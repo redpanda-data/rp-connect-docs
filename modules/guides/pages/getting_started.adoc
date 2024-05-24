@@ -1,0 +1,150 @@
+= Get Started
+:description: Getting started with {page-component-title}
+
+Woops! You fell for the marketing hype. Let's try and get through this together.
+
+image::shared:teacher-blob.svg[]
+
+== Install
+
+The easiest way to install {page-component-title} is with this handy script:
+
+[tabs]
+=====
+Latest::
++
+--
+[source,sh]
+----
+curl -Lsf https://www.benthos.dev/sh/install | bash
+----
+
+--
+Version::
++
+--
+[source,sh]
+----
+curl -Lsf https://www.benthos.dev/sh/install | bash -s -- 3.56.0
+----
+
+--
+=====
+
+Or you can grab an archive containing {page-component-title} from the https://github.com/benthosdev/benthos/releases[releases page].
+
+=== Docker
+
+If you have docker installed you can pull the latest official {page-component-title} image with:
+
+[source,sh,subs="attributes+"]
+----
+docker pull ghcr.io/{project-github}
+docker run --rm -v /path/to/your/config.yaml:/benthos.yaml ghcr.io/{project-github}
+----
+
+=== Homebrew
+
+On macOS, {page-component-title} can be installed via Homebrew:
+
+[source,sh]
+----
+brew install benthos
+----
+
+== Run
+
+A {page-component-title} stream pipeline is configured with a single xref:configuration:about.adoc[config file], you can generate a fresh one with:
+
+[,bash,subs="attributes+"]
+----
+{binary-name} create > config.yaml
+----
+
+The main sections that make up a config are `input`, `pipeline` and `output`. When you generate a fresh config it'll simply pipe `stdin` to `stdout` like this:
+
+[source,yaml]
+----
+input:
+  stdin: {}
+
+pipeline:
+  processors: []
+
+output:
+  stdout: {}
+----
+
+Eventually we'll want to configure a more useful xref:components:inputs/about.adoc[input] and xref:components:outputs/about.adoc[output], but for now this is useful for quickly testing processors. You can execute this config with:
+
+[,bash,subs="attributes+"]
+----
+{binary-name} -c ./config.yaml
+----
+
+Anything you write to stdin will get written unchanged to stdout, cool! Resist the temptation to play with this for hours, there's more stuff to try out.
+
+Next, let's add some processing steps in order to mutate messages. The most powerful one is the xref:components:processors/mapping.adoc[`mapping` processor] which allows us to perform mappings, let's add a mapping to uppercase our messages:
+
+[source,yaml]
+----
+input:
+  stdin: {}
+
+pipeline:
+  processors:
+    - mapping: root = content().uppercase()
+
+output:
+  stdout: {}
+----
+
+Now your messages should come out in all caps, how whacky! IT'S LIKE BENTHOS IS SHOUTING BACK AT YOU!
+
+You can add as many xref:components:processors/about.adoc[processing steps] as you like, and since processors are what make {page-component-title} powerful they are worth experimenting with. Let's create a more advanced pipeline that works with JSON documents:
+
+[source,yaml]
+----
+input:
+  stdin: {}
+
+pipeline:
+  processors:
+    - sleep:
+        duration: 500ms
+    - mapping: |
+        root.doc = this
+        root.first_name = this.names.index(0).uppercase()
+        root.last_name = this.names.index(-1).hash("sha256").encode("base64")
+
+output:
+  stdout: {}
+----
+
+First, we sleep for 500 milliseconds just to keep the suspense going. Next, we restructure our input JSON document by nesting it within a field `doc`, we map the upper-cased first element of `names` to a new field `first_name`. Finally, we map the hashed and base64 encoded value of the last element of `names` to a new field `last_name`.
+
+Try running that config with some sample documents:
+
+[source,sh,subs="attributes+"]
+----
+echo '{"id":"1","names":["celine","dion"]}
+{"id":"2","names":["chad","robert","kroeger"]}' | {binary-name} -c ./config.yaml
+----
+
+You should see (amongst some logs):
+
+[source,sh]
+----
+{"doc":{"id":"1","names":["celine","dion"]},"first_name":"CELINE","last_name":"1VvPgCW9sityz5XAMGdI2BTA7/44Wb3cANKxqhiCo50="}
+{"doc":{"id":"2","names":["chad","robert","kroeger"]},"first_name":"CHAD","last_name":"uXXg5wCKPjpyj/qbivPbD9H9CZ5DH/F0Q1Twytnt2hQ="}
+----
+
+How exciting! I don't know about you but I'm going to need to lie down for a while. Now that you are a {page-component-title} expert might I suggest you peruse these sections to see if anything tickles your fancy?
+
+* xref:guides:bloblang/walkthrough.adoc[Bloblang Walkthrough]
+* xref:components:inputs/about.adoc[Inputs]
+* xref:components:processors/about.adoc[Processors]
+* xref:components:outputs/about.adoc[Outputs]
+* xref:guides:monitoring.adoc[Monitoring]
+* link:/cookbooks[Cookbooks]
+* xref:configuration:about.adoc[More about configuration]

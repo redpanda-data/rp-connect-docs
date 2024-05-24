@@ -1,0 +1,107 @@
+= Components
+:description: Learn about components
+
+
+A good ninja gets clued up on its gear.
+
+image::shared:Blobninja.svg[]
+
+== Core components
+
+Every {page-component-title} pipeline has at least one xref:components:inputs/about.adoc[input], an optional xref:components:buffers/about.adoc[buffer], an xref:components:outputs/about.adoc[output] and any number of xref:components:processors/about.adoc[processors]:
+
+[source,yaml]
+----
+input:
+  kafka:
+    addresses: [ TODO ]
+    topics: [ foo, bar ]
+    consumer_group: foogroup
+
+buffer:
+  type: none
+
+pipeline:
+  processors:
+  - mapping: |
+      message = this
+      meta.link_count = links.length()
+
+output:
+  aws_s3:
+    bucket: TODO
+    path: '${! meta("kafka_topic") }/${! json("message.id") }.json'
+----
+
+These are the main components within {page-component-title} and they provide the majority of useful behavior.
+
+== Observability components
+
+There are also the observability components xref:components:http/about.adoc[http], xref:components:logger/about.adoc[logger], xref:components:metrics/about.adoc[metrics], and xref:components:tracers/about.adoc[tracing], which allow you to specify how {page-component-title} exposes observability data:
+
+[source,yaml]
+----
+http:
+  address: 0.0.0.0:4195
+  enabled: true
+  debug_endpoints: false
+
+logger:
+  format: json
+  level: WARN
+
+metrics:
+  statsd:
+    address: localhost:8125
+    flush_period: 100ms
+
+tracer:
+  jaeger:
+    agent_address: localhost:6831
+----
+
+== Resource components
+
+Finally, there are xref:components:caches/about.adoc[caches] and xref:components:rate_limits/about.adoc[rate limits]. These are components that are referenced by core components and can be shared.
+
+[source,yaml]
+----
+input:
+  http_client: # This is an input
+    url: TODO
+    rate_limit: foo_ratelimit # This is a reference to a rate limit
+
+pipeline:
+  processors:
+    - cache: # This is a processor
+        resource: baz_cache # This is a reference to a cache
+        operator: add
+        key: '${! json("id") }'
+        value: "x"
+    - mapping: root = if errored() { deleted() }
+
+rate_limit_resources:
+  - label: foo_ratelimit
+    local:
+      count: 500
+      interval: 1s
+
+cache_resources:
+  - label: baz_cache
+    memcached:
+      addresses: [ localhost:11211 ]
+----
+
+It's also possible to configure inputs, outputs and processors as resources which allows them to be reused throughout a configuration with the xref:components:inputs/resource.adoc[`resource` input], xref:components:outputs/resource.adoc[`resource` output] and xref:components:processors/resource.adoc[`resource` processor] respectively.
+
+For more information about any of these component types check out their sections:
+
+* xref:components:inputs/about.adoc[inputs]
+* xref:components:processors/about.adoc[processors]
+* xref:components:outputs/about.adoc[outputs]
+* xref:components:buffers/about.adoc[buffers]
+* xref:components:metrics/about.adoc[metrics]
+* xref:components:tracers/about.adoc[tracers]
+* xref:components:logger/about.adoc[logger]
+* xref:components:caches/about.adoc[caches]
+* xref:components:rate_limits/about.adoc[rate limits]

@@ -1,0 +1,41 @@
+site:
+  title: Redpanda Docs
+  start_page: redpanda-connect:ROOT:about.adoc
+  url: http://localhost:5002
+content:
+  sources:
+  - url: .
+    branches: HEAD
+  - url: https://github.com/redpanda-data/documentation
+    branches: [site-search, shared]
+  #- url: ../benthos
+  #  branches: HEAD
+  #  start_paths: [docs]
+  #- url: https://github.com/redpanda-data/redpanda-labs
+  #  branches: main
+  #  start_paths: [docs,'*/docs']
+ui:
+  bundle:
+    url: https://github.com/redpanda-data/docs-ui/releases/latest/download/ui-bundle.zip
+    snapshot: true
+asciidoc:
+  attributes:
+  extensions:
+  - '@asciidoctor/tabs'
+  - '@redpanda-data//docs-extensions-and-macros/macros/rp-connect-components'
+  - '@redpanda-data/docs-extensions-and-macros/macros/glossary'
+  - '@redpanda-data/docs-extensions-and-macros/macros/config-ref'
+  - '@redpanda-data/docs-extensions-and-macros/macros/helm-ref'
+antora:
+  extensions:
+  - require: '@redpanda-data//docs-extensions-and-macros/extensions/generate-rp-connect-categories'
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/unpublish-pages'
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/unlisted-pages'
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/add-global-attributes'
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/replace-attributes-in-attachments'
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/validate-attributes'
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/find-related-docs'
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/find-related-labs'
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/aggregate-terms'
+output:
+  clean: true

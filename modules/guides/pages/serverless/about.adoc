@@ -1,0 +1,20 @@
+= Serverless
+
+
+Currently the only supported serverless deployment of {page-component-title} is for
+xref:guides:serverless/lambda.adoc[AWS Lambda], if you are interested in other platforms please
+https://github.com/benthosdev/benthos/issues[raise an issue].
+
+[NOTE]
+.Looking for something less manual?
+====
+Rather than bundle the distribution and configs yourself,
+check out https://github.com/makenew/serverless-benthos[makenew/serverless-benthos], which makes quick work of deploying
+a {page-component-title} serverless project on AWS Lambda.
+For building and deploying distributions with custom plugins,
+look at https://github.com/makenew/benthos-plugin[makenew/benthos-plugin].
+====
+
+== Platforms
+
+* xref:guides:serverless/lambda.adoc[AWS Lambda]

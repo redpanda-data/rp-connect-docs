@@ -1,0 +1,35 @@
+= Caches
+
+A cache is a key/value store which can be used by certain components for applications such as deduplication or data joins. Caches are configured as a named resource:
+
+[source,yaml]
+----
+cache_resources:
+  - label: foobar
+    memcached:
+      addresses:
+        - localhost:11211
+      default_ttl: 60s
+----
+
+____
+It's possible to layer caches with read-through and write-through behavior using the xref:components:caches/multilevel.adoc[`multilevel` cache].
+____
+
+And then any components that use caches have a field `resource` that specifies the cache resource:
+
+[source,yaml]
+----
+pipeline:
+  processors:
+    - cache:
+        resource: foobar
+        operator: add
+        key: '${! json("message.id") }'
+        value: "storeme"
+    - mapping: root = if errored() { deleted() }
+----
+
+For the simple case where you wish to store messages in a cache as an output destination for your pipeline check out the xref:components:outputs/cache.adoc[`cache` output]. To see examples of more advanced uses of caches such as hydration and deduplication check out the xref:components:processors/cache.adoc[`cache` processor].
+
+You can find out more about resources xref:configuration:resources.adoc[in this document.]
