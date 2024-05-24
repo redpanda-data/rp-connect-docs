@@ -93,7 +93,8 @@ root.url = this.url.parse_url().catch(err -> {"error":err,"input":this.url})
 
 When the input document is not structured attempting to reference structured fields with `this` will result in an error. Therefore, a convenient way to delete non-structured data is with a catch.
 
-```coffeescript
+[source,coffeescript,role="no-placeholders"]
+----
 root = this.catch(deleted())
 
 # In:  {"doc":{"foo":"bar"}}
@@ -101,7 +102,7 @@ root = this.catch(deleted())
 
 # In:  not structured data
 # Out: <Message deleted>
-```
+----
 
 === `exists`
 
@@ -467,7 +468,8 @@ For each pair of strings in an argument array, replaces all occurrences of the f
 ==== Examples
 
 
-```coffeescript
+[source,coffeescript,role="no-placeholders"]
+----
 root.new_value = this.value.replace_all_many([
   "<b>", "&lt;b&gt;",
   "</b>", "&lt;/b&gt;",
@@ -477,7 +479,7 @@ root.new_value = this.value.replace_all_many([
 
 # In:  {"value":"<i>Hello</i> <b>World</b>"}
 # Out: {"new_value":"&lt;i&gt;Hello&lt;/i&gt; &lt;b&gt;World&lt;/b&gt;"}
-```
+----
 
 === `reverse`
 
@@ -551,12 +553,13 @@ Introduced in version 4.2.0.
 
 Creates a slug from an English string
 
-```coffeescript
+[source,coffeescript,subs="attributes+"]
+----
 root.slug = this.value.slug()
 
 # In:  {"value":"Gopher & {page-component-title}"}
 # Out: {"slug":"gopher-and-benthos"}
-```
+----
 
 Creates a slug from a French string
 
