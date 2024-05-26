@@ -63,6 +63,7 @@ The behavior of connection metrics may differ based on input type due to certain
 * `output_connection_up`: For continuous stream based outputs represents a count of the number of the times the output has successfully established a connection to the target sink. For poll based outputs that do not retain an active connection this value will increment once.
 * `output_connection_failed`: For continuous stream based outputs represents a count of the number of times the output has failed to establish a connection to the target sink.
 * `output_connection_lost`: For continuous stream based outputs represents a count of the number of times the output has lost a previously established connection to the target sink.
+
 [CAUTION]
 ====
 The behavior of connection metrics may differ based on output type due to certain libraries and protocols obfuscating the concept of a single connection.

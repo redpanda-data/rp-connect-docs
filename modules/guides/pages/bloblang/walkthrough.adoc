@@ -40,7 +40,9 @@ As you can see the input document in the editor begins as a JSON object `{"messa
 }
 ----
 
-Which is a (neatly formatted) replica of the input document. This is the result of our mapping because we assigned the entire input document to the root of our new thing. However, you won't get far in life by trapping yourself in the past, let's create a brand new document by assigning a fresh object to the root:
+This output is a (neatly formatted) replica of the input document. This is the result of our mapping because we assigned the entire input document to the root of our new thing.
+
+Let's create a brand new document by assigning a fresh object to the root:
 
 [source,coffeescript]
 ----
@@ -197,7 +199,7 @@ Unstructured mapping is not limited to the output. Rather than referencing the i
 root = content().uppercase()
 ----
 
-And then put any old gibberish in the input panel, the output panel should be the same gibberish but all uppercase.
+When you add content to the input panel, it should be the same in the output panel, but in all uppercase.
 
 == Conditionals
 
@@ -245,7 +247,7 @@ root.pet.treats = if this.pet.is_cute {
 }
 ----
 
-This is possible because field deletions are expressed as assigned values created with the `deleted()` function. This is cool but also in poor taste, treats should be allocated based on need, not cuteness!
+This is possible because field deletions are expressed as assigned values created with the `deleted()` function.
 
 === If statement
 
@@ -320,7 +322,7 @@ root.pet.toys = match this.pet.type {
 
 == Error handling
 
-Are you feeling relaxed? Well don't, because in the world of mapping anything can happen, at ANY TIME, and there are plenty of ways that a mapping can fail due to variations in the input data. Are you feeling stressed? Well don't, because Bloblang makes handling errors easy.
+Bloblang can simplify handling errors.
 
 First, let's take a look at what happens when errors _aren't_ handled, change your input to the following:
 
@@ -399,7 +401,7 @@ This version is more granular and will capture each of the errors individually, 
 
 == Validation
 
-I'm worried that I've turned you into some sort of error hating thug, hell-bent on eliminating all errors from existence. However, sometimes errors are what we want. Failing a mapping with an error allows us to handle the bad document in other ways, such as routing it to a dead-letter queue or filtering it entirely.
+Sometimes errors are what we want. Failing a mapping with an error allows us to handle the bad document in other ways, such as routing it to a dead-letter queue or filtering it entirely.
 
 You can read about common {page-component-title} error handling patterns for bad data in the xref:configuration:error_handling.adoc[error handling guide], but the first step is to create the error. Luckily, Bloblang has a range of ways of creating errors under certain circumstances, which can be used in order to validate the data being mapped.
 
@@ -421,7 +423,7 @@ With some of these sample inputs:
 {"foo":10,"bar":"hello world","baz":[]}
 ----
 
-However, these methods don't cover all use cases. The general purpose error throwing technique is the xref:guides:bloblang/functions.adoc#throw[`throw` function], which takes an argument string that describes the error. When it's called it will throw a mapping error that abandons the mapping (unless it's caught, psych!)
+However, these methods don't cover all use cases. The general purpose error throwing technique is the xref:guides:bloblang/functions.adoc#throw[`throw` function], which takes an argument string that describes the error. When it's called it will throw a mapping error that abandons the mapping.
 
 For example, we can check the type of a field with the xref:guides:bloblang/methods.adoc#type[method `type`], and then throw an error if it's not the type we expected:
 
@@ -541,7 +543,7 @@ Neat.
 
 == Advanced methods
 
-Congratulations for making it this far, but if you take your current level of knowledge to a map-off you'll be laughed off the stage. What happens when you need to map all of the elements of an array? Or filter the keys of an object by their values? What if the fellowship just used the eagles to fly to mount doom?
+What happens when you need to map all of the elements of an array? Or filter the keys of an object by their values? What if the fellowship just used the eagles to fly to mount doom?
 
 Bloblang offers a bunch of advanced methods for xref:guides:bloblang/methods.adoc#object--array-manipulation[manipulating structured data types], let's take a quick tour of some of the cooler ones. Set your input document to this list of things:
 
@@ -699,13 +701,9 @@ Try running that mapping with the following input document:
 }
 ----
 
-Charlie will be upset but at least we'll be safe.
-
 == Unit testing
 
-You are truly a champion of mappings, and you're probably feeling pretty confident right now. Maybe you even have a mapping that you're particularly proud of. Well, I'm sorry to inform you that your mapping is DOOMED, as a mapping without unit tests is like a Twitter session, with the progression of time it will inevitably descend into madness.
-
-However, if you act now there is still time to spare your mapping from this fate, as {page-component-title} has it's own xref:configuration:unit_testing.adoc[unit testing capabilities] that you can also use for your mappings. To start with save a mapping into a file called something like `naughty_man.blobl`, we can use the example above from the reusable mappings section:
+{page-component-title} has it's own xref:configuration:unit_testing.adoc[unit testing capabilities] that you can also use for your mappings. To start with save a mapping into a file called something like `naughty_man.blobl`, we can use the example above from the reusable mappings section:
 
 [source,coffeescript]
 ----
@@ -794,7 +792,3 @@ Test 'naughty_man_test.yaml' succeeded
 ----
 
 And now our mapping, should we need to expand it in the future, is better protected against regressions. You can read more about the {page-component-title} unit test specification, including alternative output predicates, in xref:configuration:unit_testing.adoc[this document].
-
-== Final words
-
-That's it for this walkthrough, if you're hungry for more then I suggest you re-evaluate your priorities in life. If you have feedback then please link:/community[get in touch], despite being terrible people the {page-component-title} community are very welcoming.

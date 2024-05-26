@@ -3,7 +3,7 @@
 
 You can't build cool graphs without metrics, and xref:components:metrics/about.adoc[{page-component-title} emits many]. However, occasionally you might want to also emit custom metrics that track data extracted from messages being processed. In this cookbook we'll explore how to achieve this by configuring {page-component-title} to pull download stats from Github, DockerHub and Homebrew and emit them as gauges.
 
-== The Basics
+== The basics
 
 Firstly, we need to target an API so let's start with the nice and simple Homebrew API, which we'll poll every 60 seconds.
 
@@ -95,7 +95,7 @@ metrics:
   prometheus: {}
 ----
 
-With the above config we have selected the xref:components:metrics/prometheus.adoc[`prometheus` metrics type], which allows us to use https://prometheus.io/[Prometheus] to scrape metrics from {page-component-title} by polling its HTTP API at the url `+http://localhost:4195/stats+`.
+With the above config we have selected the xref:components:metrics/prometheus.adoc[`prometheus` metrics type], which allows us to use https://prometheus.io/[Prometheus^] to scrape metrics from {page-component-title} by polling its HTTP API at the url `+http://localhost:4195/stats+`.
 
 We have also specified a [`path_mapping`][metrics.prometheus.path_mapping] that deletes any internal metrics usually emitted by {page-component-title} by filtering on our custom metric name.
 
@@ -199,7 +199,7 @@ metrics:
 --
 =====
 
-== Harder Example
+== Advanced custom metrics example
 
 So that's the basics covered. Next, we're going to target the Github releases API which gives a slightly more complex payload that looks something like this:
 
@@ -234,7 +234,7 @@ Then we can use an xref:components:processors/unarchive.adoc[`unarchive` process
 
 A simple pipeline of these steps would look like this (please forgive the regexp):
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 http:
   address: 0.0.0.0:4195
@@ -247,7 +247,7 @@ input:
 pipeline:
   processors:
     - http:
-        url: https://api.github.com/repos/benthosdev/benthos/releases
+        url: https://api.github.com/repos/{project-github}/releases
         verb: GET
 
     - mapping: |
@@ -278,9 +278,9 @@ metrics:
 
 Finally, let's combine all the custom metrics into one pipeline.
 
-== Combining into a Workflow
+== Combining into a workflow
 
-Okay I'm getting bored now so let's wrap this up. The following config expands on the previous examples by configuring each API poll as a xref:components:processors/branch.adoc[`branch` processor], which allows us to run them within a xref:components:processors/workflow.adoc[`workflow` processor] that can execute all three branches in parallel.
+The following config expands on the previous examples by configuring each API poll as a xref:components:processors/branch.adoc[`branch` processor], which allows us to run them within a xref:components:processors/workflow.adoc[`workflow` processor] that can execute all three branches in parallel.
 
 The xref:components:processors/metric.adoc[`metric` processors] have also been combined into a single reusable resource by updating the other API calls to format their payloads into the same structure as our Github remap.
 

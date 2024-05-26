@@ -22,13 +22,13 @@ asciidoc:
   attributes:
   extensions:
   - '@asciidoctor/tabs'
-  - '@redpanda-data//docs-extensions-and-macros/macros/rp-connect-components'
+  - '../docs-extensions-and-macros/macros/rp-connect-components'
   - '@redpanda-data/docs-extensions-and-macros/macros/glossary'
   - '@redpanda-data/docs-extensions-and-macros/macros/config-ref'
   - '@redpanda-data/docs-extensions-and-macros/macros/helm-ref'
 antora:
   extensions:
-  - require: '@redpanda-data//docs-extensions-and-macros/extensions/generate-rp-connect-categories'
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/generate-rp-connect-categories'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/unpublish-pages'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/unlisted-pages'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/add-global-attributes'

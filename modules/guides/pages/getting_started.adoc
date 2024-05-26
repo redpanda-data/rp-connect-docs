@@ -1,9 +1,7 @@
 = Get Started
-:description: Getting started with {page-component-title}
+:description: Getting started with {page-component-title}.
 
-Woops! You fell for the marketing hype. Let's try and get through this together.
-
-image::shared:teacher-blob.svg[]
+This topic explains how to get started with {page-component-title}.
 
 == Install
 
@@ -31,7 +29,7 @@ curl -Lsf https://www.benthos.dev/sh/install | bash -s -- 3.56.0
 --
 =====
 
-Or you can grab an archive containing {page-component-title} from the https://github.com/benthosdev/benthos/releases[releases page].
+Or you can grab an archive containing {page-component-title} from the https://github.com/{project-github}/releases[releases page^].
 
 === Docker
 
@@ -125,7 +123,7 @@ First, we sleep for 500 milliseconds just to keep the suspense going. Next, we r
 
 Try running that config with some sample documents:
 
-[source,sh,subs="attributes+"]
+[,sh,subs="attributes+"]
 ----
 echo '{"id":"1","names":["celine","dion"]}
 {"id":"2","names":["chad","robert","kroeger"]}' | {binary-name} -c ./config.yaml
@@ -133,13 +131,13 @@ echo '{"id":"1","names":["celine","dion"]}
 
 You should see (amongst some logs):
 
-[source,sh]
+[source,json]
 ----
 {"doc":{"id":"1","names":["celine","dion"]},"first_name":"CELINE","last_name":"1VvPgCW9sityz5XAMGdI2BTA7/44Wb3cANKxqhiCo50="}
 {"doc":{"id":"2","names":["chad","robert","kroeger"]},"first_name":"CHAD","last_name":"uXXg5wCKPjpyj/qbivPbD9H9CZ5DH/F0Q1Twytnt2hQ="}
 ----
 
-How exciting! I don't know about you but I'm going to need to lie down for a while. Now that you are a {page-component-title} expert might I suggest you peruse these sections to see if anything tickles your fancy?
+See also:
 
 * xref:guides:bloblang/walkthrough.adoc[Bloblang Walkthrough]
 * xref:components:inputs/about.adoc[Inputs]

@@ -51,10 +51,10 @@ input:
 
 By default {page-component-title} does not build with components that require linking to external libraries. If you wish to build {page-component-title} locally with this component then set the build tag `x_benthos_extra`:
 
-[source,shell]
+[source,bash,subs="attributes+"]
 ----
 # With go
-go install -tags "x_benthos_extra" github.com/benthosdev/benthos/v4/cmd/benthos@latest
+go install -tags "x_benthos_extra" github.com/{project-github}/v4/cmd/benthos@latest
 
 # Using make
 make TAGS=x_benthos_extra

@@ -11,7 +11,7 @@ input:
     topics: [ "haha_business" ]
 ----
 
-[source,sh,subs="attributes+"]
+[,sh,subs="attributes+"]
 ----
 BROKERS="foo:9092,bar:9092" {binary-name} -c ./config.yaml
 ----
@@ -78,7 +78,7 @@ Here's a map of inputs to resulting values:
 {"foo":{"b":null,"c":{"baz":"from_c"}}}             -> from_c
 ----
 
-=== Delayed Processing
+=== Delayed processing
 
 We have a stream of JSON documents each with a unix timestamp field `doc.received_at` which is set when our platform receives it. We wish to only process messages an hour _after_ they were received. We can achieve this by running the `sleep` processor using an interpolation function to calculate the seconds needed to wait for:
 

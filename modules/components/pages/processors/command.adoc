@@ -33,7 +33,7 @@ The specified command is executed for each message processed, with the raw bytes
 
 Since this processor executes a new process for each message performance will likely be an issue for high throughput streams. If this is the case then consider using the xref:components:processors/subprocess.adoc[`subprocess` processor] instead as it keeps the underlying process alive long term and uses codecs to insert and extract inputs and outputs to it via stdin/stdout.
 
-== Error Handling
+== Error handling
 
 If a non-zero error code is returned by the command then an error containing the entirety of stderr (or a generic message if nothing is written) is set on the message. These failed messages will continue through the pipeline unchanged, but can be dropped or placed in a dead letter queue according to your config, you can read about xref:configuration:error_handling.adoc[these patterns].
 

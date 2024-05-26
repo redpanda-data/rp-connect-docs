@@ -20,7 +20,7 @@ component_type_dropdown::[]
 ====
 This component is deprecated and will be removed in the next major version release. Please consider moving onto <<alternatives,alternative components>>.
 ====
-Converts batches of documents to or from https://parquet.apache.org/docs/[Parquet files].
+Converts batches of documents to or from https://parquet.apache.org/docs/[Parquet files^].
 
 Introduced in version 3.62.0.
 
@@ -51,7 +51,7 @@ This processor is experimental and the error messages that it provides are often
 
 Unfortunately the name of the field will sometimes be missing from the error, in which case it's worth double checking the schema you provided to make sure that there are no typos in the field names, and if that doesn't reveal the issue it can help to mark fields as OPTIONAL in the schema and gradually change them back to REQUIRED until the error returns.
 
-== Define the Schema
+== Define the schema
 
 The schema must be specified as a JSON string, containing an object that describes the fields expected at the root of each document. Each field can itself have more fields defined, allowing for nested structures:
 

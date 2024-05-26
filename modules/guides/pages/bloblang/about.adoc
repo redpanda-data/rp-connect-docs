@@ -2,13 +2,13 @@
 :description: The native mapping language
 
 
-Bloblang, or blobl for short, is a language designed for mapping data of a wide variety of forms. It's a safe, fast, and powerful way to perform document mapping within {page-component-title}. It also has a https://pkg.go.dev/github.com/benthosdev/benthos/v4/public/bloblang[Go API for writing your own functions and methods] as plugins.
+Bloblang, or blobl for short, is a language designed for mapping data of a wide variety of forms. It's a safe, fast, and powerful way to perform document mapping within {page-component-title}. It also has a https://pkg.go.dev/github.com/{project-github}/v4/public/bloblang[Go API for writing your own functions and methods^] as plugins.
 
 Bloblang is available as a xref:components:processors/mapping.adoc[processor] and it's also possible to use blobl queries in xref:configuration:interpolation.adoc#bloblang-queries[function interpolations].
 
 You can also execute Bloblang mappings on the command-line with the `blobl` subcommand:
 
-[source,shell]
+[,shell]
 ----
 cat data.jsonl | {binary-name} blobl 'foo.(bar | baz).buz'
 ----

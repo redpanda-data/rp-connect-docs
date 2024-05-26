@@ -5,13 +5,13 @@ There are many components within {page-component-title} which utilize Google Clo
 these components require valid credentials.
 
 When running {page-component-title} inside a Google Cloud environment that has a
-https://cloud.google.com/iam/docs/service-accounts#default[default service account], it can automatically retrieve the
+https://cloud.google.com/iam/docs/service-accounts#default[default service account^], it can automatically retrieve the
 service account credentials to call Google Cloud APIs through a library called Application Default Credentials (ADC).
 
 Otherwise, if your application runs outside Google Cloud environments that provide a default service account, you need
 to manually create one. Once you have a service account set up which has the required permissions, you can
-https://console.cloud.google.com/apis/credentials/serviceaccountkey[create] a new Service Account Key and download it
+https://console.cloud.google.com/apis/credentials/serviceaccountkey[create^] a new Service Account Key and download it
 as a JSON file. Then all you need to do set the path to this JSON file in the `GOOGLE_APPLICATION_CREDENTIALS`
 environment variable.
 
-Please refer to https://cloud.google.com/docs/authentication/production[this document] for details.
+Please refer to https://cloud.google.com/docs/authentication/production[this document^] for details.

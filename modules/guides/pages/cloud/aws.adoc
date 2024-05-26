@@ -16,7 +16,7 @@ credentials:
 
 This section contains many fields and it isn't immediately clear which of them are compulsory and which aren't. This document aims to make it clear what each field is responsible for and how it might be used.
 
-== None of these fields are compulsory
+== Credentials
 
 The first thing to make clear is that _all_ of these fields are optional. When all fields are left blank {page-component-title} will attempt to load credentials from a shared credentials file (`~/.aws/credentials`). The profile loaded will be `default` unless the `AWS_PROFILE` environment variable is set.
 
@@ -57,7 +57,7 @@ credentials:
 
 == Assume a role
 
-It's also possible to configure {page-component-title} to https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use.html[assume a role] using your credentials by setting the field `role` to your target role ARN.
+It's also possible to configure {page-component-title} to https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use.html[assume a role^] using your credentials by setting the field `role` to your target role ARN.
 
 [source,yml]
 ----
@@ -67,7 +67,7 @@ credentials:
 
 This does NOT require explicit credentials, but it's possible to use both.
 
-If you need to assume a role owned by another organization they might require you to https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html[provide an external ID], in which case place it in the field `role_external_id`:
+If you need to assume a role owned by another organization they might require you to https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html[provide an external ID^], in which case place it in the field `role_external_id`:
 
 [source,yml]
 ----

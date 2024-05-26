@@ -53,9 +53,9 @@ func main() {
 
 == Pipeline threads behavior change
 
-https://github.com/benthosdev/benthos/issues/399
-
 In V3 the `pipeline.threads` field defaults to 1. If this field is explicitly set to `0` it will automatically match the number of CPUs on the host machine. In V4 this will change so that the default value of `pipeline.threads` is `-1`, where this value indicates we should match the number of host CPUs. An explicit value of `0` is still considered valid and functionally equivalent to `-1`.
+
+https://github.com/{project-github}/issues/399[Related issue^].
 
 == Old Style Interpolation Functions Removed
 
@@ -65,9 +65,9 @@ However, supporting the old style means our parsing capabilities are weakened an
 
 == Bloblang changes
 
-https://github.com/benthosdev/benthos/issues/571
-
 The functions `meta`, `root_meta`, `error` and `env` now return `null` when the target value does not exist. This is in order to improve consistency across different functions and query types. In cases where a default empty string is preferred you can add `.or("")` onto the function. In cases where you want to throw an error when the value does not exist you can add `.not_null()` onto the function.
+
+https://github.com/{project-github}/issues/571[Related issue^].
 
 === Root referencing
 
@@ -103,7 +103,7 @@ docker run --rm -p 4195:4195 jeffail/benthos \
 
 == Old plugin APIs removed
 
-Any packages from within the `lib` directory have been removed. Please use only the APIs within the `public` directory, the API docs count be found on https://pkg.go.dev/github.com/benthosdev/benthos/v4/public[pkg.go.dev], and examples can be found in the https://github.com/benthosdev/benthos-plugin-example[`benthos-plugin-example` repository]. These new APIs can be found in V3 so if you have many components you can migrate them incrementally by sticking with V3 until completion.
+Any packages from within the `lib` directory have been removed. Please use only the APIs within the `public` directory, the API docs count be found on https://pkg.go.dev/github.com/benthosdev/benthos/v4/public[pkg.go.dev^], and examples can be found in the https://github.com/benthosdev/benthos-plugin-example[`benthos-plugin-example` repository^]. These new APIs can be found in V3 so if you have many components you can migrate them incrementally by sticking with V3 until completion.
 
 Many of the old packages within `lib` can also still be found within `internal`, if you're in a pickle you can find some of those APIs and copy/paste them into your own repository.
 
@@ -127,9 +127,9 @@ Caches that support TTLs have had their `ttl` fields renamed to `default_ttl` in
 
 == Field default changes
 
-https://github.com/benthosdev/benthos/issues/392
-
 Lots of fields have had default values removed in cases where they were deemed unlikely to be useful and likely to cause frustration. This specifically applies to any `url`, `urls`, `address` or `addresses` fields that may have once had a default value containing a common example for the particular service. In most cases this should cause minimal disruption as the field is non-optional and therefore not specifying it explicitly will result in config errors.
+
+https://github.com/{project-github}/issues/392[Related issue^].
 
 However, there are the following exceptions that are worth noting:
 
@@ -153,13 +153,13 @@ Therefore the default value of `retry_until_success` will now be `false`, which 
 
 === AWS `region` fields
 
-https://github.com/benthosdev/benthos/issues/696
-
 Any configuration sections containing AWS fields no longer have a default `region` of `eu-west-1`. Instead, the field will be empty by default, where unless explicitly set the environment variable `AWS_REGION` will be used. This will cause problems for users where they expect the region `eu-west-1` to be targeted when neither the field nor the environment variable `AWS_REGION` are set.
+
+https://github.com/{project-github}/issues/696[Related issue^].
 
 == Clickhouse driver changes
 
-The `clickhouse` SQL driver Data Source Name format parameters have been changed due to a client library update (details can be found at https://github.com/ClickHouse/clickhouse-go). A compatibility layer has been added that makes a best attempt to translate the old DSN format to the new one, but some parameters may not carry over exactly.
+The `clickhouse` SQL driver Data Source Name format parameters have been changed due to a client library update (details can be found at https://github.com/ClickHouse/clickhouse-go[^]). A compatibility layer has been added that makes a best attempt to translate the old DSN format to the new one, but some parameters may not carry over exactly.
 
 This update also means placeholders in `sql_raw` queries should be in dollar syntax.
 
@@ -184,11 +184,11 @@ This change was made in order to return processing errors directly to the invoke
 
 == Metrics changes
 
-https://github.com/benthosdev/benthos/issues/1066
-
 The metrics produced by a {page-component-title} stream have been greatly simplified and now make better use of labels/tags in order to provide component-specific insights. The configuration and behavior of metrics types has also been made more consistent, with metric names being the same throughout and `mapping` now being a general top-level field.
 
 For a full overview of the new system check out the xref:components:metrics/about.adoc[metrics about page].
+
+https://github.com/{project-github}/issues/1066[Related issue^].
 
 === Field `prefix` is gone
 
@@ -239,17 +239,17 @@ However, it's recommended to change your metric names instead.
 
 == Tracing changes
 
-https://github.com/benthosdev/benthos/issues/872
-
 Distributed tracing within {page-component-title} is now done via the Open Telemetry client library. Unfortunately, this client library does not support the full breadth of options as we had before. As such, the `jaeger` tracing type now only supports the `const` sampling type, and the field `service_name` has been removed.
 
 This will likely mean tracing output will appear different in this release, and if you were relying on code that extracts and interacts with spans from messages in your custom plugins then it will need to be converted to use the official Open Telemetry APIs.
 
+https://github.com/{project-github}/issues/872[Related issue^].
+
 == Logging changes
 
-https://github.com/benthosdev/benthos/issues/589
-
 The `logger` config section has been simplified, the new default set to `logfmt`, and the `classic` format removed. The default value of `add_timestamp` has also been changed to `false`.
+
+https://github.com/{project-github}/issues/589[Related issue^].
 
 == Automatic max In flight
 
@@ -257,9 +257,9 @@ Outputs that compose other outputs (`broker`, `switch`, etc) no longer require t
 
 == Processor batch behavior changes
 
-https://github.com/benthosdev/benthos/issues/408
-
 Some processors that once executed only once per batch have been updated to execute upon each message individually by default. This change has been made because it was felt the individual message case was considerably more common (and intuitive) and that it is possible to satisfy the batch-wide behavior in other ways that are opt-in, such as by placing the processors within a `branch` and having your `request_map` explicit for a single `batch_index` (i.e. `request_map: root = if batch_index() != 0 { deleted() }`).
+
+https://github.com/{project-github}/issues/408[Related issue^].
 
 === Processor `parts` field removed
 
@@ -303,4 +303,4 @@ The `sleep` processor now executes for every message of batches by default.
 
 == Broker ditto macro gone
 
-The hidden macro `ditto` for broker configs is now removed. Use the `copies` field instead. For some edge cases where `copies` does not satisfy your requirements you may be better served using xref:configuration:templating.adoc[configuration templates]. If all else fails then please link:/community[reach out] and we can look into other solutions.
+The hidden macro `ditto` for broker configs is now removed. Use the `copies` field instead. For some edge cases where `copies` does not satisfy your requirements you may be better served using xref:configuration:templating.adoc[configuration templates]. If all else fails then please https://redpanda.com/slack[reach out] and we can look into other solutions.

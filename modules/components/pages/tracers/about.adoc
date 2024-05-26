@@ -1,7 +1,7 @@
 = Tracers
 
 
-A tracer type represents a destination for {page-component-title} to send tracing events to such as https://www.jaegertracing.io/[Jaeger].
+A tracer type represents a destination for {page-component-title} to send tracing events to such as https://www.jaegertracing.io/[Jaeger^].
 
 When a tracer is configured all messages will be allocated a root span during ingestion that represents their journey through a {page-component-title} pipeline. Many {page-component-title} processors create spans, and so tracing is a great way to analyse the pathways of individual messages as they progress through a {page-component-title} instance.
 
@@ -21,4 +21,4 @@ tracer:
     sampler_param: 1
 ----
 
-WARNING: Although the configuration spec of this component is stable the format of spans, tags and logs created by {page-component-title} is subject to change as it is tuned for improvement.
+CAUTION: Although the configuration spec of this component is stable the format of spans, tags and logs created by {page-component-title} is subject to change as it is tuned for improvement.

@@ -11,10 +11,10 @@ which runs Amazon Linux 2 on either the `x86_64` or `arm64` architecture.
 .Looking for something less manual?
 ====
 Rather than bundle the distribution and configs yourself,
-check out https://github.com/makenew/serverless-benthos[makenew/serverless-benthos], which makes quick work of deploying
+check out https://github.com/makenew/serverless-benthos[makenew/serverless-benthos^], which makes quick work of deploying
 a {page-component-title} serverless project on AWS Lambda.
 For building and deploying distributions with custom plugins,
-look at https://github.com/makenew/benthos-plugin[makenew/benthos-plugin].
+look at https://github.com/makenew/benthos-plugin[makenew/benthos-plugin^].
 ====
 
 It uses the same configuration format as a regular {page-component-title} instance, which can be
@@ -141,7 +141,7 @@ output:
 
 === go1.x on x86_64
 
-Grab an archive labelled `benthos-lambda` from the https://github.com/benthosdev/benthos/releases[releases page]
+Grab an archive labelled `benthos-lambda` from the https://github.com/{project-github}/releases[releases page^]
 page and then create your function:
 
 [source,sh]
@@ -156,12 +156,12 @@ aws lambda create-function \
   --function-name benthos-example
 ----
 
-There is also an example https://github.com/benthosdev/benthos/tree/main/resources/serverless/lambda/benthos-lambda-sam.yaml[SAM template] and
-https://github.com/benthosdev/benthos/tree/main/resources/serverless/lambda/benthos-lambda.tf[Terraform resource] in the repo to copy from.
+There is also an example https://github.com/{project-github}/tree/main/resources/serverless/lambda/benthos-lambda-sam.yaml[SAM template^] and
+https://github.com/{project-github}/tree/main/resources/serverless/lambda/benthos-lambda.tf[Terraform resource^] in the repo to copy from.
 
 === provided.al2 on amd64
 
-Grab an archive labelled `benthos-lambda-al2` for `arm64` from the https://github.com/benthosdev/benthos/releases[releases page]
+Grab an archive labelled `benthos-lambda-al2` for `arm64` from the https://github.com/{project-github}/releases[releases page^]
 page and then create your function (AWS CLI v2 only):
 
 [source,sh]
@@ -177,8 +177,8 @@ aws lambda create-function \
   --function-name benthos-example
 ----
 
-There is also an example https://github.com/benthosdev/benthos/tree/main/resources/serverless/lambda/benthos-lambda-al2-sam.yaml[SAM template] and
-https://github.com/benthosdev/benthos/tree/main/resources/serverless/lambda/benthos-lambda-al2.tf[Terraform resource] in the repo to copy from.
+There is also an example https://github.com/{project-github}/tree/main/resources/serverless/lambda/benthos-lambda-al2-sam.yaml[SAM template^] and
+https://github.com/{project-github}/tree/main/resources/serverless/lambda/benthos-lambda-al2.tf[Terraform resource^] in the repo to copy from.
 
 Note that you can also run `benthos-lambda-al2` on x86_64, just use the `amd64` zip instead.
 

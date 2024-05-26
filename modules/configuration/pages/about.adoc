@@ -93,7 +93,7 @@ This is powerful but can potentially lead to large and cumbersome configuration 
 
 For guidance on how to write and run unit tests for your configuration files read xref:configuration:unit_testing.adoc[this guide].
 
-== Customizing Your Configuration
+== Customizing your configuration
 
 Sometimes it's useful to write a configuration where certain fields can be defined during deployment. For this purpose {page-component-title} supports xref:configuration:interpolation.adoc[environment variable interpolation], allowing you to set fields in your config with environment variables like so:
 
@@ -109,7 +109,7 @@ input:
 
 This is very useful for sharing configuration files across different deployment environments.
 
-== Reusing Configuration Snippets
+== Reusing configuration snippets
 
 Sometimes it's necessary to use a rather large component multiple times. Instead of copy/pasting the configuration or using YAML anchors you can define your component xref:configuration:resources.adoc[as a resource].
 
@@ -136,7 +136,7 @@ processor_resources:
         SomeThingElse: "set-to-something-else"
 ----
 
-=== Feature Toggles
+=== Feature toggles
 
 Resources can be imported separately to your config file with the cli flag `-r` or `-resources`, which is a useful way to switch out resources with common names based on your chosen environment. For example, with a main configuration file `config.yaml`:
 
@@ -250,7 +250,7 @@ All of these generated configuration examples also include other useful config s
 
 For more information read the output from `{binary-name} create --help`.
 
-== Help With Debugging
+== Help with debugging
 
 Once you have a config written you now move onto the next headache of proving that it works, and understanding why it doesn't. {page-component-title}, like most good config driven services, performs validation on configs and tries to provide sensible error messages.
 

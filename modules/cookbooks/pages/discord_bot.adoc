@@ -1,11 +1,11 @@
 = Create a Discord Bot
 :description: Learn how to use {page-component-title} to create a vanity chat bot.
 
-Stream processing is stupid and boring, and so it's important to re-purpose tools like {page-component-title} for fun things occasionally. This cookbook outlines how {page-component-title} can be used to create a Discord bot for important tasks such as providing insults and bad jokes to your chat. If you're a member of the https://discord.gg/6VaWjzP[{page-component-title} Discord server] then you're likely already familiar with Blob Bot which is the resulting product.
+This cookbook outlines how {page-component-title} can be used to create a Discord bot for important tasks such as providing insults and bad jokes to your chat. If you're a member of the https://discord.gg/6VaWjzP[{page-component-title} Discord server^] then you're likely already familiar with Blob Bot which is the resulting product.
 
 == Consuming messages
 
-Before you start messing with {page-component-title} you need to register a new bot with the https://discord.com/developers/applications[Discord Developer Portal]. Start by building an Application, then use the build-a-bot page to choose a bot name and avatar. You should end up with a token generated for the bot, and you'll also need to add it to your server.
+Before you start messing with {page-component-title} you need to register a new bot with the https://discord.com/developers/applications[Discord Developer Portal^]. Start by building an Application, then use the build-a-bot page to choose a bot name and avatar. You should end up with a token generated for the bot, and you'll also need to add it to your server.
 
 As soon as your bot is added to your server and you have a token you can immediately begin consuming messages from a channel with the xref:components:inputs/discord.adoc[`discord` input]:
 
@@ -24,7 +24,7 @@ cache_resources:
 ----
 
 ____
-If you aren't sure how to access the ID of a channel try https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-[this tutorial].
+If you aren't sure how to access the ID of a channel try https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-[this tutorial^].
 ____
 
 The `poll_period` shouldn't be too short as it'll exhaust your rate limits. If you plan to use the bot for hitting multiple Discord APIs then give it a fair few seconds between each poll. It's also necessary to point the input to a xref:components:caches/about.adoc[cache resource], and this will be used to store the ID of the latest message received for paginating the messages endpoint.
@@ -42,11 +42,9 @@ If you were to run this config (setting the channel and bot token as env vars in
 {"content":"yeah","author":{"id":"4321"}}
 ----
 
-It might be tempting to leave your silent surveillance bot running indefinitely but that's creepy and weird, so instead let's add the ability to respond to messages.
-
 == Writing messages
 
-Writing messages to a Discord channel is pretty easy. You can feed the xref:components:outputs/discord.adoc[`discord` output] either a JSON object following the https://discord.com/developers/docs/resources/channel#message-object[Message Object structure], or just a raw string and the structure will be created for you. Therefore we can write a hypothetical uppercasing echo bot with a simple xref:guides:bloblang/about.adoc[Bloblang mapping]:
+Writing messages to a Discord channel is pretty easy. You can feed the xref:components:outputs/discord.adoc[`discord` output] either a JSON object following the https://discord.com/developers/docs/resources/channel#message-object[Message Object structure^], or just a raw string and the structure will be created for you. Therefore we can write a hypothetical uppercasing echo bot with a simple xref:guides:bloblang/about.adoc[Bloblang mapping]:
 
 [source,yaml]
 ----
@@ -133,7 +131,7 @@ Clicking websites and browsing the internet is very difficult and most people ar
 
 The final command we're going to add to our bot is "/release", where it will hit the Github API and find out for us what the latest {page-component-title} release is:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 pipeline:
   processors:
@@ -144,7 +142,7 @@ pipeline:
             - mapping: 'root = ""'
             - try:
               - http:
-                  url: https://api.github.com/repos/benthosdev/benthos/releases/latest
+                  url: https://api.github.com/repos/{project-github}/releases/latest
                   verb: GET
               - mapping: 'root = "The latest release of {page-component-title} is %v: %v".format(this.tag_name, this.html_url)'
 
@@ -158,15 +156,13 @@ pipeline:
 Here we've added a switch case that clears the contents of the message, hits the Github API to obtain the latest {page-component-title} release as a JSON object, and finally maps the tag name and the URL of the release to a useful message.
 
 ____
-We're hitting the Github API with the xref:components:processors/http.adoc[generic `http` processor], which can be configured to work with most HTTP based APIs. In fact, the Discord input and output are actually xref:configuration:templating.adoc[configuration templates] that use the generic HTTP components https://github.com/benthosdev/benthos/blob/master/template/outputs/discord.yaml[under the hood].
+We're hitting the Github API with the xref:components:processors/http.adoc[generic `http` processor], which can be configured to work with most HTTP based APIs. In fact, the Discord input and output are actually xref:configuration:templating.adoc[configuration templates] that use the generic HTTP components https://github.com/{project-github}/blob/master/template/outputs/discord.yaml[under the hood^].
 ____
 
 Since this command is networked and therefore has a chance of failure we've added some xref:configuration:error_handling.adoc[error handling] mechanisms after the switch processor so that it'd capture errors from this new case and any new cases we add later.
 
 Within the catch block we simply log the error for the admin to peruse and change the response message out for a generic "whoopsie daisy" apology.
 
-== Final words
+The full config for Blob Bot (with some super secret responses redacted) can be found https://github.com/{project-github}/blob/master/config/examples/discord_bot.yaml[in the Github repo^]. To find out more about Bloblang check out xref:guides:bloblang/about.adoc[the guide page]. To find out more about config templates check out the xref:configuration:templating.adoc[templates documentation page].
 
-The full config for Blob Bot (with some super secret responses redacted) can be found https://github.com/benthosdev/benthos/blob/master/config/examples/discord_bot.yaml[in the Github repo]. To find out more about Bloblang check out xref:guides:bloblang/about.adoc[the guide page]. To find out more about config templates check out the xref:configuration:templating.adoc[templates documentation page].
-
-If you want to play with Blob Bot then https://discord.gg/6VaWjzP[join our Discord]. There are also some humans in there that will help you manage your disappointment when you see Blob Bot in action.
+If you want to play with Blob Bot then https://discord.gg/6VaWjzP[join our Discord^]. There are also some humans in there that will help you manage your disappointment when you see Blob Bot in action.
