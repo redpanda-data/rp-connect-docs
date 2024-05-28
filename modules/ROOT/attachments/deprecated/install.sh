@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# Installs Redpanda Connect.
+# Installs Benthos the quick way, for adventurers that want to spend more time
+# grooming their cats.
 #
 # Requires curl, grep, cut, tar, uname, chmod, mv, rm.
 
@@ -8,10 +9,10 @@
 
 header() {
 		cat 1>&2 <<EOF
-Redpanda Connect Installer
+Benthos Installer
 
-Website: https://www.redpanda.com
-Docs: https://www.docs.redpanda.com/redpanda-connect/
+Website: https://www.benthos.dev
+Docs: https://www.benthos.dev/docs/about
 Repo: https://github.com/benthosdev/benthos
 
 EOF
