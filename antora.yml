@@ -6,8 +6,12 @@ nav:
 - modules/ROOT/nav.adoc
 asciidoc:
   attributes:
-    binary-name: redpanda-connect
-    project-github: redpanda-data/redpanda-connect
+    binary-name: rpk connect
+    project-github: redpanda-data/connect
+    # Fallback for the version of Redpanda
+    # used for things like rpk download URLs
+    full-version: 24.1.4
+    latest-release-commit: 'b5ade3f40'
     categories:
       input:
         - name: "Services"

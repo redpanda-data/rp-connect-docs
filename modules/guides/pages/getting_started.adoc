@@ -5,31 +5,15 @@ This topic explains how to get started with {page-component-title}.
 
 == Install
 
-The easiest way to install {page-component-title} is with this handy script:
+You can install {page-component-title} using one of the following methods.
 
-[tabs]
-=====
-Latest::
-+
---
-[source,sh]
-----
-curl -Lsf https://www.benthos.dev/sh/install | bash
-----
+=== Linux
 
---
-Version::
-+
---
-[source,sh]
-----
-curl -Lsf https://www.benthos.dev/sh/install | bash -s -- 3.56.0
-----
+include::ROOT:get-started:partial$install-rpk-linux.adoc[]
 
---
-=====
+=== MacOS
 
-Or you can grab an archive containing {page-component-title} from the https://github.com/{project-github}/releases[releases page^].
+include::ROOT:get-started:partial$install-rpk-macos.adoc[]
 
 === Docker
 
@@ -38,16 +22,7 @@ If you have docker installed you can pull the latest official {page-component-ti
 [source,sh,subs="attributes+"]
 ----
 docker pull ghcr.io/{project-github}
-docker run --rm -v /path/to/your/config.yaml:/benthos.yaml ghcr.io/{project-github}
-----
-
-=== Homebrew
-
-On macOS, {page-component-title} can be installed via Homebrew:
-
-[source,sh]
-----
-brew install benthos
+docker run --rm -v <path/to/your/config.yaml>:/connect.yaml ghcr.io/{project-github}
 ----
 
 == Run
@@ -57,6 +32,13 @@ A {page-component-title} stream pipeline is configured with a single xref:config
 [,bash,subs="attributes+"]
 ----
 {binary-name} create > config.yaml
+----
+
+For Docker installs:
+
+[source,sh,subs="attributes+"]
+----
+docker run --rm ghcr.io/{project-github} create > ./config.yaml
 ----
 
 The main sections that make up a config are `input`, `pipeline` and `output`. When you generate a fresh config it'll simply pipe `stdin` to `stdout` like this:
@@ -78,6 +60,13 @@ Eventually we'll want to configure a more useful xref:components:inputs/about.ad
 [,bash,subs="attributes+"]
 ----
 {binary-name} -c ./config.yaml
+----
+
+For Docker installs:
+
+[source,sh,subs="attributes+"]
+----
+docker run --rm -v $(pwd)/config.yaml:/connect.yaml ghcr.io/{project-github}
 ----
 
 Anything you write to stdin will get written unchanged to stdout, cool! Resist the temptation to play with this for hours, there's more stuff to try out.
