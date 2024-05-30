@@ -19,7 +19,7 @@ A template is defined in a YAML file that can be imported when {page-component-t
 
 [,bash,subs="attributes+"]
 ----
-{binary-name} -t "./templates/*.yaml" -c ./config.yaml
+{rpk-command} -t "./templates/*.yaml" -c ./config.yaml
 ----
 
 The template describes the type of the component and configuration fields that can be used to customize it, followed by a xref:guides:bloblang/about.adoc[Bloblang mapping] that translates an object containing those fields into a {page-component-title} config structure. This allows you to use logic to generate more complex configurations:
@@ -291,7 +291,7 @@ metrics_mapping: |-
 
 === `tests`
 
-Optional unit test definitions for the template that verify certain configurations produce valid configs. These tests are executed with the command `{binary-name} template lint`.
+Optional unit test definitions for the template that verify certain configurations produce valid configs. These tests are executed with the command `{rpk-command} template lint`.
 
 
 *Type*: list of `object`

@@ -4,7 +4,7 @@ When running {page-component-title} in `streams` mode it's possible to create st
 
 [,bash,subs="attributes+"]
 ----
-{binary-name} streams ./foo.yaml ./configs/*.yaml
+{rpk-command} streams ./foo.yaml ./configs/*.yaml
 ----
 
 == Resources
@@ -13,7 +13,7 @@ A stream configuration should only include the base stream component fields (`in
 
 [,bash,subs="attributes+"]
 ----
-{binary-name} -r "./resources/prod/*.yaml" streams ./stream_configs/*.yaml
+{rpk-command} -r "./resources/prod/*.yaml" streams ./stream_configs/*.yaml
 ----
 
 == Walkthrough
@@ -57,7 +57,7 @@ Run {page-component-title} in streams mode, pointing to our directory of streams
 
 [,bash,subs="attributes+"]
 ----
-{binary-name} streams ./streams/*.yaml
+{rpk-command} streams ./streams/*.yaml
 ----
 
 On a separate terminal you can query the set of streams loaded:
