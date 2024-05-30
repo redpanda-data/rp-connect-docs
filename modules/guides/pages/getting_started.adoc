@@ -30,7 +30,6 @@ If you have docker installed you can pull the latest official {page-component-ti
 [source,sh,subs="attributes+"]
 ----
 docker pull ghcr.io/{project-github}
-docker run --rm -v <path/to/your/config.yaml>:/connect.yaml ghcr.io/{project-github}
 ----
 
 == Run
