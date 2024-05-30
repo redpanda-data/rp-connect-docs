@@ -5,61 +5,31 @@ This topic explains how to get started with {page-component-title}.
 
 == Install
 
-You can install {page-component-title} using one of the following methods.
+You can install {page-component-title} using the `rpk` command-line tool (CLI). The `rpk` CLI allows you to create and manage data pipelines with {page-component-title} as well as xref:ROOT:get-started:rpk-install.adoc[interact with Redpanda clusters].
 
-- <<rpk, The `rpk` CLI>>
-- <<Standalone binary>>
-
-=== rpk
-
-For Linux and MacOS, you can install and use {page-component-title} with Redpanda Keeper (`rpk`) command-line tool (CLI). The `rpk` CLI allows you to create and manage data pipelines with {page-component-title} as well as xref:ROOT:get-started:rpk-install.adoc[interact with Redpanda clusters].
-
+[%collapsible]
+.Also interacting with a Redpanda cluster?
+====
 If you want to use `rpk` to also communicate with a Redpanda cluster, ensure the version of `rpk` that you install matches the version of Redpanda running in your cluster.
+====
 
-==== Linux
+=== Linux
 
 include::ROOT:get-started:partial$install-rpk-linux.adoc[]
 
-==== MacOS
+=== MacOS
 
 include::ROOT:get-started:partial$install-rpk-macos.adoc[]
-
-=== Standalone binary
-
-You can download and install the standalone binary for {page-component-title}. This method is suitable if you want the flexibility to run {page-component-title} independently of `rpk` and Redpanda.
-
-==== Docker
-
-If you have docker installed you can pull the latest official {page-component-title} image with:
-
-[source,sh,subs="attributes+"]
-----
-docker pull ghcr.io/{project-github}
-----
 
 == Run
 
 A {page-component-title} stream pipeline is configured with a single xref:configuration:about.adoc[config file], you can generate a fresh one with:
 
-[tabs]
-======
-rpk::
-+
---
+
 [,bash,subs="attributes+"]
 ----
 rpk connect create > connect.yaml
 ----
---
-Docker::
-+
---
-[source,sh,subs="attributes+"]
-----
-docker run --rm ghcr.io/{project-github} create > ./connect.yaml
-----
---
-======
 
 The main sections that make up a config are `input`, `pipeline` and `output`. When you generate a fresh config it'll simply pipe `stdin` to `stdout` like this:
 
@@ -77,25 +47,10 @@ output:
 
 Eventually we'll want to configure a more useful xref:components:inputs/about.adoc[input] and xref:components:outputs/about.adoc[output], but for now this is useful for quickly testing processors. You can execute this config with:
 
-[tabs]
-======
-rpk::
-+
---
 [,bash,subs="attributes+"]
 ----
 {rpk-command} connect.yaml
 ----
---
-Docker::
-+
---
-[source,sh,subs="attributes+"]
-----
-docker run --rm -v $(pwd)/connect.yaml:/connect.yaml ghcr.io/{project-github}
-----
---
-======
 
 Anything you write to stdin will get written unchanged to stdout, cool! Resist the temptation to play with this for hours, there's more stuff to try out.
 
@@ -140,27 +95,11 @@ First, we sleep for 500 milliseconds just to keep the suspense going. Next, we r
 
 Try running that config with some sample documents:
 
-[tabs]
-======
-rpk::
-+
---
 [,bash,subs="attributes+"]
 ----
 echo '{"id":"1","names":["celine","dion"]}
 {"id":"2","names":["chad","robert","kroeger"]}' | {rpk-command} connect.yaml
 ----
---
-Docker::
-+
---
-[source,bash,subs="attributes+"]
-----
-echo '{"id":"1","names":["celine","dion"]}
-{"id":"2","names":["chad","robert","kroeger"]}' | docker run --rm -i -v $(pwd)/connect.yaml:/connect.yaml ghcr.io/{project-github} -c /connect.yaml
-----
---
-======
 
 You should see this output in the logs:
 
