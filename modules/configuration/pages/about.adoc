@@ -192,9 +192,9 @@ These flags also support wildcards, which allows you to import an entire directo
 
 === Templating
 
-Resources can only be instantiated with a single configuration, which means they aren't suitable for cases where the configuration is required in multiple places but with slightly different parameters, ugh!
+Resources can only be instantiated with a single configuration, which means they aren't suitable for cases where the configuration is required in multiple places but with slightly different parameters.
 
-But hey, why don't you chill out? {page-component-title} has a (currently experimental) alternative feature called templates, with which it's possible to define a custom configuration schema and a template for building a configuration from that schema. You can read more about templates xref:configuration:templating.adoc[in this guide].
+{page-component-title} has a (currently experimental) alternative feature called templates, with which it's possible to define a custom configuration schema and a template for building a configuration from that schema. You can read more about templates xref:configuration:templating.adoc[in this guide].
 
 == Reloading
 
@@ -242,9 +242,7 @@ If, for example, we wanted to generate a config with a websocket input, a Kafka 
 {binary-name} create websocket/mapping/kafka
 ----
 
-____
-If you need a gentle reminder as to which components {page-component-title} offers you can see those as well with `{binary-name} list`.
-____
+TIP: To see which components {page-component-title} offers, use `{binary-name} list`.
 
 All of these generated configuration examples also include other useful config sections such as `metrics`, `logging`, etc with sensible defaults.
 

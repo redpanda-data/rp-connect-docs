@@ -7,6 +7,10 @@ This topic explains how to get started with {page-component-title}.
 
 You can install {page-component-title} using one of the following methods.
 
+For Linux and MacOS, you can use Redpanda Connect with Redpanda Keeper (`rpk`). The `rpk` command-line tool allows you create and manage data pipelines with Redpanda Connect as well as xref:ROOT:get-started:rpk-install.adoc[interact with Redpanda clusters].
+
+To use `rpk` to communicate with a Redpanda cluster, ensure the version of `rpk` that you install matches the version of Redpanda running in your cluster.
+
 === Linux
 
 include::ROOT:get-started:partial$install-rpk-linux.adoc[]

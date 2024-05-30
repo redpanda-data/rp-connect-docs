@@ -443,6 +443,7 @@ A username to authenticate as.
 === `basic_auth.password`
 
 A password to authenticate with.
+
 [CAUTION]
 ====
 This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
@@ -456,7 +457,7 @@ This field contains sensitive information that usually shouldn't be added to a c
 
 === `jwt`
 
-BETA: Allows you to specify JWT authentication.
+Allows you to specify JWT authentication.
 
 
 *Type*: `object`
