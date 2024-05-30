@@ -7,15 +7,19 @@ This topic explains how to get started with {page-component-title}.
 
 You can install {page-component-title} using one of the following methods.
 
-For Linux and MacOS, you can use Redpanda Connect with Redpanda Keeper (`rpk`). The `rpk` command-line tool allows you create and manage data pipelines with Redpanda Connect as well as xref:ROOT:get-started:rpk-install.adoc[interact with Redpanda clusters].
+=== rpk
 
-To use `rpk` to communicate with a Redpanda cluster, ensure the version of `rpk` that you install matches the version of Redpanda running in your cluster.
+For Linux and MacOS, you can install and use {page-component-title} with Redpanda Keeper (`rpk`) command-line tool (CLI). The `rpk` CLI allows you to create and manage data pipelines with {page-component-title} as well as xref:ROOT:get-started:rpk-install.adoc[interact with Redpanda clusters].
 
-=== Linux
+If you want to use `rpk` to also communicate with a Redpanda cluster, ensure the version of `rpk` that you install matches the version of Redpanda running in your cluster.
+
+NOTE: `rpk` does not currently support {page-component-title} flags.
+
+==== Linux
 
 include::ROOT:get-started:partial$install-rpk-linux.adoc[]
 
-=== MacOS
+==== MacOS
 
 include::ROOT:get-started:partial$install-rpk-macos.adoc[]
 
@@ -33,17 +37,25 @@ docker run --rm -v <path/to/your/config.yaml>:/connect.yaml ghcr.io/{project-git
 
 A {page-component-title} stream pipeline is configured with a single xref:configuration:about.adoc[config file], you can generate a fresh one with:
 
+[tabs]
+======
+rpk::
++
+--
 [,bash,subs="attributes+"]
 ----
-{binary-name} create > config.yaml
+rpk connect create > connect.yaml
 ----
-
-For Docker installs:
-
+--
+Docker::
++
+--
 [source,sh,subs="attributes+"]
 ----
-docker run --rm ghcr.io/{project-github} create > ./config.yaml
+docker run --rm ghcr.io/{project-github} create > ./connect.yaml
 ----
+--
+======
 
 The main sections that make up a config are `input`, `pipeline` and `output`. When you generate a fresh config it'll simply pipe `stdin` to `stdout` like this:
 
@@ -61,17 +73,25 @@ output:
 
 Eventually we'll want to configure a more useful xref:components:inputs/about.adoc[input] and xref:components:outputs/about.adoc[output], but for now this is useful for quickly testing processors. You can execute this config with:
 
+[tabs]
+======
+rpk::
++
+--
 [,bash,subs="attributes+"]
 ----
-{binary-name} -c ./config.yaml
+{rpk-command} connect.yaml
 ----
-
-For Docker installs:
-
+--
+Docker::
++
+--
 [source,sh,subs="attributes+"]
 ----
-docker run --rm -v $(pwd)/config.yaml:/connect.yaml ghcr.io/{project-github}
+docker run --rm -v $(pwd)/connect.yaml:/connect.yaml ghcr.io/{project-github}
 ----
+--
+======
 
 Anything you write to stdin will get written unchanged to stdout, cool! Resist the temptation to play with this for hours, there's more stuff to try out.
 
@@ -116,13 +136,29 @@ First, we sleep for 500 milliseconds just to keep the suspense going. Next, we r
 
 Try running that config with some sample documents:
 
-[,sh,subs="attributes+"]
+[tabs]
+======
+rpk::
++
+--
+[,bash,subs="attributes+"]
 ----
 echo '{"id":"1","names":["celine","dion"]}
-{"id":"2","names":["chad","robert","kroeger"]}' | {binary-name} -c ./config.yaml
+{"id":"2","names":["chad","robert","kroeger"]}' | {rpk-command} connect.yaml
 ----
+--
+Docker::
++
+--
+[source,bash,subs="attributes+"]
+----
+echo '{"id":"1","names":["celine","dion"]}
+{"id":"2","names":["chad","robert","kroeger"]}' | docker run --rm -i -v $(pwd)/connect.yaml:/connect.yaml ghcr.io/{project-github} -c /connect.yaml
+----
+--
+======
 
-You should see (amongst some logs):
+You should see this output in the logs:
 
 [source,json]
 ----

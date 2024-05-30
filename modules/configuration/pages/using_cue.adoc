@@ -27,12 +27,12 @@ ____
 CUE modules must start with a hostname. This will typically be the URL of your repository. For example: `cue mod init github.com/redpanda-data/hello-cue`.
 ____
 
-The `{binary-name} list` command will generate a CUE package containing the types we'll need to build our configuration. Let's write this package into our project:
+The `{rpk-command} list` command will generate a CUE package containing the types we'll need to build our configuration. Let's write this package into our project:
 
 [,bash,subs="attributes+"]
 ----
 mkdir benthos
-{binary-name} list --format cue > benthos/schema.cue
+{rpk-command} list --format cue > benthos/schema.cue
 ----
 
 At this point, you should now have the following directory structure:
@@ -109,7 +109,7 @@ We can run this with {page-component-title} to see that it indeed works:
 
 [,bash,subs="attributes+"]
 ----
-{binary-name} -c <(cue export --out yaml config.cue)
+{rpk-command} -c <(cue export --out yaml config.cue)
 ----
 
 When you are satisfied with the results, terminate the {page-component-title} process and let's move on to look at some of the nice features that we get with CUE.
