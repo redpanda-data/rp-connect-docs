@@ -7,13 +7,14 @@ This topic explains how to get started with {page-component-title}.
 
 You can install {page-component-title} using one of the following methods.
 
+- <<rpk, The `rpk` CLI>>
+- <<Standalone binary>>
+
 === rpk
 
 For Linux and MacOS, you can install and use {page-component-title} with Redpanda Keeper (`rpk`) command-line tool (CLI). The `rpk` CLI allows you to create and manage data pipelines with {page-component-title} as well as xref:ROOT:get-started:rpk-install.adoc[interact with Redpanda clusters].
 
 If you want to use `rpk` to also communicate with a Redpanda cluster, ensure the version of `rpk` that you install matches the version of Redpanda running in your cluster.
-
-NOTE: `rpk` does not currently support {page-component-title} flags.
 
 ==== Linux
 
@@ -23,7 +24,11 @@ include::ROOT:get-started:partial$install-rpk-linux.adoc[]
 
 include::ROOT:get-started:partial$install-rpk-macos.adoc[]
 
-=== Docker
+=== Standalone binary
+
+You can download and install the standalone binary for {page-component-title}. This method is suitable if you want the flexibility to run {page-component-title} independently of `rpk` and Redpanda.
+
+==== Docker
 
 If you have docker installed you can pull the latest official {page-component-title} image with:
 
