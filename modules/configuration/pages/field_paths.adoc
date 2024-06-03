@@ -32,11 +32,11 @@ For example, if we had the following JSON structure:
 }
 ----
 
-The query path `foo~1foo.bar~0bo..baz` would return `22`.
+The query path `+foo~1foo.bar~0bo..baz+` would return `22`.
 
 == Arrays
 
-When {page-component-title} encounters an array whilst traversing a JSON structure it requires the next path segment to be either an integer of an existing index, or, depending on whether the path is used to query or set the target value, the character `*` or `-` respectively.
+When {page-component-title} encounters an array while traversing a JSON structure it requires the next path segment to be either an integer of an existing index or, depending on whether the path is used to query or set the target value, the character `*` or `-` respectively.
 
 For example, if we had the following JSON structure:
 
@@ -53,7 +53,7 @@ The query path `foo.2.bar` would return `23`.
 
 === Querying
 
-When a query reaches an array the character `*` indicates that the query should return the value of the remaining path from each element of the array (within an array.)
+When a query reaches an array the character `*` indicates that the query should return the value of the remaining path from each array element (within an array.)
 
 === Setting
 
