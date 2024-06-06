@@ -27,12 +27,12 @@ ____
 CUE modules must start with a hostname. This will typically be the URL of your repository. For example: `cue mod init github.com/redpanda-data/hello-cue`.
 ____
 
-The `rpk connect run list` command will generate a CUE package containing the types we'll need to build our configuration. Let's write this package into our project:
+The `rpk connect list` command will generate a CUE package containing the types we'll need to build our configuration. Let's write this package into our project:
 
 [,bash,subs="attributes+"]
 ----
 mkdir benthos
-rpk connect run list --format cue > benthos/schema.cue
+rpk connect list --format cue > benthos/schema.cue
 ----
 
 At this point, you should now have the following directory structure:

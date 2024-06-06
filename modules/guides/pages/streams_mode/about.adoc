@@ -36,7 +36,7 @@ output:
   sync_response: {}
 ----
 
-Will register an endpoint `/meow`, which will be prefixed with the name `foo` to become `/foo/meow`. This behavior is intended to make a clearer distinction between endpoints registered by different streams, and prevent collisions of those endpoints. However, you can disable this behavior by setting the flag `--prefix-stream-endpoints` to `false` (`rpk connect run streams --prefix-stream-endpoints=false ./streams/*.yaml`).
+Will register an endpoint `/meow`, which will be prefixed with the name `foo` to become `/foo/meow`. This behavior is intended to make a clearer distinction between endpoints registered by different streams, and prevent collisions of those endpoints. However, you can disable this behavior by setting the flag `--prefix-stream-endpoints` to `false` (`rpk connect streams --prefix-stream-endpoints=false ./streams/*.yaml`).
 
 == Resources
 
