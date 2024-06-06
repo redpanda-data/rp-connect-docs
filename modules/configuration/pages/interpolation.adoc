@@ -13,7 +13,7 @@ input:
 
 [,sh,subs="attributes+"]
 ----
-BROKERS="foo:9092,bar:9092" {rpk-command} -c ./config.yaml
+BROKERS="foo:9092,bar:9092" rpk connect run -c ./config.yaml
 ----
 
 If a literal string is required that matches this pattern (`+${foo}+`) you can escape it with double brackets. For example, the string `+${{foo}}+` is read as the literal `+${foo}+`.
