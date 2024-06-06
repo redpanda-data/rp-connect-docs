@@ -33,7 +33,7 @@ The first step in processing windows is producing the windows themselves, this c
 
 [tabs]
 =====
-.system::
+System::
 +
 --
 A `system_window` buffer creates windows by following the system clock of the running machine. Windows will be created and emitted at predictable times, but this also means windows for historic data will not be emitted and therefore prevents backfills of traffic data:
