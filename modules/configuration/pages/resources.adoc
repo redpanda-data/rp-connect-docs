@@ -97,7 +97,7 @@ processor_resources:
         Desires: "are-empty"
 ----
 
-Then when you execute {page-component-title} use the environment variable to choose your resource: `FEATURE_REQUEST=get_foo {rpk-command} -c ./your_config.yaml`.
+Then when you execute {page-component-title} use the environment variable to choose your resource: `FEATURE_REQUEST=get_foo rpk connect run -c ./your_config.yaml`.
 
 === With imports
 
@@ -141,14 +141,14 @@ We can select our chosen resource by changing which file we import, either runni
 
 [,bash,subs="attributes+"]
 ----
-{rpk-command} -r ./staging/request.yaml -c ./config.yaml
+rpk connect run -r ./staging/request.yaml -c ./config.yaml
 ----
 
 Or:
 
 [,bash,subs="attributes+"]
 ----
-{rpk-command} -r ./production/request.yaml -c ./config.yaml
+rpk connect run -r ./production/request.yaml -c ./config.yaml
 ----
 
-These flags also support wildcards, which allows you to import an entire directory of resource files like `{rpk-command} -r "./staging/*.yaml" -c ./config.yaml`.
+These flags also support wildcards, which allows you to import an entire directory of resource files like `rpk connect run -r "./staging/*.yaml" -c ./config.yaml`.

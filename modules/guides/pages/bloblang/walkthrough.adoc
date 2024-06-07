@@ -4,7 +4,7 @@
 
 Bloblang is the most advanced mapping language that you'll learn from this walkthrough (probably). It is designed for readability, the power to shape even the most outrageous input documents, and to easily make erratic schemas bend to your will. Bloblang is the native mapping language of {page-component-title}, but it has been designed as a general purpose technology ready to be adopted by other tools.
 
-In this walkthrough you'll learn how to make new friends by mapping their documents, and lose old friends as they grow jealous and bitter of your mapping abilities. There are a few ways to execute Bloblang but the way we'll do it in this guide is to pull a {page-component-title} docker image and run the command `{rpk-command} blobl server`, which opens up an interactive Bloblang editor:
+In this walkthrough you'll learn how to make new friends by mapping their documents, and lose old friends as they grow jealous and bitter of your mapping abilities. There are a few ways to execute Bloblang but the way we'll do it in this guide is to pull a {page-component-title} docker image and run the command `rpk connect blobl server`, which opens up an interactive Bloblang editor:
 
 [source,sh,subs="attributes+"]
 ----
@@ -759,7 +759,7 @@ tests:
 
 As you can see we've defined a single test, where we point to our mapping file which will be executed in our test. We then specify an input message which is a reduced version of the document we tried out before, and finally we specify output predicates, which is a JSON comparison against the output document.
 
-We can execute these tests with `{rpk-command} test ./naughty_man_test.yaml`, {page-component-title} will also automatically find our tests if you simply run `{rpk-command} test ./...`. You should see an output something like:
+We can execute these tests with `rpk connect test ./naughty_man_test.yaml`, {page-component-title} will also automatically find our tests if you simply run `rpk connect test ./...`. You should see an output something like:
 
 [source,text]
 ----

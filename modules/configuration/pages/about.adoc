@@ -178,17 +178,17 @@ We can select our chosen resource by changing which file we import, either runni
 
 [,bash,subs="attributes+"]
 ----
-{rpk-command} -r ./staging/request.yaml -c ./config.yaml
+rpk connect run -r ./staging/request.yaml -c ./config.yaml
 ----
 
 Or:
 
 [,bash,subs="attributes+"]
 ----
-{rpk-command} -r ./production/request.yaml -c ./config.yaml
+rpk connect run -r ./production/request.yaml -c ./config.yaml
 ----
 
-These flags also support wildcards, which allows you to import an entire directory of resource files like `{rpk-command} -r "./staging/*.yaml" -c ./config.yaml`. You can find out more about configuration resources in the xref:configuration:resources.adoc[resources document].
+These flags also support wildcards, which allows you to import an entire directory of resource files like `rpk connect run -r "./staging/*.yaml" -c ./config.yaml`. You can find out more about configuration resources in the xref:configuration:resources.adoc[resources document].
 
 === Templating
 
@@ -203,13 +203,13 @@ It's possible to have a running instance of {page-component-title} reload config
 [,bash,subs="attributes+"]
 ----
 # Normal mode
-{rpk-command} -w -r ./production/request.yaml -c ./config.yaml
+rpk connect run -w -r ./production/request.yaml -c ./config.yaml
 ----
 
 [,bash,subs="attributes+"]
 ----
 # Streams mode
-{rpk-command} -w -r ./production/request.yaml streams ./stream_configs/*.yaml
+rpk connect run -w -r ./production/request.yaml streams ./stream_configs/*.yaml
 ----
 
 If a file update results in configuration parsing or linting errors then the change is ignored (with logs informing you of the problem) and the previous configuration will continue to be run (until the issues are fixed).
@@ -239,14 +239,14 @@ If, for example, we wanted to generate a config with a websocket input, a Kafka 
 
 [,bash,subs="attributes+"]
 ----
-{rpk-command} create websocket/mapping/kafka
+rpk connect create websocket/mapping/kafka
 ----
 
-TIP: To see which components {page-component-title} offers, use `{rpk-command} list`.
+TIP: To see which components {page-component-title} offers, use `rpk connect list`.
 
 All of these generated configuration examples also include other useful config sections such as `metrics`, `logging`, etc with sensible defaults.
 
-For more information read the output from `{rpk-command} create --help`.
+For more information read the output from `rpk connect create --help`.
 
 == Help with debugging
 
@@ -271,11 +271,11 @@ We can catch this error before attempting to run the config:
 
 [,bash,subs="attributes+"]
 ----
-{rpk-command} lint ./foo.yaml
+rpk connect lint ./foo.yaml
 ./foo.yaml: line 3: field yourl not recognized
 ----
 
-For more information read the output from `{rpk-command} lint --help`.
+For more information read the output from `rpk connect lint --help`.
 
 === Echoing
 
@@ -283,7 +283,7 @@ Echoing is where {page-component-title} can print back your configuration _after
 
 [,bash,subs="attributes+"]
 ----
-{rpk-command} -c ./your-config.yaml echo
+rpk connect run -c ./your-config.yaml echo
 ----
 
 You can check the output of the above command to see if certain sections are missing or fields are incorrect, which allows you to pinpoint typos in the config.

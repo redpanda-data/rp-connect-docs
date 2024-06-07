@@ -64,7 +64,7 @@ Eventually we'll want to configure a more useful xref:components:inputs/about.ad
 
 [,bash,subs="attributes+"]
 ----
-{rpk-command} connect.yaml
+rpk connect run connect.yaml
 ----
 
 For Docker installations:
@@ -120,7 +120,7 @@ Try running that config with some sample documents:
 [,bash,subs="attributes+"]
 ----
 echo '{"id":"1","names":["celine","dion"]}
-{"id":"2","names":["chad","robert","kroeger"]}' | {rpk-command} connect.yaml
+{"id":"2","names":["chad","robert","kroeger"]}' | rpk connect run connect.yaml
 ----
 
 For Docker installations:
