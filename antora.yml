@@ -11,6 +11,318 @@ asciidoc:
     # used for things like rpk download URLs
     full-version: 24.1.4
     latest-release-commit: 'b5ade3f40'
+    # Used to display common names for connectors in macro-generated content.
+    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#components_by_category
+    components:
+      - key: aws_kinesis_data_streams
+        name: "AWS Kinesis Data Streams"
+      - key: aws_kinesis_firehose
+        name: "AWS Kinesis Firehose"
+      - key: aws_kinesis
+        name: "AWS Kinesis"
+      - key: aws_sqs
+        name: "AWS SQS"
+      - key: aws_sns
+        name: "AWS SNS"
+      - key: azure_cosmosdb
+        name: "Azure Cosmos DB"
+      - key: azure_table_storage
+        name: "Azure Table Storage"
+      - key: gcp_bigquery
+        name: "GCP BigQuery"
+      - key: oracle
+        name: "Oracle"
+      - key: snowflake_put
+        name: "Snowflake"
+      - key: aws_dynamodb
+        name: "AWS DynamoDB"
+      - key: azure_blob_storage
+        name: "Azure Blob Storage"
+      - key: aws_s3
+        name: "AWS S3"
+      - key: cassandra
+        name: "Cassandra"
+      - key: gcp_cloud_storage
+        name: "GCP Cloud Storage"
+      - key: amqp
+        name: "AMQP"
+      - key: avro
+        name: "Avro"
+      - key: awk
+        name: "AWK"
+      - key: aws_lambda
+        name: "AWS Lambda"
+      - key: azure_queue_storage
+        name: "Azure Queue Storage"
+      - key: clickhouse
+        name: "ClickHouse"
+      - key: cockroachdb_changefeed
+        name: "CockroachDB"
+      - key: couchbase
+        name: "Couchbase"
+      - key: csv
+        name: "CSV"
+      - key: discord
+        name: "Discord"
+      - key: elasticsearch
+        name: "Elasticsearch"
+      - key: kafka_franz
+        name: "Franz-go"
+      - key: gcp_pubsub
+        name: "GCP Pub/Sub"
+      - key: grok
+        name: "Grok"
+      - key: hdfs
+        name: "HDFS"
+      - key: http
+        name: "HTTP"
+      - key: javascript
+        name: "JavaScript"
+      - key: jmespath
+        name: "JMESPath"
+      - key: json_schema
+        name: "JSON Schema"
+      - key: kafka
+        name: "Kafka"
+      - key: memcached
+        name: "Memcached"
+      - key: msgpack
+        name: "MessagePack"
+      - key: mongodb
+        name: "MongoDB"
+      - key: mqtt
+        name: "MQTT"
+      - key: mysql
+        name: "MySQL"
+      - key: nats
+        name: "NATS"
+      - key: nsq
+        name: "NSQ"
+      - key: opensearch
+        name: "OpenSearch"
+      - key: parquet
+        name: "Parquet"
+      - key: postgresql
+        name: "PostgreSQL"
+      - key: protobuf
+        name: "Protobuf"
+      - key: pulsar
+        name: "Pulsar"
+      - key: redis
+        name: "Redis"
+      - key: ristretto
+        name: "Ristretto"
+      - key: schema_registry
+        name: "Schema Registry"
+      - key: sentry
+        name: "Sentry"
+      - key: splunk_hec
+        name: "Splunk"
+      - key: snowflake_put
+        name: "Snowflake"
+      - key: socket
+        name: "Socket"
+      - key: sql
+        name: "SQL"
+      - key: sqlite
+        name: "SQLite"
+      - key: trino
+        name: "Trino"
+      - key: wasm
+        name: "WebAssembly"
+      - key: websocket
+        name: "WebSocket"
+      - key: twitter_search
+        name: "X/Twitter"
+      - key: xml
+        name: "XML"
+    # Used to display common names for drivers in macro-generated content.
+    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#components_by_category
+    drivers:
+      - key: "gocosmos"
+        name: "Azure Cosmos DB"
+      - key: "clickhouse"
+        name: "ClickHouse"
+      - key: "oracle"
+        name: "Oracle"
+      - key: "mssql"
+        name: "Microsoft SQL Server"
+      - key: "mysql"
+        name: "MYSQL"
+      - key: "snowflake"
+        name: "Snowflake"
+      - key: "postgresql"
+        name: "PostgreSQL"
+      - key: "postgres"
+        name: "PostgreSQL"
+      - key: "sqlite"
+        name: "SQLite"
+      - key: "trino"
+        name: "Trino"
+    # Used to display common names for caches in macro-generated content.
+    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#components_by_category
+    caches:
+      - key: "aws_dynamodb"
+        name: "AWS DynamoDB"
+      - key: "memcached"
+        name: "Memcached"
+      - key: "redis"
+        name: "Redis"
+      - key: "aws_s3"
+        name: "AWS S3"
+      - key: "memory"
+        name: "Memory"
+      - key: "ristretto"
+        name: "Ristretto"
+      - key: "couchbase"
+        name: "Couchbase"
+      - key: "mongodb"
+        name: "MongoDB"
+      - key: "sql"
+        name: "SQL"
+      - key: "file"
+        name: "File"
+      - key: "multilevel"
+        name: "Multilevel"
+      - key: "ttlru"
+        name: "TTL LRU"
+      - key: "gcp_cloud_storage"
+        name: "GCP Cloud Storage"
+      - key: "nats_kv"
+        name: "NATS KV"
+      - key: "lru"
+        name: "LRU"
+      - key: "noop"
+        name: "Noop"
+    # Defines the connectors that are marked 'certified'.
+    # This list is a temporary solution until each connector's source code includes the correct support level information. https://github.com/redpanda-data/benthos/pull/21/commits/aba447436e44faf7d4279d3394d82084ea0ed1e1#diff-26839711b0903fcf81e360ea17690bd67eb5e924cbabb62ffe85202c98c2a0a6
+    certified-components:
+      - name: "amqp_0_9"
+        types: ["input", "output"]
+      - name: "archive"
+        types: ["processor"]
+      - name: "aws_dynamodb_partiql"
+        types: ["processor"]
+      - name: "aws_kinesis"
+        types: ["input", "output"]
+      - name: "aws_kinesis_firehose"
+        types: ["output"]
+      - name: "aws_lambda"
+        types: ["processor"]
+      - name: "aws_s3"
+        types: ["input", "output"]
+      - name: "aws_sqs"
+        types: ["input", "output"]
+      - name: "bloblang"
+        types: ["processor"]
+      - name: "bounds_check"
+        types: ["processor"]
+      - name: "cache"
+        types: ["processor"]
+      - name: "cached"
+        types: ["processor"]
+      - name: "command"
+        types: ["processor"]
+      - name: "compress"
+        types: ["processor"]
+      - name: "csv"
+        types: ["input"]
+      - name: "decompress"
+        types: ["processor"]
+      - name: "dedupe"
+        types: ["processor"]
+      - name: "file"
+        types: ["input", "output"]
+      - name: "generate"
+        types: ["input"]
+      - name: "group_by"
+        types: ["processor"]
+      - name: "group_by_value"
+        types: ["processor"]
+      - name: "http"
+        types: ["processor"]
+      - name: "http_client"
+        types: ["input", "output"]
+      - name: "http_server"
+        types: ["input", "output"]
+      - name: "javascript"
+        types: ["processor"]
+      - name: "jmespath"
+        types: ["processor"]
+      - name: "jq"
+        types: ["processor"]
+      - name: "json_schema"
+        types: ["processor"]
+      - name: "kafka"
+        types: ["input", "output"]
+      - name: "kafka_franz"
+        types: ["input", "output"]
+      - name: "log"
+        types: ["processor"]
+      - name: "mapping"
+        types: ["processor"]
+      - name: "metric"
+        types: ["processor"]
+      - name: "mutation"
+        types: ["processor"]
+      - name: "nats"
+        types: ["input", "output"]
+      - name: "nats_jetstream"
+        types: ["input", "output"]
+      - name: "nats_kv"
+        types: ["input", "output", "processor"]
+      - name: "nats_request_reply"
+        types: ["processor"]
+      - name: "opensearch"
+        types: ["output"]
+      - name: "parquet_decode"
+        types: ["processor"]
+      - name: "parquet_encode"
+        types: ["processor"]
+      - name: "protobuf"
+        types: ["processor"]
+      - name: "rate_limit"
+        types: ["processor"]
+      - name: "redis"
+        types: ["processor"]
+      - name: "redis_hash"
+        types: ["output"]
+      - name: "redis_list"
+        types: ["input", "output"]
+      - name: "redis_pubsub"
+        types: ["input", "output"]
+      - name: "redis_script"
+        types: ["processor"]
+      - name: "redis_streams"
+        types: ["input", "output"]
+      - name: "schema_registry_decode"
+        types: ["processor"]
+      - name: "schema_registry_encode"
+        types: ["processor"]
+      - name: "select_parts"
+        types: ["processor"]
+      - name: "sftp"
+        types: ["output"]
+      - name: "sleep"
+        types: ["processor"]
+      - name: "socket"
+        types: ["input", "output"]
+      - name: "socket_server"
+        types: ["input", "output"]
+      - name: "sql_insert"
+        types: ["output", "processor"]
+      - name: "sql_raw"
+        types: ["input", "output", "processor"]
+      - name: "sql_select"
+        types: ["input", "output", "processor"]
+      - name: "unarchive"
+        types: ["processor"]
+      - name: "websocket"
+        types: ["input", "output"]
+      - name: "workflow"
+        types: ["processor"]
+    # Used to group components into categories in the component macros
+    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#components_by_category
     categories:
       input:
         - name: "Services"
