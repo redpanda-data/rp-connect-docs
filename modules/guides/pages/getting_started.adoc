@@ -71,7 +71,7 @@ For Docker installations:
 
 [,bash]
 ----
-docker run --rm -v $(pwd)/connect.yaml:/connect.yaml docker.redpanda.com/redpandadata/redpanda connect run
+docker run --rm -it -v $(pwd)/connect.yaml:/connect.yaml docker.redpanda.com/redpandadata/redpanda connect run
 ----
 
 Anything you write to stdin will get written unchanged to stdout, cool! Resist the temptation to play with this for hours, there's more stuff to try out.
