@@ -221,8 +221,6 @@ asciidoc:
         types: ["processor"]
       - name: "cached"
         types: ["processor"]
-      - name: "command"
-        types: ["processor"]
       - name: "compress"
         types: ["processor"]
       - name: "csv"
@@ -231,8 +229,6 @@ asciidoc:
         types: ["processor"]
       - name: "dedupe"
         types: ["processor"]
-      - name: "file"
-        types: ["input", "output"]
       - name: "generate"
         types: ["input"]
       - name: "group_by"
@@ -243,10 +239,6 @@ asciidoc:
         types: ["processor"]
       - name: "http_client"
         types: ["input", "output"]
-      - name: "http_server"
-        types: ["input", "output"]
-      - name: "javascript"
-        types: ["processor"]
       - name: "jmespath"
         types: ["processor"]
       - name: "jq"
