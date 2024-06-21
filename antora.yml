@@ -194,6 +194,10 @@ asciidoc:
         name: "LRU"
       - key: "noop"
         name: "Noop"
+    # Defines the connectors that are marked 'enterprise'.
+    enterprise-components:
+      - "splunk_hec"
+      - "snowflake_put"
     # Defines the connectors that are marked 'certified'.
     # This list is a temporary solution until each connector's source code includes the correct support level information. https://github.com/redpanda-data/benthos/pull/21/commits/aba447436e44faf7d4279d3394d82084ea0ed1e1#diff-26839711b0903fcf81e360ea17690bd67eb5e924cbabb62ffe85202c98c2a0a6
     certified-components:
@@ -221,6 +225,8 @@ asciidoc:
         types: ["processor"]
       - name: "cached"
         types: ["processor"]
+      - name: "command"
+        types: ["processor"]
       - name: "compress"
         types: ["processor"]
       - name: "csv"
@@ -229,6 +235,8 @@ asciidoc:
         types: ["processor"]
       - name: "dedupe"
         types: ["processor"]
+      - name: "file"
+        types: ["input","output"]
       - name: "generate"
         types: ["input"]
       - name: "group_by"
@@ -239,6 +247,10 @@ asciidoc:
         types: ["processor"]
       - name: "http_client"
         types: ["input", "output"]
+      - name: "http_server"
+        types: ["input", "output"]
+      - name: "javascript"
+        types: ["processor"]
       - name: "jmespath"
         types: ["processor"]
       - name: "jq"
