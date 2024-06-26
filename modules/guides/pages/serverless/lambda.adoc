@@ -115,7 +115,7 @@ output:
 Grab an archive labelled `redpanda-connect-lambda` from the https://github.com/{project-github}/releases[releases page^]
 page and then create your function:
 
-[source,sh]
+[source,sh, subs="attributes+"]]
 ----
 LAMBDA_ENV=`cat yourconfig.yaml | jq -csR {Variables:{BENTHOS_CONFIG:.}}`
 aws lambda create-function \
@@ -132,7 +132,7 @@ aws lambda create-function \
 Grab an archive labelled `redpanda-connect-lambda-al2` for `arm64` from the https://github.com/{project-github}/releases[releases page^]
 page and then create your function (AWS CLI v2 only):
 
-[source,sh]
+[source,sh, subs="attributes+"]
 ----
 LAMBDA_ENV=`cat yourconfig.yaml | jq -csR {Variables:{BENTHOS_CONFIG:.}}`
 aws lambda create-function \
@@ -140,7 +140,7 @@ aws lambda create-function \
   --architectures arm64 \
   --handler not.used.for.provided.al2.runtime \
   --role benthos-example-role \
-  --zip-file fileb://connect-lambda-al2_{tagged-version}_linux_arm64.zip \
+  --zip-file fileb://redpanda-connect-lambda-al2_{tagged-version}_linux_arm64.zip \
   --environment "$LAMBDA_ENV" \
   --function-name benthos-example
 ----
