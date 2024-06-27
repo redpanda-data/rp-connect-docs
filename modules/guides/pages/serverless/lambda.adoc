@@ -122,7 +122,7 @@ aws lambda create-function \
   --runtime go1.x \
   --handler redpanda-connect-lambda \
   --role benthos-example-role \
-  --zip-file fileb://redpanda-connect-lambda_{tagged-version}_linux_amd64.zip \
+  --zip-file fileb://redpanda-connect-lambda_{latest-connect-version}_linux_amd64.zip \
   --environment "$LAMBDA_ENV" \
   --function-name benthos-example
 ----
@@ -140,7 +140,7 @@ aws lambda create-function \
   --architectures arm64 \
   --handler not.used.for.provided.al2.runtime \
   --role benthos-example-role \
-  --zip-file fileb://redpanda-connect-lambda-al2_{tagged-version}_linux_arm64.zip \
+  --zip-file fileb://redpanda-connect-lambda-al2_{latest-connect-version}_linux_arm64.zip \
   --environment "$LAMBDA_ENV" \
   --function-name benthos-example
 ----
