@@ -1,30 +1,23 @@
 = Lambda
 :description: Deploying as an AWS Lambda function
 
-The `benthos-lambda` distribution is a version of {page-component-title} specifically tailored
+You can use either of the following distributions to deploy {page-component-title} as an AWS Lambda function:
+
+* The `redpanda-connect-lambda` distribution is specifically tailored
 for deployment as an AWS Lambda function on the `go1.x` runtime,
 which runs Amazon Linux on the `x86_64` architecture.
-The `benthos-lambda-al2` distribution supports the `provided.al2` runtime,
+
+* The `redpanda-connect-lambda-al2` distribution supports the `provided.al2` runtime,
 which runs Amazon Linux 2 on either the `x86_64` or `arm64` architecture.
 
-[NOTE]
-.Looking for something less manual?
-====
-Rather than bundle the distribution and configs yourself,
-check out https://github.com/makenew/serverless-benthos[makenew/serverless-benthos^], which makes quick work of deploying
-a {page-component-title} serverless project on AWS Lambda.
-For building and deploying distributions with custom plugins,
-look at https://github.com/makenew/benthos-plugin[makenew/benthos-plugin^].
-====
+== Configuration 
 
-It uses the same configuration format as a regular {page-component-title} instance, which can be
-provided in 1 of 2 ways:
+The AWS Lambda version of {page-component-title} uses the same configuration format as a regular instance. Choose from the following two options:
 
 . Inline via the `BENTHOS_CONFIG` environment variable (YAML format).
 . Via the filesystem using a layer, extension, or container image. By default,
-the `benthos-lambda` distribution will look for a valid configuration file in
-the locations listed below. Alternatively, the configuration file path can be
-set explicity by passing a `BENTHOS_CONFIG_PATH` environment variable.
+the `redpanda-connect-lambda` distribution looks for a valid configuration file in
+the locations listed below. Alternatively, you can set the configuration file path explicity by passing a `BENTHOS_CONFIG_PATH` environment variable.
  ** `./benthos.yaml`
  ** `./config.yaml`
  ** `/benthos.yaml`
@@ -40,11 +33,11 @@ is sent to the output destination.
 
 == Run with an output
 
-The flow of a {page-component-title} lambda function with an output configured looks like this:
+The flow of a {page-component-title} Lambda function with an output configured looks like this:
 
 [source,text]
 ----
-                    benthos-lambda
+                    redpanda-connect-lambda
            +------------------------------+
            |                              |
        -------> Processors ----> Output -----> Somewhere
@@ -66,7 +59,7 @@ The flow when an output is not configured looks like this:
 
 [source,text]
 ----
-               benthos-lambda
+               redpanda-connect-lambda
            +--------------------+
            |                    |
        -------> Processors --\  |
@@ -88,29 +81,7 @@ of size one are a single object array in this case)
 
 === Process errors
 
-The default behavior of a {page-component-title} lambda is that the handler will not return an
-error unless the output fails. This means that errors that occur within your
-processors will not result in the handler failing, which will instead return the
-final state of the message.
-
-In the next major version release (V4) this will change and the handler will
-fail if messages have encountered an uncaught error during execution. However,
-in the meantime it is possible to configure your output to use the new
-xref:components:outputs/reject.adoc[`reject` output] in order to trigger a handler error on
-processor errors:
-
-[source,yaml]
-----
-output:
-  switch:
-    retry_until_success: false
-    cases:
-      - check: '!errored()'
-        output:
-          sync_response: {}
-      - output:
-          reject: "processing failed due to: ${! error() }"
-----
+By default, the {page-component-title} Lambda handler fails if messages encounter an uncaught error during execution. 
 
 == Run a combination
 
@@ -119,7 +90,7 @@ destinations and also return a result back to the caller. This is done by
 configuring an output block and including an output of the type
 `sync_response`.
 
-For example, if we wished for our lambda function to send a payload to Kafka
+For example, if we wished for our Lambda function to send a payload to Kafka
 and also return the same payload back to the caller we could use a
 xref:components:outputs/broker.adoc[broker]:
 
@@ -141,30 +112,27 @@ output:
 
 === go1.x on x86_64
 
-Grab an archive labelled `benthos-lambda` from the https://github.com/{project-github}/releases[releases page^]
+Grab an archive labelled `redpanda-connect-lambda` from the https://github.com/{project-github}/releases[releases page^]
 page and then create your function:
 
-[source,sh]
+[source,sh, subs="attributes+"]]
 ----
 LAMBDA_ENV=`cat yourconfig.yaml | jq -csR {Variables:{BENTHOS_CONFIG:.}}`
 aws lambda create-function \
   --runtime go1.x \
-  --handler benthos-lambda \
+  --handler redpanda-connect-lambda \
   --role benthos-example-role \
-  --zip-file fileb://benthos-lambda.zip \
+  --zip-file fileb://redpanda-connect-lambda_{latest-connect-version}_linux_amd64.zip \
   --environment "$LAMBDA_ENV" \
   --function-name benthos-example
 ----
 
-There is also an example https://github.com/{project-github}/tree/main/resources/serverless/lambda/benthos-lambda-sam.yaml[SAM template^] and
-https://github.com/{project-github}/tree/main/resources/serverless/lambda/benthos-lambda.tf[Terraform resource^] in the repo to copy from.
+=== provided.al2 on arm64
 
-=== provided.al2 on amd64
-
-Grab an archive labelled `benthos-lambda-al2` for `arm64` from the https://github.com/{project-github}/releases[releases page^]
+Grab an archive labelled `redpanda-connect-lambda-al2` for `arm64` from the https://github.com/{project-github}/releases[releases page^]
 page and then create your function (AWS CLI v2 only):
 
-[source,sh]
+[source,sh, subs="attributes+"]
 ----
 LAMBDA_ENV=`cat yourconfig.yaml | jq -csR {Variables:{BENTHOS_CONFIG:.}}`
 aws lambda create-function \
@@ -172,15 +140,12 @@ aws lambda create-function \
   --architectures arm64 \
   --handler not.used.for.provided.al2.runtime \
   --role benthos-example-role \
-  --zip-file fileb://benthos-lambda.zip \
+  --zip-file fileb://redpanda-connect-lambda-al2_{latest-connect-version}_linux_arm64.zip \
   --environment "$LAMBDA_ENV" \
   --function-name benthos-example
 ----
 
-There is also an example https://github.com/{project-github}/tree/main/resources/serverless/lambda/benthos-lambda-al2-sam.yaml[SAM template^] and
-https://github.com/{project-github}/tree/main/resources/serverless/lambda/benthos-lambda-al2.tf[Terraform resource^] in the repo to copy from.
-
-Note that you can also run `benthos-lambda-al2` on x86_64, just use the `amd64` zip instead.
+Note that you can also run `redpanda-connect-lambda-al2` on `x86_64`, just use the `amd64` zip instead.
 
 == Invoke
 
