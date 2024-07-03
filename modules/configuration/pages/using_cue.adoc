@@ -109,7 +109,7 @@ We can run this with {page-component-title} to see that it indeed works:
 
 [,bash,subs="attributes+"]
 ----
-rpk connect run -c <(cue export --out yaml config.cue)
+rpk connect -c <(cue export --out yaml config.cue)
 ----
 
 When you are satisfied with the results, terminate the {page-component-title} process and let's move on to look at some of the nice features that we get with CUE.
