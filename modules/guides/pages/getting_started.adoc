@@ -128,7 +128,7 @@ For Docker installations:
 [,bash]
 ----
 echo '{"id":"1","names":["celine","dion"]}
-{"id":"2","names":["chad","robert","kroeger"]}' | docker run --rm -i -v $(pwd)/connect.yaml:/connect.yaml docker.redpanda.com/redpandadata/redpanda connect run 
+{"id":"2","names":["chad","robert","kroeger"]}' | docker run --rm -i -v $(pwd)/connect.yaml:/connect.yaml docker.redpanda.com/redpandadata/redpanda connect run
 ----
 
 You should see this output in the logs:

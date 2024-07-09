@@ -283,7 +283,7 @@ Echoing is where {page-component-title} can print back your configuration _after
 
 [,bash,subs="attributes+"]
 ----
-rpk connect run -c ./your-config.yaml echo
+rpk connect echo ./your-config.yaml
 ----
 
 You can check the output of the above command to see if certain sections are missing or fields are incorrect, which allows you to pinpoint typos in the config.
