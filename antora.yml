@@ -1,11 +1,14 @@
 name: redpanda-connect
-title: Redpanda Connect
+title: Connect
 version: ~
 start_page: ROOT:about.adoc
 nav:
 - modules/ROOT/nav.adoc
 asciidoc:
   attributes:
+    page-header-data:
+      order: 3
+      color: '#821890'
     project-github: redpanda-data/connect
     # Fallback for the latest version of Redpanda
     # This is replaced by the version fetcher extension
