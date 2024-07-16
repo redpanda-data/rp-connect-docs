@@ -1,5 +1,5 @@
 = Outputs
-
+:page-aliases: components:outputs.adoc
 
 An output is a sink where we wish to send our consumed data after applying an optional array of xref:components:processors/about.adoc[processors]. Only one output is configured at the root of a {page-component-title} config. However, the output can be a xref:components:outputs/broker.adoc[broker] which combines multiple outputs under a chosen brokering pattern, or a xref:components:outputs/switch.adoc[switch] which is used to multiplex against different outputs.
 
