@@ -132,7 +132,7 @@ Diff::
 +    - mapping: root = ""
 +
 +    - http:
-+        url: http://ghcr.io/{project-github}
++        url: http://docker.redpanda.com/{project-github}
 +        verb: GET
 +        headers:
 +          Content-Type: application/json
@@ -177,7 +177,7 @@ pipeline:
     - mapping: root = ""
 
     - http:
-        url: http://ghcr.io/{project-github}
+        url: http://docker.redpanda.com/{project-github}
         verb: GET
         headers:
           Content-Type: application/json
@@ -307,7 +307,7 @@ processor_resources:
       processors:
         - try:
           - http:
-              url: http://ghcr.io/{project-github}
+              url: http://docker.redpanda.com/{project-github}
               verb: GET
               headers:
                 Content-Type: application/json

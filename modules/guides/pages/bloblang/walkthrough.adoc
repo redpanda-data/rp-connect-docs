@@ -8,8 +8,8 @@ In this walkthrough you'll learn how to make new friends by mapping their docume
 
 [source,sh,subs="attributes+"]
 ----
-docker pull ghcr.io/{project-github}:latest
-docker run -p 4195:4195 --rm ghcr.io/{project-github} blobl server --no-open --host 0.0.0.0
+docker pull docker.redpanda.com/{project-github}:latest
+docker run -p 4195:4195 --rm docker.redpanda.com/{project-github} blobl server --no-open --host 0.0.0.0
 ----
 
 [NOTE]
