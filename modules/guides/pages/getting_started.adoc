@@ -28,7 +28,7 @@ To use `rpk` in Docker, you can use the Redpanda Docker image, which includes bo
 
 [source,bash]
 ----
-docker pull docker.redpanda.com/redpandadata/redpanda
+docker pull docker.redpanda.com/redpandadata/connect
 ----
 
 == Run
@@ -44,7 +44,7 @@ For Docker installations:
 
 [,bash]
 ----
-docker run --rm docker.redpanda.com/redpandadata/redpanda connect create > ./connect.yaml
+docker run --rm docker.redpanda.com/redpandadata/connect connect create > ./connect.yaml
 ----
 
 The main sections that make up a config are `input`, `pipeline` and `output`. When you generate a fresh config it'll simply pipe `stdin` to `stdout` like this:
@@ -72,7 +72,7 @@ For Docker installations:
 
 [,bash]
 ----
-docker run --rm -it -v $(pwd)/connect.yaml:/connect.yaml docker.redpanda.com/redpandadata/redpanda connect run
+docker run --rm -it -v $(pwd)/connect.yaml:/connect.yaml docker.redpanda.com/redpandadata/connect connect run
 ----
 
 Anything you write to stdin will get written unchanged to stdout, cool! Resist the temptation to play with this for hours, there's more stuff to try out.
@@ -129,7 +129,7 @@ For Docker installations:
 [,bash]
 ----
 echo '{"id":"1","names":["celine","dion"]}
-{"id":"2","names":["chad","robert","kroeger"]}' | docker run --rm -i -v $(pwd)/connect.yaml:/connect.yaml docker.redpanda.com/redpandadata/redpanda connect run
+{"id":"2","names":["chad","robert","kroeger"]}' | docker run --rm -i -v $(pwd)/connect.yaml:/connect.yaml docker.redpanda.com/redpandadata/connect connect run
 ----
 
 You should see this output in the logs:
