@@ -17,7 +17,7 @@ You can import resources either in the general configuration, or using the `-r`/
 
 [,bash,subs="attributes+"]
 ----
-rpk connect run -r "./prod/*.yaml" streams -o ./config.yaml
+rpk connect streams -r "./prod/*.yaml" -o ./config.yaml
 ----
 
 == HTTP endpoints
