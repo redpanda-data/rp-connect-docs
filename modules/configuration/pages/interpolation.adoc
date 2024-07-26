@@ -7,7 +7,7 @@
 input:
   kafka:
     addresses: [ "${BROKERS}" ]
-    consumer_group: benthos_bridge_consumer
+    consumer_group: redpanda_connect_consumer
     topics: [ "haha_business" ]
 ----
 

@@ -11,13 +11,13 @@ Alternatively, {page-component-title} can be run in `streams` mode, where a sing
 
 These two methods can be used in combination, i.e. it's possible to update and delete streams that were created with static files.
 
-When running {page-component-title} in streams mode it is still necessary to provide a general service wide configuration with the `-c`/`--config` flag that specifies observability configuration such as the `metrics`, `logger` and `tracing` sections, as well the `http` section for configuring how the HTTP server should behave.
+When running {page-component-title} in streams mode it is still necessary to provide a general service wide configuration with the `-o`/`--observability` flag that specifies observability configuration such as the `metrics`, `logger` and `tracing` sections, as well the `http` section for configuring how the HTTP server should behave.
 
 You can import resources either in the general configuration, or using the `-r`/`--resources` flag, the same as when running {page-component-title} in regular mode.
 
 [,bash,subs="attributes+"]
 ----
-rpk connect run -r "./prod/*.yaml" -c ./config.yaml streams
+rpk connect streams -r "./prod/*.yaml" -o ./config.yaml
 ----
 
 == HTTP endpoints
