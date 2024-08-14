@@ -1,0 +1,29 @@
+= chunker
+:type: scanner
+:status: stable
+
+// © 2024 Redpanda Data Inc.
+
+
+component_type_dropdown::[]
+
+
+Split an input stream into chunks of a given number of bytes.
+
+```yml
+# Config fields, showing default values
+chunker:
+  size: 0 # No default (required)
+```
+
+== Fields
+
+=== `size`
+
+The size of each chunk in bytes.
+
+
+*Type*: `int`
+
+
+
