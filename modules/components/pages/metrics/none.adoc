@@ -1,0 +1,20 @@
+= none
+:type: metrics
+:status: stable
+
+// © 2024 Redpanda Data Inc.
+
+
+component_type_dropdown::[]
+
+
+Disable metrics entirely.
+
+```yml
+# Config fields, showing default values
+metrics:
+  none: {}
+  mapping: ""
+```
+
+
