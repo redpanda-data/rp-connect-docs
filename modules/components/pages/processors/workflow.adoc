@@ -1,4 +1,5 @@
 = workflow
+// tag::single-source[]
 :type: processor
 :status: stable
 :categories: ["Composition"]
@@ -380,5 +381,4 @@ For example, if our meta object is stored at the path `meta.workflow` and we wan
 
 However, if structured metadata is disabled by setting the field `meta_path` to empty then the workflow processor instead adds a general error flag to messages when any executed branch fails. In this case it's possible to handle failures using xref:configuration:error_handling.adoc[standard error handling patterns].
 
-
-
+// end::single-source[]

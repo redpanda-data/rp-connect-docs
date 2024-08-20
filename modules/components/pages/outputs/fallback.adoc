@@ -1,4 +1,5 @@
 = fallback
+// tag::single-source[]
 :type: output
 :status: stable
 :categories: ["Utility"]
@@ -66,4 +67,4 @@ Redpanda Connect makes a best attempt at inferring which specific messages of th
 
 However, depending on the output and the error returned it is sometimes not possible to determine the individual messages that failed, in which case the whole batch is passed to the next tier in order to preserve at-least-once delivery guarantees.
 
-
+// end::single-source[]

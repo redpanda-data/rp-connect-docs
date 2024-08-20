@@ -1,4 +1,5 @@
 = broker
+// tag::single-source[]
 :type: output
 :status: stable
 :categories: ["Utility"]
@@ -247,3 +248,4 @@ With the round robin pattern each message will be assigned a single output follo
 
 The greedy pattern results in higher output throughput at the cost of potentially disproportionate message allocations to those outputs. Each message is sent to a single output, which is determined by allowing outputs to claim messages as soon as they are able to process them. This results in certain faster outputs potentially processing more messages at the cost of slower outputs.
 
+// end::single-source[]

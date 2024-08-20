@@ -1,4 +1,5 @@
 = nats_jetstream
+// tag::single-source[]
 :type: output
 :status: stable
 :categories: ["Services"]
@@ -465,4 +466,4 @@ inject_tracing_map: meta = @.merge(this)
 inject_tracing_map: root.meta.span = this
 ```
 
-
+// end::single-source[]

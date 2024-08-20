@@ -1,4 +1,5 @@
 = nats_jetstream
+// tag::single-source[]
 :type: input
 :status: stable
 :categories: ["Services"]
@@ -492,4 +493,4 @@ extract_tracing_map: root = @
 extract_tracing_map: root = this.meta.span
 ```
 
-
+// end::single-source[]

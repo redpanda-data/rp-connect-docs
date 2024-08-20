@@ -1,4 +1,5 @@
 = cache
+// tag::single-source[]
 :type: processor
 :status: stable
 :categories: ["Integration"]
@@ -227,3 +228,4 @@ can be detected with xref:configuration:error_handling.adoc[processor error hand
 Delete a key and its contents from the cache. If the key does not exist the
 action is a no-op and will not fail with an error.
 
+// end::single-source[]

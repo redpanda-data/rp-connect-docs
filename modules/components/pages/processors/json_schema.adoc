@@ -1,4 +1,5 @@
 = json_schema
+// tag::single-source[]
 :type: processor
 :status: stable
 :categories: ["Mapping"]
@@ -90,3 +91,4 @@ If a payload being processed looked like:
 Then a log message would appear explaining the fault and the payload would be
 dropped.
 
+// end::single-source[]

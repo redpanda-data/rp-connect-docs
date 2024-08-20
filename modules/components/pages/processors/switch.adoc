@@ -1,4 +1,5 @@
 = switch
+// tag::single-source[]
 :type: processor
 :status: stable
 :categories: ["Composition"]
@@ -96,3 +97,4 @@ When a switch processor executes on a xref:configuration:batching.adoc[batch of 
 
 At the end of switch processing the resulting batch will follow the same ordering as the batch was received. If any child processors have split or otherwise grouped messages this grouping will be lost as the result of a switch is always a single batch. In order to perform conditional grouping and/or splitting use the xref:components:processors/group_by.adoc[`group_by` processor].
 
+// end::single-source[]
