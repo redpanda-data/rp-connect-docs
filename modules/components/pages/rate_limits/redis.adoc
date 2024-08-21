@@ -228,12 +228,15 @@ A plain text certificate to use.
 === `tls.client_certs[].key`
 
 A plain text certificate key to use.
+ifndef::env-cloud[]
 [CAUTION]
 ====
 This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
 ====
-
-
+endif::[]
+ifdef::env-cloud[]
+include::components:partial$secret_warning.adoc[]
+endif::[]
 
 *Type*: `string`
 
