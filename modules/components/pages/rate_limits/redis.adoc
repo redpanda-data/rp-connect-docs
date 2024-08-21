@@ -156,12 +156,16 @@ Requires version 3.45.0 or newer
 === `tls.root_cas`
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
+
+ifndef::env-cloud[]
 [CAUTION]
 ====
 This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
 ====
-
-
+endif::[]
+ifdef::env-cloud[]
+include::components:partial$secret_warning.adoc[]
+endif::[]
 
 *Type*: `string`
 
