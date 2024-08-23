@@ -12,7 +12,9 @@ component_type_dropdown::[]
 
 Generates messages at a given interval using a xref:guides:bloblang/about.adoc[Bloblang] mapping executed without a context. This allows you to generate messages for testing your pipeline configs.
 
+ifndef::env-cloud[]
 Introduced in version 3.40.0.
+endif::[]
 
 ```yml
 # Config fields, showing default values

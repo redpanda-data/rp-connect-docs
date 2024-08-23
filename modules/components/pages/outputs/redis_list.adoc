@@ -170,7 +170,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
@@ -450,7 +453,10 @@ The command used to push elements to the Redis list
 *Type*: `string`
 
 *Default*: `"rpush"`
+
+ifndef::env-cloud[]
 Requires version 4.22.0 or newer
+endif::[]
 
 Options:
 `rpush`

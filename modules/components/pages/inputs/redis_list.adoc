@@ -153,7 +153,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
@@ -322,7 +325,10 @@ Optionally sets a limit on the number of messages that can be flowing through a 
 *Type*: `int`
 
 *Default*: `0`
+
+ifndef::env-cloud[]
 Requires version 4.9.0 or newer
+endif::[]
 
 === `timeout`
 
@@ -341,7 +347,10 @@ The command used to pop elements from the Redis list
 *Type*: `string`
 
 *Default*: `"blpop"`
+
+ifndef::env-cloud[]
 Requires version 4.22.0 or newer
+endif::[]
 
 Options:
 `blpop`

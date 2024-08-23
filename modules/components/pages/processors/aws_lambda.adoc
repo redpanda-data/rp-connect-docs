@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Invokes an AWS lambda for each message. The contents of the message is the payload of the request, and the result of the invocation will become the new contents of the message.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -229,7 +230,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `credentials.role`
 

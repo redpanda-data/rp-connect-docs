@@ -12,7 +12,9 @@ component_type_dropdown::[]
 
 Executes a xref:guides:bloblang/about.adoc[Bloblang] mapping and directly transforms the contents of messages, mutating (or deleting) them.
 
+ifndef::env-cloud[]
 Introduced in version 4.5.0.
+endif::[]
 
 ```yml
 # Config fields, showing default values

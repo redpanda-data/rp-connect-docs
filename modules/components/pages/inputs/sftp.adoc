@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Consumes files from an SFTP server.
 
+ifndef::env-cloud[]
 Introduced in version 3.39.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -182,7 +183,10 @@ The xref:components:scanners/about.adoc[scanner] by which the stream of bytes co
 *Type*: `scanner`
 
 *Default*: `{"to_the_end":{}}`
+
+ifndef::env-cloud[]
 Requires version 4.25.0 or newer
+endif::[]
 
 === `delete_on_finish`
 
@@ -200,7 +204,9 @@ An experimental mode whereby the input will periodically scan the target paths f
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 3.42.0 or newer
+endif::[]
 
 === `watcher.enabled`
 

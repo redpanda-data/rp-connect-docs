@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Runs an SQL select query against a database and returns the result as an array of objects, one for each row returned, containing a key for each column queried and its value.
 
+ifndef::env-cloud[]
 Introduced in version 3.59.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -279,7 +280,9 @@ If a statement fails for any reason a warning log will be emitted but the operat
 
 *Type*: `array`
 
+ifndef::env-cloud[]
 Requires version 4.10.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -303,7 +306,9 @@ If the statement fails for any reason a warning log will be emitted but the oper
 
 *Type*: `string`
 
+ifndef::env-cloud[]
 Requires version 4.10.0 or newer
+endif::[]
 
 ```yml
 # Examples

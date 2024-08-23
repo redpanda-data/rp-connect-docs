@@ -153,7 +153,9 @@ A list of topics to consume from. Multiple comma separated topics can be listed 
 
 *Type*: `array`
 
+ifndef::env-cloud[]
 Requires version 3.33.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -227,7 +229,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
@@ -516,7 +521,10 @@ The maximum number of messages of the same topic and partition that can be proce
 *Type*: `int`
 
 *Default*: `1024`
+
+ifndef::env-cloud[]
 Requires version 3.33.0 or newer
+endif::[]
 
 === `auto_replay_nacks`
 
@@ -552,7 +560,9 @@ EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] that attempts 
 
 *Type*: `string`
 
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 ```yml
 # Examples

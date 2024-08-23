@@ -262,7 +262,10 @@ EXPERIMENTAL: Optionally set a level at which the request and response payload o
 *Type*: `string`
 
 *Default*: `""`
+
+ifndef::env-cloud[]
 Requires version 4.12.0 or newer
+endif::[]
 
 Options:
 `TRACE`
@@ -411,7 +414,10 @@ A list of optional requested permissions.
 *Type*: `array`
 
 *Default*: `[]`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `oauth2.endpoint_params`
 
@@ -421,7 +427,10 @@ A list of optional endpoint parameters, values should be arrays of strings.
 *Type*: `object`
 
 *Default*: `{}`
+
+ifndef::env-cloud[]
 Requires version 4.21.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -567,7 +576,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
@@ -891,7 +903,10 @@ The xref:components:scanners/about.adoc[scanner] by which the stream of bytes co
 *Type*: `scanner`
 
 *Default*: `{"lines":{}}`
+
+ifndef::env-cloud[]
 Requires version 4.25.0 or newer
+endif::[]
 
 === `auto_replay_nacks`
 

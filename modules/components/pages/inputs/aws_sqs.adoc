@@ -103,7 +103,10 @@ Whether to set the visibility timeout of the consumed message to zero once it is
 *Type*: `bool`
 
 *Default*: `true`
+
+ifndef::env-cloud[]
 Requires version 3.58.0 or newer
+endif::[]
 
 === `max_number_of_messages`
 
@@ -204,7 +207,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `credentials.role`
 

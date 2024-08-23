@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Write messages to a NATS JetStream subject.
 
+ifndef::env-cloud[]
 Introduced in version 3.46.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -158,7 +159,10 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 *Type*: `object`
 
 *Default*: `{}`
+
+ifndef::env-cloud[]
 Requires version 4.1.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -261,7 +265,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
@@ -477,7 +484,9 @@ EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] used to inject
 
 *Type*: `string`
 
+ifndef::env-cloud[]
 Requires version 4.23.0 or newer
+endif::[]
 
 ```yml
 # Examples

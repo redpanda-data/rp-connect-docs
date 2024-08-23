@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Inserts items into a DynamoDB table.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -377,7 +378,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `credentials.role`
 

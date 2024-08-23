@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Sends messages to Snowflake stages and, optionally, calls Snowpipe to load this data into one or more tables.
 
+ifndef::env-cloud[]
 Introduced in version 4.0.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -596,7 +597,10 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 *Type*: `string`
 
 *Default*: `""`
+
+ifndef::env-cloud[]
 Requires version v4.12.0 or newer
+endif::[]
 
 === `file_extension`
 
@@ -607,7 +611,10 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 *Type*: `string`
 
 *Default*: `""`
+
+ifndef::env-cloud[]
 Requires version v4.12.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -662,7 +669,10 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 *Type*: `string`
 
 *Default*: `""`
+
+ifndef::env-cloud[]
 Requires version v4.12.0 or newer
+endif::[]
 
 === `snowpipe`
 

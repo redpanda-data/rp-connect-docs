@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Sends messages to an AWS SNS topic.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -92,7 +93,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
+ifndef::env-cloud[]
 Requires version 3.60.0 or newer
+endif::[]
 
 === `message_deduplication_id`
 
@@ -102,7 +105,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
+ifndef::env-cloud[]
 Requires version 3.60.0 or newer
+endif::[]
 
 === `max_in_flight`
 
@@ -120,7 +125,9 @@ Specify criteria for which metadata values are sent as headers.
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 3.60.0 or newer
+endif::[]
 
 === `metadata.exclude_prefixes`
 
@@ -221,7 +228,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `credentials.role`
 

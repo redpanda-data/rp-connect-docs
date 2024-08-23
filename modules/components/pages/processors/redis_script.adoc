@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Performs actions against Redis using https://redis.io/docs/manual/programmability/eval-intro/[LUA scripts^].
 
+ifndef::env-cloud[]
 Introduced in version 4.11.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -190,7 +191,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 

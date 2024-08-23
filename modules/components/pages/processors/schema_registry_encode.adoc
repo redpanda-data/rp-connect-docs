@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Automatically encodes and validates messages with schemas from a Confluent Schema Registry service.
 
+ifndef::env-cloud[]
 Introduced in version 3.58.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -158,7 +159,10 @@ Whether messages encoded in Avro format should be parsed as normal JSON ("json t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.59.0 or newer
+endif::[]
 
 === `oauth`
 
@@ -167,7 +171,9 @@ Allows you to specify open authentication via OAuth version 1.
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 4.7.0 or newer
+endif::[]
 
 === `oauth.enabled`
 
@@ -243,7 +249,9 @@ Allows you to specify basic authentication.
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 4.7.0 or newer
+endif::[]
 
 === `basic_auth.enabled`
 
@@ -290,7 +298,9 @@ BETA: Allows you to specify JWT authentication.
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 4.7.0 or newer
+endif::[]
 
 === `jwt.enabled`
 
@@ -362,7 +372,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 

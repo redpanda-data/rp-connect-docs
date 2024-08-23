@@ -12,8 +12,9 @@ component_type_dropdown::[]
 Stores key/value pairs as a single document in a DynamoDB table. The key is stored as a string value and used as the table hash key. The value is stored as
 a binary value using the `data_key` field name.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -260,7 +261,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `credentials.role`
 

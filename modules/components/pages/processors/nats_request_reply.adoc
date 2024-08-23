@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Sends a message to a NATS subject and expects a reply, from a NATS subscriber acting as a responder, back.
 
+ifndef::env-cloud[]
 Introduced in version 4.27.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -288,7 +289,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 

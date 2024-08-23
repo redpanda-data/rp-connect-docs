@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Cache key/values in a NATS key-value bucket.
 
+ifndef::env-cloud[]
 Introduced in version 4.27.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -165,7 +166,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
