@@ -101,7 +101,9 @@ A list of URLs to connect to. The first URL to successfully establish a connecti
 
 *Type*: `array`
 
+ifndef::env-cloud[]
 Requires version 3.58.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -220,7 +222,10 @@ A list of regular expression patterns whereby if a message that has failed to be
 *Type*: `array`
 
 *Default*: `[]`
+
+ifndef::env-cloud[]
 Requires version 3.64.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -281,7 +286,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
