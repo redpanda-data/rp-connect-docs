@@ -1,5 +1,6 @@
 = Interpolation
 
+// tag::single-source[]
 {page-component-title} allows you to dynamically set config fields with environment variables anywhere within a config file using the syntax `${<variable-name>}` (or `${<variable-name>:<default-value>}` in order to specify a default value). This is useful for setting environment specific fields such as addresses:
 
 [source,yaml]
@@ -91,3 +92,5 @@ pipeline:
 ----
 
 If the calculated result is less than or equal to zero the processor does not sleep at all. If the value of `doc.created_at` is a string then our method `.number()` will attempt to parse it into a number.
+
+// end::single-source[]
