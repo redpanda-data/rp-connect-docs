@@ -1,5 +1,4 @@
 = Interpolation
-
 // tag::single-source[]
 
 Connect allows you to dynamically set config fields with environment variables anywhere within a config file using the syntax `${<variable-name>}` (or `${<variable-name>:<default-value>}` in order to specify a default value). This is useful for setting environment specific fields such as addresses:
