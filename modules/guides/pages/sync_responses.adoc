@@ -1,7 +1,8 @@
 = Synchronous Responses
+// tag::single-source[]
 :description: Understand synchronous response handling in Redpanda Connect, ensuring reliable and efficient data processing.
 
-In a regular {page-component-title} pipeline messages will flow in one direction and acknowledgements flow in the other:
+In a regular Connect pipeline messages will flow in one direction and acknowledgements flow in the other:
 
 [source,text]
 ----
@@ -12,11 +13,11 @@ Input (AMQP) -> Processors -> Output (AMQP)
     <------- Acknowledgement ---------
 ----
 
-However, {page-component-title} has support for a number of protocols where this limitation is not the case.
+However, Connect has support for a number of protocols where this limitation is not the case.
 
 For example, HTTP is a request/response protocol, and so our `http_server` input is capable of returning a response payload after consuming a message from a request.
 
-When using these protocols it's possible to configure {page-component-title} stream pipelines that allow messages to pass in the opposite direction, resulting in response messages at the input level:
+When using these protocols it's possible to configure Connect stream pipelines that allow messages to pass in the opposite direction, resulting in response messages at the input level:
 
 [source,text]
 ----
@@ -29,7 +30,7 @@ Input (HTTP Server) -> Processors -> Output (Sync Response)
 
 == Routing processed messages back
 
-It's possible to route the result of any {page-component-title} processing pipeline directly back to an input with a xref:components:outputs/sync_response.adoc[`sync_response`] output:
+It's possible to route the result of any Connect processing pipeline directly back to an input with a xref:components:outputs/sync_response.adoc[`sync_response`] output:
 
 [source,yaml]
 ----
@@ -95,7 +96,7 @@ output:
 
 Using the above example, sending a request 'foo bar' to the path `/post` passes the message 'FOO BAR BAZ' to the Kafka topic `foo_topic`, and also returns the response 'foo bar baz'.
 
-However, it is important to keep in mind that due to {page-component-title}' strict delivery guarantees the response message will not actually be returned until the message has reached its output destination and an acknowledgement can be made.
+However, it is important to keep in mind that due to Connect's strict delivery guarantees the response message will not actually be returned until the message has reached its output destination and an acknowledgement can be made.
 
 == Routing output responses back
 
@@ -113,9 +114,9 @@ output:
     propagate_response: true
 ----
 
-With the above example a message received from the endpoint `/post` would be sent unchanged to the address `+http://localhost:4196/post+`, and then the response from that request would get returned back. This basically turns {page-component-title} into a proxy server with the potential to mutate payloads between requests.
+With the above example a message received from the endpoint `/post` would be sent unchanged to the address `+http://localhost:4196/post+`, and then the response from that request would get returned back. This basically turns Connect into a proxy server with the potential to mutate payloads between requests.
 
-The following config turns {page-component-title} into an HTTP proxy server that also sends all request payloads to a Kafka topic:
+The following config turns Connect into an HTTP proxy server that also sends all request payloads to a Kafka topic:
 
 [source,yaml]
 ----
@@ -134,3 +135,5 @@ output:
           verb: POST
           propagate_response: true
 ----
+
+// end::single-source[]
