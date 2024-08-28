@@ -1,7 +1,6 @@
 = Rate Limits
-
-
-A rate limit is a strategy for limiting the usage of a shared resource across parallel components in a {page-component-title} instance, or potentially across multiple instances. They are configured as a resource:
+// tag::single-source[]
+A rate limit is a strategy for limiting the usage of a shared resource across parallel components in a Connect instance, or potentially across multiple instances. They are configured as a resource:
 
 [source,yaml]
 ----
@@ -39,3 +38,5 @@ input:
 ----
 
 You can find out more about resources xref:configuration:resources.adoc[in this document.]
+
+// end::single-source[]

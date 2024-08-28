@@ -1,7 +1,8 @@
 = Outputs
 :page-aliases: components:outputs.adoc
 
-An output is a sink where we wish to send our consumed data after applying an optional array of xref:components:processors/about.adoc[processors]. Only one output is configured at the root of a {page-component-title} config. However, the output can be a xref:components:outputs/broker.adoc[broker] which combines multiple outputs under a chosen brokering pattern, or a xref:components:outputs/switch.adoc[switch] which is used to multiplex against different outputs.
+// tag::single-source[]
+An output is a sink where we wish to send our consumed data after applying an optional array of xref:components:processors/about.adoc[processors]. Only one output is configured at the root of a Connect config. However, the output can be a xref:components:outputs/broker.adoc[broker] which combines multiple outputs under a chosen brokering pattern, or a xref:components:outputs/switch.adoc[switch] which is used to multiplex against different outputs.
 
 An output config section looks like this:
 
@@ -21,13 +22,13 @@ output:
 
 == Back pressure
 
-{page-component-title} outputs apply back pressure to components upstream. This means if your output target starts blocking traffic {page-component-title} will gracefully stop consuming until the issue is resolved.
+Connect outputs apply back pressure to components upstream. This means if your output target starts blocking traffic Connect will gracefully stop consuming until the issue is resolved.
 
 == Retries
 
-When a {page-component-title} output fails to send a message the error is propagated back up to the input, where depending on the protocol it will either be pushed back to the source as a Noack (e.g. AMQP) or will be reattempted indefinitely with the commit withheld until success (e.g. Kafka).
+When a Connect output fails to send a message the error is propagated back up to the input, where depending on the protocol it will either be pushed back to the source as a Noack (e.g. AMQP) or will be reattempted indefinitely with the commit withheld until success (e.g. Kafka).
 
-It's possible to instead have {page-component-title} indefinitely retry an output until success with a xref:components:outputs/retry.adoc[`retry`] output. Some other outputs, such as the xref:components:outputs/broker.adoc[`broker`], might also retry indefinitely depending on their configuration.
+It's possible to instead have Connect indefinitely retry an output until success with a xref:components:outputs/retry.adoc[`retry`] output. Some other outputs, such as the xref:components:outputs/broker.adoc[`broker`], might also retry indefinitely depending on their configuration.
 
 == Dead letter queues
 
@@ -48,7 +49,7 @@ output:
 
 == Multiplexing outputs
 
-There are a few different ways of multiplexing in {page-component-title}, here's a quick run through:
+There are a few different ways of multiplexing in Connect, here's a quick run through:
 
 === Interpolation multiplexing
 
@@ -105,3 +106,4 @@ Outputs have an optional field `label` that can uniquely identify them in observ
 
 components_by_category::[output]
 
+// end::single-source[]
