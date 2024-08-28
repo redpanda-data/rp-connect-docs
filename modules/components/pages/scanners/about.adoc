@@ -1,6 +1,5 @@
 = Scanners
 // tag::single-source[]
-
 For most Connect xref:components:inputs/about.adoc[inputs] the data consumed comes pre-partitioned into discrete messages which can be comfortably held and processed in memory. However, some inputs such as the xref:components:inputs/file.adoc[`file` input] often need to consume data that is large enough that it cannot be processed entirely within memory, and others such as the xref:components:inputs/socket.adoc[`socket` input] don't have a concept of consuming the data "entirely".
 
 For such inputs it's necessary to define a mechanism by which the stream of source bytes can be chopped into smaller logical messages, processed and outputted as a continuous process whilst the stream is being read, as this dramatically reduces the memory usage of Connect as a whole and results in a more fluid flow of data.
@@ -40,6 +39,6 @@ input:
 --
 =====
 
-A scanner is a plugin similar to any other core {page-component-title} component (inputs, processors, outputs, etc), which means it's possible to define your own scanners that can be utilized by inputs that need them.
+A scanner is a plugin similar to any other core Connect component (inputs, processors, outputs, etc), which means it's possible to define your own scanners that can be utilized by inputs that need them.
 
 // end::single-source[]
