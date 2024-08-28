@@ -1,6 +1,7 @@
 = Inputs
 :page-aliases: components:inputs.adoc
 
+// tag::single-source[]
 An input is a source of data piped through an array of optional xref:components:processors/about.adoc[processors]:
 
 [source,yaml]
@@ -60,6 +61,7 @@ Sometimes it's useful to consume a sequence of inputs, where an input is only co
 
 It's possible to generate data with {page-component-title} using the xref:components:inputs/generate.adoc[`generate` input], which is also a convenient way to trigger scheduled pipelines.
 
+// end::single-source[]
 
 == Categories
 
