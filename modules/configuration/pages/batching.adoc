@@ -1,7 +1,7 @@
 = Message Batching
 // tag::single-source[]
 
-Connect is able to join sources and sinks with sometimes conflicting batching behaviors without sacrificing its strong delivery guarantees. It's also able to perform powerful xref:configuration:windowed_processing.adoc[processing functions] across batches of messages such as grouping, archiving and reduction. Therefore, batching within Connect is a mechanism that serves multiple purposes:
+Redpanda Connect is able to join sources and sinks with sometimes conflicting batching behaviors without sacrificing its strong delivery guarantees. It's also able to perform powerful xref:configuration:windowed_processing.adoc[processing functions] across batches of messages such as grouping, archiving and reduction. Therefore, batching within Redpanda Connect is a mechanism that serves multiple purposes:
 
 . <<performance,Performance (throughput)>>
 . <<grouped-message-processing,Grouped message processing>>
@@ -102,11 +102,11 @@ For more examples of batched (or windowed) processing check out xref:configurati
 
 == Compatibility
 
-Connect is able to read and write over protocols that support multiple part messages, and all payloads travelling through Connect are represented as a multiple part message. Therefore, all components within Connect are able to work with multiple parts in a message as standard.
+Redpanda Connect is able to read and write over protocols that support multiple part messages, and all payloads travelling through Redpanda Connect are represented as a multiple part message. Therefore, all components within Redpanda Connect are able to work with multiple parts in a message as standard.
 
-When messages reach an output that _doesn't_ support multiple parts the message is broken down into an individual message per part, and then one of two behaviors happen depending on the output. If the output supports batch sending messages then the collection of messages are sent as a single batch. Otherwise, Connect falls back to sending the messages sequentially in multiple, individual requests.
+When messages reach an output that _doesn't_ support multiple parts the message is broken down into an individual message per part, and then one of two behaviors happen depending on the output. If the output supports batch sending messages then the collection of messages are sent as a single batch. Otherwise, Redpanda Connect falls back to sending the messages sequentially in multiple, individual requests.
 
-This behavior means that not only can multiple part message protocols be easily matched with single part protocols, but also the concept of multiple part messages and message batches are interchangeable within Connect.
+This behavior means that not only can multiple part message protocols be easily matched with single part protocols, but also the concept of multiple part messages and message batches are interchangeable within Redpanda Connect.
 
 === Shrinking batches
 

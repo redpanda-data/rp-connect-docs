@@ -8,7 +8,7 @@
 
 // © 2024 Redpanda Data Inc.
 
-The Connect service offers a command `rpk connect test` for running unit tests on sections of a configuration file. This makes it easy to protect your config files from regressions over time.
+The Redpanda Connect service offers a command `rpk connect test` for running unit tests on sections of a configuration file. This makes it easy to protect your config files from regressions over time.
 
 == Writing a test
 
@@ -69,7 +69,7 @@ Sometimes it's more convenient to define your tests within the config being test
 
 === Bloblang tests
 
-Sometimes when working with large {bloblang-url}[Bloblang mappings] it's preferred to have the full mapping in a separate file to your Connect configuration. In this case it's possible to write unit tests that target and execute the mapping directly with the field `target_mapping`, which when specified is interpreted as either an absolute path or a path relative to the test definition file that points to a file containing only a Bloblang mapping.
+Sometimes when working with large {bloblang-url}[Bloblang mappings] it's preferred to have the full mapping in a separate file to your Redpanda Connect configuration. In this case it's possible to write unit tests that target and execute the mapping directly with the field `target_mapping`, which when specified is interpreted as either an absolute path or a path relative to the test definition file that points to a file containing only a Bloblang mapping.
 
 For example, if we were to have a file `cities.blobl` containing a mapping:
 
@@ -102,11 +102,11 @@ tests:
         - json_equals: {"Cities": "Bellevue, Olympia, Seattle"}
 ```
 
-And execute this test the same way we execute other Connect tests (`rpk connect test ./dir/cities_test.yaml`, `rpk connect test ./dir/...`, etc).
+And execute this test the same way we execute other Redpanda Connect tests (`rpk connect test ./dir/cities_test.yaml`, `rpk connect test ./dir/...`, etc).
 
 === Fragmented tests
 
-Sometimes the number of tests you need to define in order to cover a config file is so vast that it's necessary to split them across multiple test definition files. This is possible but Connect still requires a way to detect the configuration file being targeted by these fragmented test definition files. In order to do this we must prefix our `target_processors` field with the path of the target relative to the definition file.
+Sometimes the number of tests you need to define in order to cover a config file is so vast that it's necessary to split them across multiple test definition files. This is possible but Redpanda Connect still requires a way to detect the configuration file being targeted by these fragmented test definition files. In order to do this we must prefix our `target_processors` field with the path of the target relative to the definition file.
 
 The syntax of `target_processors` in this case is a full {json-pointer-url}[JSON Pointer] that should look something like `target.yaml#/pipeline/processors`. For example, if we saved our test definition above in an arbitrary location like `./tests/first.yaml` and wanted to target our original `foo.yaml` config file, we could do that with the following:
 

@@ -1,8 +1,8 @@
 = Amazon Web Services
 // tag::single-source[]
-:description: Find out about AWS components in Connect.
+:description: Find out about AWS components in Redpanda Connect.
 
-There are many components within Connect which utilize AWS services. You will find that each of these components contains a configuration section under the field `credentials`, of the format:
+There are many components within Redpanda Connect which utilize AWS services. You will find that each of these components contains a configuration section under the field `credentials`, of the format:
 
 [source,yml]
 ----
@@ -19,11 +19,11 @@ This section contains many fields and it isn't immediately clear which of them a
 
 == Credentials
 
-The first thing to make clear is that _all_ of these fields are optional. When all fields are left blank Connect will attempt to load credentials from a shared credentials file (`~/.aws/credentials`). The profile loaded will be `default` unless the `AWS_PROFILE` environment variable is set.
+The first thing to make clear is that _all_ of these fields are optional. When all fields are left blank Redpanda Connect will attempt to load credentials from a shared credentials file (`~/.aws/credentials`). The profile loaded will be `default` unless the `AWS_PROFILE` environment variable is set.
 
 == Explicit credentials
 
-By explicitly setting the credentials you are using at the component level it's possible to connect to components using different accounts within the same Connect process.
+By explicitly setting the credentials you are using at the component level it's possible to connect to components using different accounts within the same Redpanda Connect process.
 
 === Select a profile
 
@@ -58,7 +58,7 @@ credentials:
 
 == Assume a role
 
-It's also possible to configure Connect to https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use.html[assume a role^] using your credentials by setting the field `role` to your target role ARN.
+It's also possible to configure Redpanda Connect to https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use.html[assume a role^] using your credentials by setting the field `role` to your target role ARN.
 
 [source,yml]
 ----

@@ -3,7 +3,7 @@
 // tag::single-source[]
 :description: Learn what Bloblang is and how to use the native mapping language.
 
-Bloblang, or blobl for short, is a language designed for mapping data of a wide variety of forms. It's a safe, fast, and powerful way to perform document mapping within {page-component-title}. It also has a https://pkg.go.dev/github.com/{project-github}/v4/public/bloblang[Go API for writing your own functions and methods^] as plugins.
+Bloblang, or blobl for short, is a language designed for mapping data of a wide variety of forms. It's a safe, fast, and powerful way to perform document mapping within Redpanda Connect. It also has a https://pkg.go.dev/github.com/{project-github}/v4/public/bloblang[Go API for writing your own functions and methods^] as plugins.
 
 Bloblang is available as a xref:components:processors/mapping.adoc[processor] and it's also possible to use blobl queries in xref:configuration:interpolation.adoc#bloblang-queries[function interpolations].
 
@@ -113,7 +113,7 @@ root.new_doc.type = $foo
 
 === Metadata
 
-{page-component-title} messages contain metadata that is separate from the main payload, in Bloblang you can modify the metadata of the resulting message with the `meta` assignment keyword. Metadata values of the resulting message are referenced within queries with the `@` operator or the xref:guides:bloblang/functions.adoc#metadata[`metadata()` function]:
+Redpanda Connect messages contain metadata that is separate from the main payload, in Bloblang you can modify the metadata of the resulting message with the `meta` assignment keyword. Metadata values of the resulting message are referenced within queries with the `@` operator or the xref:guides:bloblang/functions.adoc#metadata[`metadata()` function]:
 
 [source,coffeescript]
 ----
@@ -374,7 +374,7 @@ root.foo = this.value_one.apply("things")
 root.bar = this.value_two.apply("things")
 ----
 
-Imports from a Bloblang mapping within a {page-component-title} config are relative to the process running the config. Imports from an imported file are relative to the file that is importing it.
+Imports from a Bloblang mapping within a Redpanda Connect config are relative to the process running the config. Imports from an imported file are relative to the file that is importing it.
 
 == Filtering
 
@@ -429,7 +429,7 @@ root.foo = this.bar.index(5).or("default")
 
 == Unit testing
 
-It's possible to execute unit tests for your Bloblang mappings using the standard {page-component-title} unit test capabilities outlined xref:configuration:unit_testing.adoc[in this document].
+It's possible to execute unit tests for your Bloblang mappings using the standard Redpanda Connect unit test capabilities outlined xref:configuration:unit_testing.adoc[in this document].
 
 == Troubleshooting
 
