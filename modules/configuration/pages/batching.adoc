@@ -1,6 +1,7 @@
 = Message Batching
+// tag::single-source[]
 
-{page-component-title} is able to join sources and sinks with sometimes conflicting batching behaviors without sacrificing its strong delivery guarantees. It's also able to perform powerful xref:configuration:windowed_processing.adoc[processing functions] across batches of messages such as grouping, archiving and reduction. Therefore, batching within {page-component-title} is a mechanism that serves multiple purposes:
+Connect is able to join sources and sinks with sometimes conflicting batching behaviors without sacrificing its strong delivery guarantees. It's also able to perform powerful xref:configuration:windowed_processing.adoc[processing functions] across batches of messages such as grouping, archiving and reduction. Therefore, batching within Connect is a mechanism that serves multiple purposes:
 
 . <<performance,Performance (throughput)>>
 . <<grouped-message-processing,Grouped message processing>>
@@ -101,11 +102,11 @@ For more examples of batched (or windowed) processing check out xref:configurati
 
 == Compatibility
 
-{page-component-title} is able to read and write over protocols that support multiple part messages, and all payloads travelling through {page-component-title} are represented as a multiple part message. Therefore, all components within {page-component-title} are able to work with multiple parts in a message as standard.
+Connect is able to read and write over protocols that support multiple part messages, and all payloads travelling through Connect are represented as a multiple part message. Therefore, all components within Connect are able to work with multiple parts in a message as standard.
 
-When messages reach an output that _doesn't_ support multiple parts the message is broken down into an individual message per part, and then one of two behaviors happen depending on the output. If the output supports batch sending messages then the collection of messages are sent as a single batch. Otherwise, {page-component-title} falls back to sending the messages sequentially in multiple, individual requests.
+When messages reach an output that _doesn't_ support multiple parts the message is broken down into an individual message per part, and then one of two behaviors happen depending on the output. If the output supports batch sending messages then the collection of messages are sent as a single batch. Otherwise, Connect falls back to sending the messages sequentially in multiple, individual requests.
 
-This behavior means that not only can multiple part message protocols be easily matched with single part protocols, but also the concept of multiple part messages and message batches are interchangeable within {page-component-title}.
+This behavior means that not only can multiple part message protocols be easily matched with single part protocols, but also the concept of multiple part messages and message batches are interchangeable within Connect.
 
 === Shrinking batches
 
@@ -197,3 +198,5 @@ output:
 The above config will batch up messages and then merge them into a line delimited format before sending it over HTTP. This is an easier format to parse than the default which would have been https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html[rfc1342^].
 
 During shutdown any remaining messages waiting for a batch to complete will be flushed down the pipeline.
+
+// end::single-source[]
