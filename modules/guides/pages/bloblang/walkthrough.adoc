@@ -1,4 +1,5 @@
 = Bloblang Walkthrough
+// tag::single-source[]
 :description: A step by step introduction to Bloblang
 
 
@@ -792,3 +793,5 @@ Test 'naughty_man_test.yaml' succeeded
 ----
 
 And now our mapping, should we need to expand it in the future, is better protected against regressions. You can read more about the Redpanda Connect unit test specification, including alternative output predicates, in xref:configuration:unit_testing.adoc[this document].
+
+// end::single-source[]
