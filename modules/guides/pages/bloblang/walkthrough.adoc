@@ -12,11 +12,13 @@ docker pull docker.redpanda.com/redpandadata/connect:latest
 docker run -p 4195:4195 --rm docker.redpanda.com/redpandadata/connect blobl server --no-open --host 0.0.0.0
 ----
 
+ifndef::env-cloud[]
 [NOTE]
 .Alternatives
 ====
 For alternative Redpanda Connect installation options check out the xref:guides:getting_started.adoc[getting started guide].
 ====
+endif::[]
 
 Next, open your browser at `+http://localhost:4195+` and you should see an app with three panels, the top-left is where you paste an input document, the bottom is your Bloblang mapping and on the top-right is the output.
 
