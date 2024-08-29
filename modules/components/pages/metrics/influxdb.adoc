@@ -1,4 +1,5 @@
 = influxdb
+// tag::single-source[]
 :type: metrics
 :status: beta
 
@@ -10,8 +11,9 @@ component_type_dropdown::[]
 
 Send metrics to InfluxDB 1.x using the `/write` endpoint.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -118,15 +120,24 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
+
+ifndef::env-cloud[]
 [CAUTION]
 ====
 This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
 ====
+endif::[]
+ifdef::env-cloud[]
+include::components:partial$secret_warning.adoc[]
+endif::[]
 
 
 
@@ -191,10 +202,16 @@ A plain text certificate to use.
 === `tls.client_certs[].key`
 
 A plain text certificate key to use.
+
+ifndef::env-cloud[]
 [CAUTION]
 ====
 This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
 ====
+endif::[]
+ifdef::env-cloud[]
+include::components:partial$secret_warning.adoc[]
+endif::[]
 
 
 
@@ -225,10 +242,16 @@ The path of a certificate key to use.
 A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.
 
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
+
+ifndef::env-cloud[]
 [CAUTION]
 ====
 This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
 ====
+endif::[]
+ifdef::env-cloud[]
+include::components:partial$secret_warning.adoc[]
+endif::[]
 
 
 
@@ -256,9 +279,17 @@ A username (when applicable).
 === `password`
 
 A password (when applicable).
+
+
+ifndef::env-cloud[]
 [CAUTION]
 ====
 This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
+====
+endif::[]
+ifdef::env-cloud[]
+include::components:partial$secret_warning.adoc[]
+endif::[]ad our xref:configuration:secrets.adoc[secrets page for more info].
 ====
 
 
@@ -373,5 +404,4 @@ Sets the retention policy for each write.
 
 *Type*: `string`
 
-
-
+// end::single-source[]
