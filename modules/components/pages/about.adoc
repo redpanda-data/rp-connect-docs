@@ -2,7 +2,8 @@
 :description: Learn about components.
 :page-aliases: ROOT:components.adoc, components:conditions.adoc 
 
-Every {page-component-title} pipeline has at least one xref:components:inputs/about.adoc[input], an optional xref:components:buffers/about.adoc[buffer], an xref:components:outputs/about.adoc[output] and any number of xref:components:processors/about.adoc[processors]:
+// tag::single-source[]
+Every Redpanda Connect pipeline has at least one xref:components:inputs/about.adoc[input], an optional xref:components:buffers/about.adoc[buffer], an xref:components:outputs/about.adoc[output] and any number of xref:components:processors/about.adoc[processors]:
 
 [source,yaml]
 ----
@@ -27,11 +28,11 @@ output:
     path: '${! meta("kafka_topic") }/${! json("message.id") }.json'
 ----
 
-These are the main components within {page-component-title} and they provide the majority of useful behavior.
+These are the main components within Redpanda Connect and they provide the majority of useful behavior.
 
 == Observability components
 
-There are also the observability components xref:components:http/about.adoc[http], xref:components:logger/about.adoc[logger], xref:components:metrics/about.adoc[metrics], and xref:components:tracers/about.adoc[tracing], which allow you to specify how {page-component-title} exposes observability data:
+There are also the observability components xref:components:http/about.adoc[http], xref:components:logger/about.adoc[logger], xref:components:metrics/about.adoc[metrics], and xref:components:tracers/about.adoc[tracing], which allow you to specify how Redpanda Connect exposes observability data:
 
 [source,yaml]
 ----
@@ -99,3 +100,5 @@ For more information about any of these component types check out their sections
 * xref:components:logger/about.adoc[logger]
 * xref:components:caches/about.adoc[caches]
 * xref:components:rate_limits/about.adoc[rate limits]
+
+endif::[]

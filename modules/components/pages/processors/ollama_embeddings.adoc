@@ -1,4 +1,5 @@
 = ollama_embeddings
+// tag::single-source[]
 :type: processor
 :status: experimental
 :categories: ["AI"]
@@ -10,7 +11,9 @@ component_type_dropdown::[]
 
 Generates vector embeddings from text, using the Ollama API.
 
+ifndef::env-cloud[]
 Introduced in version 4.32.0.
+endif::[]
 
 ```yml
 # Config fields, showing default values
@@ -70,3 +73,5 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 
 *Type*: `string`
+
+// end::single-source[]
