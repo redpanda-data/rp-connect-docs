@@ -1,5 +1,5 @@
 = Enrichment Workflows
-:description: How to configure {page-component-title} to process a workflow of enrichment services.
+:description: How to configure Redpanda Connect to process a workflow of enrichment services.
 
 This cookbook demonstrates how to enrich a stream of JSON documents with HTTP services. This method also works with xref:components:processors/aws_lambda.adoc[AWS Lambda functions], xref:components:processors/subprocess.adoc[subprocesses], etc.
 
@@ -247,10 +247,10 @@ Great! However, as a streaming pipeline this set up isn't ideal as our first two
 
 == Combining into a workflow
 
-If we configure our enrichments within a xref:components:processors/workflow.adoc[`workflow` processor] we can use {page-component-title} to automatically detect our dependency graph, giving us two key benefits:
+If we configure our enrichments within a xref:components:processors/workflow.adoc[`workflow` processor] we can use Redpanda Connect to automatically detect our dependency graph, giving us two key benefits:
 
 . Enrichments at the same level of a dependency graph (claims and hyperbole) will be executed in parallel.
-. When introducing more enrichments to our pipeline the added complexity of resolving the dependency graph is handled automatically by {page-component-title}.
+. When introducing more enrichments to our pipeline the added complexity of resolving the dependency graph is handled automatically by Redpanda Connect.
 
 Placing our branches within a xref:components:processors/workflow.adoc[`workflow` processor] makes our final pipeline configuration look like this:
 

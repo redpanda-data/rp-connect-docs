@@ -1,7 +1,7 @@
 = Migrating to Version 2
 :description: Learn how to migrate to Redpanda Connect v2.
 
-{page-component-title} version 2 comes with a small number of backwards incompatible changes
+Redpanda Connect version 2 comes with a small number of backwards incompatible changes
 that are organized into three sections; <<configuration,configuration>>,
 <<service,service>> and <<go-api,Go API>>.
 
@@ -51,7 +51,7 @@ In version 2 the field `unsubscribe_on_close` of the `nats_stream` input is now
 
 == Service
 
-The recommended way to create plugins for {page-component-title} is outlined in
+The recommended way to create plugins for Redpanda Connect is outlined in
 https://github.com/benthosdev/benthos-plugin-example[this repository^].
 Therefore the following experimental plugin related flags have been removed from
 the service: `swap-envs`, `plugins-dir`, `list-input-plugins`,
@@ -77,7 +77,7 @@ find . -name "*.go" | \
 
 === Interface changes
 
-The following interface changes have occurred to core {page-component-title} components:
+The following interface changes have occurred to core Redpanda Connect components:
 
 * `types.Cache` now has `types.Closable` embedded.
 * `types.RateLimit` now has `types.Closable` embedded.

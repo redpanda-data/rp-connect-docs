@@ -1,7 +1,7 @@
 = Lambda
 :description: Deploying as an AWS Lambda function
 
-You can use either of the following distributions to deploy {page-component-title} as an AWS Lambda function:
+You can use either of the following distributions to deploy Redpanda Connect as an AWS Lambda function:
 
 * The `redpanda-connect-lambda` distribution is specifically tailored
 for deployment as an AWS Lambda function on the `go1.x` runtime,
@@ -12,7 +12,7 @@ which runs Amazon Linux 2 on either the `x86_64` or `arm64` architecture.
 
 == Configuration 
 
-The AWS Lambda version of {page-component-title} uses the same configuration format as a regular instance. Choose from the following two options:
+The AWS Lambda version of Redpanda Connect uses the same configuration format as a regular instance. Choose from the following two options:
 
 . Inline via the `BENTHOS_CONFIG` environment variable (YAML format).
 . Via the filesystem using a layer, extension, or container image. By default,
@@ -33,7 +33,7 @@ is sent to the output destination.
 
 == Run with an output
 
-The flow of a {page-component-title} Lambda function with an output configured looks like this:
+The flow of a Redpanda Connect Lambda function with an output configured looks like this:
 
 [source,text]
 ----
@@ -81,7 +81,7 @@ of size one are a single object array in this case)
 
 === Process errors
 
-By default, the {page-component-title} Lambda handler fails if messages encounter an uncaught error during execution. 
+By default, the Redpanda Connect Lambda handler fails if messages encounter an uncaught error during execution. 
 
 == Run a combination
 

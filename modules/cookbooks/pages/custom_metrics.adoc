@@ -1,7 +1,7 @@
 = Custom Metrics
 :description: Learn how to emit custom metrics from messages.
 
-You can't build cool graphs without metrics, and xref:components:metrics/about.adoc[{page-component-title} emits many]. However, occasionally you might want to also emit custom metrics that track data extracted from messages being processed. In this cookbook we'll explore how to achieve this by configuring {page-component-title} to pull download stats from Github, DockerHub and Homebrew and emit them as gauges.
+You can't build cool graphs without metrics, and xref:components:metrics/about.adoc[Redpanda Connect emits many]. However, occasionally you might want to also emit custom metrics that track data extracted from messages being processed. In this cookbook we'll explore how to achieve this by configuring Redpanda Connect to pull download stats from Github, DockerHub and Homebrew and emit them as gauges.
 
 == The basics
 
@@ -95,9 +95,9 @@ metrics:
   prometheus: {}
 ----
 
-With the above config we have selected the xref:components:metrics/prometheus.adoc[`prometheus` metrics type], which allows us to use https://prometheus.io/[Prometheus^] to scrape metrics from {page-component-title} by polling its HTTP API at the url `+http://localhost:4195/stats+`.
+With the above config we have selected the xref:components:metrics/prometheus.adoc[`prometheus` metrics type], which allows us to use https://prometheus.io/[Prometheus^] to scrape metrics from Redpanda Connect by polling its HTTP API at the url `+http://localhost:4195/stats+`.
 
-We have also specified a [`path_mapping`][metrics.prometheus.path_mapping] that deletes any internal metrics usually emitted by {page-component-title} by filtering on our custom metric name.
+We have also specified a [`path_mapping`][metrics.prometheus.path_mapping] that deletes any internal metrics usually emitted by Redpanda Connect by filtering on our custom metric name.
 
 Finally, there's also a xref:components:processors/mapping.adoc[`mapping` processor] added to the end of our pipeline that deletes all messages since we're not interested in sending the raw data anywhere after this point anyway.
 
@@ -112,7 +112,7 @@ Giving something like:
 
 [source,text]
 ----
-# HELP benthos_downloads {page-component-title} Gauge metric
+# HELP benthos_downloads Redpanda Connect Gauge metric
 # TYPE benthos_downloads gauge
 benthos_downloads{source="homebrew"} 78978979
 ----

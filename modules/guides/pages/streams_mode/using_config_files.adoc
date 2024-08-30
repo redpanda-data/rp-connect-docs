@@ -1,6 +1,6 @@
 = Streams Via Config Files
 
-When running {page-component-title} in `streams` mode it's possible to create streams with their own static configurations, simply list one or more files after the `streams` subcommand:
+When running Redpanda Connect in `streams` mode it's possible to create streams with their own static configurations, simply list one or more files after the `streams` subcommand:
 
 [,bash,subs="attributes+"]
 ----
@@ -53,7 +53,7 @@ output:
 EOF
 ----
 
-Run {page-component-title} in streams mode, pointing to our directory of streams:
+Run Redpanda Connect in streams mode, pointing to our directory of streams:
 
 [,bash,subs="attributes+"]
 ----

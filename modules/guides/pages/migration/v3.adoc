@@ -1,7 +1,7 @@
 = Migrating to Version 3
 :description: Learn how to migrate to Redpanda Connect v3.
 
-{page-component-title} version 3 comes with some breaking <<service,service>> and <<configuration,configuration>> changes as well as a few breaking <<go-api,API changes>>.
+Redpanda Connect version 3 comes with some breaking <<service,service>> and <<configuration,configuration>> changes as well as a few breaking <<go-api,API changes>>.
 
 == Service
 
@@ -42,7 +42,7 @@ of the config object to individual types. E.g. when using `statsd` the field
 
 === JSON paths
 
-Many components within {page-component-title} use an unspecified "JSON dot path" syntax for querying and setting fields within JSON documents. The format of these paths has been formalized to make them clearer and more generally useful, but this potentially breaks your paths when they query against hierarchies that contain arrays.
+Many components within Redpanda Connect use an unspecified "JSON dot path" syntax for querying and setting fields within JSON documents. The format of these paths has been formalized to make them clearer and more generally useful, but this potentially breaks your paths when they query against hierarchies that contain arrays.
 
 The formal specification for v3 can be found xref:configuration:field_paths.adoc[in this document].
 
@@ -69,7 +69,7 @@ The `process_dag` processor now only permits workflow stage names matching the f
 
 === Modules
 
-{page-component-title} now fully adheres to https://github.com/golang/go/wiki/Modules[Go Modules^], import paths must therefore now contain the major version (v3) like so:
+Redpanda Connect now fully adheres to https://github.com/golang/go/wiki/Modules[Go Modules^], import paths must therefore now contain the major version (v3) like so:
 
 [source,go]
 ----

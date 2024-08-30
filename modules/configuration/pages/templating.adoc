@@ -8,9 +8,9 @@
 Templates are an experimental feature and are subject to change outside major version releases.
 ====
 
-Templates are a way to define new {page-component-title} components (similar to plugins) that are implemented by generating a {page-component-title} config snippet from pre-defined parameter fields. This is useful when a common pattern of {page-component-title} configuration is used but with varying parameters each time.
+Templates are a way to define new Redpanda Connect components (similar to plugins) that are implemented by generating a Redpanda Connect config snippet from pre-defined parameter fields. This is useful when a common pattern of Redpanda Connect configuration is used but with varying parameters each time.
 
-A template is defined in a YAML file that can be imported when {page-component-title} runs using the flag `-t`:
+A template is defined in a YAML file that can be imported when Redpanda Connect runs using the flag `-t`:
 
 [source,bash]
 ----

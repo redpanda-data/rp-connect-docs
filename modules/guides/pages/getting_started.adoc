@@ -1,12 +1,12 @@
 = Get Started
-:description: Getting started with {page-component-title}.
+:description: Getting started with Redpanda Connect.
 :page-aliases: getting_started:overview.adoc, ROOT:install.adoc
 
-This topic explains how to get started with {page-component-title}.
+This topic explains how to get started with Redpanda Connect.
 
 == Install
 
-You can install {page-component-title} using the `rpk` command-line tool (CLI). The `rpk` CLI allows you to create and manage data pipelines with {page-component-title} as well as xref:ROOT:get-started:rpk-install.adoc[interact with Redpanda clusters].
+You can install Redpanda Connect using the `rpk` command-line tool (CLI). The `rpk` CLI allows you to create and manage data pipelines with Redpanda Connect as well as xref:ROOT:get-started:rpk-install.adoc[interact with Redpanda clusters].
 
 [%collapsible]
 .Also interacting with a Redpanda cluster?
@@ -33,7 +33,7 @@ docker pull docker.redpanda.com/redpandadata/connect
 
 == Run
 
-A {page-component-title} stream pipeline is configured with a single xref:configuration:about.adoc[config file], you can generate a fresh one with:
+A Redpanda Connect stream pipeline is configured with a single xref:configuration:about.adoc[config file], you can generate a fresh one with:
 
 [,bash,subs="attributes+"]
 ----
@@ -94,7 +94,7 @@ output:
 
 Now your messages should come out in all caps.
 
-You can add as many xref:components:processors/about.adoc[processing steps] as you like, and since processors are what make {page-component-title} powerful they are worth experimenting with. Let's create a more advanced pipeline that works with JSON documents:
+You can add as many xref:components:processors/about.adoc[processing steps] as you like, and since processors are what make Redpanda Connect powerful they are worth experimenting with. Let's create a more advanced pipeline that works with JSON documents:
 
 [source,yaml]
 ----

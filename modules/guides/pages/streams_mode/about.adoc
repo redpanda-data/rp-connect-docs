@@ -2,18 +2,18 @@
 :description: Get an overview of streams mode in Redpanda Connect, detailing its features, use cases, and setup instructions.
 :page-aliases: guides:streams_mode.adoc
 
-A {page-component-title} stream consists of four components; an input, an optional buffer, processor pipelines and an output. Under normal use a {page-component-title} instance is a single stream, and these components are configured within the service config file.
+A Redpanda Connect stream consists of four components; an input, an optional buffer, processor pipelines and an output. Under normal use a Redpanda Connect instance is a single stream, and these components are configured within the service config file.
 
-Alternatively, {page-component-title} can be run in `streams` mode, where a single running {page-component-title} instance is able to run multiple entirely isolated streams. Adding streams in this mode can be done in two ways:
+Alternatively, Redpanda Connect can be run in `streams` mode, where a single running Redpanda Connect instance is able to run multiple entirely isolated streams. Adding streams in this mode can be done in two ways:
 
-. xref:guides:streams_mode/using_config_files.adoc[Static configuration files] allows you to maintain a directory of static stream configuration files that will be traversed by {page-component-title}.
+. xref:guides:streams_mode/using_config_files.adoc[Static configuration files] allows you to maintain a directory of static stream configuration files that will be traversed by Redpanda Connect.
 . An xref:guides:streams_mode/using_rest_api.adoc[HTTP REST API] allows you to dynamically create, read the status of, update, and delete streams at runtime.
 
 These two methods can be used in combination, i.e. it's possible to update and delete streams that were created with static files.
 
-When running {page-component-title} in streams mode it is still necessary to provide a general service wide configuration with the `-o`/`--observability` flag that specifies observability configuration such as the `metrics`, `logger` and `tracing` sections, as well the `http` section for configuring how the HTTP server should behave.
+When running Redpanda Connect in streams mode it is still necessary to provide a general service wide configuration with the `-o`/`--observability` flag that specifies observability configuration such as the `metrics`, `logger` and `tracing` sections, as well the `http` section for configuring how the HTTP server should behave.
 
-You can import resources either in the general configuration, or using the `-r`/`--resources` flag, the same as when running {page-component-title} in regular mode.
+You can import resources either in the general configuration, or using the `-r`/`--resources` flag, the same as when running Redpanda Connect in regular mode.
 
 [,bash,subs="attributes+"]
 ----
@@ -22,7 +22,7 @@ rpk connect streams -r "./prod/*.yaml" -o ./config.yaml
 
 == HTTP endpoints
 
-A {page-component-title} config can contain components such as an `http_server` input that register endpoints to the service-wide HTTP server. When these components are created from within a named stream in streams mode the endpoint will be prefixed with the streams identifier by default. For example, a stream with the identifier `foo` and the config:
+A Redpanda Connect config can contain components such as an `http_server` input that register endpoints to the service-wide HTTP server. When these components are created from within a named stream in streams mode the endpoint will be prefixed with the streams identifier by default. For example, a stream with the identifier `foo` and the config:
 
 [source,yaml]
 ----
@@ -40,13 +40,13 @@ Will register an endpoint `/meow`, which will be prefixed with the name `foo` to
 
 == Resources
 
-When running {page-component-title} in streams mode xref:configuration:resources.adoc[resource components] are shared across all streams. The streams mode HTTP API also provides an endpoint for modifying and adding resource configurations dynamically.
+When running Redpanda Connect in streams mode xref:configuration:resources.adoc[resource components] are shared across all streams. The streams mode HTTP API also provides an endpoint for modifying and adding resource configurations dynamically.
 
 == Metrics
 
-Metrics from all streams are aggregated and exposed via the method specified in xref:components:metrics/about.adoc[the config] of the {page-component-title} instance running in `streams` mode, with their metrics enriched with the tag `stream` containing the stream name.
+Metrics from all streams are aggregated and exposed via the method specified in xref:components:metrics/about.adoc[the config] of the Redpanda Connect instance running in `streams` mode, with their metrics enriched with the tag `stream` containing the stream name.
 
-For example, a {page-component-title} instance running in streams mode running a stream named `foo` would have metrics from `foo` registered with the label `stream` with the value of `foo`.
+For example, a Redpanda Connect instance running in streams mode running a stream named `foo` would have metrics from `foo` registered with the label `stream` with the value of `foo`.
 
 This can cause problems if your streams are short lived and uniquely named as the number of metrics registered will continue to climb indefinitely. In order to avoid this you can use the `mapping` field to filter metric names.
 

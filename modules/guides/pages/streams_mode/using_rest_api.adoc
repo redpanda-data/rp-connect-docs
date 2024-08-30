@@ -1,12 +1,12 @@
 = Streams Via REST API
 
-By using the {page-component-title} `streams` mode REST API you can dynamically control which streams are active at runtime. The full spec for the {page-component-title} streams mode REST API can be xref:guides:streams_mode/streams_api.adoc[found here].
+By using the Redpanda Connect `streams` mode REST API you can dynamically control which streams are active at runtime. The full spec for the Redpanda Connect streams mode REST API can be xref:guides:streams_mode/streams_api.adoc[found here].
 
 Note that stream configs created and updated using this API do _not_ benefit from xref:configuration:interpolation.adoc[environment variable interpolation] (function interpolation will still work).
 
 == Walkthrough
 
-Start by running {page-component-title} in streams mode:
+Start by running Redpanda Connect in streams mode:
 
 [,bash,subs="attributes+"]
 ----
