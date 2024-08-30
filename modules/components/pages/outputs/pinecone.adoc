@@ -1,4 +1,5 @@
 = pinecone
+// tag::single-source[]
 :type: output
 :status: experimental
 :categories: ["AI"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Inserts items into a Pinecone index.
 
+ifndef::env-cloud[]
 Introduced in version 4.31.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -198,11 +200,18 @@ The host for the Pinecone index.
 
 === `api_key`
 
-The Pinecone api key.
+The Pinecone API key.
+
+
+ifndef::env-cloud[]
 [CAUTION]
 ====
 This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
 ====
+endif::[]
+ifdef::env-cloud[]
+include::components:partial$secret_warning.adoc[]
+endif::[]
 
 
 
@@ -258,5 +267,4 @@ An optional mapping of message to metadata in the Pinecone index entry.
 
 *Type*: `string`
 
-
-
+// end::single-source[]
