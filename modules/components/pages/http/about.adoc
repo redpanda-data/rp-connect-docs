@@ -3,11 +3,14 @@
 
 // © 2024 Redpanda Data Inc.
 
+ifndef::env-cloud[]
 When Redpanda Connect runs it kicks off an HTTP server that provides a few generally useful endpoints and is also where configured components such as the xref:components:inputs/http_server.adoc[`http_server` input] xref:components:outputs/http_server.adoc[and output] can register their own endpoints if they don't require their own host/port.
+endif::[]
+ifdef::env-cloud[]
+When Redpanda Connect runs it kicks off an HTTP server that provides a few generally useful endpoints and is also where configured components can register their own endpoints if they don't require their own host/port.
+endif::[]
 
 The configuration for this server lives under the `http` namespace, with the following default values:
-
-
 
 [tabs]
 ======
