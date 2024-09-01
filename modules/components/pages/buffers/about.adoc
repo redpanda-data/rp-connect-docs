@@ -1,6 +1,6 @@
 = Buffers
-// tag::single-source[]
 :page-aliases: components:buffers.adoc
+// tag::single-source[]
 
 Redpanda Connect uses a transaction model internally for guaranteeing delivery of messages, this means that a message from an input is not acknowledged (or its offset committed, etc) until that message has been processed and either intentionally deleted or successfully delivered to all outputs. This transaction model makes Redpanda Connect safe to deploy in scenarios where data loss is unacceptable. However, sometimes it's useful to customize the way in which messages are delivered, and this is where buffers come in.
 
