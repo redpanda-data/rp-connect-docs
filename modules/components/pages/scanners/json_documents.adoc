@@ -1,4 +1,5 @@
 = json_documents
+// tag::single-source[]
 :type: scanner
 :status: stable
 
@@ -10,11 +11,14 @@ component_type_dropdown::[]
 
 Consumes a stream of one or more JSON documents.
 
+ifndef::env-cloud[]
 Introduced in version 4.27.0.
+endif::[]
+
 
 ```yml
 # Config fields, showing default values
 json_documents: {}
 ```
 
-
+// end::single-source[]
