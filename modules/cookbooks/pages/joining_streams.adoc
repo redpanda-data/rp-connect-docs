@@ -1,4 +1,5 @@
 = Joining Streams
+// tag::single-source[]
 :description: How to hydrate documents by joining multiple streams.
 
 This cookbook demonstrates how to merge JSON events from parallel streams using content based rules and a xref:components:caches/about.adoc[cache] of your choice.
@@ -229,3 +230,5 @@ cache_resources:
 ----
 
 You can find a full example https://github.com/{project-github}/blob/master/config/examples/joining_streams.yaml[in the project repo^], and with this config we can deploy as many instances of Redpanda Connect as we need as the partitions will be balanced across the consumers.
+
+// end::single-source[]

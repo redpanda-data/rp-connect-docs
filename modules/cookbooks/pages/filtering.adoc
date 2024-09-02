@@ -1,4 +1,5 @@
 = Filtering and Sampling
+// tag::single-source[]
 :description: Configure Redpanda Connect to conditionally drop messages.
 
 Filtering events in Redpanda Connect is both easy and flexible, this cookbook demonstrates a few different types of filtering you can do. All of these examples make use of the xref:components:processors/mapping.adoc[`mapping` processor] but shouldn't require any prior knowledge.
@@ -61,3 +62,5 @@ pipeline:
          deleted()
       }
 ----
+
+// end::single-source[]
