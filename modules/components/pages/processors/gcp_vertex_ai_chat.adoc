@@ -10,7 +10,7 @@
 
 component_type_dropdown::[]
 
-Generates responses to messages in a chat conversation, using the Vertex AI API.
+Generates responses to messages in a chat conversation, using the https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform[Vertex API AI^].
 
 ifndef::env-cloud[]
 Introduced in version 4.34.0.
@@ -80,7 +80,7 @@ The GCP project ID to use.
 
 === `credentials_json`
 
-An optional field to set a Google Service Account Credentials json.
+An optional field to set a Google Service Account Credentials JSON.
 
 ifndef::env-cloud[]
 [CAUTION]
@@ -200,7 +200,7 @@ Sets the stop sequences to use. When this pattern is encountered the LLM stops g
 
 === `presence_penalty`
 
-Positive values penalize new tokens if they appear in the text so far, increasing the model's likelihood to talk about new topics.
+Positive values penalize new tokens if they appear in the text already, increasing the model's likelihood to include new topics.
 
 
 *Type*: `float`
