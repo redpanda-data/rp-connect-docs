@@ -1,0 +1,247 @@
+= aws_bedrock_chat
+// tag::single-source[]
+:type: processor
+:status: experimental
+:categories: ["AI"]
+
+// © 2024 Redpanda Data Inc.
+
+
+component_type_dropdown::[]
+
+
+Generates responses to messages in a chat conversation, using the https://aws.amazon.com/bedrock/[AWS Bedrock API^].
+
+ifndef::env-cloud[]
+Introduced in version 4.34.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+# Common configuration fields, showing default values
+label: ""
+aws_bedrock_chat:
+  model: amazon.titan-text-express-v1 # No default (required)
+  prompt: "" # No default (optional)
+  system_prompt: "" # No default (optional)
+  max_tokens: 0 # No default (optional)
+  stop: 0 # No default (optional)
+```
+
+--
+Advanced::
++
+--
+
+```yml
+# All configuration fields, showing default values
+label: ""
+aws_bedrock_chat:
+  region: ""
+  endpoint: ""
+  credentials:
+    profile: ""
+    id: ""
+    secret: ""
+    token: ""
+    from_ec2_role: false
+    role: ""
+    role_external_id: ""
+  model: amazon.titan-text-express-v1 # No default (required)
+  prompt: "" # No default (optional)
+  system_prompt: "" # No default (optional)
+  max_tokens: 0 # No default (optional)
+  stop: 0 # No default (optional)
+  temperature: [] # No default (optional)
+  top_p: 0 # No default (optional)
+```
+
+--
+======
+
+This processor sends prompts to your chosen large language model (LLM) and generates text from the responses, using the AWS Bedrock API.
+
+For more information, see the https://docs.aws.amazon.com/bedrock/latest/userguide[AWS Bedrock documentation^].
+
+== Fields
+
+=== `model`
+
+The model ID to use. For a full list, see the https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html[AWS Bedrock documentation^].
+
+
+*Type*: `string`
+
+
+```yml
+# Examples
+
+model: amazon.titan-text-express-v1
+
+model: anthropic.claude-3-5-sonnet-20240620-v1:0
+
+model: cohere.command-text-v14
+
+model: meta.llama3-1-70b-instruct-v1:0
+
+model: mistral.mistral-large-2402-v1:0
+```
+
+=== `prompt`
+
+The prompt you want to generate a response for. By default, the processor submits the entire payload as a string.
+
+
+*Type*: `string`
+
+
+=== `system_prompt`
+
+The system prompt to submit to the AWS Bedrock LLM.
+
+
+*Type*: `string`
+
+
+=== `max_tokens`
+
+The maximum number of tokens to allow in the generated response.
+
+
+*Type*: `int`
+
+
+=== `stop`
+
+The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options.
+
+
+*Type*: `float`
+
+
+=== `credentials`
+
+Configure which AWS credentials to use (optional). For more information, see xref:guides:cloud/aws.adoc[].
+
+
+*Type*: `object`
+
+
+=== `credentials.profile`
+
+The profile from `~/.aws/credentials` to use.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.id`
+
+The ID of credentials to use.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.secret`
+
+The secret for the credentials you want to use.
+
+ifndef::env-cloud[]
+[CAUTION]
+====
+This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
+====
+endif::[]
+ifdef::env-cloud[]
+include::components:partial$secret_warning.adoc[]
+endif::[]
+
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.token`
+
+The token for the credentials you want to use. You must enter this value when using short-term credentials.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.from_ec2_role`
+
+Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].
+
+
+*Type*: `bool`
+
+*Default*: `false`
+
+ifndef::env-cloud[]
+Requires version 4.2.0 or newer
+endif::[]
+
+=== `credentials.role`
+
+The role ARN to assume.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.role_external_id`
+
+The external ID to use when assuming a role.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `region`
+
+The AWS region to target.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `endpoint`
+
+Specify a custom endpoint for the AWS API.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+
+=== `temperature`
+
+A list of stop sequences. A stop sequence is a sequence of characters that causes the model to stop generating the response.
+
+
+*Type*: `array`
+
+
+=== `top_p`
+
+The percentage of most-likely candidates that the model considers for the next token. For example, if you choose a value of `0.8`, the model selects from the top 80% of the probability distribution of tokens that could be next in the sequence.
+
+
+*Type*: `float`
+
+// end::single-source[]
