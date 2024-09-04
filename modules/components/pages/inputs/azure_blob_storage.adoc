@@ -79,7 +79,7 @@ When downloading large files it's often necessary to process it in streamed part
 
 == Stream new files
 
-By default this input will consume all files found within the target container and will then gracefully terminate. This is referred to as a "batch" mode of operation. However, it's possible to instead configure a container as https://learn.microsoft.com/en-gb/azure/event-grid/event-schema-blob-storage[an Event Grid source^] and then use this as a <<targetsinput, `targets_input`>>, in which case new files are consumed as they're uploaded and Redpanda Connect will continue listening for and downloading files as they arrive. This is referred to as a "streamed" mode of operation.
+By default this input will consume all files found within the target container and will then gracefully terminate. This is referred to as a "batch" mode of operation. However, it's possible to instead configure a container as https://learn.microsoft.com/en-gb/azure/event-grid/event-schema-blob-storage[an Event Grid source^] and then use this as a <<targets_input, `targets_input`>>, in which case new files are consumed as they're uploaded and Redpanda Connect will continue listening for and downloading files as they arrive. This is referred to as a "streamed" mode of operation.
 
 == Metadata
 
@@ -171,31 +171,71 @@ Whether to delete downloaded objects from the blob once they are processed.
 
 === `targets_input`
 
-EXPERIMENTAL: An optional source of download targets, configured as a xref:components:inputs/about.adoc[regular Redpanda Connect input]. Each message yielded by this input should be a single structured object containing a field `name`, which represents the blob to be downloaded.
+CAUTION: This is an experimental field that provides an optional source of download targets, configured as a xref:components:inputs/about.adoc[regular Redpanda Connect input]. Each message yielded by this input should be a single structured object containing a field `name`, which represents the blob to be downloaded.
 
+This requires setting up https://learn.microsoft.com/en-gb/azure/event-grid/event-schema-blob-storage[Azure Blob Storage as an Event Grid source^] and an associated event handler that a Redpanda Connect input can read from. For example, use either one of the following:  
+
+* https://learn.microsoft.com/en-gb/azure/event-grid/handler-event-hubs[Azure Event Hubs] using the `kafka` input 
+* https://learn.microsoft.com/en-gb/azure/event-grid/handler-event-grid-namespace-topic[Namespace topics] using the `mqtt` input
 
 *Type*: `input`
 
 Requires version 4.27.0 or newer
 
-```yml
-# Examples
+[tabs]
+======
+Event Hubs::
++
+--
 
+```yml
+targets_input:
+  kafka:
+    addresses:
+      - <event-hub-hostname>:9093
+    topics: [ <event-hub-name> ]
+    tls:
+      enabled: true
+      skip_cert_verify: false
+    sasl:
+      mechanism: "PLAIN"
+      user: "$ConnectionString"
+      password: <eventhub-connection-string>
+    consumer_group: <consumer-group>
+    start_from_oldest: true
+  processors:
+    - unarchive:
+        format: json_array
+    - mapping: |-
+        if this.subject.contains("/containers/<container-name>/") && this.eventType == "Microsoft.Storage.BlobCreated" {
+          root.name = this.data.url.parse_url().path.trim_prefix("/<container-name>/")
+        } 
+        else {
+          root = deleted()
+        }
+```
+
+--
+Namespace Topics::
++
+--
+
+```yml
 targets_input:
   mqtt:
     topics:
-      - some-topic
+      - <topic-name>
     urls:
-      - example.westeurope-1.ts.eventgrid.azure.net:8883
+      - <url>.eventgrid.azure.net:8883
   processors:
     - unarchive:
         format: json_array
     - mapping: |-
         if this.eventType == "Microsoft.Storage.BlobCreated" {
-          root.name = this.data.url.parse_url().path.trim_prefix("/foocontainer/")
+          root.name = this.data.url.parse_url().path.trim_prefix("/<container-name>/")
         } else {
           root = deleted()
         }
 ```
 
-
+--
