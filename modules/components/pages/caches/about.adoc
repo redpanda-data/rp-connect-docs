@@ -12,12 +12,9 @@ cache_resources:
         - localhost:11211
       default_ttl: 60s
 ----
-
-ifndef::env-cloud[]
 ____
 It's possible to layer caches with read-through and write-through behavior using the xref:components:caches/multilevel.adoc[`multilevel` cache].
 ____
-endif::[]
 
 And then any components that use caches have a field `resource` that specifies the cache resource:
 
