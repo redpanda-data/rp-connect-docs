@@ -11,7 +11,14 @@ metrics:
     flush_period: 100ms
 ----
 
+ifndef::env-cloud[]
 The default metrics configuration is to expose Prometheus metrics on the xref:components:http/about.adoc[service-wide HTTP endpoint] at the endpoints `/metrics` and `/stats`.
+endif::[]
+ifdef::env-cloud[]
+Redpanda Connect automatically xref:cloud-docs:develop:connect:configuration/monitor-connect.adoc[exports detailed metrics] for each component of your data pipeline to a Prometheus endpoint.
+endif::[]
+
+redpanda-connect:develop:getting_started.adoc
 
 == Timings
 
