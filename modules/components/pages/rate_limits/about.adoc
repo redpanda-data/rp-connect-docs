@@ -25,6 +25,7 @@ input:
 
 By using a rate limit in this way we can guarantee that our input will only poll our HTTP source at the rate of 500 requests per second.
 
+ifndef::env-cloud[]
 Some components don't have a `rate_limit` field but we might still wish to throttle them by a rate limit, in which case we can use the xref:components:processors/rate_limit.adoc[`rate_limit` processor] that applies back pressure to a processing pipeline when the limit is reached. For example, if we wished to limit the consumption of lines of a xref:components:inputs/csv.adoc[`csv` file input] to a specified rate limit we can do that with the following:
 
 [source,yaml]
@@ -37,6 +38,10 @@ input:
     - rate_limit:
         resource: foobar
 ----
+endif::[]
+ifdef::env-cloud[]
+Some components don't have a `rate_limit` field but we might still wish to throttle them by a rate limit, in which case we can use the xref:components:processors/rate_limit.adoc[`rate_limit` processor] that applies back pressure to a processing pipeline when the limit is reached. 
+endif::[]
 
 You can find out more about resources xref:configuration:resources.adoc[in this document.]
 
