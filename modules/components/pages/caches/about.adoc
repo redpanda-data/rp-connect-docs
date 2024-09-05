@@ -32,6 +32,8 @@ pipeline:
 
 For the simple case where you wish to store messages in a cache as an output destination for your pipeline check out the xref:components:outputs/cache.adoc[`cache` output]. To see examples of more advanced uses of caches such as hydration and deduplication check out the xref:components:processors/cache.adoc[`cache` processor].
 
+ifndef::env-cloud[]
 You can find out more about resources xref:configuration:resources.adoc[in this document.]
+endif::[]
 
 // end::single-source[]

@@ -38,11 +38,11 @@ input:
     - rate_limit:
         resource: foobar
 ----
+
+You can find out more about resources xref:configuration:resources.adoc[in this document.]
 endif::[]
 ifdef::env-cloud[]
 Some components don't have a `rate_limit` field but we might still wish to throttle them by a rate limit, in which case we can use the xref:components:processors/rate_limit.adoc[`rate_limit` processor] that applies back pressure to a processing pipeline when the limit is reached. 
 endif::[]
-
-You can find out more about resources xref:configuration:resources.adoc[in this document.]
 
 // end::single-source[]
