@@ -15,7 +15,7 @@ ifndef::env-cloud[]
 The default metrics configuration is to expose Prometheus metrics on the xref:components:http/about.adoc[service-wide HTTP endpoint] at the endpoints `/metrics` and `/stats`.
 endif::[]
 ifdef::env-cloud[]
-Redpanda Connect automatically xref:cloud-docs:develop:connect:configuration/monitor-connect.adoc[exports detailed metrics] for each component of your data pipeline to a Prometheus endpoint.
+Redpanda Connect automatically xref:cloud-docs:develop/connect/configuration/monitor-connect.adoc[exports detailed metrics] for each component of your data pipeline to a Prometheus endpoint.
 endif::[]
 
 redpanda-connect:develop:getting_started.adoc
@@ -108,7 +108,12 @@ The `label` label contains the unique label configured for a component emitting 
 
 === `stream`
 
+ifndef::env-cloud[]
 The `stream` label is present in a metric series emitted from a stream config executed when Redpanda Connect is running in xref:guides:streams_mode/about.adoc[streams mode], and is populated with the stream name.
+endif::[]
+ifdef::env-cloud[]
+The `stream` label is present in a metric series emitted from a stream config executed when Redpanda Connect is running in streams mode, and is populated with the stream name.
+endif::[]
 
 == Example
 
