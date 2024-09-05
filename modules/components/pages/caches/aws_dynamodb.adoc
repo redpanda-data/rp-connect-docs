@@ -228,14 +228,7 @@ The ID of credentials to use.
 
 The secret for the credentials being used.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
-
-
 
 *Type*: `string`
 

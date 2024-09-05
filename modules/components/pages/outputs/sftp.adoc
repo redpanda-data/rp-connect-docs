@@ -111,12 +111,7 @@ The username to connect to the SFTP server.
 
 The password for the username to connect to the SFTP server.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 
 
@@ -137,12 +132,7 @@ The private key for the username to connect to the SFTP server.
 
 Optional passphrase for private key.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 
 

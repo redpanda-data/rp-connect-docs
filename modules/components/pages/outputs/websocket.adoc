@@ -128,12 +128,7 @@ endif::[]
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 *Type*: `string`
 
@@ -197,12 +192,7 @@ A plain text certificate to use.
 
 A plain text certificate key to use.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 *Type*: `string`
 
@@ -232,12 +222,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 
 
@@ -283,12 +268,7 @@ A value used to identify the client to the service provider.
 
 A secret used to establish ownership of the consumer key.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 
 
@@ -309,12 +289,7 @@ A value used to gain access to the protected resources on behalf of the user.
 
 A secret provided in order to establish ownership of a given access token.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 
 
@@ -352,12 +327,7 @@ A username to authenticate as.
 
 A password to authenticate with.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 
 

@@ -200,7 +200,7 @@ Requires version 3.45.0 or newer
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
-include::components:partial$secret_warning_sm.adoc[]
+include::components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -264,7 +264,7 @@ A plain text certificate to use.
 
 A plain text certificate key to use.
 
-include::components:partial$secret_warning_sm.adoc[]
+include::components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -294,7 +294,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
-include::components:partial$secret_warning_sm.adoc[]
+include::components:partial$secret_warning.adoc[]
 
 
 *Type*: `string`
@@ -357,7 +357,7 @@ user: ${USER}
 
 A SASL plain text password. It is recommended that you use environment variables to populate this field.
 
-include::components:partial$secret_warning_sm.adoc[]
+include::components:partial$secret_warning.adoc[]
 
 
 *Type*: `string`

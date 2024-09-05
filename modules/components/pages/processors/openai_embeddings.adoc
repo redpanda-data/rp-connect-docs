@@ -45,12 +45,7 @@ The Open API endpoint that the processor sends requests to. Update the default v
 
 The API key for OpenAI API.
 
-ifndef::env-cloud[]
-include::components:partial$secret_warning_sm.adoc[]
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 
 
