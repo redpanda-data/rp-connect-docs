@@ -53,10 +53,10 @@ workflow:
 Most of the time the best way to compose processors is also the simplest, just configure them in series. This is because processors are often CPU bound, low-latency, and you can gain vertical scaling by increasing the number of processor pipeline threads, allowing Redpanda Connect to process xref:configuration:processing_pipelines.adoc[multiple messages in parallel].
 
 ifndef::env-cloud[]
-However, some processors, such as xref:components:processors/http.adoc[`http`], xref:components:processors/aws_lambda.adoc[`aws_lambda`] or xref:components:processors/cache.adoc[`cache`] interact with external services and therefore spend most of their time waiting for a response. These processors tend to be high-latency and low CPU activity, which causes messages to process slowly.
+However, some processors, such as xref:components:processors/http.adoc[`http`], xref:components:processors/aws_lambda.adoc[`aws_lambda`] or xref:components:processors/cache.adoc[`cache`], interact with external services and therefore spend most of their time waiting for a response. These processors tend to be high-latency and low CPU activity, which causes messages to process slowly.
 endif::[]
 ifdef::env-cloud[]
-However, some processors, such as xref:components:processors/aws_lambda.adoc[`aws_lambda`] and xref:components:processors/cache.adoc[`cache`] interact with external services and therefore spend most of their time waiting for a response. These processors tend to be high-latency and low CPU activity, which causes messages to process slowly.
+However, some processors, such as xref:components:processors/aws_lambda.adoc[`aws_lambda`] and xref:components:processors/cache.adoc[`cache`], interact with external services and therefore spend most of their time waiting for a response. These processors tend to be high-latency and low CPU activity, which causes messages to process slowly.
 endif::[]
 
 When a processing pipeline contains multiple network processors that aren't dependent on each other we can benefit from performing these processors in parallel for each individual message, reducing the overall message processing latency.

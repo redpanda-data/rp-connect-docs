@@ -2,7 +2,12 @@
 // tag::single-source[]
 :description: How to configure Redpanda Connect to process a workflow of enrichment services.
 
+ifndef::env-cloud[]
 This cookbook demonstrates how to enrich a stream of JSON documents with HTTP services. This method also works with xref:components:processors/aws_lambda.adoc[AWS Lambda functions], xref:components:processors/subprocess.adoc[subprocesses], etc.
+endif::[]
+ifdef::env-cloud[]
+This cookbook demonstrates how to enrich a stream of JSON documents with HTTP services. This method also works with xref:components:processors/aws_lambda.adoc[AWS Lambda functions].
+endif::[]
 
 We will start off by configuring a single enrichment, then we will move onto a workflow of enrichments with a network of dependencies using the xref:components:processors/workflow.adoc[`workflow` processor].
 
