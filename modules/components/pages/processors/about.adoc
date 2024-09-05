@@ -1,5 +1,6 @@
 = Processors
 // tag::single-source[]
+
 Redpanda Connect processors are functions applied to messages passing through a pipeline. The function signature allows a processor to mutate or drop messages depending on the content of the message. There are many types on offer but the most powerful are the xref:components:processors/mapping.adoc[`mapping`] and xref:components:processors/mutation.adoc[`mutation`] processors.
 
 Processors are set via config, and depending on where in the config they are placed they will be run either immediately after a specific input (set in the input section), on all messages (set in the pipeline section) or before a specific output (set in the output section). Most processors apply to all messages and can be placed in the pipeline section:

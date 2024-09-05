@@ -299,10 +299,7 @@ endif::[]
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
 ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+include::components:partial$secret_warning_sm.adoc[]
 endif::[]
 ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
@@ -372,10 +369,7 @@ A plain text certificate key to use.
 
 
 ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+include::components:partial$secret_warning_sm.adoc[]
 endif::[]
 ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
@@ -412,10 +406,7 @@ Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ci
 
 
 ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+include::components:partial$secret_warning_sm.adoc[]
 endif::[]
 ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
@@ -477,10 +468,7 @@ An optional plain text user JWT (given along with the corresponding user NKey Se
 
 
 ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+include::components:partial$secret_warning_sm.adoc[]
 endif::[]
 ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
@@ -497,10 +485,7 @@ An optional plain text user NKey Seed (given along with the corresponding user J
 
 
 ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+include::components:partial$secret_warning_sm.adoc[]
 endif::[]
 ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]

@@ -1,5 +1,6 @@
 = Metadata
 // tag::single-source[]
+
 In Redpanda Connect each message has raw contents and metadata, which is a map of key/value pairs representing an arbitrary amount of complementary data.
 
 When an input protocol supports attributes or metadata they will automatically be added to your messages, refer to the respective input documentation for a list of metadata keys. When an output supports attributes or metadata any metadata key/value pairs in a message will be sent (subject to service limits).

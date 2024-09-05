@@ -497,10 +497,7 @@ Username.
 An optional password.
 
 ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+include::components:partial$secret_warning_sm.adoc[]
 endif::[]
 ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
@@ -524,10 +521,7 @@ The path to a file containing the private SSH key.
 An optional private SSH key passphrase.
 
 ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+include::components:partial$secret_warning_sm.adoc[]
 endif::[]
 ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]

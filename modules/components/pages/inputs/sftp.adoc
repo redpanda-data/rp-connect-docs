@@ -115,10 +115,7 @@ The username to connect to the SFTP server.
 The password for the username to connect to the SFTP server.
 
 ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+include::components:partial$secret_warning_sm.adoc[]
 endif::[]
 ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
@@ -144,10 +141,7 @@ The private key for the username to connect to the SFTP server.
 Optional passphrase for private key.
 
 ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+include::components:partial$secret_warning_sm.adoc[]
 endif::[]
 ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
