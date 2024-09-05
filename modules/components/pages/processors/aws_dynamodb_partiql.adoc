@@ -1,4 +1,5 @@
 = aws_dynamodb_partiql
+// tag::single-source[]
 :type: processor
 :status: experimental
 :categories: ["Integration"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Executes a PartiQL expression against a DynamoDB table for each message.
 
+ifndef::env-cloud[]
 Introduced in version 3.48.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -158,10 +160,8 @@ The ID of credentials to use.
 === `credentials.secret`
 
 The secret for the credentials being used.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -186,7 +186,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `credentials.role`
 
@@ -206,4 +209,4 @@ An external ID to provide when assuming a role.
 
 *Default*: `""`
 
-
+// end::single-source[]

@@ -1,4 +1,5 @@
 = aws_sqs
+// tag::single-source[]
 :type: input
 :status: stable
 :categories: ["Services","AWS"]
@@ -102,7 +103,10 @@ Whether to set the visibility timeout of the consumed message to zero once it is
 *Type*: `bool`
 
 *Default*: `true`
+
+ifndef::env-cloud[]
 Requires version 3.58.0 or newer
+endif::[]
 
 === `max_number_of_messages`
 
@@ -169,10 +173,8 @@ The ID of credentials to use.
 === `credentials.secret`
 
 The secret for the credentials being used.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -197,7 +199,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `credentials.role`
 
@@ -217,4 +222,4 @@ An external ID to provide when assuming a role.
 
 *Default*: `""`
 
-
+// end::single-source[]

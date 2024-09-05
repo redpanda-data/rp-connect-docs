@@ -1,6 +1,7 @@
 = Interpolation
+// tag::single-source[]
 
-{page-component-title} allows you to dynamically set config fields with environment variables anywhere within a config file using the syntax `${<variable-name>}` (or `${<variable-name>:<default-value>}` in order to specify a default value). This is useful for setting environment specific fields such as addresses:
+Redpanda Connect allows you to dynamically set config fields with environment variables anywhere within a config file using the syntax `${<variable-name>}` (or `${<variable-name>:<default-value>}` in order to specify a default value). This is useful for setting environment specific fields such as addresses:
 
 [source,yaml]
 ----
@@ -24,7 +25,7 @@ When an environment variable interpolation is found within a config, does not ha
 
 == Bloblang queries
 
-Some {page-component-title} fields also support xref:guides:bloblang/about.adoc[Bloblang] function interpolations, which are much more powerful expressions that allow you to query the contents of messages and perform arithmetic. The syntax of a function interpolation is `${!<bloblang expression>}`, where the contents are a bloblang query (the right-hand-side of a bloblang map) including a range of xref:guides:bloblang/about.adoc#functions[functions]. For example, with the following config:
+Some Redpanda Connect fields also support xref:guides:bloblang/about.adoc[Bloblang] function interpolations, which are much more powerful expressions that allow you to query the contents of messages and perform arithmetic. The syntax of a function interpolation is `${!<bloblang expression>}`, where the contents are a bloblang query (the right-hand-side of a bloblang map) including a range of xref:guides:bloblang/about.adoc#functions[functions]. For example, with the following config:
 
 [source,yaml]
 ----
@@ -91,3 +92,5 @@ pipeline:
 ----
 
 If the calculated result is less than or equal to zero the processor does not sleep at all. If the value of `doc.created_at` is a string then our method `.number()` will attempt to parse it into a number.
+
+// end::single-source[]

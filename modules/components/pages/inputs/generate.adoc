@@ -1,4 +1,5 @@
 = generate
+// tag::single-source[]
 :type: input
 :status: stable
 :categories: ["Utility"]
@@ -11,7 +12,9 @@ component_type_dropdown::[]
 
 Generates messages at a given interval using a xref:guides:bloblang/about.adoc[Bloblang] mapping executed without a context. This allows you to generate messages for testing your pipeline configs.
 
+ifndef::env-cloud[]
 Introduced in version 3.40.0.
+endif::[]
 
 ```yml
 # Config fields, showing default values
@@ -147,4 +150,4 @@ Whether messages that are rejected (nacked) at the output level should be automa
 
 *Default*: `true`
 
-
+// end::single-source[]

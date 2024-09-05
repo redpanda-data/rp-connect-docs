@@ -1,4 +1,5 @@
 = cached
+// tag::single-source[]
 :type: processor
 :status: experimental
 :categories: ["Utility"]
@@ -11,7 +12,9 @@ component_type_dropdown::[]
 
 Cache the result of applying one or more processors to messages identified by a key. If the key already exists within the cache the contents of the message will be replaced with the cached result instead of applying the processors. This component is therefore useful in situations where an expensive set of processors need only be executed periodically.
 
+ifndef::env-cloud[]
 Introduced in version 4.3.0.
+endif::[]
 
 ```yml
 # Config fields, showing default values
@@ -152,5 +155,4 @@ The list of processors whose result will be cached.
 
 *Type*: `array`
 
-
-
+// end::single-source[]

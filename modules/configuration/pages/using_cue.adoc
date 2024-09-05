@@ -2,10 +2,10 @@
 
 [CAUTION]
 ====
-CUE support is experimental. It may change for some time to improve CUE's ability to type-check {page-component-title} configurations at the expense of causing new validation errors when moving from one {page-component-title} release to the next.
+CUE support is experimental. It may change for some time to improve CUE's ability to type-check Redpanda Connect configurations at the expense of causing new validation errors when moving from one Redpanda Connect release to the next.
 ====
 
-https://cuelang.org/[*CUE*^] is a powerful configuration language that makes it easier and safer to build {page-component-title} configurations. It achieves this by validating and type-checking configurations as well as allowing you to build useful utilities that reduce boilerplate. In this guide, we will see how to build a {page-component-title} configuration using CUE, export it to YAML and execute it.
+https://cuelang.org/[*CUE*^] is a powerful configuration language that makes it easier and safer to build Redpanda Connect configurations. It achieves this by validating and type-checking configurations as well as allowing you to build useful utilities that reduce boilerplate. In this guide, we will see how to build a Redpanda Connect configuration using CUE, export it to YAML and execute it.
 
 == Prerequisites
 
@@ -48,7 +48,7 @@ hello-cue/
     config.cue
 ----
 
-We are now ready to write our {page-component-title} config in CUE. Let's start by editing our `config.cue` to include the following snippet:
+We are now ready to write our Redpanda Connect config in CUE. Let's start by editing our `config.cue` to include the following snippet:
 
 [source,cue]
 ----
@@ -105,14 +105,14 @@ output:
 tests: []
 ----
 
-We can run this with {page-component-title} to see that it indeed works:
+We can run this with Redpanda Connect to see that it indeed works:
 
 [,bash,subs="attributes+"]
 ----
 rpk connect run <(cue export --out yaml config.cue)
 ----
 
-When you are satisfied with the results, terminate the {page-component-title} process and let's move on to look at some of the nice features that we get with CUE.
+When you are satisfied with the results, terminate the Redpanda Connect process and let's move on to look at some of the nice features that we get with CUE.
 
 == Enhance
 
@@ -312,7 +312,7 @@ The `benthos.cue` file we emitted earlier contains a number of useful types that
 
 * `benthos.#Config`
 
-This definition describes the format of a {page-component-title} config file. You'll want to use it at the top of your configuration file to validate its overall structure.
+This definition describes the format of a Redpanda Connect config file. You'll want to use it at the top of your configuration file to validate its overall structure.
 
 * `benthos.#Input`
 * `benthos.#Output`
@@ -323,8 +323,8 @@ This definition describes the format of a {page-component-title} config file. Yo
 * `benthos.#Metric`
 * `benthos.#Tracer`
 
-Each of these definitions is a disjunction that holds all the corresponding components in {page-component-title}. In other words, a CUE field that is specified as `benthos.#Input`, such as `myfield: benthos.#Input`, must resolve to a valid {page-component-title} input.
+Each of these definitions is a disjunction that holds all the corresponding components in Redpanda Connect. In other words, a CUE field that is specified as `benthos.#Input`, such as `myfield: benthos.#Input`, must resolve to a valid Redpanda Connect input.
 
 == Wrap up
 
-Being able to define helper packages and definitions like `#Guarded` and reusing them across your {page-component-title} configurations is a really powerful feature of CUE. This will allow you to share consistent good practices without messy boilerplate across projects and teams!
+Being able to define helper packages and definitions like `#Guarded` and reusing them across your Redpanda Connect configurations is a really powerful feature of CUE. This will allow you to share consistent good practices without messy boilerplate across projects and teams!

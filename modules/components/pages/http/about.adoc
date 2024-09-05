@@ -1,12 +1,16 @@
 = HTTP
+// tag::single-source[]
 
 // © 2024 Redpanda Data Inc.
 
-When {page-component-title} runs it kicks off an HTTP server that provides a few generally useful endpoints and is also where configured components such as the xref:components:inputs/http_server.adoc[`http_server` input] xref:components:outputs/http_server.adoc[and output] can register their own endpoints if they don't require their own host/port.
+ifndef::env-cloud[]
+When Redpanda Connect runs it kicks off an HTTP server that provides a few generally useful endpoints and is also where configured components such as the xref:components:inputs/http_server.adoc[`http_server` input] xref:components:outputs/http_server.adoc[and output] can register their own endpoints if they don't require their own host/port.
+endif::[]
+ifdef::env-cloud[]
+When Redpanda Connect runs it kicks off an HTTP server that provides a few generally useful endpoints and is also where configured components can register their own endpoints if they don't require their own host/port.
+endif::[]
 
 The configuration for this server lives under the `http` namespace, with the following default values:
-
-
 
 [tabs]
 ======
@@ -56,13 +60,13 @@ The field `root_path` specifies a general prefix for all endpoints, this can hel
 
 == Enabling HTTPS
 
-By default {page-component-title} will serve traffic over HTTP. In order to enforce TLS and serve traffic exclusively over HTTPS you must provide a `cert_file` and `key_file` path in your config, which point to a file containing a certificate and a matching private key for the server respectively.
+By default Redpanda Connect will serve traffic over HTTP. In order to enforce TLS and serve traffic exclusively over HTTPS you must provide a `cert_file` and `key_file` path in your config, which point to a file containing a certificate and a matching private key for the server respectively.
 
 If the certificate is signed by a certificate authority, the `cert_file` should be the concatenation of the server's certificate, any intermediates, and the CA's certificate.
 
 == Enabling basic authentication
 
-By default {page-component-title} does not do any sort of authentication for the service-wide HTTP server. However, it's possible to configure basic authentication with the <<basic-auth,`basic_auth`>> field. Passwords configured must be hashed according to the specified algorithm and base64 encoded, for some hashing algorithms you can do this using {page-component-title} itself:
+By default Redpanda Connect does not do any sort of authentication for the service-wide HTTP server. However, it's possible to configure basic authentication with the <<basic-auth,`basic_auth`>> field. Passwords configured must be hashed according to the specified algorithm and base64 encoded, for some hashing algorithms you can do this using Redpanda Connect itself:
 
 ```sh
 echo mynewpassword | rpk connect blobl 'root = content().hash("sha256").encode("base64")'
@@ -88,7 +92,7 @@ A list of allowed origins to connect from. The literal value `*` can be specifie
 
 == Debug endpoints
 
-The field `debug_endpoints` when set to `true` prompts {page-component-title} to register a few extra endpoints that can be useful for debugging performance or behavioral problems:
+The field `debug_endpoints` when set to `true` prompts Redpanda Connect to register a few extra endpoints that can be useful for debugging performance or behavioral problems:
 
 - `/debug/config/json` returns the loaded config as JSON.
 - `/debug/config/yaml` returns the loaded config as YAML.
@@ -166,7 +170,9 @@ Adds Cross-Origin Resource Sharing headers.
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 3.63.0 or newer
+endif::[]
 
 === `cors.enabled`
 
@@ -260,3 +266,4 @@ Salt for scrypt algorithm. (base64 encoded)
 
 *Default*: `""`
 
+// end::single-source[]

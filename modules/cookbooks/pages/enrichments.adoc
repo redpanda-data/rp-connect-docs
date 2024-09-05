@@ -1,5 +1,6 @@
 = Enrichment Workflows
-:description: How to configure {page-component-title} to process a workflow of enrichment services.
+// tag::single-source[]
+:description: How to configure Redpanda Connect to process a workflow of enrichment services.
 
 This cookbook demonstrates how to enrich a stream of JSON documents with HTTP services. This method also works with xref:components:processors/aws_lambda.adoc[AWS Lambda functions], xref:components:processors/subprocess.adoc[subprocesses], etc.
 
@@ -247,10 +248,10 @@ Great! However, as a streaming pipeline this set up isn't ideal as our first two
 
 == Combining into a workflow
 
-If we configure our enrichments within a xref:components:processors/workflow.adoc[`workflow` processor] we can use {page-component-title} to automatically detect our dependency graph, giving us two key benefits:
+If we configure our enrichments within a xref:components:processors/workflow.adoc[`workflow` processor] we can use Redpanda Connect to automatically detect our dependency graph, giving us two key benefits:
 
 . Enrichments at the same level of a dependency graph (claims and hyperbole) will be executed in parallel.
-. When introducing more enrichments to our pipeline the added complexity of resolving the dependency graph is handled automatically by {page-component-title}.
+. When introducing more enrichments to our pipeline the added complexity of resolving the dependency graph is handled automatically by Redpanda Connect.
 
 Placing our branches within a xref:components:processors/workflow.adoc[`workflow` processor] makes our final pipeline configuration look like this:
 
@@ -319,3 +320,5 @@ output:
 Since the contents of `tmp` won't be required downstream we remove it after our enrichments using a xref:components:processors/mapping.adoc[`mapping` processor].
 
 A xref:components:processors/catch.adoc[`catch`] processor was added at the end of the pipeline which catches documents that failed enrichment. You can replace the log event with a wide range of recovery actions such as sending to a dead-letter/retry queue, dropping the message entirely, etc. You can read more about error handling xref:configuration:error_handling.adoc[in this article].
+
+// end::single-source[]

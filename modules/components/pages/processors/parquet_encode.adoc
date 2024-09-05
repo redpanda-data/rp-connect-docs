@@ -1,4 +1,5 @@
 = parquet_encode
+// tag::single-source[]
 :type: processor
 :status: experimental
 :categories: ["Parsing"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Encodes https://parquet.apache.org/docs/[Parquet files^] from a batch of structured messages.
 
+ifndef::env-cloud[]
 Introduced in version 4.4.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -179,11 +181,14 @@ The default encoding type to use for fields. A custom default encoding is only n
 *Type*: `string`
 
 *Default*: `"DELTA_LENGTH_BYTE_ARRAY"`
+
+ifndef::env-cloud[]
 Requires version 4.11.0 or newer
+endif::[]
 
 Options:
 `DELTA_LENGTH_BYTE_ARRAY`
 , `PLAIN`
 .
 
-
+// end::single-source[]

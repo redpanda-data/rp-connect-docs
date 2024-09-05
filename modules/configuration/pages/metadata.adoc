@@ -1,12 +1,13 @@
 = Metadata
+// tag::single-source[]
 
-In {page-component-title} each message has raw contents and metadata, which is a map of key/value pairs representing an arbitrary amount of complementary data.
+In Redpanda Connect each message has raw contents and metadata, which is a map of key/value pairs representing an arbitrary amount of complementary data.
 
 When an input protocol supports attributes or metadata they will automatically be added to your messages, refer to the respective input documentation for a list of metadata keys. When an output supports attributes or metadata any metadata key/value pairs in a message will be sent (subject to service limits).
 
 == Editing metadata
 
-{page-component-title} allows you to add and remove metadata using the xref:components:processors/mapping.adoc[`mapping` processor]. For example, you can do something like this in your pipeline:
+Redpanda Connect allows you to add and remove metadata using the xref:components:processors/mapping.adoc[`mapping` processor]. For example, you can do something like this in your pipeline:
 
 [source,yaml]
 ----
@@ -47,7 +48,7 @@ output:
     topic: ${! meta("target_topic") }
 ----
 
-{page-component-title} also allows you to conditionally process messages based on their metadata with the xref:components:processors/switch.adoc[`switch` processor]:
+Redpanda Connect also allows you to conditionally process messages based on their metadata with the xref:components:processors/switch.adoc[`switch` processor]:
 
 [source,yaml]
 ----
@@ -111,3 +112,5 @@ output:
     metadata:
       exclude_prefixes: [ "_" ]
 ----
+
+// end::single-source[]

@@ -161,10 +161,8 @@ endpoint: https://localhost:8081
 === `account_key`
 
 Account key.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -180,10 +178,8 @@ account_key: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZ
 === `connection_string`
 
 Connection string.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 

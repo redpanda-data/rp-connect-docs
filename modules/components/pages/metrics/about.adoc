@@ -1,7 +1,7 @@
 = Metrics
+// tag::single-source[]
 
-
-{page-component-title} emits lots of metrics in order to expose how components configured within your pipeline are behaving. You can configure exactly where these metrics end up with the config field `metrics`, which describes a metrics format and destination. For example, if you wished to push them via the StatsD protocol you could use this configuration:
+Redpanda Connect emits lots of metrics in order to expose how components configured within your pipeline are behaving. You can configure exactly where these metrics end up with the config field `metrics`, which describes a metrics format and destination. For example, if you wished to push them via the StatsD protocol you could use this configuration:
 
 [source,yaml]
 ----
@@ -15,11 +15,11 @@ The default metrics configuration is to expose Prometheus metrics on the xref:co
 
 == Timings
 
-It's worth noting that timing metrics within {page-component-title} are measured in nanoseconds and are therefore named with a `_ns` suffix. However, some exporters do not support this level of precision and are downgraded, or have the unit converted for convenience. In these cases the exporter documentation outlines the conversion and why it is made.
+It's worth noting that timing metrics within Redpanda Connect are measured in nanoseconds and are therefore named with a `_ns` suffix. However, some exporters do not support this level of precision and are downgraded, or have the unit converted for convenience. In these cases the exporter documentation outlines the conversion and why it is made.
 
 == Metric names
 
-Each major {page-component-title} component type emits one or more metrics with the name prefixed by the type. These metrics are intended to provide an overview of behavior, performance and health. Some specific component implementations may provide their own unique metrics on top of these standardized ones, these extra metrics can be found listed on their respective documentation pages.
+Each major Redpanda Connect component type emits one or more metrics with the name prefixed by the type. These metrics are intended to provide an overview of behavior, performance and health. Some specific component implementations may provide their own unique metrics on top of these standardized ones, these extra metrics can be found listed on their respective documentation pages.
 
 == Inputs
 
@@ -87,7 +87,7 @@ All cache metrics have a label `operation` denoting the operation that triggered
 
 == Metric labels
 
-The standard metric names are unique to the component type, but a benthos config may consist of any number of component instantiations. In order to provide a metrics series that is unique for each instantiation {page-component-title} adds labels (or tags) that uniquely identify the instantiation. These labels are as follows:
+The standard metric names are unique to the component type, but a benthos config may consist of any number of component instantiations. In order to provide a metrics series that is unique for each instantiation Redpanda Connect adds labels (or tags) that uniquely identify the instantiation. These labels are as follows:
 
 === `path`
 
@@ -101,11 +101,11 @@ The `label` label contains the unique label configured for a component emitting 
 
 === `stream`
 
-The `stream` label is present in a metric series emitted from a stream config executed when {page-component-title} is running in xref:guides:streams_mode/about.adoc[streams mode], and is populated with the stream name.
+The `stream` label is present in a metric series emitted from a stream config executed when Redpanda Connect is running in xref:guides:streams_mode/about.adoc[streams mode], and is populated with the stream name.
 
 == Example
 
-The following {page-component-title} configuration:
+The following Redpanda Connect configuration:
 
 [source,yaml]
 ----
@@ -154,7 +154,7 @@ output_sent{label="bar",path="root.output"}
 
 == Metric mapping
 
-Since {page-component-title} emits a large variety of metrics it is often useful to restrict or modify the metrics that are emitted. This can be done using the xref:guides:bloblang/about.adoc[Bloblang mapping language] in the field `metrics.mapping`. This is a mapping executed for each metric that is registered within the {page-component-title} service and allows you to delete an entire series, modify the series name and delete or modify individual labels.
+Since Redpanda Connect emits a large variety of metrics it is often useful to restrict or modify the metrics that are emitted. This can be done using the xref:guides:bloblang/about.adoc[Bloblang mapping language] in the field `metrics.mapping`. This is a mapping executed for each metric that is registered within the Redpanda Connect service and allows you to delete an entire series, modify the series name and delete or modify individual labels.
 
 Within the mapping the input document (referenced by the keyword `this`) is a string value containing the metric name, and the resulting document (referenced by the keyword `root`) must be a string value containing the resulting name. As is standard in Bloblang mappings, if the value of `root` is not assigned within the mapping then the metric name remains unchanged. If the value of `root` is `deleted()` then the metric series is dropped.
 
@@ -182,3 +182,5 @@ metrics:
   prometheus:
     use_histogram_timing: false
 ----
+
+// end::single-source[]

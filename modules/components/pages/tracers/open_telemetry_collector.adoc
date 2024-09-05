@@ -1,4 +1,5 @@
 = open_telemetry_collector
+// tag::single-source[]
 :type: tracer
 :status: experimental
 
@@ -128,7 +129,9 @@ Settings for trace sampling. Sampling is recommended for high-volume production 
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 4.25.0 or newer
+endif::[]
 
 === `sampling.enabled`
 
@@ -155,4 +158,4 @@ ratio: 0.85
 ratio: 0.5
 ```
 
-
+// end::single-source[]

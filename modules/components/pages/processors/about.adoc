@@ -1,7 +1,7 @@
 = Processors
+// tag::single-source[]
 
-
-{page-component-title} processors are functions applied to messages passing through a pipeline. The function signature allows a processor to mutate or drop messages depending on the content of the message. There are many types on offer but the most powerful are the xref:components:processors/mapping.adoc[`mapping`] and xref:components:processors/mutation.adoc[`mutation`] processors.
+Redpanda Connect processors are functions applied to messages passing through a pipeline. The function signature allows a processor to mutate or drop messages depending on the content of the message. There are many types on offer but the most powerful are the xref:components:processors/mapping.adoc[`mapping`] and xref:components:processors/mutation.adoc[`mutation`] processors.
 
 Processors are set via config, and depending on where in the config they are placed they will be run either immediately after a specific input (set in the input section), on all messages (set in the pipeline section) or before a specific output (set in the output section). Most processors apply to all messages and can be placed in the pipeline section:
 
@@ -24,7 +24,7 @@ Processors have an optional field `label` that can uniquely identify them in obs
 
 == Error handling
 
-Some processors have conditions whereby they might fail. Rather than throw these messages into the abyss {page-component-title} still attempts to send these messages onwards, and has mechanisms for filtering, recovering or dead-letter queuing messages that have failed which can be read about xref:configuration:error_handling.adoc[here].
+Some processors have conditions whereby they might fail. Rather than throw these messages into the abyss Redpanda Connect still attempts to send these messages onwards, and has mechanisms for filtering, recovering or dead-letter queuing messages that have failed which can be read about xref:configuration:error_handling.adoc[here].
 
 === Error logs
 
@@ -70,7 +70,7 @@ components_by_category::[processor]
 
 == Batching and multiple-part messages
 
-All {page-component-title} processors support multiple-part messages, which are synonymous with batches. This enables some cool xref:configuration:windowed_processing.adoc[windowed processing] capabilities.
+All Redpanda Connect processors support multiple-part messages, which are synonymous with batches. This enables some cool xref:configuration:windowed_processing.adoc[windowed processing] capabilities.
 
 Many processors are able to perform their behaviors on specific parts of a message batch, or on all parts, and have a field `parts` for specifying an array of part indexes they should apply to. If the list of target parts is empty these processors will be applied to all message parts.
 
@@ -79,3 +79,5 @@ Part indexes can be negative, and if so the part will be selected from the end c
 Some processors such as xref:components:processors/dedupe.adoc[`dedupe`] act across an entire batch, when instead we might like to perform them on individual messages of a batch. In this case the xref:components:processors/for_each.adoc[`for_each`] processor can be used.
 
 You can read more about batching xref:configuration:batching.adoc[in this document].
+
+// end::single-source[]

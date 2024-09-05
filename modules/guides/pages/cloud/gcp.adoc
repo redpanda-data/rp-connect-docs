@@ -1,10 +1,11 @@
 = Google Cloud Platform
-:description: Find out about GCP components in {page-component-title}
+// tag::single-source[]
+:description: Find out about GCP components in Redpanda Connect
 
-There are many components within {page-component-title} which utilize Google Cloud Platform (GCP) services. You will find that each of
+There are many components within Redpanda Connect which utilize Google Cloud Platform (GCP) services. You will find that each of
 these components require valid credentials.
 
-When running {page-component-title} inside a Google Cloud environment that has a
+When running Redpanda Connect inside a Google Cloud environment that has a
 https://cloud.google.com/iam/docs/service-accounts#default[default service account^], it can automatically retrieve the
 service account credentials to call Google Cloud APIs through a library called Application Default Credentials (ADC).
 
@@ -15,3 +16,5 @@ as a JSON file. Then all you need to do set the path to this JSON file in the `G
 environment variable.
 
 Please refer to https://cloud.google.com/docs/authentication/production[this document^] for details.
+
+// end::single-source[]

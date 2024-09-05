@@ -1,6 +1,7 @@
 = Resources
+// tag::single-source[]
 
-Resources are components within {page-component-title} that are declared with a unique label and can be referenced any number of times within a configuration. Only one instance of each named resource is created, but it is safe to use it in multiple places as they can be shared without consequence.
+Resources are components within Redpanda Connect that are declared with a unique label and can be referenced any number of times within a configuration. Only one instance of each named resource is created, but it is safe to use it in multiple places as they can be shared without consequence.
 
 Some components such as caches and rate limits can _only_ be created as a resource. However, for components where it's optional there are a few reasons why it might be advantageous to do so.
 
@@ -97,11 +98,11 @@ processor_resources:
         Desires: "are-empty"
 ----
 
-Then when you execute {page-component-title} use the environment variable to choose your resource: `FEATURE_REQUEST=get_foo rpk connect run ./your_config.yaml`.
+Then when you execute Redpanda Connect use the environment variable to choose your resource: `FEATURE_REQUEST=get_foo rpk connect run ./your_config.yaml`.
 
 === With imports
 
-However, {page-component-title} allows you to import resources from separate files with the cli flag `-r` or `-resources`, which can be a useful way to switch out resources with common names based on your chosen environment. For example, with a main configuration file `config.yaml`:
+However, Redpanda Connect allows you to import resources from separate files with the cli flag `-r` or `-resources`, which can be a useful way to switch out resources with common names based on your chosen environment. For example, with a main configuration file `config.yaml`:
 
 [source,yaml]
 ----
@@ -152,3 +153,5 @@ rpk connect run -r ./production/request.yaml ./config.yaml
 ----
 
 These flags also support wildcards, which allows you to import an entire directory of resource files like `rpk connect run -r "./staging/*.yaml" ./config.yaml`.
+
+// end::single-source[]

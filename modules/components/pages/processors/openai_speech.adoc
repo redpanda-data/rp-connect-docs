@@ -1,4 +1,5 @@
 = openai_speech
+// tag::single-source[]
 :type: processor
 :status: experimental
 :categories: ["AI"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Generates audio from a text description and other attributes, using OpenAI API.
 
+ifndef::env-cloud[]
 Introduced in version 4.32.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -69,10 +71,8 @@ The Open API endpoint that the processor sends requests to. Update the default v
 === `api_key`
 
 The API key for OpenAI API.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -152,3 +152,5 @@ response_format: wav
 
 response_format: pcm
 ```
+
+// end::single-source[]

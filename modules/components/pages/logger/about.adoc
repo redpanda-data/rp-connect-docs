@@ -1,8 +1,10 @@
 = Logger
 
+// tag::single-source[]
+
 // © 2024 Redpanda Data Inc.
 
-{page-component-title} logging prints to stdout (or stderr if your output is stdout) and is formatted as https://brandur.org/logfmt[logfmt^] by default. Use these configuration options to change both the logging formats as well as the destination of logs.
+Redpanda Connect logging prints to stdout (or stderr if your output is stdout) and is formatted as https://brandur.org/logfmt[logfmt^] by default. Use these configuration options to change both the logging formats as well as the destination of logs.
 
 
 
@@ -164,3 +166,4 @@ The maximum number of days to retain old log files based on the timestamp encode
 
 *Default*: `0`
 
+// end::single-source[]

@@ -1,4 +1,5 @@
 = group_by_value
+// tag::single-source[]
 :type: processor
 :status: stable
 :categories: ["Composition"]
@@ -60,3 +61,4 @@ output:
     path: docs/${! meta("kafka_key") }/${! count("files") }-${! timestamp_unix_nano() }.tar.gz
 ```
 
+// end::single-source[]

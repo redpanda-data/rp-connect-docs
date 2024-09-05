@@ -1,4 +1,5 @@
 = system_window
+// tag::single-source[]
 :type: buffer
 :status: beta
 :categories: ["Windowing"]
@@ -11,7 +12,9 @@ component_type_dropdown::[]
 
 Chops a stream of messages into tumbling or sliding windows of fixed temporal size, following the system clock.
 
+ifndef::env-cloud[]
 Introduced in version 3.53.0.
+endif::[]
 
 ```yml
 # Config fields, showing default values
@@ -199,4 +202,4 @@ allowed_lateness: 10s
 allowed_lateness: 1m
 ```
 
-
+// end::single-source[]

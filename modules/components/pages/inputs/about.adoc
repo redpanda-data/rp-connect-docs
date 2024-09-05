@@ -1,6 +1,8 @@
 = Inputs
 :page-aliases: components:inputs.adoc
 
+// tag::single-source[]
+
 An input is a source of data piped through an array of optional xref:components:processors/about.adoc[processors]:
 
 [source,yaml]
@@ -22,13 +24,13 @@ input:
        root.link_count = this.links.length()
 ----
 
-Some inputs have a logical end, for example a xref:components:inputs/csv.adoc[`csv` input] ends once the last row is consumed, when this happens the input gracefully terminates and {page-component-title} will shut itself down once all messages have been processed fully.
+Some inputs have a logical end, for example a xref:components:inputs/csv.adoc[`csv` input] ends once the last row is consumed, when this happens the input gracefully terminates and Redpanda Connect will shut itself down once all messages have been processed fully.
 
 It's also possible to specify a logical end for an input that otherwise doesn't have one with the xref:components:inputs/read_until.adoc[`read_until` input], which checks a condition against each consumed message in order to determine whether it should be the last.
 
 == Brokering
 
-Only one input is configured at the root of a {page-component-title} config. However, the root input can be a xref:components:inputs/broker.adoc[broker] which combines multiple inputs and merges the streams:
+Only one input is configured at the root of a Redpanda Connect config. However, the root input can be a xref:components:inputs/broker.adoc[broker] which combines multiple inputs and merges the streams:
 
 [source,yaml]
 ----
@@ -58,8 +60,9 @@ Sometimes it's useful to consume a sequence of inputs, where an input is only co
 
 == Generating messages
 
-It's possible to generate data with {page-component-title} using the xref:components:inputs/generate.adoc[`generate` input], which is also a convenient way to trigger scheduled pipelines.
+It's possible to generate data with Redpanda Connect using the xref:components:inputs/generate.adoc[`generate` input], which is also a convenient way to trigger scheduled pipelines.
 
+// end::single-source[]
 
 == Categories
 

@@ -1,4 +1,5 @@
 = kafka
+// tag::single-source[]
 :type: input
 :status: stable
 :categories: ["Services"]
@@ -152,7 +153,9 @@ A list of topics to consume from. Multiple comma separated topics can be listed 
 
 *Type*: `array`
 
+ifndef::env-cloud[]
 Requires version 3.33.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -226,15 +229,16 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -299,10 +303,8 @@ A plain text certificate to use.
 === `tls.client_certs[].key`
 
 A plain text certificate key to use.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -333,10 +335,8 @@ The path of a certificate key to use.
 A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.
 
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -403,10 +403,8 @@ user: ${USER}
 === `sasl.password`
 
 A PLAIN password. It is recommended that you use environment variables to populate this field.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -491,7 +489,10 @@ The maximum number of messages of the same topic and partition that can be proce
 *Type*: `int`
 
 *Default*: `1024`
+
+ifndef::env-cloud[]
 Requires version 3.33.0 or newer
+endif::[]
 
 === `auto_replay_nacks`
 
@@ -527,7 +528,9 @@ EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] that attempts 
 
 *Type*: `string`
 
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -692,4 +695,4 @@ processors:
       format: json_array
 ```
 
-
+// end::single-source[]

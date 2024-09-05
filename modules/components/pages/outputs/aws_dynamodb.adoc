@@ -1,4 +1,5 @@
 = aws_dynamodb
+// tag::single-source[]
 :type: output
 :status: stable
 :categories: ["Services","AWS"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Inserts items into a DynamoDB table.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -342,10 +344,8 @@ The ID of credentials to use.
 === `credentials.secret`
 
 The secret for the credentials being used.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -370,7 +370,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `credentials.role`
 
@@ -434,4 +437,4 @@ The maximum period to wait before retry attempts are abandoned. If zero then no 
 
 *Default*: `"30s"`
 
-
+// end::single-source[]

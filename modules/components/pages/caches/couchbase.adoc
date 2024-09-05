@@ -78,12 +78,8 @@ Username to connect to the cluster.
 === `password`
 
 Password to connect to the cluster.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
 
-
+include::components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

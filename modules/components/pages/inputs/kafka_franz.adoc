@@ -1,4 +1,5 @@
 = kafka_franz
+// tag::single-source[]
 :type: input
 :status: beta
 :categories: ["Services"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 A Kafka input using the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
+ifndef::env-cloud[]
 Introduced in version 3.61.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -257,15 +259,16 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -330,10 +333,8 @@ A plain text certificate to use.
 === `tls.client_certs[].key`
 
 A plain text certificate key to use.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -364,11 +365,8 @@ The path of a certificate key to use.
 A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.
 
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
 
+include::components:partial$secret_warning.adoc[]
 
 
 *Type*: `string`
@@ -438,10 +436,8 @@ A username to provide for PLAIN or SCRAM-* authentication.
 === `sasl[].password`
 
 A password to provide for PLAIN or SCRAM-* authentication.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -521,10 +517,8 @@ The ID of credentials to use.
 === `sasl[].aws.credentials.secret`
 
 The secret for the credentials being used.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -549,7 +543,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `sasl[].aws.credentials.role`
 
@@ -680,4 +677,4 @@ processors:
       format: json_array
 ```
 
-
+// end::single-source[]

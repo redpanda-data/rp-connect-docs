@@ -1,4 +1,5 @@
 = sequence
+// tag::single-source[]
 :type: input
 :status: stable
 :categories: ["Utility"]
@@ -193,7 +194,9 @@ Each message must be structured (JSON or otherwise processed into a structured f
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 3.40.0 or newer
+endif::[]
 
 === `sharded_join.type`
 
@@ -252,5 +255,4 @@ An array of inputs to read from sequentially.
 
 *Type*: `array`
 
-
-
+// end::single-source[]

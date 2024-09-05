@@ -1,4 +1,5 @@
 = socket
+// tag::single-source[]
 :type: input
 :status: stable
 :categories: ["Network"]
@@ -71,6 +72,9 @@ The xref:components:scanners/about.adoc[scanner] by which the stream of bytes co
 *Type*: `scanner`
 
 *Default*: `{"lines":{}}`
+
+ifndef::env-cloud[]
 Requires version 4.25.0 or newer
+endif::[]
 
-
+// end::single-source[]

@@ -1,4 +1,5 @@
 = sftp
+// tag::single-source[]
 :type: input
 :status: beta
 :categories: ["Network"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Consumes files from an SFTP server.
 
+ifndef::env-cloud[]
 Introduced in version 3.39.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -111,10 +113,8 @@ The username to connect to the SFTP server.
 === `credentials.password`
 
 The password for the username to connect to the SFTP server.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -134,11 +134,8 @@ The private key for the username to connect to the SFTP server.
 === `credentials.private_key_pass`
 
 Optional passphrase for private key.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
 
+include::components:partial$secret_warning.adoc[]
 
 
 *Type*: `string`
@@ -170,7 +167,10 @@ The xref:components:scanners/about.adoc[scanner] by which the stream of bytes co
 *Type*: `scanner`
 
 *Default*: `{"to_the_end":{}}`
+
+ifndef::env-cloud[]
 Requires version 4.25.0 or newer
+endif::[]
 
 === `delete_on_finish`
 
@@ -188,7 +188,9 @@ An experimental mode whereby the input will periodically scan the target paths f
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 3.42.0 or newer
+endif::[]
 
 === `watcher.enabled`
 
@@ -244,4 +246,4 @@ A xref:components:caches/about.adoc[cache resource] for storing the paths of fil
 
 *Default*: `""`
 
-
+// end::single-source[]

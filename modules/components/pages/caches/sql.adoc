@@ -1,4 +1,5 @@
 = sql
+// tag::single-source[]
 :type: cache
 :status: experimental
 :categories: ["Services"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Uses an SQL database table as a destination for storing cache key/value items.
 
+ifndef::env-cloud[]
 Introduced in version 4.26.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -243,7 +245,9 @@ If a statement fails for any reason a warning log will be emitted but the operat
 
 *Type*: `array`
 
+ifndef::env-cloud[]
 Requires version 4.10.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -267,7 +271,9 @@ If the statement fails for any reason a warning log will be emitted but the oper
 
 *Type*: `string`
 
+ifndef::env-cloud[]
 Requires version 4.10.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -313,5 +319,4 @@ An optional maximum number of open connections to the database. If conn_max_idle
 
 *Type*: `int`
 
-
-
+// end::single-source[]

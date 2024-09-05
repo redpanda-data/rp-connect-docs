@@ -1,4 +1,5 @@
 = aws_s3
+// tag::single-source[]
 :type: output
 :status: stable
 :categories: ["Services","AWS"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Sends message parts as objects to an Amazon S3 bucket. Each object is uploaded with the path specified with the `path` field.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -312,7 +314,10 @@ An optional server side encryption algorithm.
 *Type*: `string`
 
 *Default*: `""`
+
+ifndef::env-cloud[]
 Requires version 3.63.0 or newer
+endif::[]
 
 === `force_path_style_urls`
 
@@ -490,10 +495,8 @@ The ID of credentials to use.
 === `credentials.secret`
 
 The secret for the credentials being used.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -518,7 +521,10 @@ Use the credentials of a host EC2 machine configured to assume https://docs.aws.
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 4.2.0 or newer
+endif::[]
 
 === `credentials.role`
 
@@ -538,4 +544,4 @@ An external ID to provide when assuming a role.
 
 *Default*: `""`
 
-
+// end::single-source[]

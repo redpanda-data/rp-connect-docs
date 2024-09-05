@@ -1,10 +1,10 @@
 = Bloblang Walkthrough
+// tag::single-source[]
 :description: A step by step introduction to Bloblang
 
+Bloblang is the most advanced mapping language that you'll learn from this walkthrough (probably). It is designed for readability, the power to shape even the most outrageous input documents, and to easily make erratic schemas bend to your will. Bloblang is the native mapping language of Redpanda Connect, but it has been designed as a general purpose technology ready to be adopted by other tools.
 
-Bloblang is the most advanced mapping language that you'll learn from this walkthrough (probably). It is designed for readability, the power to shape even the most outrageous input documents, and to easily make erratic schemas bend to your will. Bloblang is the native mapping language of {page-component-title}, but it has been designed as a general purpose technology ready to be adopted by other tools.
-
-In this walkthrough you'll learn how to make new friends by mapping their documents, and lose old friends as they grow jealous and bitter of your mapping abilities. There are a few ways to execute Bloblang but the way we'll do it in this guide is to pull a {page-component-title} docker image and run the command `rpk connect blobl server`, which opens up an interactive Bloblang editor:
+In this walkthrough you'll learn how to make new friends by mapping their documents, and lose old friends as they grow jealous and bitter of your mapping abilities. There are a few ways to execute Bloblang but the way we'll do it in this guide is to pull a Redpanda Connect docker image and run the command `rpk connect blobl server`, which opens up an interactive Bloblang editor:
 
 [source,sh,subs="attributes+"]
 ----
@@ -12,11 +12,13 @@ docker pull docker.redpanda.com/redpandadata/connect:latest
 docker run -p 4195:4195 --rm docker.redpanda.com/redpandadata/connect blobl server --no-open --host 0.0.0.0
 ----
 
+ifndef::env-cloud[]
 [NOTE]
 .Alternatives
 ====
-For alternative {page-component-title} installation options check out the xref:guides:getting_started.adoc[getting started guide].
+For alternative Redpanda Connect installation options check out the xref:guides:getting_started.adoc[getting started guide].
 ====
+endif::[]
 
 Next, open your browser at `+http://localhost:4195+` and you should see an app with three panels, the top-left is where you paste an input document, the bottom is your Bloblang mapping and on the top-right is the output.
 
@@ -403,7 +405,7 @@ This version is more granular and will capture each of the errors individually, 
 
 Sometimes errors are what we want. Failing a mapping with an error allows us to handle the bad document in other ways, such as routing it to a dead-letter queue or filtering it entirely.
 
-You can read about common {page-component-title} error handling patterns for bad data in the xref:configuration:error_handling.adoc[error handling guide], but the first step is to create the error. Luckily, Bloblang has a range of ways of creating errors under certain circumstances, which can be used in order to validate the data being mapped.
+You can read about common Redpanda Connect error handling patterns for bad data in the xref:configuration:error_handling.adoc[error handling guide], but the first step is to create the error. Luckily, Bloblang has a range of ways of creating errors under certain circumstances, which can be used in order to validate the data being mapped.
 
 There are xref:guides:bloblang/methods.adoc#type-coercion[a few helper methods] that make validating and coercing fields nice and easy, try this mapping out:
 
@@ -703,7 +705,7 @@ Try running that mapping with the following input document:
 
 == Unit testing
 
-{page-component-title} has it's own xref:configuration:unit_testing.adoc[unit testing capabilities] that you can also use for your mappings. To start with save a mapping into a file called something like `naughty_man.blobl`, we can use the example above from the reusable mappings section:
+Redpanda Connect has it's own xref:configuration:unit_testing.adoc[unit testing capabilities] that you can also use for your mappings. To start with save a mapping into a file called something like `naughty_man.blobl`, we can use the example above from the reusable mappings section:
 
 [source,coffeescript]
 ----
@@ -759,7 +761,7 @@ tests:
 
 As you can see we've defined a single test, where we point to our mapping file which will be executed in our test. We then specify an input message which is a reduced version of the document we tried out before, and finally we specify output predicates, which is a JSON comparison against the output document.
 
-We can execute these tests with `rpk connect test ./naughty_man_test.yaml`, {page-component-title} will also automatically find our tests if you simply run `rpk connect test ./...`. You should see an output something like:
+We can execute these tests with `rpk connect test ./naughty_man_test.yaml`, Redpanda Connect will also automatically find our tests if you simply run `rpk connect test ./...`. You should see an output something like:
 
 [source,text]
 ----
@@ -791,4 +793,6 @@ Because in actual fact our expected output is wrong, I'll leave it to you to spo
 Test 'naughty_man_test.yaml' succeeded
 ----
 
-And now our mapping, should we need to expand it in the future, is better protected against regressions. You can read more about the {page-component-title} unit test specification, including alternative output predicates, in xref:configuration:unit_testing.adoc[this document].
+And now our mapping, should we need to expand it in the future, is better protected against regressions. You can read more about the Redpanda Connect unit test specification, including alternative output predicates, in xref:configuration:unit_testing.adoc[this document].
+
+// end::single-source[]

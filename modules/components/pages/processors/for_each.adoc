@@ -1,4 +1,5 @@
 = for_each
+// tag::single-source[]
 :type: processor
 :status: stable
 :categories: ["Composition"]
@@ -21,4 +22,4 @@ This is useful for forcing batch wide processors such as xref:components:process
 
 Please note that most processors already process per message of a batch, and this processor is not needed in those cases.
 
-
+// end::single-source[]

@@ -1,4 +1,5 @@
 = openai_transcription
+// tag::single-source[]
 :type: processor
 :status: experimental
 :categories: ["AI"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Generates a transcription of spoken audio in the input language, using the OpenAI API.
 
+// tag::single-source[]
 Introduced in version 4.32.0.
-
+// end::single-source[]
 
 [tabs]
 ======
@@ -68,10 +70,8 @@ The Open API endpoint that the processor sends requests to. Update the default v
 === `api_key`
 
 The API key for OpenAI API.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -128,3 +128,5 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 
 *Type*: `string`
+
+// end::single-source[]

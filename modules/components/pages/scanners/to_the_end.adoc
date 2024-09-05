@@ -1,4 +1,5 @@
 = to_the_end
+// tag::single-source[]
 :type: scanner
 :status: stable
 
@@ -20,5 +21,4 @@ to_the_end: {}
 Some sources of data may not have a logical end, therefore caution should be made to exclusively use this scanner when the end of an input stream is clearly defined (and well within memory).
 ====
 
-
-
+// end::single-source[]

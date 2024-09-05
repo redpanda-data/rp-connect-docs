@@ -1,4 +1,5 @@
 = Bloblang Arithmetic
+// tag::single-source[]
 :description: How arithmetic works within Bloblang
 
 
@@ -35,3 +36,5 @@ Numerical comparisons (`>`, `>=`, `<`, `+<=+`) are valid to use against number v
 === Boolean
 
 Boolean comparison operators (`||`, `&&`) are valid to use against boolean values only (`true` or `false`). If a non-boolean value is used as an argument then a xref:guides:bloblang/about.adoc#error-handling[recoverable mapping error will be thrown].
+
+// end::single-source[]

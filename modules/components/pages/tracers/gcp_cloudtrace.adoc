@@ -1,4 +1,5 @@
 = gcp_cloudtrace
+// tag::single-source[]
 :type: tracer
 :status: experimental
 
@@ -10,8 +11,9 @@ component_type_dropdown::[]
 
 Send tracing events to a https://cloud.google.com/trace[Google Cloud Trace^].
 
+ifndef::env-cloud[]
 Introduced in version 4.2.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -87,5 +89,4 @@ The period of time between each flush of tracing spans.
 
 *Type*: `string`
 
-
-
+// end::single-source[]

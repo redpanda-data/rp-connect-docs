@@ -1,4 +1,5 @@
 = schema_registry_decode
+// tag::single-source[]
 :type: processor
 :status: beta
 :categories: ["Parsing","Integration"]
@@ -113,7 +114,9 @@ Allows you to specify open authentication via OAuth version 1.
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 4.7.0 or newer
+endif::[]
 
 === `oauth.enabled`
 
@@ -136,10 +139,8 @@ A value used to identify the client to the service provider.
 === `oauth.consumer_secret`
 
 A secret used to establish ownership of the consumer key.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -159,10 +160,8 @@ A value used to gain access to the protected resources on behalf of the user.
 === `oauth.access_token_secret`
 
 A secret provided in order to establish ownership of a given access token.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -177,7 +176,9 @@ Allows you to specify basic authentication.
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 4.7.0 or newer
+endif::[]
 
 === `basic_auth.enabled`
 
@@ -200,10 +201,8 @@ A username to authenticate as.
 === `basic_auth.password`
 
 A password to authenticate with.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -218,7 +217,9 @@ BETA: Allows you to specify JWT authentication.
 
 *Type*: `object`
 
+ifndef::env-cloud[]
 Requires version 4.7.0 or newer
+endif::[]
 
 === `jwt.enabled`
 
@@ -290,15 +291,16 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -363,11 +365,8 @@ A plain text certificate to use.
 === `tls.client_certs[].key`
 
 A plain text certificate key to use.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
 
+include::components:partial$secret_warning.adoc[]
 
 
 *Type*: `string`
@@ -397,10 +396,8 @@ The path of a certificate key to use.
 A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.
 
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -416,4 +413,4 @@ password: foo
 password: ${KEY_PASSWORD}
 ```
 
-
+// end::single-source[]

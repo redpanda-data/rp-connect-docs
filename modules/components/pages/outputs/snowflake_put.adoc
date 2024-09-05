@@ -1,4 +1,5 @@
 = snowflake_put
+// tag::single-source[]
 :type: output
 :status: beta
 :categories: ["Services"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Sends messages to Snowflake stages and, optionally, calls Snowpipe to load this data into one or more tables.
 
+ifndef::env-cloud[]
 Introduced in version 4.0.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -493,10 +495,8 @@ Username.
 === `password`
 
 An optional password.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
+
+include::components:partial$secret_warning.adoc[]
 
 
 
@@ -514,12 +514,8 @@ The path to a file containing the private SSH key.
 === `private_key_pass`
 
 An optional private SSH key passphrase.
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
 
-
+include::components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -585,7 +581,10 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 *Type*: `string`
 
 *Default*: `""`
+
+ifndef::env-cloud[]
 Requires version v4.12.0 or newer
+endif::[]
 
 === `file_extension`
 
@@ -596,7 +595,10 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 *Type*: `string`
 
 *Default*: `""`
+
+ifndef::env-cloud[]
 Requires version v4.12.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -651,7 +653,10 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 *Type*: `string`
 
 *Default*: `""`
+
+ifndef::env-cloud[]
 Requires version v4.12.0 or newer
+endif::[]
 
 === `snowpipe`
 
@@ -782,4 +787,4 @@ The maximum number of parallel message batches to have in flight at any given ti
 
 *Default*: `1`
 
-
+// end::single-source[]
