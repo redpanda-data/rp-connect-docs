@@ -64,7 +64,12 @@ And returns a JSON payload of the form:
 
 Since each request only applies to a single document we will make this enrichment scale by deploying multiple HTTP services and hitting those instances in parallel across our document batches.
 
+ifndef::env-cloud[]
 In order to send a mapped request and map the response back into the original document we will use the xref:components:processors/branch.adoc[`branch` processor], with a child xref:components:processors/http.adoc[`http`] processor.
+endif::[]
+ifdef::env-cloud[]
+In order to send a mapped request and map the response back into the original document we will use the xref:components:processors/branch.adoc[`branch` processor], with a child `http` processor.
+endif::[]
 
 [source,yaml]
 ----
