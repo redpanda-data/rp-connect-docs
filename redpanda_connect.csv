@@ -110,7 +110,7 @@ kafka_migrator_bundle,input,kafka_migrator_bundle,4.35.0,certified,n,y,y,y
 kafka_migrator_bundle,output,kafka_migrator_bundle,4.35.0,certified,n,y,y,y
 kafka_migrator_offsets,output,kafka_migrator_offsets,4.35.0,certified,n,y,y,y
 lines,scanner,lines,0.0.0,certified,n,y,y,n
-local,rate limit,local,0.0.0,certified,n,y,y,n
+local,rate_limit,local,0.0.0,certified,n,y,y,n
 log,processor,log,0.0.0,certified,n,y,y,n
 logger,metric,logger,0.0.0,certified,n,n,n,n
 lru,cache,lru,0.0.0,community,n,y,y,n
@@ -179,7 +179,7 @@ re_match,scanner,re_match,0.0.0,certified,n,y,y,n
 read_until,input,read_until,0.0.0,certified,n,y,y,n
 redis,cache,Redis,0.0.0,certified,n,y,y,n
 redis,processor,Redis,0.0.0,certified,n,y,y,n
-redis,rate limit,Redis,4.12.0,certified,n,y,y,n
+redis,rate_limit,Redis,4.12.0,certified,n,y,y,n
 redis_hash,output,Redis Hash,0.0.0,certified,n,y,y,n
 redis_list,input,Redis List,0.0.0,certified,n,y,y,n
 redis_list,output,Redis List,0.0.0,certified,n,y,y,n
@@ -218,7 +218,6 @@ splunk,input,Splunk,4.30.0,certified,n,y,y,y
 splunk_hec,output,Splunk,4.30.0,certified,n,y,y,y
 sql,cache,SQL,4.26.0,certified,n,n,n,n
 sql_insert,output,ClickHouse,3.59.0,community,n,y,y,n
-sql_insert,output,sql_insert,3.59.0,certified,n,y,y,n
 sql_insert,output,Azure Cosmos DB,0.0.0,community,n,y,y,n
 sql_insert,output,Microsoft SQL Server,0.0.0,community,n,y,y,n
 sql_insert,output,MYSQL,0.0.0,certified,n,y,y,n
