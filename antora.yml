@@ -216,6 +216,9 @@ asciidoc:
       - "ollama_embeddings"
       - "aws_bedrock_chat"
       - "gcp_vertex_ai_chat"
+      - "kafka_migrator"
+      - "kafka_migrator_bundle"
+      - "kafka_migrator_offsets"
     # Defines the connectors that are marked 'certified'.
     # This list is a temporary solution until each connector's source code includes the correct support level information. https://github.com/redpanda-data/benthos/pull/21/commits/aba447436e44faf7d4279d3394d82084ea0ed1e1#diff-26839711b0903fcf81e360ea17690bd67eb5e924cbabb62ffe85202c98c2a0a6
     certified-components:
@@ -279,6 +282,12 @@ asciidoc:
         types: ["input", "output"]
       - name: "kafka_franz"
         types: ["input", "output"]
+      - name: "kafka_bundle"
+        types: ["input", "output"]  
+      - name: "kafka_migrator"
+        types: ["input", "output"]
+      - name: "kafka_migrator_offsets"
+        types: ["output"]
       - name: "log"
         types: ["processor"]
       - name: "mapping"
