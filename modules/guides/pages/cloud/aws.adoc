@@ -19,12 +19,16 @@ This section contains many fields and it isn't immediately clear which of them a
 
 == Credentials
 
+ifndef::env-cloud[]
 The first thing to make clear is that _all_ of these fields are optional. When all fields are left blank Redpanda Connect will attempt to load credentials from a shared credentials file (`~/.aws/credentials`). The profile loaded will be `default` unless the `AWS_PROFILE` environment variable is set.
 
 == Explicit credentials
+endif::[]
+
 
 By explicitly setting the credentials you are using at the component level it's possible to connect to components using different accounts within the same Redpanda Connect process.
 
+ifndef::env-cloud[]
 === Select a profile
 
 If you are using your shared credentials file but wish to explicitly select a profile set the `profile` field:
@@ -35,7 +39,10 @@ credentials:
   profile: foo
 ----
 
+
 === Manual
+
+endif::[]
 
 If you are using long term credentials for your account you only need to set the fields `id` and `secret`:
 
