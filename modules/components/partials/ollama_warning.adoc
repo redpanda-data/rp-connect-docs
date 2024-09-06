@@ -1,0 +1,9 @@
+ifdef::env-cloud[]
+
+NOTE: Ollama connectors are not currently available in Serverless.
+
+[CAUTION]
+====
+Pricing is based on resource consumption. Running Ollama connectors is resource intensive. When Redpanda Connect runs a pipeline with a Ollama processor in it, Redpanda Cloud deploys GPU-powered machines.
+====
+endif::[]
