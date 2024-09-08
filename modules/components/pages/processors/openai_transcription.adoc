@@ -12,9 +12,9 @@ component_type_dropdown::[]
 
 Generates a transcription of spoken audio in the input language, using the OpenAI API.
 
-// tag::single-source[]
+ifndef::env-cloud[]
 Introduced in version 4.32.0.
-// end::single-source[]
+endif::[]
 
 [tabs]
 ======
