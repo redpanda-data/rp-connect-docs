@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Executes a SQL query against https://learn.microsoft.com/en-us/azure/cosmos-db/introduction[Azure CosmosDB^] and creates a batch of messages from each page of items.
 
+ifndef::env-cloud[]
 Introduced in version v4.25.0.
-
+endif::[]
 
 [tabs]
 ======

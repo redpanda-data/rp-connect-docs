@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Downloads objects within an Azure Blob Storage container, optionally filtered by a prefix.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -159,7 +160,10 @@ The xref:components:scanners/about.adoc[scanner] by which the stream of bytes co
 *Type*: `scanner`
 
 *Default*: `{"to_the_end":{}}`
+
+ifndef::env-cloud[]
 Requires version 4.25.0 or newer
+endif::[]
 
 === `delete_objects`
 
@@ -181,7 +185,9 @@ This requires setting up https://learn.microsoft.com/en-gb/azure/event-grid/even
 
 *Type*: `input`
 
+ifndef::env-cloud[]
 Requires version 4.27.0 or newer
+endif::[]
 
 [tabs]
 ======

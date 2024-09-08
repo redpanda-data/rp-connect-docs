@@ -13,7 +13,9 @@ component_type_dropdown::[]
 
 Executes a `SELECT` query against BigQuery and creates a message for each row received.
 
+ifndef::env-cloud[]
 Introduced in version 3.63.0.
+endif::[]
 
 ```yml
 # Config fields, showing default values
