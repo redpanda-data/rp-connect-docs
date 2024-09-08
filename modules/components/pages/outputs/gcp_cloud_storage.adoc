@@ -12,8 +12,9 @@ component_type_dropdown::[]
 
 Sends message parts as objects to a Google Cloud Storage bucket. Each object is uploaded with the path specified with the `path` field.
 
+ifndef::env-cloud[]
 Introduced in version 3.43.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -177,7 +178,10 @@ Determines how file path collisions should be dealt with.
 *Type*: `string`
 
 *Default*: `"overwrite"`
+
+ifndef::env-cloud[]
 Requires version 3.53.0 or newer
+endif::[]
 
 |===
 | Option | Summary
