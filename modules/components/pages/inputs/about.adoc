@@ -24,7 +24,12 @@ input:
        root.link_count = this.links.length()
 ----
 
+ifndef::env-cloud[]
 Some inputs have a logical end, for example a xref:components:inputs/csv.adoc[`csv` input] ends once the last row is consumed, when this happens the input gracefully terminates and Redpanda Connect will shut itself down once all messages have been processed fully.
+endif::[]
+ifdef::env-cloud[]
+Some inputs have a logical end, when this happens the input gracefully terminates and Redpanda Connect will shut itself down once all messages have been processed fully.
+endif::[]
 
 It's also possible to specify a logical end for an input that otherwise doesn't have one with the xref:components:inputs/read_until.adoc[`read_until` input], which checks a condition against each consumed message in order to determine whether it should be the last.
 

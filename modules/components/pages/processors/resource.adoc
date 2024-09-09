@@ -42,7 +42,8 @@ processor_resources:
       root.meta.link_count = this.links.length()
       root.user.age = this.user.age.number()
 ```
-
+ifndef::env-cloud[]
 You can find out more about resources in xref:configuration:resources.adoc[]
+endif::[]
 
 // end::single-source[]

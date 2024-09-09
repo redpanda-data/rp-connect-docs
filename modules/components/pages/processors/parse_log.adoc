@@ -9,9 +9,12 @@
 
 component_type_dropdown::[]
 
-
+ifndef::env-cloud[]
 Parses common log <<formats>> into <<codecs, structured data>>. This is easier and often much faster than xref:components:processors/grok.adoc[`grok`].
-
+endif::[]
+ifdef::env-cloud[]
+Parses common log <<formats>> into <<codecs, structured data>>.
+endif::[]
 
 [tabs]
 ======

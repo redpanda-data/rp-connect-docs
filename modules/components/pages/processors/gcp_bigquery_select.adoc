@@ -1,4 +1,5 @@
 = gcp_bigquery_select
+// tag::single-source[]
 :type: processor
 :status: experimental
 :categories: ["Integration"]
@@ -11,7 +12,9 @@ component_type_dropdown::[]
 
 Executes a `SELECT` query against BigQuery and replaces messages with the rows returned.
 
+ifndef::env-cloud[]
 Introduced in version 3.64.0.
+endif::[]
 
 ```yml
 # Config fields, showing default values
@@ -148,5 +151,4 @@ An optional suffix to append to the select query.
 
 *Type*: `string`
 
-
-
+// end::single-source[]

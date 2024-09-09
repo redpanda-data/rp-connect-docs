@@ -1,4 +1,5 @@
 = gcp_bigquery
+// tag::single-source[]
 :type: output
 :status: beta
 :categories: ["GCP","Services"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Sends messages as new rows to a Google Cloud BigQuery table.
 
+ifndef::env-cloud[]
 Introduced in version 3.55.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -406,4 +408,4 @@ processors:
       format: json_array
 ```
 
-
+// end::single-source[]

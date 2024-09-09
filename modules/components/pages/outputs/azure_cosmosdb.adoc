@@ -1,4 +1,5 @@
 = azure_cosmosdb
+// tag::single-source[]
 :type: output
 :status: experimental
 :categories: ["Azure"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Creates or updates messages as JSON documents in https://learn.microsoft.com/en-us/azure/cosmos-db/introduction[Azure CosmosDB^].
 
+ifndef::env-cloud[]
 Introduced in version v4.25.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -517,4 +519,4 @@ Additionally, instead of installing the container self-signed certificate which 
 
 Then you can access the CosmosDB UI via `http://localhost:8080/_explorer/index.html` and use `http://localhost:8080` as the CosmosDB endpoint.
 
-
+// end::single-source[]

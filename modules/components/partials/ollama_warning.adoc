@@ -1,0 +1,9 @@
+ifdef::env-cloud[]
+
+NOTE: Ollama connectors are currently only available on BYOC GCP clusters.
+
+[CAUTION]
+====
+When Redpanda Connect runs a data pipeline with a Ollama processor in it, Redpanda Cloud deploys a GPU-powered instance for the exclusive use of that pipeline. As pricing is based on resource consumption, this can have cost implications.
+====
+endif::[]

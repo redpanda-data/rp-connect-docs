@@ -1,4 +1,5 @@
 = gcp_cloud_storage
+// tag::single-source[]
 :type: input
 :status: beta
 :categories: ["Services","GCP"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Downloads objects within a Google Cloud Storage bucket, optionally filtered by a prefix.
 
+ifndef::env-cloud[]
 Introduced in version 3.43.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -98,7 +100,10 @@ The xref:components:scanners/about.adoc[scanner] by which the stream of bytes co
 *Type*: `scanner`
 
 *Default*: `{"to_the_end":{}}`
+
+ifndef::env-cloud[]
 Requires version 4.25.0 or newer
+endif::[]
 
 === `delete_objects`
 
@@ -109,4 +114,4 @@ Whether to delete downloaded objects from the bucket once they are processed.
 
 *Default*: `false`
 
-
+// end::single-source[]

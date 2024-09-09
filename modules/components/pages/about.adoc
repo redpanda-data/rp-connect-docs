@@ -33,7 +33,12 @@ These are the main components within Redpanda Connect and they provide the major
 
 == Observability components
 
-There are also the observability components xref:components:http/about.adoc[http], xref:components:logger/about.adoc[logger], xref:components:metrics/about.adoc[metrics], and xref:components:tracers/about.adoc[tracing], which allow you to specify how Redpanda Connect exposes observability data:
+ifndef::env-cloud[]
+There are also the observability components: xref:components:http/about.adoc[http], xref:components:logger/about.adoc[logger], xref:components:metrics/about.adoc[metrics], and xref:components:tracers/about.adoc[tracing], which allow you to specify how Redpanda Connect exposes observability data.
+endif::[]
+ifdef::env-cloud[]
+There are also the observability components: xref:components:logger/about.adoc[logger], xref:components:metrics/about.adoc[metrics], and xref:components:tracers/about.adoc[tracing], which allow you to specify how Redpanda Connect exposes observability data.
+endif::[]
 
 [source,yaml]
 ----

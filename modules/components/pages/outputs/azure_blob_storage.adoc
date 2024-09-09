@@ -1,4 +1,5 @@
 = azure_blob_storage
+// tag::single-source[]
 :type: output
 :status: beta
 :categories: ["Services","Azure"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Sends message parts as objects to an Azure Blob Storage Account container. Each object is uploaded with the filename specified with the `container` field.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -191,4 +193,4 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 *Default*: `64`
 
-
+// end::single-source[]

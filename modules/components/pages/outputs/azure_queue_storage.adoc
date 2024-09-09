@@ -1,4 +1,5 @@
 = azure_queue_storage
+// tag::single-source[]
 :type: output
 :status: beta
 :categories: ["Services","Azure"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Sends messages to an Azure Storage Queue.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -254,4 +256,4 @@ processors:
       format: json_array
 ```
 
-
+// end::single-source[]

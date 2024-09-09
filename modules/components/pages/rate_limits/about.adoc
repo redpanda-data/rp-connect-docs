@@ -12,6 +12,7 @@ rate_limit_resources:
       interval: 1s
 ----
 
+ifndef::env-cloud[]
 And most components that hit external services have a field `rate_limit` for specifying a rate limit resource to use, identified by the `label` field. For example, if we wanted to use our `foobar` rate limit with an xref:components:inputs/http_client.adoc[`http_client`] input it would look like this:
 
 [source,yaml]
@@ -22,9 +23,23 @@ input:
     verb: GET
     rate_limit: foobar
 ----
+endif::[]
+ifdef::env-cloud[]
+And most components that hit external services have a field `rate_limit` for specifying a rate limit resource to use, identified by the `label` field. For example, if we wanted to use our `foobar` rate limit with a `http_client` input it would look like this:
+
+[source,yaml]
+----
+input:
+  http_client:
+    url: TODO
+    verb: GET
+    rate_limit: foobar
+----
+endif::[]
 
 By using a rate limit in this way we can guarantee that our input will only poll our HTTP source at the rate of 500 requests per second.
 
+ifndef::env-cloud[]
 Some components don't have a `rate_limit` field but we might still wish to throttle them by a rate limit, in which case we can use the xref:components:processors/rate_limit.adoc[`rate_limit` processor] that applies back pressure to a processing pipeline when the limit is reached. For example, if we wished to limit the consumption of lines of a xref:components:inputs/csv.adoc[`csv` file input] to a specified rate limit we can do that with the following:
 
 [source,yaml]
@@ -39,5 +54,9 @@ input:
 ----
 
 You can find out more about resources xref:configuration:resources.adoc[in this document.]
+endif::[]
+ifdef::env-cloud[]
+Some components don't have a `rate_limit` field but we might still wish to throttle them by a rate limit, in which case we can use the xref:components:processors/rate_limit.adoc[`rate_limit` processor] that applies back pressure to a processing pipeline when the limit is reached. 
+endif::[]
 
 // end::single-source[]

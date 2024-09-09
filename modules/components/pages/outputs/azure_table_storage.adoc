@@ -1,4 +1,5 @@
 = azure_table_storage
+// tag::single-source[]
 :type: output
 :status: beta
 :categories: ["Services","Azure"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Stores messages in an Azure Table Storage table.
 
+ifndef::env-cloud[]
 Introduced in version 3.36.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -362,4 +364,4 @@ processors:
       format: json_array
 ```
 
-
+// end::single-source[]

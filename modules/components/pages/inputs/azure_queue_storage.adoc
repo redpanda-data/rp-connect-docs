@@ -1,4 +1,5 @@
 = azure_queue_storage
+// tag::single-source[]
 :type: input
 :status: beta
 :categories: ["Services","Azure"]
@@ -11,8 +12,9 @@ component_type_dropdown::[]
 
 Dequeue objects from an Azure Storage Queue.
 
+ifndef::env-cloud[]
 Introduced in version 3.42.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -118,7 +120,10 @@ The timeout duration until a dequeued message gets visible again, 30s by default
 *Type*: `string`
 
 *Default*: `"30s"`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `max_in_flight`
 
@@ -138,4 +143,4 @@ If set to `true` the queue is polled on each read request for information such a
 
 *Default*: `false`
 
-
+// end::single-source[]
