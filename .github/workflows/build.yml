@@ -4,7 +4,7 @@
 name: Build Production Site
 on:
   push:
-    branches: [main]
+    branches: [main,connect-csv]
 permissions:
   id-token: write
   contents: read
