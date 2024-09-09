@@ -11,7 +11,7 @@
 component_type_dropdown::[]
 
 
-Use the `kafka_migrator` output in conjunction with the `kafka_franz` input that is configured to read the `__consumer_offsets` topic.
+Use the `kafka_migrator_offsets` output in conjunction with the `kafka_franz` input that is configured to read the `__consumer_offsets` topic.
 This output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
 
