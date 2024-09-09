@@ -39,7 +39,24 @@ bounds_check,processor,bounds_check,0.0.0,certified,n,y,y,n
 branch,processor,branch,0.0.0,certified,n,y,y,n
 broker,input,broker,0.0.0,certified,n,y,y,n
 broker,output,broker,0.0.0,certified,n,y,y,n
-cache,output,cache,0.0.0,certified,n,y,y,n
+cache,output,AWS DynamoDB,0.0.0,community,n,y,y,n
+cache,input,AWS S3,0.0.0,certified,n,y,y,n
+cache,output,AWS S3,0.0.0,certified,n,y,y,n
+cache,processor,Couchbase,0.0.0,community,n,y,y,n
+cache,input,File,0.0.0,certified,n,y,y,n
+cache,output,File,0.0.0,certified,n,y,y,n
+cache,input,GCP Cloud Storage,0.0.0,certified,n,y,y,n
+cache,output,GCP Cloud Storage,0.0.0,certified,n,y,y,n
+cache,output,Buffer,0.0.0,certified,n,y,y,n
+cache,input,MongoDB,0.0.0,community,n,y,y,n
+cache,output,MongoDB,0.0.0,community,n,y,y,n
+cache,processor,MongoDB,0.0.0,community,n,y,y,n
+cache,input,NATS KV,0.0.0,certified,n,y,y,n
+cache,output,NATS KV,0.0.0,certified,n,y,y,n
+cache,processor,NATS KV,0.0.0,certified,n,y,y,n
+cache,processor,noop,0.0.0,certified,n,y,y,n
+cache,processor,Redis,0.0.0,certified,n,y,y,n
+cache,rate_limit,Redis,0.0.0,certified,n,y,y,n
 cache,processor,cache,0.0.0,certified,n,y,y,n
 cached,processor,cached,4.3.0,certified,n,y,y,n
 cassandra,input,cassandra,0.0.0,community,n,n,n,n
@@ -220,7 +237,7 @@ sql,cache,SQL,4.26.0,certified,n,n,n,n
 sql_insert,output,ClickHouse,3.59.0,community,n,y,y,n
 sql_insert,output,Azure Cosmos DB,0.0.0,community,n,y,y,n
 sql_insert,output,Microsoft SQL Server,0.0.0,community,n,y,y,n
-sql_insert,output,MYSQL,0.0.0,certified,n,y,y,n
+sql_insert,output,MySQL,0.0.0,certified,n,y,y,n
 sql_insert,output,Oracle,0.0.0,certified,n,y,y,n
 sql_insert,output,PostgreSQL,0.0.0,certified,n,y,y,n
 sql_insert,output,Snowflake,0.0.0,community,n,n,y,n
@@ -229,7 +246,7 @@ sql_insert,output,Trino,0.0.0,community,n,n,y,n
 sql_insert,processor,ClickHouse,0.0.0,community,n,n,n,n
 sql_insert,processor,Azure Cosmos DB,0.0.0,community,n,n,n,n
 sql_insert,processor,Microsoft SQL Server,0.0.0,community,n,n,n,n
-sql_insert,processor,MYSQL,0.0.0,certified,n,y,y,n
+sql_insert,processor,MySQL,0.0.0,certified,n,y,y,n
 sql_insert,processor,Oracle,0.0.0,certified,n,y,y,n
 sql_insert,processor,PostgreSQL,0.0.0,certified,n,y,y,n
 sql_insert,processor,Snowflake,0.0.0,community,n,n,n,n
@@ -238,7 +255,7 @@ sql_insert,processor,Trino,0.0.0,community,n,n,n,n
 sql_raw,input,ClickHouse,0.0.0,community,n,n,n,n
 sql_raw,input,Azure Cosmos DB,0.0.0,community,n,n,n,n
 sql_raw,input,Microsoft SQL Server,0.0.0,community,n,n,n,n
-sql_raw,input,MYSQL,0.0.0,certified,n,y,y,n
+sql_raw,input,MySQL,0.0.0,certified,n,y,y,n
 sql_raw,input,Oracle,0.0.0,certified,n,y,y,n
 sql_raw,input,PostgreSQL,0.0.0,certified,n,y,y,n
 sql_raw,input,Snowflake,0.0.0,community,n,n,n,n
@@ -247,7 +264,7 @@ sql_raw,input,Trino,0.0.0,community,n,n,n,n
 sql_raw,output,ClickHouse,0.0.0,community,n,n,n,n
 sql_raw,output,Azure Cosmos DB,0.0.0,community,n,n,n,n
 sql_raw,output,Microsoft SQL Server,0.0.0,community,n,n,n,n
-sql_raw,output,MYSQL,0.0.0,certified,n,y,y,n
+sql_raw,output,MySQL,0.0.0,certified,n,y,y,n
 sql_raw,output,Oracle,0.0.0,certified,n,y,y,n
 sql_raw,output,PostgreSQL,0.0.0,certified,n,y,y,n
 sql_raw,output,Snowflake,0.0.0,community,n,n,n,n
@@ -256,7 +273,7 @@ sql_raw,output,Trino,0.0.0,community,n,n,n,n
 sql_raw,processor,ClickHouse,0.0.0,community,n,n,n,n
 sql_raw,processor,Azure Cosmos DB,0.0.0,community,n,n,n,n
 sql_raw,processor,Microsoft SQL Server,0.0.0,community,n,n,n,n
-sql_raw,processor,MYSQL,0.0.0,certified,n,y,y,n
+sql_raw,processor,MySQL,0.0.0,certified,n,y,y,n
 sql_raw,processor,Oracle,0.0.0,certified,n,y,y,n
 sql_raw,processor,PostgreSQL,0.0.0,certified,n,y,y,n
 sql_raw,processor,Snowflake,0.0.0,community,n,n,n,n
@@ -265,7 +282,7 @@ sql_raw,processor,Trino,0.0.0,community,n,n,n,n
 sql_select,input,ClickHouse,0.0.0,community,n,n,n,n
 sql_select,input,Azure Cosmos DB,0.0.0,community,n,n,n,n
 sql_select,input,Microsoft SQL Server,0.0.0,community,n,n,n,n
-sql_select,input,MYSQL,0.0.0,certified,n,y,y,n
+sql_select,input,MySQL,0.0.0,certified,n,y,y,n
 sql_select,input,Oracle,0.0.0,certified,n,y,y,n
 sql_select,input,PostgreSQL,0.0.0,certified,n,y,y,n
 sql_select,input,Snowflake,0.0.0,community,n,n,n,n
@@ -274,7 +291,7 @@ sql_select,input,Trino,0.0.0,community,n,n,n,n
 sql_select,processor,ClickHouse,0.0.0,community,n,n,n,n
 sql_select,processor,Azure Cosmos DB,0.0.0,community,n,n,n,n
 sql_select,processor,Microsoft SQL Server,0.0.0,community,n,n,n,n
-sql_select,processor,MYSQL,0.0.0,certified,n,y,y,n
+sql_select,processor,MySQL,0.0.0,certified,n,y,y,n
 sql_select,processor,Oracle,0.0.0,certified,n,y,y,n
 sql_select,processor,PostgreSQL,0.0.0,certified,n,y,y,n
 sql_select,processor,Snowflake,0.0.0,community,n,n,n,n
