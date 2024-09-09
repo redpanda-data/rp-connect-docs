@@ -1,0 +1,174 @@
+= Retrival Augmented Generation (RAG)
+// tag::single-source[]
+:description: How to configure Redpanda Connect to create a RAG pipeline using Postgres and PGVector.
+
+This cookbook demonstrates how to create a Retrival Augmented Generation (RAG) pipeline using Postgres and https://github.com/pgvector/pgvector[PGVector]. We'll create two Redpanda Connect pipelines: one for creating embeddings with https://ollama.ai[Ollama^] and another for searching the data using https://github.com/pgvector/pgvector[PGVector]. We will run both pipelines together using xref:guides/streams_mode/about.adoc[streams mode].
+
+== Compute the embeddings
+
+We'll start out by defining the indexing pipeline that will take textual data from Redpanda, compute embeddings for it, and then write it into a Postgres table with a PGVector index on the embeddings column.
+
+Articles to be indexed are received over the topic `articles` and look like this:
+
+[source,json]
+----
+{
+  "type": "article",
+  "article": {
+    "id": "123foo",
+    "title": "Dogs Stop Barking",
+    "content": "The world was shocked this morning to find that all dogs have stopped barking."
+  }
+}
+----
+
+We'll be able to read from our Redpanda topic using the xref:components:inputs/kafka.adoc[`kafka`] input:
+
+[source,yaml]
+----
+input:
+  kafka:
+    addresses: [ "${REDPANDA_CLUSTER}" ]
+    topics: [ articles ]
+    consumer_group: rp_connect_articles_group
+    tls:
+      enabled: true
+    sasl:
+      mechanism: SCRAM-SHA-256
+      user: "${REDPANDA_USER}"
+      password: "${REDPANDA_PASSWORD}"
+----
+
+We'll be using https://ollama.com/library/nomic-embed-text[Nomic Embed] to compute embeddings. Since each request only applies to a single document we will make this scale by making requests in parallel across our document batches.
+
+In order to send a mapped request and map the response back into the original document we will use the xref:components:processors/branch.adoc[`branch` processor], with a child xref:components:processors/ollama_embeddings.adoc[`ollama_embeddings`] processor.
+
+[source,yaml]
+----
+pipeline:
+  threads: -1
+  processors:
+    - branch:
+        request_map: 'root = "search_document: %s\n%s".format(this.article.title, this.article.content)'
+        processors:
+          - ollama_embeddings:
+              model: nomic-embed-text
+        result_map: 'root.article.embeddings = this'
+----
+
+With this pipeline our documents will come out looking something like this:
+
+[source,yaml]
+----
+{
+  "type": "article",
+  "article": {
+    "id": "123foo",
+    "title": "Dogs Stop Barking",
+    "content": "The world was shocked this morning to find that all dogs have stopped barking.",
+    "embeddings": [0.754, 0.19283, 0.231, 0.834], # This vector will actually have 768 dimensions
+  }
+}
+----
+
+Now we can send that to Postgres using the xref:components:outputs/sql_insert.adoc[`sql_insert`] output. We'll also take advantage of the `init_statement` functionality to setup our `pgvector` and our table.
+
+[source,yaml]
+----
+output:
+  sql_insert:
+    driver: postgres
+    dsn: "${PG_CONNECTION_STRING}"
+    init_statement: |
+      CREATE EXTENSION IF NOT EXISTS vector;
+      CREATE TABLE IF NOT EXISTS searchable_text (
+        id varchar(128) PRIMARY KEY,
+        title text NOT NULL,
+        body text NOT NULL,
+        embeddings vector(768) NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS text_hnsw_index
+        ON searchable_text 
+        USING hnsw (embeddings vector_l2_ops);
+    table: searchable_text
+    columns: ["id", "title", "body", "embeddings"]
+    args_mapping: "[this.article.id, this.article.title, this.article.content, this.article.embeddings.vector()]"
+----
+
+We can save this pipeline as `indexing.yaml` and run it with `rpk connect run ./indexing.yaml` to test and make sure our postgres table is being populated with embeddings.
+
+== Generating search responses
+
+In order to generate responses to questions over our dataset we're creating embeddings for, we'll use an xref:components:inputs/http_server.adoc[HTTP server input] to recieve the questions. Since we'll be running this pipeline in Streams mode, our HTTP server will xref:guides:streams_mode/about.adoc#http-endpoints[endpoints prefixed with stream identifier], which in our case is the same as the filename: `search`.
+
+[source,yaml]
+----
+input:
+  http_server:
+    path: /
+    allowed_verbs: [ GET ]
+    sync_response:
+      headers:
+        Content-Type: application/json
+----
+
+Our user query will come in as the query parameter `q` like so `http://localhost:4195/search?q=question_here`. Since query parameters as exposed as metadata in the `http_server` input, we can reference that in bloblang with `@q`.
+
+[source,yaml]
+----
+pipeline:
+  processors:
+    - label: compute_embeddings
+      ollama_embeddings:
+        model: nomic-embed-text
+        text: "search_query: %s".format(@q)
+----
+
+Now our payload is the embeddings vector and we can use Postgres to fetch the top 3 most similar documents to our embeddings vector using the xref:components:processors/sql_raw.adoc[`sql_raw`] processor.
+
+[source,yaml]
+----
+    - sql_raw:
+        driver: "postgres"
+        dsn: "${PG_CONNECTION_STRING}"
+        query: SELECT title, body FROM searchable_text ORDER BY embeddings <-> $1 LIMIT 3
+        args_mapping: "[ this.vector() ]"
+----
+
+With our looked up information, as well as our initial query, we can use the xref:components:processors/ollama_chat.adoc[`ollama_chat` processor] to respond to the user's question as text.
+
+[source,yaml]
+----
+    - label: generate_response
+      ollama_chat:
+        model: llama3.1
+        prompt: |
+          Your task is to respond to user queries using the provided information.
+
+          The user asked: ${! @q }
+          Context: ${!this.map_each(row -> "%s\n%s".format(row.title, row.body)).join("\n\n")}
+          Response:
+----
+
+Now that we've generated our response, we can send that back as the response to our HTTP server using xref:components:processors/sync_response.adoc[`sync_response`], then we will delete the message so nothing goes to the output using a xref:components:processors/mapping.adoc[bloblang mapping].
+
+[source,yaml]
+----
+    - mapping: 'root.response = content().string()'
+    - sync_response: {}
+    - mapping: 'root = deleted()'
+----
+
+Now that that both pipelines are ready, we can run them both using streams mode: `rpk connect streams indexing.yaml search.yaml`.
+
+Once some documents have been indexed, we can query our system via: `curl -G 'localhost:4195/search' --data-urlencode 'q=what is happening to the dogs?' | jq`
+
+The output will look something like:
+
+[source,json]
+----
+{
+  "response": "Everyone in the world woke up today shocked as their beloved pooches were slient - unable to bark."
+}
+----
+// end::single-source[]
