@@ -62,11 +62,11 @@ output:
 The way this works is that if your processor with the side effect (`redis` in this case) succeeds then the final `mapping` processor deletes the message which results in an acknowledgement. If the processor fails then the `try` block exits early without executing the `mapping` processor and instead the message is routed to the `reject` output, which nacks the message with an error message containing the error obtained from the `redis` processor.
 
 
-
+ifndef::env-cloud[]
 == Categories
 
 components_by_category::[processor]
-
+endif::[]
 
 == Batching and multiple-part messages
 
