@@ -1,14 +1,19 @@
-= Retrival Augmented Generation (RAG)
+= Retrieval-Augmented Generation (RAG)
 // tag::single-source[]
-:description: How to configure Redpanda Connect to create a RAG pipeline using Postgres and PGVector.
+:description: How to configure Redpanda Connect to create a RAG pipeline, using PostgreSQL and PGVector.
 
-This cookbook demonstrates how to create a Retrival Augmented Generation (RAG) pipeline using Postgres and https://github.com/pgvector/pgvector[PGVector]. We'll create two Redpanda Connect pipelines: one for creating embeddings with https://ollama.ai[Ollama^] and another for searching the data using https://github.com/pgvector/pgvector[PGVector]. We will run both pipelines together using xref:guides/streams_mode/about.adoc[streams mode].
+This cookbook shows you how to create a Retrieval-Augmented Generation (RAG) pipeline, using PostgreSQL and https://github.com/pgvector/pgvector[PGVector^]. 
+
+Follow the cookbook to:
+
+* Create two Redpanda Connect data pipelines: one for creating embeddings with https://ollama.ai[Ollama^] and another for searching the data, using https://github.com/pgvector/pgvector[PGVector^].
+* Run the two pipelines in parallel using xref:guides/streams_mode/about.adoc[streams mode].
 
 == Compute the embeddings
 
 We'll start out by defining the indexing pipeline that will take textual data from Redpanda, compute embeddings for it, and then write it into a Postgres table with a PGVector index on the embeddings column.
 
-Articles to be indexed are received over the topic `articles` and look like this:
+Articles for indexing are received over the topic `articles` and look like this:
 
 [source,json]
 ----
@@ -22,7 +27,7 @@ Articles to be indexed are received over the topic `articles` and look like this
 }
 ----
 
-We'll be able to read from our Redpanda topic using the xref:components:inputs/kafka.adoc[`kafka`] input:
+Your indexing pipeline can read from the Redpanda topic, using the xref:components:inputs/kafka.adoc[`kafka`] input:
 
 [source,yaml]
 ----
@@ -39,9 +44,9 @@ input:
       password: "${REDPANDA_PASSWORD}"
 ----
 
-We'll be using https://ollama.com/library/nomic-embed-text[Nomic Embed] to compute embeddings. Since each request only applies to a single document we will make this scale by making requests in parallel across our document batches.
+Use https://ollama.com/library/nomic-embed-text[Nomic Embed] to compute embeddings. Since each request only applies to a single document, you can scale this by making requests in parallel across document batches.
 
-In order to send a mapped request and map the response back into the original document we will use the xref:components:processors/branch.adoc[`branch` processor], with a child xref:components:processors/ollama_embeddings.adoc[`ollama_embeddings`] processor.
+To send a mapped request and map the response back into the original document, use the xref:components:processors/branch.adoc[`branch` processor] with a child xref:components:processors/ollama_embeddings.adoc[`ollama_embeddings`] processor.
 
 [source,yaml]
 ----
@@ -56,7 +61,7 @@ pipeline:
         result_map: 'root.article.embeddings = this'
 ----
 
-With this pipeline our documents will come out looking something like this:
+With this pipeline, your processed documents should look something like this:
 
 [source,yaml]
 ----
@@ -71,7 +76,7 @@ With this pipeline our documents will come out looking something like this:
 }
 ----
 
-Now we can send that to Postgres using the xref:components:outputs/sql_insert.adoc[`sql_insert`] output. We'll also take advantage of the `init_statement` functionality to setup our `pgvector` and our table.
+Now, try sending this transformed data to PostgreSQL using the xref:components:outputs/sql_insert.adoc[`sql_insert`] output. You can take advantage of the `init_statement` functionality to set up `pgvector` and a table to write the data to.
 
 [source,yaml]
 ----
@@ -95,11 +100,11 @@ output:
     args_mapping: "[this.article.id, this.article.title, this.article.content, this.article.embeddings.vector()]"
 ----
 
-We can save this pipeline as `indexing.yaml` and run it with `rpk connect run ./indexing.yaml` to test and make sure our postgres table is being populated with embeddings.
+Save this pipeline as `indexing.yaml` and run it with `rpk connect run ./indexing.yaml` to make sure your PostgreSQL table is populated with embeddings.
 
 == Generating search responses
 
-In order to generate responses to questions over our dataset we're creating embeddings for, we'll use an xref:components:inputs/http_server.adoc[HTTP server input] to recieve the questions. Since we'll be running this pipeline in Streams mode, our HTTP server will xref:guides:streams_mode/about.adoc#http-endpoints[endpoints prefixed with stream identifier], which in our case is the same as the filename: `search`.
+To generate responses to questions with the dataset you're creating embeddings for, use a xref:components:inputs/http_server.adoc[HTTP server input] to receive the questions. Since you're running this pipeline in streams mode, the HTTP server uses xref:guides:streams_mode/about.adoc#http-endpoints[endpoints prefixed with stream identifier], which in this case is the same as the filename: `search`.
 
 [source,yaml]
 ----
@@ -112,7 +117,7 @@ input:
         Content-Type: application/json
 ----
 
-Our user query will come in as the query parameter `q` like so `http://localhost:4195/search?q=question_here`. Since query parameters as exposed as metadata in the `http_server` input, we can reference that in bloblang with `@q`.
+The user query uses the query parameter `q`: `http://localhost:4195/search?q=question_here`. Since query parameters are exposed as metadata in the `http_server` input, you can reference that in bloblang with `@q`.
 
 [source,yaml]
 ----
@@ -124,7 +129,7 @@ pipeline:
         text: "search_query: %s".format(@q)
 ----
 
-Now our payload is the embeddings vector and we can use Postgres to fetch the top 3 most similar documents to our embeddings vector using the xref:components:processors/sql_raw.adoc[`sql_raw`] processor.
+The payload is the embeddings vector. To fetch the top three most similar documents to your embeddings vector, you can write a PostgreSQL query in the xref:components:processors/sql_raw.adoc[`sql_raw`] processor.
 
 [source,yaml]
 ----
@@ -150,7 +155,7 @@ With our looked up information, as well as our initial query, we can use the xre
           Response:
 ----
 
-Now that we've generated our response, we can send that back as the response to our HTTP server using xref:components:processors/sync_response.adoc[`sync_response`], then we will delete the message so nothing goes to the output using a xref:components:processors/mapping.adoc[bloblang mapping].
+Now that you've generated a response, you can send that back to the HTTP server as a response using xref:components:processors/sync_response.adoc[`sync_response`]. Then, delete the message using a xref:components:processors/mapping.adoc[bloblang mapping] so that nothing goes to the output.
 
 [source,yaml]
 ----
@@ -159,11 +164,11 @@ Now that we've generated our response, we can send that back as the response to 
     - mapping: 'root = deleted()'
 ----
 
-Now that that both pipelines are ready, we can run them both using streams mode: `rpk connect streams indexing.yaml search.yaml`.
+Both pipelines are ready. Try running both of them using streams mode: `rpk connect streams indexing.yaml search.yaml`.
 
-Once some documents have been indexed, we can query our system via: `curl -G 'localhost:4195/search' --data-urlencode 'q=what is happening to the dogs?' | jq`
+Once some documents have been indexed, you can query the system using: `curl -G 'localhost:4195/search' --data-urlencode 'q=what is happening to the dogs?' | jq`
 
-The output will look something like:
+The output should look something like:
 
 [source,json]
 ----
