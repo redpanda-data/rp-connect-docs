@@ -131,7 +131,7 @@ pipeline:
 
 The payload is the embeddings vector. To fetch the top three most similar documents to your embeddings vector, you can write a PostgreSQL query in the xref:components:processors/sql_raw.adoc[`sql_raw`] processor.
 
-[source,yaml]
+[source,yaml,role="no-placeholders"]
 ----
     - sql_raw:
         driver: "postgres"
