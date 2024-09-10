@@ -2,29 +2,40 @@
 // tag::single-source[]
 :description: How to configure Redpanda Connect to create a RAG pipeline, using PostgreSQL and PGVector.
 
+ifndef::env-cloud[]
 This cookbook shows you how to create a Retrieval-Augmented Generation (RAG) pipeline, using PostgreSQL and https://github.com/pgvector/pgvector[PGVector^]. 
 
 Follow the cookbook to:
 
-* Create two Redpanda Connect data pipelines: one for creating embeddings with https://ollama.ai[Ollama^] and another for searching the data, using https://github.com/pgvector/pgvector[PGVector^].
+* Create two Redpanda Connect data pipelines: one for creating vector embeddings with https://ollama.ai[Ollama^] and another for searching the data, using https://github.com/pgvector/pgvector[PGVector^].
 * Run the two pipelines in parallel using xref:guides/streams_mode/about.adoc[streams mode].
+endif::[]
+ifdef::env-cloud[]
+This cookbook shows you how to create a vector embeddings indexing pipeline for Retrieval-Augmented Generation (RAG), using PostgreSQL and https://github.com/pgvector/pgvector[PGVector^]. 
+
+Follow the cookbook to:
+
+* Take textual data from a Redpanda topic and compute vector embeddings for it using https://ollama.ai[Ollama^]
+* Write the pipeline output into a PostgreSQL table with a https://github.com/pgvector/pgvector[PGVector^] index on the embeddings column.
+endif::[]
 
 == Compute the embeddings
 
+ifndef::env-cloud[]
 We'll start out by defining the indexing pipeline that will take textual data from Redpanda, compute embeddings for it, and then write it into a Postgres table with a PGVector index on the embeddings column.
+endif::[]
 
-Articles for indexing are received over the topic `articles` and look like this:
-
-[source,json]
+[source,bash]
 ----
-{
+rpk topic create articles
+echo '{
   "type": "article",
   "article": {
     "id": "123foo",
     "title": "Dogs Stop Barking",
     "content": "The world was shocked this morning to find that all dogs have stopped barking."
   }
-}
+}' | rpk topic produce acticles -f '%v'
 ----
 
 Your indexing pipeline can read from the Redpanda topic, using the xref:components:inputs/kafka.adoc[`kafka`] input:
@@ -33,15 +44,26 @@ Your indexing pipeline can read from the Redpanda topic, using the xref:componen
 ----
 input:
   kafka:
+ifndef::env-cloud[]
     addresses: [ "${REDPANDA_CLUSTER}" ]
+endif::[]
+ifdef::env-cloud[]
+    addresses: [ "TODO" ]
+endif::[]
     topics: [ articles ]
     consumer_group: rp_connect_articles_group
     tls:
       enabled: true
     sasl:
       mechanism: SCRAM-SHA-256
+ifndef::env-cloud[]
       user: "${REDPANDA_USER}"
       password: "${REDPANDA_PASSWORD}"
+endif::[]
+ifdef::env-cloud[]
+      user: "TODO"
+      password: "TODO"
+endif::[]
 ----
 
 Use https://ollama.com/library/nomic-embed-text[Nomic Embed] to compute embeddings. Since each request only applies to a single document, you can scale this by making requests in parallel across document batches.
@@ -83,7 +105,12 @@ Now, try sending this transformed data to PostgreSQL using the xref:components:o
 output:
   sql_insert:
     driver: postgres
+ifndef::env-cloud[]
     dsn: "${PG_CONNECTION_STRING}"
+endif::[]
+ifdef::env-cloud[]
+    dsn: "TODO"
+endif::[]
     init_statement: |
       CREATE EXTENSION IF NOT EXISTS vector;
       CREATE TABLE IF NOT EXISTS searchable_text (
@@ -100,6 +127,11 @@ output:
     args_mapping: "[this.article.id, this.article.title, this.article.content, this.article.embeddings.vector()]"
 ----
 
+ifdef::env-cloud[]
+After deploying this pipeline using the Redpanda Console, you can verify data is being written into PostgreSQL using `psql` to execute `SELECT count(*) FROM searchable_text;`.
+endif::[]
+
+ifndef::env-cloud[]
 Save this pipeline as `indexing.yaml` and run it with `rpk connect run ./indexing.yaml` to make sure your PostgreSQL table is populated with embeddings.
 
 == Generating search responses
@@ -176,4 +208,5 @@ The output should look something like:
   "response": "Everyone in the world woke up today shocked as their beloved pooches were slient - unable to bark."
 }
 ----
+endif::[]
 // end::single-source[]
