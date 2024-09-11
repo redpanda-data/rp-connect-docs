@@ -66,7 +66,7 @@ ifdef::env-cloud[]
 endif::[]
 ----
 
-Use https://ollama.com/library/nomic-embed-text[Nomic Embed] to compute embeddings. Since each request only applies to a single document, you can scale this by making requests in parallel across document batches.
+Use https://ollama.com/library/nomic-embed-text[Nomic Embed^] to compute embeddings. Since each request only applies to a single document, you can scale this by making requests in parallel across document batches.
 
 To send a mapped request and map the response back into the original document, use the xref:components:processors/branch.adoc[`branch` processor] with a child xref:components:processors/ollama_embeddings.adoc[`ollama_embeddings`] processor.
 
@@ -172,7 +172,7 @@ The payload is the embeddings vector. To fetch the top three most similar docume
         args_mapping: "[ this.vector() ]"
 ----
 
-With our looked up information, as well as our initial query, we can use the xref:components:processors/ollama_chat.adoc[`ollama_chat` processor] to respond to the user's question as text.
+With your looked up information, as well as your initial query, you can use the xref:components:processors/ollama_chat.adoc[`ollama_chat` processor] to respond to the user's question as text.
 
 [source,yaml]
 ----
@@ -198,14 +198,19 @@ Now that you've generated a response, you can send that back to the HTTP server 
 
 Both pipelines are ready. Try running both of them using streams mode: `rpk connect streams indexing.yaml search.yaml`.
 
-Once some documents have been indexed, you can query the system using: `curl -G 'localhost:4195/search' --data-urlencode 'q=what is happening to the dogs?' | jq`
+When some documents have been indexed, you can query the system using:
+
+[,bash]
+----
+curl -G 'localhost:4195/search' --data-urlencode 'q=what is happening to the dogs?' | jq
+----
 
 The output should look something like:
 
 [source,json]
 ----
 {
-  "response": "Everyone in the world woke up today shocked as their beloved pooches were slient - unable to bark."
+  "response": "Everyone in the world woke up today shocked as their beloved pooches were silent - unable to bark."
 }
 ----
 endif::[]
