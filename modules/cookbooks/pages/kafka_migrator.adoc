@@ -99,7 +99,7 @@ services:
 $ docker-compose -f docker-compose.yml up --force-recreate -V
 ----
 
-NOTE: You used an `init` container above to create 2 topics, `foo` and `bar`, each with 2 partitions and an associated ACL.
+NOTE: This command uses an `init` container to create two topics, `foo` and `bar`, each with two partitions and an associated ACL.
 
 == Create schemas
 
