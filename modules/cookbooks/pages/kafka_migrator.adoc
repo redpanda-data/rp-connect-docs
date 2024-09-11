@@ -161,7 +161,7 @@ Now, run this command to start the pipeline, and leave it running:
 $ redpanda-connect run generate_data.yaml
 ----
 
-Next, add a Redpanda Connect consumer, which reads messages from the `source` cluster topics and leave it running. This consumer uses the `foobar` consumer group, which will be reused in a later step when consuming from the `sink` cluster.
+Next, add a Redpanda Connect consumer, which reads messages from the `source` cluster topics, and leave it running. This consumer uses the `foobar` consumer group, which will be reused in a later step when consuming from the `sink` cluster.
 
 [source,yaml]
 ----
