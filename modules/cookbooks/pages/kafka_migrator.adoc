@@ -115,9 +115,9 @@ curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" --data '{
 
 Let's simulate an application with a producer and consumer actively publishing and reading messages on the `source` cluster. You can use Redpanda Connect to generate some Avro-encoded messages and push them to the two topics from the `source` cluster.
 
+.`generate_data.yaml`
 [source,yaml]
 ----
-# generate_data.yaml
 
 http:
   enabled: false
