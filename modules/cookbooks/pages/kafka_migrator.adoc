@@ -285,7 +285,7 @@ Redpanda Connect provides a comprehensive suite of metrics in various formats, s
 
 [source,console]
 ----
-$ curl http://localhost:4195/metrics
+curl http://localhost:4195/metrics
 ...
 # HELP input_kafka_migrator_lag Benthos Gauge metric
 # TYPE input_kafka_migrator_lag gauge
