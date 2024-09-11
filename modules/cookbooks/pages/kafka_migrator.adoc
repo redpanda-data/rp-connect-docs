@@ -24,9 +24,9 @@ This cookbook shows how to use the bundled components.
 
 First, you’ll need two clusters. To keep it simple, you can run the https://hub.docker.com/r/bitnami/kafka[Bitnami Kafka^] and https://hub.docker.com/r/bitnami/schema-registry[Schema Registry^] Docker containers for the source cluster and a https://hub.docker.com/r/redpandadata/redpanda[Redpanda Docker container^] for the destination cluster via https://docs.docker.com/compose[Docker Compose^].
 
+.`docker-compose.yml`
 [source,yaml]
 ----
-# docker-compose.yml
 
 services:
   source:
