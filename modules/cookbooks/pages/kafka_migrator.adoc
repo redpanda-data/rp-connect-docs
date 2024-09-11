@@ -198,7 +198,7 @@ Run launch the `source` consumer pipeline, and leave it running:
 $ redpanda-connect run read_data_source.yaml
 ----
 
-At this point, the `source` cluster should have some data in both `foo` and `bar` topics and the consumer should be printing the messages it reads from these topics to `stdout`.
+At this point, the `source` cluster should have some data in both `foo` and `bar` topics, and the consumer should print the messages it reads from these topics to `stdout`.
 
 == Configure and start Kafka Migrator
 
