@@ -283,7 +283,7 @@ User:redpanda  *     TOPIC          foo            LITERAL                READ  
 
 == Check metrics to monitor progress
 
-Redpanda Connect provides a comprehensive suite of metrics in various formats, which you can use to monitor its performance in your observability stack. Besides the xref:components:metrics/about.adoc#metric-names[standard Redpanda Connect metrics], the `kafka_migrator` input also emits an `input_kafka_migrator_lag` metric for monitoring the migration progress of each topic and partition (for example in Prometheus format).
+Redpanda Connect provides a comprehensive suite of metrics in various formats, such as Prometheus, which you can use to monitor its performance in your observability stack. Besides the xref:components:metrics/about.adoc#metric-names[standard Redpanda Connect metrics], the `kafka_migrator` input also emits an `input_kafka_migrator_lag` metric for monitoring the migration progress of each topic and partition.
 
 [source,console]
 ----
