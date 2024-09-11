@@ -7,16 +7,18 @@ Author: https://www.linkedin.com/in/mtodor[Mihai Todor^]
 :description: With Kafka Migrator, you can move your workloads from any Kafka system to Redpanda using _just one command_. It lets you migrate Kafka messages, schemas, and ACLs quickly and efficiently.
 
 Redpanda Connect's Kafka Migrator uses functionality from the following components:
-* xref:components:inputs/kafka_migrator.adoc[`kafka_migrator` input],
-* xref:components:outputs/kafka_migrator.adoc[`kafka_migrator` output]
-* xref:components:inputs/kafka_franz.adoc[`kafka_franz` input]
-* xref:components:outputs/kafka_migrator_offsets.adoc[`kafka_migrator_offsets` output]
-* xref:components:inputs/schema_registry.adoc[`schema_registry` input]
-* xref:components:outputs/schema_registry.adoc[`schema_registry` output].
+
+- xref:components:inputs/kafka_migrator.adoc[`kafka_migrator` input],
+- xref:components:outputs/kafka_migrator.adoc[`kafka_migrator` output],
+- xref:components:inputs/kafka_franz.adoc[`kafka_franz` input],
+- xref:components:outputs/kafka_migrator_offsets.adoc[`kafka_migrator_offsets` output],
+- xref:components:inputs/schema_registry.adoc[`schema_registry` input],
+- xref:components:outputs/schema_registry.adoc[`schema_registry` output].
 
 For convenience, these components are bundled together into the:
-* xref:components:inputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` input] and
-* xref:components:outputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` output] templates.
+
+- xref:components:inputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` input] and
+- xref:components:outputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` output] templates.
 
 This cookbook shows how to use the bundled components.
 
