@@ -214,7 +214,7 @@ ACL migration for topics adheres to the following principles:
 - `ALLOW ALL` ACLs for topics are downgraded to `ALLOW READ`
 - Group ACLs are not migrated
 
-Note: Changing topic configurations, such as partition count, isn't currently supported.
+NOTE: Changing topic configurations, such as partition count, isn't currently supported.
 
 Now, use the following Kafka Migrator Bundle configuration. Please refer to the xref:components:inputs/kafka_migrator_bundle.adoc[Kafka Migrator Bundle input] and xref:components:outputs/kafka_migrator_bundle.adoc[Kafka Migrator Bundle output] docs for details.
 
