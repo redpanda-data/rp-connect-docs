@@ -218,7 +218,7 @@ NOTE: Changing topic configurations, such as partition count, isn't currently su
 
 Now, use the following Kafka Migrator Bundle configuration. Please refer to the xref:components:inputs/kafka_migrator_bundle.adoc[Kafka Migrator Bundle input] and xref:components:outputs/kafka_migrator_bundle.adoc[Kafka Migrator Bundle output] docs for details.
 
-NOTE: The `max_in_flight: 1` setting is required to preserve message ordering at the partition level. See xref:components:outputs/kafka_migrator.adoc#max_in_flight[`kafka_migrator` output documentation] for more details.
+NOTE: The `max_in_flight: 1` setting is required to preserve message ordering at the partition level. See the xref:components:outputs/kafka_migrator.adoc#max_in_flight[`kafka_migrator` output documentation] for more details.
 
 [source,yaml]
 ----
