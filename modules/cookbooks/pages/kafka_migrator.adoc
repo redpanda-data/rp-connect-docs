@@ -261,7 +261,7 @@ redpanda-connect run kafka_migrator_bundle.yaml
 
 == Check the status of migrated topics
 
-You can use the Redpanda https://docs.redpanda.com/current/get-started/rpk[`rpk` CLI tool^] to check which topics and ACLs have been migrated to the `destination` cluster. You can quickly xref:ROOT:get-started:rpk-install.adoc[install `rpk`] if you don't already have it.
+You can use the Redpanda xref:ROOT:get-started:rpk/index.adoc[`rpk` CLI tool^] to check which topics and ACLs have been migrated to the `destination` cluster. You can quickly xref:ROOT:get-started:rpk-install.adoc[install `rpk`] if you don't already have it.
 
 NOTE: For now, users need to be migrated manually. However, this step is not required for the current demo. Similarly, roles are specific to Redpanda and, for now, will also require manual migration if the `source` cluster is based on Redpanda.
 
