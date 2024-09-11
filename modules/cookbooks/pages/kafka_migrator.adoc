@@ -20,14 +20,15 @@ For convenience, these components are bundled together into the:
 
 This cookbook shows how to use the bundled components.
 
+ifndef::env-cloud[]
+
 == Create the Docker containers
 
-First, you’ll need two clusters. To keep it simple, you can run the https://hub.docker.com/r/bitnami/kafka[Bitnami Kafka^] and https://hub.docker.com/r/bitnami/schema-registry[Schema Registry^] Docker containers for the source cluster and a https://hub.docker.com/r/redpandadata/redpanda[Redpanda Docker container^] for the destination cluster via https://docs.docker.com/compose[Docker Compose^].
+First, you'll need two clusters. To keep it simple, you can run the https://hub.docker.com/r/bitnami/kafka[Bitnami Kafka^] and https://hub.docker.com/r/bitnami/schema-registry[Schema Registry^] Docker containers for the source cluster and a https://hub.docker.com/r/redpandadata/redpanda[Redpanda Docker container^] for the destination cluster via https://docs.docker.com/compose[Docker Compose^].
 
 .`docker-compose.yml`
 [source,yaml]
 ----
-
 services:
   source:
     image: bitnami/kafka
@@ -57,10 +58,10 @@ services:
       source:
         condition: service_healthy
     command: >
-      -c "kafka-topics.sh --create --if-not-exists --topic foo --replication-factor=1 --partitions=2 --bootstrap-server source:19092 &&
-          kafka-topics.sh --create --if-not-exists --topic bar --replication-factor=1 --partitions=2 --bootstrap-server source:19092 &&
+      -c "kafka-topics.sh --bootstrap-server source:19092 --create --if-not-exists --topic foo --replication-factor=1 --partitions=2 &&
+          kafka-topics.sh --bootstrap-server source:19092 --create --if-not-exists --topic bar --replication-factor=1 --partitions=2 &&
           echo 'Created topics:' &&
-          kafka-topics.sh --list --exclude-internal --bootstrap-server source:19092 &&
+          kafka-topics.sh --bootstrap-server source:19092 --list --exclude-internal &&
           kafka-acls.sh --bootstrap-server source:19092 --add --allow-principal User:redpanda --operation Read --topic foo &&
           kafka-acls.sh --bootstrap-server source:19092 --add --deny-principal User:redpanda --operation Read --topic bar
           echo 'Created ACLs:' &&
@@ -101,24 +102,91 @@ docker-compose -f docker-compose.yml up --force-recreate -V
 
 NOTE: This command uses an `init` container to create two topics, `foo` and `bar`, each with two partitions and an associated ACL.
 
+endif::[]
+
+ifdef::env-cloud[]
+
+== Create a Kafka cluster and a Redpanda Cloud cluster
+
+First, you'll need to provision two clusters, a Kafka one called `source` and a Redpanda Cloud one called `destination`. We'll use the following sample connection details throughout the rest of this cookbook:
+
+`source`
+----
+broker:          source.cloud.kafka.com:9092
+schema registry: https://schema-registry-source.cloud.kafka.com:30081
+username:        kafka
+password:        testpass
+----
+
+`destination`
+----
+broker:          destination.cloud.redpanda.com:9092
+schema registry: https://schema-registry-destination.cloud.redpanda.com:30081
+username:        redpanda
+password:        testpass
+----
+
+Then you'll have to create two topics in the `source` Kafka cluster, `foo` and `bar`, and an ACL for each topic:
+
+[source,console]
+----
+cat > ./config.properties <<EOF
+security.protocol=SASL_SSL
+sasl.mechanism=SCRAM-SHA-256
+sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="testpass";
+EOF
+
+kafka-topics.sh --bootstrap-server source.cloud.kafka.com:9092 --command-config config.properties --create --if-not-exists --topic foo --replication-factor=3 --partitions=2
+
+kafka-topics.sh --bootstrap-server source.cloud.kafka.com:9092 --command-config config.properties --create --if-not-exists --topic bar --replication-factor=3 --partitions=2
+
+kafka-topics.sh --bootstrap-server source.cloud.kafka.com:9092 --command-config config.properties --list --exclude-internal
+
+kafka-acls.sh --bootstrap-server source.cloud.kafka.com:9092 --command-config config.properties --add --allow-principal User:redpanda --operation Read --topic foo
+
+kafka-acls.sh --bootstrap-server source.cloud.kafka.com:9092 --command-config config.properties --add --deny-principal User:redpanda --operation Read --topic bar
+
+kafka-acls.sh --bootstrap-server source.cloud.kafka.com:9092 --command-config config.properties --list
+----
+
+endif::[]
+
 == Create schemas
 
 When the demo clusters are up and running, use https://curl.se[curl^] to create a schema for each topic in the `source` cluster.
 
+ifndef::env-cloud[]
+
 [source,console]
 ----
 curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" --data '{"schema": "{\"name\": \"Foo\", \"type\": \"record\", \"fields\": [{\"name\": \"data\", \"type\": \"int\"}]}"}' http://localhost:8081/subjects/foo/versions
+
 curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" --data '{"schema": "{\"name\": \"Bar\", \"type\": \"record\", \"fields\": [{\"name\": \"data\", \"type\": \"int\"}]}"}' http://localhost:8081/subjects/bar/versions
 ----
+
+endif::[]
+
+ifdef::env-cloud[]
+
+[source,console]
+----
+curl -X POST -u "kafka:testpass" -H "Content-Type: application/vnd.schemaregistry.v1+json" --data '{"schema": "{\"name\": \"Foo\", \"type\": \"record\", \"fields\": [{\"name\": \"data\", \"type\": \"int\"}]}"}' https://schema-registry-source.cloud.kafka.com:30081/subjects/foo/versions
+
+curl -X POST -u "kafka:testpass" -H "Content-Type: application/vnd.schemaregistry.v1+json" --data '{"schema": "{\"name\": \"Bar\", \"type\": \"record\", \"fields\": [{\"name\": \"data\", \"type\": \"int\"}]}"}' https://schema-registry-source.cloud.kafka.com:30081/subjects/bar/versions
+----
+
+endif::[]
 
 == Generate messages
 
 Let's simulate an application with a producer and consumer actively publishing and reading messages on the `source` cluster. You can use Redpanda Connect to generate some Avro-encoded messages and push them to the two topics from the `source` cluster.
 
 .`generate_data.yaml`
+
+ifndef::env-cloud[]
+
 [source,yaml]
 ----
-
 http:
   enabled: false
 
@@ -152,6 +220,57 @@ output:
     partition: ${! random_int(min:0, max:1) }
 ----
 
+endif::[]
+
+ifdef::env-cloud[]
+
+[source,yaml]
+----
+http:
+  enabled: false
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          mapping: |
+            let msg = counter()
+            root.data = $msg
+
+            meta kafka_topic = match $msg % 2 {
+              0 => "foo"
+              1 => "bar"
+            }
+          interval: 1s
+          count: 0
+          batch_size: 1
+
+        processors:
+          - schema_registry_encode:
+              url: "https://schema-registry-source.cloud.kafka.com:30081"
+              subject: ${! metadata("kafka_topic") }
+              avro_raw_json: true
+              basic_auth:
+                enabled: true
+                username: kafka
+                password: testpass
+
+output:
+  kafka_franz:
+    seed_brokers: [ "source.cloud.kafka.com:9092" ]
+    topic: ${! @kafka_topic }
+    partitioner: manual
+    partition: ${! random_int(min:0, max:1) }
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: kafka
+        password: testpass
+----
+
+endif::[]
+
 Now, run this command to start the pipeline, and leave it running:
 
 [source,console]
@@ -162,9 +281,11 @@ redpanda-connect run generate_data.yaml
 Next, add a Redpanda Connect consumer, which reads messages from the `source` cluster topics, and leave it running. This consumer uses the `foobar` consumer group, which will be reused in a later step when consuming from the `sink` cluster.
 
 .`read_data_source.yaml`
+
+ifndef::env-cloud[]
+
 [source,yaml]
 ----
-
 http:
   enabled: false
 
@@ -188,6 +309,48 @@ output:
     - mapping: |
         root = this.merge({"count": counter(), "topic": @kafka_topic, "partition": @kafka_partition})
 ----
+
+endif::[]
+
+ifdef::env-cloud[]
+
+[source,yaml]
+----
+http:
+  enabled: false
+
+input:
+  kafka_franz:
+    seed_brokers: [ "source.cloud.kafka.com:9092" ]
+    topics:
+      - '^[^_]' # Skip topics which start with `_`
+    regexp_topics: true
+    start_from_oldest: true
+    consumer_group: foobar
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: kafka
+        password: testpass
+
+  processors:
+    - schema_registry_decode:
+        url: "https://schema-registry-source.cloud.kafka.com:30081"
+        avro_raw_json: true
+        basic_auth:
+          enabled: true
+          username: kafka
+          password: testpass
+
+output:
+  stdout: {}
+  processors:
+    - mapping: |
+        root = this.merge({"count": counter(), "topic": @kafka_topic, "partition": @kafka_partition})
+----
+
+endif::[]
 
 Run launch the `source` consumer pipeline, and leave it running:
 
@@ -219,9 +382,11 @@ Now, use the following Kafka Migrator Bundle configuration. Please refer to the 
 NOTE: The `max_in_flight: 1` setting is required to preserve message ordering at the partition level. See the xref:components:outputs/kafka_migrator.adoc#max_in_flight[`kafka_migrator` output documentation] for more details.
 
 .`kafka_migrator_bundle.yaml`
+
+ifndef::env-cloud[]
+
 [source,yaml]
 ----
-
 input:
   kafka_migrator_bundle:
     kafka_migrator:
@@ -252,6 +417,60 @@ metrics:
     meta label = if this == "input_kafka_migrator_lag" { "source" }
 ----
 
+endif::[]
+
+ifdef::env-cloud[]
+
+[source,yaml]
+----
+input:
+  kafka_migrator_bundle:
+    kafka_migrator:
+      seed_brokers: [ "source.cloud.kafka.com:9092" ]
+      topics:
+        - '^[^_]' # Skip internal topics which start with `_`
+      regexp_topics: true
+      consumer_group: migrator_bundle
+      start_from_oldest: true
+      sasl:
+        - mechanism: SCRAM-SHA-256
+          username: kafka
+          password: testpass
+
+    schema_registry:
+      url: "https://schema-registry-source.cloud.kafka.com:30081"
+      include_deleted: true
+      subject_filter: ""
+      basic_auth:
+        enabled: true
+        username: kafka
+        password: testpass
+
+output:
+  kafka_migrator_bundle:
+    kafka_migrator:
+      seed_brokers: [ "destination.cloud.redpanda.com:9092" ]
+      max_in_flight: 1
+      sasl:
+        - mechanism: SCRAM-SHA-256
+          username: redpanda
+          password: testpass
+
+    schema_registry:
+      url: https://schema-registry-destination.cloud.redpanda.com:30081
+      basic_auth:
+        enabled: true
+        username: redpanda
+        password: testpass
+
+metrics:
+  prometheus: {}
+  mapping: |
+    meta label = if this == "input_kafka_migrator_lag" { "source" }
+----
+
+endif::[]
+
 Launch the Kafka Migrator Bundle pipeline, and leave it running:
 
 [source,console]
@@ -265,19 +484,41 @@ You can use the Redpanda xref:ROOT:get-started:rpk/index.adoc[`rpk` CLI tool^] t
 
 NOTE: For now, users need to be migrated manually. However, this step is not required for the current demo. Similarly, roles are specific to Redpanda and, for now, will also require manual migration if the `source` cluster is based on Redpanda.
 
+ifndef::env-cloud[]
+
 [source,console]
 ----
-rpk -X brokers=localhost:9093 -X admin.hosts=localhost:9645 topic list
+rpk -X brokers=localhost:9093 topic list
 NAME      PARTITIONS  REPLICAS
 _schemas  1           1
 bar       2           1
 foo       2           1
 
-rpk -X brokers=localhost:9093 -X admin.hosts=localhost:9645 security acl list
+rpk -X brokers=localhost:9093 security acl list
 PRINCIPAL      HOST  RESOURCE-TYPE  RESOURCE-NAME  RESOURCE-PATTERN-TYPE  OPERATION  PERMISSION  ERROR
 User:redpanda  *     TOPIC          bar            LITERAL                READ       DENY
 User:redpanda  *     TOPIC          foo            LITERAL                READ       ALLOW
 ----
+
+endif::[]
+
+ifdef::env-cloud[]
+
+[source,console]
+----
+rpk -X brokers=destination.cloud.redpanda.com:9092 -X tls.enabled=true -X sasl.mechanism=SCRAM-SHA-256 -X user=redpanda -X pass=testpass topic list
+NAME      PARTITIONS  REPLICAS
+_schemas  1           1
+bar       2           1
+foo       2           1
+
+rpk -X brokers=destination.cloud.redpanda.com:9092 -X tls.enabled=true -X sasl.mechanism=SCRAM-SHA-256 -X user=redpanda -X pass=testpass security acl list
+PRINCIPAL      HOST  RESOURCE-TYPE  RESOURCE-NAME  RESOURCE-PATTERN-TYPE  OPERATION  PERMISSION  ERROR
+User:redpanda  *     TOPIC          bar            LITERAL                READ       DENY
+User:redpanda  *     TOPIC          foo            LITERAL                READ       ALLOW
+----
+
+endif::[]
 
 == Check metrics to monitor progress
 
@@ -303,9 +544,11 @@ input_kafka_migrator_lag{label="source",partition="1",path="root.input.sequence.
 Stop the `read_data_source.yaml` consumer you started earlier and, afterwards, start a similar consumer for the `destination` cluster. Before starting the consumer up on the `destination` cluster, make sure you give the migrator bundle some time to replicate the translated offset.
 
 .`read_data_destination.yaml`
+
+ifndef::env-cloud[]
+
 [source,yaml]
 ----
-
 http:
   enabled: false
 
@@ -329,6 +572,46 @@ output:
     - mapping: |
         root = this.merge({"count": counter(), "topic": @kafka_topic, "partition": @kafka_partition})
 ----
+
+endif::[]
+
+ifdef::env-cloud[]
+
+[source,yaml]
+----
+http:
+  enabled: false
+
+input:
+  kafka_franz:
+    seed_brokers: [ "destination.cloud.redpanda.com:9092" ]
+    topics:
+      - '^[^_]' # Skip topics which start with `_`
+    regexp_topics: true
+    start_from_oldest: true
+    consumer_group: foobar
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: redpanda
+        password: testpass
+
+  processors:
+    - schema_registry_decode:
+        url: "https://schema-registry-destination.cloud.redpanda.com:30081"
+        avro_raw_json: true
+        basic_auth:
+          enabled: true
+          username: redpanda
+          password: testpass
+
+output:
+  stdout: {}
+  processors:
+    - mapping: |
+        root = this.merge({"count": counter(), "topic": @kafka_topic, "partition": @kafka_partition})
+----
+
+endif::[]
 
 Now launch the `destination` consumer pipeline, and leave it running:
 
