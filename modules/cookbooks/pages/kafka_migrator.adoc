@@ -302,7 +302,7 @@ input_kafka_migrator_lag{label="source",partition="1",path="root.input.sequence.
 
 == Read from the migrated topics
 
-Finally, stop the `read_data_source.yaml` consumer you started previously and, afterwards, start a similar consumer for the `destination` cluster. Before starting the consumer up on the `destination` cluster, make sure you give the migrator bundle some time to replicate the translated offset.
+Stop the `read_data_source.yaml` consumer you started earlier and, afterwards, start a similar consumer for the `destination` cluster. Before starting the consumer up on the `destination` cluster, make sure you give the migrator bundle some time to replicate the translated offset.
 
 [source,yaml]
 ----
