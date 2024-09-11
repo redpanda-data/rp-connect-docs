@@ -8,7 +8,7 @@ This cookbook shows you how to create a Retrieval-Augmented Generation (RAG) pip
 Follow the cookbook to:
 
 * Create two Redpanda Connect data pipelines: one for creating vector embeddings with https://ollama.ai[Ollama^] and another for searching the data, using https://github.com/pgvector/pgvector[PGVector^].
-* Run the two pipelines in parallel using xref:guides/streams_mode/about.adoc[streams mode].
+* Run the two pipelines in parallel using xref:guides:streams_mode/about.adoc[streams mode].
 endif::[]
 ifdef::env-cloud[]
 This cookbook shows you how to create a vector embeddings indexing pipeline for Retrieval-Augmented Generation (RAG), using PostgreSQL and https://github.com/pgvector/pgvector[PGVector^]. 
@@ -22,7 +22,7 @@ endif::[]
 == Compute the embeddings
 
 ifndef::env-cloud[]
-We'll start out by defining the indexing pipeline that will take textual data from Redpanda, compute embeddings for it, and then write it into a Postgres table with a PGVector index on the embeddings column.
+Start by defining the indexing pipeline, which takes textual data from Redpanda, computes vector embeddings for it, and then write it into a PostgreSQL table with a PGVector index on the embeddings column.
 endif::[]
 
 [source,bash]
