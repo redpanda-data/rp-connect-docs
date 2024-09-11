@@ -218,9 +218,9 @@ Now, use the following Kafka Migrator Bundle configuration. Please refer to the 
 
 NOTE: The `max_in_flight: 1` setting is required to preserve message ordering at the partition level. See the xref:components:outputs/kafka_migrator.adoc#max_in_flight[`kafka_migrator` output documentation] for more details.
 
+.`kafka_migrator_bundle.yaml`
 [source,yaml]
 ----
-# kafka_migrator_bundle.yaml
 
 input:
   kafka_migrator_bundle:
