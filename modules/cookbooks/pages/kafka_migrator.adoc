@@ -377,7 +377,7 @@ ACL migration for topics adheres to the following principles:
 
 NOTE: Changing topic configurations, such as partition count, isn't currently supported.
 
-Now, use the following Kafka Migrator Bundle configuration. Please refer to the xref:components:inputs/kafka_migrator_bundle.adoc[Kafka Migrator Bundle input] and xref:components:outputs/kafka_migrator_bundle.adoc[Kafka Migrator Bundle output] docs for details.
+Now, use the following Kafka Migrator Bundle configuration. Please refer to the xref:components:inputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` input] and xref:components:outputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` output] docs for details.
 
 NOTE: The `max_in_flight: 1` setting is required to preserve message ordering at the partition level. See the xref:components:outputs/kafka_migrator.adoc#max_in_flight[`kafka_migrator` output documentation] for more details.
 
