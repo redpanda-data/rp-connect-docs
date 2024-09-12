@@ -24,6 +24,9 @@ endif::[]
 ifndef::env-cloud[]
 Start by defining the indexing pipeline, which takes textual data from Redpanda, computes vector embeddings for it, and then write it into a PostgreSQL table with a PGVector index on the embeddings column.
 endif::[]
+ifdef::env-cloud[]
+Start by creating a Redpanda topic, which you can use as an input for an indexing data pipeline. 
+endif::[]
 
 [source,bash]
 ----
@@ -35,7 +38,7 @@ echo '{
     "title": "Dogs Stop Barking",
     "content": "The world was shocked this morning to find that all dogs have stopped barking."
   }
-}' | rpk topic produce acticles -f '%v'
+}' | rpk topic produce articles -f '%v'
 ----
 
 Your indexing pipeline can read from the Redpanda topic, using the xref:components:inputs/kafka.adoc[`kafka`] input:
