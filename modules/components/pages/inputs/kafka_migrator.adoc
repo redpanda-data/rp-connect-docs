@@ -9,7 +9,7 @@
 
 component_type_dropdown::[]
 
-Use this connector in conjunction with the xref:components:outputs/kafka_migrator.adoc[`kafka_migrator` output] to migrate topics between Kafka brokers. The `kafka_migrator` input uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
+Use this connector in conjunction with the xref:components:outputs/kafka_migrator.adoc[`kafka_migrator` output] to migrate topics between Apache Kafka brokers. The `kafka_migrator` input uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
 
 ifndef::env-cloud[]
@@ -79,8 +79,8 @@ input:
 The `kafka_migrator` input:
 
 * Reads a batch of messages from a Kafka broker.
-* Attempts to create all selected topics along with their associated ACLs in the broker that the output points to, identified by the label specified in `output_resource`. 
-* Waits for the `kafka_migrator` output to acknowledge the writes before updating the Kafka consumer group offset. 
+* Attempts to create all selected topics along with their associated ACLs in the broker that the output points to, identified by the label specified in `output_resource`.
+* Waits for the `kafka_migrator` output to acknowledge the writes before updating the Kafka consumer group offset.
 
 Specify a consumer group for this input to consume one or more topics and automatically balance the topic partitions across any other connected clients with the same consumer group. Otherwise, topics are consumed in their entirety or with explicit partitions.
 
@@ -129,7 +129,7 @@ seed_brokers:
 
 === `topics`
 
-A list of topics to consume from. Use commas to separated multiple topics in a single element. 
+A list of topics to consume from. Use commas to separated multiple topics in a single element.
 
 When a `consumer_group` is specified, partitions are automatically distributed across consumers of a topic. Otherwise, all partitions are consumed.
 
@@ -212,7 +212,7 @@ The maximum number of messages that can accumulate in each batch.
 
 === `auto_replay_nacks`
 
-Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure. 
+Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
 
 Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data is discarded immediately upon consumption and mutation.
 
