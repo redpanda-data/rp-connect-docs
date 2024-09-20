@@ -29,6 +29,7 @@ input:
   gcp_cloud_storage:
     bucket: "" # No default (required)
     prefix: ""
+    credentials_json: "" # No default (optional)
     scanner:
       to_the_end: {}
 ```
@@ -45,6 +46,7 @@ input:
   gcp_cloud_storage:
     bucket: "" # No default (required)
     prefix: ""
+    credentials_json: "" # No default (optional)
     scanner:
       to_the_end: {}
     delete_objects: false
@@ -85,8 +87,17 @@ The name of the bucket from which to download objects.
 
 === `prefix`
 
-An optional path prefix, if set only objects with the prefix are consumed.
+Optional path prefix, if set only objects with the prefix are consumed.
 
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials_json`
+
+Optional field to set https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google Service Account Credentials JSON^].
+
+include::components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

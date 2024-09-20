@@ -32,6 +32,7 @@ output:
     content_type: application/octet-stream
     collision_mode: overwrite
     timeout: 3s
+    credentials_json: "" # No default (optional)
     max_in_flight: 64
     batching:
       count: 0
@@ -57,6 +58,7 @@ output:
     collision_mode: overwrite
     chunk_size: 16777216
     timeout: 3s
+    credentials_json: "" # No default (optional)
     max_in_flight: 64
     batching:
       count: 0
@@ -222,6 +224,16 @@ timeout: 1s
 
 timeout: 500ms
 ```
+
+=== `credentials_json`
+
+Optional field to set https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google Service Account Credentials JSON^].
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
 
 === `max_in_flight`
 
