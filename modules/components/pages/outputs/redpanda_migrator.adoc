@@ -1,4 +1,4 @@
-= kafka_migrator
+= redpanda_migrator
 // tag::single-source[]
 :type: output
 :status: beta
@@ -11,10 +11,10 @@ component_type_dropdown::[]
 
 Writes a batch of messages to an Apache Kafka broker and waits for acknowledgement before propagating them back to the input.
 
-Use this connector in conjunction with the xref:components:inputs/kakfa_migrator[`kafka_migrator` input] to migrate topics between Kafka brokers. The `kafka_migrator` output uses the the https://github.com/twmb/franz-go[Franz Kafka client library^].
+Use this connector in conjunction with the xref:components:inputs/kakfa_migrator[`redpanda_migrator` input] to migrate topics between Kafka brokers. The `redpanda_migrator` output uses the the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
 ifndef::env-cloud[]
-Introduced in version 4.35.0.
+Introduced in version 4.37.0.
 endif::[]
 
 [tabs]
@@ -27,7 +27,7 @@ Common::
 # Common config fields, showing default values
 output:
   label: ""
-  kafka_migrator:
+  redpanda_migrator:
     seed_brokers: [] # No default (required)
     topic: "" # No default (required)
     key: "" # No default (optional)
@@ -52,7 +52,7 @@ Advanced::
 # All config fields, showing default values
 output:
   label: ""
-  kafka_migrator:
+  redpanda_migrator:
     seed_brokers: [] # No default (required)
     topic: "" # No default (required)
     key: "" # No default (optional)
@@ -84,17 +84,25 @@ output:
       client_certs: []
     sasl: [] # No default (optional)
     timestamp: ${! timestamp_unix() } # No default (optional)
-    input_resource: kafka_migrator_input
+    input_resource: redpanda_migrator_input
+    replication_factor_override: true
+    replication_factor: 3
 ```
 
 --
 ======
 
-This output can query the `kafka_migrator` input for topic and ACL configurations.
+This output can query the `redpanda_migrator` input for topic and ACL configurations.
 
 If the configured broker does not contain the current message topic, this output attempts to create it along with the topic
-ACLs, which are automatically read from the `kafka_migrator` input, identified by the label specified in
+ACLs, which are automatically read from the `redpanda_migrator` input, identified by the label specified in
 `input_resource`.
+
+ACL migration adheres to the following principles:
+
+- `ALLOW WRITE` ACLs for topics are not migrated
+- `ALLOW ALL` ACLs for topics are downgraded to `ALLOW READ`
+- Only topic ACLs are migrated, group ACLs are not migrated
 
 
 == Examples
@@ -109,14 +117,14 @@ Writes messages to the configured broker and creates topics and topic ACLs if th
 
 ```yaml
 output:
-  kafka_migrator:
+  redpanda_migrator:
     seed_brokers: [ "127.0.0.1:9093" ]
     topic: ${! metadata("kafka_topic").or(throw("missing kafka_topic metadata")) }
     key: ${! metadata("kafka_key") }
     partitioner: manual
     partition: ${! metadata("kafka_partition").or(throw("missing kafka_partition metadata")) }
     timestamp: ${! metadata("kafka_timestamp_unix").or(timestamp_unix()) }
-    input_resource: kafka_migrator_input
+    input_resource: redpanda_migrator_input
     max_in_flight: 1
 ```
 
@@ -808,11 +816,31 @@ timestamp: ${! metadata("kafka_timestamp_unix") }
 
 === `input_resource`
 
-The label of the `kafka_migrator` input from which to read the configurations of topics and ACLs for creation.
+The label of the `redpanda_migrator` input from which to read the configurations of topics and ACLs for creation.
 
 
 *Type*: `string`
 
-*Default*: `"kafka_migrator_input"`
+*Default*: `"redpanda_migrator_input"`
+
+
+=== `replication_factor_override`
+
+Use the specified replication factor when creating topics.
+
+
+*Type*: `bool`
+
+*Default*: `true`
+
+
+=== `replication_factor`
+
+Replication factor for created topics. This is only used when `replication_factor_override` is set to `true`.
+
+
+*Type*: `int`
+
+*Default*: `3`
 
 // end::single-source[]

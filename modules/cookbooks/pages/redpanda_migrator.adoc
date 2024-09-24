@@ -1,24 +1,23 @@
-= Kafka Migrator
-
-:description: Move your workloads from any Kafka system to Redpanda using a single command. Kafka Migrator lets you migrate Kafka messages, schemas, and ACLs quickly and efficiently.
+= Redpanda Migrator
+:description: Move your workloads from any Kafka system to Redpanda using a single command. Redpanda Migrator lets you migrate Kafka messages, schemas, and ACLs quickly and efficiently.
 
 // tag::single-source[]
 
-With Kafka Migrator, you can move your workloads from any Apache Kafka system to Redpanda using a single command. It lets you migrate Kafka messages, schemas, and ACLs quickly and efficiently.
+With Redpanda Migrator, you can move your workloads from any Apache Kafka system to Redpanda using a single command. It lets you migrate Kafka messages, schemas, and ACLs quickly and efficiently.
 
-Redpanda Connect's Kafka Migrator uses functionality from the following components:
+Redpanda Connect's Redpanda Migrator uses functionality from the following components:
 
-- xref:components:inputs/kafka_migrator.adoc[`kafka_migrator` input]
-- xref:components:outputs/kafka_migrator.adoc[`kafka_migrator` output]
+- xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input]
+- xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output]
 - xref:components:inputs/kafka_franz.adoc[`kafka_franz` input]
-- xref:components:outputs/kafka_migrator_offsets.adoc[`kafka_migrator_offsets` output]
+- xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` output]
 - xref:components:inputs/schema_registry.adoc[`schema_registry` input]
 - xref:components:outputs/schema_registry.adoc[`schema_registry` output]
 
 For convenience, these components are bundled together into the following:
 
-- xref:components:inputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` input]
-- xref:components:outputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` output]
+- xref:components:inputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input]
+- xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` output]
 
 This cookbook shows how to use the bundled components.
 
@@ -363,13 +362,13 @@ redpanda-connect run read_data_source.yaml
 
 At this point, the `source` cluster should have some data in both `foo` and `bar` topics, and the consumer should print the messages it reads from these topics to `stdout`.
 
-== Configure and start Kafka Migrator
+== Configure and start Redpanda Migrator
 
-You're ready to start the new Kafka Migrator Bundle, which will do the following:
+You're ready to start the new Redpanda Migrator Bundle, which will do the following:
 
 - On startup, it reads all the schemas from the `source` cluster Schema Registry through the REST API and pushes them to the destination cluster Schema Registry using the same API. It needs to preserve the schema IDs, so the `destination` cluster *must not have any schemas in it*.
-- Once the schemas have been imported, Kafka Migrator begins the migration of all the selected topics from the `source` cluster, and any associated ACLs. After it finishes creating all the topics and ACLs that don't exist in the `destination` cluster, it begins the migration of messages and performs consumer group offsets remapping.
-- If any new topics are created in the `source` cluster while Kafka Migrator is running, they are only migrated to the `destination` cluster if messages are written to them.
+- Once the schemas have been imported, Redpanda Migrator begins the migration of all the selected topics from the `source` cluster, and any associated ACLs. After it finishes creating all the topics and ACLs that don't exist in the `destination` cluster, it begins the migration of messages and performs consumer group offsets remapping.
+- If any new topics are created in the `source` cluster while Redpanda Migrator is running, they are only migrated to the `destination` cluster if messages are written to them.
 
 ACL migration for topics adheres to the following principles:
 
@@ -379,19 +378,19 @@ ACL migration for topics adheres to the following principles:
 
 NOTE: Changing topic configurations, such as partition count, isn't currently supported.
 
-Now, use the following Kafka Migrator Bundle configuration. See the xref:components:inputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` input] and xref:components:outputs/kafka_migrator_bundle.adoc[`kafka_migrator_bundle` output] docs for details.
+Now, use the following Redpanda Migrator Bundle configuration. See the xref:components:inputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input] and xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` output] docs for details.
 
-NOTE: The `max_in_flight: 1` setting is required to preserve message ordering at the partition level. See the xref:components:outputs/kafka_migrator.adoc#max_in_flight[`kafka_migrator` output documentation] for more details.
+NOTE: The `max_in_flight: 1` setting is required to preserve message ordering at the partition level. See the xref:components:outputs/redpanda_migrator.adoc#max_in_flight[`redpanda_migrator` output documentation] for more details.
 
-.`kafka_migrator_bundle.yaml`
+.`redpanda_migrator_bundle.yaml`
 
 ifndef::env-cloud[]
 
 [source,yaml]
 ----
 input:
-  kafka_migrator_bundle:
-    kafka_migrator:
+  redpanda_migrator_bundle:
+    redpanda_migrator:
       seed_brokers: [ "localhost:9092" ]
       topics:
         - '^[^_]' # Skip internal topics which start with `_`
@@ -405,8 +404,8 @@ input:
       subject_filter: ""
 
 output:
-  kafka_migrator_bundle:
-    kafka_migrator:
+  redpanda_migrator_bundle:
+    redpanda_migrator:
       seed_brokers: [ "localhost:9093" ]
       max_in_flight: 1
 
@@ -416,7 +415,7 @@ output:
 metrics:
   prometheus: {}
   mapping: |
-    meta label = if this == "input_kafka_migrator_lag" { "source" }
+    meta label = if this == "input_redpanda_migrator_lag" { "source" }
 ----
 
 endif::[]
@@ -426,8 +425,8 @@ ifdef::env-cloud[]
 [source,yaml]
 ----
 input:
-  kafka_migrator_bundle:
-    kafka_migrator:
+  redpanda_migrator_bundle:
+    redpanda_migrator:
       seed_brokers: [ "source.cloud.kafka.com:9092" ]
       topics:
         - '^[^_]' # Skip internal topics which start with `_`
@@ -449,8 +448,8 @@ input:
         password: testpass
 
 output:
-  kafka_migrator_bundle:
-    kafka_migrator:
+  redpanda_migrator_bundle:
+    redpanda_migrator:
       seed_brokers: [ "destination.cloud.redpanda.com:9092" ]
       max_in_flight: 1
       sasl:
@@ -468,16 +467,16 @@ output:
 metrics:
   prometheus: {}
   mapping: |
-    meta label = if this == "input_kafka_migrator_lag" { "source" }
+    meta label = if this == "input_redpanda_migrator_lag" { "source" }
 ----
 
 endif::[]
 
-Launch the Kafka Migrator Bundle pipeline, and leave it running:
+Launch the Redpanda Migrator Bundle pipeline, and leave it running:
 
 [source,console]
 ----
-redpanda-connect run kafka_migrator_bundle.yaml
+redpanda-connect run redpanda_migrator_bundle.yaml
 ----
 
 == Check the status of migrated topics
@@ -524,20 +523,20 @@ endif::[]
 
 == Check metrics to monitor progress
 
-Redpanda Connect provides a comprehensive suite of metrics in various formats, such as Prometheus, which you can use to monitor its performance in your observability stack. Besides the xref:components:metrics/about.adoc#metric-names[standard Redpanda Connect metrics], the `kafka_migrator` input also emits an `input_kafka_migrator_lag` metric for monitoring the migration progress of each topic and partition.
+Redpanda Connect provides a comprehensive suite of metrics in various formats, such as Prometheus, which you can use to monitor its performance in your observability stack. Besides the xref:components:metrics/about.adoc#metric-names[standard Redpanda Connect metrics], the `redpanda_migrator` input also emits an `input_redpanda_migrator_lag` metric for monitoring the migration progress of each topic and partition.
 
 [source,console]
 ----
 curl http://localhost:4195/metrics
 ...
-# HELP input_kafka_migrator_lag Benthos Gauge metric
-# TYPE input_kafka_migrator_lag gauge
-input_kafka_migrator_lag{label="source",partition="0",path="root.input.sequence.broker.inputs.0",topic="__consumer_offsets"} 0
-input_kafka_migrator_lag{label="source",partition="0",path="root.input.sequence.broker.inputs.0",topic="bar"} 0
-input_kafka_migrator_lag{label="source",partition="0",path="root.input.sequence.broker.inputs.0",topic="foo"} 0
-input_kafka_migrator_lag{label="source",partition="1",path="root.input.sequence.broker.inputs.0",topic="__consumer_offsets"} 0
-input_kafka_migrator_lag{label="source",partition="1",path="root.input.sequence.broker.inputs.0",topic="bar"} 1
-input_kafka_migrator_lag{label="source",partition="1",path="root.input.sequence.broker.inputs.0",topic="foo"} 0
+# HELP input_redpanda_migrator_lag Benthos Gauge metric
+# TYPE input_redpanda_migrator_lag gauge
+input_redpanda_migrator_lag{label="source",partition="0",path="root.input.sequence.broker.inputs.0",topic="__consumer_offsets"} 0
+input_redpanda_migrator_lag{label="source",partition="0",path="root.input.sequence.broker.inputs.0",topic="bar"} 0
+input_redpanda_migrator_lag{label="source",partition="0",path="root.input.sequence.broker.inputs.0",topic="foo"} 0
+input_redpanda_migrator_lag{label="source",partition="1",path="root.input.sequence.broker.inputs.0",topic="__consumer_offsets"} 0
+input_redpanda_migrator_lag{label="source",partition="1",path="root.input.sequence.broker.inputs.0",topic="bar"} 1
+input_redpanda_migrator_lag{label="source",partition="1",path="root.input.sequence.broker.inputs.0",topic="foo"} 0
 ...
 ----
 
@@ -626,7 +625,7 @@ It's worth clarifying that the `source` cluster consumer uses the same `foobar` 
 
 And you're all done!
 
-Due to the mechanics of the Kafka protocol, Kafka Migrator needs to perform offset remapping when migrating consumer group offsets to the `destination` cluster. While more sophisticated approaches are possible, Redpanda chose to use a simple timestamp-based approach. So, for each migrated offset, the `destination` cluster is queried to find the latest offset before the received offset timestamp. Kafka Migrator then writes this offset as the `destination` consumer group offset for the corresponding topic and partition pair.
+Due to the mechanics of the Kafka protocol, Redpanda Migrator needs to perform offset remapping when migrating consumer group offsets to the `destination` cluster. While more sophisticated approaches are possible, Redpanda chose to use a simple timestamp-based approach. So, for each migrated offset, the `destination` cluster is queried to find the latest offset before the received offset timestamp. Redpanda Migrator then writes this offset as the `destination` consumer group offset for the corresponding topic and partition pair.
 
 Although the timestamp-based approach doesn't guarantee exactly-once delivery, it minimises the likelihood of message duplication and avoids the need for complex and error-prone offset remapping logic.
 
