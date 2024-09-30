@@ -1,4 +1,7 @@
 = redpanda_migrator_bundle
+:page-aliases: components:outputs/kafka_migrator_bundle.adoc
+
+
 // tag::single-source[]
 :type: output
 :status: experimental
@@ -10,7 +13,7 @@
 
 component_type_dropdown::[]
 
-Writes messages and schemas to an Apache Kafka or Redpanda cluster. Use this output in conjunction with the `redpanda_migrator_bundle` input.
+Writes messages and schemas to an Apache Kafka or Redpanda cluster. Use this output in conjunction with the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator_bundle` input].
 
 
 ```yml
