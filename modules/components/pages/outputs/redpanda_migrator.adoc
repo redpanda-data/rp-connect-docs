@@ -13,7 +13,7 @@ component_type_dropdown::[]
 
 Writes a batch of messages to an Apache Kafka broker and waits for acknowledgement before propagating them back to the input.
 
-Use this connector in conjunction with the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] to migrate topics between Kafka brokers. The `redpanda_migrator` output uses the the https://github.com/twmb/franz-go[Franz Kafka client library^].
+Use this connector in conjunction with the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] to migrate topics between Kafka brokers. The `redpanda_migrator` output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
 ifndef::env-cloud[]
 Introduced in version 4.37.0.

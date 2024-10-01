@@ -365,7 +365,7 @@ At this point, the `source` cluster should have some data in both `foo` and `bar
 
 == Configure and start Redpanda Migrator
 
-You're ready to start the new Redpanda Migrator Bundle, which will do the following:
+The Redpanda Migrator Bundle does the following:
 
 - On startup, it reads all the schemas from the `source` cluster Schema Registry through the REST API and pushes them to the destination cluster Schema Registry using the same API. It needs to preserve the schema IDs, so the `destination` cluster *must not have any schemas in it*.
 - Once the schemas have been imported, Redpanda Migrator begins the migration of all the selected topics from the `source` cluster, and any associated ACLs. After it finishes creating all the topics and ACLs that don't exist in the `destination` cluster, it begins the migration of messages and performs consumer group offsets remapping.

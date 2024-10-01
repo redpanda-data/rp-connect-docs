@@ -131,13 +131,13 @@ seed_brokers:
 
 === `topics`
 
-A list of topics to consume from. Use commas to separated multiple topics in a single element.
+A list of topics to consume from. Use commas to separate multiple topics in a single element.
 
 When a `consumer_group` is specified, partitions are automatically distributed across consumers of a topic. Otherwise, all partitions are consumed.
 
 Alternatively, you can specify explicit partitions to consume by using a colon after the topic name. For example, `foo:0` would consume the partition `0` of the topic foo. This syntax supports ranges. For example, `foo:0-10` would consume partitions `0` through to `10` inclusive.
 
-You can also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_from_oldest` determines which offset to start from.
+It is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_from_oldest` determines which offset to start from.
 
 
 *Type*: `array`
