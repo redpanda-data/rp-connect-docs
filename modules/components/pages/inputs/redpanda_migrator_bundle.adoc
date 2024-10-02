@@ -1,0 +1,55 @@
+= redpanda_migrator_bundle
+:page-aliases: components:inputs/kafka_migrator_bundle.adoc
+
+// tag::single-source[]
+:type: input
+:status: experimental
+:categories: ["Services"]
+
+// © 2024 Redpanda Data Inc.
+
+
+component_type_dropdown::[]
+
+
+The `redpanda_migrator_bundle` input reads messages and schemas from an Apache Kafka or Redpanda cluster. Use this input in conjunction with the xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` output].
+
+```yml
+# Config fields, showing default values
+input:
+  label: ""
+  redpanda_migrator_bundle:
+    redpanda_migrator: {} # No default (required)
+    schema_registry: {} # No default (required)
+    migrate_schemas_before_data: true
+```
+
+
+== Fields
+
+=== `redpanda_migrator`
+
+The xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] configuration.
+
+
+*Type*: `object`
+
+
+=== `schema_registry`
+
+The xref:components:inputs/schema_registry.adoc[`schema_registry` input] configuration.
+
+
+*Type*: `object`
+
+
+=== `migrate_schemas_before_data`
+
+Migrate all schemas first before starting to migrate data.
+
+
+*Type*: `bool`
+
+*Default*: `true`
+
+// end::single-source[]

@@ -1,4 +1,6 @@
-= kafka_migrator
+= redpanda_migrator
+:page-aliases: components:inputs/kafka_migrator.adoc
+
 // tag::single-source[]
 :type: input
 :status: beta
@@ -9,11 +11,11 @@
 
 component_type_dropdown::[]
 
-Use this connector in conjunction with the xref:components:outputs/kafka_migrator.adoc[`kafka_migrator` output] to migrate topics between Apache Kafka brokers. The `kafka_migrator` input uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
+Use this connector in conjunction with the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] to migrate topics between Apache Kafka brokers. The `redpanda_migrator` input uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
 
 ifndef::env-cloud[]
-Introduced in version 4.35.0.
+Introduced in version 4.37.0.
 endif::[]
 
 [tabs]
@@ -26,7 +28,7 @@ Common::
 # Common configuration fields, showing default values
 input:
   label: ""
-  kafka_migrator:
+  redpanda_migrator:
     seed_brokers: [] # No default (required)
     topics: [] # No default (required)
     regexp_topics: false
@@ -43,7 +45,7 @@ Advanced::
 # All configuration fields, showing default values
 input:
   label: ""
-  kafka_migrator:
+  redpanda_migrator:
     seed_brokers: [] # No default (required)
     topics: [] # No default (required)
     regexp_topics: false
@@ -70,23 +72,23 @@ input:
       check: ""
       processors: [] # No default (optional)
     topic_lag_refresh_period: 5s
-    output_resource: kafka_migrator_output
+    output_resource: redpanda_migrator_output
 ```
 
 --
 ======
 
-The `kafka_migrator` input:
+The `redpanda_migrator` input:
 
 * Reads a batch of messages from a Kafka broker.
 * Attempts to create all selected topics along with their associated ACLs in the broker that the output points to, identified by the label specified in `output_resource`.
-* Waits for the `kafka_migrator` output to acknowledge the writes before updating the Kafka consumer group offset.
+* Waits for the `redpanda_migrator` output to acknowledge the writes before updating the Kafka consumer group offset.
 
 Specify a consumer group for this input to consume one or more topics and automatically balance the topic partitions across any other connected clients with the same consumer group. Otherwise, topics are consumed in their entirety or with explicit partitions.
 
 == Metrics
 
-This input emits a `input_kafka_migrator_lag` metric with `topic` and `partition` labels for each consumed topic.
+This input emits a `input_redpanda_migrator_lag` metric with `topic` and `partition` labels for each consumed topic.
 
 == Metadata
 
@@ -129,13 +131,13 @@ seed_brokers:
 
 === `topics`
 
-A list of topics to consume from. Use commas to separated multiple topics in a single element.
+A list of topics to consume from. Use commas to separate multiple topics in a single element.
 
 When a `consumer_group` is specified, partitions are automatically distributed across consumers of a topic. Otherwise, all partitions are consumed.
 
 Alternatively, you can specify explicit partitions to consume by using a colon after the topic name. For example, `foo:0` would consume the partition `0` of the topic foo. This syntax supports ranges. For example, `foo:0-10` would consume partitions `0` through to `10` inclusive.
 
-You can also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_from_oldest` determines which offset to start from.
+It is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_from_oldest` determines which offset to start from.
 
 
 *Type*: `array`
@@ -698,11 +700,11 @@ The period of time between each topic lag refresh cycle.
 
 === `output_resource`
 
-The label of the `kafka_migrator` output in which the currently selected topics need to be created before attempting to read messages.
+The label of the `redpanda_migrator` output in which the currently selected topics need to be created before attempting to read messages.
 
 
 *Type*: `string`
 
-*Default*: `"kafka_migrator_output"`
+*Default*: `"redpanda_migrator_output"`
 
 // end::single-source[]

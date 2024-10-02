@@ -1,4 +1,7 @@
-= kafka_migrator_offsets
+= redpanda_migrator_offsets
+:page-aliases: components:outputs/kafka_migrator_offsets.adoc
+
+
 // tag::single-source[]
 :type: output
 :status: beta
@@ -11,12 +14,12 @@
 component_type_dropdown::[]
 
 
-Use the `kafka_migrator_offsets` output in conjunction with the `kafka_franz` input that is configured to read the `__consumer_offsets` topic.
+Use the `redpanda_migrator_offsets` output in conjunction with the `kafka_franz` input that is configured to read the `__consumer_offsets` topic.
 This output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
 
 ifndef::env-cloud[]
-Introduced in version 4.35.0.
+Introduced in version 4.37.0.
 endif::[]
 
 [tabs]
@@ -29,7 +32,7 @@ Common::
 # Common config fields, showing default values
 output:
   label: ""
-  kafka_migrator_offsets:
+  redpanda_migrator_offsets:
     seed_brokers: [] # No default (required)
     kafka_key: ${! @kafka_key }
     max_in_flight: 1
@@ -44,7 +47,7 @@ Advanced::
 # All config fields, showing default values
 output:
   label: ""
-  kafka_migrator_offsets:
+  redpanda_migrator_offsets:
     seed_brokers: [] # No default (required)
     kafka_key: ${! @kafka_key }
     client_id: benthos
