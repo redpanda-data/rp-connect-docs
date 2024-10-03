@@ -6,7 +6,9 @@
 
 Redpanda Connect logging prints to stdout (or stderr if your output is stdout) and is formatted as https://brandur.org/logfmt[logfmt^] by default. Use these configuration options to change both the logging formats as well as the destination of logs.
 
-
+ifndef::env-cloud[]
+TIP: You can also configure the xref:components:redpanda/about.adoc[`redpanda` component] to send logs and status updates to topics on a Redpanda cluster.
+endif::[]
 
 [tabs]
 ======
