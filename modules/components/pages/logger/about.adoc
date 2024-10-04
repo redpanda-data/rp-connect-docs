@@ -6,7 +6,9 @@
 
 Redpanda Connect logging prints to stdout (or stderr if your output is stdout) and is formatted as https://brandur.org/logfmt[logfmt^] by default. Use these configuration options to change both the logging formats as well as the destination of logs.
 
-
+ifndef::env-cloud[]
+TIP: You can also configure the xref:components:redpanda/about.adoc[`redpanda` component] to send logs and status updates to topics on a Redpanda cluster.
+endif::[]
 
 [tabs]
 ======
@@ -21,7 +23,7 @@ logger:
   format: logfmt
   add_timestamp: false
   static_fields:
-    '@service': benthos
+    '@service': redpanda-connect
 ```
 
 --
@@ -39,7 +41,7 @@ logger:
   timestamp_name: time
   message_name: msg
   static_fields:
-    '@service': benthos
+    '@service': redpanda-connect
   file:
     path: ""
     rotate: false
@@ -70,7 +72,6 @@ Options:
 , `TRACE`
 , `ALL`
 , `NONE`
-.
 
 === `format`
 
@@ -84,7 +85,6 @@ Set the format of emitted logs.
 Options:
 `json`
 , `logfmt`
-.
 
 === `add_timestamp`
 
@@ -129,7 +129,7 @@ A map of key/value pairs to add to each structured log.
 
 *Type*: `object`
 
-*Default*: `{"@service":"benthos"}`
+*Default*: `{"@service":"redpanda-connect"}`
 
 === `file`
 
