@@ -73,6 +73,9 @@ input:
       processors: [] # No default (optional)
     topic_lag_refresh_period: 5s
     output_resource: redpanda_migrator_output
+    replication_factor_override: true
+    replication_factor: 3
+    metadata_max_age: 5m
 ```
 
 --
@@ -192,7 +195,7 @@ An identifier for the client connection.
 
 *Type*: `string`
 
-*Default*: `"benthos"`
+*Default*: `benthos`
 
 === `rack_id`
 
@@ -230,7 +233,7 @@ The period of time between each commit of the current partition offsets. Offsets
 
 *Type*: `string`
 
-*Default*: `"5s"`
+*Default*: `5s`
 
 === `start_from_oldest`
 
@@ -696,7 +699,7 @@ The period of time between each topic lag refresh cycle.
 
 *Type*: `string`
 
-*Default*: `"5s"`
+*Default*: `5s`
 
 === `output_resource`
 
@@ -705,6 +708,32 @@ The label of the `redpanda_migrator` output in which the currently selected topi
 
 *Type*: `string`
 
-*Default*: `"redpanda_migrator_output"`
+*Default*: `redpanda_migrator_output`
+
+=== `replication_factor_override`
+
+Use the value specified in the `replication_factor` field when creating topics.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `replication_factor`
+
+Replication factor for created topics. This is only used when `replication_factor_override` is set to `true`.
+
+*Type*: `int`
+
+*Default*: `3`
+
+
+=== `metadata_max_age`
+
+The maximum period of time after which metadata is refreshed.
+
+*Type*: `string`
+
+*Default*: `5m`
+
 
 // end::single-source[]
