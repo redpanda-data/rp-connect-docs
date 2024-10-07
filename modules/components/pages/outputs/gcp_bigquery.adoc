@@ -28,6 +28,7 @@ output:
   label: ""
   gcp_bigquery:
     project: ""
+    job_project: ""
     dataset: "" # No default (required)
     table: "" # No default (required)
     format: NEWLINE_DELIMITED_JSON
@@ -55,6 +56,7 @@ output:
   label: ""
   gcp_bigquery:
     project: ""
+    job_project: ""
     dataset: "" # No default (required)
     table: "" # No default (required)
     format: NEWLINE_DELIMITED_JSON
@@ -174,7 +176,6 @@ The format of each incoming message.
 Options:
 `NEWLINE_DELIMITED_JSON`
 , `CSV`
-.
 
 === `max_in_flight`
 
