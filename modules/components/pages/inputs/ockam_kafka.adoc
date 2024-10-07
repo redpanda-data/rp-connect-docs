@@ -86,7 +86,7 @@ input:
 
 === `kafka.seed_brokers`
 
-A list of broker addresses to connect to. List items that contain commas are expanded into multiple addresses.
+A list of broker addresses to connect to (optional). List items that contain commas are expanded into multiple addresses.
 
 *Type*: `array`
 ```yml
@@ -101,7 +101,7 @@ seed_brokers:
 ```
 === `kafka.topics`
 
-A list of topics to consume from. You can list multiple comma-separated topics in a single element. If you specify a `consumer_group`, partitions are automatically distributed across consumers of a topic. Otherwise, all partitions are consumed.
+A list of topics to consume from (required). You can list multiple comma-separated topics in a single element. If you specify a `consumer_group`, partitions are automatically distributed across consumers of a topic. Otherwise, all partitions are consumed.
 
 Alternatively, add a colon after the topic name to specify the explicit partitions to consume. For example, `foo:0` consumes the partition `0` of the topic `foo`. This syntax also supports ranges. For example, `foo:0-10` consumes all partitions from `0` through to `10` inclusively.
 
@@ -333,7 +333,7 @@ password: ${KEY_PASSWORD}
 
 === `kafka.sasl`
 
-Specify one or more methods or mechanisms of SASL authentication. They are tried in order. If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.
+Specify one or more methods or mechanisms of SASL authentication (optional). They are tried in order. If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.
 
 *Type*: `array`
 
@@ -559,7 +559,7 @@ check: this.type == "end_of_transaction"
 
 === `kafka.batching.processors`
 
-For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
+For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed (optional). All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
 
 *Type*: `array`
 
@@ -586,13 +586,13 @@ Use only TLS for message encryption.
 
 === `enrollment_ticket`
 
-No description given.
+No description given (optional).
 
 *Type*: `string`
 
 === `identity_name`
 
-No description given.
+No description given (optional).
 
 *Type*: `string`
 
@@ -622,7 +622,7 @@ No description given.
 
 === `relay`
 
-No description given.
+No description given (optional).
 
 *Type*: `string`
 

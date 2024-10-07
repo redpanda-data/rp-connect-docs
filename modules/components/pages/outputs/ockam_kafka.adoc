@@ -96,7 +96,7 @@ input:
 
 === `kafka.seed_brokers`
 
-A list of broker addresses to connect to. List items that contain commas are expanded into multiple addresses.
+A list of broker addresses to connect to (optional). List items that contain commas are expanded into multiple addresses.
 
 *Type*: `array`
 ```yml
@@ -111,7 +111,7 @@ seed_brokers:
 ```
 === `kafka.topic`
 
-The topic to write messages to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The topic to write messages to (required). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -126,7 +126,7 @@ Populates a key for each message (optional). This field supports xref:configurat
 
 === `kafka.partitioner`
 
-Override the default murmur2 hashing partitioner.
+Override the default murmur2 hashing partitioner (optional).
 
 *Type*: `string`
 
@@ -307,7 +307,7 @@ check: this.type == "end_of_transaction"
 
 === `kafka.batching.processors`
 
-For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
+For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed (optional). All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
 
 *Type*: `array`
 
@@ -485,7 +485,7 @@ password: ${KEY_PASSWORD}
 
 === `kafka.sasl`
 
-Specify one or more methods or mechanisms of SASL authentication. They are tried in order. If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.
+Specify one or more methods or mechanisms of SASL authentication (optional). They are tried in order. If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.
 
 *Type*: `array`
 
@@ -663,13 +663,13 @@ No description given.
 
 === `enrollment_ticket`
 
-No description given.
+No description given (optional).
 
 *Type*: `string`
 
 === `identity_name`
 
-No description given.
+No description given (optional).
 
 *Type*: `string`
 
