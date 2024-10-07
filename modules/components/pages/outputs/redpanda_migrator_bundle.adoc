@@ -21,8 +21,8 @@ Writes messages and schemas to an Apache Kafka or Redpanda cluster. Use this out
 output:
   label: ""
   redpanda_migrator_bundle:
-    redpanda_migrator: {} # No default (optional)
-    schema_registry: {} # No default (required)
+    redpanda_migrator: {} # No default (required)
+    schema_registry: {} # No default (optional)
 ```
 
 == Fields
