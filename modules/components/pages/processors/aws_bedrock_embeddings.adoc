@@ -1,0 +1,164 @@
+= aws_bedrock_embeddings
+// tag::single-source[]
+:type: processor
+:status: experimental
+:categories: ["AI"]
+
+// © 2024 Redpanda Data Inc.
+
+
+component_type_dropdown::[]
+
+
+Generates vector embeddings from text prompts, using the https://aws.amazon.com/bedrock/[AWS Bedrock API^].
+
+ifndef::env-cloud[]
+Introduced in version 4.37.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+```yml
+# Common config fields, showing default values
+label: ""
+aws_bedrock_embeddings:
+  model: amazon.titan-embed-text-v1 # No default (required)
+  text: "" # No default (optional)
+```
+--
+Advanced::
++
+--
+```yml
+# All config fields, showing default values
+label: ""
+aws_bedrock_embeddings:
+  region: ""
+  endpoint: ""
+  credentials:
+    profile: ""
+    id: ""
+    secret: ""
+    token: ""
+    from_ec2_role: false
+    role: ""
+    role_external_id: ""
+  model: amazon.titan-embed-text-v1 # No default (required)
+  text: "" # No default (optional)
+```
+--
+======
+
+This processor sends text prompts to your chosen large language model (LLM) which generates vector embeddings for them, using the AWS Bedrock API.
+
+For more information, see the https://docs.aws.amazon.com/bedrock/latest/userguide[AWS Bedrock documentation^].
+
+== Fields
+
+=== `model`
+
+The ID of the LLM that you want to use to generate vector embeddings. For a full list, see the https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html[AWS Bedrock documentation^].
+
+*Type*: `string`
+```yml
+# Examples
+model: amazon.titan-embed-text-v1
+model: amazon.titan-embed-text-v2:0
+model: cohere.embed-english-v3
+model: cohere.embed-multilingual-v3
+```
+=== `text`
+
+The prompt you want to generate a vector embedding for. By default, the processor submits the entire payload as a string.
+
+*Type*: `string`
+
+=== `region`
+
+The region in which your AWS resources are hosted.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `endpoint`
+
+Specify a custom endpoint for the AWS API.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials`
+
+Manually configure the AWS credentials to use (optional). For more information, see the xref:guides:cloud/aws.adoc[Amazon Web Services guide].
+
+*Type*: `object`
+
+=== `credentials.profile`
+
+The profile from `~/.aws/credentials` to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.id`
+
+The ID of the AWS credentials to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.secret`
+
+The secret for the AWS credentials in use.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.token`
+
+The token for the AWS credentials in use. This is a required value for short-term credentials.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.from_ec2_role`
+
+Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].
+
+*Type*: `bool`
+
+*Default*: `false`
+
+ifndef::env-cloud[]
+Requires version 4.2.0 or newer
+endif::[]
+
+=== `credentials.role`
+
+The role ARN to assume.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.role_external_id`
+
+An external ID to use when assuming a role.
+
+*Type*: `string`
+
+*Default*: `""`
+
+
+// end::single-source[]
