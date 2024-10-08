@@ -1,4 +1,5 @@
 = gcp_vertex_ai_embeddings
+
 // tag::single-source[]
 :type: processor
 :status: experimental
@@ -108,3 +109,5 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 The maximum length of a generated vector embedding. If this value is set, generated embeddings are truncated to this size.
 
 *Type*: `int`
+
+// end::single-source[]
