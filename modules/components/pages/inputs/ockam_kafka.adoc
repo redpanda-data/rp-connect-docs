@@ -56,6 +56,7 @@ input:
       auto_replay_nacks: true
       commit_period: 5s
       start_from_oldest: true
+      metadata_max_age: 5m
       tls:
         enabled: false
         skip_cert_verify: false
@@ -198,6 +199,15 @@ Whether to consume from the oldest available offset. Otherwise, messages are con
 *Type*: `bool`
 
 *Default*: `true`
+
+=== `kafka.metadata_max_age`
+
+The maximum period of time after which metadata is refreshed.
+
+*Type*: `string`
+
+*Default*: `5m`
+
 
 === `kafka.tls`
 
