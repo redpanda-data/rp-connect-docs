@@ -15,6 +15,10 @@ component_type_dropdown::[]
 
 Writes messages and schemas to an Apache Kafka or Redpanda cluster. Use this output in conjunction with the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator_bundle` input].
 
+ifndef::env-cloud[]
+Introduced in version 4.37.0.
+endif::[]
+
 
 ```yml
 # Config fields, showing default values
