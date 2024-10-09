@@ -398,6 +398,7 @@ input:
       regexp_topics: true
       consumer_group: migrator_bundle
       start_from_oldest: true
+      replication_factor_override: false
 
     schema_registry:
       url: http://localhost:8081
@@ -409,6 +410,7 @@ output:
     redpanda_migrator:
       seed_brokers: [ "localhost:9093" ]
       max_in_flight: 1
+      replication_factor_override: false
 
     schema_registry:
       url: http://localhost:8082
