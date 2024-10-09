@@ -9,7 +9,7 @@
 component_type_dropdown::[]
 
 
-Encrypts messages from an Apache Kafka producer and publishes them to a Redpanda cluster, using an https://docs.ockam.io/portals/kafka/redpanda[Ockam Portal^].
+Encrypts messages from an Apache Kafka producer and publishes them to a Redpanda cluster, using an https://docs.ockam.io/portals/kafka/redpanda[Ockam portal^].
 
 [tabs]
 ======
@@ -211,7 +211,7 @@ The maximum period of time after which metadata is refreshed.
 
 === `kafka.tls`
 
-You can use custom TLS settings to override system defaults.
+Override system defaults with custom TLS settings.
 
 *Type*: `object`
 
@@ -588,7 +588,7 @@ processors:
 
 === `disable_content_encryption`
 
-Use only TLS for message encryption.
+Disable Kafka message encryption.
 
 *Type*: `bool`
 
@@ -596,19 +596,21 @@ Use only TLS for message encryption.
 
 === `enrollment_ticket`
 
-No description given (optional).
+The path, URL or inline hex-encoded value of the enrollment ticket (optional).
 
 *Type*: `string`
 
 === `identity_name`
 
-No description given (optional).
+The name of an Ockam identity to use. If this value is not provided, the default Ockam identity is used (optional).
 
 *Type*: `string`
 
 === `allow`
 
-No description given.
+Use in conjunction with the `route_to_kafka_outlet` field to specify an ACL policy that is validated against a Kafka outlet.
+
+For example, `(= subject.kafka_role "outlet")` verifies that the Kafka outlet has a `kafka_role` attribute that contains the value `outlet`. Alternatively, `kafka_role` is a simplified rule which verifies that Kafka outlet has a `kafka_role` attribute with the value `true`.
 
 *Type*: `string`
 
@@ -616,7 +618,7 @@ No description given.
 
 === `route_to_kafka_outlet`
 
-No description given.
+The route to reach the Kafka outlet of your Ockam portal. For example, `/project/default`.
 
 *Type*: `string`
 
@@ -624,7 +626,9 @@ No description given.
 
 === `allow_producer`
 
-No description given.
+Specify an ACL policy to validate against the Kafka producer.
+
+For example, `(= subject.kafka_role "producer")` verifies that the Kafka producer has a `kafka_role` attribute which contains the value `true`.
 
 *Type*: `string`
 
@@ -632,13 +636,13 @@ No description given.
 
 === `relay`
 
-No description given (optional).
+When specified, the Ockam node is accessible through a relay (optional).
 
 *Type*: `string`
 
 === `node_address`
 
-No description given.
+The TCP listening address of the Ockam node.
 
 *Type*: `string`
 

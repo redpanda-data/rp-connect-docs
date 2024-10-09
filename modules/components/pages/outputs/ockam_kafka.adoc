@@ -655,7 +655,7 @@ timestamp: ${! metadata("kafka_timestamp_unix") }
 
 === `disable_content_encryption`
 
-No description given.
+Disable Kafka message encryption.
 
 *Type*: `bool`
 
@@ -663,19 +663,21 @@ No description given.
 
 === `enrollment_ticket`
 
-No description given (optional).
+The path, URL or inline hex-encoded value of the enrollment ticket (optional).
 
 *Type*: `string`
 
 === `identity_name`
 
-No description given (optional).
+The name of an Ockam identity to use. If this value is not provided, the default Ockam identity is used (optional).
 
 *Type*: `string`
 
 === `allow`
 
-No description given.
+Use in conjunction with the `route_to_kafka_outlet` field to specify an ACL policy that is validated against a Kafka outlet.
+
+For example, `(= subject.kafka_role "outlet")` verifies that the Kafka outlet has a `kafka_role` attribute that contains the value `outlet`. Alternatively, `kafka_role` is a simplified rule which verifies that Kafka outlet has a `kafka_role` attribute with the value `true`.
 
 *Type*: `string`
 
@@ -683,7 +685,7 @@ No description given.
 
 === `route_to_kafka_outlet`
 
-No description given.
+The route to reach the Kafka outlet of your Ockam portal. For example, `/project/default`.
 
 *Type*: `string`
 
@@ -691,7 +693,9 @@ No description given.
 
 === `allow_consumer`
 
-No description given.
+Specify an ACL policy to validate against the Kafka consumer.
+
+For example, `(= subject.kafka_role "consumer")` verifies that the Kafka consumer has a `kafka_role` attribute which contains the value `true`.
 
 *Type*: `string`
 
@@ -699,7 +703,7 @@ No description given.
 
 === `route_to_consumer`
 
-No description given.
+The TCP listening address of the Kafka consumer.
 
 *Type*: `string`
 
