@@ -98,6 +98,8 @@ Manually configure the AWS credentials to use (optional). For more information, 
 
 *Type*: `object`
 
+
+ifndef::env-cloud[]
 === `credentials.profile`
 
 The profile from `~/.aws/credentials` to use.
@@ -131,6 +133,7 @@ The token for the AWS credentials in use. This is a required value for short-ter
 *Type*: `string`
 
 *Default*: `""`
+endif::[]
 
 === `credentials.from_ec2_role`
 
