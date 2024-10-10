@@ -16,77 +16,45 @@ ifndef::env-cloud[]
 Introduced in version 4.37.0.
 endif::[]
 
-ifndef::env-cloud[]
 [tabs]
 ======
 Common::
 +
 --
-```yml
+[,yaml]
+----
 # Common config fields, showing default values
 label: ""
 aws_bedrock_embeddings:
   model: amazon.titan-embed-text-v1 # No default (required)
   text: "" # No default (optional)
-```
+----
 --
 Advanced::
 +
 --
-```yml
+[,yaml]
+----
 # All config fields, showing default values
 label: ""
 aws_bedrock_embeddings:
   region: ""
   endpoint: ""
   credentials:
+ifndef::env-cloud[]
     profile: ""
     id: ""
     secret: ""
     token: ""
+endif::[]
     from_ec2_role: false
     role: ""
     role_external_id: ""
   model: amazon.titan-embed-text-v1 # No default (required)
   text: "" # No default (optional)
-```
+----
 --
 ======
-endif::[]
-
-ifdef::env-cloud[]
-[tabs]
-======
-Common::
-+
---
-```yml
-# Common config fields, showing default values
-label: ""
-aws_bedrock_embeddings:
-  model: amazon.titan-embed-text-v1 # No default (required)
-  text: "" # No default (optional)
-```
---
-Advanced::
-+
---
-```yml
-# All config fields, showing default values
-label: ""
-aws_bedrock_embeddings:
-  region: ""
-  endpoint: ""
-  credentials:
-    from_ec2_role: false
-    role: ""
-    role_external_id: ""
-  model: amazon.titan-embed-text-v1 # No default (required)
-  text: "" # No default (optional)
-```
---
-======
-endif::[]
 
 This processor sends text prompts to your chosen large language model (LLM) which generates vector embeddings for them, using the AWS Bedrock API.
 
@@ -108,7 +76,7 @@ model: cohere.embed-multilingual-v3
 ```
 === `text`
 
-The prompt you want to generate a vector embedding for. By default, the processor submits the entire payload as a string.
+The prompt you want to generate a vector embedding for. The processor submits the entire payload as a string.
 
 *Type*: `string`
 
