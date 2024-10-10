@@ -234,7 +234,7 @@ By default, this value is set to `false`, and records containing unknown values 
 
 === `max_bad_records`
 
-The maximum number of bad records that are ignored when reading data.
+The maximum number of bad records to ignore when reading data and <<ignore_unknown_values, `ignore_unknown_values`>> is set to `true`.
 
 
 *Type*: `int`
@@ -245,9 +245,9 @@ The maximum number of bad records that are ignored when reading data.
 
 Whether this component automatically infers the options and schema for `CSV` and `NEWLINE_DELIMITED_JSON` sources. 
 
-If this value is set to `false` and the destination table doesn't exist, the output may throw an insertion error as it is unable to insert data. 
+If this value is set to `false` and the destination table doesn't exist, the output throws an insertion error as it is unable to insert data. 
 
-CAUTION: This field delegates schema detection to the GCP BigQuery service. For the `CSV` format, values like `"no"` may be treated as booleans.
+CAUTION: This field delegates schema detection to the GCP BigQuery service. For the `CSV` format, values like `no` may be treated as booleans.
 
 *Type*: `bool`
 

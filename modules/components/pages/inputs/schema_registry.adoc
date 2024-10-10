@@ -130,7 +130,7 @@ Include only subjects which match the regular expression filter, or leave this f
 
 === `fetch_in_order`
 
-Fetch all schemas from the schema registry service and sort them by ID. Set this value to `true` if you use schema references: schemas that refer to other schemas.
+Indicate whether to fetch all schemas from the schema registry service and sort them by ID. Set this value to `true` if you use schemas that refer to other schemas (schema references).
 
 *Type*: `bool`
 
@@ -400,7 +400,7 @@ Whether to use JWT authentication in requests.
 
 === `jwt.private_key_file`
 
-A file in PEM format encoded via PKCS1 or PKCS8 as private key.
+A PEM-encoded file containing a private key that is formatted using either PKCS1 or PKCS8 standards.
 
 *Type*: `string`
 
