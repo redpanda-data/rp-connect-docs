@@ -28,7 +28,7 @@ cohere_embeddings:
   dimensions: search_document
 ```
 
-This processor sends text strings to your chosen large language model (LLM) which generates vector embeddings for them, using the Cohere API. By default, the processor submits the entire payload of each message as a string, unless you use the `text_mapping` field to customize it.
+This processor sends text strings to your chosen large language model (LLM), which generates vector embeddings for them using the Cohere API. By default, the processor submits the entire payload of each message as a string, unless you use the `text_mapping` field to customize it.
 
 To learn more about vector embeddings, see the https://docs.cohere.com/docs/embeddings[Cohere API documentation^].
 
