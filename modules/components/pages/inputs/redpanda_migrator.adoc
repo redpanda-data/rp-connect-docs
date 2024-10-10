@@ -189,7 +189,7 @@ An optional consumer group. When specified, the partitions of specified topics a
 
 === `output_resource`
 
-The label of the `redpanda_migrator` output in which the currently selected topics need to be created before attempting to read messages.
+The label of the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] in which the currently selected topics need to be created before attempting to read messages.
 
 
 *Type*: `string`
@@ -198,7 +198,7 @@ The label of the `redpanda_migrator` output in which the currently selected topi
 
 === `replication_factor_override`
 
-Indicate whether to override the replication factor of the input topics when creating copies of them. You must specify the new replication factor in the <<replication-factor, `replication_factor` field>>.
+Indicate whether to override the replication factor of the input topics when creating copies of them on the output cluster. You must specify the new replication factor in the <<replication-factor, `replication_factor` field>>.
 
 *Type*: `bool`
 
@@ -728,7 +728,7 @@ The period of time between each topic lag refresh cycle.
 
 === `metadata_max_age`
 
-The maximum period of time after which metadata is refreshed.
+The maximum period of time after which metadata is refreshed. Reducing this value increases the frequency with which newly created topics are identified. 
 
 *Type*: `string`
 

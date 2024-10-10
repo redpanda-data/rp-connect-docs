@@ -218,7 +218,7 @@ partition: ${! meta("partition") }
 
 === `input_resource`
 
-The label of the `redpanda_migrator` input from which to read the configurations of topics and ACLs for creation.
+The label of the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] from which to read the configurations of topics and ACLs for creation.
 
 
 *Type*: `string`
@@ -228,7 +228,7 @@ The label of the `redpanda_migrator` input from which to read the configurations
 
 === `replication_factor_override`
 
-Indicate whether to override the replication factor of the input topics when creating copies of them. The new replication factor must be specified in the <<replication-factor, `replication_factor` field>>.
+Indicate whether to override the replication factor of the input topics when creating copies of them on the output cluster. The new replication factor must be specified in the <<replication-factor, `replication_factor` field>>.
 
 *Type*: `bool`
 
