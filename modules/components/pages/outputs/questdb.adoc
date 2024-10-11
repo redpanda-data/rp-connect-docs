@@ -1,7 +1,9 @@
 = questdb
 :type: output
-:status: experimental
+:page-beta: true
 :categories: ["Services"]
+
+// tag::single-source[]
 
 // © 2024 Redpanda Data Inc.
 
@@ -10,6 +12,10 @@ component_type_dropdown::[]
 
 
 Pushes messages to a QuestDB table.
+
+ifndef::env-cloud[]
+Introduced in version 4.37.0.
+endif::[]
 
 [tabs]
 ======
@@ -86,9 +92,9 @@ IMPORTANT: Redpanda recommends that you enable the dedupe feature on the QuestDB
 
 == Performance
 
-For improved performance, this output sends multiple messages in parallel. You can tune the maximum number of in-flight messages or message batches, using the `max_in_flight` field.
+For improved performance, this output sends multiple messages (or message batches) in parallel. You can tune the maximum number of in-flight messages or message batches, using the `max_in_flight` field. 
 
-This output can also send message batches. You can configure batches at both the input and output level. For more information, see xref:configuration:batching.adoc[Message Batching].
+You can configure batches at both the input and output level. For more information, see xref:configuration:batching.adoc[Message Batching].
 
 == Fields
 
@@ -421,3 +427,5 @@ Mark a message as an error if it is empty after field validation.
 *Type*: `bool`
 
 *Default*: `false`
+
+// end::single-source[]
