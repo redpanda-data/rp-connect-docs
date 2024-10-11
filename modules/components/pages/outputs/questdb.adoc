@@ -11,7 +11,7 @@
 component_type_dropdown::[]
 
 
-Pushes messages to a QuestDB table.
+Pushes messages to a https://questdb.io/docs/[QuestDB^] table.
 
 ifndef::env-cloud[]
 Introduced in version 4.37.0.
@@ -88,11 +88,11 @@ output:
 --
 ======
 
-IMPORTANT: Redpanda recommends that you enable the dedupe feature on the QuestDB server. For more information about about deploying, configuring, and using QuestDB, see the https://questdb.io/docs/[QuestDB documentation]. 
+IMPORTANT: Redpanda Data recommends enabling the dedupe feature on the QuestDB server. For more information about deploying, configuring, and using QuestDB, see the https://questdb.io/docs/[QuestDB documentation^]. 
 
 == Performance
 
-For improved performance, this output sends multiple messages (or message batches) in parallel. You can tune the maximum number of in-flight messages or message batches, using the `max_in_flight` field. 
+For improved performance, this output sends multiple messages in parallel. You can tune the maximum number of in-flight messages (or message batches), using the `max_in_flight` field. 
 
 You can configure batches at both the input and output level. For more information, see xref:configuration:batching.adoc[Message Batching].
 
