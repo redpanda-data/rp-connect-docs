@@ -133,6 +133,13 @@ If HTTPS is enabled, the following fields are added as well:
 
 You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
 
+=== Headers
+
+Request headers are available as metadata keyed off the header name with now additional prefix. Header name casing is changed during processing to train case:
+```text
+x-api-key available as metadata("X-Api-Key")
+```
+
 == Examples
 
 [tabs]
