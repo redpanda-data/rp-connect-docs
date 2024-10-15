@@ -11,7 +11,7 @@
 component_type_dropdown::[]
 
 
-Writes a batch of messages to any graph database that supports the https://neo4j.com/docs/bolt/current/bolt/[Bolt protocol^] and the https://neo4j.com/docs/cypher-manual/current/introduction/[Cypher query language^]. For each incoming message, the connector can perform operations to store or delete data within the database using the Cypher query language.
+Writes a batch of messages to any graph database that supports the https://neo4j.com/docs/go-manual/current/connect-advanced/[Neo4j and Bolt URI schemes^]. For each incoming message, the connector can perform operations to store or delete data within the database using the https://neo4j.com/docs/cypher-manual/current/introduction/[Cypher query language].
 
 ifndef::env-cloud[]
 Introduced in version 4.37.0.
