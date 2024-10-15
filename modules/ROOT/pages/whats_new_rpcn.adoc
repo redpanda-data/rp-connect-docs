@@ -7,7 +7,7 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 == Version 4.37.0
 
-Redpanda Connect has new bundled <<redpanda-migrator-components-beta,Redpanda Migrator components>>, more <<ai-processors-beta, AI processors>> for Self-Managed and Cloud platforms, and three new <<community-outputs-beta, community outputs>>. 
+Redpanda Connect has new bundled <<redpanda-migrator-components-beta,Redpanda Migrator components>>, more <<ai-processors-beta, AI processors>> for Self-Managed and Cloud platforms, and three new <<certified-and-community-outputs-beta, outputs>>. 
 
 === Redpanda Migrator components (beta)
 
@@ -24,13 +24,11 @@ Some new additions to Redpanda Connect’s growing list of AI processors:
 * xref:components:processors/cohere_embeddings.adoc[`cohere_embeddings`]
 * xref:components:processors/gcp_vertex_ai_embeddings.adoc[`gcp_vertex_ai_embeddings`]
 
-=== Community outputs (beta) 
+=== Certified and community outputs (beta) 
 
-Three new community outputs: 
-
-* xref:components:outputs/couchbase.adoc[`couchbase`]
-* xref:components:outputs/cypher.adoc[`cypher`]
-* xref:components:outputs/questdb.adoc[`questdb`]
+* xref:components:outputs/couchbase.adoc[`couchbase`] (community)
+* xref:components:outputs/cypher.adoc[`cypher`] (community)
+* xref:components:outputs/questdb.adoc[`questdb`] (certified)
 
 === Component updates
 
@@ -92,18 +90,21 @@ This release adds:
 
 == Version 4.32.1
 
-Redpanda Connect has a new batch of AI processors for Self-Managed and Cloud platforms.
+Redpanda Connect has a new batch of beta AI processors for Self-Managed and Cloud platforms.
 
-=== AI processors (beta)
+=== For Self-Managed and Cloud platforms
 
-* xref:components:processors/ollama_chat.adoc[`ollama_chat`]
-* xref:components:processors/ollama_embeddings.adoc[`ollama_embeddings`]
 * xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion`]
 * xref:components:processors/openai_embeddings.adoc[`openai_embeddings`]
 * xref:components:processors/openai_image_generation.adoc[`openai_image_generation`]
 * xref:components:processors/openai_speech.adoc[`openai_speech`]
 * xref:components:processors/openai_transcription.adoc[`openai_transcription`]
 * xref:components:processors/openai_translation.adoc[`openai_translation`]
+
+=== For Self-Managed only
+
+* xref:components:processors/ollama_chat.adoc[`ollama_chat`]
+* xref:components:processors/ollama_embeddings.adoc[`ollama_embeddings`]
 
 
 == Version 4.31.0
