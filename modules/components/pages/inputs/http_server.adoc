@@ -135,7 +135,7 @@ You can access these metadata fields using xref:configuration:interpolation.adoc
 
 === Headers
 
-Request headers are available as metadata keyed off the header name with no additional prefix. Header name casing is changed during processing to train case:
+Request headers are available as metadata and use the HTTP header name with no additional prefix as a key. During processing, Redpanda Connect changes the format of the header name, as in the following example:
 ```text
 x-api-key available as metadata("X-Api-Key")
 ```
