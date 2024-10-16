@@ -1,7 +1,6 @@
 = gcp_vertex_ai_chat
 // tag::single-source[]
 :type: processor
-:status: experimental
 :categories: ["AI"]
 
 
@@ -82,17 +81,7 @@ The GCP project ID to use.
 
 An optional field to set a Google Service Account Credentials JSON.
 
-ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
-
-
 
 *Type*: `string`
 
