@@ -79,12 +79,8 @@ output:
 
 == Examples
 
-[tabs]
-======
-Writes to Neo4j Aura::
-+
---
-This is an example of how to write data to Neo4j Aura.
+An example of how to write data to Neo4j Aura.
+
 ```yaml
 output:
   cypher:
@@ -105,8 +101,6 @@ output:
       username: "${NEO4J_USER}"
       password: "${NEO4J_PASSWORD}"
 ```
---
-======
 
 == Fields
 
