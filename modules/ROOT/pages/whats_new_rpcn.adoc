@@ -1,0 +1,139 @@
+= What's New in Redpanda Connect
+:description: Summary of new features in Redpanda Connect.
+
+This topic includes new content added from version 4.29.0 onwards. 
+
+For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
+
+== Version 4.37.0
+
+Redpanda Connect has new bundled <<redpanda-migrator-components-beta,Redpanda Migrator components>>, more <<ai-processors-beta, AI processors>> for Self-Managed and Cloud platforms, and three new <<certified-and-community-outputs-beta, outputs>>. 
+
+=== Redpanda Migrator components (beta)
+
+You can now move workloads from any Apache Kafka system to Redpanda using the xref:components:inputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input] and xref:components:outputs/redpanda_migrator_bundle.adoc[output]. 
+
+For full details, see the Redpanda Migrator Cookbook for xref:cookbooks:redpanda_migrator.adoc[Self-Managed] and xref:redpanda-cloud:develop:connect/cookbooks/redpanda_migrator.adoc[Cloud].
+
+=== AI processors (beta)
+
+Some new additions to Redpanda Connect’s growing list of AI processors:
+
+* xref:components:processors/aws_bedrock_embeddings.adoc[`aws_bedrock_embeddings`] 
+* xref:components:processors/cohere_chat.adoc[`cohere_chat`]
+* xref:components:processors/cohere_embeddings.adoc[`cohere_embeddings`]
+* xref:components:processors/gcp_vertex_ai_embeddings.adoc[`gcp_vertex_ai_embeddings`]
+
+=== Certified and community outputs (beta) 
+
+* xref:components:outputs/couchbase.adoc[`couchbase`] (community)
+* xref:components:outputs/cypher.adoc[`cypher`] (community)
+* xref:components:outputs/questdb.adoc[`questdb`] (certified)
+
+=== Component updates
+
+This release adds:
+
+* The `metadata_max_age` field to xref:components:inputs/kafka_franz.adoc[`kafka_franz`] and xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`] inputs.
+* The `fetch_in_order` field to the xref:components:inputs/schema_registry.adoc[`schema_registry` input].
+
+== Version 4.36.0
+
+You can now use the `replication_factor_override` and `replication_factor` fields of the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] and xref:components:outputs/redpanda_migrator.adoc[output] to set a replication factor for migrated topics.
+
+
+== Versions 4.35.1 to 4.35.3
+
+Redpanda Connect is now fully integrated with the Redpanda Cloud platform. This release adds Azure and GCP components to the growing list of available components. For a full list of components supported in Redpanda Cloud, see the xref:redpanda-cloud:develop:connect/components/catalog.adoc[Connector Catalog]. 
+
+== Version 4.35.0
+
+Redpanda Connect now includes beta versions of Redpanda Migrator components:
+
+* xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] and xref:components:outputs/redpanda_migrator.adoc[output]
+* xref:components:inputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input] and xref:components:outputs/redpanda_migrator_bundle.adoc[output]
+* xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` output]
+
+For full details, see the Redpanda Migrator Cookbook for xref:cookbooks:redpanda_migrator.adoc[Self-Managed] and xref:redpanda-cloud:develop:connect/cookbooks/redpanda_migrator.adoc[Cloud].
+
+
+=== Component updates
+
+This release adds:
+
+* OAuth, basic authentication, and JSON Web Token fields to the xref:components:inputs/schema_registry.adoc[`schema_registry` input] and xref:components:outputs/schema_registry.adoc[output].
+* The `job_project` field to the xref:components:outputs/gcp_bigquery.adoc[`gcp_bigquery` output].
+
+== Version 4.34.0
+
+Redpanda Connect now includes beta versions of two new AI processors for Cloud and Self-Managed platforms:
+
+* xref:components:processors/aws_bedrock_chat.adoc[`aws_bedrock_chat`]
+* xref:components:processors/gcp_vertex_ai_chat.adoc[`gcp_vertex_ai_chat`]
+
+== Version 4.33.0
+
+Redpanda Connect now includes beta versions of the following components for Self-Managed and Cloud platforms:
+
+* xref:components:inputs/schema_registry.adoc[`schema_registry` input] and xref:components:outputs/schema_registry.adoc[output]
+* xref:components:outputs/qdrant.adoc[`qdrant` output]
+
+You can also use the new Bloblang xref:guides:bloblang/methods.adoc[`vector`] method to create vector embeddings for SQL databases. 
+
+=== Component updates
+
+This release adds:
+
+* The `credentials_json` field to all GCP components.
+* The `content_md5` field to the xref:components:outputs/aws_s3.adoc[`aws_s3` output].
+* The `send_ack` field to the xref:components:inputs/nats.adoc[`nats` input].
+
+== Version 4.32.1
+
+Redpanda Connect has a new batch of beta AI processors for Self-Managed and Cloud platforms.
+
+=== For Self-Managed and Cloud platforms
+
+* xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion`]
+* xref:components:processors/openai_embeddings.adoc[`openai_embeddings`]
+* xref:components:processors/openai_image_generation.adoc[`openai_image_generation`]
+* xref:components:processors/openai_speech.adoc[`openai_speech`]
+* xref:components:processors/openai_transcription.adoc[`openai_transcription`]
+* xref:components:processors/openai_translation.adoc[`openai_translation`]
+
+=== For Self-Managed only
+
+* xref:components:processors/ollama_chat.adoc[`ollama_chat`]
+* xref:components:processors/ollama_embeddings.adoc[`ollama_embeddings`]
+
+
+== Version 4.31.0
+
+Redpanda Connect now includes beta versions of two new components:
+
+* xref:components:outputs/pinecone.adoc[`pinecone` output] - Redpanda Connect's first AI component 
+* xref:components:processors/redpanda_data_transform.adoc[`redpanda_data_transform` processor]
+
+
+=== Component updates
+
+This release adds:
+
+* Custom TLS fields for the xref:components:inputs/splunk.adoc[`splunk` input] and xref:components:outputs/splunk_hec.adoc[`splunk_hec` output].
+* The `timestamp` field to xref:components:outputs/kafka.adoc[`kafka`] and xref:components:outputs/kafka_franz.adoc[`kafka_franz`] outputs.
+* The `status_topic` field to the xref:components:redpanda/about.adoc[`redpanda` component].
+
+== Version 4.30.0 to 4.30.1
+
+Redpanda Connect now includes a beta version of the xref:components:inputs/splunk.adoc[`splunk` input].
+
+== Version 4.29.0
+
+Redpanda Connect now separates packages into an enterprise bundle and a free bundle, which contains community and selected certified connectors. To learn more about licensing and support levels, see xref:components:connector-support-levels.adoc[].
+
+=== Component updates
+
+This release adds:
+
+* The `auth.oauth2.scope` field to the xref:components:inputs/pulsar.adoc[`pulsar` input] and xref:components:outputs/pulsar.adoc[output].
+* The `subscription_initial_position` field to the xref:components:inputs/pulsar.adoc[`pulsar` input].
