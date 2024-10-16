@@ -13,13 +13,17 @@ component_type_dropdown::[]
 
 The `redpanda_migrator_bundle` input reads messages and schemas from an Apache Kafka or Redpanda cluster. Use this input in conjunction with the xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` output].
 
+ifndef::env-cloud[]
+Introduced in version 4.37.0.
+endif::[]
+
 ```yml
 # Config fields, showing default values
 input:
   label: ""
   redpanda_migrator_bundle:
     redpanda_migrator: {} # No default (required)
-    schema_registry: {} # No default (required)
+    schema_registry: {} # No default (optional)
     migrate_schemas_before_data: true
 ```
 

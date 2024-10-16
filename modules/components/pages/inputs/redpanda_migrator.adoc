@@ -48,6 +48,9 @@ input:
     seed_brokers: [] # No default (required)
     topics: [] # No default (required)
     regexp_topics: false
+    output_resource: redpanda_migrator_output
+    replication_factor_override: true
+    replication_factor: 3
     consumer_group: "" # No default (optional)
     client_id: benthos
     rack_id: ""
@@ -71,7 +74,7 @@ input:
       check: ""
       processors: [] # No default (optional)
     topic_lag_refresh_period: 5s
-    output_resource: redpanda_migrator_output
+    metadata_max_age: 5m
 ```
 
 --
@@ -183,6 +186,31 @@ An optional consumer group. When specified, the partitions of specified topics a
 
 *Type*: `string`
 
+=== `output_resource`
+
+The label of the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] in which the currently selected topics need to be created before attempting to read messages.
+
+
+*Type*: `string`
+
+*Default*: `redpanda_migrator_output`
+
+=== `replication_factor_override`
+
+Indicate whether to override the replication factor of the input topics when creating copies of them on the output cluster. You must specify the new replication factor in the <<replication-factor, `replication_factor` field>>.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+[[replication-factor]]
+=== `replication_factor`
+
+Replication factor for created topics. This is only used when `replication_factor_override` is set to `true`.
+
+*Type*: `int`
+
+*Default*: `3`
 
 === `client_id`
 
@@ -191,7 +219,7 @@ An identifier for the client connection.
 
 *Type*: `string`
 
-*Default*: `"benthos"`
+*Default*: `benthos`
 
 === `rack_id`
 
@@ -229,7 +257,7 @@ The period of time between each commit of the current partition offsets. Offsets
 
 *Type*: `string`
 
-*Default*: `"5s"`
+*Default*: `5s`
 
 === `start_from_oldest`
 
@@ -695,15 +723,15 @@ The period of time between each topic lag refresh cycle.
 
 *Type*: `string`
 
-*Default*: `"5s"`
+*Default*: `5s`
 
-=== `output_resource`
+=== `metadata_max_age`
 
-The label of the `redpanda_migrator` output in which the currently selected topics need to be created before attempting to read messages.
-
+The maximum period of time after which metadata is refreshed. Reducing this value increases the frequency with which newly created topics are identified. 
 
 *Type*: `string`
 
-*Default*: `"redpanda_migrator_output"`
+*Default*: `5m`
+
 
 // end::single-source[]

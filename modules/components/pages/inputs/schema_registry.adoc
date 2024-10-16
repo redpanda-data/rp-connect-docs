@@ -44,6 +44,7 @@ input:
     url: "" # No default (required)
     include_deleted: false
     subject_filter: ""
+    fetch_in_order: true
     tls:
       enabled: false
       skip_cert_verify: false
@@ -52,6 +53,22 @@ input:
       root_cas_file: ""
       client_certs: []
     auto_replay_nacks: true
+    oauth:
+      enabled: false
+      consumer_key: ""
+      consumer_secret: ""
+      access_token: ""
+      access_token_secret: ""
+    basic_auth:
+      enabled: false
+      username: ""
+      password: ""
+    jwt:
+      enabled: false
+      private_key_file: ""
+      signing_method: ""
+      claims: {}
+      headers: {}
 ```
 
 --
@@ -111,6 +128,18 @@ Include only subjects which match the regular expression filter, or leave this f
 
 *Default*: `""`
 
+=== `fetch_in_order`
+
+Indicate whether to fetch all schemas from the schema registry service and sort them by ID. Set this value to `true` if you use schemas that refer to other schemas (schema references).
+
+*Type*: `bool`
+
+*Default*: `true`
+
+ifndef::env-cloud[]
+Requires version 3.37.0 or newer
+endif::[]
+
 === `tls`
 
 Override system defaults with custom TLS settings.
@@ -130,7 +159,7 @@ Whether custom TLS settings are enabled.
 
 === `tls.skip_cert_verify`
 
-Whether to skip server side certificate verification.
+Whether to skip server-side certificate verification.
 
 
 *Type*: `bool`
@@ -154,15 +183,7 @@ endif::[]
 
 Specify a certificate authority to use (optional). This is a string that represents a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
-ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
 
 *Type*: `string`
 
@@ -226,17 +247,7 @@ The plain text certificate to use.
 
 The plain text certificate key to use.
 
-ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
-
-
 
 *Type*: `string`
 
@@ -266,17 +277,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 
 Because the obsolete `pbeWithMD5AndDES-CBC` algorithm does not authenticate the ciphertext, it is vulnerable to padding Oracle attacks that can let an attacker recover the plaintext.
 
-ifndef::env-cloud[]
-[CAUTION]
-====
-This field contains sensitive information that usually shouldn't be added to a config directly, read our xref:configuration:secrets.adoc[secrets page for more info].
-====
-endif::[]
-ifdef::env-cloud[]
 include::components:partial$secret_warning.adoc[]
-endif::[]
-
-
 
 *Type*: `string`
 
@@ -300,5 +301,133 @@ Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto r
 *Type*: `bool`
 
 *Default*: `true`
+
+=== `oauth`
+
+Configure OAuth version 1.0 to give this component authorized access to your schema registry.
+
+*Type*: `object`
+
+=== `oauth.enabled`
+
+Whether to use OAuth version 1 in requests.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `oauth.consumer_key`
+
+The value used to identify this component or client to your schema registry.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `oauth.consumer_secret`
+
+The secret used to establish ownership of the consumer key.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `oauth.access_token`
+
+The value this component can use to gain access to the data in the schema registry.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `oauth.access_token_secret`
+
+The secret that establishes ownership of the `oauth.access_token`.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `basic_auth`
+
+Configure basic authentication for requests from this component to your schema registry.
+
+*Type*: `object`
+
+=== `basic_auth.enabled`
+
+Whether to use basic authentication in requests.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `basic_auth.username`
+
+The username of the account credentials to authenticate as.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `basic_auth.password`
+
+The password of the account credentials to authenticate with.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `jwt`
+
+BETA: Configure JSON Web Token (JWT) authentication for the secure transmission of data from your schema registry to this component.
+
+*Type*: `object`
+
+=== `jwt.enabled`
+
+Whether to use JWT authentication in requests.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `jwt.private_key_file`
+
+A PEM-encoded file containing a private key that is formatted using either PKCS1 or PKCS8 standards.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `jwt.signing_method`
+
+The method used to sign the token, such as RS256, RS384, RS512 or EdDSA.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `jwt.claims`
+
+Values used to pass the identity of the authenticated entity to the service provider. In this case, between this component and the schema registry.
+
+*Type*: `object`
+
+*Default*: `{}`
+
+=== `jwt.headers`
+
+The key/value pairs that identify the type of token and signing algorithm.
+
+*Type*: `object`
+
+*Default*: `{}`
 
 // end::single-source[]
