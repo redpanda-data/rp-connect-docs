@@ -277,7 +277,7 @@ Now, run this command to start the pipeline, and leave it running:
 
 [source,console]
 ----
-redpanda-connect run generate_data.yaml
+rpk connect run generate_data.yaml
 ----
 
 Next, add a Redpanda Connect consumer, which reads messages from the `source` cluster topics, and leave it running. This consumer uses the `foobar` consumer group, which will be reused in a later step when consuming from the `destination` cluster.
@@ -358,7 +358,7 @@ Launch the `source` consumer pipeline, and leave it running:
 
 [source,console]
 ----
-redpanda-connect run read_data_source.yaml
+rpk connect run read_data_source.yaml
 ----
 
 At this point, the `source` cluster should have some data in both `foo` and `bar` topics, and the consumer should print the messages it reads from these topics to `stdout`.
@@ -479,7 +479,7 @@ Launch the Redpanda Migrator Bundle pipeline, and leave it running:
 
 [source,console]
 ----
-redpanda-connect run redpanda_migrator_bundle.yaml
+rpk connect run redpanda_migrator_bundle.yaml
 ----
 
 == Check the status of migrated topics
@@ -621,7 +621,7 @@ Now launch the `destination` consumer pipeline, and leave it running:
 
 [source,console]
 ----
-redpanda-connect run read_data_destination.yaml
+rpk connect run read_data_destination.yaml
 ----
 
 It's worth clarifying that the `source` cluster consumer uses the same `foobar` consumer group. As you can see, this consumer resumes reading messages from where the `source` consumer left off.
