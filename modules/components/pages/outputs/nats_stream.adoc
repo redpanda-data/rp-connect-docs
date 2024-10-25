@@ -9,7 +9,7 @@
 component_type_dropdown::[]
 
 
-Publish to a NATS Stream subject.
+Publish messages to a NATS Stream subject.
 
 
 [tabs]
@@ -19,7 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   nats_stream:
@@ -36,7 +36,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   nats_stream:
@@ -54,6 +54,7 @@ output:
       client_certs: []
     auth:
       nkey_file: ./seed.nk # No default (optional)
+      nkey: "" # No default (optional)
       user_credentials_file: ./user.creds # No default (optional)
       user_jwt: "" # No default (optional)
       user_nkey_seed: "" # No default (optional)
@@ -69,47 +70,42 @@ output:
 The NATS Streaming Server is being deprecated. Critical bug fixes and security fixes will be applied until June of 2023. NATS-enabled applications requiring persistence should use https://docs.nats.io/nats-concepts/jetstream[JetStream^].
 ====
 
-
-
 == Authentication
 
-There are several components within Redpanda Connect which uses NATS services. You will find that each of these components
-support optional advanced authentication parameters for https://docs.nats.io/nats-server/configuration/securing_nats/auth_intro/nkey_auth[NKeys^]
-and https://docs.nats.io/using-nats/developer/connecting/creds[User Credentials^].
+There are a number of Redpanda Connect components that use NATS services. Each of these components
+support optional, advanced authentication parameters for https://docs.nats.io/nats-server/configuration/securing_nats/auth_intro/nkey_auth[NKeys^] and https://docs.nats.io/using-nats/developer/connecting/creds[user credentials^].
 
-See an https://docs.nats.io/running-a-nats-service/nats_admin/security/jwt[in-depth tutorial^].
+For an in-depth guide, see the https://docs.nats.io/running-a-nats-service/nats_admin/security/jwt[NATS documentation^].
 
-=== NKey file
+=== NKeys
 
-The NATS server can use these NKeys in several ways for authentication. The simplest is for the server to be configured
-with a list of known public keys and for the clients to respond to the challenge by signing it with its private NKey
-configured in the `nkey_file` field.
+NATS server can use NKeys in several ways for authentication. The simplest approach is to configure the server 
+with a list of user's public keys. The server can then generate a challenge for each connection request from a client, and the client must respond to the challenge by signing it with its private NKey; configured in the `nkey_file` or `nkey` field.
 
-https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[More details^].
+For more details, see the https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NATS documentation^].
 
 === User credentials
 
-NATS server supports decentralized authentication based on JSON Web Tokens (JWT). Clients need an https://docs.nats.io/nats-server/configuration/securing_nats/jwt#json-web-tokens[user JWT^]
-and a corresponding https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NKey secret^] when connecting to a server
-which is configured to use this authentication scheme.
+NATS server also supports decentralized authentication based on JSON Web Tokens (JWTs). When a server is configured to use this authentication scheme, clients need a https://docs.nats.io/nats-server/configuration/securing_nats/jwt#json-web-tokens[user JWT^]
+and a corresponding https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NKey secret^] to connect.
 
-The `user_credentials_file` field should point to a file containing both the private key and the JWT and can be
-generated with the https://docs.nats.io/nats-tools/nsc[nsc tool^].
+You can use either of the following methods to supply the user JWT and NKey secret:
 
-Alternatively, the `user_jwt` field can contain a plain text JWT and the `user_nkey_seed`can contain
-the plain text NKey Seed.
+* In the `user_credentials_file` field, enter the path to a file containing both the private key and the JWT. You can generate the file using the https://docs.nats.io/nats-tools/nsc[nsc tool^].
+* In the `user_jwt` field, enter a plain text JWT, and in the `user_nkey_seed` field, enter
+the plain text NKey seed or private key.
 
-https://docs.nats.io/using-nats/developer/connecting/creds[More details^].
+For more details about authentication using JWTs, see the https://docs.nats.io/using-nats/developer/connecting/creds[NATS documentation^].
 
 == Performance
 
-This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.
+This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the number of in flight messages (or message batches) with the field `max_in_flight`.
 
 == Fields
 
 === `urls`
 
-A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.
+A list of URLs to connect to. If a list item contains commas, it will be expanded into multiple URLs.
 
 
 *Type*: `array`
@@ -335,9 +331,27 @@ An optional file containing a NKey seed.
 nkey_file: ./seed.nk
 ```
 
+=== `auth.nkey`
+
+Your NKey seed or private key.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+ifndef::env-cloud[]
+Requires version 3.48.0 or newer
+endif::[]
+
+```yml
+# Examples
+
+nkey: UDXU4RCSJNZOIQHZNWXHXORDPRTGNJAHAHFRGZNEEJCPQTT2M7NLCNF4
+```
+
 === `auth.user_credentials_file`
 
-An optional file containing user credentials which consist of an user JWT and corresponding NKey seed.
+An optional file containing user credentials which consist of a user JWT and corresponding NKey seed.
 
 
 *Type*: `string`
@@ -351,7 +365,7 @@ user_credentials_file: ./user.creds
 
 === `auth.user_jwt`
 
-An optional plain text user JWT (given along with the corresponding user NKey Seed).
+An optional plain text user JWT to use along with the corresponding user NKey seed.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -362,7 +376,7 @@ include::components:partial$secret_warning.adoc[]
 
 === `auth.user_nkey_seed`
 
-An optional plain text user NKey Seed (given along with the corresponding user JWT).
+An optional plain text user NKey seed to use along with the corresponding user JWT.
 
 include::components:partial$secret_warning.adoc[]
 
