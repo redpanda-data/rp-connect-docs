@@ -12,7 +12,7 @@
 component_type_dropdown::[]
 
 
-Sends message parts as files to an Azure Data Lake Gen2 file system. Each file is uploaded with the file name specified in the `path` field.
+Sends message parts as files to an https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction[Azure Data Lake Gen2^] file system. Each file is uploaded with the file name specified in the `path` field.
 
 ifndef::env-cloud[]
 Introduced in version 4.38.0.
