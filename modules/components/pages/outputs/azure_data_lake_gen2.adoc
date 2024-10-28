@@ -33,7 +33,7 @@ output:
     max_in_flight: 64
 ```
 To specify a different <<path,`path` value>> (file name) for each file, use xref:configuration:interpolation.adoc#bloblang-queries[function
-interpolations], which are calculated for each message in a batch.
+interpolations]. Function interpolations are calculated for each message in a batch.
 
 == Authentication methods
 
@@ -45,9 +45,6 @@ This output supports multiple authentication methods. You must configure at leas
 - `storage_account` to access using https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#DefaultAzureCredential[DefaultAzureCredential^]
 
 If you configure multiple authentication methods, the `storage_connection_string` takes precedence.
-
-NOTE: If the `storage_connection_string` field does not contain the `AccountName` parameter value, specify it in the
-`storage_account` field.
 
 == Performance
 
@@ -74,6 +71,9 @@ The access key for the storage account. Use this field along with `storage_accou
 === `storage_connection_string`
 
 The connection string for the storage account. You must enter a value for this field if no other authentication method is specified.
+
+NOTE: If the `storage_connection_string` field does not contain the `AccountName` parameter value, specify it in the
+`storage_account` field.
 
 *Type*: `string`
 
