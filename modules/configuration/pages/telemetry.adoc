@@ -12,9 +12,9 @@ For example, if usage data shows that most `aws_s3` outputs are paired with a `m
 
 == Data collection method
 
-When a Redpanda Connect instance executes a configuration, it sends a JSON payload to the collection server. The payload contains a high-level, anonymized summary of the contents of the configuration file. Specific field values are never transmitted, nor are decorations of the configuration, such as label names.
+When you execute a configuration, the Redpanda Connect instance sends a JSON payload to the collection server. The payload contains a high-level, anonymized summary of the contents of the configuration file. Specific field values are never transmitted, nor are decorations of the configuration, such as label names.
 
-For example, a Redpanda Connect instance executes the following configuration:
+For example, if you execute this configuration:
 
 ```yml
 input:
@@ -30,7 +30,7 @@ output:
     path: filename.txt
 ```
 
-Redpanda extracts the following details:
+Redpanda extracts the following details from the data collected:
 
 * A unique identifier for the Redpanda Connect instance.
 * How long the configuration has been running for.
