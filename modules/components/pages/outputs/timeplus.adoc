@@ -209,13 +209,13 @@ include::components:partial$secret_warning.adoc[]
 
 === `username`
 
-The username for the Timeplus application server. This field is required if you are sending message to Timeplus Enterprise (Self-Hosted) or `timeplusd`.
+The username for the Timeplus application server. This field is required if you are sending messages to Timeplus Enterprise (Self-Hosted) or `timeplusd`.
 
 *Type*: `string`
 
 === `password`
 
-The password for the Timeplus application server. This field is required if you are sending message to Timeplus Enterprise (Self-Hosted) or `timeplusd`.
+The password for the Timeplus application server. This field is required if you are sending messages to Timeplus Enterprise (Self-Hosted) or `timeplusd`.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -223,7 +223,7 @@ include::components:partial$secret_warning.adoc[]
 
 === `max_in_flight`
 
-The maximum number of messages to have in flight at a given time. Increase this number to improve throughput.
+The maximum number of message batches to have in flight at a given time. Increase this number to improve throughput.
 
 *Type*: `int`
 
