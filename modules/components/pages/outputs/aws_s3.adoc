@@ -170,7 +170,7 @@ The path of each message to upload. This field supports xref:configuration:inter
 
 *Type*: `string`
 
-*Default*: `"${!counter()}-${!timestamp_unix_nano()}.txt"`
+*Default*: `${!counter()}-${!timestamp_unix_nano()}.txt`
 
 ```yml
 # Examples
@@ -208,7 +208,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
-*Default*: `"application/octet-stream"`
+*Default*: `application/octet-stream`
 
 === `content_encoding`
 
@@ -291,7 +291,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
-*Default*: `"STANDARD"`
+*Default*: `STANDARD`
 
 Options:
 `STANDARD`
@@ -350,7 +350,7 @@ The maximum period to wait on an upload before abandoning it and reattempting.
 
 *Type*: `string`
 
-*Default*: `"5s"`
+*Default*: `5s`
 
 === `batching`
 
