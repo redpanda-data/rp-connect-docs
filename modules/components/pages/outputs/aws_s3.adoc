@@ -116,7 +116,7 @@ By default Redpanda Connect will use a shared credentials file when connecting t
 
 == Batching
 
-It's common to want to upload messages to S3 as batched archives. The easiest way to do this is to batch your messages at the output level and join the batch of messages with an xref:components:processors/archive.adoc[`archive`] and/or xref:components:processors/compress.adoc[`compress`] processor.
+It's common to want to upload messages to S3 as batched archives. The easiest way to do this is to batch your messages at the output level and join the batch of messages with an xref:components:processors/archive.adoc[`archive`] or xref:components:processors/compress.adoc[`compress`] processor.
 
 For example, the following configuration uploads messages as a .tar.gz archive of documents: 
 
