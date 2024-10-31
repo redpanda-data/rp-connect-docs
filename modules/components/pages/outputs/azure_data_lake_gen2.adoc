@@ -48,7 +48,7 @@ If you configure multiple authentication methods, the `storage_connection_string
 
 == Performance
 
-This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.
+Sends multiple messages in flight in parallel for improved performance. You can tune the number of in flight messages (or message batches) with the field `max_in_flight`.
 
 == Fields
 
@@ -114,7 +114,7 @@ path: ${!json("doc.namespace")}/${!json("doc.id")}.json
 ```
 === `max_in_flight`
 
-The maximum number of messages to have in flight at a given time. Increase this number to improve throughput.
+The maximum number of messages to have in flight at a given time. Increase this number to improve throughput or until performance plateaus.
 
 *Type*: `int`
 
