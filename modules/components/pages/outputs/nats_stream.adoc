@@ -80,7 +80,7 @@ For an in-depth guide, see the https://docs.nats.io/running-a-nats-service/nats_
 === NKeys
 
 NATS server can use NKeys in several ways for authentication. The simplest approach is to configure the server 
-with a list of user's public keys. The server can then generate a challenge for each connection request from a client, and the client must respond to the challenge by signing it with its private NKey; configured in the `nkey_file` or `nkey` field.
+with a list of user's public keys. The server can then generate a challenge for each connection request from a client, and the client must respond to the challenge by signing it with its private NKey, configured in the `nkey_file` or `nkey` field.
 
 For more details, see the https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NATS documentation^].
 
@@ -99,7 +99,7 @@ For more details about authentication using JWTs, see the https://docs.nats.io/u
 
 == Performance
 
-This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the number of in flight messages (or message batches) with the field `max_in_flight`.
+Send multiple messages in flight in parallel for improved performance. You can tune the number of in flight messages (or message batches) with the field `max_in_flight`.
 
 == Fields
 

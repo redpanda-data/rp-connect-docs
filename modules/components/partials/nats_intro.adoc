@@ -1,6 +1,6 @@
 == Connection name
 
-When monitoring and managing a production NATS system, it is often useful to know which connection a message was sent or received from. To achieve this, set the connection name option when creating a NATS connection. Redpanda Connect can then automatically set the connection name to the NATS component label, so that monitoring tools between NATS and Redpanda Connect can stay in sync.
+When monitoring and managing a production https://docs.nats.io/nats-concepts/overview[NATS system^], it is often useful to know which connection a message was sent or received from. To achieve this, set the connection name option when creating a NATS connection. Redpanda Connect can then automatically set the connection name to the NATS component label, so that monitoring tools between NATS and Redpanda Connect can stay in sync.
 
 
 == Authentication
@@ -13,7 +13,7 @@ For an in-depth guide, see the https://docs.nats.io/running-a-nats-service/nats_
 === NKeys
 
 NATS server can use NKeys in several ways for authentication. The simplest approach is to configure the server 
-with a list of user's public keys. The server can then generate a challenge for each connection request from a client, and the client must respond to the challenge by signing it with its private NKey; configured in the `nkey_file` or `nkey` field.
+with a list of user's public keys. The server can then generate a challenge for each connection request from a client, and the client must respond to the challenge by signing it with its private NKey, configured in the `nkey_file` or `nkey` field.
 
 For more details, see the https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NATS documentation^].
 
