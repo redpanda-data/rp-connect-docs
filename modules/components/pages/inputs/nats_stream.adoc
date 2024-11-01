@@ -79,7 +79,7 @@ The NATS Streaming Server is being deprecated. Critical bug fixes and security f
 
 Tracking and persisting offsets through a durable name is also optional and works with or without a queue. If a durable name is not provided then subjects are consumed from the most recently published message.
 
-When a consumer closes its connection it unsubscribes. When all consumers of a durable queue do this the offsets are deleted. To stop consumers from unsubscribing, set the field `unsubscribe_on_close` to `false`.
+When a consumer closes its connection, it unsubscribes from the subject. When all consumers of a durable queue do this, the offsets are deleted from the NATS server. To avoid this, set the `unsubscribe_on_close` field to `false`, to prevent consumers from unsubscribing.
 
 == Metadata
 
