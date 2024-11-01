@@ -69,7 +69,7 @@ This output only accepts structured messages. All messages must:
 - Contain the same keys.
 - Use a structure that matches the schema of the destination data stream.
 
-If your upstream data source or pipeline returns unstructured messages, such as strings, you can configure a output processor to transform the messages. See the <<unstructured-message,Unstructured message>> section for examples.
+If your upstream data source or pipeline returns unstructured messages, such as strings, you can configure an output processor to transform the messages. See the <<unstructured-messages,Unstructured messages>> section for examples.
 
 == Examples
 
@@ -145,9 +145,9 @@ Replace the following placeholders with your own values:
 
 === Unstructured messages
 
-If your upstream data source or pipeline returns unstructured messages, such as strings, you can configure an output processor to transform them into a structured messages and then pass them to the output.
+If your upstream data source or pipeline returns unstructured messages, such as strings, you can configure an output processor to transform them into structured messages and then pass them to the output.
 
-This example creates structured messages using the `raw` field, and stores the original string content into it. You can modify the name of the field, but you must also add either the the `raw` field name or your custom field name to the destination data stream.
+In the following example, the `mapping` processor creates a field called `raw`, and uses the functions `content().string()` to store the original string content into it, thereby creating structured messages. If you use this example, you must also add the `raw` field name to the destination data stream, so that your message structure matches the schema of your destination data stream.
 
 ```yaml
 output:
