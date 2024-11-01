@@ -69,6 +69,7 @@ input:
       period: ""
       check: ""
       processors: [] # No default (optional)
+    metadata_max_age: 5m
 ```
 
 --
@@ -214,7 +215,7 @@ The period of time between each commit of the current partition offsets. Offsets
 
 *Type*: `string`
 
-*Default*: `"5s"`
+*Default*: `5s`
 
 === `start_from_oldest`
 
@@ -676,5 +677,15 @@ processors:
   - archive:
       format: json_array
 ```
+
+=== `metadata_max_age`
+
+The maximum period of time after which metadata is refreshed.
+
+*Type*: `string`
+
+*Default*: `5m`
+
+
 
 // end::single-source[]
