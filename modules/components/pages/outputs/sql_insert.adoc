@@ -143,10 +143,54 @@ A Data Source Name to identify the target database.
 The following is a list of supported drivers, their placeholder style, and their respective DSN formats:
 
 |===
+| Driver | Placeholder Style
+
+| `clickhouse` 
+| https://github.com/ClickHouse/clickhouse-go#dsn[clickhouse://[username[:password\]@\][netloc\][:port\]/dbname[?param1=value1&...&paramN=valueN\^]
+
+| `mysql`
+| Question mark (?)
+
+| `postgres`
+| Dollar sign ($)
+
+| `mssql`
+| Question mark (?)
+
+| `sqlite`
+| Question mark (?)
+
+| `oracle`
+| Colon (:)
+
+| `snowflake`
+| Question mark (?)
+
+| `trino`
+| Question mark (?)
+
+| `gocosmos`
+| Colon (:)
+|===
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+|===
 | Driver | Data Source Name Format
 
 | `clickhouse` 
-| https://github.com/ClickHouse/clickhouse-go#dsn[`clickhouse://[username[:password\]@\][netloc\][:port\]/dbname[?param1=value1&...&paramN=valueN\]`^] 
+a| https://github.com/ClickHouse/clickhouse-go#dsn[`clickhouse://[username[:password\]@\][netloc\]&#10;[:port\]/dbname[?param1=value1&...&paramN=valueN\]`^] 
 
 | `mysql` 
 | `[username[:password]@][protocol[(address)]]/dbname[?param1=value1&...&paramN=valueN]` 

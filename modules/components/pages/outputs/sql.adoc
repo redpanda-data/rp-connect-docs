@@ -110,31 +110,31 @@ The query to execute. The style of placeholder to use depends on the driver, som
 | Driver | Placeholder Style
 
 | `clickhouse`
-| Dollar sign
+| Dollar sign ($)
 
 | `mysql`
-| Question mark
+| Question mark (?)
 
 | `postgres`
-| Dollar sign
+| Dollar sign ($)
 
 | `mssql`
-| Question mark
+| Question mark (?)
 
 | `sqlite`
-| Question mark
+| Question mark (?)
 
 | `oracle`
-| Colon
+| Colon (:)
 
 | `snowflake`
-| Question mark
+| Question mark (?)
 
 | `trino`
-| Question mark
+| Question mark (?)
 
 | `gocosmos`
-| Colon
+| Colon (:)
 |===
 
 *Type*: `string`

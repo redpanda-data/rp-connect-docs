@@ -202,15 +202,33 @@ The query to execute. The style of placeholder to use depends on the driver, som
 
 |===
 | Driver | Placeholder Style
-| `clickhouse` | Dollar sign ($)
-| `mysql` | Question mark (?)
-| `postgres` | Dollar sign ($)
-| `mssql` | Question mark (?)
-| `sqlite` | Question mark (?)
-| `oracle` | Colon (;)
-| `snowflake` | Question mark (?)
-| `trino` | Question mark (?)
-| `gocosmos` | Colon (;)
+
+| `clickhouse`
+| Dollar sign ($)
+
+| `mysql`
+| Question mark (?)
+
+| `postgres`
+| Dollar sign ($)
+
+| `mssql`
+| Question mark (?)
+
+| `sqlite`
+| Question mark (?)
+
+| `oracle`
+| Colon (:)
+
+| `snowflake`
+| Question mark (?)
+
+| `trino`
+| Question mark (?)
+
+| `gocosmos`
+| Colon (:)
 |===
 
 
