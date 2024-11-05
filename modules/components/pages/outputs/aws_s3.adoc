@@ -65,6 +65,7 @@ output:
       exclude_prefixes: []
     storage_class: STANDARD
     kms_key_id: ""
+    checksum_algorithm: ""
     server_side_encryption: ""
     force_path_style_urls: false
     max_in_flight: 64
@@ -306,16 +307,30 @@ Options:
 
 === `kms_key_id`
 
-An optional server side encryption key.
-
+An optional server-side encryption key.
 
 *Type*: `string`
 
 *Default*: `""`
 
+=== `checksum_algorithm`
+
+The algorithm used to validate each object during its upload to the Amazon S3 bucket.
+
+*Type*: `string`
+
+*Default*: `""`
+
+*Options*: `CRC32`, `CRC32C`, `SHA1`, `SHA256`
+
+ifndef::env-cloud[]
+Requires version 4.38.0 or newer
+endif::[]
+
+
 === `server_side_encryption`
 
-An optional server side encryption algorithm.
+An optional server-side encryption algorithm.
 
 
 *Type*: `string`
