@@ -23,12 +23,12 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   aws_s3:
     bucket: "" # No default (required)
-    path: ${!count("files")}-${!timestamp_unix_nano()}.txt
+    path: ${!counter()}-${!timestamp_unix_nano()}.txt
     tags: {}
     content_type: application/octet-stream
     metadata:
@@ -47,12 +47,12 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   aws_s3:
     bucket: "" # No default (required)
-    path: ${!count("files")}-${!timestamp_unix_nano()}.txt
+    path: ${!counter()}-${!timestamp_unix_nano()}.txt
     tags: {}
     content_type: application/octet-stream
     content_encoding: ""
@@ -65,6 +65,7 @@ output:
       exclude_prefixes: []
     storage_class: STANDARD
     kms_key_id: ""
+    checksum_algorithm: ""
     server_side_encryption: ""
     force_path_style_urls: false
     max_in_flight: 64
@@ -104,7 +105,7 @@ The tags field allows you to specify key/value pairs to attach to objects as tag
 output:
   aws_s3:
     bucket: TODO
-    path: ${!count("files")}-${!timestamp_unix_nano()}.tar.gz
+    path: ${!counter()}-${!timestamp_unix_nano()}.tar.gz
     tags:
       Key1: Value1
       Timestamp: ${!meta("Timestamp")}
@@ -116,15 +117,15 @@ By default Redpanda Connect will use a shared credentials file when connecting t
 
 == Batching
 
-It's common to want to upload messages to S3 as batched archives, the easiest way to do this is to batch your messages at the output level and join the batch of messages with an xref:components:processors/archive.adoc[`archive`] and/or xref:components:processors/compress.adoc[`compress`] processor.
+It's common to want to upload messages to S3 as batched archives. The easiest way to do this is to batch your messages at the output level and join the batch of messages with an xref:components:processors/archive.adoc[`archive`] or xref:components:processors/compress.adoc[`compress`] processor.
 
-For example, if we wished to upload messages as a .tar.gz archive of documents we could achieve that with the following config:
+For example, the following configuration uploads messages as a .tar.gz archive of documents: 
 
 ```yaml
 output:
   aws_s3:
     bucket: TODO
-    path: ${!count("files")}-${!timestamp_unix_nano()}.tar.gz
+    path: ${!counter()}-${!timestamp_unix_nano()}.tar.gz
     batching:
       count: 100
       period: 10s
@@ -135,13 +136,13 @@ output:
             algorithm: gzip
 ```
 
-Alternatively, if we wished to upload JSON documents as a single large document containing an array of objects we can do that with:
+Alternatively, this configuration uploads JSON documents as a single large document containing an array of objects:
 
 ```yaml
 output:
   aws_s3:
     bucket: TODO
-    path: ${!count("files")}-${!timestamp_unix_nano()}.json
+    path: ${!counter()}-${!timestamp_unix_nano()}.json
     batching:
       count: 100
       processors:
@@ -165,18 +166,17 @@ The bucket to upload messages to.
 
 === `path`
 
-The path of each message to upload.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The path of each message to upload. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
 *Type*: `string`
 
-*Default*: `"${!count(\"files\")}-${!timestamp_unix_nano()}.txt"`
+*Default*: `${!counter()}-${!timestamp_unix_nano()}.txt`
 
 ```yml
 # Examples
 
-path: ${!count("files")}-${!timestamp_unix_nano()}.txt
+path: ${!counter()}-${!timestamp_unix_nano()}.txt
 
 path: ${!meta("kafka_key")}.json
 
@@ -209,7 +209,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
-*Default*: `"application/octet-stream"`
+*Default*: `application/octet-stream`
 
 === `content_encoding`
 
@@ -292,7 +292,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
-*Default*: `"STANDARD"`
+*Default*: `STANDARD`
 
 Options:
 `STANDARD`
@@ -306,16 +306,30 @@ Options:
 
 === `kms_key_id`
 
-An optional server side encryption key.
-
+An optional server-side encryption key.
 
 *Type*: `string`
 
 *Default*: `""`
 
+=== `checksum_algorithm`
+
+The algorithm used to validate each object during its upload to the Amazon S3 bucket.
+
+*Type*: `string`
+
+*Default*: `""`
+
+*Options*: `CRC32`, `CRC32C`, `SHA1`, `SHA256`
+
+ifndef::env-cloud[]
+Requires version 4.38.0 or newer
+endif::[]
+
+
 === `server_side_encryption`
 
-An optional server side encryption algorithm.
+An optional server-side encryption algorithm.
 
 
 *Type*: `string`
@@ -351,7 +365,7 @@ The maximum period to wait on an upload before abandoning it and reattempting.
 
 *Type*: `string`
 
-*Default*: `"5s"`
+*Default*: `5s`
 
 === `batching`
 
