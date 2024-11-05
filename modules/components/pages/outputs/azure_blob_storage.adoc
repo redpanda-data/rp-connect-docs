@@ -23,7 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   azure_blob_storage:
@@ -32,7 +32,7 @@ output:
     storage_connection_string: ""
     storage_sas_token: ""
     container: messages-${!timestamp("2006")} # No default (required)
-    path: ${!count("files")}-${!timestamp_unix_nano()}.txt
+    path: ${!counter()}-${!timestamp_unix_nano()}.txt
     max_in_flight: 64
 ```
 
@@ -42,7 +42,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   azure_blob_storage:
@@ -51,7 +51,7 @@ output:
     storage_connection_string: ""
     storage_sas_token: ""
     container: messages-${!timestamp("2006")} # No default (required)
-    path: ${!count("files")}-${!timestamp_unix_nano()}.txt
+    path: ${!counter()}-${!timestamp_unix_nano()}.txt
     blob_type: BLOCK
     public_access_level: PRIVATE
     max_in_flight: 64
@@ -135,18 +135,17 @@ container: messages-${!timestamp("2006")}
 
 === `path`
 
-The path of each message to upload.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The path of each message to upload. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
 *Type*: `string`
 
-*Default*: `"${!count(\"files\")}-${!timestamp_unix_nano()}.txt"`
+*Default*: `"${!counter()}-${!timestamp_unix_nano()}.txt"`
 
 ```yml
 # Examples
 
-path: ${!count("files")}-${!timestamp_unix_nano()}.json
+path: ${!counter()}-${!timestamp_unix_nano()}.json
 
 path: ${!meta("kafka_key")}.json
 
