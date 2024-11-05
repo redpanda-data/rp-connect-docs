@@ -5,6 +5,35 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.38.0
+
+This update includes the beta release of two new outputs for Cloud and Self-Managed, and the introduction of a xref:configuration:telemetry.adoc[telemetry service], which collects and sends anonymized usage statistics to Redpanda.
+
+=== New outputs (beta)
+
+* xref:components:outputs/azure_data_lake_gen2.adoc[`azure_data_lake_gen2`] (certified)
+* xref:components:outputs/timeplus.adoc[`timeplus`] (community) 
+
+=== Component updates
+
+This release adds:
+
+* The `checksum_algorithm` to the xref:components:outputs/aws_s3.adoc[`aws_s3` output].
+* The `private_key` field to the xref:components:outputs/snowflake_put.adoc[`snowflake_put` output].
+* The `nkey` field to the following components:
+** `nats` (xref:components:inputs/nats.adoc[input], xref:components:outputs/nats.adoc[output])
+** `nats_jetstream` (xref:components:inputs/nats_jetstream.adoc[input], xref:components:outputs/nats_jetstream.adoc[output])
+** `nats_kv` (xref:components:inputs/nats_kv.adoc[input], xref:components:outputs/nats_kv.adoc[output], xref:components:processors/nats_kv.adoc[processor])
+** `nats_stream` (xref:components:inputs/nats_stream.adoc[input], xref:components:outputs/nats_stream.adoc[output])
+** `nats_request_reply` (xref:components:processors/nats_request_reply.adoc[processor])
+
+Other changes:
+
+* The `collection` field of the xref:components:outputs/mongodb.adoc[`mongodb` output] now supports interpolation functions.
+* All components that used the deprecated `count` function, with a default value for the `path` field, now use the `counter` function.
++
+NOTE: If you have multiple components that execute a mapping using the deprecated `count` function with the original default value, and these counters need to cascade, there may be a change in behavior. To avoid this, explicitly define a value for the `path` field. 
+
 == Version 4.37.0
 
 Redpanda Connect has new bundled <<redpanda-migrator-components-beta,Redpanda Migrator components>>, more <<ai-processors-beta, AI processors>> for Self-Managed and Cloud platforms, and three new <<certified-and-community-outputs-beta, outputs>>. 
