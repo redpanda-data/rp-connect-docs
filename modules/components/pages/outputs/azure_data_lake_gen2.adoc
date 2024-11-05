@@ -1,0 +1,123 @@
+= azure_data_lake_gen2
+//tag::single-source[]
+:type: output
+:page-beta: true
+
+:categories: ["Services","Azure"]
+
+
+// © 2024 Redpanda Data Inc.
+
+
+component_type_dropdown::[]
+
+
+Sends message parts as files to an https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction[Azure Data Lake Gen2^] file system. Each file is uploaded with the file name specified in the `path` field.
+
+ifndef::env-cloud[]
+Introduced in version 4.38.0.
+endif::[]
+
+
+```yml
+# Configuration fields, showing default values
+output:
+  label: ""
+  azure_data_lake_gen2:
+    storage_account: "" # No default (optional)
+    storage_access_key: "" # No default (optional)
+    storage_connection_string: "" # No default (optional)
+    storage_sas_token: "" # No default (optional)
+    filesystem: messages-${!timestamp("2006")} # No default (required)
+    path: ${!counter()}-${!timestamp_unix_nano()}.txt
+    max_in_flight: 64
+```
+To specify a different <<path,`path` value>> (file name) for each file, use xref:configuration:interpolation.adoc#bloblang-queries[function
+interpolations]. Function interpolations are calculated for each message in a batch.
+
+== Authentication methods
+
+This output supports multiple authentication methods. You must configure at least one method from the following list:
+
+- `storage_connection_string`
+- `storage_account` and `storage_access_key`
+- `storage_account` and `storage_sas_token`
+- `storage_account` to access using https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#DefaultAzureCredential[DefaultAzureCredential^]
+
+If you configure multiple authentication methods, the `storage_connection_string` takes precedence.
+
+== Performance
+
+Sends multiple messages in flight in parallel for improved performance. You can tune the number of in flight messages (or message batches) with the field `max_in_flight`.
+
+== Fields
+
+=== `storage_account`
+
+The storage account to access. This field is ignored when the `storage_connection_string` field is populated.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `storage_access_key`
+
+The access key for the storage account. Use this field along with `storage_account` for authentication. This field is ignored when the `storage_connection_string` field is populated.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `storage_connection_string`
+
+The connection string for the storage account. You must enter a value for this field if no other authentication method is specified.
+
+NOTE: If the `storage_connection_string` field does not contain the `AccountName` parameter value, specify it in the
+`storage_account` field.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `storage_sas_token`
+
+The SAS token for the storage account. Use this field along with `storage_account` for authentication. This field is ignored when either the `storage_connection_string` or `storage_access_key` fields are populated.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `filesystem`
+
+The name of the data lake storage file system you want to upload messages to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+```yml
+# Examples
+filesystem: messages-${!timestamp("2006")}
+```
+
+=== `path`
+
+The path (file name) of each message to upload to the data lake storage file system. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `${!counter()}-${!timestamp_unix_nano()}.txt`
+
+```yml
+# Examples
+path: ${!counter()}-${!timestamp_unix_nano()}.json
+path: ${!meta("kafka_key")}.json
+path: ${!json("doc.namespace")}/${!json("doc.id")}.json
+```
+=== `max_in_flight`
+
+The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.
+
+*Type*: `int`
+
+*Default*: `64`
+
+// end::single-source[]
