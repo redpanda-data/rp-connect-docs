@@ -1,0 +1,52 @@
+= Telemetry
+// tag::single-source[]
+
+:description: How Redpanda collects usage statistics to help improve Redpanda Connect.
+
+From version 4.38.0, the default Redpanda Connect configuration includes a telemetry service that sends anonymized usage statistics to Redpanda. Redpanda analyzes the data to find out how often each Redpanda Connect component is used in production environments, and common usage patterns. This data analysis aims to help:
+
+* Identify gaps in functionality. 
+* Prioritize the delivery of new features, enhancements, and bug fixes.
+
+For example, if usage data shows that most `aws_s3` outputs are paired with a `mutation` processor, then embedding a `mutation` field in the component might be a useful enhancement.
+
+== Data collection method
+
+When you execute a configuration, the Redpanda Connect instance sends a JSON payload to the collection server. The payload contains a high-level, anonymized summary of the contents of the configuration file. Field values are never transmitted, nor are decorations of the configuration, such as label names.
+
+For example, if you execute this configuration:
+
+```yml
+input:
+  label: message_input
+  generate:
+    interval: 1s
+    mapping: 'root.input_field = "string"'
+
+output:
+  label: message_output
+  aws_s3:
+    bucket: bucket_name
+    path: filename.txt
+```
+
+Redpanda extracts the following details from the data collected:
+
+* A unique identifier for the Redpanda Connect instance.
+* How long the configuration has been running for.
+* Components used in the configuration. In this case, a `generate` input and an `aws_s3` output.
+* The IP address of the running Redpanda Connect instance.
+
+The code responsible for extracting usage data is available in the `connect` repository in the file: https://github.com/redpanda-data/connect/blob/v4.38.0/internal/telemetry/payload.go[./payload.go^].
+
+== Data collection frequency
+
+To avoid analyzing instances used for experimentation or testing, a Redpanda Connect instance must have been running for at least 5 minutes before any usage data is collected. Once usage data starts to be emitted, it is sent to the collection server once every 24 hours. 
+
+== Blocking the telemetry service
+
+The telemetry service configuration is only included in the build artifacts released through https://github.com/redpanda-data/connect/releases[GitHub] or Redpanda’s official https://hub.docker.com/r/redpandadata/connect/[Docker images]. Custom builds do not send usage data. 
+
+To continue to use the official Redpanda artifacts or images but disable the telemetry service, you can block internet traffic. Redpanda Connect continues to operate normally if it is unable to send usage data.
+
+// end::single-source[]
