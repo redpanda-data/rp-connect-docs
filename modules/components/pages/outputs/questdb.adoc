@@ -218,7 +218,9 @@ Whether to allow the remote server to request renegotiation. Enable this option 
 
 *Default*: `false`
 
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 

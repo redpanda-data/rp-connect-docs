@@ -131,8 +131,11 @@ The maximum amount of time to wait in order to establish a connection before the
 
 *Type*: `string`
 
-*Default*: `"30s"`
+*Default*: `30s`
+
+ifndef::env-cloud[]
 Requires version 3.58.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -211,7 +214,6 @@ A password to connect with.
 include::components:partial$secret_warning.adoc[]
 
 
-
 *Type*: `string`
 
 *Default*: `""`
@@ -259,16 +261,16 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
-
 include::components:partial$secret_warning.adoc[]
-
-
 
 *Type*: `string`
 
@@ -348,6 +350,7 @@ The path of a certificate to use.
 *Type*: `string`
 
 *Default*: `""`
+
 
 === `tls.client_certs[].key_file`
 
