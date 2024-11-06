@@ -1,0 +1,361 @@
+= Get Started with the Redpanda Connect Helm Chart
+:description: Deploy Redpanda Connect on Kubernetes using Helm.
+:page-aliases: getting_started:kubernetes_install.adoc, ROOT:kubernetes_install.adoc
+
+This guide explains how to deploy and configure Redpanda Connect on Kubernetes using the Helm chart.
+
+Redpanda Connect is a powerful stream processor that integrates data across various glossterm:source connector[sources] (inputs) and glossterm:sink connector[sinks] (outputs), enabling seamless data flows between systems. It supports complex data processing tasks such as data enrichment, transformation, filtering, and routing, making it a versatile solution for data pipelines that require high performance and resilience.
+
+Common use cases for Redpanda Connect include:
+
+* **Real-time data ingestion**: Ingesting data from various sources into Redpanda or other data platforms.
+* **Data transformation**: Enriching and transforming data to match business requirements before forwarding it to a destination.
+* **Data filtering and routing**: Filtering data and routing it to the appropriate sinks based on predefined conditions.
+
+== Prerequisites
+
+* A running Kubernetes cluster.
+* `kubectl` CLI and `helm` CLI installed.
+
+== Install with Helm
+
+To deploy Redpanda Connect on Kubernetes, use the official Helm chart.
+
+[source,bash]
+----
+helm repo add redpanda https://charts.redpanda.com <1>
+helm repo update <2>
+helm install redpanda-connect redpanda/connect --namespace <namespace> --create-namespace <3>
+----
+
+<1> Adds the Redpanda Helm repository.
+<2> Updates your local Helm repository cache.
+<3> Installs Redpanda Connect in the given namespace. You can customize this deployment by configuring values in the Helm chart.
+
+== Run example pipelines
+
+Redpanda Connect can run in two different modes: **standalone mode** and **streams mode**.
+
+* **Standalone mode**: Allows you to run a single pipeline configuration at a time, making it suitable for simpler, fixed configurations that don't need to run concurrently.
+* **Streams mode**: Supports multiple pipelines running simultaneously, with each pipeline managed through a ConfigMap. Streams mode is ideal for complex data processing needs and scenarios requiring multiple concurrent data flows.
+
+=== Use standalone mode
+
+In standalone mode, all configurations are specified directly within `config` in `values.yaml`. This approach is best for running a single pipeline at a time.
+
+. Create a ConfigMap to provide data that Redpanda Connect can read. This example ConfigMap contains a JSON object simulating input data:
++
+[source,bash]
+----
+kubectl create configmap connect-input --from-literal=input-data='{"name": "Test User", "email": "test.user@example.com"}' --namespace <namespace>
+----
+
+. Create a `pipeline.yaml` file and add the following pipeline configuration for Redpanda Connect. This file configures Redpanda Connect in standalone mode to read from the file mounted by the ConfigMap and convert the usernames to uppercase.
++
+.`pipeline.yaml`
+[source,yaml]
+----
+extraVolumes:
+  - name: input-config
+    configMap:
+      name: connect-input
+extraVolumeMounts:
+  - name: input-config
+    mountPath: /input
+    subPath: input-data
+config:
+  input:
+    file:
+      paths:
+        - "/input" <1>
+  pipeline:
+    processors:
+      - mapping: |
+          root.name = this.name.uppercase() <2>
+  output:
+    stdout: {} <3>
+----
++
+<1> For the input, use the contents of the file at the path where the ConfigMap data is mounted.
+<2> Convert the name field in the input JSON to uppercase using xref:guides:bloblang/walkthrough.adoc[Bloblang], the native mapping language of Redpanda Connect.
+<3> Output the processed data to stdout, making it viewable in logs.
+
+. Deploy the pipeline:
++
+[source,bash]
+----
+helm upgrade --install redpanda-connect redpanda/connect --namespace <namespace> --values pipeline.yaml
+----
+
+. Check the logs:
++
+[,bash]
+----
+export POD_NAME=$(kubectl get pods --namespace <namespace> -l "app.kubernetes.io/name=redpanda-connect,app.kubernetes.io/instance=redpanda-connect" -o jsonpath="{.items[0].metadata.name}")
+kubectl logs $POD_NAME --namespace <namespace>
+----
++
+You should see the username converted to uppercase in the output:
++
+[,json]
+----
+{"name":"TEST USER"}
+----
+
+. Check the Pod's status:
++
+[source,bash]
+----
+kubectl get pods --namespace <namespace> -l app.kubernetes.io/name=redpanda-connect --watch
+----
++
+After a few moments, the Pod enters a **CrashLoopBackOff** status because containers are expected to run continuously. When Redpanda Connect finishes processing the input file and has no further data to process, the Pod exits, causing Kubernetes to restart it repeatedly.
++
+To prevent this status, configure Redpanda Connect to continue processing data indefinitely. One way to do this is by using a `generate` input instead of a static input file.
+
+. Update the `pipeline.yaml` file to use the `generate` input to produce data every second:
++
+[source,yaml]
+----
+config:
+  input:
+    generate:
+      interval: 1s
+      count: 0  # Setting count to 0 ensures it generates data indefinitely.
+      mapping: |
+        let first_name = fake("first_name")
+        let last_name = fake("last_name")
+        root.user_id = counter()
+        root.name = ($first_name + " " + $last_name)
+        root.email = ($first_name.slice(0,1) + $last_name + "@example.com")
+        root.timestamp = now()
+  pipeline:
+    processors:
+      - mapping: |
+          root.name = this.name.uppercase()
+  output:
+    stdout: {}
+----
++
+This configuration generates a JSON object with:
++
+- `user_id`: A unique identifier for each record, generated using the `counter()` function.
+- `name`: A randomly generated first and last name, using the `fake()` function.
+- `email`: An email based on the generated names.
+- `timestamp`: The current timestamp at the time of generation, using the `now()` function.
+
+. Deploy the updated configuration:
++
+[source,bash]
+----
+helm upgrade --install redpanda-connect redpanda/connect --namespace <namespace> --values pipeline.yaml
+----
+
+. Watch the logs:
++
+[,bash]
+----
+export POD_NAME=$(kubectl get pods --namespace <namespace> -l "app.kubernetes.io/name=redpanda-connect,app.kubernetes.io/instance=redpanda-connect" -o jsonpath="{.items[0].metadata.name}")
+kubectl logs $POD_NAME --namespace <namespace> -f
+----
++
+You should see logs showing JSON objects similar to the following, with names in uppercase:
++
+[source,json,role="no-copy"]
+----
+{"name":"ZOIE SIPES"}
+{"name":"LORENA KERTZMANN"}
+{"name":"DALLAS BOYER"}
+{"name":"LOUIE WILDERMAN"}
+{"name":"EMILIA KOEPP"}
+{"name":"KALEIGH PACOCHA"}
+----
+
+. Check the Pod's status:
++
+[source,bash]
+----
+kubectl get pods --namespace <namespace> -l app.kubernetes.io/name=redpanda-connect --watch
+----
++
+The pod should now be running without entering a CrashLoopBackOff state, as the `generate` input continuously feeds new data to the pipeline, preventing it from terminating.
+
+=== Use streams mode
+
+Streams mode is designed for running multiple pipelines at once. In streams mode, configurations are managed through a Kubernetes ConfigMap.
+
+. Define your pipeline configurations in the following separate YAML files:
++
+.`woof.yaml`
+[source,yaml]
+----
+input:
+  generate:
+    mapping: root = "woof" # Generates a message with the word "woof" at regular intervals.
+    interval: 5s
+    count: 0
+output:
+  stdout:
+    codec: lines # Outputs each message as a new line in stdout.
+----
++
+.`meow.yaml`
+[source,yaml]
+----
+input:
+  generate:
+    mapping: root = "meow" # Generates a message with the word "meow" at regular intervals.
+    interval: 2s
+    count: 0
+output:
+  stdout:
+    codec: lines # Outputs each message as a new line in stdout.
+----
+
+. Bundle the configuration files into a ConfigMap, which Redpanda Connect will reference:
++
+[source,bash]
+----
+kubectl create configmap connect-streams --from-file=woof.yaml --from-file=meow.yaml --namespace <namespace>
+----
+
+. Configure Redpanda Connect in streams mode and specify the name of the ConfigMap to use:
++
+.`connect.yaml`
+[source,yaml]
+----
+streams:
+  enabled: true <1>
+  streamsConfigMap: "connect-streams" <2>
+----
++
+<1> Enable streams mode in Redpanda Connect.
+<2> Use the given ConfigMap as the pipeline configuration.
+
+. Deploy the chart:
++
+[source,bash]
+----
+helm upgrade --install redpanda-connect redpanda/connect --namespace <namespace> --values connect.yaml
+----
+
+. Watch the logs:
++
+[,bash]
+----
+export POD_NAME=$(kubectl get pods --namespace <namespace> -l "app.kubernetes.io/name=redpanda-connect,app.kubernetes.io/instance=redpanda-connect" -o jsonpath="{.items[0].metadata.name}")
+kubectl logs $POD_NAME --namespace <namespace> -f
+----
++
+You should see logs showing a combination of outputs from both pipelines:
++
+[.no-copy]
+----
+woof
+meow
+meow
+meow
+woof
+meow
+meow
+----
+
+=== Update the pipeline in streams mode
+
+To update a pipeline in streams mode:
+
+. Modify one of the configuration files locally.
++
+.`woof.yaml`
+[source,yaml]
+----
+# Updated woof.yaml
+input:
+  generate:
+    mapping: root = "bark"  # Updated to generate a message with the word "bark" instead of "woof."
+    interval: 5s
+    count: 0
+output:
+  stdout:
+    codec: lines
+----
+
+. Update the ConfigMap with the modified file:
++
+[source,bash]
+----
+kubectl create configmap connect-streams --from-file=woof.yaml --from-file=meow.yaml --namespace <namespace> --dry-run=client -o yaml | kubectl apply -f -
+----
+
+. Restart the Deployment:
++
+[source,bash]
+----
+kubectl rollout restart deployment/redpanda-connect --namespace <namespace>
+----
+
+=== Global configuration
+
+When deploying Redpanda Connect in streams mode, you can configure global tracing, logging, and HTTP settings to apply across all pipelines. Specify these in your `values.yaml` overrides under the `metrics`, `logger`, and `tracing` sections.
+
+[source,yaml]
+----
+metrics:
+  prometheus: {} # Enable Prometheus metrics collection.
+
+tracing:
+  openTelemetry:
+    http: [] # Configure OpenTelemetry HTTP tracing.
+    grpc: []
+    tags: {}
+
+logger:
+  level: INFO # Set logging level (e.g., INFO, DEBUG).
+  static_fields:
+    '@service': redpanda-connect # Add static fields to logs for better traceability.
+----
+
+== Access the HTTP server on Redpanda Connect
+
+To manage and monitor Redpanda Connect, you can use its HTTP server, which provides useful endpoints for version checking, pipeline management, and more. By default, Redpanda Connect exposes this server using a Kubernetes ClusterIP Service, accessible only within the cluster.
+
+. Forward the ports of the ClusterIP Service to your local device:
++
+[source,bash]
+----
+kubectl port-forward svc/redpanda-connect 8080:80 --namespace <namespace>
+----
+
+. Access the HTTP server locally. For example, to check the Redpanda Connect version, run:
++
+[,bash]
+----
+curl http://localhost:8080/version
+----
++
+Example output:
++
+[,json]
+----
+{
+  "version": "v4.38.0",
+  "built": "2024-10-17T09:27:42Z"
+}
+----
+
+You can also configure external access using a LoadBalancer Service or an Ingress. See the link:https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/values.yaml#L79C1-L107C31[Helm values] for more details.
+
+== Next steps
+
+* Learn more about xref:guides:bloblang/walkthrough.adoc[Bloblang], the mapping language for processing data in Redpanda Connect.
+* Try more hands-on examples with one of the xref:cookbooks:index.adoc[Cookbooks].
+
+== Suggested reading
+
+* link:https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/values.yaml[Helm values]
+* xref:components:http/about.adoc[HTTP server]
+* xref:components:inputs/about.adoc[Inputs]
+* xref:components:processors/about.adoc[Processors]
+* xref:components:outputs/about.adoc[Outputs]
+* xref:guides:monitoring.adoc[Monitoring]
+* xref:configuration:about.adoc[More about configuration]
