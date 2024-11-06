@@ -1,0 +1,8 @@
+[NOTE]
+====
+- By default, the `postgres` driver enforces SSL. You can override this with the parameter `sslmode=disable`.
+- The `snowflake` driver supports multiple DSN formats. For more details, see the https://pkg.go.dev/github.com/snowflakedb/gosnowflake#hdr-Connection_String[gosnowflake documentation^]. 
++
+For https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication[key pair authentication^], the DSN has the following format: `<snowflake_user>@<snowflake_account>/<db_name>/<schema_name>?warehouse=<warehouse>&role=<role>&authenticator=snowflake_jwt&privateKey=<base64_url_encoded_private_key>`, where the value for the `privateKey` parameter can be constructed from an unencrypted RSA private key file `rsa_key.p8`, using `openssl enc -d -base64 -in rsa_key.p8 | basenc --base64url -w0`. On macOS, if you install `coreutils` with Homebrew, you can use `gbasenc` instead of `basenc`. If you have a password-encrypted private key, you can decrypt it using `openssl pkcs8 -in rsa_key_encrypted.p8 -out rsa_key.p8`. Also, make sure fields such as the username are URL-encoded.
+- The https://pkg.go.dev/github.com/microsoft/gocosmos[`gocosmos`^] driver is still experimental, but it has support for https://learn.microsoft.com/en-us/azure/cosmos-db/hierarchical-partition-keys[hierarchical partition keys^] as well as https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-query-container#cross-partition-query[cross-partition queries^]. For more details, see https://github.com/microsoft/gocosmos/blob/main/SQL.md[SQL notes^].
+====
