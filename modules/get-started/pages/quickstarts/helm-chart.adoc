@@ -36,21 +36,29 @@ helm install redpanda-connect redpanda/connect --namespace <namespace> --create-
 
 Redpanda Connect can run in two different modes: **standalone mode** and **streams mode**.
 
-* **Standalone mode**: Allows you to run a single pipeline configuration at a time, making it suitable for simpler, fixed configurations that don't need to run concurrently.
-* **Streams mode**: Supports multiple pipelines running simultaneously, with each pipeline managed through a ConfigMap. Streams mode is ideal for complex data processing needs and scenarios requiring multiple concurrent data flows.
+* **Standalone mode**: Allows you to run a single pipeline at a time, making it suitable for simpler configurations that don't need to run concurrently.
+* **Streams mode**: Supports multiple pipelines running simultaneously, with each pipeline managed through a ConfigMap. Streams mode is ideal for complex data processing use cases, multiple concurrent data flows.
 
 === Use standalone mode
 
-In standalone mode, all configurations are specified directly within `config` in `values.yaml`. This approach is best for running a single pipeline at a time.
+In standalone mode, you configure a single pipeline within the `config` section of your Helm values file. This mode is best suited for running a single pipeline from start to finish in one execution.
 
-. Create a ConfigMap to provide data that Redpanda Connect can read. This example ConfigMap contains a JSON object simulating input data:
+In this example, you’ll set up a pipeline that reads data from a file, processes it by converting specific fields to uppercase, and then outputs the result to stdout so you can view it in the logs.
+
+. Create a ConfigMap to provide input data that Redpanda Connect will read from a file. This example ConfigMap contains a JSON object with simulated data, such as a user's name and email:
 +
 [source,bash]
 ----
 kubectl create configmap connect-input --from-literal=input-data='{"name": "Test User", "email": "test.user@example.com"}' --namespace <namespace>
 ----
++
+This ConfigMap will act as the source for the file-based input in Redpanda Connect, allowing the pipeline to read and process this structured JSON data.
 
-. Create a `pipeline.yaml` file and add the following pipeline configuration for Redpanda Connect. This file configures Redpanda Connect in standalone mode to read from the file mounted by the ConfigMap and convert the usernames to uppercase.
+. Create a `pipeline.yaml` file.
++
+This file will be used to override the default Helm chart values for Redpanda Connect.
+
+. Add the following configuration to `pipeline.yaml` to set up a simple standalone pipeline that reads data from the file mounted by the ConfigMap, processes it by converting usernames to uppercase, and outputs the result to stdout:
 +
 .`pipeline.yaml`
 [source,yaml]
@@ -109,7 +117,7 @@ You should see the username converted to uppercase in the output:
 kubectl get pods --namespace <namespace> -l app.kubernetes.io/name=redpanda-connect --watch
 ----
 +
-After a few moments, the Pod enters a **CrashLoopBackOff** status because containers are expected to run continuously. When Redpanda Connect finishes processing the input file and has no further data to process, the Pod exits, causing Kubernetes to restart it repeatedly.
+The Pod enters a `CrashLoopBackOff` state because containers are expected to run continuously. When Redpanda Connect finishes processing the input file and has no further data to process, the Pod exits, causing Kubernetes to restart it repeatedly.
 +
 To prevent this status, configure Redpanda Connect to continue processing data indefinitely. One way to do this is by using a `generate` input instead of a static input file.
 
@@ -178,7 +186,7 @@ You should see logs showing JSON objects similar to the following, with names in
 kubectl get pods --namespace <namespace> -l app.kubernetes.io/name=redpanda-connect --watch
 ----
 +
-The pod should now be running without entering a CrashLoopBackOff state, as the `generate` input continuously feeds new data to the pipeline, preventing it from terminating.
+The Pod should now be running without entering a `CrashLoopBackOff` state, as the `generate` input continuously feeds new data to the pipeline, preventing it from terminating.
 
 === Use streams mode
 
