@@ -1,8 +1,11 @@
-* xref:about.adoc[]
-** xref:whats_new_rpcn.adoc[]
-** xref:ROOT:get-started/index.adoc[Get Started]
-*** xref:ROOT:get-started/rpk.adoc[Redpanda `rpk` CLI]
-*** xref:ROOT:get-started/helm-chart.adoc[Kubernetes]
+
+* xref:get-started:index.adoc[Get Started]
+** xref:get-started:about.adoc[]
+** xref:get-started:whats-new.adoc[What's New]
+** xref:get-started:quickstarts/index.adoc[Quickstarts]
+*** xref:get-started:quickstarts/rpk.adoc[CLI]
+*** xref:get-started:quickstarts/helm-chart.adoc[Helm Chart]
+
 * xref:configuration:about.adoc[]
 ** xref:configuration:resources.adoc[]
 ** xref:configuration:batching.adoc[]
@@ -319,6 +322,7 @@
 *** xref:guides:migration/v4.adoc[]
 *** xref:guides:migration/v3.adoc[]
 *** xref:guides:migration/v2.adoc[]
+
 * xref:cookbooks:index.adoc[]
 ** xref:cookbooks:custom_metrics.adoc[]
 ** xref:cookbooks:discord_bot.adoc[]
@@ -327,6 +331,6 @@
 ** xref:cookbooks:joining_streams.adoc[]
 ** xref:cookbooks:rag.adoc[]
 ** xref:cookbooks:redpanda_migrator.adoc[]
-** xref:reference:k-connect-helm-spec.adoc[]
+
 * xref:reference:index.adoc[]
 ** xref:reference:k-connect-helm-spec.adoc[Helm Chart Specification]

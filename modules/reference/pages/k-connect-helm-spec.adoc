@@ -231,9 +231,13 @@ Restart policy for containers in the Pod.
 
 === https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=deployment.rolloutConfigMap[deployment.rolloutConfigMap]
 
+Rollout the deployment on ConfigMap changes.
+
 *Default:* `true`
 
 === https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=deployment.terminationGracePeriodSeconds[deployment.terminationGracePeriodSeconds]
+
+Time in seconds for Pod termination grace period.
 
 *Default:* `60`
 
@@ -566,7 +570,7 @@ Tolerations for scheduling Pods onto nodes with matching taints.
 
 === https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=topologySpreadConstraints[topologySpreadConstraints]
 
-Spread incoming Pods across the cluster based on topology.
+Spread incoming Pods across the cluster based on topology to improve distribution and fault tolerance.
 
 *Default:* `[]`
 
