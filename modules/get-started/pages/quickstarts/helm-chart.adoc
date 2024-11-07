@@ -39,11 +39,11 @@ Redpanda Connect can run in two different modes: **standalone mode** and **strea
 * **Standalone mode**: Allows you to run a single pipeline at a time, making it suitable for simpler configurations that don't need to run concurrently.
 * **Streams mode**: Supports multiple pipelines running simultaneously, with each pipeline managed through a ConfigMap. Streams mode is ideal for complex data processing use cases, multiple concurrent data flows.
 
-=== Use standalone mode
+=== Run a single pipeline in standalone mode
 
 In standalone mode, you configure a single pipeline within the `config` section of your Helm values file. This mode is best suited for running a single pipeline from start to finish in one execution.
 
-In this example, you’ll set up a pipeline that reads data from a file, processes it by converting specific fields to uppercase, and then outputs the result to stdout so you can view it in the logs.
+In this example, you'll set up a pipeline that reads data from a file, processes it by converting specific fields to uppercase, and then outputs the result to stdout so you can view it in the logs.
 
 . Create a ConfigMap to provide input data that Redpanda Connect will read from a file. This example ConfigMap contains a JSON object with simulated data, such as a user's name and email:
 +
@@ -119,9 +119,9 @@ kubectl get pods --namespace <namespace> -l app.kubernetes.io/name=redpanda-conn
 +
 The Pod enters a `CrashLoopBackOff` state because containers are expected to run continuously. When Redpanda Connect finishes processing the input file and has no further data to process, the Pod exits, causing Kubernetes to restart it repeatedly.
 +
-To prevent this status, configure Redpanda Connect to continue processing data indefinitely. One way to do this is by using a `generate` input instead of a static input file.
+To prevent this status, configure Redpanda Connect to continue processing data indefinitely. One way to do this is by using a `generate` input instead of a static input file. The `generate` input allows Redpanda Connect to continuously produce synthetic data, simulating a live data source.
 
-. Update the `pipeline.yaml` file to use the `generate` input to produce data every second:
+. Update the `pipeline.yaml` file to use the `generate` input to produce data every second.
 +
 [source,yaml]
 ----
@@ -188,9 +188,9 @@ kubectl get pods --namespace <namespace> -l app.kubernetes.io/name=redpanda-conn
 +
 The Pod should now be running without entering a `CrashLoopBackOff` state, as the `generate` input continuously feeds new data to the pipeline, preventing it from terminating.
 
-=== Use streams mode
+=== Run multiple pipelines in streams mode
 
-Streams mode is designed for running multiple pipelines at once. In streams mode, configurations are managed through a Kubernetes ConfigMap.
+Streams mode is suited for concurrent processing and complex workflows. Each pipeline, defined in separate YAML files, runs simultaneously, making this mode ideal for high-throughput applications. All the YAML files must be bundled together into a ConfigMap that you can pass to Redpanda Connect.
 
 . Define your pipeline configurations in the following separate YAML files:
 +
