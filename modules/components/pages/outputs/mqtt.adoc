@@ -1,16 +1,18 @@
 = mqtt
+// tag::single-source[]
 :type: output
 :status: stable
 :categories: ["Services"]
 
 // © 2024 Redpanda Data Inc.
 
-
 component_type_dropdown::[]
-
 
 Pushes messages to an MQTT broker.
 
+ifndef::env-cloud[]
+Introduced in version 4.37.0.
+endif::[]
 
 [tabs]
 ======
@@ -129,8 +131,11 @@ The maximum amount of time to wait in order to establish a connection before the
 
 *Type*: `string`
 
-*Default*: `"30s"`
+*Default*: `30s`
+
+ifndef::env-cloud[]
 Requires version 3.58.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -257,7 +262,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
@@ -402,7 +410,10 @@ The maximum amount of time to wait to write data before the attempt is abandoned
 *Type*: `string`
 
 *Default*: `"3s"`
+
+ifndef::env-cloud[]
 Requires version 3.58.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -429,7 +440,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
+ifndef::env-cloud[]
 Requires version 3.59.0 or newer
+endif::[]
 
 === `max_in_flight`
 
@@ -440,4 +453,4 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 *Default*: `64`
 
-
+// end::single-source[]
