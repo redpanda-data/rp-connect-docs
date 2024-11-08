@@ -1,0 +1,19 @@
+==== Install `rpk connect`
+
+Once you have finished the `rpk` installation, install the `rpk connect` plugin, which provides a specific set of commands to interact with data pipelines. By default, the `rpk connect` plugin installs the latest version of Redpanda Connect.
+
+To install the latest version of Redpanda Connect, run: 
+
+[,bash]
+----
+rpk connect install
+----
+
+To install a specific version of Redpanda Connect, run:
+
+[,bash]
+----
+rpk connect install --connect-version <version>
+----
+
+Replace the `<version>` placeholder with the exact version number you want to use, for example: `4.39.0`.
