@@ -45,7 +45,7 @@ Redpanda Connect can run in two different modes: **standalone mode** and **strea
 
 == Run pipelines in standalone mode
 
-In standalone mode, you can configure a single pipeline within the `config` section of your Helm values file. This mode is best suited for running a single pipeline from start to finish in one execution.
+In standalone mode, you can configure a single pipeline within the `config` section of your Helm values file.
 
 === Hello world
 
@@ -72,7 +72,7 @@ config:
   output:
     stdout: {} <4>
 ----
-<1> Uses Bloblang to create a JSON object with the message "Hello, Redpanda Connect!" stored in `root.message`.
+<1> Use Bloblang to create a JSON object with the message "Hello, Redpanda Connect!" stored in `root.message`.
 <2> Generate the message only once.
 <3> Convert the `message` field in the input to uppercase using the xref:guides:bloblang/methods.adoc#uppercase[`uppercase()`] method in Bloblang.
 <4> Output the processed data to stdout, making it viewable in logs.
@@ -92,7 +92,7 @@ export POD_NAME=$(kubectl get pods --namespace <namespace> -l "app.kubernetes.io
 kubectl logs $POD_NAME --namespace <namespace>
 ----
 +
-You should see the messages converted to uppercase in the output:
+You should see the message converted to uppercase in the output:
 +
 [,json]
 ----
@@ -106,7 +106,7 @@ You should see the messages converted to uppercase in the output:
 kubectl get pods --namespace <namespace> -l app.kubernetes.io/name=redpanda-connect --watch
 ----
 +
-The Pod enters a `CrashLoopBackOff` state because containers are expected to run continuously. When Redpanda Connect finishes processing the three messages, the Pod exits, causing Kubernetes to restart it repeatedly.
+The Pod enters a `CrashLoopBackOff` state because containers are expected to run continuously. When Redpanda Connect finishes processing the pipeline, the Pod exits, causing Kubernetes to restart it repeatedly.
 +
 To prevent this status, you can configure Redpanda Connect to continue processing data indefinitely.
 
