@@ -247,7 +247,7 @@ include::components:partial$secret_warning.adoc[]
 
 === `mapping`
 
-The Bloblang `mapping` to execute on each message.
+The xref:guides:bloblang/about.adoc[Bloblang `mapping`] to execute on each message.
 
 *Type*: `string`
 
@@ -405,9 +405,9 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `channel_prefix`
 
-The prefix to use when creating a channel name for connecting to a Snowflake table. Add a `channel_prefix` to avoid the creation of duplicate channel names, which can cause errors and prevent multiple instances of Redpanda Connect from writing at the same time. 
+The prefix to use when creating a channel name for connecting to a Snowflake table. Without a value for `channel_prefix`, this output creates a channel name based on a table's fully qualified name, which results in a single stream per table. 
 
-Without a value for `channel_prefix`, this output creates a channel name based on a table's fully qualified name, which results in a single stream per table. 
+Adding a `channel_prefix` also avoids the creation of duplicate channel names, which can cause errors and prevent multiple instances of Redpanda Connect from writing at the same time. 
 
 The maximum number of channels open at any time is determined by the value in the `max_in_flight` field. 
 
