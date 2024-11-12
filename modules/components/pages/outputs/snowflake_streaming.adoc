@@ -9,11 +9,11 @@
 
 component_type_dropdown::[]
 
+NOTE: For improved performance, cost effectiveness and ease of use, Redpanda recommends that you use this output instead of `snowflake_put`.
 
 Allows Snowflake to ingest data from your data pipeline using https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview[Snowpipe Streaming^].
 
 To help you configure your own `snowflake_streaming` output, this page includes two <<example-pipelines,example data pipelines>>.
-
 
 ifndef::env-cloud[]
 Introduced in version 4.39.0.
@@ -44,15 +44,6 @@ output:
       CREATE TABLE IF NOT EXISTS <table-name> (amount NUMBER);
     schema_evolution:
       enabled: false # No default (required)
-      new_column_type_mapping: |-
-        root = match this.value.type() {
-          this == "string" => "STRING"
-          this == "bytes" => "BINARY"
-          this == "number" => "DOUBLE"
-          this == "bool" => "BOOLEAN"
-          this == "timestamp" => "TIMESTAMP"
-          _ => "VARIANT"
-        }
     batching:
       count: 0
       byte_size: 0
@@ -113,39 +104,34 @@ output:
 
 == Supported data formats for Snowflake columns
 
-Your output must create messages with the correct data formats for the Snowflake columns you want to write data to.
+The message data from your output must match the columns in the Snowflake that you want to write data to. The following table shows you the https://docs.snowflake.com/en/sql-reference/intro-summary-data-types[column data types supported by Snowflake^] and how they correspond to the xref:guides:bloblang/methods.adoc#type[Bloblang data types] in Redpanda Connect.
 
 |===
-| Snowflake column type | Allowed data formats in Redpanda Connect
+| Snowflake column data type | Bloblang data types
 
-| CHAR, VARCHAR 
-| String
+| CHAR, VARCHAR
+| `string`
 
 | BINARY
-| Byte (`[]byte`)
+| `string` or `bytes`
 
 | NUMBER 
-a| 
-* Any numeric type
-* String representation of a number
+| `number`, or `string` where the `string` is parsed into a `number`
 
 | FLOAT 
-| Any numeric type
+| `number`
 
 | BOOLEAN
-a|
-* Boolean (`bool`)
-* Any numeric data type
-* Strings parsable according to https://pkg.go.dev/strconv#ParseBool[`strconv.ParseBool`^] in Golang.
+| `bool`, or `number` where a non-zero number is `true`
 
 | TIME, DATE, TIMESTAMP 
-| Unix or RFC 3339 with timestamps in nanoseconds. You can parse different string formats using a https://docs.redpanda.com/redpanda-connect/guides/bloblang/about/[Bloblang `mapping`].
+| `timestamp`, or `number` where the `number` is a converted to a Unix timestamp
 
 | VARIANT, ARRAY, OBJECT
-| Any data type is converted into JSON
+| Any data type converted into JSON
 
 | GEOGRAPHY,GEOMETRY
-| Not supported. For full details of all unsupported data types and other limitations, see the https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#limitations[Snowflake documentation^].
+| Not supported
 
 |===
 
@@ -168,6 +154,29 @@ For improved performance, this output:
 === Batch sizes
 
 Redpanda recommends that every message batch writes at least 16 MiB of compressed output to Snowflake. You can monitor batch sizes using the `snowflake_compressed_output_size_bytes` metric.
+
+=== Metrics
+
+This output emits the following metrics.
+
+|===
+| Metric name | Description
+
+| `snowflake_build_output_latency_ns`
+| The time taken to build the output file that is sent to Snowflake.
+
+| `snowflake_upload_latency_ns`
+| The time taken to upload the output file to Snowflake.
+
+| `snowflake_convert_latency_ns`
+| The time taken to convert messages into the Snowflake column data types.
+
+| `snowflake_serialize_latency_ns`
+| The time taken to serialize the converted columnar data into a file to send to snowflake.
+
+|===
+
+NOTE: `snowflake_convert_latency_ns` + `snowflake_serialize_latency_ns` = `snowflake_build_output_latency_ns`
 
 == Fields
 
@@ -288,11 +297,22 @@ A mapping function from the Redpanda Connect data types to column data types in 
 
 The input to this mapping is an object with the value and the name of the new column. For example: `{"value": 42.3, "name":"new_data_field"}"`.
 
-Overriding the mapping function, allows you to customize data types.
+You can also override the mapping function to customize data types.
 
 *Type*: `string`
 
-*Default*: `"root = match this.value.type() {\n  this == \"string\" =\u003e \"STRING\"\n  this == \"bytes\" =\u003e \"BINARY\"\n  this == \"number\" =\u003e \"DOUBLE\"\n  this == \"bool\" =\u003e \"BOOLEAN\"\n  this == \"timestamp\" =\u003e \"TIMESTAMP\"\n  _ =\u003e \"VARIANT\"\n}"`
+*Default*: 
+
+```yml
+"root = match this.value.type() {
+    this == \"string\" =\u003e \"STRING\"
+    this == \"bytes\" =\u003e \"BINARY\"
+    this == \"number\" =\u003e \"DOUBLE\"
+    this == \"bool\" =\u003e \"BOOLEAN\"
+    this == \"timestamp\" =\u003e \"TIMESTAMP\"
+    _ =\u003e \"VARIANT\"
+  }"
+```
 
 === `build_parallelism`
 
