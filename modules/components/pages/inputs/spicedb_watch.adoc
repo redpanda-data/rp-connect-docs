@@ -60,7 +60,7 @@ For this input to authenticate with your SpiceDB instance, you must provide:
 
 == Configure a Cache
 
-You must store the https://authzed.com/docs/spicedb/concepts/consistency#zedtokens[ZedToken^] (ID) of the latest message consumed and acknowledged by this input in a cache. Ideally, the cache should persistent across restarts. This means that every time the input is initialized, it starts reading from the newest data updates.
+You must use a xref:configuration:resources.adoc[cache resource] to store the https://authzed.com/docs/spicedb/concepts/consistency#zedtokens[ZedToken^] (ID) of the latest message consumed and acknowledged by this input. Ideally, the cache should persistent across restarts. This means that every time the input is initialized, it starts reading from the newest data updates.
 
 == Fields
 
@@ -104,7 +104,7 @@ max_receive_message_bytes: 50mib
 
 === `cache`
 
-A cache resource to use for performing unread message backfills. The ZedToken (ID) of the last message received must be stored in this cache, which is then used for subsequent requests.
+The xref:configuration:resources.adoc[cache resource] to use for performing unread message backfills. The ZedToken (ID) of the last message received must be stored in this cache, which is then used for subsequent requests.
 
 === `cache_key`
 
