@@ -1,0 +1,248 @@
+= redpanda_common
+// tag::single-source[]
+:type: input
+:page-beta: true
+:categories: ["Services"]
+
+component_type_dropdown::[]
+
+
+Consumes data from a Redpanda (Kafka) broker, using credentials from a common `redpanda` configuration block. 
+
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+# Common configuration fields, showing default values
+input:
+  label: ""
+  redpanda_common:
+    topics: [] # No default (required)
+    regexp_topics: false
+    consumer_group: "" # No default (optional)
+    auto_replay_nacks: true
+```
+
+--
+Advanced::
++
+--
+
+```yml
+# All configuration fields, showing default values
+input:
+  label: ""
+  redpanda_common:
+    topics: [] # No default (required)
+    regexp_topics: false
+    rack_id: ""
+    start_from_oldest: true
+    fetch_max_bytes: 50MiB
+    fetch_min_bytes: 1B
+    fetch_max_partition_bytes: 1MiB
+    consumer_group: "" # No default (optional)
+    commit_period: 5s
+    partition_buffer_bytes: 1MB
+    auto_replay_nacks: true
+```
+
+--
+======
+
+Specify a consumer group for this input to consume one or more topics and automatically balance the topic partitions across any other connected clients with the same consumer group. Otherwise, topics are consumed in their entirety or with explicit partitions.
+
+== Delivery guarantees
+
+If you choose to use consumer groups, the offsets of records received by Redpanda Connect are committed automatically. In the event of restarts, this input uses the committed offsets to resume data consumption where it left off.
+
+Redpanda Connect guarantees at-least-once delivery. Records are only confirmed as delivered when all downstream outputs that a record is routed to have also confirmed delivery.
+
+== Ordering
+
+To preserve the order of topic partitions:
+
+* Records consumed from each partition are processed and delivered in the order that they are received
+* Only one batch of records of a given partition is processed at a time
+
+This approach means that although records from different partitions may be processed in parallel, records from the same partition are processed in sequential order.
+
+=== Delivery errors
+
+The order in which records are delivered may be disrupted by delivery errors and any error-handling mechanisms that start up. Redpanda Connect leans towards at-least-once delivery unless instructed otherwise, and this includes reattempting delivery of data when the ordering of that data is no longer guaranteed.
+
+For example, a batch of records is sent to an output broker and only a subset of records are delivered. In this scenario, Redpanda Connect (by default) attempts to deliver the records that failed, even though these delivery failures may have been sent before records that were delivered successfully.
+
+==== Using a fallback output
+
+To prevent delivery errors from disrupting the order of records, you must specify a xref:components:outputs/fallback.adoc[`fallback`] output in your pipeline configuration. When adding a `fallback` output, it is also good practice to set the `auto_retry_nacks` field to `false`. This also improves the throughput of your pipeline. 
+
+For example, the following configuration includes a `fallback` output, which writes delivery errors into a dead letter queue topic (`foo_dlq`), which is also retried indefinitely as a way to apply back pressure.
+
+```yaml
+output:
+  fallback:
+    - redpanda_common:
+        topic: foo
+    - retry:
+        output:
+          redpanda_common:
+            topic: foo_dlq
+```
+
+== Credentials
+
+By default, Redpanda Connect uses a shared credentials file when connecting to AWS services. You can also set credentials at a component level, to allow you to transfer data across accounts. To find out more, see xref:guides:cloud/aws.adoc[].
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+```text
+- `kafka_key`
+- `kafka_topic`
+- `kafka_partition`
+- `kafka_offset`
+- `kafka_timestamp`
+- `kafka_timestamp_unix`
+- `kafka_tombstone_message`
+- All record headers
+```
+
+== Fields
+
+=== `topics`
+
+A list of topics to consume from. Use commas to separate multiple topics in a single element.
+
+When a `consumer_group` is specified, partitions are automatically distributed across consumers of a topic. Otherwise, all partitions are consumed.
+
+Alternatively, you can specify explicit partitions to consume by using a colon after the topic name. For example, `foo:0` would consume the partition `0` of the topic foo. This syntax supports ranges. For example, `foo:0-10` would consume partitions `0` through to `10` inclusive.
+
+It is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_from_oldest` determines which offset to start from.
+
+*Type*: `array`
+
+```yml
+# Examples
+
+topics:
+  - foo
+  - bar
+
+topics:
+  - things.*
+
+topics:
+  - foo,bar
+
+topics:
+  - foo:0
+  - bar:1
+  - bar:3
+
+topics:
+  - foo:0,bar:1,bar:3
+
+topics:
+  - foo:0-5
+```
+
+=== `regexp_topics`
+
+Whether listed topics are interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions, this field must remain set to `false`.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `rack_id`
+
+A rack specifies where the client is physically located and changes fetch requests to consume from the closest replica as opposed to the leader replica.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `start_from_oldest`
+
+Whether to consume from the oldest available offset. Otherwise, messages are consumed from the latest offset. This setting is applied when creating a new consumer group or the saved offset no longer exists.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `fetch_max_bytes`
+
+The maximum amount of bytes that a broker tries to send during a fetch. 
+
+If brokers sends individual records larger than the `fetch_max_bytes` value, this limit will be breached.
+
+*Type*: `string`
+
+*Default*: `50MiB`
+
+=== `fetch_min_bytes`
+
+The minimum amount of bytes that a broker tries to send during a fetch. This field is the equivalent of the Java setting: `fetch.min.bytes`.
+
+*Type*: `string`
+
+*Default*: `1B`
+
+=== `fetch_max_partition_bytes`
+
+The maximum amount of bytes that are consumed from a single partition in a fetch request. This field is the equivalent of the Java setting: `fetch.max.partition.bytes`.
+
+If a single batch is larger than the `fetch_max_partition_bytes` value, the batch is still sent so that the client can make progress. 
+
+*Type*: `string`
+
+*Default*: `1MiB`
+
+=== `consumer_group`
+
+An optional consumer group. When this value is specified: 
+
+- The partitions of any topics, specified in the `topics` field, are automatically distributed across consumers sharing a consumer group
+- Partition offsets are automatically committed and resumed under this name
+
+Consumer groups are not supported when you specify explicit partitions to consume from in the `topics` field.
+
+*Type*: `string`
+
+
+=== `commit_period`
+
+The period of time between each commit of the current partition offsets. Offsets are always committed during shutdown.
+
+
+*Type*: `string`
+
+*Default*: `5s`
+
+=== `partition_buffer_bytes`
+
+A buffer size (in bytes) for each consumed partition, which allows the internal queuing of records before they are flushed. Increasing this value may improve throughput but results in higher memory utilization. 
+
+Each buffer can grow slightly beyond this value.
+
+*Type*: `string`
+
+*Default*: `1MB`
+
+=== `auto_replay_nacks`
+
+Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+
+Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+// end::single-source[]
