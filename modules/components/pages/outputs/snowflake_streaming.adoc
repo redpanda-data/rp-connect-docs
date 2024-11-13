@@ -38,7 +38,7 @@ output:
     private_key_pass: "" # No default (optional)
     mapping: "" # No default (optional)
     init_statement: | # No default (optional)
-      CREATE TABLE IF NOT EXISTS <table-name> (amount NUMBER);
+      CREATE TABLE IF NOT EXISTS mytable (amount NUMBER);
     schema_evolution:
       enabled: false # No default (required)
     batching:
@@ -96,9 +96,6 @@ output:
 --
 ======
 
-`<table-name>`: Replace the placeholder value with the name of the Snowflake table you want to write data to.
-
-
 == Supported data formats for Snowflake columns
 
 The message data from your output must match the columns in the Snowflake that you want to write data to. The following table shows you the https://docs.snowflake.com/en/sql-reference/intro-summary-data-types[column data types supported by Snowflake^] and how they correspond to the xref:guides:bloblang/methods.adoc#type[Bloblang data types] in Redpanda Connect.
@@ -112,7 +109,7 @@ The message data from your output must match the columns in the Snowflake that y
 | BINARY
 | `string` or `bytes`
 
-| NUMBER 
+| NUMBER
 | `number`, or `string` where the `string` is parsed into a `number`
 
 | FLOAT 
@@ -122,7 +119,7 @@ The message data from your output must match the columns in the Snowflake that y
 | `bool`, or `number` where a non-zero number is `true`
 
 | TIME, DATE, TIMESTAMP 
-| `timestamp`, or `number` where the `number` is a converted to a Unix timestamp
+| `timestamp`, or `number` where the `number` is a converted to a Unix timestamp, or `string` where the `string` is parsed using RFC 3339 format
 
 | VARIANT, ARRAY, OBJECT
 | Any data type converted into JSON
