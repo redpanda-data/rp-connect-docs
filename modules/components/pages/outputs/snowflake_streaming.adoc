@@ -4,9 +4,6 @@
 :page-beta: true
 :categories: ["Services"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
 
 NOTE: For improved performance, cost effectiveness and ease of use, Redpanda recommends that you use this output instead of `snowflake_put`.
@@ -162,21 +159,22 @@ This output emits the following metrics.
 |===
 | Metric name | Description
 
-| `snowflake_build_output_latency_ns`
-| The time taken to build the output file that is sent to Snowflake.
-
-| `snowflake_upload_latency_ns`
-| The time taken to upload the output file to Snowflake.
-
 | `snowflake_convert_latency_ns`
 | The time taken to convert messages into the Snowflake column data types.
 
 | `snowflake_serialize_latency_ns`
-| The time taken to serialize the converted columnar data into a file to send to snowflake.
+| The time taken to serialize the converted columnar data into a file to send to Snowflake.
+
+| `snowflake_build_output_latency_ns`
+| The time taken to build the output file that is sent to Snowflake. This metric is the sum of `snowflake_convert_latency_ns` + `snowflake_serialize_latency_ns`. 
+
+| `snowflake_upload_latency_ns`
+| The time taken to upload the output file to Snowflake.
+
+| `snowflake_compressed_output_size_bytes`
+| The size in bytes of each message batch sent to Snowflake.
 
 |===
-
-NOTE: `snowflake_convert_latency_ns` + `snowflake_serialize_latency_ns` = `snowflake_build_output_latency_ns`
 
 == Fields
 
@@ -304,14 +302,14 @@ You can also override the mapping function to customize data types.
 *Default*: 
 
 ```yml
-"root = match this.value.type() {
-    this == \"string\" =\u003e \"STRING\"
-    this == \"bytes\" =\u003e \"BINARY\"
-    this == \"number\" =\u003e \"DOUBLE\"
-    this == \"bool\" =\u003e \"BOOLEAN\"
-    this == \"timestamp\" =\u003e \"TIMESTAMP\"
-    _ =\u003e \"VARIANT\"
-  }"
+root = match this.value.type() {
+    this == "string" => "STRING"
+    this == "bytes" => "BINARY"
+    this == "number" => "DOUBLE"
+    this == "bool" => "BOOLEAN"
+    this == "timestamp" => "TIMESTAMP"
+    _ => "VARIANT"
+  }
 ```
 
 === `build_parallelism`
