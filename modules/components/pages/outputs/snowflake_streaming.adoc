@@ -259,7 +259,7 @@ The xref:guides:bloblang/about.adoc[Bloblang `mapping`] to execute on each messa
 
 Optional SQL statements to execute immediately after this output connects to Snowflake for the first time. This is a useful way to initialize tables before processing data. 
 
-NOTE: Make sure any SQL statements are idempotent, so they do not cause issues when run multiple times after service restarts.
+NOTE: Make sure your SQL statements are idempotent, so they do not cause issues when run multiple times after service restarts.
 
 *Type*: `string`
 
