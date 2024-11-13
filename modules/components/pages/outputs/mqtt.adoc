@@ -86,8 +86,11 @@ This output benefits from sending multiple messages in flight in parallel for im
 
 === `urls`
 
-A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.
+A list of URLs to connect to. Use the format `scheme://host:port`, where:
 
+* `scheme` is one of the following: `tcp`, `ssl`, `ws`
+* `host` is the IP address or hostname
+* `port` is the port on which the MQTT broker accepts connections
 
 *Type*: `array`
 

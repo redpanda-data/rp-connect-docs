@@ -43,10 +43,16 @@ The code responsible for extracting usage data is available in the `connect` rep
 
 To avoid analyzing instances used for experimentation or testing, a Redpanda Connect instance must have been running for at least 5 minutes before any usage data is collected. Once usage data starts to be emitted, it is sent to the collection server once every 24 hours. 
 
-== Blocking the telemetry service
+== Disabling the telemetry service
 
 The telemetry service configuration is only included in the build artifacts released through https://github.com/redpanda-data/connect/releases[GitHub] or Redpanda’s official https://hub.docker.com/r/redpandadata/connect/[Docker images]. Custom builds do not send usage data. 
 
-To continue to use the official Redpanda artifacts or images but disable the telemetry service, you can block internet traffic. Redpanda Connect continues to operate normally if it is unable to send usage data.
+To continue to use the official Redpanda artifacts or images but disable the telemetry service, you can either block internet traffic or run the following command:
+
+```bash
+rpk connect run --disable-telemetry
+```
+
+Redpanda Connect will continue to operate normally.
 
 // end::single-source[]
