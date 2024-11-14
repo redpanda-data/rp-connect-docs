@@ -60,7 +60,7 @@ For this input to authenticate with your SpiceDB instance, you must provide:
 
 == Configure a cache
 
-You must use a xref:configuration:resources.adoc[cache resource] to store the https://authzed.com/docs/spicedb/concepts/consistency#zedtokens[ZedToken^] (ID) of the latest message consumed and acknowledged by this input. Ideally, the cache should persist across restarts. This means that every time the input is initialized, it starts reading from the newest data updates. The following example uses a xref:components:rate_limits/redis.adoc[`redis` cache].
+You must use a cache resource to store the https://authzed.com/docs/spicedb/concepts/consistency#zedtokens[ZedToken^] (ID) of the latest message consumed and acknowledged by this input. Ideally, the cache should persist across restarts. This means that every time the input is initialized, it starts reading from the newest data updates. The following example uses a xref:components:rate_limits/redis.adoc[`redis` cache].
 
 ```yml
 # Example
@@ -126,7 +126,7 @@ max_receive_message_bytes: 50mib
 
 === `cache`
 
-The xref:configuration:resources.adoc[cache resource] that you must configure to store the ZedToken (ID) of the last message processed. The ZedToken is stored in the cache within the `ACK` function of the message. This means that a ZedToken is only stored when a message is successfully routed through all processors and outputs in the data pipeline.
+The <<configure-a-cache,cache resource>> that you must configure to store the ZedToken (ID) of the last message processed. The ZedToken is stored in the cache within the `ACK` function of the message. This means that a ZedToken is only stored when a message is successfully routed through all processors and outputs in the data pipeline.
 
 === `cache_key`
 
