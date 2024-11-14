@@ -63,8 +63,7 @@ For this input to authenticate with your SpiceDB instance, you must provide:
 You must use a xref:configuration:resources.adoc[cache resource] to store the https://authzed.com/docs/spicedb/concepts/consistency#zedtokens[ZedToken^] (ID) of the latest message consumed and acknowledged by this input. Ideally, the cache should persist across restarts. This means that every time the input is initialized, it starts reading from the newest data updates. The following example uses a xref:components:rate_limits/redis.adoc[`redis` cache].
 
 ```yml
-# Examples
-
+# Example
 input:
   label: ""
   spicedb_watch:
