@@ -58,9 +58,26 @@ For this input to authenticate with your SpiceDB instance, you must provide:
 - The endpoint of the SpiceDB instance
 - A Bearer token
 
-== Configure a Cache
+== Configure a cache
 
-You must use a xref:configuration:resources.adoc[cache resource] to store the https://authzed.com/docs/spicedb/concepts/consistency#zedtokens[ZedToken^] (ID) of the latest message consumed and acknowledged by this input. Ideally, the cache should persistent across restarts. This means that every time the input is initialized, it starts reading from the newest data updates.
+You must use a xref:configuration:resources.adoc[cache resource] to store the https://authzed.com/docs/spicedb/concepts/consistency#zedtokens[ZedToken^] (ID) of the latest message consumed and acknowledged by this input. Ideally, the cache should persist across restarts. This means that every time the input is initialized, it starts reading from the newest data updates. The following example uses a xref:components:rate_limits/redis.adoc[`redis` cache].
+
+```yml
+# Examples
+
+input:
+  label: ""
+  spicedb_watch:
+    endpoint: grpc.authzed.com:443
+    bearer_token: ""
+    cache: "spicedb_cache"
+cache_resources:
+  - label: "spicedb_cache"
+    redis:
+      url: redis://:6379
+```
+
+To learn more about cache configuration, see xref:configuration:resources.adoc[Resources] and the xref:components:caches/about.adoc[Caches section], which includes a range of cache components.
 
 == Fields
 
@@ -73,6 +90,7 @@ The endpoint of your SpiceDB instance.
 
 ```yml
 # Examples
+
 endpoint: grpc.authzed.com:443
 ```
 
@@ -88,7 +106,7 @@ include::components:partial$secret_warning.adoc[]
 
 === `max_receive_message_bytes`
 
-The maximum message size (in bytes) this input can receive.
+The maximum message size (in bytes) this input can receive. If a message exceeds this limit, an `rpc error` is written to the Redpanda Connect logs.
 
 *Type*: `string`
 
@@ -104,7 +122,7 @@ max_receive_message_bytes: 50mib
 
 === `cache`
 
-The xref:configuration:resources.adoc[cache resource] to use for performing unread message backfills. The ZedToken (ID) of the last message received must be stored in this cache, which is then used for subsequent requests.
+The xref:configuration:resources.adoc[cache resource] that you must configure to store the ZedToken (ID) of the last message processed. The ZedToken is stored in the cache within the `ACK` function of the message. This means that a ZedToken is only stored when a message is successfully routed through all processors and outputs in the data pipeline.
 
 === `cache_key`
 
