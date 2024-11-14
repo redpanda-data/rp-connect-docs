@@ -76,7 +76,12 @@ cache_resources:
       url: redis://:6379
 ```
 
+ifndef::env-cloud[]
 To learn more about cache configuration, see xref:configuration:resources.adoc[Resources] and the xref:components:caches/about.adoc[Caches section], which includes a range of cache components.
+endif::[]
+ifdef::env-cloud[]
+To learn more about cache configuration, see the xref:components:caches/about.adoc[Caches section], which includes a range of cache components.
+endif::[]
 
 == Fields
 
