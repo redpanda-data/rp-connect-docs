@@ -472,10 +472,10 @@ helm repo update
 +
 [,bash]
 ----
-helm upgrade redpanda-connect redpanda/connect --namespace <namespace> --values <your-values-file.yaml>
+helm upgrade redpanda-connect redpanda/connect --namespace <namespace> --values <your-values-file>
 ----
 +
-Replace <your-values-file.yaml> with the path to your custom configuration file.
+Replace `<your-values-file>` with the path to your custom configuration file.
 
 === Roll back an upgrade
 
