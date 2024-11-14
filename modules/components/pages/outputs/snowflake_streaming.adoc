@@ -477,7 +477,7 @@ output:
     channel_prefix: "snowflake-channel-for-${HOST}"
 ```
 --
-HTTP sidecar to push data to Snowflake::
+HTTP server to push data to Snowflake::
 +
 --
 Create a HTTP server input that receives HTTP PUT requests with JSON payloads. The payloads are buffered locally then written to Snowflake in batches.
