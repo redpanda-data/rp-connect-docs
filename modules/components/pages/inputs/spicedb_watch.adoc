@@ -55,8 +55,8 @@ input:
 
 For this input to authenticate with your SpiceDB instance, you must provide:
 
-- The endpoint of the SpiceDB instance
-- A Bearer token
+- The <<endpoint>> of the SpiceDB instance
+- A <<bearer_token, bearer token>>
 
 == Configure a cache
 
@@ -100,7 +100,7 @@ endpoint: grpc.authzed.com:443
 
 === `bearer_token`
 
-The SpiceDB Bearer token to use to authenticate with your SpiceDB instance.
+The SpiceDB bearer token to use to authenticate with your SpiceDB instance.
 
 include::components:partial$secret_warning.adoc[]
 
