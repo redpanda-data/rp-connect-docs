@@ -10,11 +10,10 @@ Consumes topic data from one or more Kafka brokers.
 
 ifndef::env-cloud[]
 Introduced in version 4.39.0.
+
+NOTE: If you intend to use multiple `redpanda` components in your data pipeline, which have a common set of credentials, consider using the xref:components:inputs/redpanda_common.adoc[`redpanda_common` input] and xref:components:outputs/redpanda_common.adoc[output] instead.
 endif::[]
 
-Use this connector in conjunction with the xref:components:outputs/redpanda.adoc[`redpanda` output], if you need to move topic data between Redpanda clusters, or other Apache Kafka clusters.
-
-NOTE: If you need to read data from one or more topics on a Redpanda cluster, and then write the data to another topic on the same cluster, consider using the xref:components:inputs/redpanda_common.adoc[`redpanda_common` input] and xref:components:outputs/redpanda_common.adoc[output] instead.
 
 [tabs]
 ======
@@ -100,7 +99,7 @@ For example, a batch of records is sent to an output broker and only a subset of
 
 To prevent delivery errors from disrupting the order of records, you must specify a xref:components:outputs/fallback.adoc[`fallback`] output in your pipeline configuration. When adding a `fallback` output, it is good practice to set the `auto_retry_nacks` field to `false`. This also improves the throughput of your pipeline. 
 
-For example, the following configuration includes a `fallback` output that writes delivery errors into a dead letter queue topic (`foo_dlq`), which is also retried indefinitely as a way to apply back pressure.
+For example, the following configuration includes a `fallback` output. If Redpanda Connect fails to write delivery errors to the `foo` topic, it then attempts to write them into a dead letter queue topic (`foo_dlq`), which is retried indefinitely as a way to apply back pressure.
 
 ```yaml
 output:

@@ -9,13 +9,11 @@ component_type_dropdown::[]
 
 Sends data to a Redpanda (Kafka) broker, using credentials from a common `redpanda` configuration block.
 
+To avoid duplicating Redpanda cluster credentials in your `redpanda_common` input, output, or any other components in your data pipeline, you can use a single xref:components:redpanda/about.adoc[`redpanda` configuration block]. For more details, see the <<pipeline-example,Pipeline example>>.
+
 ifndef::env-cloud[]
 Introduced in version 4.39.0.
 endif::[]
-
-Use this connector in conjunction with the xref:components:inputs/redpanda_common.adoc[`redpanda_common` input], to read data from one or more topics on a Redpanda cluster, and then write the data to another topic on the same cluster.
-
-To avoid duplicating Redpanda cluster credentials in your `redpanda_common` input, output, or any other components in your data pipeline, you can use a single `redpanda` configuration block. For more details, see the <<pipeline-example,Pipeline example>>.
 
 NOTE: If you need to move topic data between Redpanda clusters or other Apache Kafka clusters, consider using the xref:components:inputs/redpanda.adoc[`redpanda` input] and xref:components:outputs/redpanda.adoc[output] instead.
 
@@ -75,19 +73,16 @@ output:
 
 == Pipeline example
 
-This data pipeline reads data from `topic_A` on a Redpanda cluster, transforms the data, and then writes it to `topic_B` on the same cluster. The cluster details are configured within the `redpanda` configuration block, so you only need to configure them once. This is a useful feature when you have multiple inputs and outputs in the same data pipeline that need to connect to the same cluster.
+This data pipeline reads data from `topic_A` and `topic_B` on a Redpanda cluster, and then writes the data to `topic_C` on the same cluster. The cluster details are configured within the `redpanda` configuration block, so you only need to configure them once. This is a useful feature when you have multiple inputs and outputs in the same data pipeline that need to connect to the same cluster.
 
 ```
 input:
-  XXXXXX
-
-pipeline:
-  processors:
-    XXXXX
+  redpanda_common:
+    topics: [ topic_A, topic_B ]
 
 output:
   redpanda_common:
-    topic: bar
+    topic: topic_C
     key: ${! @id }
 
 redpanda:

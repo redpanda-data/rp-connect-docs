@@ -62,19 +62,16 @@ redpanda:
 
 == Pipeline example
 
-This data pipeline uses the xref:components:inputs/redpanda_common.adoc[`redpanda_common` input] and xref:components:outputs/redpanda_common.adoc[output] to read data from `topic_A` on a Redpanda cluster, transform the data, and then write it to `topic_B` on the same cluster. The cluster details are configured within the `redpanda` configuration block, so you only need to configure them once. This is a useful feature when you have multiple inputs and outputs in the same data pipeline that need to connect to the same cluster.
+This data pipeline reads data from `topic_A` and `topic_B` on a Redpanda cluster, and then writes the data to `topic_C` on the same cluster. The cluster details are configured within the `redpanda` configuration block, so you only need to configure them once. This is a useful feature when you have multiple inputs and outputs in the same data pipeline that need to connect to the same cluster.
 
 ```
 input:
-  XXXXXX
-
-pipeline:
-  processors:
-    XXXXX
+  redpanda_common:
+    topics: [ topic_A, topic_B ]
 
 output:
   redpanda_common:
-    topic: bar
+    topic: topic_C
     key: ${! @id }
 
 redpanda:
