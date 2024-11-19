@@ -1,5 +1,6 @@
 = What's New in Redpanda Connect
 :description: Summary of new features in Redpanda Connect.
+:page-aliases: ROOT:whats_new_rpcn.adoc
 
 This topic includes new content added from version 4.29.0 onwards. 
 
@@ -8,6 +9,14 @@ For a full list of product updates, and details of updates prior to version 4.29
 == Version 4.38.0
 
 This update includes the beta release of two new outputs for Cloud and Self-Managed, and the introduction of a xref:configuration:telemetry.adoc[telemetry service], which collects and sends anonymized usage statistics to Redpanda.
+
+=== New tooling
+
+A new Helm chart for deploying Redpanda Connect in Kubernetes is now available. This chart simplifies the deployment and configuration of Redpanda Connect, allowing you to manage and scale Redpanda Connect instances in Kubernetes environments.
+
+To get started with the Helm chart, see xref:get-started:quickstarts/helm-chart.adoc[].
+
+Or, see the release notes for the chart on https://github.com/redpanda-data/helm-charts/releases/tag/connect-3.0.0[GitHub].
 
 === New outputs (beta)
 
