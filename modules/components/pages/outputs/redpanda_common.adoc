@@ -1,0 +1,300 @@
+= redpanda_common
+// tag::single-source[]
+:type: output
+:page-beta: true
+:categories: ["Services"]
+
+component_type_dropdown::[]
+
+
+Sends data to a Redpanda (Kafka) broker, using credentials from a common `redpanda` configuration block.
+
+To avoid duplicating Redpanda cluster credentials in your `redpanda_common` input, output, or any other components in your data pipeline, you can use a single xref:components:redpanda/about.adoc[`redpanda` configuration block]. For more details, see the <<pipeline-example,Pipeline example>>.
+
+ifndef::env-cloud[]
+Introduced in version 4.39.0.
+endif::[]
+
+NOTE: If you need to move topic data between Redpanda clusters or other Apache Kafka clusters, consider using the xref:components:inputs/redpanda.adoc[`redpanda` input] and xref:components:outputs/redpanda.adoc[output] instead.
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+# Common configuration fields, showing default values
+output:
+  label: ""
+  redpanda_common:
+    topic: "" # No default (required)
+    key: "" # No default (optional)
+    partition: ${! meta("partition") } # No default (optional)
+    metadata:
+      include_prefixes: []
+      include_patterns: []
+    max_in_flight: 10
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
+```
+
+--
+Advanced::
++
+--
+
+```yml
+# All configuration fields, showing default values
+output:
+  label: ""
+  redpanda_common:
+    topic: "" # No default (required)
+    key: "" # No default (optional)
+    partition: ${! meta("partition") } # No default (optional)
+    metadata:
+      include_prefixes: []
+      include_patterns: []
+    timestamp: ${! timestamp_unix() } # No default (optional)
+    max_in_flight: 10
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
+      processors: [] # No default (optional)
+```
+
+--
+======
+
+== Pipeline example
+
+This data pipeline reads data from `topic_A` and `topic_B` on a Redpanda cluster, and then writes the data to `topic_C` on the same cluster. The cluster details are configured within the `redpanda` configuration block, so you only need to configure them once. This is a useful feature when you have multiple inputs and outputs in the same data pipeline that need to connect to the same cluster.
+
+```
+input:
+  redpanda_common:
+    topics: [ topic_A, topic_B ]
+
+output:
+  redpanda_common:
+    topic: topic_C
+    key: ${! @id }
+
+redpanda:
+  seed_brokers: [ "127.0.0.1:9092" ]
+  tls:
+    enabled: true
+  sasl:
+    - mechanism: SCRAM-SHA-512
+      password: bar
+      username: foo
+
+```
+
+== Fields
+
+=== `topic`
+
+A topic to write messages to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+
+=== `key`
+
+A key to populate for each message (optional). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+
+*Type*: `string`
+
+
+=== `partition`
+
+Set a partition for each message (optional). This field is only relevant when the `partitioner` is set to `manual`.
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+You must provide an interpolation string that is a valid integer.
+
+
+*Type*: `string`
+
+```yml
+# Examples
+
+partition: ${! meta("partition") }
+```
+
+=== `metadata`
+
+Specify which (if any) metadata values are added to messages as headers.
+
+
+*Type*: `object`
+
+
+=== `metadata.include_prefixes`
+
+Provide a list of explicit metadata key prefixes to match against.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+```yml
+# Examples
+
+include_prefixes:
+  - foo_
+  - bar_
+
+include_prefixes:
+  - kafka_
+
+include_prefixes:
+  - content-
+```
+
+=== `metadata.include_patterns`
+
+Provide a list of explicit metadata key regular expression (re2) patterns to match against.
+
+
+*Type*: `array`
+
+*Default*: `[]`
+
+```yml
+# Examples
+
+include_patterns:
+  - .*
+
+include_patterns:
+  - _timestamp_unix$
+```
+
+=== `timestamp`
+
+Set a timestamp for each message (optional). When left empty, the current timestamp is used. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+
+```yml
+# Examples
+
+timestamp: ${! timestamp_unix() }
+
+timestamp: ${! metadata("kafka_timestamp_unix") }
+```
+
+=== `max_in_flight`
+
+The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.
+
+*Type*: `int`
+
+*Default*: `10`
+
+=== `batching`
+
+Allows you to configure a xref:configuration:batching.adoc[batching policy].
+
+*Type*: `object`
+
+
+```yml
+# Examples
+
+batching:
+  byte_size: 5000
+  count: 0
+  period: 1s
+
+batching:
+  count: 10
+  period: 1s
+
+batching:
+  check: this.contains("END BATCH")
+  count: 0
+  period: 1m
+```
+
+=== `batching.count`
+
+The number of messages after which the batch is flushed. Set to `0` to disable count-based batching.
+
+*Type*: `int`
+
+*Default*: `0`
+
+=== `batching.byte_size`
+
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+
+*Type*: `int`
+
+*Default*: `0`
+
+=== `batching.period`
+
+The period after which an incomplete batch is flushed regardless of its size.
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+
+period: 1s
+
+period: 1m
+
+period: 500ms
+```
+
+=== `batching.check`
+
+A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+
+check: this.type == "end_of_transaction"
+```
+
+=== `batching.processors`
+
+For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
+
+*Type*: `array`
+
+```yml
+# Examples
+
+processors:
+  - archive:
+      format: concatenate
+
+processors:
+  - archive:
+      format: lines
+
+processors:
+  - archive:
+      format: json_array
+```
+
+// end::single-source[]

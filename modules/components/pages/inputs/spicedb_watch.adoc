@@ -1,0 +1,282 @@
+= spicedb_watch
+// tag::single-source[]
+:type: input
+:page-beta: true
+:categories: ["Services"]
+
+component_type_dropdown::[]
+
+Consumes messages from the https://buf.build/authzed/api/docs/main:authzed.api.v1#authzed.api.v1.WatchService.Watch[Watch API^] of a https://authzed.com/docs/spicedb/getting-started/discovering-spicedb[SpiceDB^] instance. This input is useful if you have downstream applications that need to react to real-time changes in data managed by SpiceDB.
+
+ifndef::env-cloud[]
+Introduced in version 4.39.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+```yml
+# Common configuration fields, showing default values
+input:
+  label: ""
+  spicedb_watch:
+    endpoint: grpc.authzed.com:443 # No default (required)
+    bearer_token: ""
+    cache: "" # No default (required)
+```
+--
+Advanced::
++
+--
+```yml
+# All configuration fields, showing default values
+input:
+  label: ""
+  spicedb_watch:
+    endpoint: grpc.authzed.com:443 # No default (required)
+    bearer_token: ""
+    max_receive_message_bytes: 4MB
+    cache: "" # No default (required)
+    cache_key: authzed.com/spicedb/watch/last_zed_token
+    tls:
+      enabled: false
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs: []
+```
+--
+======
+
+== Authentication
+
+For this input to authenticate with your SpiceDB instance, you must provide:
+
+- The <<endpoint>> of the SpiceDB instance
+- A <<bearer_token, bearer token>>
+
+== Configure a cache
+
+You must use a cache resource to store the https://authzed.com/docs/spicedb/concepts/consistency#zedtokens[ZedToken^] (ID) of the latest message consumed and acknowledged by this input. Ideally, the cache should persist across restarts. This means that every time the input is initialized, it starts reading from the newest data updates. The following example uses a xref:components:rate_limits/redis.adoc[`redis` cache].
+
+```yml
+# Example
+input:
+  label: ""
+  spicedb_watch:
+    endpoint: grpc.authzed.com:443
+    bearer_token: ""
+    cache: "spicedb_cache"
+cache_resources:
+  - label: "spicedb_cache"
+    redis:
+      url: redis://:6379
+```
+
+ifndef::env-cloud[]
+To learn more about cache configuration, see xref:configuration:resources.adoc[Resources] and the xref:components:caches/about.adoc[Caches section], which includes a range of cache components.
+endif::[]
+ifdef::env-cloud[]
+To learn more about cache configuration, see the xref:components:caches/about.adoc[Caches section], which includes a range of cache components.
+endif::[]
+
+== Fields
+
+=== `endpoint`
+
+The endpoint of your SpiceDB instance.
+
+*Type*: `string`
+
+
+```yml
+# Examples
+
+endpoint: grpc.authzed.com:443
+```
+
+=== `bearer_token`
+
+The SpiceDB bearer token to use to authenticate with your SpiceDB instance.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `max_receive_message_bytes`
+
+The maximum message size (in bytes) this input can receive. If a message exceeds this limit, an `rpc error` is written to the Redpanda Connect logs.
+
+*Type*: `string`
+
+*Default*: `4MB`
+
+```yml
+# Examples
+
+max_receive_message_bytes: 100MB
+
+max_receive_message_bytes: 50mib
+```
+
+=== `cache`
+
+The <<configure-a-cache,cache resource>> that you must configure to store the ZedToken (ID) of the last message processed. The ZedToken is stored in the cache within the `ACK` function of the message. This means that a ZedToken is only stored when a message is successfully routed through all processors and outputs in the data pipeline.
+
+=== `cache_key`
+
+The key identifier to use when storing the ZedToken (ID) of the last message received.
+
+*Type*: `string`
+
+*Default*: `authzed.com/spicedb/watch/last_zed_token`
+
+
+=== `tls`
+
+Override system defaults with custom TLS settings.
+
+*Type*: `object`
+
+=== `tls.enabled`
+
+Whether custom TLS settings are enabled.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `tls.skip_cert_verify`
+
+Whether to skip server-side certificate verification.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `tls.enable_renegotiation`
+
+Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: 
+tls: no renegotiation`.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+ifndef::env-cloud[]
+Requires version 3.45.0 or newer
+endif::[]
+
+=== `tls.root_cas`
+
+Specify a certificate authority to use (optional). This is a string that represents a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+
+root_cas: |-
+  -----BEGIN CERTIFICATE-----
+  ...
+  -----END CERTIFICATE-----
+```
+
+=== `tls.root_cas_file`
+
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate.
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+
+root_cas_file: ./root_cas.pem
+```
+
+=== `tls.client_certs`
+
+A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+```yml
+# Examples
+
+client_certs:
+  - cert: foo
+    key: bar
+
+client_certs:
+  - cert_file: ./example.pem
+    key_file: ./example.key
+```
+
+=== `tls.client_certs[].cert`
+
+The plain text certificate to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `tls.client_certs[].key`
+
+The plain text certificate key to use.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `tls.client_certs[].cert_file`
+
+The path to the certificate to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `tls.client_certs[].key_file`
+
+The path of a certificate key to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `tls.client_certs[].password`
+
+The plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format. 
+
+WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding Oracle attacks which may allow an attacker recover the plain text password.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+
+password: foo
+
+password: ${KEY_PASSWORD}
+```
+
+// end::single-source[]
