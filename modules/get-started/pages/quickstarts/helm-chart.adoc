@@ -1,0 +1,528 @@
+= Get Started with the Redpanda Connect Helm Chart
+:description: Deploy Redpanda Connect on Kubernetes using Helm.
+:page-aliases: get-started:helm-chart.adoc
+
+This guide explains how to deploy and configure Redpanda Connect on Kubernetes using the Helm chart. It covers the available deployment modes and walks you through building your own pipelines.
+
+== What is Redpanda Connect?
+
+Redpanda Connect is a powerful stream processor that integrates data across various sources (inputs) and sinks (outputs), enabling seamless data flows between systems. It supports complex data processing tasks such as data enrichment, transformation, filtering, and routing, making it an ideal solution for data pipelines that require high performance and resilience.
+
+Redpanda Connect includes Bloblang, a flexible mapping language for processing data with built-in functions for transformations, random data generation, and more. These functions allow for easy customization of data pipelines.
+
+Common use cases for Redpanda Connect include:
+
+* **Real-time data ingestion**: Ingesting data from various sources into Redpanda or other data platforms.
+* **Data transformation**: Enriching and transforming data to match business requirements before forwarding it to a destination.
+* **Data filtering and routing**: Filtering data and routing it to the appropriate sinks based on predefined conditions.
+
+== Prerequisites
+
+* A running Kubernetes cluster.
+* The https://kubernetes.io/docs/tasks/tools/[`kubectl` CLI] and the https://helm.sh/docs/intro/install/[`helm` CLI] installed.
+
+== Install with Helm
+
+To deploy Redpanda Connect on Kubernetes, use the official Helm chart.
+
+[source,bash]
+----
+helm repo add redpanda https://charts.redpanda.com <1>
+helm repo update <2>
+helm install redpanda-connect redpanda/connect --namespace <namespace> --create-namespace <3>
+----
+
+<1> Adds the Redpanda Helm repository.
+<2> Updates your local Helm repository cache.
+<3> Installs Redpanda Connect in the given namespace. You can customize this deployment by configuring values in the Helm chart.
+
+== Deployment modes
+
+Redpanda Connect can run in two different modes: **standalone mode** and **streams mode**.
+
+* **Standalone mode**: Allows you to run a single pipeline at a time, making it suitable for simpler configurations that don't need to run concurrently.
+* **Streams mode**: Supports multiple pipelines running simultaneously, with each pipeline managed through a ConfigMap. Streams mode is ideal for complex data processing use cases.
+
+== Run pipelines in standalone mode
+
+In standalone mode, you can configure a single pipeline within the `config` section of your Helm values file.
+
+=== Hello world
+
+In this example, you'll produce a simple message and convert it to uppercase using a Bloblang method.
+
+. Create a `pipeline.yaml` file.
++
+This file will be used to override the default Helm chart values for Redpanda Connect.
+
+. Add the following configuration to `pipeline.yaml`:
++
+[source,yaml]
+----
+config:
+  input:
+    generate:
+      mapping: |
+        root.message = "Hello, Redpanda Connect!" <1>
+      count: 1 <2>
+  pipeline:
+    processors:
+      - mapping: |
+          root.message = this.message.uppercase() <3>
+  output:
+    stdout: {} <4>
+----
+<1> Use Bloblang to create a JSON object with the message "Hello, Redpanda Connect!" stored in `root.message`.
+<2> Generate the message only once.
+<3> Convert the `message` field in the input to uppercase using the xref:guides:bloblang/methods.adoc#uppercase[`uppercase()`] method in Bloblang.
+<4> Output the processed data to stdout, making it viewable in logs.
+
+. Deploy the pipeline:
++
+[source,bash]
+----
+helm upgrade --install redpanda-connect redpanda/connect --namespace <namespace> --values pipeline.yaml
+----
+
+. Check the logs:
++
+[,bash]
+----
+export POD_NAME=$(kubectl get pods --namespace <namespace> -l "app.kubernetes.io/name=redpanda-connect,app.kubernetes.io/instance=redpanda-connect" -o jsonpath="{.items[0].metadata.name}")
+kubectl logs $POD_NAME --namespace <namespace>
+----
++
+You should see the message converted to uppercase in the output:
++
+[,json]
+----
+{"message":"HELLO, REDPANDA CONNECT!"}
+----
+
+. Check the Pod's status:
++
+[source,bash]
+----
+kubectl get pods --namespace <namespace> -l app.kubernetes.io/name=redpanda-connect --watch
+----
++
+The Pod enters a `CrashLoopBackOff` state because containers are expected to run continuously. When Redpanda Connect finishes processing the pipeline, the Pod exits, causing Kubernetes to restart it repeatedly.
++
+To prevent this status, you can configure Redpanda Connect to continue processing data indefinitely.
+
+=== Produce continuous data
+
+To produce data continuously, you can set `input.generate.count` to `0`.
+
+. Update the `pipeline.yaml` file to produce a message every second, indefinitely:
++
+[source,yaml]
+----
+config:
+  input:
+    generate:
+      interval: 1s
+      count: 0  # Setting count to 0 ensures it generates data indefinitely.
+      mapping: |
+        root.message = "Hello, Redpanda Connect!"
+  pipeline:
+    processors:
+      - mapping: |
+          root.message = this.uppercase()
+  output:
+    stdout: {}
+----
+
+. Deploy the updated configuration:
++
+[source,bash]
+----
+helm upgrade --install redpanda-connect redpanda/connect --namespace <namespace> --values pipeline.yaml
+----
+
+. Watch the logs:
++
+[,bash]
+----
+export POD_NAME=$(kubectl get pods --namespace <namespace> -l "app.kubernetes.io/name=redpanda-connect,app.kubernetes.io/instance=redpanda-connect" -o jsonpath="{.items[0].metadata.name}")
+kubectl logs $POD_NAME --namespace <namespace> -f
+----
++
+You should see in the logs that Redpanda Connect is producing the same message every second and its being converted to uppercase:
++
+[source,json,role="no-copy"]
+----
+{"message": "HELLO, REDPANDA CONNECT!"}
+{"message": "HELLO, REDPANDA CONNECT!"}
+{"message": "HELLO, REDPANDA CONNECT!"}
+----
+
+. Check the Pod's status:
++
+[source,bash]
+----
+kubectl get pods --namespace <namespace> -l app.kubernetes.io/name=redpanda-connect --watch
+----
++
+The Pod should now be running without entering a `CrashLoopBackOff` state, as the `generate` input continuously feeds new data to the pipeline, preventing it from terminating.
+
+=== Simulate realistic data streams
+
+To make the output more realistic, use some Bloblang functions to generate varied data such as random names and emails.
+
+. Update the `pipeline.yaml` file to generate some realistic user data.
++
+[source,yaml]
+----
+config:
+  input:
+    generate:
+      interval: 1s
+      count: 0
+      mapping: |
+        # Store the generated names in variables
+        let first_name = fake("first_name")
+        let last_name = fake("last_name")
+
+        # Build the message
+        root.user_id = counter()
+        root.name = ($first_name + " " + $last_name)
+        root.timestamp = now()
+  pipeline:
+    processors:
+      - mapping: |
+          root.name = this.name.uppercase()
+  output:
+    stdout: {}
+----
++
+This configuration generates a JSON object with:
++
+- `user_id`: A unique identifier for each record, generated using the xref:guides:bloblang/functions.adoc#counter[`counter()`] function.
+- `name`: A randomly generated first and last name, using the xref:guides:bloblang/functions.adoc#fake[`fake()`] function. The first and last names are stored in variables and referenced using the `$<variable-name>` syntax.
+- `timestamp`: The current timestamp at the time of generation, using the xref:guides:bloblang/functions.adoc#now[`now()`] function.
+
+. Deploy the updated configuration:
++
+[source,bash]
+----
+helm upgrade --install redpanda-connect redpanda/connect --namespace <namespace> --values pipeline.yaml
+----
+
+. Watch the logs:
++
+[,bash]
+----
+export POD_NAME=$(kubectl get pods --namespace <namespace> -l "app.kubernetes.io/name=redpanda-connect,app.kubernetes.io/instance=redpanda-connect" -o jsonpath="{.items[0].metadata.name}")
+kubectl logs $POD_NAME --namespace <namespace> -f
+----
++
+You should see logs showing JSON objects similar to the following, with names in uppercase:
++
+[source,json,role="no-copy"]
+----
+{"name":"ZOIE SIPES"}
+{"name":"LORENA KERTZMANN"}
+{"name":"DALLAS BOYER"}
+{"name":"LOUIE WILDERMAN"}
+{"name":"EMILIA KOEPP"}
+{"name":"KALEIGH PACOCHA"}
+----
+
+=== Process data from a file input
+
+To configure a pipeline that reads data from a file, first store the data in a ConfigMap. This ConfigMap will be mounted into the Redpanda Connect Pod, allowing it to read the file directly.
+
+. Create a ConfigMap to provide the input data that Redpanda Connect will read. This example ConfigMap contains a JSON object with example user data:
++
+[source,bash]
+----
+kubectl create configmap connect-input --from-literal=input-data='{"name": "Redpanda Connect", "email": "rp.connect@example.com"}' --namespace <namespace>
+----
++
+This ConfigMap will act as the source for the file-based input in Redpanda Connect, allowing the pipeline to read and process this structured JSON data.
+
+. Update the `pipeline.yaml` file to read data from the file mounted by the ConfigMap:
++
+.`pipeline.yaml`
+[source,yaml]
+----
+extraVolumes:
+  - name: input-config
+    configMap:
+      name: connect-input
+extraVolumeMounts:
+  - name: input-config
+    mountPath: /input <1>
+    subPath: input-data
+config:
+  input:
+    file:
+      paths:
+        - "/input" <1>
+  pipeline:
+    processors:
+      - mapping: |
+          root.name = this.name.uppercase()
+  output:
+    stdout: {}
+----
++
+<1> For the input, use the contents of the file at the path where the ConfigMap data is mounted.
+
+. Deploy the pipeline:
++
+[source,bash]
+----
+helm upgrade --install redpanda-connect redpanda/connect --namespace <namespace> --values pipeline.yaml
+----
+
+. Check the logs:
++
+[,bash]
+----
+export POD_NAME=$(kubectl get pods --namespace <namespace> -l "app.kubernetes.io/name=redpanda-connect,app.kubernetes.io/instance=redpanda-connect" -o jsonpath="{.items[0].metadata.name}")
+kubectl logs $POD_NAME --namespace <namespace>
+----
++
+You should see the username converted to uppercase in the output:
++
+[,json]
+----
+{"name":"REDPANDA CONNECT"}
+----
+
+== Run multiple pipelines in streams mode
+
+In streams mode, each pipeline, defined in separate YAML files, runs simultaneously, making this mode ideal for high-throughput applications. All the YAML files must be bundled together into a ConfigMap that you can pass to Redpanda Connect.
+
+. Define your pipeline configurations in the following separate YAML files:
++
+.`woof.yaml`
+[source,yaml]
+----
+input:
+  generate:
+    mapping: root = "woof" # Generates a message with the word "woof" at regular intervals.
+    interval: 5s
+    count: 0
+output:
+  stdout:
+    codec: lines # Outputs each message as a new line in stdout.
+----
++
+.`meow.yaml`
+[source,yaml]
+----
+input:
+  generate:
+    mapping: root = "meow" # Generates a message with the word "meow" at regular intervals.
+    interval: 2s
+    count: 0
+output:
+  stdout:
+    codec: lines # Outputs each message as a new line in stdout.
+----
+
+. Bundle the configuration files into a ConfigMap, which Redpanda Connect will reference:
++
+[source,bash]
+----
+kubectl create configmap connect-streams --from-file=woof.yaml --from-file=meow.yaml --namespace <namespace>
+----
+
+. Configure Redpanda Connect in streams mode and specify the name of the ConfigMap to use:
++
+.`connect.yaml`
+[source,yaml]
+----
+streams:
+  enabled: true <1>
+  streamsConfigMap: "connect-streams" <2>
+----
++
+<1> Enable streams mode in Redpanda Connect.
+<2> Use the given ConfigMap as the pipeline configuration.
+
+. Deploy the chart:
++
+[source,bash]
+----
+helm upgrade --install redpanda-connect redpanda/connect --namespace <namespace> --values connect.yaml
+----
+
+. Watch the logs:
++
+[,bash]
+----
+export POD_NAME=$(kubectl get pods --namespace <namespace> -l "app.kubernetes.io/name=redpanda-connect,app.kubernetes.io/instance=redpanda-connect" -o jsonpath="{.items[0].metadata.name}")
+kubectl logs $POD_NAME --namespace <namespace> -f
+----
++
+You should see logs showing a combination of outputs from both pipelines:
++
+[.no-copy]
+----
+woof
+meow
+meow
+meow
+woof
+meow
+meow
+----
+
+=== Update the pipeline in streams mode
+
+To update a pipeline in streams mode:
+
+. Modify one of the configuration files locally.
++
+.`woof.yaml`
+[source,yaml]
+----
+# Updated woof.yaml
+input:
+  generate:
+    mapping: root = "bark"  # Updated to generate a message with the word "bark" instead of "woof."
+    interval: 5s
+    count: 0
+output:
+  stdout:
+    codec: lines
+----
+
+. Update the ConfigMap with the modified file:
++
+[source,bash]
+----
+kubectl create configmap connect-streams --from-file=woof.yaml --from-file=meow.yaml --namespace <namespace> --dry-run=client -o yaml | kubectl apply -f -
+----
+
+. Restart the Deployment:
++
+[source,bash]
+----
+kubectl rollout restart deployment/redpanda-connect --namespace <namespace>
+----
+
+=== Global configuration
+
+When deploying Redpanda Connect in streams mode, you can configure global tracing, logging, and HTTP settings to apply across all pipelines. Specify these in your `values.yaml` overrides under the `metrics`, `logger`, and `tracing` sections.
+
+[source,yaml]
+----
+metrics:
+  prometheus: {} # Enable Prometheus metrics collection.
+
+tracing:
+  openTelemetry:
+    http: [] # Configure OpenTelemetry HTTP tracing.
+    grpc: []
+    tags: {}
+
+logger:
+  level: INFO # Set logging level (e.g., INFO, DEBUG).
+  static_fields:
+    '@service': redpanda-connect # Add static fields to logs for better traceability.
+----
+
+== Access the HTTP server on Redpanda Connect
+
+To manage and monitor Redpanda Connect, you can use its HTTP server, which provides useful endpoints for version checking, pipeline management, and more. By default, Redpanda Connect exposes this server using a Kubernetes ClusterIP Service, accessible only within the cluster.
+
+. Forward the ports of the ClusterIP Service to your local device:
++
+[source,bash]
+----
+kubectl port-forward svc/redpanda-connect 8080:80 --namespace <namespace>
+----
+
+. Access the HTTP server locally. For example, to check the Redpanda Connect version, run:
++
+[,bash]
+----
+curl http://localhost:8080/version
+----
++
+Example output:
++
+[,json]
+----
+{
+  "version": "v4.38.0",
+  "built": "2024-10-17T09:27:42Z"
+}
+----
+
+You can also configure external access using a LoadBalancer Service or an Ingress. See the link:https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/values.yaml#L79C1-L107C31[Helm values] for more details.
+
+== Upgrade Redpanda Connect
+
+To upgrade Redpanda Connect to a newer chart version:
+
+. Ensure your Helm repository is updated to fetch the latest version of the Redpanda chart:
++
+[,bash]
+----
+helm repo update
+----
+
+. Upgrade your existing deployment using the https://helm.sh/docs/helm/helm_upgrade/[`helm upgrade`] command:
++
+[,bash]
+----
+helm upgrade redpanda-connect redpanda/connect --namespace <namespace> --values <your-values-file>
+----
++
+Replace `<your-values-file>` with the path to your custom configuration file.
+
+=== Roll back an upgrade
+
+If an upgrade introduces issues, you can roll back to a previous release. Helm retains previous deployments, allowing you to roll back with the https://helm.sh/docs/helm/helm_rollback/[`helm rollback`] command:
+
+[,bash]
+----
+helm rollback redpanda-connect <revision-number> --namespace <namespace>
+----
+
+To find the revision number, use the https://helm.sh/docs/helm/helm_history/[`helm history`] command:
+
+[,bash]
+----
+helm history redpanda-connect --namespace <namespace>
+----
+
+This command lists previous deployments and their revision numbers.
+
+== Uninstall Redpanda Connect
+
+To remove Redpanda Connect and all related resources from your Kubernetes cluster, use the https://helm.sh/docs/helm/helm_uninstall/[`helm uninstall`] command to uninstall the chart:
+
+[,bash]
+----
+helm uninstall redpanda-connect --namespace <namespace>
+----
+
+This command deletes all resources created by the Helm chart, including Deployments and Services.
+
+Uninstalling the chart does not delete the ConfigMaps that you manually created outside of the Helm chart. To delete these ConfigMaps, do the following:
+
+[,bash]
+----
+kubectl delete configmap connect-streams connect-input --namespace <namespace>
+----
+
+== Next steps
+
+* Learn more about xref:guides:bloblang/walkthrough.adoc[Bloblang], the mapping language for processing data in Redpanda Connect.
+* Try more hands-on examples with one of the xref:cookbooks:index.adoc[Cookbooks].
+
+== Suggested reading
+
+* xref:guides:streams_mode/about.adoc[Streams mode]
+* xref:components:inputs/about.adoc[Inputs]
+* xref:components:processors/about.adoc[Processors]
+* xref:components:outputs/about.adoc[Outputs]
+* xref:components:http/about.adoc[HTTP server]
+* link:https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/values.yaml[Helm values]
