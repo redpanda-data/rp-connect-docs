@@ -4,9 +4,6 @@
 :page-beta: true
 :categories: ["Services"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
 
 
@@ -201,7 +198,7 @@ The name of the destination data stream. Make sure the schema of the data stream
 
 === `apikey`
 
-The API key for the Ingest API. You need to generate this in the web console of Timeplus Enterprise (Cloud). This field is required if you are sending message to Timeplus Enterprise (Cloud).
+The API key for the Ingest API. You need to generate this in the web console of Timeplus Enterprise (Cloud). This field is required if you are sending messages to Timeplus Enterprise (Cloud).
 
 include::components:partial$secret_warning.adoc[]
 
