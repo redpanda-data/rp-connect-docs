@@ -203,7 +203,7 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `batching`
 
-Lets you configure a xref:configuration:batching.adoc[batching policy].
+Allows you to configure a xref:configuration:batching.adoc[batching policy].
 
 *Type*: `object`
 
@@ -236,7 +236,7 @@ The number of messages after which the batch is flushed. Set to `0` to disable c
 
 === `batching.byte_size`
 
-The amount of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 *Type*: `int`
 

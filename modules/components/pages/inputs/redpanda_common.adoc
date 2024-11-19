@@ -105,7 +105,7 @@ This approach means that although records from different partitions may be proce
 
 === Delivery errors
 
-The order in which records are delivered may be disrupted by delivery errors and any error-handling mechanisms that start up. Redpanda Connect leans towards at-least-once delivery unless instructed otherwise, and this includes reattempting delivery of data when the ordering of that data is no longer guaranteed.
+The order in which records are delivered may be disrupted by delivery errors and any error-handling mechanisms that start up. Redpanda Connect uses at-least-once delivery unless instructed otherwise, and this includes reattempting delivery of data when the ordering of that data is no longer guaranteed.
 
 For example, a batch of records is sent to an output broker and only a subset of records are delivered. In this scenario, Redpanda Connect (by default) attempts to deliver the records that failed, even though these delivery failures may have been sent before records that were delivered successfully.
 
@@ -214,7 +214,7 @@ Whether to consume from the oldest available offset. Otherwise, messages are con
 
 === `fetch_max_bytes`
 
-The maximum amount of bytes that a broker tries to send during a fetch. 
+The maximum number of bytes that a broker tries to send during a fetch. 
 
 If individual records are larger than the `fetch_max_bytes` value, brokers will still send them.
 
@@ -224,7 +224,7 @@ If individual records are larger than the `fetch_max_bytes` value, brokers will 
 
 === `fetch_min_bytes`
 
-The minimum amount of bytes that a broker tries to send during a fetch. This field is equivalent to the Java setting `fetch.min.bytes`.
+The minimum number of bytes that a broker tries to send during a fetch. This field is equivalent to the Java setting `fetch.min.bytes`.
 
 *Type*: `string`
 
@@ -232,7 +232,7 @@ The minimum amount of bytes that a broker tries to send during a fetch. This fie
 
 === `fetch_max_partition_bytes`
 
-The maximum amount of bytes that are consumed from a single partition in a fetch request. This field is equivalent to the Java setting `fetch.max.partition.bytes`.
+The maximum number of bytes that are consumed from a single partition in a fetch request. This field is equivalent to the Java setting `fetch.max.partition.bytes`.
 
 If a single batch is larger than the `fetch_max_partition_bytes` value, the batch is still sent so that the client can make progress. 
 
