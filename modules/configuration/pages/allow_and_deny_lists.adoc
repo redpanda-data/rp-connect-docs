@@ -12,7 +12,7 @@ Introduced in version 4.39.0.
 
 == Configure an allow list
 
-Configure an allow list to let users run only a subset of named components on your Redpanda Connect instance.
+To configure an allow list:
 
 . Create a `connector_list.yaml` file in the following location: `/etc/redpanda/connector_list.yaml`.
 . In the xref:components:catalog.adoc[Connector Catalog], find the exact name of the component family you want to grant access to. For example: `aws_s3` and `azure_cosmosdb`.
@@ -28,7 +28,7 @@ allow:
 
 == Configure a deny list
 
-Configure a deny list to block users from running a subset of named components on your Redpanda Connect instance.
+To configure a deny list:
 
 . Create a `connector_list.yaml` file in the following location: `/etc/redpanda/connector_list.yaml`.
 . In the xref:components:catalog.adoc[Connector Catalog], find the exact name of the component family you want to block access to. For example: `aws_s3` and `azure_cosmosdb`.
