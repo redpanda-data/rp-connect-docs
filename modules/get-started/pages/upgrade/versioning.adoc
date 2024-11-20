@@ -1,0 +1,19 @@
+= Redpanda Connect Versioning
+:description: Learn how Redpanda Connect implements versioning.
+
+Redpanda Connect uses semantic versioning. Version numbers follow the format `major.minor.patch`:
+
+- `major`: This version may include breaking changes.
+- `minor`: This version only includes backward-compatible new features or enhancements.
+- `patch`: This version includes backward-compatible bug fixes.
+
+For example, version 4.35.1 is the first patch release of bug fixes following the minor release of product enhancements in 4.35.0. Breaking changes would not be released until 5.0.0.
+
+== Next steps
+
+To benefit from Redpanda Connect's new features and enhancements, upgrade to the latest version.
+
+* Upgrade using the xref:get-started:upgrade/rpk-upgrade.adoc[`rpk` CLI].
+* Upgrade using xref:get-started:upgrade/helm-chart-upgrade.adoc[Helm].
+
+Learn more about the xref:ROOT:upgrade:rolling-upgrade.adoc[versioning of other Redpanda Self-Managed products].
