@@ -96,21 +96,9 @@ Data source name.
 
 The query to execute. The style of placeholder to use depends on the driver, some drivers require question marks (`?`) whereas others expect incrementing dollar signs (`$1`, `$2`, and so on) or colons (`:1`, `:2` and so on). The style to use is outlined in this table:
 
-| Driver | Placeholder Style |
-|---|---|
-| `clickhouse` | Dollar sign |
-| `mysql` | Question mark |
-| `postgres` | Dollar sign |
-| `mssql` | Question mark |
-| `sqlite` | Question mark |
-| `oracle` | Colon |
-| `snowflake` | Question mark |
-| `trino` | Question mark |
-| `gocosmos` | Colon |
-
+include::components:partial$query_table.adoc[]
 
 *Type*: `string`
-
 
 ```yml
 # Examples
@@ -151,5 +139,3 @@ Result codec.
 *Type*: `string`
 
 *Default*: `"none"`
-
-

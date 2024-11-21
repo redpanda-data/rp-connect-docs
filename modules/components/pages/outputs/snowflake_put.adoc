@@ -1,7 +1,7 @@
 = snowflake_put
 // tag::single-source[]
 :type: output
-:status: beta
+:page-beta: true
 :categories: ["Services"]
 
 // © 2024 Redpanda Data Inc.
@@ -9,6 +9,7 @@
 
 component_type_dropdown::[]
 
+TIP: Use the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output] for improved performance, cost-effectiveness, and ease of use.
 
 Sends messages to Snowflake stages and, optionally, calls Snowpipe to load this data into one or more tables.
 
@@ -23,7 +24,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   snowflake_put:
@@ -32,6 +33,7 @@ output:
     cloud: aws # No default (optional)
     user: "" # No default (required)
     password: "" # No default (optional)
+    private_key: "" # No default (optional)
     private_key_file: "" # No default (optional)
     private_key_pass: "" # No default (optional)
     role: "" # No default (required)
@@ -59,7 +61,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   snowflake_put:
@@ -68,6 +70,7 @@ output:
     cloud: aws # No default (optional)
     user: "" # No default (required)
     password: "" # No default (optional)
+    private_key: "" # No default (optional)
     private_key_file: "" # No default (optional)
     private_key_pass: "" # No default (optional)
     role: "" # No default (required)
@@ -503,17 +506,28 @@ include::components:partial$secret_warning.adoc[]
 *Type*: `string`
 
 
+=== `private_key`
+
+Your private SSH key. When using encrypted keys, you must also set a value for <<private_key_pass,`private_key_pass`>>.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+ifndef::env-cloud[]
+Requires version 3.48.0 or newer
+endif::[]
+
 === `private_key_file`
 
-The path to a file containing the private SSH key.
+The path to a file containing your private SSH key. When using encrypted keys, you must also set a value for <<private_key_pass,`private_key_pass`>>.
 
 
 *Type*: `string`
 
-
 === `private_key_pass`
 
-An optional private SSH key passphrase.
+The passphrase for your private SSH key.
 
 include::components:partial$secret_warning.adoc[]
 

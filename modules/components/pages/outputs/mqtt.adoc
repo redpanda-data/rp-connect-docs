@@ -1,16 +1,18 @@
 = mqtt
+// tag::single-source[]
 :type: output
 :status: stable
 :categories: ["Services"]
 
 // © 2024 Redpanda Data Inc.
 
-
 component_type_dropdown::[]
-
 
 Pushes messages to an MQTT broker.
 
+ifndef::env-cloud[]
+Introduced in version 4.37.0.
+endif::[]
 
 [tabs]
 ======
@@ -84,11 +86,15 @@ This output benefits from sending multiple messages in flight in parallel for im
 
 === `urls`
 
-A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.
+A list of URLs to connect to. Use the format `scheme://host:port`, where:
 
+* `scheme` is one of the following: `tcp`, `ssl`, `ws`
+* `host` is the IP address or hostname
+* `port` is the port on which the MQTT broker accepts connections
+
+If an item in the list contains commas, it is expanded into multiple URLs.
 
 *Type*: `array`
-
 
 ```yml
 # Examples
@@ -129,8 +135,11 @@ The maximum amount of time to wait in order to establish a connection before the
 
 *Type*: `string`
 
-*Default*: `"30s"`
+*Default*: `30s`
+
+ifndef::env-cloud[]
 Requires version 3.58.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -257,7 +266,10 @@ Whether to allow the remote server to repeatedly request renegotiation. Enable t
 *Type*: `bool`
 
 *Default*: `false`
+
+ifndef::env-cloud[]
 Requires version 3.45.0 or newer
+endif::[]
 
 === `tls.root_cas`
 
@@ -402,7 +414,10 @@ The maximum amount of time to wait to write data before the attempt is abandoned
 *Type*: `string`
 
 *Default*: `"3s"`
+
+ifndef::env-cloud[]
 Requires version 3.58.0 or newer
+endif::[]
 
 ```yml
 # Examples
@@ -429,7 +444,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
+ifndef::env-cloud[]
 Requires version 3.59.0 or newer
+endif::[]
 
 === `max_in_flight`
 
@@ -440,4 +457,4 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 *Default*: `64`
 
-
+// end::single-source[]

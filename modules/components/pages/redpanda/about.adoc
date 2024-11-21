@@ -4,9 +4,12 @@ component_type_dropdown::[]
 
 // tag::single-source[]
 
-// © 2024 Redpanda Data Inc.
+The Redpanda Connect configuration service allows you to:
 
-You can configure Redpanda Connect to send logs and status updates to topics on a Redpanda cluster, in addition to the xref:components:logger/about.adoc[default logger]. The `redpanda` namespace contains the configuration of this service, which uses the following default values:
+- Configure Redpanda cluster credentials in a single configuration block, which is referenced by multiple components in data pipeline. For more information, see the <<pipeline-example,Pipeline example>>.
+- Send logs and status updates to topics on a Redpanda cluster, in addition to the xref:components:logger/about.adoc[default logger].
+
+The `redpanda` namespace contains the configuration of this service.
 
 [tabs]
 ======
@@ -17,8 +20,8 @@ Common::
 ```yml
 # Common configuration fields, showing default values
 redpanda:
-  pipeline_id: ""
   seed_brokers: [] # No default (optional)
+  pipeline_id: ""
   logs_topic: ""
   logs_level: info
   status_topic: ""
@@ -32,15 +35,8 @@ Advanced::
 ```yml
 # All configuration fields, showing default values
 redpanda:
-  pipeline_id: ""
   seed_brokers: [] # No default (optional)
-  logs_topic: ""
-  logs_level: info
-  status_topic: ""
   client_id: benthos
-  rack_id: ""
-  timeout: 10s
-  max_message_bytes: 1MB
   tls:
     enabled: false
     skip_cert_verify: false
@@ -49,27 +45,51 @@ redpanda:
     root_cas_file: ""
     client_certs: []
   sasl: [] # No default (optional)
+  metadata_max_age: 50m
+  pipeline_id: ""
+  logs_topic: ""
+  logs_level: info
+  status_topic: ""
+  partitioner: "" # No default (optional)
+  idempotent_write: true
+  compression: "" # No default (optional)
+  timeout: 10s
+  max_message_bytes: 1MB
+  broker_write_max_bytes: 100MB
 ```
-
 --
 ======
 
+== Pipeline example
+
+This data pipeline reads data from `topic_A` and `topic_B` on a Redpanda cluster, and then writes the data to `topic_C` on the same cluster. The cluster details are configured within the `redpanda` configuration block, so you only need to configure them once. This is a useful feature when you have multiple inputs and outputs in the same data pipeline that need to connect to the same cluster.
+
+```
+input:
+  redpanda_common:
+    topics: [ topic_A, topic_B ]
+
+output:
+  redpanda_common:
+    topic: topic_C
+    key: ${! @id }
+
+redpanda:
+  seed_brokers: [ "127.0.0.1:9092" ]
+  tls:
+    enabled: true
+  sasl:
+    - mechanism: SCRAM-SHA-512
+      password: bar
+      username: foo
+
+```
+
 == Fields
-
-Schema properties for the `redpanda` section.
-
-=== `pipeline_id`
-
-The ID of a Redpanda Connect data pipeline (optional). When specified, the pipeline ID is written to all logs and status updates sent to the configured topics. 
-
-*Type*: `string`
-
-*Default*: `""`
 
 === `seed_brokers`
 
-A list of broker addresses to connect to. List items that contain commas are expanded into multiple addresses.
-
+A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item.
 
 *Type*: `array`
 
@@ -88,44 +108,6 @@ seed_brokers:
   - foo:9092,bar:9092
 ```
 
-=== `logs_topic`
-
-The topic that logs are sent to.
-
-*Type*: `string`
-
-*Default*: `""`
-
-```yml
-# Example
-
-logs_topic: __redpanda.connect.logs
-```
-
-=== `logs_level`
-
-The logging level of logs sent to Redpanda.
-
-*Type*: `string`
-
-*Default*: `info`
-
-*Options*: `debug`, `info`, `warn`, `error`
-
-=== `status_topic`
-
-The topic that status updates are sent to. For full details of the schema for status updates, see the https://github.com/redpanda-data/connect/blob/main/internal/protoconnect/status.pb.go[object specification^].
-
-*Type*: `string`
-
-*Default*: `""`
-
-```yml
-# Example
-
-status_topic: __redpanda.connect.status
-```
-
 === `client_id`
 
 An identifier for the client connection.
@@ -134,41 +116,9 @@ An identifier for the client connection.
 
 *Default*: `benthos`
 
-=== `rack_id`
-
-A rack identifier for this client.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `timeout`
-
-The maximum period of time allowed for sending log or status update messages before a request is abandoned and a retry attempted. 
-
-*Type*: `string`
-
-*Default*: `10s`
-
-=== `max_message_bytes`
-
-The maximum size of an individual message in bytes. Messages larger than this value are rejected. This field is equivalent to Kafka's `max.message.bytes`. 
-
-*Type*: `string`
-
-*Default*: `1MB`
-
-```yml
-# Examples
-
-max_message_bytes: 100MB
-
-max_message_bytes: 50mib
-```
-
 === `tls`
 
-You can use custom TLS settings to override system defaults.
+Override system defaults with custom TLS settings.
 
 *Type*: `object`
 
@@ -479,5 +429,146 @@ An external ID to use when assuming a role.
 *Type*: `string`
 
 *Default*: `""`
+
+=== `metadata_max_age`
+
+The maximum period of time after which metadata is refreshed.
+
+*Type*: `string`
+
+*Default*: `5m`
+
+=== `pipeline_id`
+
+The ID of a Redpanda Connect data pipeline (optional). When specified, the pipeline ID is written to all logs and status updates sent to the configured topics. 
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `logs_topic`
+
+The topic that logs are sent to.
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Example
+
+logs_topic: __redpanda.connect.logs
+```
+
+=== `logs_level`
+
+The logging level of logs sent to Redpanda.
+
+*Type*: `string`
+
+*Default*: `info`
+
+*Options*: `debug`, `info`, `warn`, `error`
+
+=== `status_topic`
+
+The topic that status updates are sent to. For full details of the schema for status updates, see the https://github.com/redpanda-data/connect/blob/main/internal/protoconnect/status.pb.go[object specification^].
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Example
+
+status_topic: __redpanda.connect.status
+```
+
+=== `partitioner`
+
+Override the default murmur2 hashing partitioner.
+
+
+*Type*: `string`
+
+
+|===
+| Option | Summary
+
+| `least_backup`
+| Chooses the least backed up partition. The partition with the fewest buffered records. Partitions are selected per batch.
+| `manual`
+| Manually select a partition for each message. You must also specify a value for the `partition` field.
+| `murmur2_hash`
+| Kafka's default hash algorithm that uses a 32-bit murmur2 hash of the key to compute the partition for the record.
+| `round_robin`
+| Does a round robin of messages through all available partitions. This algorithm has lower throughput and causes higher CPU load on brokers, but is useful if you want to ensure an even distribution of records to partitions.
+
+|===
+
+=== `idempotent_write`
+
+Enable the idempotent write producer option. This requires the `IDEMPOTENT_WRITE` permission on `CLUSTER`. Disable this option if the `IDEMPOTENT_WRITE` permission is not available.
+
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `compression`
+
+Set an explicit compression type (optional). The default preference is to use `snappy` when the broker supports it. Otherwise, use `none`.
+
+*Type*: `string`
+
+
+Options:
+`lz4`
+, `snappy`
+, `gzip`
+, `none`
+, `zstd`
+
+
+=== `timeout`
+
+The maximum period of time allowed for sending log or status update messages before a request is abandoned and a retry attempted. 
+
+*Type*: `string`
+
+*Default*: `10s`
+
+=== `max_message_bytes`
+
+The maximum size of an individual message in bytes. Messages larger than this value are rejected. This field is equivalent to Kafka's `max.message.bytes`. 
+
+*Type*: `string`
+
+*Default*: `1MB`
+
+```yml
+# Examples
+
+max_message_bytes: 100MB
+
+max_message_bytes: 50mib
+```
+
+=== `broker_write_max_bytes`
+
+The upper bound for the number of bytes written to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.
+
+*Type*: `string`
+
+*Default*: `"100MB"`
+
+```yml
+# Examples
+
+broker_write_max_bytes: 128MB
+
+broker_write_max_bytes: 50mib
+```
+
 
 // end::single-source[]

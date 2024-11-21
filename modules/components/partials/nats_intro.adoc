@@ -1,0 +1,31 @@
+== Connection name
+
+When monitoring and managing a production https://docs.nats.io/nats-concepts/overview[NATS system^], it is often useful to know which connection a message was sent or received from. To achieve this, set the connection name option when creating a NATS connection. Redpanda Connect can then automatically set the connection name to the NATS component label, so that monitoring tools between NATS and Redpanda Connect can stay in sync.
+
+
+== Authentication
+
+A number of Redpanda Connect components use NATS services. Each of these components
+support optional, advanced authentication parameters for https://docs.nats.io/nats-server/configuration/securing_nats/auth_intro/nkey_auth[NKeys^] and https://docs.nats.io/using-nats/developer/connecting/creds[user credentials^].
+
+For an in-depth guide, see the https://docs.nats.io/running-a-nats-service/nats_admin/security/jwt[NATS documentation^].
+
+=== NKeys
+
+NATS server can use NKeys in several ways for authentication. The simplest approach is to configure the server 
+with a list of user's public keys. The server can then generate a challenge for each connection request from a client, and the client must respond to the challenge by signing it with its private NKey, configured in the `nkey_file` or `nkey` field.
+
+For more details, see the https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NATS documentation^].
+
+=== User credentials
+
+NATS server also supports decentralized authentication based on JSON Web Tokens (JWTs). When a server is configured to use this authentication scheme, clients need a https://docs.nats.io/nats-server/configuration/securing_nats/jwt#json-web-tokens[user JWT^]
+and a corresponding https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NKey secret^] to connect.
+
+You can use either of the following methods to supply the user JWT and NKey secret:
+
+* In the `user_credentials_file` field, enter the path to a file containing both the private key and the JWT. You can generate the file using the https://docs.nats.io/nats-tools/nsc[nsc tool^].
+* In the `user_jwt` field, enter a plain text JWT, and in the `user_nkey_seed` field, enter
+the plain text NKey seed or private key.
+
+For more details about authentication using JWTs, see the https://docs.nats.io/using-nats/developer/connecting/creds[NATS documentation^].

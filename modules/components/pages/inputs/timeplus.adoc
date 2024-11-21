@@ -1,0 +1,156 @@
+= timeplus
+// tag::single-source[]
+:type: input
+:page-beta: true
+:categories: ["Services"]
+
+// © 2024 Redpanda Data Inc.
+
+
+component_type_dropdown::[]
+
+Executes a streaming or table query on https://docs.timeplus.com/[Timeplus Enterprise (Cloud or Self-Hosted)^] or the `timeplusd` component, and creates a structured message for each table row received.
+
+If you execute a streaming query, this input runs until the query terminates. For table queries, it shuts down after all rows returned by the query are exhausted.
+
+```yml
+# Common configuration fields, showing default values
+input:
+  label: ""
+  timeplus:
+    query: select * from iot # No default (required)
+    url: tcp://localhost:8463
+    workspace: "" # No default (optional)
+    apikey: "" # No default (optional)
+    username: "" # No default (optional)
+    password: "" # No default (optional)
+```
+
+== Examples
+
+[tabs]
+======
+Timeplus Enterprise (Cloud) using HTTP::
++
+--
+You must https://docs.timeplus.com/apikey[generate an API key^] using the web console of Timeplus Enterprise (Cloud).
+
+```yaml
+input:
+  timeplus:
+    url: https://us-west-2.timeplus.cloud
+    workspace: <workspace-id>
+    query: select * from <table-name>
+    apikey: <api-key>
+```
+Replace the following placeholders with your own values:
+
+- `<workspace-id>`: The ID of the workspace you want to read messages from.
+- `<table-name>`: The table you want to query.
+- `<api-key>`: The API key for Timeplus Enterprise REST API.
+
+--
+
+Timeplus Enterprise (Self-Hosted) using HTTP::
++
+--
+You must specify the username, password, and URL of the application server.
+
+```yaml
+input:
+  timeplus:
+    url: http://localhost:8000
+    workspace: `<workspace-id>`
+    query: select * from <table-name>
+    username: <timeplus-username>
+    password: <timeplus-password>
+```
+
+Replace the following placeholders with your own values:
+
+- `<workspace-id>`: The ID of the workspace you want to read messages from.
+- `<table-name>`: The table you want to query.
+- `<timeplus-username>`: The username for the Timeplus application server.
+- `<timeplus-password>`: The password for the Timeplus application server.
+
+--
+
+timeplusd using TCP::
++
+--
+Make sure the schema of the `url` is `tcp`.
+```yaml
+input:
+  timeplus:
+    url: tcp://localhost:8463
+    query: select * from <table-name>
+    username: <timeplus-username>
+    password: <timeplus-password>
+```
+
+Replace the following placeholders with your own values:
+
+- `<table-name>`: The table you want to query.
+- `<timeplus-username>`: The username for the Timeplus application server.
+- `<timeplus-password>`: The password for the Timeplus application server.
+
+--
+======
+
+== Fields
+
+=== `query`
+
+The query to execute on Timeplus Enterprise (Cloud or Self-Hosted) or `timeplusd`.
+
+*Type*: `string`
+
+```yml
+# Examples
+query: select * from iot
+query: select count(*) from table(iot)
+```
+
+=== `url`
+
+The URL of your Timeplus instance, which should always include the schema and host.
+
+*Type*: `string`
+
+*Default*: `tcp://localhost:8463`
+
+```yml
+# Examples
+url: http://localhost:8000
+url: http://127.0.0.1:3218
+```
+
+=== `workspace`
+
+The ID of the workspace you want to read messages from. This field is required if you are connecting to Timeplus Enterprise (Cloud or Self-Hosted) using HTTP.
+
+*Type*: `string`
+
+=== `apikey`
+
+The API key for the Timeplus Enterprise REST API. You need to generate the key in the web console of Timeplus Enterprise (Cloud). This field is required if you are reading messages from Timeplus Enterprise (Cloud).
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+=== `username`
+
+The username for the Timeplus application server. This field is required if you are reading messages from Timeplus Enterprise (Self-Hosted) or `timeplusd`.
+
+*Type*: `string`
+
+=== `password`
+
+The password for the Timeplus application server. This field is required if you are reading messages from Timeplus Enterprise (Self-Hosted) or `timeplusd`.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+// end::single-source[]

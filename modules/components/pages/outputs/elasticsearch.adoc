@@ -19,13 +19,13 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   elasticsearch:
     urls: [] # No default (required)
     index: "" # No default (required)
-    id: ${!count("elastic_ids")}-${!timestamp_unix()}
+    id: ${!counter()}-${!timestamp_unix()}
     type: ""
     max_in_flight: 64
     batching:
@@ -41,7 +41,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   elasticsearch:
@@ -49,7 +49,7 @@ output:
     index: "" # No default (required)
     action: index
     pipeline: ""
-    id: ${!count("elastic_ids")}-${!timestamp_unix()}
+    id: ${!counter()}-${!timestamp_unix()}
     type: ""
     routing: ""
     sniff: true
@@ -156,13 +156,13 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 === `id`
 
-The ID for indexed messages. Interpolation should be used in order to create a unique ID for each message.
+The ID for indexed messages. Use interpolation to create a unique ID for each message.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
 *Type*: `string`
 
-*Default*: `"${!count(\"elastic_ids\")}-${!timestamp_unix()}"`
+*Default*: `"${!counter()}-${!timestamp_unix()}"`
 
 === `type`
 

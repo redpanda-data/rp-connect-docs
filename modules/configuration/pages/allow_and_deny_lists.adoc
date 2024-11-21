@@ -1,0 +1,43 @@
+= Configure an Allow or Deny List
+:description: Learn how to configure an allow or deny list for a Redpanda Connect instance.
+
+You can configure an allow or deny list to limit the Redpanda Connect components that users can run within data pipelines on a Redpanda Connect instance.
+
+Introduced in version 4.39.0.
+
+== Limitations
+
+- You can configure only one allow list, or one deny list per Redpanda Connect instance.
+- When you add the name of a component to your allow or deny list, you grant or block access to all related components. For example, if you include `aws_s3` in your list, you grant or block access to the entire `aws_s3` family of components, including the cache, input, and output.
+
+== Configure an allow list
+
+To configure an allow list:
+
+. Create a `connector_list.yaml` file in the following location: `/etc/redpanda/connector_list.yaml`.
+. In the xref:components:catalog.adoc[Connector Catalog], find the exact name of the component family you want to grant access to. For example: `aws_s3` and `azure_cosmosdb`.
+. Add the names of the component families to the `connector_list.yaml` file, using the following format:
+
++
+```yaml
+allow:
+  - aws_s3
+  - azure_cosmosdb
+```
+. Save your configuration.
+
+== Configure a deny list
+
+To configure a deny list:
+
+. Create a `connector_list.yaml` file in the following location: `/etc/redpanda/connector_list.yaml`.
+. In the xref:components:catalog.adoc[Connector Catalog], find the exact name of the component family you want to block access to. For example: `aws_s3` and `azure_cosmosdb`.
+. Add the names of the component families to the `connector_list.yaml` file, using the following format:
+
++
+```yaml
+deny:
+  - aws_s3
+  - azure_cosmosdb
+```
+. Save your configuration.

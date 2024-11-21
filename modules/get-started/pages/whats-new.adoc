@@ -1,9 +1,82 @@
 = What's New in Redpanda Connect
 :description: Summary of new features in Redpanda Connect.
+:page-aliases: ROOT:whats_new_rpcn.adoc
 
 This topic includes new content added from version 4.29.0 onwards. 
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
+
+== Version 4.39.0
+
+Highlights of this update include the beta release of three new components for Self-Managed and Cloud, including a new `snowflake_streaming` output. This release also includes additions to the `redpanda` family of components and introduces new features for Self-Managed.
+
+=== Components for Cloud and Self-Managed (beta)
+
+* xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]
+* xref:components:inputs/timeplus.adoc[`timeplus` input]
+* xref:components:inputs/spicedb_watch.adoc[`spicedb_watch` input]
+
+=== Additional `redpanda` components (beta)
+
+* `redpanda` (xref:components:inputs/redpanda.adoc[input] and xref:components:outputs/redpanda.adoc[output]): Consume message data from or send message data to Kafka brokers.
+* `redpanda_common` (xref:components:inputs/redpanda_common.adoc[input] and xref:components:outputs/redpanda_common.adoc[output]): Consume message data from or send message data to a Redpanda Kafka broker, using credentials from a common xref:components:redpanda/about.adoc[`redpanda` configuration block] (Self-Managed only).
+
+=== Features in Self-Managed
+
+You can now:
+
+* Create an xref:configuration:allow_and_deny_lists.adoc[allow list or deny list] for a Redpanda Connect instance
+* Use the xref:configuration:secrets.adoc#look-up-secrets-on-a-remote-system-at-runtime[`rpk connect` CLI flag `--secrets`] to look up secrets on a remote system
+* Use the xref:configuration:telemetry.adoc#disable-the-telemetry-service[`rpk connect` CLI flag `--disable-telemetry`] to block the telemetry service
+
+=== Component updates
+
+This release adds the following fields to the xref:components:redpanda/about.adoc[`redpanda` configuration service]:
+
+- `metadata_max_age`
+- `partitioner`
+- `idempotent_write`
+- `compression`
+- `broker_write_max_bytes`
+
+The `url` field of the xref:components:outputs/aws_sqs.adoc[`aws_sqs` output] now supports interpolation functions.
+
+== Version 4.38.0
+
+This update includes the beta release of two new outputs for Cloud and Self-Managed, and the introduction of a xref:configuration:telemetry.adoc[telemetry service], which collects and sends anonymized usage statistics to Redpanda.
+
+=== New tooling
+
+A new Helm chart for deploying Redpanda Connect in Kubernetes is now available. This chart simplifies the deployment and configuration of Redpanda Connect, allowing you to manage and scale Redpanda Connect instances in Kubernetes environments.
+
+To get started with the Helm chart, see xref:get-started:quickstarts/helm-chart.adoc[].
+
+Or, see the release notes for the chart on https://github.com/redpanda-data/helm-charts/releases/tag/connect-3.0.0[GitHub].
+
+=== New outputs (beta)
+
+* xref:components:outputs/azure_data_lake_gen2.adoc[`azure_data_lake_gen2`] (certified)
+* xref:components:outputs/timeplus.adoc[`timeplus`] (community) 
+
+=== Component updates
+
+This release adds:
+
+* The `checksum_algorithm` to the xref:components:outputs/aws_s3.adoc[`aws_s3` output].
+* The `private_key` field to the xref:components:outputs/snowflake_put.adoc[`snowflake_put` output].
+* The `nkey` field to the following components:
+** `nats` (xref:components:inputs/nats.adoc[input], xref:components:outputs/nats.adoc[output])
+** `nats_jetstream` (xref:components:inputs/nats_jetstream.adoc[input], xref:components:outputs/nats_jetstream.adoc[output])
+** `nats_kv` (xref:components:inputs/nats_kv.adoc[input], xref:components:outputs/nats_kv.adoc[output], xref:components:processors/nats_kv.adoc[processor])
+** `nats_stream` (xref:components:inputs/nats_stream.adoc[input], xref:components:outputs/nats_stream.adoc[output])
+** `nats_request_reply` (xref:components:processors/nats_request_reply.adoc[processor])
+
+Other changes:
+
+* The `collection` field of the xref:components:outputs/mongodb.adoc[`mongodb` output] now supports interpolation functions.
+* All components that used the deprecated `count` function, with a default value for the `path` field, now use the `counter` function.
++
+NOTE: If you have multiple components that execute a mapping using the deprecated `count` function with the original default value, and these counters need to cascade, there may be a change in behavior. To avoid this, explicitly define a value for the `path` field. 
 
 == Version 4.37.0
 
