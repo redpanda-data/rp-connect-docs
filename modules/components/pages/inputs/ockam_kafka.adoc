@@ -8,9 +8,9 @@
 
 component_type_dropdown::[]
 
-Uses https://docs.ockam.io/[Ockam^] to produce encrypted messages from external Kafka topics. You can consume the encrypted messages using the `ockam_kafka` output or by https://command.ockam.io/manual/ockam-kafka-inlet-create.html[creating a Kafka Portal Inlet^] using Ockam Command.
+Uses https://docs.ockam.io/[Ockam^] to decrypt and read end-to-end encrypted messages from Kafka topics. You can write encrypted messages using the `ockam_kafka` output or by https://command.ockam.io/manual/ockam-kafka-inlet-create.html[creating a Kafka Portal Inlet^] using Ockam Command.
 
-Ockam’s encryption method guarantees that downstream consumers receive topic data from authenticated producers that has not been tampered with or leaked in-flight. The Kafka brokers or service providers which messages pass through cannot see or manipulate message data.
+https://docs.ockam.io/reference/command/secure-channels[Ockam Secure Channels] guarantee that topic data can only be consumed by authenticated and authorized consumers, and that the data cannot be leaked or or tampered with in-flight between the producer and consumer. Neither Kafka brokers, service providers nor other components can see or manipulate the messages.
 
 NOTE: You can use Ockam to encrypt whole messages, or specific fields in a message. 
 
@@ -248,7 +248,7 @@ Requires version 3.45.0 or newer
 
 === `kafka.tls.root_cas`
 
-Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -266,7 +266,7 @@ root_cas: |-
 
 === `kafka.tls.root_cas_file`
 
-Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 *Type*: `string`
 
@@ -332,7 +332,7 @@ The path of a certificate key to use.
 
 The plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format. 
 
-WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding oracle attacks which may allow an attacker recover the plain text password.
+WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding oracle attacks that may allow an attacker recover the plain text password.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -348,7 +348,7 @@ password: ${KEY_PASSWORD}
 
 === `kafka.sasl`
 
-Specify one or more methods or mechanisms of SASL authentication (optional). Authentication mechanisms are tried in order. If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.
+Specify one or more methods or mechanisms of SASL authentication, which are attempted in order (optional). If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.
 
 *Type*: `array`
 
@@ -371,7 +371,7 @@ The SASL mechanism to use.
 | `AWS_MSK_IAM`
 | AWS IAM-based authentication as specified by the `aws-msk-iam-auth` Java library.
 | `OAUTHBEARER`
-| OAuth Bearer-based authentication.
+| OAuth bearer-based authentication.
 | `PLAIN`
 | Plain text authentication.
 | `SCRAM-SHA-256`
@@ -539,7 +539,7 @@ The number of messages after which the batch is flushed. Set to `0` to disable c
 
 === `kafka.batching.byte_size`
 
-The amount of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 *Type*: `int`
 
@@ -597,8 +597,8 @@ Disables Kafka message encryption.
 
 If this value is set to `true`:
 
-* Only message payloads remain unencrypted. It does not disable TLS or any other transport-layer encryption that may also be enabled.
-* All participants in a topic must also have their settings set to `true`.
+* Only message payloads remain unencrypted. This setting does not disable TLS or any other transport-layer encryption that may also be enabled.
+* All other `ockam_kafka` inlets and outlets in a topic must also have their settings set to `true`.
 
 *Type*: `bool`
 
@@ -640,7 +640,7 @@ The route to reach the Kafka Portal Outlet of your Ockam portal. For example, `/
 
 Specify an access control policy for producers.
 
-For example, `orders_producer` forces the producer to present an Ockam credential, which confirms that the producer has the attribute `orders_producer=true`.
+For example, setting this value to `orders_producer` forces the producer to present an Ockam credential, which confirms that the producer has the attribute `orders_producer=true`.
 
 *Type*: `string`
 
@@ -648,7 +648,9 @@ For example, `orders_producer` forces the producer to present an Ockam credentia
 
 === `relay`
 
-Make the Ockam node accessible through a relay with the supplied name (optional).
+Make the Ockam node accessible through a relay with the supplied name (optional). 
+
+For example, setting this value to `orders_consumer` would require you to set the `route_to_consumer` on any producer to `/project/default/service/forward_to_orders_consumer/secure/api`.
 
 
 *Type*: `string`
