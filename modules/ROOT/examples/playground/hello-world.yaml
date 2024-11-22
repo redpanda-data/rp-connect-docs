@@ -1,0 +1,7 @@
+title: Hello world
+input: |
+  {
+    "message": "hello world"
+  }
+mapping: |
+  root.message = this.message.uppercase()
