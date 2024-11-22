@@ -146,10 +146,16 @@ Redpanda Connect now includes beta versions of two new AI processors for Cloud a
 
 == Version 4.33.0
 
-Redpanda Connect now includes beta versions of the following components for Self-Managed and Cloud platforms:
+Redpanda Connect now includes beta versions of four new components.
+
+=== For Self-Managed and Cloud platforms:
 
 * xref:components:inputs/schema_registry.adoc[`schema_registry` input] and xref:components:outputs/schema_registry.adoc[output]
 * xref:components:outputs/qdrant.adoc[`qdrant` output]
+
+=== For Self-Managed Only
+
+* xref:components:inputs/ockam_kafka.adoc[`ockam_kafka` input] and xref:components:outputs/ockam_kafka.adoc[output]
 
 You can also use the new Bloblang xref:guides:bloblang/methods.adoc[`vector`] method to create vector embeddings for SQL databases. 
 

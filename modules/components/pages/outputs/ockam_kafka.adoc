@@ -14,6 +14,8 @@ https://docs.ockam.io/reference/command/secure-channels[Ockam Secure Channels^] 
 
 NOTE: You can use Ockam to encrypt whole messages, or specific fields in a message. 
 
+Introduced in version 4.33.0.
+
 [tabs]
 ======
 Common::
@@ -274,7 +276,7 @@ The number of messages after which the batch is flushed. Set to `0` to disable c
 
 === `kafka.batching.byte_size`
 
-The amount of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 *Type*: `int`
 
