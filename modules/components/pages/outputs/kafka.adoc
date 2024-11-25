@@ -10,7 +10,7 @@
 component_type_dropdown::[]
 
 
-The kafka output type writes a batch of messages to Kafka brokers and waits for acknowledgement before propagating it back to the input.
+The `kafka` output writes a batch of messages to Kafka brokers and waits for acknowledgement before propagating them back to the input.
 
 
 [tabs]
@@ -105,7 +105,7 @@ output:
 --
 ======
 
-The config field `ack_replicas` determines whether we wait for acknowledgement from all replicas or just a single broker.
+The configuration field `ack_replicas` determines whether we wait for acknowledgement from all replicas or just a single broker.
 
 Both the `key` and `topic` fields can be dynamically set using function interpolations described in xref:configuration:interpolation.adoc#bloblang-queries[Bloblang queries].
 
