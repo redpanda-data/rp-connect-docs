@@ -62,6 +62,8 @@ output:
     input_resource: redpanda_migrator_input
     replication_factor_override: true
     replication_factor: 3
+    translate_schema_ids: true
+    schema_registry_output_resource: schema_registry_output
     client_id: benthos
     rack_id: ""
     idempotent_write: true
@@ -188,7 +190,7 @@ Override the default murmur2 hashing partitioner.
 | Option | Summary
 
 | `least_backup`
-| Chooses the least backed up partition (the partition with the fewest amount of buffered records). Partitions are selected per batch.
+| Chooses the least backed up partition (the partition with the fewest buffered records). Partitions are selected per batch.
 | `manual`
 | Manually select a partition for each message. You must also specify a value for the `partition` field.
 | `murmur2_hash`
@@ -252,6 +254,22 @@ An identifier for the client connection.
 *Type*: `string`
 
 *Default*: `"benthos"`
+
+=== `translate_schema_ids`
+
+Encodes Redpanda schema IDs ready for consumption by an Apache Kafka broker.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `schema_registry_output_resource`
+
+The label of the xref:components:outputs/schema_registry.adoc[schema_registry output] to user for fetching schema IDs.
+
+*Type*: `string`
+
+*Default*: `"schema_registry_output"`
 
 === `rack_id`
 
@@ -375,7 +393,7 @@ The number of messages after which the batch is flushed. Set to `0` to disable c
 
 === `batching.byte_size`
 
-The amount of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 
 *Type*: `int`

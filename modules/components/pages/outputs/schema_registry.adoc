@@ -11,7 +11,7 @@
 component_type_dropdown::[]
 
 
-Publishes schemas to a schema registry.
+Publishes schemas to a schema registry. This output uses the https://pkg.go.dev/github.com/twmb/franz-go/pkg/sr[Franz Kafka Schema Registry client^].
 
 ifndef::env-cloud[]
 Introduced in version 4.32.2.
@@ -45,6 +45,8 @@ output:
   schema_registry:
     url: "" # No default (required)
     subject: "" # No default (required)
+    backfill_dependencies: true
+    input_resource: schema_registry_input
     tls:
       enabled: false
       skip_cert_verify: false
@@ -108,17 +110,31 @@ output:
 
 The base URL of the schema registry service.
 
-
 *Type*: `string`
-
 
 === `subject`
 
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The subject name.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
+=== `backfill_dependencies`
+
+Backfill missing schema references and previous versions.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `input_resource`
+
+The label of the xref:components:inputs/schema_registry.adoc[`schema_registry` input] from which to read source schemas.
+
+*Type*: `string`
+
+*Default*: `schema_registry_input`
 
 === `tls`
 
@@ -161,7 +177,7 @@ endif::[]
 
 === `tls.root_cas`
 
-Specify a certificate authority to use (optional). This is a string that represents a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify a certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -180,7 +196,7 @@ root_cas: |-
 
 === `tls.root_cas_file`
 
-Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 
 *Type*: `string`

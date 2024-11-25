@@ -12,6 +12,8 @@ component_type_dropdown::[]
 
 Automatically decodes and validates messages with schemas from a Confluent Schema Registry service.
 
+This processor uses the https://pkg.go.dev/github.com/twmb/franz-go/pkg/sr[Franz Kafka Schema Registry client^].
+
 
 [tabs]
 ======
@@ -66,7 +68,7 @@ schema_registry_decode:
 
 Decodes messages automatically from a schema stored within a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by extracting a schema ID from the message and obtaining the associated schema from the registry. If a message fails to match against the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].
 
-Avro, Protobuf and Json schemas are supported, all are capable of expanding from schema references as of v4.22.0.
+Avro, Protobuf and JSON schemas are supported, all are capable of expanding from schema references as of v4.22.0.
 
 == Avro JSON format
 
