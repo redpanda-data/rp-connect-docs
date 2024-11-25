@@ -246,14 +246,7 @@ Replication factor for created topics. This is only used when `replication_facto
 
 *Default*: `3`
 
-=== `client_id`
 
-An identifier for the client connection.
-
-
-*Type*: `string`
-
-*Default*: `"benthos"`
 
 === `translate_schema_ids`
 
@@ -269,7 +262,16 @@ The label of the xref:components:outputs/schema_registry.adoc[schema_registry ou
 
 *Type*: `string`
 
-*Default*: `"schema_registry_output"`
+*Default*: `schema_registry_output`
+
+=== `client_id`
+
+An identifier for the client connection.
+
+
+*Type*: `string`
+
+*Default*: `benthos`
 
 === `rack_id`
 
