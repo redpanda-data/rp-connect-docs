@@ -87,7 +87,7 @@ input:
         root_cas_file: ""
         client_certs: []
       sasl: [] # No default (optional)
-      timestamp: ${! timestamp_unix() } # No default (optional)
+      timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
     disable_content_encryption: false
     enrollment_ticket: "" # No default (optional)
     identity_name: "" # No default (optional)
@@ -644,9 +644,9 @@ An external ID to use when assuming a role.
 
 *Default*: `""`
 
-=== `kafka.timestamp`
+=== `kafka.timestamp_ms`
 
-Sets a timestamp for each message. Leave this field empty to use the current timestamp.
+Sets a timestamp (in milliseconds) for each message (optional). Leave this field empty to use the current timestamp.
 
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
@@ -654,8 +654,8 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 ```yml
 # Examples
-timestamp: ${! timestamp_unix() }
-timestamp: ${! metadata("kafka_timestamp_unix") }
+timestamp_ms: ${! timestamp_unix_milli() }
+timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ```
 
 === `disable_content_encryption`

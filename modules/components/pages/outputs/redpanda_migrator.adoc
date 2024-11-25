@@ -89,7 +89,7 @@ output:
       root_cas_file: ""
       client_certs: []
     sasl: [] # No default (optional)
-    timestamp: ${! timestamp_unix() } # No default (optional)
+    timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
 ```
 
 --
@@ -126,7 +126,7 @@ output:
     key: ${! metadata("kafka_key") }
     partitioner: manual
     partition: ${! metadata("kafka_partition").or(throw("missing kafka_partition metadata")) }
-    timestamp: ${! metadata("kafka_timestamp_unix").or(timestamp_unix()) }
+    timestamp_ms: ${! metadata("kafka_timestamp_ms").or(timestamp_unix_milli()) }
     input_resource: redpanda_migrator_input
     max_in_flight: 1
 ```
@@ -846,9 +846,9 @@ An external ID to provide when assuming a role.
 
 *Default*: `""`
 
-=== `timestamp`
+=== `timestamp_ms`
 
-An optional timestamp to set for each message. When left empty, the current timestamp is used.
+Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
@@ -858,9 +858,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ```yml
 # Examples
 
-timestamp: ${! timestamp_unix() }
+timestamp_ms: ${! timestamp_unix_milli() }
 
-timestamp: ${! metadata("kafka_timestamp_unix") }
+timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ```
 
 

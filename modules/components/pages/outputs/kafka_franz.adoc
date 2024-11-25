@@ -81,7 +81,7 @@ output:
       root_cas_file: ""
       client_certs: []
     sasl: [] # No default (optional)
-    timestamp: ${! timestamp_unix() } # No default (optional)
+    timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
 ```
 
 --
@@ -735,21 +735,20 @@ An external ID to provide when assuming a role.
 
 *Default*: `""`
 
-=== `timestamp`
+=== `timestamp_ms`
 
-An optional timestamp to set for each message. When left empty, the current timestamp is used.
+An optional timestamp (in milliseconds) to set for each message. When left empty, the current timestamp is used.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
 *Type*: `string`
 
-
 ```yml
 # Examples
 
-timestamp: ${! timestamp_unix() }
+timestamp_ms: ${! timestamp_unix_milli() }
 
-timestamp: ${! metadata("kafka_timestamp_unix") }
+timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ```
 
 // end::single-source[]

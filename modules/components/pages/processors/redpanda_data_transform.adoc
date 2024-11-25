@@ -53,7 +53,7 @@ redpanda_data_transform:
   output_metadata:
     include_prefixes: []
     include_patterns: []
-  timestamp: ${! timestamp_unix() } # No default (optional)
+  timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
   timeout: 10s
   max_memory_pages: 1600
 ```
@@ -195,7 +195,7 @@ include_patterns:
 
 === `timestamp`
 
-An optional timestamp to set for each message. When left empty, the current timestamp is used.
+Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
@@ -205,9 +205,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ```yml
 # Examples
 
-timestamp: ${! timestamp_unix() }
+timestamp_ms: ${! timestamp_unix_milli() }
 
-timestamp: ${! metadata("kafka_timestamp_unix") }
+timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ```
 
 === `timeout`

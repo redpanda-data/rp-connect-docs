@@ -65,7 +65,7 @@ output:
     metadata:
       include_prefixes: []
       include_patterns: []
-    timestamp: ${! timestamp_unix() } # No default (optional)
+    timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
     max_in_flight: 256
     partitioner: "" # No default (optional)
     idempotent_write: true
@@ -510,7 +510,7 @@ include_patterns:
 
 === `timestamp`
 
-Set a timestamp for each message (optional). When left empty, the current timestamp is used. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
 *Type*: `string`
@@ -519,9 +519,9 @@ Set a timestamp for each message (optional). When left empty, the current timest
 ```yml
 # Examples
 
-timestamp: ${! timestamp_unix() }
+timestamp_ms: ${! timestamp_unix_milli() }
 
-timestamp: ${! metadata("kafka_timestamp_unix") }
+timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ```
 
 === `max_in_flight`
