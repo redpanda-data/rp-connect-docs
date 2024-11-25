@@ -25,7 +25,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   redpanda_migrator:
@@ -50,7 +50,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   redpanda_migrator:
@@ -258,7 +258,7 @@ Encodes Redpanda schema IDs ready for consumption by an Apache Kafka broker.
 
 === `schema_registry_output_resource`
 
-The label of the xref:components:outputs/schema_registry.adoc[schema_registry output] to user for fetching schema IDs.
+The label of the xref:components:outputs/schema_registry.adoc[schema_registry output] to use for fetching schema IDs.
 
 *Type*: `string`
 
