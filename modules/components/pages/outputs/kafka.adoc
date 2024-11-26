@@ -811,7 +811,7 @@ max_elapsed_time: 1h
 
 === `timestamp_ms`
 
-An optional timestamp (in milliseconds) to set for each message. When left empty, the current timestamp is used.
+Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
