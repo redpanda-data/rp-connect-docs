@@ -46,6 +46,7 @@ output:
     url: "" # No default (required)
     subject: "" # No default (required)
     backfill_dependencies: true
+    translate_ids: true
     input_resource: schema_registry_input
     tls:
       enabled: false
@@ -123,6 +124,14 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 === `backfill_dependencies`
 
 Backfill missing schema references and previous versions.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `translate_ids`
+
+Encodes Redpanda schema IDs ready to publish to a schema registry.
 
 *Type*: `bool`
 
