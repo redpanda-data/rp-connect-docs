@@ -1,0 +1,318 @@
+= pg_stream
+// tag::single-source[]
+:type: input
+:page-beta: true
+:categories: ["Services"]
+
+component_type_dropdown::[]
+
+Streams data changes from a PostgreSQL database using logical replication. There is also a configuration option to <<stream_snapshot,stream all existing data>> from the database.
+
+ifndef::env-cloud[]
+Introduced in version 4.40.0.
+endif::[]
+
+```yml
+# Configuration fields, showing default values
+input:
+  label: ""
+  pg_stream:
+    dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable # No default (required)
+    batch_transactions: true
+    stream_snapshot: false
+    snapshot_memory_safety_factor: 1
+    snapshot_batch_size: 0
+    schema: public # No default (required)
+    tables: [] # No default (required)
+    checkpoint_limit: 1024
+    temporary_slot: false
+    slot_name: "" # No default (optional)
+    pg_standby_timeout: 10s
+    pg_wal_monitor_interval: 3s
+    max_parallel_snapshot_tables: 1
+    auto_replay_nacks: true
+    batching:
+      count: 0
+      byte_size: 0
+      period: "" # No default (optional)
+      check: "" # No default (optional)
+      processors: [] # No default (optional)
+```
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `mode`: Whether a message is part of the snapshot processing of existing data in a database (`snapshot`) or a data update streamed to Redpanda Connect (`streaming`).
+- `table`: The name of the database table from which the message originated.
+- `operation`: The type of database operation that generated the message, such as `INSERT`, `UPDATE` or `DELETE`.
+
+== Fields
+
+=== `dsn`
+
+The data source name (DSN) of the PostgreSQL database from which you want to stream updates. Use the format `postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]`.
+
+By default, PostgreSQL enforces SSL. In secure environments, you can override this mode by appending the parameter `sslmode=disable` to the connection string.
+
+*Type*: `string`
+
+```yml
+# Examples
+
+dsn: postgres://foouser:foopass@localhost:5432/foodb
+
+dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
+```
+
+=== `batch_transactions`
+
+When set to `true`, transactions are batched into a single message.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `stream_snapshot`
+
+When set to `true`, this input streams a snapshot of all existing data in the source database before streaming data changes. To use this setting, all database tables that you want to replicate _must_ have a primary key. This allows Redpanda Connect to read from multiple tables in parallel.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+```yml
+# Examples
+
+stream_snapshot: true
+```
+
+=== `snapshot_memory_safety_factor`
+
+The fraction of available memory to use for streaming the database snapshot. Decimal values between `0` and `1` represent the percentage of memory to use. For example, `0.3` would allocate 30% of the available memory. Lower values make initial streaming slower, but help prevent out-of-memory errors.
+
+This option is only available when `stream_snapshot` is set to `true`.
+
+*Type*: `float`
+
+*Default*: `1`
+
+```yml
+# Examples
+
+snapshot_memory_safety_factor: 0.2
+```
+
+=== `snapshot_batch_size`
+
+The number of table rows to fetch in each batch when querying the snapshot. Leave at `0` to allow the input to determine the batch size based on `snapshot_memory_safety_factor` value.
+
+This option is only available when `stream_snapshot` is set to `true`.
+
+*Type*: `int`
+
+*Default*: `0`
+
+```yml
+# Examples
+
+snapshot_batch_size: 10000
+```
+
+=== `schema`
+
+The PostgreSQL schema from which to replicate data.
+
+*Type*: `string`
+```yml
+# Examples
+
+schema: public
+```
+
+=== `tables`
+
+A list of database table names to include in the logical replication. Specify each table name as a separate item.
+
+*Type*: `array`
+
+```yml
+
+tables:
+  - orders_table
+  - customer_address_table
+  - inventory_table
+```
+
+=== `checkpoint_limit`
+
+The maximum number of messages that this input can process at a given time. Increasing this limit enables parallel processing, and batching at the output level. To preserve at-least-once guarantees, any given log sequence number (LSN) is not acknowledged until all messages under that offset are delivered.
+
+*Type*: `int`
+
+*Default*: `1024`
+
+=== `temporary_slot`
+
+If set to `true`, the input creates a temporary replication slot that is automatically dropped when the connection to your source database is closed.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `slot_name`
+
+The name of the PostgreSQL logical replication slot to use. If not provided, a random name is generated unless you create a replication slot manually before starting replication.
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+
+slot_name: test_replication_slot
+```
+
+=== `pg_standby_timeout`
+
+Specify the standby timeout after which an idle connection is refreshed.
+
+*Type*: `string`
+
+*Default*: `10s`
+
+```yml
+# Examples
+
+pg_standby_timeout: 30s
+```
+
+=== `pg_wal_monitor_interval`
+
+How often to report changes to the replication lag.
+
+*Type*: `string`
+
+*Default*: `3s`
+
+```yml
+# Examples
+
+pg_wal_monitor_interval: 6s
+```
+
+=== `max_parallel_snapshot_tables`
+
+Specify the maximum number of tables that are processed in parallel when the initial snapshot of the source database is taken. 
+
+*Type*: `int`
+
+*Default*: `1`
+
+=== `auto_replay_nacks`
+
+Whether to automatically replay rejected messages (negative acknowledgements) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+
+Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data is discarded immediately upon consumption and mutation.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `batching`
+
+Allows you to configure a xref:configuration:batching.adoc[batching policy].
+
+*Type*: `object`
+
+```yml
+# Examples
+
+batching:
+  byte_size: 5000
+  count: 0
+  period: 1s
+
+batching:
+  count: 10
+  period: 1s
+
+batching:
+  check: this.contains("END BATCH")
+  count: 0
+  period: 1m
+```
+
+=== `batching.count`
+
+The number of messages after which the batch is flushed. Set to `0` to disable count-based batching.
+
+*Type*: `int`
+
+*Default*: `0`
+
+=== `batching.byte_size`
+
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+
+*Type*: `int`
+
+*Default*: `0`
+
+=== `batching.period`
+
+The period of time after which an incomplete batch is flushed regardless of its size.
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+
+period: 1s
+
+period: 1m
+
+period: 500ms
+```
+=== `batching.check`
+
+A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch.
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+
+check: this.type == "end_of_transaction"
+```
+
+=== `batching.processors`
+
+For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
+
+*Type*: `array`
+
+```yml
+# Examples
+
+processors:
+  - archive:
+      format: concatenate
+
+processors:
+  - archive:
+      format: lines
+
+processors:
+  - archive:
+      format: json_array
+```
+
+// end::single-source[]
