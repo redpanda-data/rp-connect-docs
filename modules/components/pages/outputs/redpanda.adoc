@@ -508,7 +508,7 @@ include_patterns:
   - _timestamp_unix$
 ```
 
-=== `timestamp`
+=== `timestamp_ms`
 
 Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
