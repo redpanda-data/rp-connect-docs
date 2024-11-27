@@ -79,12 +79,7 @@ You must use an account with sufficient permissions to update your replication s
 
 === Replication process
 
-When you run a pipeline that uses the `pg_stream` input, Redpanda Connect makes a connection to your PostgreSQL database, it can either:
-
-- Create a <<temporary_slot,temporary replication slot>>
-- Use a <<slot_name,replication slot that you have already configured>>
-
-The replication slot uses a copy of the Write-Ahead Log (WAL) file to subscribe to changes in your database records before they are applied to the database itself.
+When you run a pipeline that uses the `pg_stream` input, Redpanda Connect makes a connection to your PostgreSQL database, it creates a temporary replication slot. The replication slot uses a copy of the Write-Ahead Log (WAL) file to subscribe to changes in your database records before they are applied to the database itself.
 
 Once the replication slot is available, Redpanda Connect:
 
