@@ -12,6 +12,7 @@ ifndef::env-cloud[]
 Introduced in version 4.40.0.
 endif::[]
 
+
 ```yml
 # Configuration fields, showing default values
 input:
@@ -38,6 +39,82 @@ input:
       check: "" # No default (optional)
       processors: [] # No default (optional)
 ```
+
+== Change data capture in the `pg_stream` input
+
+The `pg_stream` input uses logical replication to capture changes made to a PostgreSQL database in real time and streams them to Redpanda Connect. Redpanda Connect uses this replication method to allow you to choose which database tables in your source database to receive changes from.
+
+=== Prerequisites
+
+- PostgreSQL version 10 or later
+- Logical replication enabled
+
+=== Enable logical replication
+
+Before you run a pipeline using the `pg_stream` input, you must enable logical replication on your PostgreSQL source database.
+
+To check whether logical replication is already enabled, run the following command:
+
+```SQL
+SELECT name,setting FROM pg_settings WHERE name IN ('wal_level','rds.logical_replication');
+```
+If the `wal_level` value is `logical`, you can start to use this connector. Otherwise, choose from the following sets of instructions to update your replication settings.
+
+==== Self-Hosted PostgreSQL
+
+You must use an account with sufficient permissions to update your replication settings:
+
+. Open the `postgresql.conf` file.
+. Find the `wal_level` parameter and uncomment it.
+. Update the parameter value to `wal_level = logical`. If you already use replication slots, you may need to increase the limit on replication slots (`max_replication_slots`). The `max_wal_senders` parameter value must also be greater than or equal to `max_replication_slots`.
+. Restart the PostgreSQL server.
+
+
+==== Other platforms
+
+- https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.Concepts.General.FeatureSupport.LogicalReplication.html[Amazon RDS for PostgreSQL DB^]
+- https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-logical#prerequisites-for-logical-replication-and-logical-decoding[Azure Database for PostgreSQL^]
+- https://cloud.google.com/sql/docs/postgres/replication/configure-logical-replication[Google Cloud SQL for PostgreSQL^], including creating a user with replication privileges
+- https://neon.tech/docs/guides/logical-replication-guide[Neon^]
+
+=== Replication process
+
+When you run a pipeline that uses the `pg_stream` input, Redpanda Connect makes a connection to your PostgreSQL database, it can either:
+
+- Create a <<temporary_slot,temporary replication slot>>
+- Use a <<slot_name,replication slot that you have already configured>>
+
+The replication slot uses a copy of the Write-Ahead Log (WAL) file to subscribe to changes in your database records before they are applied to the database itself.
+
+Once the replication slot is available, Redpanda Connect:
+
+. Takes a snapshot of the current database.
+. Starts to stream data updates. It processes messages from the latest offset.
+
+[NOTE]
+====
+
+You can configure this input to run in one of two modes, to either:
+
+- Stream all data in the snapshot and data updates after the snapshot is taken
+- Stream just the data updates
+
+For full details, see the <<stream-snapshot,`stream_snapshot` field>>.
+====
+
+=== Monitoring the replication process
+
+You can monitor the initial replication of data using the following metrics:
+
+- `replication_log_bytes`: Shows the population of the replication slot with data records. If the replication is completing successfully, the number of bytes should rise and fall as data is consumed by the connector. If the number of bytes continues to rise, data is not being processed successfully.
+- `snapshot_progress_per_table`: Shows the progress of message consumption as a percentage.
+- `snapshot_message_rate`: Shows the number of messages processed per second.
+
+Once the initial replication process is complete, the snapshot is removed and the input keeps a connection open to the database so that it can receive data updates.
+
+=== Troubleshooting replication failures
+
+If the database snapshot fails, the replication slot has only an incomplete record of the existing data in your database. To maintain data integrity, you must drop the replication slot manually and run your Redpanda Connect pipeline again.
 
 == Metadata
 
@@ -178,7 +255,7 @@ slot_name: test_replication_slot
 
 === `pg_standby_timeout`
 
-Specify the standby timeout after which an idle connection is refreshed.
+Specify the standby timeout after which an idle connection is refreshed to keep the connection alive.
 
 *Type*: `string`
 
