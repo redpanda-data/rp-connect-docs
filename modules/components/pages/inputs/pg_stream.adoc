@@ -56,19 +56,36 @@ Before you run a pipeline using the `pg_stream` input, you must enable logical r
 To check whether logical replication is already enabled, run the following command:
 
 ```SQL
-SELECT name,setting FROM pg_settings WHERE name IN ('wal_level','rds.logical_replication');
+SHOW wal_level;
 ```
+
 If the `wal_level` value is `logical`, you can start to use this connector. Otherwise, choose from the following sets of instructions to update your replication settings.
 
 ==== Self-Hosted PostgreSQL
 
-You must use an account with sufficient permissions to update your replication settings:
+Use an account with sufficient permissions (superuser) to update your replication settings.
 
 . Open the `postgresql.conf` file.
-. Find the `wal_level` parameter and uncomment it.
+. Find the `wal_level` parameter.
 . Update the parameter value to `wal_level = logical`. If you already use replication slots, you may need to increase the limit on replication slots (`max_replication_slots`). The `max_wal_senders` parameter value must also be greater than or equal to `max_replication_slots`.
 . Restart the PostgreSQL server.
 
+For this input to make a successful connection to your database, also make sure that your database allows replication connections.
+
+. Open the `pg_hba.conf` file.
+. Update this line.
+
++
+[source,yaml]
+----
+host    replication     <replication-username>   <connector-ip>/32    md5
+----
+
++
+Replace the following placeholders with your own values:
+
+- `<replication-username>`: The username from an account with superuser privileges.
+- `<connector-ip>`: The IP address of the server where you are running Redpanda Connect.
 
 ==== Other platforms
 
@@ -79,7 +96,7 @@ You must use an account with sufficient permissions to update your replication s
 
 === Replication process
 
-When you run a pipeline that uses the `pg_stream` input, Redpanda Connect makes a connection to your PostgreSQL database, it creates a temporary replication slot. The replication slot uses a copy of the Write-Ahead Log (WAL) file to subscribe to changes in your database records before they are applied to the database itself.
+When you run a pipeline that uses the `pg_stream` input, Redpanda Connect makes a connection to your PostgreSQL database and creates a replication slot. The replication slot uses a copy of the Write-Ahead Log (WAL) file to subscribe to changes in your database records as they are applied to the database itself.
 
 Once the replication slot is available, Redpanda Connect:
 
@@ -101,15 +118,18 @@ For full details, see the <<stream-snapshot,`stream_snapshot` field>>.
 
 You can monitor the initial replication of data using the following metrics:
 
-- `replication_log_bytes`: Shows the population of the replication slot with data records. If the replication is completing successfully, the number of bytes should rise and fall as data is consumed by the connector. If the number of bytes continues to rise, data is not being processed successfully.
-- `snapshot_progress_per_table`: Shows the progress of message consumption as a percentage.
-- `snapshot_message_rate`: Shows the number of messages processed per second.
+- `replication_lag_bytes`: Indicates how far the connector is lagging behind the source database when processing the transaction log.
+- `postgres_snapshot_progress`: Shows the progress of snapshot processing for each table.
 
 Once the initial replication process is complete, the snapshot is removed and the input keeps a connection open to the database so that it can receive data updates.
 
 === Troubleshooting replication failures
 
-If the database snapshot fails, the replication slot has only an incomplete record of the existing data in your database. To maintain data integrity, you must drop the replication slot manually and run your Redpanda Connect pipeline again.
+If the database snapshot fails, the replication slot has only an incomplete record of the existing data in your database. To maintain data integrity, you must drop the replication slot manually in your source database and run the Redpanda Connect pipeline again.
+
+```SQL
+SELECT pg_drop_replication_slot(SLOT_NAME);
+```
 
 == Metadata
 
@@ -123,9 +143,7 @@ This input adds the following metadata fields to each message:
 
 === `dsn`
 
-The data source name (DSN) of the PostgreSQL database from which you want to stream updates. Use the format `postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]`.
-
-By default, PostgreSQL enforces SSL. In secure environments, you can override this mode by appending the parameter `sslmode=disable` to the connection string.
+The data source name (DSN) of the PostgreSQL database from which you want to stream updates. Use the format `postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]`. For example, if you wanted to disable SSL in a secure environment, you would add `sslmode=disable` to the connection string.
 
 *Type*: `string`
 
@@ -139,7 +157,7 @@ dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
 
 === `batch_transactions`
 
-When set to `true`, transactions are batched into a single message.
+When set to `true`, all data updates in a transaction are batched into a single message.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -149,7 +167,7 @@ include::components:partial$secret_warning.adoc[]
 
 === `stream_snapshot`
 
-When set to `true`, this input streams a snapshot of all existing data in the source database before streaming data changes. To use this setting, all database tables that you want to replicate _must_ have a primary key. This allows Redpanda Connect to read from multiple tables in parallel.
+When set to `true`, this input streams a snapshot of all existing data in the source database before streaming data changes. To use this setting, all database tables that you want to replicate _must_ have a primary key.
 
 *Type*: `bool`
 
@@ -165,7 +183,8 @@ stream_snapshot: true
 
 The fraction of available memory to use for streaming the database snapshot. Decimal values between `0` and `1` represent the percentage of memory to use. For example, `0.3` would allocate 30% of the available memory. Lower values make initial streaming slower, but help prevent out-of-memory errors.
 
-This option is only available when `stream_snapshot` is set to `true`.
+This option is only available when `stream_snapshot` is set to `true`. You can use either `snapshot_memory_safety_factor` or `snapshot_batch_size`, not both. 
+
 
 *Type*: `float`
 
@@ -181,7 +200,7 @@ snapshot_memory_safety_factor: 0.2
 
 The number of table rows to fetch in each batch when querying the snapshot. Leave at `0` to allow the input to determine the batch size based on `snapshot_memory_safety_factor` value.
 
-This option is only available when `stream_snapshot` is set to `true`.
+This option is only available when `stream_snapshot` is set to `true`. You can use either `snapshot_batch_size` or `snapshot_memory_safety_factor`, not both. 
 
 *Type*: `int`
 
@@ -206,7 +225,7 @@ schema: public
 
 === `tables`
 
-A list of database table names to include in the logical replication. Specify each table name as a separate item.
+A list of database table names to include in the snapshot and logical replication. Specify each table name as a separate item.
 
 *Type*: `array`
 
@@ -228,7 +247,12 @@ The maximum number of messages that this input can process at a given time. Incr
 
 === `temporary_slot`
 
-If set to `true`, the input creates a temporary replication slot that is automatically dropped when the connection to your source database is closed. You might use this option to avoid data accumulating in the replication slot when a pipeline is paused or stopped. When the pipeline restarts, this input takes another snapshot before data updates are streamed.
+If set to `true`, the input creates a temporary replication slot that is automatically dropped when the connection to your source database is closed. You might use this option to:
+
+- Avoid data accumulating in the replication slot when a pipeline is paused or stopped
+- Test the connector
+
+If the pipeline is restarted, another data snapshot is taken before data updates are streamed.
 
 *Type*: `bool`
 
@@ -264,7 +288,7 @@ pg_standby_timeout: 30s
 
 === `pg_wal_monitor_interval`
 
-How often to report changes to the replication lag.
+How often to report changes to the replication lag and write them to Redpanda Connect metrics.
 
 *Type*: `string`
 
