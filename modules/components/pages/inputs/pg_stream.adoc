@@ -19,7 +19,7 @@ input:
   label: ""
   pg_stream:
     dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable # No default (required)
-    batch_transactions: true
+    include_transaction_markers: true
     stream_snapshot: false
     snapshot_memory_safety_factor: 1
     snapshot_batch_size: 0
@@ -70,7 +70,7 @@ Use an account with sufficient permissions (superuser) to update your replicatio
 . Update the parameter value to `wal_level = logical`. If you already use replication slots, you may need to increase the limit on replication slots (`max_replication_slots`). The `max_wal_senders` parameter value must also be greater than or equal to `max_replication_slots`.
 . Restart the PostgreSQL server.
 
-For this input to make a successful connection to your database, also make sure that your database allows replication connections.
+For this input to make a successful connection to your database, also make sure that it allows replication connections.
 
 . Open the `pg_hba.conf` file.
 . Update this line.
@@ -98,32 +98,37 @@ Replace the following placeholders with your own values:
 
 When you run a pipeline that uses the `pg_stream` input, Redpanda Connect makes a connection to your PostgreSQL database and creates a replication slot. The replication slot uses a copy of the Write-Ahead Log (WAL) file to subscribe to changes in your database records as they are applied to the database itself.
 
-Once the replication slot is available, Redpanda Connect:
+==== Replication modes
 
-. Takes a snapshot of the current database.
-. Starts to stream data updates. It processes messages from the latest offset.
+You can choose between two replication modes. If you set the <<stream_snapshot,`stream_snapshot` field>> to `true`, Redpanda Connect:
 
-[NOTE]
-====
-
-You can configure this input to run in one of two modes, to either:
-
-- Stream all data in the snapshot and data updates after the snapshot is taken
-- Stream just the data updates
-
-For full details, see the <<stream-snapshot,`stream_snapshot` field>>.
-====
-
-=== Monitoring the replication process
-
-You can monitor the initial replication of data using the following metrics:
-
-- `replication_lag_bytes`: Indicates how far the connector is lagging behind the source database when processing the transaction log.
-- `postgres_snapshot_progress`: Shows the progress of snapshot processing for each table.
+. Creates a snapshot of your database.
+. Streams the contents of the tables specified in the `pg_stream` input.
+. Starts processing changes in the WAL that occurred since the snapshot was taken, and streams them to Redpanda Connect. 
 
 Once the initial replication process is complete, the snapshot is removed and the input keeps a connection open to the database so that it can receive data updates.
 
-=== Troubleshooting replication failures
+If the pipeline restarts during the replication process, Redpanda Connect resumes processing data changes from where it left off. If there are other interruptions while the snapshot is taken, you may need to restart the snapshot process. For more information, see <<troubleshoot_replication_failures,Troubleshoot replication failures>>.
+
+If you set the <<stream_snapshot,`stream_snapshot` field>> to `false`, Redpanda Connect starts processing data changes from the end of the WAL. If the pipeline restarts, Redpanda Connect resumes processing data changes from the last acknowledged position in the WAL.
+
+==== Monitoring the replication process
+
+You can monitor the initial replication of data using the following metrics:
+
+|===
+| Metric name | Description
+
+| `replication_lag_bytes`
+| Indicates how far the connector is lagging behind the source database when processing the transaction log.
+
+| `postgres_snapshot_progress`
+| Shows the progress of snapshot processing for each table.
+
+|===
+
+
+==== Troubleshoot replication failures
 
 If the database snapshot fails, the replication slot has only an incomplete record of the existing data in your database. To maintain data integrity, you must drop the replication slot manually in your source database and run the Redpanda Connect pipeline again.
 
@@ -137,7 +142,7 @@ This input adds the following metadata fields to each message:
 
 - `mode`: Whether a message is part of the snapshot processing of existing data in a database (`snapshot`) or a data update streamed to Redpanda Connect (`streaming`).
 - `table`: The name of the database table from which the message originated.
-- `operation`: The type of database operation that generated the message, such as `INSERT`, `UPDATE` or `DELETE`.
+- `operation`: The type of database operation that generated the message, such as `INSERT`, `UPDATE`, `DELETE`, `BEGIN` and `COMMIT`. `BEGIN` are `COMMIT` operations are only included if the `include_transaction_markers` field is set to `true`.
 
 == Fields
 
@@ -155,9 +160,9 @@ dsn: postgres://foouser:foopass@localhost:5432/foodb
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
 ```
 
-=== `batch_transactions`
+=== `include_transaction_markers`
 
-When set to `true`, all data updates in a transaction are batched into a single message.
+When set to `true`, creates empty messages for `BEGIN` and `COMMIT` operations which start and complete each transaction. Messages with the `operation` metadata field set to `BEGIN` or `COMMIT` have null message payloads.
 
 include::components:partial$secret_warning.adoc[]
 
