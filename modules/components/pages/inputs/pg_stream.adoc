@@ -233,7 +233,7 @@ The maximum number of messages that this input can process at a given time. Incr
 
 === `temporary_slot`
 
-If set to `true`, the input creates a temporary replication slot that is automatically dropped when the connection to your source database is closed.
+If set to `true`, the input creates a temporary replication slot that is automatically dropped when the connection to your source database is closed. You might use this option to avoid data accumulating in the replication slot when a pipeline is paused or stopped. When the pipeline restarts, this input takes another snapshot before data updates are streamed.
 
 *Type*: `bool`
 
