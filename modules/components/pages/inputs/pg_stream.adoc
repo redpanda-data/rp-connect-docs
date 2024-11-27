@@ -198,7 +198,7 @@ snapshot_memory_safety_factor: 0.2
 
 === `snapshot_batch_size`
 
-The number of table rows to fetch in each batch when querying the snapshot. Leave at `0` to allow the input to determine the batch size based on `snapshot_memory_safety_factor` value.
+The number of table rows to fetch in each batch when querying the snapshot. Leave at `0` to allow the input to determine the batch size based on the `snapshot_memory_safety_factor` value.
 
 This option is only available when `stream_snapshot` is set to `true`. You can use either `snapshot_batch_size` or `snapshot_memory_safety_factor`, not both. 
 
