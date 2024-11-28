@@ -53,7 +53,7 @@ The `pg_stream` input uses logical replication to capture changes made to a Post
 
 Before you run a pipeline using the `pg_stream` input, you must enable logical replication on your PostgreSQL source database.
 
-To check whether logical replication is already enabled, run the following command:
+To check whether logical replication is already enabled, run the following query:
 
 ```SQL
 SHOW wal_level;
@@ -111,6 +111,14 @@ Once the initial replication process is complete, the snapshot is removed and th
 If the pipeline restarts during the replication process, Redpanda Connect resumes processing data changes from where it left off. If there are other interruptions while the snapshot is taken, you may need to restart the snapshot process. For more information, see <<troubleshoot_replication_failures,Troubleshoot replication failures>>.
 
 If you set the <<stream_snapshot,`stream_snapshot` field>> to `false`, Redpanda Connect starts processing data changes from the end of the WAL. If the pipeline restarts, Redpanda Connect resumes processing data changes from the last acknowledged position in the WAL.
+
+===== Receive TOAST and deleted values
+
+For full visibility of all data updates, you can also choose to stream TOAST and deleted values. To enable this option, run the following query on your source database:
+
+```SQL
+ALTER TABLE large_data REPLICA IDENTITY FULL;
+```
 
 ==== Monitoring the replication process
 
