@@ -87,6 +87,8 @@ Replace the following placeholders with your own values:
 - `<replication-username>`: The username from an account with superuser privileges.
 - `<connector-ip>`: The IP address of the server where you are running Redpanda Connect.
 
+. Restart the PostgreSQL server.
+
 ==== Other platforms
 
 - https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.Concepts.General.FeatureSupport.LogicalReplication.html[Amazon RDS for PostgreSQL DB^]
@@ -100,7 +102,11 @@ When you run a pipeline that uses the `pg_stream` input, Redpanda Connect makes 
 
 ==== Replication modes
 
-You can choose between two replication modes. If you set the <<stream_snapshot,`stream_snapshot` field>> to `true`, Redpanda Connect:
+You can choose between two replication modes. 
+
+===== Snapshot mode
+
+If you set the <<stream_snapshot,`stream_snapshot` field>> to `true`, Redpanda Connect:
 
 . Creates a snapshot of your database.
 . Streams the contents of the tables specified in the `pg_stream` input.
@@ -109,6 +115,8 @@ You can choose between two replication modes. If you set the <<stream_snapshot,`
 Once the initial replication process is complete, the snapshot is removed and the input keeps a connection open to the database so that it can receive data updates.
 
 If the pipeline restarts during the replication process, Redpanda Connect resumes processing data changes from where it left off. If there are other interruptions while the snapshot is taken, you may need to restart the snapshot process. For more information, see <<troubleshoot_replication_failures,Troubleshoot replication failures>>.
+
+===== Streaming mode
 
 If you set the <<stream_snapshot,`stream_snapshot` field>> to `false`, Redpanda Connect starts processing data changes from the end of the WAL. If the pipeline restarts, Redpanda Connect resumes processing data changes from the last acknowledged position in the WAL.
 
