@@ -100,6 +100,8 @@ Replace the following placeholders with your own values:
 
 When you run a pipeline that uses the `pg_stream` input, Redpanda Connect makes a connection to your PostgreSQL database and creates a replication slot. The replication slot uses a copy of the Write-Ahead Log (WAL) file to subscribe to changes in your database records as they are applied to the database itself.
 
+For local testing, you can use the <<example-pipeline,example pipeline on this page>>, which runs in snapshot mode.
+
 ==== Replication modes
 
 You can choose between two replication modes. 
@@ -430,6 +432,33 @@ processors:
 processors:
   - archive:
       format: json_array
+```
+
+== Example pipeline
+
+You can run the following pipeline locally to check that data updates are streamed from your source database to Redpanda Connect. All transactions are written to stdout.
+
+```yml
+input:
+  label: "pg_stream"
+  pg_stream:
+    dsn: postgres://user:password@host:port/dbname
+    slot_name: test_slot_native_decoder
+    snapshot_batch_size: 100000
+    stream_snapshot: true
+    temporary_slot: true
+    schema:schema_name
+    tables:
+      - table_name
+
+cache_resources:
+  - label: data_caching
+    file:
+      directory: /tmp/cache
+
+output:
+  label: main
+  stdout: {}
 ```
 
 // end::single-source[]
