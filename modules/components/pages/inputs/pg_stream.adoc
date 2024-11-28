@@ -115,7 +115,7 @@ If the pipeline restarts during the replication process, Redpanda Connect resume
 
 If you set the <<stream_snapshot,`stream_snapshot` field>> to `false`, Redpanda Connect starts processing data changes from the end of the WAL. If the pipeline restarts, Redpanda Connect resumes processing data changes from the last acknowledged position in the WAL.
 
-=== Monitor the replication process
+== Monitor the replication process
 
 You can monitor the initial replication of data using the following metrics:
 
@@ -131,7 +131,7 @@ You can monitor the initial replication of data using the following metrics:
 |===
 
 
-=== Troubleshoot replication failures
+== Troubleshoot replication failures
 
 If the database snapshot fails, the replication slot has only an incomplete record of the existing data in your database. To maintain data integrity, you must drop the replication slot manually in your source database and run the Redpanda Connect pipeline again.
 
