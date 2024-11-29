@@ -23,7 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   aws_sqs:
@@ -47,7 +47,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   aws_sqs:
@@ -64,6 +64,7 @@ output:
       period: ""
       check: ""
       processors: [] # No default (optional)
+    max_records_per_request: 10
     region: ""
     endpoint: ""
     credentials:
@@ -262,6 +263,14 @@ processors:
   - archive:
       format: json_array
 ```
+
+=== `max_records_per_request`
+
+The maximum number of records delivered in a single SQS request. Enter only values from `0` to `10`.
+
+*Type*: `int`
+
+*Default*: `10`
 
 === `region`
 
