@@ -56,8 +56,21 @@ SHOW wal_level;
 +
 If the `wal_level` value is `logical`, you can start to use this connector. Otherwise, choose from the following sets of instructions to update your replication settings.
 
-=== Self-Hosted PostgreSQL
 
+[tabs]
+=====
+Cloud platforms::
++
+--
+- https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.Concepts.General.FeatureSupport.LogicalReplication.html[Amazon RDS for PostgreSQL DB^]
+- https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-logical#prerequisites-for-logical-replication-and-logical-decoding[Azure Database for PostgreSQL^]
+- https://cloud.google.com/sql/docs/postgres/replication/configure-logical-replication[Google Cloud SQL for PostgreSQL^], including creating a user with replication privileges
+- https://neon.tech/docs/guides/logical-replication-guide[Neon^]
+
+--
+Self-Hosted PostgreSQL::
++
+--
 Use an account with sufficient permissions (superuser) to update your replication settings.
 
 . Open the `postgresql.conf` file.
@@ -83,13 +96,8 @@ Replace the following placeholders with your own values:
 - `<connector-ip>`: The IP address of the server where you are running Redpanda Connect.
 
 . Restart the PostgreSQL server.
-
-=== Other platforms
-
-- https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.Concepts.General.FeatureSupport.LogicalReplication.html[Amazon RDS for PostgreSQL DB^]
-- https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-logical#prerequisites-for-logical-replication-and-logical-decoding[Azure Database for PostgreSQL^]
-- https://cloud.google.com/sql/docs/postgres/replication/configure-logical-replication[Google Cloud SQL for PostgreSQL^], including creating a user with replication privileges
-- https://neon.tech/docs/guides/logical-replication-guide[Neon^]
+--
+=====
 
 == Choose a replication mode
 
