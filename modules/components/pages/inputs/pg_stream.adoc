@@ -45,10 +45,10 @@ The `pg_stream` input uses logical replication to capture changes made to a Post
 == Prerequisites
 
 - PostgreSQL version 10 or later
-- Logical replication enabled on your PostgreSQL cluster
 ifdef::env-cloud[]
 - Network access from the cluster where your Redpanda Connect pipeline is running to the source database environment. For detailed networking information, including how to set up a VPC peering connection, see xref:networking:index.adoc[Redpanda Cloud Networking].
 endif::[]
+- Logical replication enabled on your PostgreSQL cluster
 +
 To check whether logical replication is already enabled, run the following query:
 +
