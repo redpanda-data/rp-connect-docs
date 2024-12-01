@@ -46,6 +46,9 @@ The `pg_stream` input uses logical replication to capture changes made to a Post
 
 - PostgreSQL version 10 or later
 - Logical replication enabled on your PostgreSQL cluster
+ifdef::env-cloud[]
+- Network access from the cluster where your Redpanda Connect pipeline is running to the source database environment. For detailed networking information, including how to set up a VPC peering connection, see xref:networking:index.adoc[Redpanda Cloud Networking].
+endif::[]
 +
 To check whether logical replication is already enabled, run the following query:
 +
@@ -149,7 +152,7 @@ SELECT pg_drop_replication_slot(SLOT_NAME);
 
 == Receive TOAST and deleted values
 
-For full visibility of all data updates, you can also choose to stream TOAST and deleted values. To enable this option, run the following query on your source database:
+For full visibility of all data updates, you can also choose to stream https://www.postgresql.org/docs/current/storage-toast.html[TOAST^] and deleted values. To enable this option, run the following query on your source database:
 
 ```SQL
 ALTER TABLE large_data REPLICA IDENTITY FULL;
