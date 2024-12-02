@@ -58,7 +58,7 @@ output:
     metadata:
       include_prefixes: []
       include_patterns: []
-    timestamp: ${! timestamp_unix_milli() } # No default (optional)
+    timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
     max_in_flight: 10
     batching:
       count: 0
