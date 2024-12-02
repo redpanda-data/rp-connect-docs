@@ -42,6 +42,7 @@ This release adds:
 Other changes:
 
 * This release removes the `kafka_timestamp` field metadata field from the following inputs: xref:components:inputs/kafka.adoc[`kafka`], xref:components:inputs/kafka_franz.adoc[`kafka_franz`], xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`].
+* The following components now use the `timestamp_ms` field: xref:components:outputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:outputs/kafka.adoc[`kafka`], xref:components:outputs/kafka_franz.adoc[`kafka_franz`], xref:components:outputs/redpanda.adoc[`redpanda`], xref:components:outputs/redpanda_common.adoc[`redpanda_common`], xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`]
 * The following components now use the https://github.com/twmb/franz-go/tree/master/pkg/sr[Franz Kafka Schema Registry client library^]: xref:components:inputs/schema_registry.adoc[`schema_registry` input] and xref:components:outputs/schema_registry.adoc[output], and the xref:components:processors/schema_registry_encode.adoc[`schema_registry_encode`] and xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode`] processors.
 * The xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output] can now automatically create tables in Snowflake, when the `schema_evolution.enabled` field is set to `true`.
 
