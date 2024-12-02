@@ -20,6 +20,6 @@ rpk connect run --redpanda-license
 . Save the license key to the following directory: `/etc/redpanda/redpanda.license`. 
 . Set the environment variable: `$\{REDPANDA_LICENSE_FILEPATH}` to point to the file where the license key is stored.
 
-Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise components.
+Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise connectors.
 
 You can view the license key’s expiration date at any time in the Redpanda Connect logs.
