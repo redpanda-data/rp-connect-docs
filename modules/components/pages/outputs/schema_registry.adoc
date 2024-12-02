@@ -11,7 +11,7 @@
 component_type_dropdown::[]
 
 
-Publishes schemas to a schema registry. This output uses the https://pkg.go.dev/github.com/twmb/franz-go/pkg/sr[Franz Kafka Schema Registry client^].
+Publishes schemas to a schema registry. This output uses the https://github.com/twmb/franz-go/tree/master/pkg/sr[Franz Kafka Schema Registry client^].
 
 ifndef::env-cloud[]
 Introduced in version 4.32.2.
@@ -46,7 +46,6 @@ output:
     url: "" # No default (required)
     subject: "" # No default (required)
     backfill_dependencies: true
-    translate_ids: true
     input_resource: schema_registry_input
     tls:
       enabled: false
@@ -123,15 +122,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 === `backfill_dependencies`
 
-Backfill missing schema references and previous versions.
-
-*Type*: `bool`
-
-*Default*: `true`
-
-=== `translate_ids`
-
-Encodes Redpanda schema IDs ready to publish to a schema registry.
+Backfill missing schema references and previous schema versions. If set to `true`, you must also configure a xref:components:inputs/schema_registry.adoc[`schema_registry`] input to read source schemas.
 
 *Type*: `bool`
 
