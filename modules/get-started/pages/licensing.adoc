@@ -15,8 +15,14 @@ Once you have downloaded a license key, you can apply it in the following ways:
 
 +
 ```bash
-rpk connect run --redpanda-license
+rpk connect run --redpanda-license <license-key> ./<connect-configuration>.yaml
 ```
++
+Replace the following placeholder: 
+
+- `<license-key>`: The full license key string.
+- `<connect-configuration>`: The name of your Redpanda Connect configuration file.
+
 . Save the license key to the following directory: `/etc/redpanda/redpanda.license`. 
 . Set the environment variable: `$\{REDPANDA_LICENSE_FILEPATH}` to point to the file where the license key is stored.
 
