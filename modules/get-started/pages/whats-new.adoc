@@ -6,6 +6,10 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.42.0
+
+This release updates Redpanda Connect licensing checks for Self-Managed. Starting from version 4.42.0, you must xref:get-started:licensing.adoc[apply your Enterprise Edition license] to use any Enterprise connectors.
+
 == Version 4.41.0
 
 This release adds the `max_records_per_request` field to the xref:components:outputs/aws_sqs.adoc[`aws_sqs` output].
