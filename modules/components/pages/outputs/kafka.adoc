@@ -105,7 +105,7 @@ output:
 --
 ======
 
-The configuration field `ack_replicas` determines whether we wait for acknowledgement from all replicas or just a single broker.
+The configuration field `ack_replicas` determines whether Redpanda Connect waits for acknowledgement from all replicas or just a single broker.
 
 Both the `key` and `topic` fields can be dynamically set using function interpolations described in xref:configuration:interpolation.adoc#bloblang-queries[Bloblang queries].
 
