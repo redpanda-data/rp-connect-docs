@@ -10,7 +10,7 @@
 component_type_dropdown::[]
 
 
-Reads schemas from a schema registry. You can use this connector to extract and backup schemas during a data migration.
+Reads schemas from a schema registry. You can use this connector to extract and back up schemas during a data migration. This input uses the https://github.com/twmb/franz-go/tree/master/pkg/sr[Franz Kafka Schema Registry client^].
 
 ifndef::env-cloud[]
 Introduced in version 4.32.2.

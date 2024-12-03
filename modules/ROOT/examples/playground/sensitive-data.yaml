@@ -1,0 +1,10 @@
+title: Remove sensitive data
+input: |
+  {
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "password": "secret123"
+  }
+mapping: |
+  root = this
+  root.password = deleted()

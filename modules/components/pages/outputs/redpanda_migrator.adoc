@@ -10,7 +10,7 @@
 
 component_type_dropdown::[]
 
-Writes a batch of messages to an Apache Kafka broker and waits for acknowledgement before propagating them back to the input.
+Writes a batch of messages to an Apache Kafka broker and waits for acknowledgement before propagating any acknowledgements back to the input.
 
 Use this connector in conjunction with the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] to migrate topics between Kafka brokers. The `redpanda_migrator` output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
@@ -25,7 +25,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   redpanda_migrator:
@@ -50,7 +50,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   redpanda_migrator:
@@ -62,6 +62,8 @@ output:
     input_resource: redpanda_migrator_input
     replication_factor_override: true
     replication_factor: 3
+    translate_schema_ids: true
+    schema_registry_output_resource: schema_registry_output
     client_id: benthos
     rack_id: ""
     idempotent_write: true
@@ -87,7 +89,7 @@ output:
       root_cas_file: ""
       client_certs: []
     sasl: [] # No default (optional)
-    timestamp: ${! timestamp_unix() } # No default (optional)
+    timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
 ```
 
 --
@@ -124,7 +126,7 @@ output:
     key: ${! metadata("kafka_key") }
     partitioner: manual
     partition: ${! metadata("kafka_partition").or(throw("missing kafka_partition metadata")) }
-    timestamp: ${! metadata("kafka_timestamp_unix").or(timestamp_unix()) }
+    timestamp_ms: ${! metadata("kafka_timestamp_ms").or(timestamp_unix_milli()) }
     input_resource: redpanda_migrator_input
     max_in_flight: 1
 ```
@@ -188,7 +190,7 @@ Override the default murmur2 hashing partitioner.
 | Option | Summary
 
 | `least_backup`
-| Chooses the least backed up partition (the partition with the fewest amount of buffered records). Partitions are selected per batch.
+| Chooses the least backed up partition (the partition with the fewest buffered records). Partitions are selected per batch.
 | `manual`
 | Manually select a partition for each message. You must also specify a value for the `partition` field.
 | `murmur2_hash`
@@ -244,6 +246,22 @@ Replication factor for created topics. This is only used when `replication_facto
 
 *Default*: `3`
 
+=== `translate_schema_ids`
+
+When set to `true` translates the schema ID in each message ready to write to the destination schema registry.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `schema_registry_output_resource`
+
+The label of the xref:components:outputs/schema_registry.adoc[schema_registry output] to use for fetching schema IDs.
+
+*Type*: `string`
+
+*Default*: `schema_registry_output`
+
 === `client_id`
 
 An identifier for the client connection.
@@ -251,7 +269,7 @@ An identifier for the client connection.
 
 *Type*: `string`
 
-*Default*: `"benthos"`
+*Default*: `benthos`
 
 === `rack_id`
 
@@ -375,7 +393,7 @@ The number of messages after which the batch is flushed. Set to `0` to disable c
 
 === `batching.byte_size`
 
-The amount of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 
 *Type*: `int`
@@ -828,9 +846,9 @@ An external ID to provide when assuming a role.
 
 *Default*: `""`
 
-=== `timestamp`
+=== `timestamp_ms`
 
-An optional timestamp to set for each message. When left empty, the current timestamp is used.
+Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
@@ -840,9 +858,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ```yml
 # Examples
 
-timestamp: ${! timestamp_unix() }
+timestamp_ms: ${! timestamp_unix_milli() }
 
-timestamp: ${! metadata("kafka_timestamp_unix") }
+timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ```
 
 

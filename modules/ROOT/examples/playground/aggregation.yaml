@@ -1,0 +1,12 @@
+title: Aggregation
+input: |
+  {
+    "orders": [
+      { "item": "apple", "quantity": 3 },
+      { "item": "banana", "quantity": 5 },
+      { "item": "cherry", "quantity": 7 }
+    ]
+  }
+mapping: |
+  root.total_quantity = this.orders.map_each(o -> o.quantity).sum()
+  root.items = this.orders.map_each(o -> o.item).join(", ")
