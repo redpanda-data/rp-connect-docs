@@ -23,7 +23,7 @@ helm upgrade redpanda-connect redpanda/connect --namespace <namespace> --values 
 +
 Replace `<your-values-file>` with the path to your custom configuration file.
 
-=== Roll back an upgrade
+== Roll back an upgrade
 
 If an upgrade introduces issues, you can roll back to a previous release. Helm retains previous deployments, allowing you to roll back with the https://helm.sh/docs/helm/helm_rollback/[`helm rollback`] command:
 
