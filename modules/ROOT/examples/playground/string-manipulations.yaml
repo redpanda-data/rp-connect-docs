@@ -1,0 +1,8 @@
+title: String manipulations
+input: |
+  {
+    "email": "johndoe@example.com"
+  }
+mapping: |
+  root.username = this.email.split("@").index(0)
+  root.domain = this.email.split("@").index(1)

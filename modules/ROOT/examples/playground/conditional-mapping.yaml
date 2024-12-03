@@ -1,0 +1,10 @@
+title: Conditional mapping
+input: |
+  {
+    "status": "active",
+    "last_seen": "2023-01-01T12:00:00Z"
+  }
+mapping: |
+  root.is_active = this.status == "active"
+  root.last_seen_date = if this.exists("last_seen") {this.last_seen.ts_format("2006-Jan-02")
+  } else { null }

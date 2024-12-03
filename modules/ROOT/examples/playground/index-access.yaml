@@ -1,0 +1,8 @@
+title: Access array items
+input: |
+  {
+    "items": ["apple", "banana", "cherry"]
+  }
+mapping: |
+  root.first_item = this.items.index(0)
+  root.last_item = this.items.index(-1)
