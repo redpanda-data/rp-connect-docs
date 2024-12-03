@@ -8,7 +8,7 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 == Version 4.42.0
 
-This release introduces a xref:guides:bloblang/playground.adoc[Bloblang playground] where you can try out your Bloblang syntax and get immediate feedback. It also updates Redpanda Connect licensing checks for Self-Managed. Starting from version 4.42.0, you must xref:get-started:licensing.adoc[apply your Enterprise Edition license] to use any Enterprise connectors.
+This release introduces a xref:guides:bloblang/playground.adoc[Bloblang playground] where you can try out your Bloblang syntax and get immediate feedback. It also updates Redpanda Connect licensing checks for Redpanda Connect. Starting from version 4.42.0, you must xref:get-started:licensing.adoc[add your Enterprise Edition license] to Redpanda Connect before using any Enterprise connectors.
 
 == Version 4.41.0
 
@@ -26,7 +26,7 @@ CGO_ENABLED=1 make TAGS=x_benthos_extra redpanda-connect.
 
 == Version 4.40.0
 
-This update includes a beta release of the xref:components:inputs/pg_stream.adoc[`pg_stream` input] for Self-Managed and Cloud, which captures data changes made to a PostgreSQL database in real time and streams them to Redpanda Connect.
+This update includes a beta release of the xref:components:inputs/pg_stream.adoc[`pg_stream` input] for Redpanda Connect Self-Managed and Cloud, which captures data changes made to a PostgreSQL database in real time and streams them to Redpanda Connect.
 
 === Component updates
 
@@ -44,12 +44,32 @@ Other changes:
 * The following components now use the https://github.com/twmb/franz-go/tree/master/pkg/sr[Franz Kafka Schema Registry client library^]: xref:components:inputs/schema_registry.adoc[`schema_registry` input] and xref:components:outputs/schema_registry.adoc[output], and the xref:components:processors/schema_registry_encode.adoc[`schema_registry_encode`] and xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode`] processors.
 * The xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output] can now automatically create tables in Snowflake, when the `schema_evolution.enabled` field is set to `true`.
 
-==== Deprecations:
+==== Deprecations
 
-This release removes: 
+**Deprecated field**: `kafka_timestamp` metadata field
 
-* The `kafka_timestamp` metadata field from the following inputs: xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], and replaces it with `kafka_timestamp_ms`.
-* The `timestamp` field from the following outputs: xref:components:outputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:outputs/kafka.adoc[`kafka`], xref:components:outputs/kafka_franz.adoc[`kafka_franz`], xref:components:outputs/redpanda.adoc[`redpanda`], xref:components:outputs/redpanda_common.adoc[`redpanda_common`], xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`], and replaces it with `timestamp_ms`.
+**Affected components**:
+
+- xref:components:inputs/redpanda.adoc[`redpanda` input]
+- xref:components:inputs/redpanda_common.adoc[`redpanda_common` input]
+
+**Replaced by**: `kafka_timestamp_ms` metadata field
+
+
+**Deprecated field**: `timestamp`
+
+**Affected components**:
+
+- xref:components:outputs/ockam_kafka.adoc[`ockam_kafka` output]
+- xref:components:outputs/kafka.adoc[`kafka` output]
+- xref:components:outputs/kafka_franz.adoc[`kafka_franz` output]
+- xref:components:outputs/redpanda.adoc[`redpanda` output]
+- xref:components:outputs/redpanda_common.adoc[`redpanda_common` output]
+- xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output]
+
+**Replaced by**: `timestamp_ms` field
+
+**Action required**: Modify all systems that process these fields to ensure compatibility with the new field names.
 
 == Version 4.39.0
 
