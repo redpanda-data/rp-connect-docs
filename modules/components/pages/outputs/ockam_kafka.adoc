@@ -1,0 +1,720 @@
+= ockam_kafka
+:type: output
+:page-beta: true
+:categories: ["Services"]
+
+// © 2024 Redpanda Data Inc.
+
+
+component_type_dropdown::[]
+
+Uses https://docs.ockam.io/[Ockam^] to encrypt and write end-to-end encrypted messages to a Kafka topic. You can read encrypted messages using the `ockam_kafka` input or by https://command.ockam.io/manual/ockam-kafka-inlet-create.html[creating a Kafka Portal Inlet^] using Ockam Command.
+
+https://docs.ockam.io/reference/command/secure-channels[Ockam Secure Channels^] guarantee that consumers of topics only receive data from authenticated and authorized producers, and that the data has not been leaked or tampered with in-flight. Neither Kafka brokers, service providers nor other components can see or manipulate the messages.
+
+NOTE: You can use Ockam to encrypt whole messages, or specific fields in a message. 
+
+Introduced in version 4.33.0.
+
+[tabs]
+======
+Common::
++
+--
+```yml
+# Common configuration fields, showing default values
+input:
+  label: ""
+  ockam_kafka:
+    kafka:
+      seed_brokers: [] # No default (optional)
+      topic: "" # No default (required)
+      key: "" # No default (optional)
+      partition: ${! meta("partition") } # No default (optional)
+      metadata:
+        include_prefixes: []
+        include_patterns: []
+      max_in_flight: 10
+      batching:
+        count: 0
+        byte_size: 0
+        period: ""
+        check: ""
+    disable_content_encryption: false
+    enrollment_ticket: "" # No default (optional)
+    identity_name: "" # No default (optional)
+    allow: self
+    route_to_kafka_outlet: self
+    allow_consumer: self
+    route_to_consumer: /ip4/127.0.0.1/tcp/6262
+```
+--
+Advanced::
++
+--
+```yml
+# All configuration fields, showing default values
+input:
+  label: ""
+  ockam_kafka:
+    kafka:
+      seed_brokers: [] # No default (optional)
+      topic: "" # No default (required)
+      key: "" # No default (optional)
+      partitioner: "" # No default (optional)
+      partition: ${! meta("partition") } # No default (optional)
+      client_id: benthos
+      rack_id: ""
+      idempotent_write: true
+      metadata:
+        include_prefixes: []
+        include_patterns: []
+      max_in_flight: 10
+      timeout: 10s
+      batching:
+        count: 0
+        byte_size: 0
+        period: ""
+        check: ""
+        processors: [] # No default (optional)
+      max_message_bytes: 1MB
+      compression: "" # No default (optional)
+      tls:
+        enabled: false
+        skip_cert_verify: false
+        enable_renegotiation: false
+        root_cas: ""
+        root_cas_file: ""
+        client_certs: []
+      sasl: [] # No default (optional)
+      timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
+    disable_content_encryption: false
+    enrollment_ticket: "" # No default (optional)
+    identity_name: "" # No default (optional)
+    allow: self
+    route_to_kafka_outlet: self
+    allow_consumer: self
+    route_to_consumer: /ip4/127.0.0.1/tcp/6262
+```
+--
+======
+== Fields
+
+=== `kafka.seed_brokers`
+
+A list of broker addresses to connect to (optional). List items that contain commas are expanded into multiple addresses.
+
+*Type*: `array`
+```yml
+# Examples
+seed_brokers:
+  - localhost:9092
+seed_brokers:
+  - foo:9092
+  - bar:9092
+seed_brokers:
+  - foo:9092,bar:9092
+```
+=== `kafka.topic`
+
+The Kafka topic to write messages to (required). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+=== `kafka.key`
+
+Populates a key for each message (optional). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]. 
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `kafka.partitioner`
+
+Override the default murmur2 hashing partitioner (optional).
+
+*Type*: `string`
+
+|===
+| Option | Summary
+| `least_backup`
+| Chooses the least backed up partition, which has the fewest buffered records. Partitions are selected per batch.
+| `manual`
+| Manually select a partition for each message. To use this option, specify a value in the `partition` field.
+| `murmur2_hash`
+| Kafka's default hash algorithm that uses a 32-bit murmur2 hash of the key to compute which partition the record is written to.
+| `round_robin`
+| Does a round-robin of all available partitions for messages. This algorithm has lower throughput and causes higher CPU load on brokers, but is useful if you want to ensure an even distribution of records to partitions.
+
+|===
+
+=== `kafka.partition`
+
+Set an explicit partition for each message (optional). To use this field, set the `partitioner` to `manual`. You must provide an interpolation string that is a valid integer. 
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+```yml
+# Examples
+partition: ${! meta("partition") }
+```
+
+=== `kafka.client_id`
+
+An identifier for the client connection.
+
+*Type*: `string`
+
+*Default*: `benthos`
+
+
+=== `kafka.rack_id`
+
+A rack identifier for this client.
+
+*Type*: `string`
+
+*Default*: `""`
+
+
+=== `kafka.idempotent_write`
+
+Enables the `idempotent_write` producer option. This requires `IDEMPOTENT_WRITE` permission on `CLUSTER`. Disable this option if the correct permission is not available.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `kafka.metadata`
+
+Determines which metadata values are added to messages as headers.
+
+*Type*: `object`
+
+
+=== `kafka.metadata.include_prefixes`
+
+A list of explicit metadata key prefixes to match against.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+```yml
+# Examples
+include_prefixes:
+  - foo_
+  - bar_
+include_prefixes:
+  - kafka_
+include_prefixes:
+  - content-
+```
+
+=== `kafka.metadata.include_patterns`
+
+A list of explicit metadata key regular expression (re2) patterns to match against.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+```yml
+# Examples
+include_patterns:
+  - .*
+include_patterns:
+  - _timestamp_unix$
+```
+
+=== `kafka.max_in_flight`
+
+The maximum number of message batches to send in parallel at any given time.
+
+*Type*: `int`
+
+*Default*: `10`
+
+=== `kafka.timeout`
+
+The maximum period of time allowed for sending messages before a request is abandoned and a retry attempted. 
+
+*Type*: `string`
+
+*Default*: `10s`
+
+=== `kafka.batching`
+
+Configure a xref:configuration:batching.adoc[batching policy].
+
+*Type*: `object`
+
+```yml
+# Examples
+batching:
+  byte_size: 5000
+  count: 0
+  period: 1s
+batching:
+  count: 10
+  period: 1s
+batching:
+  check: this.contains("END BATCH")
+  count: 0
+  period: 1m
+```
+
+=== `kafka.batching.count`
+
+The number of messages after which the batch is flushed. Set to `0` to disable count-based batching.
+
+*Type*: `int`
+
+*Default*: `0`
+
+=== `kafka.batching.byte_size`
+
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+
+*Type*: `int`
+
+*Default*: `0`
+
+=== `kafka.batching.period`
+
+The period of time after which an incomplete batch is flushed regardless of its size.
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+period: 1s
+period: 1m
+period: 500ms
+```
+
+=== `kafka.batching.check`
+
+A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch.
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+check: this.type == "end_of_transaction"
+```
+
+=== `kafka.batching.processors`
+
+For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed (optional). All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
+
+*Type*: `array`
+
+```yml
+# Examples
+processors:
+  - archive:
+      format: concatenate
+processors:
+  - archive:
+      format: lines
+processors:
+  - archive:
+      format: json_array
+```
+
+=== `kafka.max_message_bytes`
+
+The maximum size of an individual message in bytes. Messages larger than this value are rejected. This field is equivalent to Kafka's `max.message.bytes`. 
+
+*Type*: `string`
+
+*Default*: `1MB`
+
+```yml
+# Examples
+max_message_bytes: 100MB
+max_message_bytes: 50mib
+```
+
+=== `kafka.compression`
+
+Set an explicit compression type (optional). The preferred default is `snappy` when the broker supports it, with a fall back to `none`.
+
+*Type*: `string`
+
+Options:
+`lz4`
+, `snappy`
+, `gzip`
+, `none`
+, `zstd`
+
+=== `kafka.tls`
+
+Override system defaults with custom TLS settings.
+
+*Type*: `object`
+
+=== `kafka.tls.enabled`
+
+Whether custom TLS settings are enabled.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `kafka.tls.skip_cert_verify`
+
+Whether to skip server-side certificate verification.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `kafka.tls.enable_renegotiation`
+
+Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+Requires version 3.45.0 or newer
+
+=== `kafka.tls.root_cas`
+
+Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+root_cas: |-
+  -----BEGIN CERTIFICATE-----
+  ...
+  -----END CERTIFICATE-----
+```
+
+=== `kafka.tls.root_cas_file`
+
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+root_cas_file: ./root_cas.pem
+```
+
+=== `kafka.tls.client_certs`
+
+A list of client certificates to use. For each certificate, specify either the fields `cert` and `key` or `cert_file` and `key_file`.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+```yml
+# Examples
+client_certs:
+  - cert: foo
+    key: bar
+client_certs:
+  - cert_file: ./example.pem
+    key_file: ./example.key
+```
+=== `kafka.tls.client_certs[].cert`
+
+The plain text certificate to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.tls.client_certs[].key`
+
+The plain text certificate key to use.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.tls.client_certs[].cert_file`
+
+The path of a certificate to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.tls.client_certs[].key_file`
+
+The path of a certificate key to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.tls.client_certs[].password`
+
+The plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format. 
+
+WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding oracle attacks that may allow an attacker recover the plain text password.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+password: foo
+password: ${KEY_PASSWORD}
+```
+
+=== `kafka.sasl`
+
+Specify one or more methods or mechanisms of SASL authentication, which are attempted in order (optional). If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.
+
+*Type*: `array`
+
+```yml
+# Examples
+sasl:
+  - mechanism: SCRAM-SHA-512
+    password: bar
+    username: foo
+```
+
+=== `kafka.sasl[].mechanism`
+
+The SASL mechanism to use.
+
+*Type*: `string`
+
+|===
+| Option | Summary
+| `AWS_MSK_IAM`
+| AWS IAM-based authentication as specified by the `aws-msk-iam-auth` Java library.
+| `OAUTHBEARER`
+| OAuth bearer-based authentication.
+| `PLAIN`
+| Plain text authentication.
+| `SCRAM-SHA-256`
+| SCRAM-based authentication as specified in RFC5802.
+| `SCRAM-SHA-512`
+| SCRAM-based authentication as specified in RFC5802.
+| `none`
+| Disable SASL authentication
+|===
+
+=== `kafka.sasl[].username`
+
+A username for `PLAIN` or `SCRAM-*` authentication.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].password`
+
+A password for `PLAIN` or `SCRAM-*` authentication.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].token`
+
+The token to use for a single session's `OAUTHBEARER` authentication.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].extensions`
+
+Key/value pairs to add to `OAUTHBEARER` authentication requests.
+
+*Type*: `object`
+
+=== `kafka.sasl[].aws`
+
+AWS specific fields for when the `mechanism` is set to `AWS_MSK_IAM`.
+
+*Type*: `object`
+
+=== `kafka.sasl[].aws.region`
+
+The AWS region to target.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].aws.endpoint`
+
+Specify a custom endpoint for the AWS API.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].aws.credentials`
+
+Manually configure the AWS credentials to use (optional). For more information, see the xref:guides:cloud/aws.adoc[Amazon Web Services guide].
+
+*Type*: `object`
+
+=== `kafka.sasl[].aws.credentials.profile`
+
+The profile from `~/.aws/credentials` to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].aws.credentials.id`
+
+The ID of credentials to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].aws.credentials.secret`
+
+The secret for the AWS credentials in use.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].aws.credentials.token`
+
+The token for the AWS credentials in use. This is a required value for short-term credentials.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].aws.credentials.from_ec2_role`
+
+Use the credentials of a host EC2 machine configured to assume an https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[IAM role associated with the instance^].
+
+*Type*: `bool`
+
+*Default*: `false`
+
+Requires version 4.2.0 or newer
+
+=== `kafka.sasl[].aws.credentials.role`
+
+The role ARN to assume.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.sasl[].aws.credentials.role_external_id`
+
+An external ID to use when assuming a role.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `kafka.timestamp_ms`
+
+Set a timestamp (in milliseconds) for each message (optional). Leave this field empty to use the current timestamp.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+```yml
+# Examples
+timestamp_ms: ${! timestamp_unix_milli() }
+timestamp_ms: ${! metadata("kafka_timestamp_ms") }
+```
+
+=== `disable_content_encryption`
+
+If this value is set to `true`:
+
+* Only message payloads remain unencrypted. This setting does not disable TLS or any other transport-layer encryption that may also be enabled.
+* All other `ockam_kafka` inlets and outlets must also have their settings set to `true`.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `enrollment_ticket`
+
+The path to a file or a URL where the enrollment ticket value is stored, or an inline hex-encoded value of the enrollment ticket (optional).
+
+You can generate a new ticket using the https://command.ockam.io/manual/ockam-project-ticket.html[`ockam project ticket` command^].
+
+*Type*: `string`
+
+=== `identity_name`
+
+The name of the https://command.ockam.io/manual/ockam-identity.html[Ockam identity^] to use. If this value is not provided, the default Ockam identity is automatically generated and used (optional).
+
+*Type*: `string`
+
+=== `allow`
+
+Use in conjunction with the `route_to_kafka_outlet` field to specify an access control policy for the Kafka Portal Outlet.
+
+For example, setting this value to `kafka_us_east` forces the Kafka Outlet to present an Ockam credential, which confirms that the Outlet has the attribute `kafka_us_east=true`.
+
+*Type*: `string`
+
+*Default*: `self`
+
+=== `route_to_kafka_outlet`
+
+The route to reach the Kafka Outlet of your Ockam portal. For example, `/project/default`.
+
+*Type*: `string`
+
+*Default*: `"self"`
+
+=== `allow_consumer`
+
+Specify an access control policy for consumers.
+
+For example, setting this value to `orders_consumer` forces the consumer to present an Ockam credential, which confirms that the consumer has the attribute `orders_consumer=true`.
+
+*Type*: `string`
+
+*Default*: `self`
+
+=== `route_to_consumer`
+
+The route to the Kafka consumer. For example, `/project/default/service/forward_to_orders_consumer/secure/api` would connect to a consumer exposed through a relay named `orders_consumer`.
+
+*Type*: `string`
+
+*Default*: `/ip4/127.0.0.1/tcp/6262`

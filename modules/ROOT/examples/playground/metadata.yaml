@@ -1,0 +1,8 @@
+title: Add metadata
+input: |
+  {
+    "message": "hello world"
+  }
+mapping: |
+  root.message = this.message.uppercase()
+  meta time = fake("timestamp")

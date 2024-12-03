@@ -7,7 +7,7 @@ Bloblang supports a range of comparison operators `!`, `>`, `>=`, `==`, `<`, `+<
 
 == Mathematical
 
-All mathematical operators (`+`, `-`, `*`, `/`, `%`) are valid against number values, and addition (`+`) is also supported when both the left and right hand side arguments are strings. If a mathematical operator is used with an argument that is non-numeric (with the aforementioned string exception) then a xref:guides:bloblang/about.adoc#error-handling[recoverable mapping error will be thrown].
+All mathematical operators (`\+`, `-`, `*`, `/`, `%`) are valid against number values, and addition (`+`) is also supported when both the left and right hand side arguments are strings. If a mathematical operator is used with an argument that is non-numeric (with the aforementioned string exception) then a xref:guides:bloblang/about.adoc#error-handling[recoverable mapping error will be thrown].
 
 === Number degradation
 

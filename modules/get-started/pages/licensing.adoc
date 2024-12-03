@@ -1,0 +1,31 @@
+= Enterprise Licensing 
+:description: Learn how to purchase and apply an Enterprise Edition license.
+
+Anyone can use the Certified and Community connectors, but you need an Enterprise Edition license to use Enterprise connectors. 
+
+== Purchase an Enterprise Edition license
+
+You can purchase and download a license from the https://www.redpanda.com/upgrade[Redpanda website^].
+
+== Apply a license key to Redpanda Connect
+
+Once you have downloaded a license key, you can apply it in the following ways:
+
+. Run the following command:
+
++
+```bash
+rpk connect run --redpanda-license <license-key> ./<connect-configuration>.yaml
+```
++
+Replace the following placeholder: 
+
+- `<license-key>`: The full license key string.
+- `<connect-configuration>`: The name of your Redpanda Connect configuration file.
+
+. Save the license key to the following directory: `/etc/redpanda/redpanda.license`. 
+. Set the environment variable: `$\{REDPANDA_LICENSE_FILEPATH}` to point to the file where the license key is stored.
+
+Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise connectors.
+
+You can view the license key’s expiration date at any time in the Redpanda Connect logs.

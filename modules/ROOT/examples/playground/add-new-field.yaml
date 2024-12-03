@@ -1,0 +1,8 @@
+title: Add new field
+input: |
+  {
+    "name": "John Doe",
+    "age": 30
+  }
+mapping: |
+  root.greeting = "Hello, " + this.name
