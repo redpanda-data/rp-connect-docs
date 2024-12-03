@@ -1,0 +1,8 @@
+title: Array processing
+input: |
+  {
+    "numbers": [1, 2, 3, 4, 5]
+  }
+mapping: |
+  root.even_numbers = this.numbers.filter(n -> n % 2 == 0)
+  root.sum = this.numbers.sum()

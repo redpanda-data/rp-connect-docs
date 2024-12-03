@@ -1,0 +1,14 @@
+title: Merge objects
+input: |
+  {
+    "user": {
+      "name": "John Doe",
+      "age": 30
+    },
+    "profile": {
+      "email": "johndoe@example.com",
+      "phone": "123-456-7890"
+    }
+  }
+mapping: |
+  root.user_data = this.user.merge(this.profile)

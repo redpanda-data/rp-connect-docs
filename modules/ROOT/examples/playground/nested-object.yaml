@@ -1,0 +1,14 @@
+title: Nested object
+input: |
+  {
+    "user": {
+      "name": "John Doe",
+      "profile": {
+        "age": 30,
+        "email": "johndoe@example.com"
+      }
+    }
+  }
+mapping: |
+  root.user_age = this.user.profile.age
+  root.user_email = this.user.profile.email
