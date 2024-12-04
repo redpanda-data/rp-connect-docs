@@ -1,0 +1,87 @@
+= Upgrade Redpanda Connect using `rpk`
+:description: pass:q[Upgrade Redpanda Connect using the `rpk connect` plugin.]
+
+Redpanda Connect uses the `rpk connect` plugin to manage upgrades, which is automatically installed when you start to run `rpk connect` commands from the `rpk` CLI. You do not need to upgrade the entire `rpk` CLI.
+
+== Upgrade Redpanda Connect
+
+The simplest way to upgrade is to use the <<upgrade-to-the-latest-version,`rpk connect upgrade` command>>. But if required, you can also upgrade (or downgrade) to a specific Redpanda Connect version.
+
+=== Prerequisites
+
+- xref:guides:getting_started.adoc[`rpk` CLI installed]
+- Review the https://github.com/redpanda-data/connect/releases[release notes^] of the Redpanda Connect version you want to upgrade to.
+
+=== Upgrade to the latest version
+
+Upgrade to the latest version of Redpanda Connect.
+
+. Check the version of Redpanda Connect already installed.
++
+[,bash]
+----
+rpk connect --version
+----
+
+. Upgrade to the latest released version.
+
++
+[,bash]
+----
+rpk connect upgrade
+----
++
+Example output:
++
+[source,bash, subs="attributes+"]
+----
+Redpanda Connect successfully upgraded from 4.38.0 to the latest version ({latest-connect-version}).
+----
+
+For a full list of `rpk connect upgrade` options, run:
+
+[,bash]
+----
+rpk connect upgrade --help
+----
+
+=== Upgrade to a specific version
+
+Force an upgrade (or downgrade) to a specific version of Redpanda Connect using the following command. 
+
+[,bash]
+----
+rpk connect install --connect-version <version> --force
+----
+
+Replace the `<version>` placeholder with the full version number, for example: `4.38.0`. You may need to wait a few seconds before the installation completes.
+
+
+Example output:
+
+```bash
+Redpanda Connect 4.38.0 successfully installed.
+```
+
+=== Uninstall the `rpk connect` plugin
+
+If you no longer want to use Redpanda Connect, you can uninstall the `rpk connect` plugin from the CLI.
+
+
+[,bash]
+----
+rpk connect uninstall
+----
+
+Example output:
+
+```bash
+PATH                                                MESSAGE
+/Users/username/.local/bin/.rpk.managed-connect     OK
+```
+
+See also:
+
+* xref:guides:getting_started.adoc[]
+* xref:ROOT:upgrade:rolling-upgrade.adoc[]
+* xref:ROOT:reference:rpk/rpk-connect/rpk-connect.adoc[]
