@@ -457,43 +457,6 @@ Example output:
 
 You can also configure external access using a LoadBalancer Service or an Ingress. See the link:https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/values.yaml#L79C1-L107C31[Helm values] for more details.
 
-== Upgrade Redpanda Connect
-
-To upgrade Redpanda Connect to a newer chart version:
-
-. Ensure your Helm repository is updated to fetch the latest version of the Redpanda chart:
-+
-[,bash]
-----
-helm repo update
-----
-
-. Upgrade your existing deployment using the https://helm.sh/docs/helm/helm_upgrade/[`helm upgrade`] command:
-+
-[,bash]
-----
-helm upgrade redpanda-connect redpanda/connect --namespace <namespace> --values <your-values-file>
-----
-+
-Replace `<your-values-file>` with the path to your custom configuration file.
-
-=== Roll back an upgrade
-
-If an upgrade introduces issues, you can roll back to a previous release. Helm retains previous deployments, allowing you to roll back with the https://helm.sh/docs/helm/helm_rollback/[`helm rollback`] command:
-
-[,bash]
-----
-helm rollback redpanda-connect <revision-number> --namespace <namespace>
-----
-
-To find the revision number, use the https://helm.sh/docs/helm/helm_history/[`helm history`] command:
-
-[,bash]
-----
-helm history redpanda-connect --namespace <namespace>
-----
-
-This command lists previous deployments and their revision numbers.
 
 == Uninstall Redpanda Connect
 
@@ -520,6 +483,7 @@ kubectl delete configmap connect-streams connect-input --namespace <namespace>
 
 == Suggested reading
 
+* xref:get-started:upgrade/helm-chart-upgrade.adoc[]
 * xref:guides:streams_mode/about.adoc[Streams mode]
 * xref:components:inputs/about.adoc[Inputs]
 * xref:components:processors/about.adoc[Processors]
