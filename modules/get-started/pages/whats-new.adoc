@@ -26,7 +26,7 @@ CGO_ENABLED=1 make TAGS=x_benthos_extra redpanda-connect.
 
 == Version 4.40.0
 
-This update includes a beta release of the xref:components:inputs/pg_stream.adoc[`pg_stream` input] for Redpanda Connect Self-Managed and Cloud, which captures data changes made to a PostgreSQL database in real time and streams them to Redpanda Connect.
+This update includes a beta release of the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input] for Redpanda Connect Self-Managed and Cloud, which captures data changes made to a PostgreSQL database in real time and streams them to Redpanda Connect.
 
 === Component updates
 

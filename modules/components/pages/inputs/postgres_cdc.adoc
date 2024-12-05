@@ -1,4 +1,5 @@
-= pg_stream
+= postgres_cdc
+:page-aliases: components:inputs/pg_stream.adoc
 // tag::single-source[]
 :type: input
 :page-beta: true
@@ -17,7 +18,7 @@ endif::[]
 # Configuration fields, showing default values
 input:
   label: ""
-  pg_stream:
+  postgres_cdc:
     dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable # No default (required)
     include_transaction_markers: true
     stream_snapshot: false
@@ -40,7 +41,7 @@ input:
       processors: [] # No default (optional)
 ```
 
-The `pg_stream` input uses logical replication to capture changes made to a PostgreSQL database in real time and streams them to Redpanda Connect. Redpanda Connect uses this replication method to allow you to choose which database tables in your source database to receive changes from. There are also <<choose-a-replication-mode,two replication modes>> to choose from, and an <<receive-toast-and-deleted-values,option to receive TOAST and deleted values>> in your data updates.
+The `postgres_cdc` input uses logical replication to capture changes made to a PostgreSQL database in real time and streams them to Redpanda Connect. Redpanda Connect uses this replication method to allow you to choose which database tables in your source database to receive changes from. There are also <<choose-a-replication-mode,two replication modes>> to choose from, and an <<receive-toast-and-deleted-values,option to receive TOAST and deleted values>> in your data updates.
 
 == Prerequisites
 
@@ -104,7 +105,7 @@ Replace the following placeholders with your own values:
 
 == Choose a replication mode
 
-When you run a pipeline that uses the `pg_stream` input, Redpanda Connect connects to your PostgreSQL database and creates a replication slot. The replication slot uses a copy of the Write-Ahead Log (WAL) file to subscribe to changes in your database records as they are applied to the database. There are two replication modes you can choose from: snapshot mode and streaming mode.
+When you run a pipeline that uses the `postgres_cdc` input, Redpanda Connect connects to your PostgreSQL database and creates a replication slot. The replication slot uses a copy of the Write-Ahead Log (WAL) file to subscribe to changes in your database records as they are applied to the database. There are two replication modes you can choose from: snapshot mode and streaming mode.
 
 In snapshot mode, Redpanda Connect first takes a snapshot of the database and streams the contents before processing changes from the WAL. In streaming mode, Redpanda Connect directly processes changes from the WAL starting from the most recent changes without taking a snapshot first.
 
@@ -115,7 +116,7 @@ For local testing, you can use the <<example-pipeline,example pipeline on this p
 If you set the <<stream_snapshot,`stream_snapshot` field>> to `true`, Redpanda Connect:
 
 . Creates a snapshot of your database.
-. Streams the contents of the tables specified in the `pg_stream` input.
+. Streams the contents of the tables specified in the `postgres_cdc` input.
 . Starts processing changes in the WAL that occurred since the snapshot was taken, and streams them to Redpanda Connect. 
 
 Once the initial replication process is complete, the snapshot is removed and the input keeps a connection open to the database so that it can receive data updates.
@@ -445,8 +446,8 @@ You can run the following pipeline locally to check that data updates are stream
 
 ```yml
 input:
-  label: "pg_stream"
-  pg_stream:
+  label: "postgres_cdc"
+  postgres_cdc:
     dsn: postgres://user:password@host:port/dbname
     include_transaction_markers: false
     slot_name: test_slot_native_decoder
