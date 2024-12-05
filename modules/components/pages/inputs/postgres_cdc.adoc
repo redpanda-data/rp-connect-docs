@@ -166,7 +166,7 @@ This input adds the following metadata fields to each message:
 
 - `mode`: Whether a message is part of the snapshot processing of existing data in a database (`snapshot`) or a data update streamed to Redpanda Connect (`streaming`).
 - `table`: The name of the database table from which the message originated.
-- `operation`: The type of database operation that generated the message, such as `INSERT`, `UPDATE`, `DELETE`, `BEGIN` and `COMMIT`. `BEGIN` are `COMMIT` operations are only included if the `include_transaction_markers` field is set to `true`.
+- `operation`: The type of database operation that generated the message, such as `INSERT`, `UPDATE`, `DELETE`, `BEGIN` and `COMMIT`. `BEGIN` and `COMMIT` operations are only included if the `include_transaction_markers` field is set to `true`.
 
 == Fields
 
