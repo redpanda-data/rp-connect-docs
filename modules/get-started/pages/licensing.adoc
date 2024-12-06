@@ -3,10 +3,6 @@
 
 Anyone can use the Certified and Community connectors, but you need an Enterprise Edition license to use Enterprise connectors.
 
-Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise connectors.
-
-You can view the license key’s expiration date at any time in the Redpanda Connect logs.
-
 == Purchase an Enterprise Edition license
 
 You can purchase and download a license from the https://www.redpanda.com/upgrade[Redpanda website^].
@@ -14,6 +10,8 @@ You can purchase and download a license from the https://www.redpanda.com/upgrad
 == Apply a license key to Redpanda Connect
 
 Once you have downloaded a license key, you can apply it in the following ways. 
+
+Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise connectors. You can view the license key’s expiration date at any time in the Redpanda Connect logs.
 
 === Apply the license using a license file
 
