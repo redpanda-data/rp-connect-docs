@@ -1,7 +1,11 @@
 = Enterprise Licensing 
 :description: Learn how to purchase and apply an Enterprise Edition license.
 
-Anyone can use the Certified and Community connectors, but you need an Enterprise Edition license to use Enterprise connectors. 
+Anyone can use the Certified and Community connectors, but you need an Enterprise Edition license to use Enterprise connectors.
+
+Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise connectors.
+
+You can view the license key’s expiration date at any time in the Redpanda Connect logs.
 
 == Purchase an Enterprise Edition license
 
@@ -9,23 +13,25 @@ You can purchase and download a license from the https://www.redpanda.com/upgrad
 
 == Apply a license key to Redpanda Connect
 
-Once you have downloaded a license key, you can apply it in the following ways:
+Once you have downloaded a license key, you can apply it in the following ways. 
 
-. Run the following command:
+=== Apply the license using a license file
 
-+
+If you have a license key file, either:
+
+- Save the license key to the following directory: `/etc/redpanda/redpanda.license`. 
+- Set the environment variable: `$\{REDPANDA_LICENSE_FILEPATH}` to point to the file where the license key is stored.
+
+
+=== Apply the license using an inline license string
+
+If you do not have a license key file, run the following command using the full license string.
+
 ```bash
-rpk connect run --redpanda-license <license-key> ./<connect-configuration>.yaml
+rpk connect run --redpanda-license <license-string> ./<connect-configuration>.yaml
 ```
-+
+
 Replace the following placeholder: 
 
-- `<license-key>`: The full license key string.
+- `<license-string>`: The full license key string.
 - `<connect-configuration>`: The name of your Redpanda Connect configuration file.
-
-. Save the license key to the following directory: `/etc/redpanda/redpanda.license`. 
-. Set the environment variable: `$\{REDPANDA_LICENSE_FILEPATH}` to point to the file where the license key is stored.
-
-Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise connectors.
-
-You can view the license key’s expiration date at any time in the Redpanda Connect logs.
