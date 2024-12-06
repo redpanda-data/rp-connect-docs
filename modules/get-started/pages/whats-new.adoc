@@ -6,6 +6,11 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.43.0
+
+This release renames the `pg_stream` input to xref:components:inputs/postgres_cdc.adoc[`postgres_cdc`].
+
+
 == Version 4.42.0
 
 This release introduces a xref:guides:bloblang/playground.adoc[Bloblang playground] where you can try out your Bloblang syntax and get immediate feedback. It also updates Redpanda Connect licensing checks for Redpanda Connect. Starting from version 4.42.0, you must xref:get-started:licensing.adoc[add your Enterprise Edition license] to Redpanda Connect before using any Enterprise connectors.
@@ -26,7 +31,7 @@ CGO_ENABLED=1 make TAGS=x_benthos_extra redpanda-connect.
 
 == Version 4.40.0
 
-This update includes a beta release of the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input] for Redpanda Connect Self-Managed and Cloud, which captures data changes made to a PostgreSQL database in real time and streams them to Redpanda Connect.
+This update includes a beta release of the xref:components:inputs/postgres_cdc.adoc[`pg_stream` input] for Redpanda Connect Self-Managed and Cloud, which captures data changes made to a PostgreSQL database in real time and streams them to Redpanda Connect.
 
 === Component updates
 
