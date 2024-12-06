@@ -10,9 +10,8 @@ component_type_dropdown::[]
 Streams data changes from a PostgreSQL database using logical replication. There is also a configuration option to <<stream_snapshot,stream all existing data>> from the database.
 
 ifndef::env-cloud[]
-Introduced in version 4.40.0.
+Introduced in version 4.40.0 and renamed from `pg_stream` to `postgres_cdc` in version 4.43.0.
 endif::[]
-
 
 ```yml
 # Configuration fields, showing default values
