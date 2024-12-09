@@ -1,17 +1,15 @@
 = Enterprise Licensing 
 :description: Learn how to purchase and apply an Enterprise Edition license.
 
-Anyone can use the Certified and Community connectors, but you need an Enterprise Edition license to use Enterprise connectors.
+Anyone can use the Certified and Community connectors, but you need a valid Enterprise Edition license to use Enterprise connectors. 
 
-== Purchase an Enterprise Edition license
+== Get an enterprise license
 
-You can purchase and download a license from the https://www.redpanda.com/upgrade[Redpanda website^].
+You can either https://www.redpanda.com/upgrade[upgrade to an Enterprise Edition license^], or http://redpanda.com/try-enterprise[generate a trial license key^] that's valid for 30 days.
 
 == Apply a license key to Redpanda Connect
 
-Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise connectors. You can view the license key’s expiration date at any time in the Redpanda Connect logs.
-
-Once you have downloaded a license key, you can apply it in the following ways: 
+When you have downloaded the license key, you can apply it in the following ways: 
 
 === Apply the license using a license file
 
@@ -19,7 +17,6 @@ If you have a license key file, either:
 
 - Save the license key to the following directory: `/etc/redpanda/redpanda.license`. 
 - Set the environment variable: `$\{REDPANDA_LICENSE_FILEPATH}` to point to the file where the license key is stored.
-
 
 === Apply the license using an inline license string
 
@@ -33,3 +30,9 @@ Replace the following placeholders:
 
 - `<license-string>`: The full license key string.
 - `<connect-configuration>`: The name of your Redpanda Connect configuration file.
+
+== Verify a license
+
+Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise connectors. 
+
+You can view the license key’s expiration date at any time in the Redpanda Connect logs.
