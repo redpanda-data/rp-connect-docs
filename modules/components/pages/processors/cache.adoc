@@ -48,7 +48,7 @@ cache:
 --
 ======
 
-For use cases where you wish to cache the result of processors consider using the xref:components:processors/cached.adoc[`cached` processor] instead.
+For use cases where you wish to cache the result of processors, consider using the xref:components:processors/cached.adoc[`cached` processor] instead.
 
 This processor will interpolate functions within the `key` and `value` fields individually for each message. This allows you to specify dynamic keys and values based on the contents of the message payloads and metadata. You can find a list of functions in xref:configuration:interpolation.adoc#bloblang-queries[Bloblang queries].
 
@@ -61,7 +61,7 @@ Deduplication::
 --
 
 
-Deduplication can be done using the add operator with a key extracted from the message payload, since it fails when a key already exists we can remove the duplicates using a xref:components:processors/mapping.adoc[`mapping` processor]:
+Deduplication can be done using the `add` operator with a key extracted from the message payload, since it fails when a key already exists we can remove the duplicates using a xref:components:processors/mapping.adoc[`mapping` processor]:
 
 ```yaml
 pipeline:
@@ -80,7 +80,7 @@ cache_resources:
 ```
 
 --
-Deduplication Batch-Wide::
+Deduplication batch-wide::
 +
 --
 
