@@ -228,7 +228,7 @@ can be detected with xref:configuration:error_handling.adoc[processor error hand
 
 === `exists`
 
-Check whether a specific key is already cached and replace the original message payload with `true` if the key exists in the cache, or `false` if it doesn't.
+Check whether a specific key is in the cache and replace the original message payload with `true` if the key exists, or `false` if it doesn’t.
 
 === `delete`
 
