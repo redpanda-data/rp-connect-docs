@@ -5,9 +5,7 @@
 
 // © 2024 Redpanda Data Inc.
 
-
 component_type_dropdown::[]
-
 
 [WARNING]
 .Deprecated
@@ -26,7 +24,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 label: ""
 sql:
   driver: "" # No default (required)
@@ -42,7 +40,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 label: ""
 sql:
   driver: "" # No default (required)
@@ -68,29 +66,25 @@ For basic inserts or select queries use either the xref:components:processors/sq
 
 A database <<drivers, driver>> to use.
 
-
 *Type*: `string`
 
-
 Options:
-`mysql`
-, `postgres`
-, `clickhouse`
-, `mssql`
-, `sqlite`
-, `oracle`
-, `snowflake`
-, `trino`
+`clickhouse`
 , `gocosmos`
-.
+, `mysql`
+, `mssql`
+, `oracle`
+, `postgres`
+, `snowflake`
+, `spanner`
+, `sqlite`
+, `trino`
 
 === `data_source_name`
 
 Data source name.
 
-
 *Type*: `string`
-
 
 === `query`
 

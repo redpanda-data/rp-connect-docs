@@ -104,21 +104,19 @@ pipeline:
 
 A database <<drivers, driver>> to use.
 
-
 *Type*: `string`
 
-
 Options:
-`mysql`
-, `postgres`
-, `clickhouse`
-, `mssql`
-, `sqlite`
-, `oracle`
-, `snowflake`
-, `trino`
+`clickhouse`
 , `gocosmos`
-.
+, `mysql`
+, `mssql`
+, `oracle`
+, `postgres`
+, `snowflake`
+, `spanner`
+, `sqlite`
+, `trino`
 
 === `dsn`
 
@@ -126,7 +124,7 @@ A Data Source Name to identify the target database.
 
 ==== Drivers
 
-:driver-support: mysql=certified, postgres=certified, clickhouse=community, mssql=community, sqlite=certified, oracle=certified, snowflake=community, trino=community, gocosmos=community
+:driver-support: clickhouse=community, gocosmos=community, mssql=community, mysql=certified, oracle=certified, postgres=certified, snowflake=community, spanner=community, sqlite=certified, trino=community
 
 The following is a list of supported drivers, their placeholder style, and their respective DSN formats:
 
