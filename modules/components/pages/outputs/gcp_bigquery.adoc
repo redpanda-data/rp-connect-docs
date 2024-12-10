@@ -127,7 +127,38 @@ When the field `csv.header` is specified for the `CSV` format, a header row is i
 
 === Parquet
 
-You can use the xref:components:processors/parquet_encode.adoc[`parquet_encode` processor] to convert message data into a Parquet format before it is sent to this output. Each message sent by the processor must be a full Parquet message.
+Each message sent to this output must be a Parquet file. You can use the xref:components:processors/parquet_encode.adoc[`parquet_encode` processor] to convert message data into the correct format. For example:
+
+```yaml
+input:
+  generate:
+    mapping: |
+      root = {
+        "foo": random_int(),
+        "bar": uuid_v4(),
+        "time": now(),
+      }
+    interval: 0
+    count: 1000
+    batch_size: 1000
+pipeline:
+  processors:
+    - parquet_encode:
+        schema:
+          - name: foo
+            type: INT64
+          - name: bar
+            type: UTF8
+          - name: time
+            type: UTF8
+        default_compression: zstd
+output:
+  gcp_bigquery:
+    project: "${PROJECT}"
+    dataset: "my_bq_dataset"
+    table: "redpanda_connect_ingest"
+    format: PARQUET
+```
 
 == Performance
 
