@@ -92,12 +92,15 @@ By default, Redpanda Connect uses a xref:guides:cloud/gcp.adoc[shared credential
 
 == Format
 
-The `gcp_bigquery` output currently supports only `CSV` and `NEWLINE_DELIMITED_JSON` formats. To learn more about how to use BigQuery with these formats, see the following documentation:
+The `gcp_bigquery` output currently supports only `NEWLINE_DELIMITED_JSON`, `CSV` and `PARQUET` formats. To learn more about how to use BigQuery with these formats, see the following documentation:
 
 - https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-json[`NEWLINE_DELIMITED_JSON`^]
 - https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-csv[`CSV`^]
+- https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-parquet[`PARQUET`]
 
-Each message may contain multiple elements separated by newlines. For example, a single message containing:
+=== Newline-delimited JSON
+
+Each JSON message may contain multiple elements separated by newlines. For example, a single message containing:
 
 ```json
 {"key": "1"}
@@ -121,6 +124,10 @@ The same is true for the CSV format.
 === CSV
 
 When the field `csv.header` is specified for the `CSV` format, a header row is inserted as the first line of each message batch. If this field is not provided, then the first message of each message batch must include a header line.
+
+=== Parquet
+
+You can use the xref:components:processors/parquet_encode.adoc[`parquet_encode` processor] to convert message data into a Parquet format before it is sent to this output. Each message sent by the processor must be a full Parquet message.
 
 == Performance
 
