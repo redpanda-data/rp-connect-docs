@@ -158,6 +158,44 @@ For full visibility of all data updates, you can also choose to stream https://w
 ALTER TABLE large_data REPLICA IDENTITY FULL;
 ```
 
+== Data mappings
+
+The following table shows how selected PostgreSQL data types are mapped to data types supported in Redpanda Connect. All other data types are mapped to string values.
+
+|===
+| PostgreSQL data type | Mapped to
+
+| TEXT, TIMESTAMP, UUID, VARCHAR
+| JSON strings, for example: `this data`
+
+| BOOL
+| Boolean JSON fields, for example: `true` or `false`
+
+| Numeric types (INT4)
+| JSON number types, for example: `1`.
+
+| JSONB
+| JSON objects, for example: `{{{ "message": "message text" }}}`
+
+| INTEGER[] 
+| An array of integer values, for example: `[1,2,3]`
+
+| TEXT[]
+| An array of string values, for example: `["value1", "value2", "value3"]`
+
+| INET 
+| A string that contains an IP address, for example: `"192.168.1.1"`
+
+| POINT
+| A string that represents a point in a two-dimensional plane, for example: `(x, y)`
+
+| TSRANGE
+| A string that includes range bounds, for example: `[2010-01-01 14:30, 2010-01-01 15:30)`
+
+| TSVECTOR
+| A string that includes vector data, for example: `"'the':2 'question':3 'is':4"`
+
+|===
 
 == Metadata
 
