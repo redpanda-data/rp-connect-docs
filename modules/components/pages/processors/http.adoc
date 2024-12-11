@@ -20,7 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 label: ""
 http:
   url: "" # No default (required)
@@ -37,7 +37,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 label: ""
 http:
   url: "" # No default (required)
@@ -85,6 +85,7 @@ http:
   retry_period: 1s
   max_retry_backoff: 300s
   retries: 3
+  follow_redirects: true
   backoff_on:
     - 429
   drop_on: []
@@ -105,11 +106,13 @@ In order to map or encode the payload to a specific request body, and map the re
 
 == Response codes
 
-Redpanda Connect considers any response code between 200 and 299 inclusive to indicate a successful response, you can add more success status codes with the field `successful_on`.
+HTTP response codes in the 200-299 range indicate a successful response. You can use the `successful_on` field to add more success status codes.
 
-When a request returns a response code within the `backoff_on` field it will be retried after increasing intervals.
+HTTP status codes in the 300-399 range are redirects. The <<follow_redirects,`follow_redirects` field>> allows you to choose how to handle these responses.
 
-When a request returns a response code within the `drop_on` field it will not be reattempted and is immediately considered a failed request.
+When a request returns a response code within the `backoff_on` field, it is retried after increasing intervals.
+
+When a request returns a response code within the `drop_on` field, it is immediately considered a failed request.
 
 == Add metadata
 
@@ -301,8 +304,6 @@ A secret used to establish ownership of the consumer key.
 
 include::components:partial$secret_warning.adoc[]
 
-
-
 *Type*: `string`
 
 *Default*: `""`
@@ -321,8 +322,6 @@ A value used to gain access to the protected resources on behalf of the user.
 A secret provided in order to establish ownership of a given access token.
 
 include::components:partial$secret_warning.adoc[]
-
-
 
 *Type*: `string`
 
@@ -747,10 +746,17 @@ The maximum period to wait between failed requests.
 
 The maximum number of retry attempts to make.
 
-
 *Type*: `int`
 
 *Default*: `3`
+
+=== `follow_redirects`
+
+Whether to follow redirects, which includes all responses with HTTP status codes in the 300-399 range. If set to `false`, the response message only contains the body, status, and headers from the redirect response, and this processor does not make a request to the URL set in the Location header of the response. 
+
+*Type*: `bool`
+
+*Default*: `true`
 
 === `backoff_on`
 
