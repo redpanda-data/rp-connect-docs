@@ -1852,7 +1852,6 @@ Marshal a value into a string. If the value is already a string it is unchanged.
 
 ==== Examples
 
-
 ```coffeescript
 root.nested_json = this.string()
 
@@ -1865,6 +1864,21 @@ root.id = this.id.string()
 
 # In:  {"id":228930314431312345}
 # Out: {"id":"228930314431312345"}
+```
+
+=== `timestamp`
+
+Attempts to parse a value into a timestamp. You can also provide an optional argument. The argument is returned when the value cannot be parsed into a timestamp.
+
+==== Parameters
+
+*`default`* <(optional) timestamp> An optional value to return if the target value cannot be parsed as a timestamp.
+
+==== Examples
+
+```coffeescript
+root.foo = this.ts.timestamp()
+root.bar = this.none.timestamp(1234567890.timestamp())
 ```
 
 === `type`
