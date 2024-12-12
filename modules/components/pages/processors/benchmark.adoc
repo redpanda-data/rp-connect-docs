@@ -6,7 +6,7 @@
 
 component_type_dropdown::[]
 
-Logs throughput statistics for messages that pass through this processor, and provides a summary of those statistics over the lifetime of the processor.
+Logs throughput statistics for processed messages, and provides a summary of those statistics over the lifetime of the processor.
 
 ifndef::env-cloud[]
 Introduced in version 4.40.0.
@@ -33,7 +33,7 @@ For example:
 INFO rolling stats: 1 msg/sec, 407 B/sec
 ```
 
-When the processor shuts down, it also writes a summary of the number and size of messages processed during the lifetime of the processor to the logs. For example:
+When the processor shuts down, it also logs a summary of the number and size of messages processed during its lifetime. For example:
 
 ```bash
 INFO total stats: 1.00186 msg/sec, 425 B/sec 
@@ -51,7 +51,7 @@ How often to emit rolling statistics. Set to `0`, if you only want to log summar
 
 === `count_bytes`
 
-Whether to measure the number of bytes per second of throughput. Redpanda Connect must serialize structured data to count the number of bytes processed, which can cause unnecessary performance degradation if serialization is not required elsewhere in your pipeline.
+Whether to measure the number of bytes per second of throughput. If set to `true`, Redpanda Connect must serialize structured data to count the number of bytes processed, which can unnecessarily degrade performance if serialization is not required elsewhere in your pipeline.
 
 *Type*: `bool`
 
