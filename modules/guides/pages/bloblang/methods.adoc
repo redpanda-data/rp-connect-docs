@@ -1868,11 +1868,11 @@ root.id = this.id.string()
 
 === `timestamp`
 
-Attempts to parse a value into a timestamp. You can also provide an optional argument. The argument is returned when the value cannot be parsed into a timestamp.
+Attempts to parse a value into a `timestamp`. You can also provide an optional argument, which is returned when the value cannot be parsed into a `timestamp`. The output of this method can be further transformed using <<timestamp-manipulation,timestamp manipulation methods>>.
 
 ==== Parameters
 
-*`default`* <(optional) timestamp> An optional value to return if the target value cannot be parsed as a timestamp.
+*`default`* <(optional) timestamp> An optional value to return if the target value cannot be parsed as a `timestamp`.
 
 ==== Examples
 
