@@ -279,13 +279,13 @@ init_statement: |2
 
 === `schema_evolution`
 
-Options to control schema updates as new columns are added to the pipeline.
+Options to control schema updates as new tables and columns are added to the pipeline.
 
 *Type*: `object`
 
 === `schema_evolution.enabled`
 
-Whether schema evolution is enabled.
+Whether schema evolution is enabled. Set to `true` to automatically create new tables and columns when they are specified in your pipeline.
 
 *Type*: `bool`
 
@@ -317,6 +317,14 @@ root = match this.value.type() {
 Options for optimizing the build of the output data that is sent to Snowflake. Monitor the `snowflake_build_output_latency_ns` metric to assess whether you need to update these options.
 
 *Type*: `object`
+
+```yml
+# Examples
+
+build_options:
+  parallelism: 4
+  chunk_size: 10000
+```
 
 === `build_options.parallelism`
 
