@@ -754,7 +754,7 @@ The maximum number of retry attempts to make.
 
 === `follow_redirects`
 
-Whether to follow redirects, including all responses with HTTP status codes in the 300-399 range. If set to `false`, the response message includes only the body, status, and headers from the redirect response, and this processor does not make a request to the URL specified in the Location header.
+Whether to follow redirects, including all responses with HTTP status codes in the 300-399 range. If set to `false`, the response message includes only the body, status, and headers from the redirect response, and this processor does not make a request to the URL specified in the `Location` header.
 
 *Type*: `bool`
 
