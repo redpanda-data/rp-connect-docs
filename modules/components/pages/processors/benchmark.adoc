@@ -1,0 +1,60 @@
+= benchmark
+// tag::single-source[]
+:type: processor
+:page-beta: true
+:categories: ["Utility"]
+
+component_type_dropdown::[]
+
+Logs throughput statistics for processed messages, and provides a summary of those statistics over the lifetime of the processor.
+
+ifndef::env-cloud[]
+Introduced in version 4.40.0.
+endif::[]
+
+```yml
+# Configuration fields, showing default values
+label: ""
+benchmark:
+  interval: 5s
+  count_bytes: true
+```
+
+== Throughput statistics
+
+This output logs the following rolling statistics at a <<interval,configurable interval>> to help you to understand the current performance of your pipeline:
+
+- The number of messages processed per second.
+- The number of bytes processed per second (optional).
+
+For example:
+
+```bash
+INFO rolling stats: 1 msg/sec, 407 B/sec
+```
+
+When the processor shuts down, it also logs a summary of the number and size of messages processed during its lifetime. For example:
+
+```bash
+INFO total stats: 1.00186 msg/sec, 425 B/sec 
+```
+
+== Fields
+
+=== `interval`
+
+How often to emit rolling statistics. Set to `0`, if you only want to log summary statistics when the processor shuts down.
+
+*Type*: `string`
+
+*Default*: `5s`
+
+=== `count_bytes`
+
+Whether to measure the number of bytes per second of throughput. If set to `true`, Redpanda Connect must serialize structured data to count the number of bytes processed, which can unnecessarily degrade performance if serialization is not required elsewhere in your pipeline.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+// end::single-source[]
