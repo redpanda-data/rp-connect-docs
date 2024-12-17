@@ -163,7 +163,7 @@ ALTER TABLE large_data REPLICA IDENTITY FULL;
 The following table shows how selected PostgreSQL data types are mapped to data types supported in Redpanda Connect. All other data types are mapped to string values.
 
 |===
-| PostgreSQL data type | Mapped to
+| PostgreSQL data type | Bloblang value
 
 | TEXT, TIMESTAMP, UUID, VARCHAR
 | JSON strings, for example: `this data`
