@@ -1868,7 +1868,13 @@ root.id = this.id.string()
 
 === `timestamp`
 
-Attempts to parse a value into a `timestamp`. You can also provide an optional argument, which is returned when the value cannot be parsed into a `timestamp`. The output of this method can be further transformed using <<timestamp-manipulation,timestamp manipulation methods>>.
+Attempts to parse a value into a `timestamp`. The input value must be one of the following:
+
+- An integer that represents a Unix timestamp (in seconds)
+- A floating-point number that represents a Unix timestamp (in seconds)
+- A string in the RFC 3339 format
+
+You can also provide an optional argument, which is returned when the value cannot be parsed into a `timestamp`. The output of this method can be further transformed using <<timestamp-manipulation,timestamp manipulation methods>>.
 
 ==== Parameters
 
