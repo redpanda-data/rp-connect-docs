@@ -279,13 +279,13 @@ init_statement: |2
 
 === `schema_evolution`
 
-Options to control schema updates as new tables and columns are added to the pipeline.
+Options to control schema updates when new fields are added to messages in your data pipeline.
 
 *Type*: `object`
 
 === `schema_evolution.enabled`
 
-Whether schema evolution is enabled. Set to `true` to allow the automatic creation of new tables and columns in the <<schema,specified schema>> when they are added to your pipeline.
+Whether schema evolution is enabled. When set to `true`, the Snowflake table is automatically created based on the schema of the first message written to it, if the table does not already exist. As new fields are added to subsequent messages in the pipeline, existing columns are created in the Snowflake table. Any required columns are marked as `nullable` if new messages do not include data for them.
 
 *Type*: `bool`
 
