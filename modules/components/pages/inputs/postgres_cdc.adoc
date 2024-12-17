@@ -165,7 +165,7 @@ This input adds the following metadata fields to each message:
 
 - `table`: The name of the database table from which the message originated.
 - `operation`: The type of database operation that generated the message, such as `READ`, `INSERT`, `UPDATE`, `DELETE`, `BEGIN` and `COMMIT`. `READ` operations occur when a snapshot of the database is processed. `BEGIN` and `COMMIT` operations are only included if the `include_transaction_markers` field is set to `true`.
-- `lsn`: The https://www.postgresql.org/docs/current/datatype-pg-lsn.html[Log Sequence Number^] of each data update from the source PostgreSQL database. The `lsn` values are strings that can be sorted to determine the order in which data updates occurred before they were streamed to Redpanda Connect.
+- `lsn`: The https://www.postgresql.org/docs/current/datatype-pg-lsn.html[Log Sequence Number^] of each data update from the source PostgreSQL database. The `lsn` values are strings that can be sorted to determine the order in which data updates were written to the WAL.
 
 == Fields
 
