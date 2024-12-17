@@ -1883,8 +1883,8 @@ You can also provide an optional argument, which is returned when the value cann
 ==== Examples
 
 ```coffeescript
-root.foo = this.ts.timestamp()
-root.bar = this.none.timestamp(1234567890.timestamp())
+root.creation_time = this.ts.timestamp()
+root.default_time = this.none.timestamp(1734443120.timestamp())
 ```
 
 === `type`
