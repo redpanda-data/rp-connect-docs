@@ -279,13 +279,13 @@ init_statement: |2
 
 === `schema_evolution`
 
-Options to control schema updates as new columns are added to the pipeline.
+Options to control schema updates when messages are written to the Snowflake table.
 
 *Type*: `object`
 
 === `schema_evolution.enabled`
 
-Whether schema evolution is enabled.
+Whether schema evolution is enabled. When set to `true`, the Snowflake table is automatically created based on the schema of the first message written to it, if the table does not already exist. As new fields are added to subsequent messages in the pipeline, existing columns are created in the Snowflake table. Any required columns are marked as `nullable` if new messages do not include data for them.
 
 *Type*: `bool`
 
@@ -317,6 +317,14 @@ root = match this.value.type() {
 Options for optimizing the build of the output data that is sent to Snowflake. Monitor the `snowflake_build_output_latency_ns` metric to assess whether you need to update these options.
 
 *Type*: `object`
+
+```yml
+# Examples
+
+build_options:
+  parallelism: 4
+  chunk_size: 10000
+```
 
 === `build_options.parallelism`
 
