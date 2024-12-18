@@ -13,7 +13,9 @@ This release introduces support for xref:get-started:licensing.adoc[trial licens
 
 == Version 4.43.0
 
-This release renames the `pg_stream` input to xref:components:inputs/postgres_cdc.adoc[`postgres_cdc`]. The `postgres_cdc` input no longer emits `mode` metadata, but sets the `operation` metadata to `read` when a snapshot of a database is processed.
+This release renames the `pg_stream` input to xref:components:inputs/postgres_cdc.adoc[`postgres_cdc`]. 
+
+The `postgres_cdc` input also no longer emits `mode` metadata, but sets the `operation` metadata field to `read` when a snapshot of a database is processed.
 
 == Version 4.42.0
 
@@ -52,7 +54,7 @@ This update includes a beta release of:
 
 It also introduces a new xref:guides:bloblang/methods.adoc#timestamp[Bloblang method for timestamps].
 
-=== Components for Cloud and Self-Managed (beta)
+=== Components for Cloud and Self-Managed Redpanda Connect (beta)
 
 * xref:components:inputs/postgres_cdc.adoc[`pg_stream` input]
 * xref:components:processors/benchmark.adoc[`benchmark` processor]
