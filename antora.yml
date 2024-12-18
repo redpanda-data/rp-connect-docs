@@ -1,7 +1,7 @@
 name: redpanda-connect
 title: Connect
 version: ~
-start_page: get-started:about.adoc
+start_page: home:index.adoc
 nav:
 - modules/ROOT/nav.adoc
 asciidoc:
@@ -19,6 +19,42 @@ asciidoc:
     # This is replaced by the version fetcher extension
     # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#version-fetcher
     latest-connect-version: 4.30.1
+    # Data for the home page
+    page-home-intro: Redpanda Connect is a data streaming service for building scalable, high-performance data pipelines that drive real-time analytics and actionable business insights. Integrate data across systems with hundreds of prebuilt connectors, change data capture (CDC) capabilities, and YAML-configurable pipelines.
+    page-home-image: connect.svg # images must be in modules/ROOT/images
+    page-home-intro-learn-more: get-started:about.adoc
+    page-home-primary-row-title: Deploy
+    page-home-primary-row:
+      - title: 'Cloud'
+        description: 'Start using Redpanda Connect in Redpanda Cloud.'
+        url: 'redpanda-cloud:develop:connect/connect-quickstart.adoc'
+        link-text: 'Get started'
+      - title: 'Self Managed'
+        description: 'Deploy Redpanda Connect on your own hardware using a CLI.'
+        url: 'get-started:quickstarts/rpk.adoc'
+        link-text: 'Get started'
+      - title: 'Kubernetes'
+        description: 'Deploy Redpanda Connect on Kubernetes using the official Helm chart.'
+        url: 'get-started:quickstarts/helm-chart.adoc'
+        link-text: 'Get started'
+    page-home-secondary-row-title: Popular topics
+    page-home-secondary-row:
+      - title: "What's new"
+        description: 'Explore new features in the latest releases.'
+        url: 'get-started:whats-new.adoc'
+        link-text: 'Learn more'
+      - title: 'Bloblang playground'
+        description: 'Experiment with Bloblang in the browser.'
+        url: 'guides:bloblang/playground.adoc'
+        link-text: 'Learn more'
+      - title: 'Connector catalog'
+        description: 'Explore all available connectors.'
+        url: 'components:catalog.adoc'
+        link-text: 'Learn more'
+      - title: 'Cookbooks'
+        description: 'Explore tutorials and real-world use cases for Redpanda Connect.'
+        url: 'cookbooks:index.adoc'
+        link-text: 'Learn more'
     # Used to display common names for connectors in macro-generated content.
     # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#components_by_category
     components:
