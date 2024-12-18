@@ -1,11 +1,16 @@
 = Connector Catalog
 // tag::single-source[]
 :description: A searchable list of available connectors.
+:page-no-toc: ''
 
 Use the following table to search for available inputs, outputs, and processors.
 
 For a description of the support levels, see xref:components:connector-support-levels.adoc[].
 
+ifdef::env-cloud[]
 component_table::[]
-
+endif::[]
+ifndef::env-cloud[]
+component_table::[all]
+endif::[]
 // end::single-source[]
