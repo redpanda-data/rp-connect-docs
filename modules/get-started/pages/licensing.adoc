@@ -10,7 +10,7 @@ You need a valid Enterprise Edition license to use the following enterprise feat
 | Limit the Redpanda Connect components that users can run within data pipelines on a Redpanda Connect instance.
 
 | https://docs.redpanda.com/redpanda-connect/components/catalog/?support=enterprise[Enterprise connectors]
-| Additional inputs, outputs, and processors available only to Enterprise customers.
+| Additional inputs, outputs, and processors available only to enterprise customers.
 
 | xref:components:redpanda/about.adoc[Redpanda Connect configuration service]
 | A configuration block that you can use to send logs and status events to a topic on a Redpanda cluster.
@@ -50,6 +50,6 @@ Replace the following placeholders:
 
 == Verify a license
 
-Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using Enterprise connectors.
+Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using enterprise connectors.
 
 You can view the license key’s expiration date at any time in the Redpanda Connect logs.
