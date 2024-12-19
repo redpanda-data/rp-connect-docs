@@ -152,7 +152,7 @@ output:
     workspace: <workspace-id>
     stream: <stream-name>
     apikey: <api-key>
-	processors:
+  processors:
     - mapping: |
         root = {}
         root.raw = content().string()
