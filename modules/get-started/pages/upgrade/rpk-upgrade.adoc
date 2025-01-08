@@ -7,6 +7,8 @@ Redpanda Connect uses the `rpk connect` plugin to manage upgrades, which is auto
 
 The simplest way to upgrade is to use the <<upgrade-to-the-latest-version,`rpk connect upgrade` command>>. But if required, you can also upgrade (or downgrade) to a specific Redpanda Connect version.
 
+NOTE: After upgrading (or downgrading), you must restart a pipeline to use features in the Redpanda Connect version you have deployed.
+
 === Prerequisites
 
 - xref:guides:getting_started.adoc[`rpk` CLI installed]
