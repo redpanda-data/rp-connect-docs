@@ -2,7 +2,7 @@
 // tag::single-source[]
 
 ifdef::env-cloud[]
-NOTE: Environment variables are not currently supported in Redpanda Connect in Redpanda Cloud.
+NOTE: Environment variables are not currently supported in Redpanda Connect in Redpanda Cloud, but you can use xref:redpanda-cloud:develop:connect/configuration/contextual-variables.adoc[contextual variables] to access information about the environment in which a data pipeline is running, and the pipeline itself.
 endif::[]
 
 Redpanda Connect allows you to dynamically set config fields with environment variables anywhere within a config file using the syntax `${<variable-name>}` (or `${<variable-name>:<default-value>}` in order to specify a default value). This is useful for setting environment specific fields such as addresses:
