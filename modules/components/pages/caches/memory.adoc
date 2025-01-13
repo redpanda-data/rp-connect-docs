@@ -3,11 +3,7 @@
 :type: cache
 :status: stable
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 Stores key/value pairs in a map held in memory. This cache is therefore reset every time the service restarts. Each item in the cache has a TTL set from the moment it was last edited, after which it will be removed during the next compaction.
 

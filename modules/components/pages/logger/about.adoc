@@ -2,8 +2,6 @@
 
 // tag::single-source[]
 
-// © 2024 Redpanda Data Inc.
-
 Redpanda Connect logging prints to stdout (or stderr if your output is stdout) and is formatted as https://brandur.org/logfmt[logfmt^] by default. Use these configuration options to change both the logging formats as well as the destination of logs.
 
 ifndef::env-cloud[]

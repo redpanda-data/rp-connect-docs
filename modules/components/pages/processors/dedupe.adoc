@@ -4,11 +4,7 @@
 :status: stable
 :categories: ["Utility"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 Deduplicates messages by storing a key value in a cache using the `add` operator. If the key already exists within the cache it is dropped.
 

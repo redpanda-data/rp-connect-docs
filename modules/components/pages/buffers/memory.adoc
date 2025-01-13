@@ -4,11 +4,7 @@
 :status: stable
 :categories: ["Utility"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 Stores consumed messages in memory and acknowledges them at the input level. During shutdown Redpanda Connect will make a best attempt at flushing all remaining messages before exiting cleanly.
 

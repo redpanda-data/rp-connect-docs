@@ -4,11 +4,7 @@
 :status: stable
 :categories: ["Mapping"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 Checks messages against a provided JSONSchema definition but does not change the payload under any circumstances. If a message does not match the schema it can be caught using xref:configuration:error_handling.adoc[error handling methods].
 

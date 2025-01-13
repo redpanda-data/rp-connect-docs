@@ -4,11 +4,7 @@
 :status: stable
 :categories: ["Composition"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 The `branch` processor allows you to create a new request message via a xref:guides:bloblang/about.adoc[Bloblang mapping], execute a list of processors on the request messages, and, finally, map the result back into the source message using another mapping.
 

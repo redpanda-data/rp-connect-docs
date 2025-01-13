@@ -3,11 +3,7 @@
 :status: experimental
 :categories: ["Integration"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 Listens to a https://www.cockroachlabs.com/docs/stable/changefeed-examples[CockroachDB Core Changefeed^] and creates a message for each row received. Each message is a json object looking like: 
 ```json

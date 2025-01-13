@@ -4,11 +4,7 @@
 :status: stable
 :categories: ["Utility"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 Throttles the throughput of a pipeline according to a specified xref:components:rate_limits/about.adoc[`rate_limit`] resource. Rate limits are shared across components and therefore apply globally to all processing pipelines.
 
