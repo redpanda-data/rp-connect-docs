@@ -4,11 +4,7 @@
 :status: beta
 :categories: ["Services"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 The `kafka_franz` output writes a batch of messages to Kafka brokers and waits for acknowledgement before propagating any acknowledgments back to the input. This output often outperforms the traditional `kafka` output, as well as providing more useful logs and error messages.
 

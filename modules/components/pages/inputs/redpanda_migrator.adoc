@@ -5,9 +5,6 @@
 :page-beta: true
 :categories: ["Services"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
 
 Use this connector in conjunction with the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] to migrate topics between Apache Kafka brokers. The `redpanda_migrator` input uses the https://github.com/twmb/franz-go[Franz Kafka client library^].

@@ -4,11 +4,7 @@
 :status: stable
 :categories: ["Utility"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 Reads messages from a child input until a consumed message passes a xref:guides:bloblang/about.adoc[Bloblang query], at which point the input closes. It is also possible to configure a timeout after which the input is closed if no new messages arrive in that period.
 

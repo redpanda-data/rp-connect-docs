@@ -4,11 +4,7 @@
 :status: stable
 :categories: ["Services"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
-
 
 Pulls messages from Redis (v5.0+) streams with the XREADGROUP command. The `client_id` should be unique for each consumer of a group.
 
