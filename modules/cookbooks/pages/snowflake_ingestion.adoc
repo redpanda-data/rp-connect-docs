@@ -235,7 +235,7 @@ input:
     # but production environment should create files as large as possible.
     batching:
       count: 100 # Collect 10 messages before flushing
-      period: 10s # or after 10 seconds, which ever comes first
+      period: 10s # or after 10 seconds, whichever comes first
 output:
   snowflake_streaming:
     # Make sure to replace this with your account identifier
