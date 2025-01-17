@@ -12,7 +12,7 @@ component_type_dropdown::[]
 include::components:partial$ollama_warning.adoc[]
 
 
-Generates responses to messages in a chat conversation, using the Ollama API.
+Generates responses to messages in a chat conversation, using the Ollama API and external tools.
 
 ifndef::env-cloud[]
 Introduced in version 4.32.0.
@@ -25,14 +25,17 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 label: ""
 ollama_chat:
   model: llama3.1 # No default (required)
   prompt: "" # No default (optional)
+  image: 'root = this.image.decode("base64")' # Decode base64 encoded image. No default (optional)
   response_format: text
   max_tokens: 0 # No default (optional)
   temperature: 0 # No default (optional)
+  save_prompt_metadata: false
+  tools: [] # No default (required)
   runner:
     context_size: 0 # No default (optional)
     batch_size: 0 # No default (optional)
@@ -45,12 +48,13 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 label: ""
 ollama_chat:
   model: llama3.1 # No default (required)
   prompt: "" # No default (optional)
   system_prompt: "" # No default (optional)
+  image: 'root = this.image.decode("base64")' # Decode base64 encoded image. No default (optional)
   response_format: text
   max_tokens: 0 # No default (optional)
   temperature: 0 # No default (optional)
@@ -62,6 +66,9 @@ ollama_chat:
   presence_penalty: 0 # No default (optional)
   frequency_penalty: 0 # No default (optional)
   stop: [] # No default (optional)
+  save_prompt_metadata: false
+  max_tool_calls: 3
+  tools: [] # No default (required)
   runner:
     context_size: 0 # No default (optional)
     batch_size: 0 # No default (optional)
@@ -77,11 +84,12 @@ ollama_chat:
 --
 ======
 
-This processor sends prompts to your chosen Ollama large language model (LLM) and generates text from the responses, using the Ollama API.
+This processor sends prompts to your chosen Ollama large language model (LLM) and generates text from the responses, using the Ollama API and external tools.
 
 By default, the processor starts and runs a locally installed Ollama server. Alternatively, to use an already running Ollama server, add your server details to the `server_address` field. You can https://ollama.com/download[download and install Ollama from the Ollama website^].
 
-For more information, see the https://github.com/ollama/ollama/tree/main/docs[Ollama documentation^].
+For more information, see the https://github.com/ollama/ollama/tree/main/docs[Ollama documentation^] and <<Examples, examples>>.
+
 
 == Fields
 
@@ -110,22 +118,30 @@ model: phi3
 The prompt you want to generate a response for. By default, the processor submits the entire payload as a string.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-
 *Type*: `string`
-
 
 === `system_prompt`
 
 The system prompt to submit to the Ollama LLM.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
+*Type*: `string`
+
+=== `image`
+
+An optional image to submit along with the <<prompt, `prompt`>> value. The result is a byte array.
 
 *Type*: `string`
 
+```yml
+# Examples
+
+image: 'root = this.image.decode("base64") # Decode base64 encoded image'
+```
 
 === `response_format`
 
-The format of the response that the Ollama model generates. If specifying JSON output, then the `prompt` should specify that the output should be in JSON as well.
+The format of the response the Ollama model generates. If specifying JSON output, then the `prompt` should specify that the output should be in JSON as well.
 
 
 *Type*: `string`
@@ -217,8 +233,98 @@ Positive values penalize new tokens based on the frequency of their appearance i
 
 === `stop`
 
-Sets the stop sequences to use. When this pattern is encountered the LLM stops generating text and returns the final response.
+Sets the stop sequences to use. When this pattern is encountered, the LLM stops generating text and returns the final response.
 
+
+*Type*: `array`
+
+=== `save_prompt_metadata`
+
+Set to `true` to save the prompt value to a metadata field (`@prompt`) on the corresponding output message. If you use the `system_prompt` field, its value is also saved to an `@system_prompt` metadata field on each output message.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+
+=== `max_tool_calls`
+
+The maximum number of sequential calls you can make to external tools to retrieve additional information to answer a prompt.
+
+*Type*: `int`
+
+*Default*: `3`
+
+=== `tools`
+
+The external tools the LLM can invoke, such as functions, APIs, or web browsing. You can build sub-pipelines that include definitions of these tools, and the LLM chooses when to invoke them to help answer a prompt. For more details, see <<Examples, examples>>.
+
+*Type*: `string`
+
+
+=== `tools[].name`
+
+The name of the external tool you want to use.
+
+*Type*: `string`
+
+
+=== `tools[].description`
+
+A description of what the tool does, which the LLM uses to decide when to invoke it.
+
+*Type*: `string`
+
+
+=== `tools[].parameters`
+
+The parameters the LLM needs to provide to invoke the tool.
+
+*Type*: `object`
+
+
+=== `tools[].parameters.required`
+
+The parameters you must define.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+
+=== `tools[].parameters.properties`
+
+The required inputs to invoke the tool.
+
+*Type*: `object`
+
+
+=== `tools[].parameters.properties.<name>.type`
+
+The data type of the parameter.
+
+*Type*: `string`
+
+
+=== `tools[].parameters.properties.<name>.description`
+
+A description of the parameter.
+
+*Type*: `string`
+
+
+=== `tools[].parameters.properties.<name>.enum`
+
+Sets this parameter to a enum, and defines the specific set of values the LLM must use.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+
+=== `tools[].processors`
+
+The Redpanda Connect processors to execute when the LLM invokes the external tool.
 
 *Type*: `array`
 
@@ -313,5 +419,72 @@ If `server_address` is not set - the URL to download the ollama binary from. Def
 
 
 *Type*: `string`
+
+== Examples
+
+[tabs]
+=====
+Analyze an image and generate a description for it::
++
+--
+This configuration fetches image URLs from stdin and uses the LLaVA LLM to describe the images.
+
+```yaml
+input:
+  stdin:
+    scanner:
+      lines: {}
+pipeline:
+  processors:
+    - http:
+        verb: GET
+        url: "${!content().string()}"
+    - ollama_chat:
+        model: llava
+        prompt: "Describe the following image"
+        image: "root = content()"
+output:
+  stdout:
+    codec: lines
+```
+--
+
+Use a sub-pipeline to make calls to external tools::
++
+--
+In this configuration, the LLama 3.2 model executes a sub-pipeline, which makes a tool call to retrieve weather data for a specific city.
+
+```yaml
+input:
+  generate:
+    count: 1
+    mapping: |
+      root = "What is the weather like in Chicago?"
+pipeline:
+  processors:
+    - ollama_chat:
+        model: llama3.2
+        prompt: "${!content().string()}"
+        tools:
+          - name: GetWeather
+            description: "Retrieve the weather for a specific city"
+            parameters:
+              required: ["city"]
+              properties:
+                city:
+                  type: string
+                  description: the city to lookup the weather for
+            processors:
+              - http:
+                  verb: GET
+                  url: 'https://wttr.in/${!this.city}?T'
+                  headers:
+                    # Uses the curl user-agent to return a text string from the weather report website
+                    User-Agent: curl/8.11.1
+output:
+  stdout: {}
+```
+--
+=====
 
 // end::single-source[]
