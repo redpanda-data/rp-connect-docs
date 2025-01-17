@@ -264,9 +264,8 @@ echo '{"animal":"polar bear","attributes":"cool","age":13}' | rpk topic produce 
 echo '{"animal":"unicorn","attributes":"rare","age":999}' | rpk topic produce demo_topic -f '%v\n'
 ----
 
-With the data produced into the topic, it will be consumed and streamed into Snowflake on the order of seconds.
-We can now go back to our Snowflake worksheet and run the following query to see data showing up live, with the
-schema from the JSON data we produced.
+The data produced into the topic is consumed and streamed into Snowflake on the order of seconds. You can now go back to the Snowflake worksheet and run the following query to see data show up live, with the
+schema from the JSON data you produced.
 
 [source,sql]
 ----
