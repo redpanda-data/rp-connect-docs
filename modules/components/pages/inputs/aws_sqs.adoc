@@ -97,7 +97,7 @@ Whether to delete the consumed message when it's acknowledged. Set to `false` to
 
 === `reset_visibility`
 
-Whether to set the visibility timeout of the consumed message to zero if Redpanda Connect receives a negative acknowledgement. Set to `false` to use the https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html[visibility timeout^] specified for the queue.
+Whether to set the visibility timeout of the consumed message to zero if Redpanda Connect receives a negative acknowledgement. Set to `false` to use the https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html[ queue's visibility timeout^] for each message rather than releasing the message immediately for reprocessing.
 
 *Type*: `bool`
 
@@ -117,7 +117,7 @@ The maximum number of messages that Redpanda Connect can return each time it pol
 
 === `max_outstanding_messages`
 
-The maximum number of pending messages that Redpanda Connect can consume at the same time.
+The maximum number of pending messages that Redpanda Connect can have in flight at the same time.
 
 *Type*: `int`
 
@@ -133,7 +133,7 @@ Whether to set a wait time (in seconds). Enter values from `1` to `20` to enable
 
 === `message_timeout`
 
-The maximum time allowed to process a received message before Redpanda Connect refreshes the https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-message-identifiers.html[receipt handle^], and the message becomes visible in the queue again. A message is eligible for refresh after half of the timeout has elapsed.
+The maximum time allowed to process a received message before Redpanda Connect refreshes the https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-message-identifiers.html[receipt handle^], and the message becomes visible in the queue again. Redpanda Connect attempts to refresh the receipt handle after half of the timeout has elapsed.
 
 *Type*: `string`
 
