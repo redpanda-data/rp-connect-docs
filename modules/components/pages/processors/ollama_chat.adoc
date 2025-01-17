@@ -473,14 +473,13 @@ pipeline:
               properties:
                 city:
                   type: string
-                  description: the city to lookup the weather for
+                  description: the city to look up the weather for
             processors:
               - http:
                   verb: GET
                   url: 'https://wttr.in/${!this.city}?T'
                   headers:
-                    # Uses the curl user-agent to return a text string from the weather report website
-                    User-Agent: curl/8.11.1
+                    User-Agent: curl/8.11.1 # Returns a text string from the weather website
 output:
   stdout: {}
 ```
