@@ -231,9 +231,8 @@ input:
       - mechanism: SCRAM-SHA-256
         username: ingestion_user
         password: ${secrets.REDPANDA_PASS}
-    # Define our batching policy. For this cookbook, we'll create small batches
-    # but in a production environment we'll want to create as large of files as
-    # possible.
+    # Define the batching policy. This cookbook creates small batches,
+    # but production environment should create files as large as possible.
     batching:
       count: 100 # Collect 10 messages before flushing
       period: 10s # or after 10 seconds, which ever comes first
