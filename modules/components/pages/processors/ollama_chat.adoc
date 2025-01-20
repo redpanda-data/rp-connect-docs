@@ -12,7 +12,7 @@ component_type_dropdown::[]
 include::components:partial$ollama_warning.adoc[]
 
 
-Generates responses to messages in a chat conversation, using the Ollama API and external tools.
+Generates responses to messages in a chat conversation using the Ollama API and external tools.
 
 ifndef::env-cloud[]
 Introduced in version 4.32.0.
@@ -84,9 +84,9 @@ ollama_chat:
 --
 ======
 
-This processor sends prompts to your chosen Ollama large language model (LLM) and generates text from the responses, using the Ollama API and external tools.
+This processor sends prompts to your chosen Ollama large language model (LLM) and generates text from the responses using the Ollama API and external tools.
 
-By default, the processor starts and runs a locally installed Ollama server. Alternatively, to use an already running Ollama server, add your server details to the `server_address` field. You can https://ollama.com/download[download and install Ollama from the Ollama website^].
+By default, the processor starts and runs a locally-installed Ollama server. Alternatively, to use an already running Ollama server, add your server details to the `server_address` field. You can https://ollama.com/download[download and install Ollama from the Ollama website^].
 
 For more information, see the https://github.com/ollama/ollama/tree/main/docs[Ollama documentation^] and <<Examples, examples>>.
 
@@ -136,7 +136,7 @@ An optional image to submit along with the <<prompt, `prompt`>> value. The resul
 ```yml
 # Examples
 
-image: 'root = this.image.decode("base64") # Decode base64 encoded image'
+image: 'root = this.image.decode("base64")' # Decode base64 encoded image
 ```
 
 === `response_format`
@@ -257,7 +257,7 @@ The maximum number of sequential calls you can make to external tools to retriev
 
 === `tools`
 
-The external tools the LLM can invoke, such as functions, APIs, or web browsing. You can build sub-pipelines that include definitions of these tools, and the LLM chooses when to invoke them to help answer a prompt. For more details, see <<Examples, examples>>.
+The external tools the LLM can invoke, such as functions, APIs, or web browsing. You can build a series of processors that include definitions of these tools, and the specified LLM can choose when to invoke them to help answer a prompt. For more information, see <<Examples, examples>>.
 
 *Type*: `string`
 
@@ -271,7 +271,7 @@ The name of the external tool you want to use.
 
 === `tools[].description`
 
-A description of what the tool does, which the LLM uses to decide when to invoke it.
+A description of what the tool does. The LLM uses this to decide when to invoke the tool.
 
 *Type*: `string`
 
@@ -449,10 +449,10 @@ output:
 ```
 --
 
-Use a sub-pipeline to make calls to external tools::
+Use a series of processors to make calls to external tools::
 +
 --
-In this configuration, the LLama 3.2 model executes a sub-pipeline, which makes a tool call to retrieve weather data for a specific city.
+In this configuration, the LLama 3.2 model executes a number of processors, which make a tool call to retrieve weather data for a specific city from a weather report website.
 
 ```yaml
 input:
