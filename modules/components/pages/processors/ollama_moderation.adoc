@@ -105,7 +105,7 @@ model: shieldgemma
 
 The prompt you used to generate a response from an LLM.
 
-If you're using the `ollama_chat` processor, you can set the `save_prompt_metadata` field to save the contents of your prompts. You can then run them through `ollama_moderation` processor to check the model responses for safety. For more details, see <<examples, Examples>>.
+If you're using the `ollama_chat` processor, you can set the `save_prompt_metadata` field to save the contents of your prompts. You can then run them through `ollama_moderation` processor to check the model responses for safety. For more details, see <<Examples, Examples>>.
 
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
@@ -211,7 +211,7 @@ If `server_address` is not set, download the Ollama binary from this URL. The de
 
 == Examples
 
-This example uses Llama Guard 3 to check if another model responded with a safe or unsafe content.
+This example uses Llama Guard 3 to check if another model (LLaVA) responded with a safe or unsafe content.
 
 ```yaml
 input:
