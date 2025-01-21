@@ -385,7 +385,7 @@ root.doc.error = error()
 
 === `error_source_label`
 
-Returns the label of the component that raised the error during the processing of a message, or an empty string if not set. A `null` is returned when the error is null or no component is associated with the source of the error. For more information about error-handling patterns read xref:configuration:error_handling.adoc[].
+Returns the label of the component that raised the error during the processing of a message, or an empty string if not set. A `null` is returned when the error is null or no component is associated with the source of the error. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
 
 ==== Examples
 
@@ -395,7 +395,7 @@ root.doc.error_source_label = error_source_label()
 
 === `error_source_name`
 
-Returns the name of the component that raised the error during the processing of a message. A `null` is returned when the error is null or no component is associated with the source of the error. For more information about error-handling patterns read xref:configuration:error_handling.adoc[].
+Returns the name of the component that raised the error during the processing of a message. A `null` is returned when the error is null or no component is associated with the source of the error. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
 
 ==== Examples
 
@@ -405,7 +405,7 @@ root.doc.error_source_name = error_source_name()
 
 === `error_source_path`
 
-Returns the path of the component that raised the error during the processing of a message. A `null` is returned when the error is null or no component is associated with source of the error. For more information about error-handling patterns read xref:configuration:error_handling.adoc[].
+Returns the path of the component that raised the error during the processing of a message. A `null` is returned when the error is null or no component is associated with source of the error. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
 
 ==== Examples
 
@@ -415,7 +415,7 @@ root.doc.error_source_path = error_source_path()
 
 === `errored`
 
-Returns a boolean value indicating whether an error has occurred during the processing of a message. For more information about error handling patterns read xref:configuration:error_handling.adoc[].
+Returns a boolean value indicating whether an error has occurred during the processing of a message. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
 
 ==== Examples
 
