@@ -15,6 +15,8 @@ component_type_dropdown::[]
 Use the `redpanda_migrator_offsets` output in conjunction with a `kafka_franz` input that is configured to read the `__consumer_offsets` topic.
 This output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
+Alternatively, use the `redpanda_migrator_bundle` xref:components:inputs/redpanda_migrator_bundle.adoc[input] and xref:components:outputs/redpanda_migrator_bundle.adoc[output] to complete the migration of topics, messages, and schemas to a Redpanda cluster.
+
 
 ifndef::env-cloud[]
 Introduced in version 4.37.0.
@@ -451,7 +453,7 @@ The maximum period of time after which metadata is refreshed.
 
 === offset_topic
 
-The Kafka offset topic ID to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The name of the Kafka offset topic to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -459,7 +461,7 @@ The Kafka offset topic ID to process. This field supports xref:configuration:int
 
 === offset_group
 
-The Kafka consumer group offset to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The name of the Kafka offset consumer group to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
