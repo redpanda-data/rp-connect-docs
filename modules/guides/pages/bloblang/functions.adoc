@@ -374,13 +374,43 @@ root.doc = content().string()
 
 === `error`
 
-If an error has occurred during the processing of a message this function returns the reported cause of the error as a string, otherwise `null`. For more information about error handling patterns read xref:configuration:error_handling.adoc[].
+If an error occurs during the processing of a message, this function returns the reported cause as a string, otherwise `null`. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
 
 ==== Examples
 
 
 ```coffeescript
 root.doc.error = error()
+```
+
+=== `error_source_label`
+
+Returns the label of the source component that raised the error during the processing of a message, or an empty string if not set. A `null` is returned when the error is null or no source component is associated with the error. For more information about error-handling patterns read xref:configuration:error_handling.adoc[].
+
+==== Examples
+
+```coffeescript
+root.doc.error_source_label = error_source_label()
+```
+
+=== `error_source_name`
+
+Returns the name of the source component that raised the error during the processing of a message. A `null` is returned when the error is null or no source component is associated with the error. For more information about error-handling patterns read xref:configuration:error_handling.adoc[].
+
+==== Examples
+
+```coffeescript
+root.doc.error_source_name = error_source_name()
+```
+
+=== `error_source_path`
+
+Returns the path of the source component that raised the error during the processing of a message. A `null` is returned when the error is null or no source component is associated with the error. For more information about error-handling patterns read xref:configuration:error_handling.adoc[].
+
+==== Examples
+
+```coffeescript
+root.doc.error_source_path = error_source_path()
 ```
 
 === `errored`
