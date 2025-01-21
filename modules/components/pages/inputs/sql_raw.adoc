@@ -164,8 +164,7 @@ query: SELECT * FROM footable WHERE user_id = $1;
 
 An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that includes the same number of values in an array as the placeholder arguments in the <<query, `query`>> field.
 
-*Type*: `string`
-
+*Type*: `bloblang`
 
 ```yml
 # Examples

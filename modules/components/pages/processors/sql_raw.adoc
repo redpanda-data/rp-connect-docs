@@ -154,9 +154,7 @@ Whether to enable xref:configuration:interpolation.adoc#bloblang-queries[interpo
 
 An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that includes the same number of values in an array as the placeholder arguments in the <<query, `query`>> field.
 
-
-*Type*: `string`
-
+*Type*: `bloblang`
 
 ```yml
 # Examples
@@ -168,7 +166,7 @@ args_mapping: root = [ meta("user.id") ]
 
 === `exec_only`
 
-Whether to discard the query result. Set to `true` to leave the message contents unchanged, which is useful when you are executing inserts, updates, and so on. By default, the message contents are kept for the last query executed, and previous queries don't change the results. If you set this field to `true` for any query but the last one, the subsequent `args_mappings` input is overwritten.
+Whether to discard the <<query, `query`>> result. Set to `true` to leave the message contents unchanged, which is useful when you are executing inserts, updates, and so on. By default, the message contents are kept for the last query executed, and previous queries don't change the results.
 
 *Type*: `bool`
 
@@ -193,13 +191,21 @@ include::components:partial$query_table.adoc[]
 
 An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that includes the same number of values in an array as the placeholder arguments in the <<query, `query`>> field.
 
-*Type*: `string`
+*Type*: `bloblang`
 
 ```yml
 # Examples
+
 args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
+
 args_mapping: root = [ meta("user.id") ]
 ```
+
+=== `queries[].exec_only`
+
+Whether to discard the query result. Set to `true` to leave the message contents unchanged, which is useful when you are executing inserts, updates, and so on. By default, the message contents are kept for the last query executed, and previous queries don't change the results. If you set this field to `true` for any query but the last one, the subsequent `args_mappings` input is overwritten.
+
+*Type*: `bool`
 
 === `init_files`
 

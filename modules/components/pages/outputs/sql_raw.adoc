@@ -60,10 +60,10 @@ output:
     init_files: [] # No default (optional)
     init_statement: | # No default (optional)
       CREATE TABLE IF NOT EXISTS some_table (
-        foo varchar(50) not null,
-        bar integer,
-        baz varchar(50),
-        primary key (ID)
+        column1 varchar(50) not null,
+        column2 integer,
+        column3 varchar(50),
+        primary key (column1)
       ) WITHOUT ROWID;
     conn_max_idle_time: "" # No default (optional)
     conn_max_life_time: "" # No default (optional)
@@ -161,7 +161,7 @@ Whether to enable xref:configuration:interpolation.adoc#bloblang-queries[interpo
 
 An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that includes the same number of values in an array as the placeholder arguments in the <<query, `query`>> field.
 
-*Type*: `string`
+*Type*: `bloblang`
 
 
 ```yml
@@ -193,11 +193,27 @@ include::components:partial$query_table.adoc[]
 
 An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that includes the same number of values in an array as the placeholder arguments in the <<query, `query`>> field.
 
-*Type*: `string`
+*Type*: `bloblang`
 
 ```yml
 # Examples
+
 args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
+
+args_mapping: root = [ meta("user.id") ]
+```
+
+=== `queries[].exec_only`
+
+An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that includes the same number of values in an array as the placeholder arguments in the <<query, `query`>> field.
+
+*Type*: `bloblang`
+
+```yml
+# Examples
+
+args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
+
 args_mapping: root = [ meta("user.id") ]
 ```
 
