@@ -19,7 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   amqp_1:
@@ -36,7 +36,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   amqp_1:
@@ -57,6 +57,7 @@ output:
       password: ""
     metadata:
       exclude_prefixes: []
+    content_type: opaque_binary
 ```
 
 --
@@ -64,7 +65,7 @@ output:
 
 == Metadata
 
-Message metadata is added to each AMQP message as string annotations. In order to control which metadata keys are added use the `metadata` config field.
+Message metadata is added to each AMQP message as string annotations. To control which metadata keys are added, use the `metadata` configuration field.
 
 == Performance
 
@@ -299,7 +300,7 @@ The SASL authentication mechanism to use.
 
 *Type*: `string`
 
-*Default*: `"none"`
+*Default*: `none`
 
 |===
 | Option | Summary
@@ -364,3 +365,16 @@ Provide a list of explicit metadata key prefixes to be excluded when adding meta
 *Default*: `[]`
 
 
+=== `content_type`
+
+The content type of the message body.
+
+Set this field value to `string` to transfer each message as an AMQP string. Consider using the `string` option if you want to write UTF-8 string messages, such as JSON messages, to your data destination.
+
+*Type*: `string`
+
+*Default*: `opaque_binary`
+
+Options:
+`opaque_binary`
+, `string`
