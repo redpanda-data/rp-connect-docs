@@ -484,6 +484,32 @@ output:
   stdout: {}
 ```
 --
+Check prompts for unsafe content::
++
+--
+This configuration uses the https://ollama.com/library/llama-guard3[Llama Guard 3 model^] to check that prompts comply with safety standards. Prompts that do not comply are marked as `unsafe` and deleted.
+
+```yaml
+pipeline:
+  processors:
+    - branch:
+        processors:
+          - ollama_chat:
+              model: llama-guard3
+              prompt: ${!this.prompt}
+        result_map: |
+          root.safety = content()
+    # Drop the message from the pipeline if it's unsafe
+    - mapping: |
+        root = if this.safety.has_prefix("unsafe") {
+          deleted()
+        }
+      # The input prompt has been checked for safety.
+    - ollama_chat:
+        model: llama3.2
+        prompt: ${!this.prompt}
+```
+--
 =====
 
 // end::single-source[]
