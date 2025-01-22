@@ -66,7 +66,7 @@ input:
 --
 ======
 
-When the rows from the query are exhausted this input shuts down, allowing the pipeline to gracefully terminate (or the next input in a xref:components:inputs/sequence.adoc[sequence] to execute).
+When the rows from the query are exhausted, this input shuts down, allowing the pipeline to gracefully terminate or for the next input in a xref:components:inputs/sequence.adoc[sequence] to execute).
 
 == Examples
 
@@ -77,7 +77,7 @@ Consumes an SQL table using a query as an input.::
 --
 
 
-Perform an aggregate over a list of names in a table that are less than 3600 seconds old.
+Perform an aggregate over names in a table that are less than one hour (3600 seconds) old.
 
 ```yaml
 input:

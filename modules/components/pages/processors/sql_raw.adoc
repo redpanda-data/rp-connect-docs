@@ -203,7 +203,7 @@ args_mapping: root = [ meta("user.id") ]
 
 === `queries[].exec_only`
 
-Whether to discard the query result. Set to `true` to leave the message contents unchanged, which is useful when you are executing inserts, updates, and so on. By default, the message contents are kept for the last query executed, and previous queries don't change the results. If you set this field to `true` for any query but the last one, the subsequent `args_mappings` input is overwritten.
+Whether to discard the query result. Set to `true` to leave the message contents unchanged, which is useful when you are executing inserts, updates, and so on. By default, the message contents are kept for the last query executed, and previous queries don't change the results. If you set this field to `true` for any query but the last one, the subsequent `args_mapping` input is overwritten.
 
 *Type*: `bool`
 
