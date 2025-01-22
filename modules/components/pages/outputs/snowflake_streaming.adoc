@@ -8,7 +8,7 @@ component_type_dropdown::[]
 
 Allows Snowflake to ingest data from your data pipeline using https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview[Snowpipe Streaming^].
 
-To help you configure your own `snowflake_streaming` output, this page includes two <<example-pipelines,example data pipelines>>.
+To help you configure your own `snowflake_streaming` output, this page includes <<example-pipelines,example data pipelines>>.
 
 ifndef::env-cloud[]
 Introduced in version 4.39.0.
@@ -28,9 +28,9 @@ output:
     account: ORG-ACCOUNT # No default (required)
     user: "" # No default (required)
     role: ACCOUNTADMIN # No default (required)
-    database: "" # No default (required)
-    schema: "" # No default (required)
-    table: "" # No default (required)
+    database: MYDATABASE # No default (required)
+    schema: PUBLIC # No default (required)
+    table: MYTABLE # No default (required)
     private_key: "" # No default (optional)
     private_key_file: "" # No default (optional)
     private_key_pass: "" # No default (optional)
@@ -39,6 +39,14 @@ output:
       CREATE TABLE IF NOT EXISTS mytable (amount NUMBER);
     schema_evolution:
       enabled: false # No default (required)
+      new_column_type_mapping: |-
+        root = match this.value.type() {
+          this == "string" => "STRING"
+          this == "bytes" => "BINARY"
+          this == "number" => "DOUBLE"
+          this == "bool" => "BOOLEAN"
+          this == "timestamp" => "TIMESTAMP"
+          _ => "VARIANT"
     batching:
       count: 0
       byte_size: 0
@@ -60,15 +68,15 @@ output:
     account: ORG-ACCOUNT # No default (required)
     user: "" # No default (required)
     role: ACCOUNTADMIN # No default (required)
-    database: "" # No default (required)
-    schema: "" # No default (required)
-    table: "" # No default (required)
+    database: MYDATABASE # No default (required)
+    schema: PUBLIC # No default (required)
+    table: MYTABLE # No default (required)
     private_key: "" # No default (optional)
     private_key_file: "" # No default (optional)
     private_key_pass: "" # No default (optional)
     mapping: "" # No default (optional)
     init_statement: | # No default (optional)
-      CREATE TABLE IF NOT EXISTS <table-name> (amount NUMBER);
+      CREATE TABLE IF NOT EXISTS mytable (amount NUMBER);
     schema_evolution:
       enabled: false # No default (required)
       new_column_type_mapping: |-
@@ -90,7 +98,9 @@ output:
       check: ""
       processors: [] # No default (optional)
     max_in_flight: 4
-    channel_prefix: "" # No default (optional)
+    channel_prefix: channel-${HOST} # No default (optional)
+    channel_name: partition-${!@kafka_partition} # No default (optional)
+    offset_token: offset-${!"%016X".format(@kafka_offset)} # No default (optional)
 ```
 
 --
@@ -188,6 +198,7 @@ Use the format `<orgname>-<account_name>` where:
 
 ```yml
 # Examples
+
 account: ORG-ACCOUNT
 ```
 
@@ -206,6 +217,7 @@ The role of the user specified in the `user` field. The user's role must have th
 
 ```yml
 # Examples
+
 role: ACCOUNTADMIN
 ```
 
@@ -215,18 +227,35 @@ The Snowflake database you want to write data to.
 
 *Type*: `string`
 
+```yml
+# Examples
+
+database: MY_DATABASE
+```
+
 === `schema`
 
 The schema of the Snowflake database you want to write data to.
 
 *Type*: `string`
 
+```yml
+# Examples
+
+schema: PUBLIC
+```
 
 === `table`
 
-The Snowflake table you want to write data to.
+The Snowflake table you want to write data to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
+
+```yml
+# Examples
+
+table: MY_TABLE
+```
 
 === `private_key`
 
@@ -445,9 +474,9 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `channel_prefix`
 
-The prefix to use when creating a channel name for connecting to a Snowflake table. Without a value for `channel_prefix`, this output creates a channel name based on a table's fully qualified name, which results in a single stream per table. 
+The prefix to use when creating a channel name for connecting to a Snowflake table. Adding a `channel_prefix` avoids the creation of duplicate channel names, which result in errors and prevent multiple instances of Redpanda Connect from writing at the same time.
 
-Adding a `channel_prefix` also avoids the creation of duplicate channel names, which can cause errors and prevent multiple instances of Redpanda Connect from writing at the same time. 
+You can specify either the `channel_prefix` or `channel_name`, but not both. If neither field is populated, this output creates a channel name based on a table's fully-qualified name, which results in a single stream per table. 
 
 The maximum number of channels open at any time is determined by the value in the `max_in_flight` field. 
 
@@ -455,33 +484,127 @@ NOTE: There is a hard limit of 10,000 streams per table. If you need to use more
 
 *Type*: `string`
 
+```yml
+# Examples
+
+channel_prefix: channel-${HOST}
+```
+
+=== `channel_name`
+
+The channel name to use when connecting to a Snowflake table. Duplicate channel names cause errors and prevent multiple instances of Redpanda Connect from writing at the same time, and so this field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+Redpanda Connect assumes that a message batch contains messages for a single channel, which means that interpolation is only executed on the first message in each batch. If your pipeline uses an input that is partitioned, such as an Apache Kafka topic, batch messages at the input level to make sure all messages are processed by the same channel.
+
+You can specify either the `channel_name` or `channel_prefix`, but not both. If neither field is populated, this output creates a channel name based on a table's fully-qualified name, which results in a single stream per table.
+
+NOTE: There is a hard limit of 10,000 streams per table. If you need to use more than 10,000 streams, contact Snowflake support.
+
+*Type*: `string`
+
+```yml
+# Examples
+
+channel_name: partition-${!@kafka_partition}
+```
+
+=== `offset_token`
+
+The offset token to use for exactly-once delivery of data to a Snowflake table. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+This output assumes that messages within a batch are in increasing order by offset token. When data is sent on a channel, the offset token of each message in the batch is compared to the latest token processed by the channel. If the offset token is lexicographically less than the latest token, it's assumed the message is a duplicate and is dropped. Messages must be delivered to the output in order, otherwise they are processed as duplicates and dropped.
+
+To avoid dropping retried messages if later messages have succeeded in the meantime, use a dead-letter queue to process failed messages. See the <<example-pipelines, Ingesting data exactly once from Redpanda>> example.
+
+NOTE: If you're using a numeric value as an offset token, pad the value so that it's lexicographically ordered in its string representation, since offset tokens are compared in string form. For more details, see the <<example-pipelines, Ingesting data exactly once from Redpanda>> example.
+
+For more information about offset tokens, see https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#offset-tokens[Snowflake Documentation^].
+
+*Type*: `string`
+
+```yml
+# Examples
+
+offset_token: offset-${!"%016X".format(@kafka_offset)}
+
+offset_token: postgres-${!@lsn}
+```
+
 == Example pipelines
 
 The following examples show you how to ingest, process, and write data to Snowflake from:
 
+* A PostgreSQL table using change data capture (CDC)
 * A Redpanda cluster
 * A REST API that posts JSON payloads to a HTTP server
 
 [tabs]
 ======
-Ingesting data from Redpanda::
+Write data exactly once to a Snowflake table using CDC::
++
+--
+Send data from a PostgreSQL table and write it to Snowflake exactly once using PostgreSQL logical replication.
+
+This example includes some important features:
+
+* To make sure that a Snowflake streaming channel does not see older data and assume that it is already committed, the configuration sets a 45 second interval between message batches. This prevents a message batch from being sent while another batch is retried.
+* The log sequence number of each data update from the Write-Ahead Log (WAL) in PostgreSQL makes sure that data is only uploaded once to the `snowflake_streaming` output, and that messages sent to the output are already lexicographically ordered.
+
+NOTE: To do exactly-once data delivery, it's important that records are delivered in order to the output, and are correctly partitioned. Before you start, read the <<offset_token,`offset_token`>> field description. Alternatively, remove the `offset_token` field to use Redpanda Connect's default at-least-once delivery model.
+
+```yaml
+input:
+  postgres_cdc:
+    dsn: postgres://foouser:foopass@localhost:5432/foodb
+    schema: "public"
+    tables: ["my_pg_table"]
+    # Use very large batches. Each batch is sent to Snowflake individually,
+    # so to optimize query performance use as big files as there is memory for
+    batching:
+      count: 50000
+      period: 45s
+    # Set an interval between message batches to prevent multiple batches 
+    # from being in flight at once
+    checkpoint_limit: 1
+output:
+  snowflake_streaming:
+    # Using the log sequence number makes sure data is only updated exactly once
+    offset_token: "${!@lsn}"
+    # Sending a single ordered log means you can only send one update
+    # at a time and properly increment the offset_token
+    # and use only a single channel.
+    max_in_flight: 1
+    account: "MYSNOW-ACCOUNT"
+    user: MYUSER
+    role: ACCOUNTADMIN
+    database: "MYDATABASE"
+    schema: "PUBLIC"
+    table: "MY_PG_TABLE"
+    private_key_file: "my/private/key.p8"
+```
+--
+Ingest data exactly once from Redpanda::
 +
 --
 Ingest data from Redpanda using consumer groups, decode the schema using the schema registry, then write the corresponding data into Snowflake.
 
-NOTE: To create multiple Redpanda Connect streams to write to each output table, you need a unique channel prefix per stream. In this example, the `channel_prefix` field constructs a unique prefix for each stream using the host name.
+This examples includes some important features:
+
+* To create multiple Redpanda Connect streams to write to each output table, you need a unique channel prefix per stream. The `channel_prefix` field constructs a unique prefix for each stream using the host name.
+* To prevent message failures from being retried and changing the order of delivered messages, a dead-letter queue processes them. For more details about message ordering, see the xref:components:inputs/redpanda_common.adoc#ordering[`redpanda_common` input] documentation.
+
+NOTE: To do exactly-once data delivery, it's important that records are delivered in order to the output, and are correctly partitioned. Before you start, read the <<channel_name, `channel_name`>> and <<offset_token, `offset_token`>> field descriptions. Alternatively, remove the `offset_token` field to use Redpanda Connect's default at-least-once delivery model.
 
 ```yaml
 input:
-  kafka_franz:
-    seed_brokers: ["redpanda.example.com:9092"]
+  redpanda_common:
     topics: ["my_topic_going_to_snow"]
     consumer_group: "redpanda_connect_to_snowflake"
-    tls: {enabled: true}
-    sasl:
-      - mechanism: SCRAM-SHA-256
-        username: MY_USER_NAME
-        password: "${TODO}"
+    # Use very large batches. Each batch is sent to Snowflake individually,
+    # so to optimize query performance use as big files as there is memory for
+    fetch_max_bytes: 100MiB
+    fetch_min_bytes: 50MiB
+    partition_buffer_bytes: 100MiB
 pipeline:
   processors:
     - schema_registry_decode:
@@ -491,25 +614,40 @@ pipeline:
           username: MY_USER_NAME
           password: "${TODO}"
 output:
-  snowflake_streaming:
-    account: "MYSNOW-ACCOUNT"
-    user: MYUSER
-    role: ACCOUNTADMIN
-    database: "MYDATABASE"
-    schema: "PUBLIC"
-    table: "MYTABLE"
-    private_key_file: "my/private/key.p8"
-    channel_prefix: "snowflake-channel-for-${HOST}"
-    schema_evolution:
-      enabled:true
+  fallback:
+    - snowflake_streaming:
+        # To write an ordered stream of messages, each partition in 
+        # Apache Kafka gets its own channel.
+        channel_name: "partition-${!@kafka_partition}"
+        # Offsets are lexicographically sorted in string form by padding with
+        # leading zeros
+        offset_token: offset-${!"%016X".format(@kafka_offset)}
+        account: "MYSNOW-ACCOUNT"
+        user: MYUSER
+        role: ACCOUNTADMIN
+        database: "MYDATABASE"
+        schema: "PUBLIC"
+        table: "MYTABLE"
+        private_key_file: "my/private/key.p8"
+        schema_evolution:
+          enabled: true
+    # To prevent delivery failures from changing the order of 
+    # delivered records, it's important that they are immediately 
+    # sent to a dead-letter queue.
+    - retry:
+        output:
+          redpanda_common:
+            topic: "dead_letter_queue"
 ```
 --
 HTTP server to push data to Snowflake::
 +
 --
-Create a HTTP server input that receives HTTP PUT requests with JSON payloads. The payloads are buffered locally then written to Snowflake in batches.
+Create a HTTP server input that receives HTTP PUT requests with JSON payloads. 
 
-This example uses a buffer to immediately respond to the HTTP requests. This may result in data loss if there are delivery failures between the output and Snowflake.
+The payloads are buffered locally then written to Snowflake in batches. To create multiple Redpanda Connect streams to write to each output table, you need a unique channel prefix per stream. In this example, the `channel_prefix` field constructs a unique prefix for each stream using the host name.
+
+NOTE: Using a buffer to immediately respond to the HTTP requests may result in data loss if there are delivery failures between the output and Snowflake.
 
 For more information about the configuration of buffers, see xref:components:buffers/memory.adoc[buffers]. Alternatively, remove the buffer entirely to respond to the HTTP request only once the data is written to Snowflake.
 
@@ -535,6 +673,9 @@ output:
     schema: "PUBLIC"
     table: "MYTABLE"
     private_key_file: "my/private/key.p8"
+    channel_prefix: "snowflake-channel-for-${HOST}"
+    schema_evolution:
+      enabled: true
 ```
 --
 ======
