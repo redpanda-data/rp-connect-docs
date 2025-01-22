@@ -203,20 +203,6 @@ args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
 args_mapping: root = [ meta("user.id") ]
 ```
 
-=== `queries[].exec_only`
-
-An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that includes the same number of values in an array as the placeholder arguments in the <<query, `query`>> field.
-
-*Type*: `bloblang`
-
-```yml
-# Examples
-
-args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
-
-args_mapping: root = [ meta("user.id") ]
-```
-
 === `max_in_flight`
 
 The maximum number of database statements to execute in parallel.
