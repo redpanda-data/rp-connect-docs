@@ -29,8 +29,9 @@ output:
   sql_raw:
     driver: "" # No default (required)
     dsn: "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60" # No default (required)
-    query: INSERT INTO footable (foo, bar, baz) VALUES (?, ?, ?); # No default (required)
+    query: INSERT INTO mytable (column1, column2, column3) VALUES (?, ?, ?); # No default (optional)
     args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ] # No default (optional)
+    queries: [] # No default (optional)
     max_in_flight: 64
     batching:
       count: 0
@@ -51,17 +52,18 @@ output:
   sql_raw:
     driver: "" # No default (required)
     dsn: "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60" # No default (required)
-    query: INSERT INTO footable (foo, bar, baz) VALUES (?, ?, ?); # No default (required)
+    query: INSERT INTO mytable (column1, column2, column3) VALUES (?, ?, ?); # No default (optional)
     unsafe_dynamic_query: false
     args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ] # No default (optional)
+    queries: [] # No default (optional)
     max_in_flight: 64
     init_files: [] # No default (optional)
     init_statement: | # No default (optional)
       CREATE TABLE IF NOT EXISTS some_table (
-        foo varchar(50) not null,
-        bar integer,
-        baz varchar(50),
-        primary key (foo)
+        column1 varchar(50) not null,
+        column2 integer,
+        column3 varchar(50),
+        primary key (column1)
       ) WITHOUT ROWID;
     conn_max_idle_time: "" # No default (optional)
     conn_max_life_time: "" # No default (optional)
@@ -78,33 +80,7 @@ output:
 --
 ======
 
-== Examples
-
-[tabs]
-======
-Table Insert (MySQL)::
-+
---
-
-
-Here we insert rows into a database by populating the columns id, name and topic with values extracted from messages and metadata:
-
-```yaml
-output:
-  sql_raw:
-    driver: mysql
-    dsn: foouser:foopassword@tcp(localhost:3306)/foodb
-    query: "INSERT INTO footable (id, name, topic) VALUES (?, ?, ?);"
-    args_mapping: |
-      root = [
-        this.user.id,
-        this.user.name,
-        meta("kafka_topic"),
-      ]
-```
-
---
-======
+For some scenarios where you might use this output, see <<Examples, Examples>>.
 
 == Fields
 
@@ -157,7 +133,9 @@ dsn: oracle://foouser:foopass@localhost:1521/service_name
 
 === `query`
 
-The query to execute. The style of placeholder to use depends on the driver, some drivers require question marks (`?`) whereas others expect incrementing dollar signs (`$1`, `$2`, and so on) or colons (`:1`, `:2` and so on). The style to use is outlined in this table:
+The query to execute. 
+
+You must include the correct placeholders for the specified database driver. Some drivers use question marks (`?`), whereas others expect incrementing dollar signs (`$1`, `$2`, and so on) or colons (`:1`, `:2`, and so on). 
 
 include::components:partial$query_table.adoc[]
 
@@ -167,7 +145,7 @@ include::components:partial$query_table.adoc[]
 ```yml
 # Examples
 
-query: INSERT INTO footable (foo, bar, baz) VALUES (?, ?, ?);
+query: INSERT INTO mytable (column1, column2, column3) VALUES (?, ?, ?); # No default (optional)
 ```
 
 === `unsafe_dynamic_query`
@@ -181,11 +159,41 @@ Whether to enable xref:configuration:interpolation.adoc#bloblang-queries[interpo
 
 === `args_mapping`
 
-An optional xref:guides:bloblang/about.adoc[Bloblang mapping] which should evaluate to an array of values matching in size to the number of placeholder arguments in the field `query`.
+An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that includes the same number of values in an array as the placeholder arguments in the <<query, `query`>> field.
 
+*Type*: `bloblang`
+
+
+```yml
+# Examples
+
+args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
+
+args_mapping: root = [ meta("user.id") ]
+```
+
+=== `queries`
+
+A list of database statements to run in addition to your main <<query, `query`>>. If you specify multiple queries, they are executed within a single transaction. For more information, see <<Examples, Examples>>.
+
+*Type*: `array`
+
+=== `queries[].query`
+
+The query to execute.
+
+You must include the correct placeholders for the specified database driver. Some drivers use question marks (`?`), whereas others expect incrementing dollar signs (`$1`, `$2`, and so on) or colons (`:1`, `:2`, and so on). 
+
+include::components:partial$query_table.adoc[]
 
 *Type*: `string`
 
+
+=== `queries[].args_mapping`
+
+An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that includes the same number of values in an array as the placeholder arguments in the <<query, `query`>> field.
+
+*Type*: `bloblang`
 
 ```yml
 # Examples
@@ -197,8 +205,7 @@ args_mapping: root = [ meta("user.id") ]
 
 === `max_in_flight`
 
-The maximum number of inserts to run in parallel.
-
+The maximum number of database statements to execute in parallel.
 
 *Type*: `int`
 
@@ -357,7 +364,6 @@ period: 500ms
 
 A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.
 
-
 *Type*: `string`
 
 *Default*: `""`
@@ -391,5 +397,61 @@ processors:
   - archive:
       format: json_array
 ```
+
+== Examples
+
+[tabs]
+======
+Table insert (MySQL)::
++
+--
+
+
+Insert rows into a database by populating the column ID, name, and topic with values extracted from messages and metadata:
+
+```yaml
+output:
+  sql_raw:
+    driver: mysql
+    dsn: user:password@tcp(localhost:3306)/foodb
+    query: INSERT INTO mytable (id, name, topic) VALUES (?, ?, ?); # No default (optional)
+    args_mapping: |
+      root = [
+        this.user.id,
+        this.user.name,
+        meta("kafka_topic"),
+      ]
+```
+
+--
+Create tables dynamically (PostgreSQL)::
++
+--
+
+Execute multiple queries in a single transaction to create output tables and insert a record into each one.
+
+```yaml
+output:
+  processors:
+    - mapping: |
+        root = this
+        # Prevent SQL injection when using unsafe_dynamic_query
+        meta table_name = "\"" + metadata("table_name").replace_all("\"", "\"\"") + "\""
+  sql_raw:
+    driver: postgres
+    dsn: postgres://localhost/postgres
+    unsafe_dynamic_query: true
+    queries:
+      - query: |
+          CREATE TABLE IF NOT EXISTS ${!metadata("table_name")} (id varchar primary key, document jsonb);
+      - query: |
+          INSERT INTO ${!metadata("table_name")} (id, document) VALUES ($1, $2)
+          ON CONFLICT (id) DO UPDATE SET document = EXCLUDED.document;
+        args_mapping: |
+          root = [ this.id, this.document.string() ]
+```
+
+--
+======
 
 // end::single-source[]
