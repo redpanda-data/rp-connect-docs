@@ -592,7 +592,12 @@ Ingest data from Redpanda using consumer groups, decode the schema using the sch
 This example includes some important features:
 
 * To create multiple Redpanda Connect streams to write to each output table, you need a unique channel prefix per stream. The `channel_prefix` field constructs a unique prefix for each stream using the host name.
+ifndef::env-cloud[]
 * To prevent message failures from being retried and changing the order of delivered messages, a dead-letter queue processes them. For more details about message ordering, see the xref:components:inputs/redpanda_common.adoc#ordering[`redpanda_common` input] documentation.
+endif::[]
+ifdef::env-cloud[]
+* To prevent message failures from being retried and changing the order of delivered messages, a dead-letter queue processes them.
+endif::[]
 
 NOTE: To do exactly-once data delivery, it's important that records are delivered in order to the output, and are correctly partitioned. Before you start, read the <<channel_name, `channel_name`>> and <<offset_token, `offset_token`>> field descriptions. Alternatively, remove the `offset_token` field to use Redpanda Connect's default at-least-once delivery model.
 
