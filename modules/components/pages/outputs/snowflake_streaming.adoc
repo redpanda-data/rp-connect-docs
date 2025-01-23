@@ -601,7 +601,8 @@ input:
     topics: ["my_topic_going_to_snow"]
     consumer_group: "redpanda_connect_to_snowflake"
     # Use very large batches. Each batch is sent to Snowflake individually,
-    # so to optimize query performance, use the largest file size your memory allows
+    # so to optimize query performance, use the largest file size 
+    # your memory allows
     fetch_max_bytes: 100MiB
     fetch_min_bytes: 50MiB
     partition_buffer_bytes: 100MiB
