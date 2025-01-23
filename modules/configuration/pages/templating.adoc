@@ -214,9 +214,11 @@ The scalar type of the field.
 | `float`
 | standard float type
 | `bool`
-| a boolean true/false
+| A boolean true/false
+| `bloblang`
+| A bloblang mapping
 | `unknown`
-| allows for nesting arbitrary configuration inside of a field
+| Allows for nesting arbitrary configuration inside a field
 
 |===
 
@@ -264,7 +266,7 @@ A xref:guides:bloblang/about.adoc[Bloblang] mapping that translates the fields o
 
 An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that allows you to rename or prevent certain metrics paths from being exported. For more information check out the xref:components:metrics/about.adoc#metric-mapping[metrics documentation]. When metric paths are created, renamed and dropped a trace log is written, enabling TRACE level logging is therefore a good way to diagnose path mappings.
 
-Invocations of this mapping are able to reference a variable $label in order to obtain the value of the label provided to the template config. This allows you to match labels with the root of the config.
+Invocations of this mapping are able to reference a variable `$label` in order to obtain the value of the label provided to the template configuration. This allows you to match labels with the root of the configuration.
 
 
 *Type*: `string`
@@ -300,6 +302,13 @@ A name to identify the test.
 
 *Type*: `string`
 
+=== `tests[].label`
+
+A label to assign to this template when running the test.
+
+*Type*: `string`
+
+*Default*: `""`
 
 === `tests[].config`
 
