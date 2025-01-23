@@ -68,20 +68,18 @@ input:
 
 This input adds the following metadata fields to each message:
 
-```text
-- kafka_key
-- kafka_topic
-- kafka_partition
-- kafka_offset
-- kafka_timestamp_unix
-- kafka_timestamp_ms
-- kafka_tombstone_message
-- kafka_offset_topic
-- kafka_offset_group
-- kafka_offset_partition
-- kafka_offset_commit_timestamp
-- kafka_offset_metadata
-```
+- `kafka_key`
+- `kafka_topic`
+- `kafka_partition`
+- `kafka_offset`
+- `kafka_timestamp_unix`
+- `kafka_timestamp_ms`
+- `kafka_tombstone_message`
+- `kafka_offset_topic`
+- `kafka_offset_group`
+- `kafka_offset_partition`
+- `kafka_offset_commit_timestamp`
+- `kafka_offset_metadata`
 
 == Fields
 
