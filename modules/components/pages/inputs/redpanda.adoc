@@ -124,7 +124,7 @@ You can break batches down further using the xref:components:processors/split.ad
 
 == Metrics
 
-This input emits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic, which records the difference (lag) between produced messages and messages read by the current consumer group.
+This input emits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic. The metric records the number of produced messages that remain to be read from each topic/partition pair by the specified current consumer group.
 
 == Metadata
 
@@ -621,7 +621,7 @@ Each buffer can grow slightly beyond this value.
 
 === `topic_lag_refresh_period`
 
-The interval between refresh cycles. During each cycle, this input queries the Repanda Connect server to calculate the topic lag - the number of produced messages that remain to be read from each topic/partition pair by the current consumer group.
+The interval between refresh cycles. During each cycle, this input queries the Repanda Connect server to calculate the topic lag - the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
 
 *Type*: `string`
 

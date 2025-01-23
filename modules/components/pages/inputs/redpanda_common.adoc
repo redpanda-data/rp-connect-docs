@@ -139,7 +139,7 @@ You can break batches down further using the xref:components:processors/split.ad
 
 == Metrics
 
-This input emits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic, which records the difference (lag) between produced messages and messages read by the current consumer group.
+This input emits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic. The metric records the number of produced messages that remain to be read from each topic/partition pair using the specified current consumer group.
 
 == Metadata
 
