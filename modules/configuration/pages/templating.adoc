@@ -312,8 +312,7 @@ A label to assign to this template when running the test.
 
 === `tests[].config`
 
-A configuration to run this test with, the config resulting from applying the template with this config will be linted.
-
+A configuration to run this test against. Redpanda Connect checks the results of applying the template with this configuration using a linter.
 
 *Type*: `object`
 
