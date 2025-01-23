@@ -559,7 +559,8 @@ input:
     schema: "public"
     tables: ["my_pg_table"]
     # Use very large batches. Each batch is sent to Snowflake individually,
-    # so to optimize query performance use as big files as there is memory for
+    # so to optimize query performance, use the largest file size
+    # your memory allows
     batching:
       count: 50000
       period: 45s
