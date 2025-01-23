@@ -487,7 +487,7 @@ output:
 Check prompts for unsafe content::
 +
 --
-This configuration runs prompts through the https://ollama.com/library/llama-guard3[Llama Guard 3 model^] to check they comply with https://mlcommons.org/2024/04/mlc-aisafety-v0-5-poc/[safety and security standards^]. Those prompts that do not comply are marked as `unsafe` by model are and deleted. To check the safety of responses, see the xref:components:processors/ollama_moderation.adoc[`ollama_moderation` processor].
+This configuration runs prompts through the https://ollama.com/library/llama-guard3[Llama Guard 3 model^] to check they comply with https://mlcommons.org/2024/04/mlc-aisafety-v0-5-poc/[safety and security standards^]. The model marks the prompts that do not comply as `unsafe`, and the Bloblang mapping deletes them. To check the safety of responses, see the xref:components:processors/ollama_moderation.adoc[`ollama_moderation` processor].
 
 ```yaml
 pipeline:
