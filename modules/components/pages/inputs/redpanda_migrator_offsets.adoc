@@ -301,7 +301,7 @@ The SASL mechanism to use.
 | `SCRAM-SHA-512`
 | SCRAM-based authentication as specified in RFC 5802.
 | `none`
-| Disable SASL authentication
+| Disable SASL authentication.
 
 |===
 
@@ -523,7 +523,7 @@ Each buffer can grow slightly beyond this value.
 
 === `topic_lag_refresh_period`
 
-The interval between refresh cycles. During each cycle, this input queries the Repanda Connect server to calculate the topic lag - the number of produced messages that remain to be read from each topic/partition pair by the current consumer group.
+The interval between refresh cycles. During each cycle, this input queries the Repanda Connect server to calculate the topic lag - the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
 
 *Type*: `string`
 
