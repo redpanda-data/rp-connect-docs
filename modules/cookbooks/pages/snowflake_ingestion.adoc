@@ -188,7 +188,7 @@ output:
     schema: STREAMING_SCHEMA
     table: STREAMING_TABLE
     # Inject your private key and password
-    private_key_file: rsa_key.pub
+    private_key_file: rsa_key.p8
     private_key_pass: "${SNOWFLAKE_KEY_PASS}"
     schema_evolution:
       enabled: true
