@@ -35,8 +35,9 @@ Configure a Redpanda Connect pipeline to generate and write data into a Redpanda
 
 == Set up your Redpanda cluster
 
-In https://cloud.redpanda.com/[Redpanda Cloud], create a new Serverless Standard cluster. When the cluster is ready, run `rpk cloud cluster select` to select the cluster.
-and set it to be your current https://docs.redpanda.com/current/get-started/config-rpk-profile/[rpk profile].
+In https://cloud.redpanda.com/[Redpanda Cloud], create a new Serverless Standard cluster. 
+
+When the cluster is ready, run `rpk cloud cluster select` to select the cluster and set it to be your current https://docs.redpanda.com/current/get-started/config-rpk-profile/[rpk profile].
 
 endif::[]
 
@@ -68,7 +69,7 @@ Log in to your Snowflake account with a user who has the ACCOUNTADMIN role. Then
 
 [source,sql]
 ----
--- Set default value for multiple variables
+-- Set default values for multiple variables
 SET PWD = 'Test1234567';
 SET USER = 'STREAMING_USER';
 SET DB = 'STREAMING_DB';
@@ -204,7 +205,7 @@ ifdef::env-cloud[]
 
 You can now create the pipeline. First create xref:develop:connect/configuration/secret-management.adoc[secrets] for the passwords and keys you created during setup.
 
-On your Serverless cluster, go to the **Connect** page, then click the **Secrets** tab, and create three secrets:
+On your Serverless cluster, go to the **Connect** page, select the **Secrets** tab and then create three secrets:
 
 * `REDPANDA_PASS` with the value `Testing1234`
 * `SNOWFLAKE_KEY` with the output value of `awk '{printf "%s\\n", $0}' rsa_key.p8`
