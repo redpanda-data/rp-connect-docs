@@ -5,8 +5,7 @@
 
 ifndef::env-cloud[]
 
-Configure a Redpanda Connect pipeline to generate and write data into a local Redpanda topic, and then ingest that data into [Snowflake^](https://www.snowflake.com/en/) using [Snowpipe Streaming^](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
-https://www.snowflake.com/en/[Snowflake^] using https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview[Snowpipe Streaming^].
+Configure a Redpanda Connect pipeline to generate and write data into a local Redpanda topic, and then ingest that data into https://www.snowflake.com/en/[Snowflake^] using https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview[Snowpipe Streaming^].
 
 == Prerequisites
 
@@ -25,8 +24,7 @@ rpk container start
 endif::[]
 ifdef::env-cloud[]
 
-Configure a Redpanda Connect pipeline to generate and write data into a Redpanda Serverless topic, and then ingest that data into [Snowflake^](https://www.snowflake.com/en/) using [Snowpipe Streaming^](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview).
-[Snowflake](https://www.snowflake.com/en/) using [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview).
+Configure a Redpanda Connect pipeline to generate and write data into a Redpanda Serverless topic, and then ingest that data into https://www.snowflake.com/en/[Snowflake^] using https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview[Snowpipe Streaming^].
 
 == Prerequisites
 
@@ -66,8 +64,7 @@ rpk security acl create --allow-principal ingestion_user --resource-pattern-type
 
 == Set up your Snowflake account
 
-Log in to your Snowflake account with a user who has the ACCOUNTADMIN role. Then, run the following SQL commands in a worksheet. They set up another user with minimal permissions to write data into a specified database and schema, ready for streaming data to Snowflake. 
-to write data into a specified database and schema for streaming data. Run the following SQL commands in a worksheet:
+Log in to your Snowflake account with a user who has the ACCOUNTADMIN role. Then, run the following SQL commands in a worksheet. They set up another user with minimal permissions to write data into a specified database and schema, ready for streaming data to Snowflake.
 
 [source,sql]
 ----
@@ -80,7 +77,7 @@ SET WH = 'STREAMING_WH';
 USE ROLE ACCOUNTADMIN;
 -- Create users
 CREATE USER IF NOT EXISTS IDENTIFIER($USER) PASSWORD=$PWD  COMMENT='STREAMING USER FOR REDPANDA CONNECT';
--- CREATE ROLES
+-- Create roles
 CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
 -- Create the destination database and virtual warehouse
 CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
@@ -94,7 +91,7 @@ GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
 -- Set defaults
 ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
 ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
--- Run following commands to find your account identifier. Copy it down for later use.
+-- Run the following commands to find your account identifier. Copy it down for later use.
 -- It will be something like `organization_name-account_name`
 -- e.g. ykmxgak-wyb52636
 WITH HOSTLIST AS 
@@ -108,7 +105,6 @@ WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 
 Create an https://docs.snowflake.com/en/user-guide/key-pair-auth[RSA key pair^] using `openssl`
 to authenticate Redpanda Connect to Snowflake. When you're prompted to give an encryption password, record it for later.
-you will need it later.
 
 [source,bash]
 ----
@@ -140,8 +136,9 @@ alter user streaming_user set rsa_public_key='< PubKeyWithoutDelimiters >';
 
 === Create a schema using `streaming_user`
 
-Log out of Snowflake and sign back in as the default user (`streaming_user`) with the associated password (default: `Test1234567`). You created both in <<set-up-your-snowflake-account,Set up your Snowflake account>>.
-Run the following SQL commands in a worksheet to create a schema (e.g., `STREAMING_SCHEMA`) in the default database (e.g., `STREAMING_DB`):
+Log out of Snowflake and sign back in as the default user (`streaming_user`) with the associated password (default: `Test1234567`). You created these credentials in <<set-up-your-snowflake-account,Set up your Snowflake account>>.
+
+Run the following SQL commands in a worksheet to create a schema (e.g. `STREAMING_SCHEMA`) in the default database (e.g. `STREAMING_DB`):
 
 [source,sql]
 ----
@@ -155,8 +152,7 @@ CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 
 ifndef::env-cloud[]
 
-You can now create the pipeline locally and inject the xref:configuration:secrets.adoc[secrets] using environment variables.
-and inject the xref:configuration:secrets.adoc[secrets] using environment variables. First, create
+You can now create the pipeline locally and inject xref:configuration:secrets.adoc[secrets] using environment variables. First, create
 a `connect.yaml` file:
 
 [source,yaml]
@@ -195,7 +191,7 @@ output:
     max_in_flight: 1
 ----
 
-You can now run the pipeline, and any JSON data produced into the topic
+Now run the pipeline, and any JSON data produced into the topic
 is streamed into Snowflake with minimal latency.
 
 [source,bash]
@@ -264,8 +260,7 @@ echo '{"animal":"polar bear","attributes":"cool","age":13}' | rpk topic produce 
 echo '{"animal":"unicorn","attributes":"rare","age":999}' | rpk topic produce demo_topic -f '%v\n'
 ----
 
-The data produced into the `demo_topic` is consumed and streamed into Snowflake in seconds. You can now go back to the Snowflake worksheet and run the following query to see data arrive in Snowflake with the
-schema from the JSON data you produced.
+The data produced into the `demo_topic` is consumed and streamed into Snowflake in seconds. Go back to the Snowflake worksheet and run the following query to see data arrive in Snowflake with the schema from the JSON data you produced.
 
 [source,sql]
 ----
