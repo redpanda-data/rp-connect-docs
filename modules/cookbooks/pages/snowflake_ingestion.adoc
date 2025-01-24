@@ -1,22 +1,22 @@
 = Ingest data into Snowflake
-:description: Configure Redpanda Connect to ingest data from Redpanda into Snowflake using Snowpipe Streaming.
+:description: Configure Redpanda Connect to ingest data from a Redpanda topic into Snowflake using Snowpipe Streaming.
 
 // tag::single-source[]
 
 ifndef::env-cloud[]
 
-In this cookbook, we use Redpanda Connect to generate data into a local Redpanda topic and then ingest that data into
+Configure a Redpanda Connect pipeline to generate and write data into a local Redpanda topic, and then ingest that data into [Snowflake^](https://www.snowflake.com/en/) using [Snowpipe Streaming^](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
 https://www.snowflake.com/en/[Snowflake^] using https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview[Snowpipe Streaming^].
 
 == Prerequisites
 
 - https://docs.redpanda.com/current/get-started/rpk-install/[`rpk` installed]
-- A https://trial.snowflake.com/[Snowflake account^].
-- `openssl` command line tool
+- A https://trial.snowflake.com/[Snowflake account^]
+- `openssl` command-line tool
 
-== Setup your Redpanda cluster
+== Set up your Redpanda cluster
 
-Run https://docs.redpanda.com/current/reference/rpk/rpk-container/rpk-container-start/[rpk container start] to create a local cluster for development:
+Run https://docs.redpanda.com/current/reference/rpk/rpk-container/rpk-container-start/[rpk container start] to create a local Redpanda cluster for development:
 
 ```
 rpk container start
@@ -25,24 +25,24 @@ rpk container start
 endif::[]
 ifdef::env-cloud[]
 
-In this cookbook, we use Redpanda Connect to generate data into a Redpanda Serverless topic, and then ingest that data into
+Configure a Redpanda Connect pipeline to generate and write data into a Redpanda Serverless topic, and then ingest that data into [Snowflake^](https://www.snowflake.com/en/) using [Snowpipe Streaming^](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview).
 [Snowflake](https://www.snowflake.com/en/) using [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview).
 
 == Prerequisites
 
 - A https://cloud.redpanda.com/sign-up[Redpanda Cloud account]
 - https://docs.redpanda.com/current/get-started/rpk-install/[`rpk` installed] and https://docs.redpanda.com/redpanda-cloud/reference/rpk/rpk-cloud/rpk-cloud-login/[signed into your Cloud account]
-- A https://trial.snowflake.com/[Snowflake account^].
-- `openssl` command line tool
+- A https://trial.snowflake.com/[Snowflake account^]
+- `openssl` command-line tool
 
 == Set up your Redpanda cluster
 
-In https://cloud.redpanda.com/[Redpanda Cloud], create a new Serverless Standard cluster. After that completes, run `rpk cloud cluster select` to select the cluster
+In https://cloud.redpanda.com/[Redpanda Cloud], create a new Serverless Standard cluster. When the cluster is ready, run `rpk cloud cluster select` to select the cluster.
 and set it to be your current https://docs.redpanda.com/current/get-started/config-rpk-profile/[rpk profile].
 
 endif::[]
 
-After the cluster is running, create a topic to send data into Snowflake:
+Next, create a `demo_topic` to use as the data source for ingesting data into Snowflake:
 
 [source,bash]
 ----
@@ -66,7 +66,7 @@ rpk security acl create --allow-principal ingestion_user --resource-pattern-type
 
 == Set up your Snowflake account
 
-Log in to your Snowflake account with a user who has ACCOUNTADMIN role. You can then run these commands to set up another user with minimal permissions
+Log in to your Snowflake account with a user who has the ACCOUNTADMIN role. Then, run the following SQL commands in a worksheet. They set up another user with minimal permissions to write data into a specified database and schema, ready for streaming data to Snowflake. 
 to write data into a specified database and schema for streaming data. Run the following SQL commands in a worksheet:
 
 [source,sql]
@@ -78,24 +78,24 @@ SET DB = 'STREAMING_DB';
 SET ROLE = 'REDPANDA_CONNECT';
 SET WH = 'STREAMING_WH';
 USE ROLE ACCOUNTADMIN;
--- CREATE USERS
+-- Create users
 CREATE USER IF NOT EXISTS IDENTIFIER($USER) PASSWORD=$PWD  COMMENT='STREAMING USER FOR REDPANDA CONNECT';
 -- CREATE ROLES
 CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
--- CREATE DATABASE AND WAREHOUSE
+-- Create the destination database and virtual warehouse
 CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
 USE IDENTIFIER($DB);
 CREATE OR REPLACE WAREHOUSE IDENTIFIER($WH) WITH WAREHOUSE_SIZE = 'SMALL';
--- GRANTS
+-- Grant privileges
 GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($ROLE);
 GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
 GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE);
 GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
--- SET DEFAULTS
+-- Set defaults
 ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
 ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
--- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
--- IT WILL BE SOMETHING LIKE organization_name-account_name
+-- Run following commands to find your account identifier. Copy it down for later use.
+-- It will be something like `organization_name-account_name`
 -- e.g. ykmxgak-wyb52636
 WITH HOSTLIST AS 
 (SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$allowlist()))))
@@ -104,10 +104,10 @@ FROM HOSTLIST
 WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 ----
 
-=== Create a RSA key pair
+=== Create an RSA key pair
 
 Create an https://docs.snowflake.com/en/user-guide/key-pair-auth[RSA key pair^] using `openssl`
-to authenticate Redpanda Connect to Snowflake. You are prompted to give an encryption password. Remember this phrase:
+to authenticate Redpanda Connect to Snowflake. When you're prompted to give an encryption password, record it for later.
 you will need it later.
 
 [source,bash]
@@ -115,22 +115,22 @@ you will need it later.
 openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -passout pass:Testing123 -out rsa_key.p8
 ----
 
-Create a public key. You are prompted to enter your encryption password.
+Create a public key. You're prompted to enter your encryption password.
 
 [source,bash]
 ----
 openssl rsa -in rsa_key.p8 -pubout -passout pass:Testing123 -out rsa_key.pub
 ----
 
-To register the public key in Snowflake, remove the public key delimiters and output only the base64 encoded portion of the
-PEM file. You can print that with the following bash command:
+To register the public key in Snowflake, remove the public key delimiters and output only the base64-encoded portion of the
+PEM file. Run the following bash command to print it:
 
 [source,bash]
 ----
 cat rsa_key.pub | sed -e '1d' -e '$d' | tr -d '\n'
 ----
 
-Back to the Snowflake worksheet, enter the output of the above command in the following SQL command and run:
+In the Snowflake worksheet, add the output of the bash command you just ran to the following SQL command and execute it:
 
 [source,sql]
 ----
@@ -140,7 +140,7 @@ alter user streaming_user set rsa_public_key='< PubKeyWithoutDelimiters >';
 
 === Create a schema using `streaming_user`
 
-Log out of Snowflake, then sign back in as the default user `streaming_user` you just created with the associated password (default: Test1234567).
+Log out of Snowflake and sign back in as the default user (`streaming_user`) with the associated password (default: `Test1234567`). You created both in <<set-up-your-snowflake-account,Set up your Snowflake account>>.
 Run the following SQL commands in a worksheet to create a schema (e.g., `STREAMING_SCHEMA`) in the default database (e.g., `STREAMING_DB`):
 
 [source,sql]
@@ -151,18 +151,18 @@ USE IDENTIFIER($DB);
 CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 ----
 
-== Create a pipeline from Redpanda to Snowflake
+== Create a pipeline from your Redpanda cluster to Snowflake
 
 ifndef::env-cloud[]
 
-You can now create the pipeline. Run the pipeline locally
+You can now create the pipeline locally and inject the xref:configuration:secrets.adoc[secrets] using environment variables.
 and inject the xref:configuration:secrets.adoc[secrets] using environment variables. First, create
 a `connect.yaml` file:
 
 [source,yaml]
 ----
 input:
-  # Read data from our local `demo_topic`
+  # Read data from the local `demo_topic`
   kafka_franz:
     seed_brokers: ["localhost:9092"]
     topics: ["demo_topic"]
@@ -173,21 +173,21 @@ input:
       - mechanism: SCRAM-SHA-256
         username: ingestion_user
         password: ${REDPANDA_PASS}
-    # Define our batching policy. For this cookbook, we create small batches,
-    # but a production environment should create files as large as possible.
+    # Define a batching policy. For this cookbook, create small batches,
+    # but in a production environment use the largest file size you can.
     batching:
       count: 100 # Collect 10 messages before flushing
       period: 10s # or after 10 seconds, which ever comes first
 output:
   snowflake_streaming:
-    # Make sure to replace this with your account identifier
+    # Replace this placeholder with your account identifier
     account: "< OrgName-AccountName >"
     user: STREAMING_USER
     role: REDPANDA_CONNECT
     database: STREAMING_DB
     schema: STREAMING_SCHEMA
     table: STREAMING_TABLE
-    # Inject our private key and password
+    # Inject your private key and password
     private_key_file: rsa_key.pub
     private_key_pass: "${SNOWFLAKE_KEY_PASS}"
     schema_evolution:
@@ -195,7 +195,7 @@ output:
     max_in_flight: 1
 ----
 
-With the file created, you can now run the pipeline, and any JSON data produced into the topic
+You can now run the pipeline, and any JSON data produced into the topic
 is streamed into Snowflake with minimal latency.
 
 [source,bash]
@@ -206,21 +206,21 @@ REDPANDA_PASS=Testing1234 SNOWFLAKE_KEY_PASS=Testing123 rpk connect run ./connec
 endif::[]
 ifdef::env-cloud[]
 
-You can now create the pipeline. First create xref:configuration:secret-management.adoc[secrets] for the passwords and keys you created during setup.
+You can now create the pipeline. First create xref:develop:connect/configuration/secret-management.adoc[secrets] for the passwords and keys you created during setup.
 
-Navigate to the Connect page in Redpanda Console, then click the "Secrets" tab, and create three secrets:
+On your Serverless cluster, go to the **Connect** page, then click the **Secrets** tab, and create three secrets:
 
 * `REDPANDA_PASS` with the value `Testing1234`
-* `SNOWFLAKE_KEY` with the value being the output of `awk '{printf "%s\\n", $0}' rsa_key.p8`
+* `SNOWFLAKE_KEY` with the output value of `awk '{printf "%s\\n", $0}' rsa_key.p8`
 * `SNOWFLAKE_KEY_PASS` with the value `Testing123`
 
-Go to the "Pipelines" tab and create a pipeline called 
-"RedpandaToSnowflake". Use the following YAML configuration:
+Select the **Pipelines** tab and create a pipeline called 
+**RedpandaToSnowflake**. Use the following YAML configuration:
 
 [source,yaml]
 ----
 input:
-  # Read data from our `demo_topic`
+  # Reads data from our `demo_topic`
   kafka_franz:
     seed_brokers: ["${REDPANDA_BROKERS}"]
     topics: ["demo_topic"]
@@ -232,20 +232,20 @@ input:
         username: ingestion_user
         password: ${secrets.REDPANDA_PASS}
     # Define the batching policy. This cookbook creates small batches,
-    # but production environment should create files as large as possible.
+    # but in a production environment use the largest file size you can.
     batching:
       count: 100 # Collect 10 messages before flushing
       period: 10s # or after 10 seconds, whichever comes first
 output:
   snowflake_streaming:
-    # Make sure to replace this with your account identifier
+    # Replace this placeholder with your account identifier
     account: "< OrgName-AccountName >"
     user: STREAMING_USER
     role: REDPANDA_CONNECT
     database: STREAMING_DB
     schema: STREAMING_SCHEMA
     table: STREAMING_TABLE
-    # Inject our private key and password
+    # Inject your private key and password
     private_key_file: "${secrets.SNOWFLAKE_KEY}"
     private_key_pass: "${secrets.SNOWFLAKE_KEY_PASS}"
     schema_evolution:
@@ -264,7 +264,7 @@ echo '{"animal":"polar bear","attributes":"cool","age":13}' | rpk topic produce 
 echo '{"animal":"unicorn","attributes":"rare","age":999}' | rpk topic produce demo_topic -f '%v\n'
 ----
 
-The data produced into the topic is consumed and streamed into Snowflake on the order of seconds. You can now go back to the Snowflake worksheet and run the following query to see data show up live, with the
+The data produced into the `demo_topic` is consumed and streamed into Snowflake in seconds. You can now go back to the Snowflake worksheet and run the following query to see data arrive in Snowflake with the
 schema from the JSON data you produced.
 
 [source,sql]
@@ -272,3 +272,4 @@ schema from the JSON data you produced.
 SELECT * FROM STREAMING_DB.STREAMING_SCHEMA.STREAMING_DATA LIMIT 50;
 ----
 
+// end::single-source[]
