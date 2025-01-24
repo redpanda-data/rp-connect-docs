@@ -36,12 +36,7 @@ output:
     metadata:
       include_prefixes: []
       include_patterns: []
-    max_in_flight: 10
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+    max_in_flight: 256
 ```
 
 --
@@ -55,32 +50,7 @@ output:
   label: ""
   redpanda_migrator:
     seed_brokers: [] # No default (required)
-    topic: "" # No default (required)
-    key: "" # No default (optional)
-    partitioner: "" # No default (optional)
-    partition: ${! meta("partition") } # No default (optional)
-    input_resource: redpanda_migrator_input
-    replication_factor_override: true
-    replication_factor: 3
-    translate_schema_ids: true
-    schema_registry_output_resource: schema_registry_output
     client_id: benthos
-    rack_id: ""
-    idempotent_write: true
-    metadata:
-      include_prefixes: []
-      include_patterns: []
-    max_in_flight: 10
-    timeout: 10s
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
-    max_message_bytes: 1MB
-    broker_write_max_bytes: 100MB
-    compression: "" # No default (optional)
     tls:
       enabled: false
       skip_cert_verify: false
@@ -89,7 +59,26 @@ output:
       root_cas_file: ""
       client_certs: []
     sasl: [] # No default (optional)
+    topic: "" # No default (required)
+    key: "" # No default (optional)
+    partition: ${! meta("partition") } # No default (optional)
+    partitioner: "" # No default (optional)
+    metadata:
+      include_prefixes: []
+      include_patterns: []
+    metadata_max_age: 5m
     timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
+    max_in_flight: 256
+    input_resource: redpanda_migrator_input
+    replication_factor_override: true
+    replication_factor: 3
+    translate_schema_ids: true
+    schema_registry_output_resource: schema_registry_output
+    idempotent_write: true
+    compression: "" # No default (optional)  
+    timeout: 10s
+    max_message_bytes: 1MB
+    broker_write_max_bytes: 100MB
 ```
 
 --
