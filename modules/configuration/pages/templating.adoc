@@ -330,7 +330,7 @@ Test execution:
 [source,bash]
 ----
 rpk connect template lint test.template.yaml
-rpk connect rpk connect run -t testconfig.yaml
+rpk connect run -t "./test.template.yaml" ./testconfig.yaml
 ----
 
 === `tests[].name`
