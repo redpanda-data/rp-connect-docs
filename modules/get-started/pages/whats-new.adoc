@@ -38,7 +38,7 @@ Redpanda Connect now supports:
 - Interpolation functions for channel and table names in the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]. 
 - Calls to external tools when using the xref:components:processors/ollama_chat.adoc[`ollama_chat` processor].
 - The execution of multiple database queries as transactions when using the xref:components:inputs/sql_raw.adoc[`sql_raw` input], xref:components:outputs/sql_raw.adoc[output] and xref:components:processors/sql_raw.adoc[processor].
-- Using the xref:configuration:templating.adoc[`label` metadata field] within a template mapping to retrieve the `label` set in the corresponding configuration.
+- Using the xref:configuration:templating.adoc[`label` metadata field] within a template mapping to retrieve the template component `label` set in the corresponding configuration.
 
 ==== Deprecations
 
