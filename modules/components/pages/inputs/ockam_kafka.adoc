@@ -309,9 +309,8 @@ Whether to consume from the oldest available offset. Otherwise, messages are con
 
 === `fetch_max_bytes`
 
-The maximum number of bytes that a broker tries to send during a fetch.
+The maximum size of a message batch (in bytes) that a broker tries to send during a client fetch. If individual records exceed the `fetch_max_bytes` value, brokers will still send them.
 
-If individual records are larger than the `fetch_max_bytes` value, brokers will still send them.
 
 *Type*: `string`
 
