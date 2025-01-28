@@ -20,10 +20,10 @@ Highlights of this update include the beta release of two components for Self-Ma
 
 This release adds:
 
-- The `max_outstanding` and `message_timeout` fields to the xref:components:inputs/aws_sqs.adoc[`aws_sqs` input].
+- The `max_outstanding_messages` and `message_timeout` fields to the xref:components:inputs/aws_sqs.adoc[`aws_sqs` input].
 - The `content_type` field to the xref:components:outputs/amqp_1.adoc[`amqp_1` output].
 - The `offset_token` field to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output].
-- The `save_prompt_meta`, `max_tool_calls` fields and `tools` object to the xref:components:processors/ollama_chat.adoc[`ollama_chat` processor].
+- The `save_prompt_metadata`, `max_tool_calls` fields and `tools` object to the xref:components:processors/ollama_chat.adoc[`ollama_chat` processor].
 - The `offset_topic`, `offset_group`, `offset_partition`, `offset_commit_timestamp` and `offset_metadata` fields to the xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` output].
 - The `topic_lag_refresh_period` field to the xref:components:inputs/redpanda.adoc[`redpanda`] and xref:components:inputs/redpanda_common.adoc[`redpanda_common`] inputs.
 - The `redpanda_lag` metric to the xref:components:inputs/redpanda.adoc[`redpanda`] and xref:components:inputs/redpanda_common.adoc[`redpanda_common`] inputs.
