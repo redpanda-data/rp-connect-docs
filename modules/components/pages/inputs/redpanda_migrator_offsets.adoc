@@ -1,25 +1,15 @@
 = redpanda_migrator_offsets
-:page-aliases: components:outputs/kafka_migrator_offsets.adoc
 // tag::single-source[]
-:type: output
+:type: input
 :page-beta: true
 :categories: ["Services"]
 
-
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
 
-
-Use the `redpanda_migrator_offsets` output in conjunction with a `kafka_franz` input that is configured to read the `__consumer_offsets` topic.
-This output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
-
-Alternatively, use the `redpanda_migrator_bundle` xref:components:inputs/redpanda_migrator_bundle.adoc[input] and xref:components:outputs/redpanda_migrator_bundle.adoc[output] to complete the migration of topics, messages, and schemas to a Redpanda cluster.
-
+Reads consumer group offsets for a specified set of topics using the https://github.com/twmb/franz-go[Franz Kafka client library^]. 
 
 ifndef::env-cloud[]
-Introduced in version 4.37.0.
+Introduced in version 4.45.0.
 endif::[]
 
 [tabs]
@@ -30,15 +20,14 @@ Common::
 
 ```yml
 # Common configuration fields, showing default values
-output:
+input:
   label: ""
   redpanda_migrator_offsets:
     seed_brokers: [] # No default (required)
-    offset_topic: ${! @kafka_offset_topic }
-    offset_group: ${! @kafka_offset_group }
-    offset_partition: ${! @kafka_offset_partition }
-    offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
-    offset_metadata: ${! @kafka_offset_metadata }
+    topics: [] # No default (required)
+    regexp_topics: false
+    consumer_group: "" # No default (optional)
+    auto_replay_nacks: true
 ```
 
 --
@@ -48,7 +37,7 @@ Advanced::
 
 ```yml
 # All configuration fields, showing default values
-output:
+input:
   label: ""
   redpanda_migrator_offsets:
     seed_brokers: [] # No default (required)
@@ -62,23 +51,35 @@ output:
       client_certs: []
     sasl: [] # No default (optional)
     metadata_max_age: 5m
-    offset_topic: ${! @kafka_offset_topic }
-    offset_group: ${! @kafka_offset_group }
-    offset_partition: ${! @kafka_offset_partition }
-    offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
-    offset_metadata: ${! @kafka_offset_metadata }
-    timeout: 10s
-    max_message_bytes: 1MB
-    broker_write_max_bytes: 100MB
-    max_retries: 0
-    backoff:
-      initial_interval: 1s
-      max_interval: 5s
-      max_elapsed_time: 30s
+    topics: [] # No default (required)
+    regexp_topics: false
+    rack_id: ""
+    consumer_group: "" # No default (optional)
+    commit_period: 5s
+    partition_buffer_bytes: 1MB
+    topic_lag_refresh_period: 5s
+    auto_replay_nacks: true
 ```
 
 --
 ======
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `kafka_key`
+- `kafka_topic`
+- `kafka_partition`
+- `kafka_offset`
+- `kafka_timestamp_unix`
+- `kafka_timestamp_ms`
+- `kafka_tombstone_message`
+- `kafka_offset_topic`
+- `kafka_offset_group`
+- `kafka_offset_partition`
+- `kafka_offset_commit_timestamp`
+- `kafka_offset_metadata`
 
 == Fields
 
@@ -245,10 +246,9 @@ The path of a certificate key to use.
 
 A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.
 
-Because the obsolete `pbeWithMD5AndDES-CBC` algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
+WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding Oracle attacks which may allow an attacker recover the plain text password.
 
 include::components:partial$secret_warning.adoc[]
-
 
 *Type*: `string`
 
@@ -301,7 +301,7 @@ The SASL mechanism to use.
 | `SCRAM-SHA-512`
 | SCRAM-based authentication as specified in RFC 5802.
 | `none`
-| Disable SASL authentication
+| Disable SASL authentication.
 
 |===
 
@@ -442,139 +442,102 @@ An external ID to provide when assuming a role.
 
 *Default*: `""`
 
-
 === metadata_max_age
 
-The maximum period of time after which metadata is refreshed.
+The maximum period of time (in minutes) after which metadata is refreshed.
 
 *Type*: `string`
 
 *Default*: `5m`
 
-=== offset_topic
+=== `topics`
 
-The name of the Kafka offset topic to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+A list of topics to consume from. Use commas to separate multiple topics in a single element.
 
-*Type*: `string`
+When a `consumer_group` is specified, partitions are automatically distributed across consumers of a topic. Otherwise, all partitions are consumed.
 
-*Default*: `${! @kafka_offset_topic }`
+Alternatively, you can specify explicit partitions to consume by using a colon after the topic name. For example, `foo:0` would consume the partition `0` of the topic foo. This syntax supports ranges. For example, `foo:0-10` would consume partitions `0` through to `10` inclusive.
 
-=== offset_group
+It is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_from_oldest` determines which offset to start from.
 
-The name of the Kafka offset consumer group to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `${! @kafka_offset_group }`
-
-=== offset_partition
-
-The Kafka offset partition ID to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `${! @kafka_offset_partition }`
-
-=== offset_commit_timestamp
-
-The Kafka offset commit timestamp to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `${! @kafka_offset_commit_timestamp }`
-
-=== offset_metadata
-
-The Kafka offset metadata value to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `${! @kafka_offset_metadata }`
-
-=== `timeout`
-
-The maximum period of time to wait for message sends before abandoning the request and retrying it.
-
-
-*Type*: `string`
-
-*Default*: `10s`
-
-=== `max_message_bytes`
-
-The maximum number of bytes that an individual message may use. Messages larger than this value are rejected. This field corresponds to Kafka's `max.message.bytes`.
-
-
-*Type*: `string`
-
-*Default*: `1MB`
+*Type*: `array`
 
 ```yml
 # Examples
 
-max_message_bytes: 100MB
+topics:
+  - foo
+  - bar
 
-max_message_bytes: 50mib
+topics:
+  - things.*
+
+topics:
+  - foo,bar
 ```
 
-=== `broker_write_max_bytes`
+=== `regexp_topics`
 
-The upper bound for the number of bytes written to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.
+Whether listed topics are interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions, this field must remain set to `false`.
 
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `rack_id`
+
+A rack specifies where the client is physically located, and changes fetch requests to consume from the closest replica as opposed to the leader replica.
 
 *Type*: `string`
 
-*Default*: `100MB`
+*Default*: `""`
 
-```yml
-# Examples
+=== `consumer_group`
 
-broker_write_max_bytes: 128MB
+An optional consumer group. When this value is specified: 
 
-broker_write_max_bytes: 50mib
-```
+- The partitions of any topics, specified in the `topics` field, are automatically distributed across consumers sharing a consumer group
+- Partition offsets are automatically committed and resumed under this name
 
-=== `max_retries`
-
-The maximum number of retries before giving up on the request. If set to `0`, there is no discrete limit.
-
-
-*Type*: `int`
-
-*Default*: `0`
-
-
-=== `backoff`
-
-Control the time intervals between retry attempts.
-
-*Type*: `object`
-
-
-=== `backoff.initial_interval`
-
-The initial amount of time to wait between retry attempts. This value increases for each failed attempt up to the `backoff.max_interval` value.
+Consumer groups are not supported when you specify explicit partitions to consume from in the `topics` field.
 
 *Type*: `string`
 
-*Default*: `1s`
+=== `commit_period`
 
-
-=== `backoff.max_interval`
-
-The maximum amount of time to wait between retry attempts.
+The period of time between each commit of the current partition offsets. Offsets are always committed during shutdown.
 
 *Type*: `string`
 
 *Default*: `5s`
 
+=== `partition_buffer_bytes`
 
-=== `backoff.max_elapsed_time`
+A buffer size (in bytes) for each consumed partition, which allows the internal queuing of records before they are flushed. Increasing this value may improve throughput but results in higher memory utilization. 
 
-The maximum amount of time to wait before retry attempts are abandoned. If set to `0`, there is no waiting period.
+Each buffer can grow slightly beyond this value.
 
 *Type*: `string`
 
-*Default*: `30s`
+*Default*: `1MB`
+
+=== `topic_lag_refresh_period`
+
+The interval between refresh cycles. During each cycle, this input queries the Repanda Connect server to calculate the topic lag - the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
+
+*Type*: `string`
+
+*Default*: `5s`
+
+=== `auto_replay_nacks`
+
+Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+
+Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation.
+
+*Type*: `bool`
+
+*Default*: `true`
+
 
 // end::single-source[]
