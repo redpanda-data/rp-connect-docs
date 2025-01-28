@@ -15,6 +15,8 @@ component_type_dropdown::[]
 Use the `redpanda_migrator_offsets` output in conjunction with a `kafka_franz` input that is configured to read the `__consumer_offsets` topic.
 This output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
+Alternatively, use the `redpanda_migrator_bundle` xref:components:inputs/redpanda_migrator_bundle.adoc[input] and xref:components:outputs/redpanda_migrator_bundle.adoc[output] to complete the migration of topics, messages, and schemas to a Redpanda cluster.
+
 
 ifndef::env-cloud[]
 Introduced in version 4.37.0.
@@ -27,13 +29,16 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   redpanda_migrator_offsets:
     seed_brokers: [] # No default (required)
-    kafka_key: ${! @kafka_key }
-    max_in_flight: 1
+    offset_topic: ${! @kafka_offset_topic }
+    offset_group: ${! @kafka_offset_group }
+    offset_partition: ${! @kafka_offset_partition }
+    offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
+    offset_metadata: ${! @kafka_offset_metadata }
 ```
 
 --
@@ -42,7 +47,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   redpanda_migrator_offsets:
@@ -57,8 +62,11 @@ output:
       client_certs: []
     sasl: [] # No default (optional)
     metadata_max_age: 5m
-    kafka_key: ${! @kafka_key }
-    max_in_flight: 1
+    offset_topic: ${! @kafka_offset_topic }
+    offset_group: ${! @kafka_offset_group }
+    offset_partition: ${! @kafka_offset_partition }
+    offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
+    offset_metadata: ${! @kafka_offset_metadata }
     timeout: 10s
     max_message_bytes: 1MB
     broker_write_max_bytes: 100MB
@@ -443,25 +451,45 @@ The maximum period of time after which metadata is refreshed.
 
 *Default*: `5m`
 
+=== offset_topic
 
-=== `kafka_key`
-
-The Kafka message key.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The name of the Kafka offset topic to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
-*Default*: `${! @kafka_key }`
+*Default*: `${! @kafka_offset_topic }`
 
+=== offset_group
 
-=== `max_in_flight`
+The name of the Kafka offset consumer group to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-The maximum number of message batches to send in parallel at any given time.
+*Type*: `string`
 
-*Type*: `int`
+*Default*: `${! @kafka_offset_group }`
 
-*Default*: `1`
+=== offset_partition
+
+The Kafka offset partition ID to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `${! @kafka_offset_partition }`
+
+=== offset_commit_timestamp
+
+The Kafka offset commit timestamp to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `${! @kafka_offset_commit_timestamp }`
+
+=== offset_metadata
+
+The Kafka offset metadata value to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `${! @kafka_offset_metadata }`
 
 === `timeout`
 
