@@ -10,7 +10,7 @@ component_type_dropdown::[]
 
 Uses https://docs.ockam.io/[Ockam^] to decrypt and read end-to-end encrypted messages from Kafka topics. You can write encrypted messages using the `ockam_kafka` output or by https://command.ockam.io/manual/ockam-kafka-inlet-create.html[creating a Kafka Portal Inlet^] using Ockam Command.
 
-https://docs.ockam.io/reference/command/secure-channels[Ockam Secure Channels] guarantee that topic data can only be consumed by authenticated and authorized consumers, and that the data cannot be leaked or or tampered with in-flight between the producer and consumer. Neither Kafka brokers, service providers nor other components can see or manipulate the messages.
+https://docs.ockam.io/reference/command/secure-channels[Ockam Secure Channels] guarantee that topic data can only be consumed by authenticated and authorized consumers, and that the data cannot be leaked or tampered with in-flight between the producer and consumer. Neither Kafka brokers, service providers nor other components can see or manipulate the messages.
 
 NOTE: You can use Ockam to encrypt whole messages, or specific fields in a message. 
 

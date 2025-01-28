@@ -82,7 +82,7 @@ input:
 
 When you specify a consumer group in your configuration, this input consumes one or more topics and automatically balances the topic partitions across any other connected clients with the same consumer group. Otherwise, topics are consumed in their entirety or with explicit partitions.
 
-This input often out-performs the traditional `kafka` input as well as providing more useful logs and error messages.
+This input often out-performs the traditional `kafka` input and provides more useful logs and error messages.
 
 == Metadata
 
@@ -536,9 +536,7 @@ Whether to consume from the oldest available offset. Otherwise, messages are con
 
 === `fetch_max_bytes`
 
-The maximum number of bytes that a broker tries to send during a fetch.
-
-If individual records are larger than the `fetch_max_bytes` value, brokers will still send them.
+The maximum size of a message batch (in bytes) that a broker tries to send during a client fetch. If individual records exceed the `fetch_max_bytes` value, brokers will still send them.
 
 *Type*: `string`
 
@@ -572,7 +570,7 @@ If a single batch is larger than the `fetch_max_partition_bytes` value, the batc
 
 === `consumer_group`
 
-An optional consumer group. When this value is specified: 
+An optional consumer group. When you specify this value: 
 
 - The partitions of any topics, specified in the `topics` field, are automatically distributed across consumers sharing a consumer group
 - Partition offsets are automatically committed and resumed under this name
@@ -716,7 +714,7 @@ processors:
 
 === `auto_replay_nacks`
 
-Whether to automatically replay rejected messages (negative acknowledgements) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+Whether to automatically replay rejected messages (negative acknowledgements) at the output level. If the cause of rejections persists, leaving this option enabled can result in back pressure.
 
 Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data is discarded immediately upon consumption and mutation.
 
