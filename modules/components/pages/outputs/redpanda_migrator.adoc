@@ -84,7 +84,7 @@ output:
 --
 ======
 
-You must specify the label of the associated xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] in the <<input_resource,`input_resource` field>>. When connected, this output queries the `redpanda_migrator` input for topic and ACL configurations and attempts to create them on the specified Kafka broker. If the broker does not contain the current message topic, this output attempts to create the topic along with its ACLs.
+You must specify the label of the associated xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] in the <<input_resource,`input_resource` field>>. When connected, this output queries the `redpanda_migrator` input for topic and ACL configurations. If the broker does not contain the current message topic, this output attempts to create the topic along with its ACLs.
 
 ACL migration adheres to the following principles:
 
@@ -273,7 +273,7 @@ The path of a certificate key to use.
 
 A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.
 
-WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding Oracle attacks which may allow an attacker recover the plain text password.
+WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding oracle attacks which may allow an attacker recover the plain text password.
 
 include::components:partial$secret_warning.adoc[]
 
