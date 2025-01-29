@@ -194,6 +194,16 @@ Use the format `<orgname>-<account_name>` where:
 - The `<orgname>` is the name of your Snowflake organization.
 - The `<account_name>` is the unique name of your account with your Snowflake organization.
 
+To find the correct value for this field, run the following query in Snowflake:
+
+```sql
+WITH HOSTLIST AS 
+(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$allowlist()))))
+SELECT REPLACE(VALUE:host,'.snowflakecomputing.com','') AS ACCOUNT_IDENTIFIER
+FROM HOSTLIST
+WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
+```
+
 *Type*: `string`
 
 ```yml
