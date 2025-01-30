@@ -7,6 +7,8 @@ ifndef::env-cloud[]
 
 Configure a Redpanda Connect pipeline to generate and write data into a local Redpanda topic, and then ingest that data into https://www.snowflake.com/en/[Snowflake^] using https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview[Snowpipe Streaming^].
 
+See also: xref:redpanda-cloud:develop:connect/cookbooks/snowflake_ingestion.adoc[Ingest data into Snowflake] using Redpanda Cloud
+
 == Prerequisites
 
 - https://docs.redpanda.com/current/get-started/rpk-install/[`rpk` installed]
@@ -267,5 +269,10 @@ The data produced into the `demo_topic` is consumed and streamed into Snowflake 
 ----
 SELECT * FROM STREAMING_DB.STREAMING_SCHEMA.STREAMING_DATA LIMIT 50;
 ----
+
+See also:
+
+- The xref:components:inputs/kafka_franz.adoc[`kafka_franz` input]
+- The xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming`] output
 
 // end::single-source[]

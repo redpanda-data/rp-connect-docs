@@ -548,6 +548,14 @@ The following examples show you how to ingest, process, and write data to Snowfl
 * A Redpanda cluster
 * A REST API that posts JSON payloads to a HTTP server
 
+ifndef::env-cloud[]
+See also: xref:cookbooks:snowflake_ingestion.adoc[Ingest data into Snowflake cookbook]
+endif::[]
+
+ifdef::env-cloud[]
+See also: xref:develop:connect/cookbooks/snowflake_ingestion.adoc[Ingest data into Snowflake cookbook]
+endif::[]
+
 [tabs]
 ======
 Write data exactly once to a Snowflake table using CDC::
