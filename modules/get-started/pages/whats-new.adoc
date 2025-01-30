@@ -27,7 +27,7 @@ This release adds:
 - The `offset_topic`, `offset_group`, `offset_partition`, `offset_commit_timestamp` and `offset_metadata` fields to the xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` output].
 - The `topic_lag_refresh_period` field to the xref:components:inputs/redpanda.adoc[`redpanda`] and xref:components:inputs/redpanda_common.adoc[`redpanda_common`] inputs.
 - The `redpanda_lag` metric to the xref:components:inputs/redpanda.adoc[`redpanda`] and xref:components:inputs/redpanda_common.adoc[`redpanda_common`] inputs.
-- The `fetch_max_wait` field to xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], and xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`] inputs.
+- The `fetch_max_wait` field to the xref:components:inputs/kafka_franz.adoc[`kafka_franz`], xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], and xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`] inputs.
 - The `kafka_lag` metadata field to the xref:components:inputs/redpanda.adoc[`redpanda`] and xref:components:inputs/redpanda_common.adoc[`redpanda_common`] inputs.
 - The `avro_schema` and `avro_schema_fingerprint` metadata fields to the xref:components:scanners/avro.adoc[`avro` scanner].
 - The `label` field to xref:configuration:templating.adoc[template test definitions].
@@ -195,7 +195,25 @@ This release adds:
 ** `compression`
 ** `broker_write_max_bytes`
 
+* The following fields to the xref:components:inputs/kafka_franz.adoc[`kafka_franz`] and xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`] inputs:
+
+** `fetch_max_bytes`
+** `fetch_min_bytes`
+** `fetch_max_partition_bytes`
+
 The `url` field of the xref:components:outputs/aws_sqs.adoc[`aws_sqs` output] now supports interpolation functions.
+
+==== Deprecations
+
+All changes are backward-compatible. No action is required if you are using an earlier version of Redpanda Connect.
+
+|===
+| Deprecated fields | Affected components
+
+| `auto_replay_nacks`, `sasl`, `metadata_max_age`
+| xref:components:inputs/ockam_kafka.adoc[`ockam_kafka` input]
+
+|===
 
 == Version 4.38.0
 
@@ -265,6 +283,7 @@ This release adds:
 
 * The `metadata_max_age` field to xref:components:inputs/kafka_franz.adoc[`kafka_franz`] and xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`] inputs.
 * The `fetch_in_order` field to the xref:components:inputs/schema_registry.adoc[`schema_registry` input].
+* The `encrypted_fields` fields to the xref:components:inputs/ockam_kafka.adoc[`ockam_kafka` input]. 
 
 == Version 4.36.0
 
