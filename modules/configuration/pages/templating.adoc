@@ -8,7 +8,7 @@
 Templates are an experimental feature and are subject to change outside major version releases.
 ====
 
-Templates are a way to define new Redpanda Connect components (similar to plugins) that are implemented by generating a Redpanda Connect config snippet from pre-defined parameter fields. This is useful when a common pattern of Redpanda Connect configuration is used but with varying parameters each time.
+Templates are a way to define new Redpanda Connect components (similar to plugins) that are implemented by generating a Redpanda Connect configuration snippet from pre-defined parameter fields. This is useful when a common pattern of Redpanda Connect configuration is used but with varying parameters each time.
 
 A template is defined in a YAML file that can be imported when Redpanda Connect runs using the flag `-t`:
 
@@ -17,7 +17,7 @@ A template is defined in a YAML file that can be imported when Redpanda Connect 
 rpk connect run -t "./templates/*.yaml" ./config.yaml
 ----
 
-The template describes the type of the component and configuration fields that can be used to customize it, followed by a xref:guides:bloblang/about.adoc[Bloblang mapping] that translates an object containing those fields into a Redpanda Connect config structure. This allows you to use logic to generate more complex configurations:
+The template describes the type of the component and configuration fields that can be used to customize it, followed by a xref:guides:bloblang/about.adoc[Bloblang mapping] that translates an object containing those fields into a Redpanda Connect configuration structure. This allows you to use logic to generate more complex configurations:
 
 [tabs]
 ======
@@ -47,7 +47,7 @@ mapping: |
   })
 ----
 --
-Config::
+Configuration::
 +
 --
 
@@ -173,7 +173,7 @@ A longer form description of the component and how to use it.
 
 === `fields`
 
-The configuration fields of the template, fields specified here will be parsed from a Redpanda Connect config and will be accessible from the template mapping.
+The configuration fields of the template, fields specified here will be parsed from a Redpanda Connect configuration and will be accessible from the template mapping.
 
 
 *Type*: `array`
@@ -214,9 +214,11 @@ The scalar type of the field.
 | `float`
 | standard float type
 | `bool`
-| a boolean true/false
+| A boolean true/false
+| `bloblang`
+| A bloblang mapping
 | `unknown`
-| allows for nesting arbitrary configuration inside of a field
+| Allows for nesting arbitrary configuration inside a field
 
 |===
 
@@ -256,15 +258,14 @@ Whether this field is considered advanced.
 
 A xref:guides:bloblang/about.adoc[Bloblang] mapping that translates the fields of the template into a valid Redpanda Connect configuration for the target component type.
 
-
-*Type*: `string`
+TIP: You can also add the metadata field `@label` within a template mapping to retrieve the `label` set in the corresponding configuration.
 
 
 === `metrics_mapping`
 
 An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that allows you to rename or prevent certain metrics paths from being exported. For more information check out the xref:components:metrics/about.adoc#metric-mapping[metrics documentation]. When metric paths are created, renamed and dropped a trace log is written, enabling TRACE level logging is therefore a good way to diagnose path mappings.
 
-Invocations of this mapping are able to reference a variable $label in order to obtain the value of the label provided to the template config. This allows you to match labels with the root of the config.
+Invocations of this mapping are able to reference a variable `$label` in order to obtain the value of the label provided to the template configuration. This allows you to match labels with the root of the configuration.
 
 
 *Type*: `string`
@@ -286,12 +287,51 @@ metrics_mapping: |-
 
 === `tests`
 
-Optional unit test definitions for the template that verify certain configurations produce valid configs. These tests are executed with the command `rpk connect template lint`.
+Optional unit test definitions for the template to help you produce valid configurations.
 
+The following examples show a test template, associated test configuration, and the commands to execute tests to verify them.
 
 *Type*: `array`
 
 *Default*: `[]`
+
+.`test.template.yaml`
+[,yaml]
+----
+name: basictemplate
+type: input
+
+mapping: |
+  root.generate = {
+    "count": 1,
+    "mapping": "root = \"" + @label.or("") + "\""
+  }
+
+tests:
+  - name: basictemplate test
+    label: quack
+    config: {}
+    expected:
+      generate:
+        count: 1
+        mapping: root = "quack"
+----
+
+.`testconfig.yaml`
+[,yaml]
+----
+input:
+  label: meow
+  basictemplate: {}
+----
+
+Test execution:
+
+[source,bash]
+----
+rpk connect template lint test.template.yaml
+rpk connect run -t "./test.template.yaml" ./testconfig.yaml
+----
 
 === `tests[].name`
 
@@ -300,11 +340,17 @@ A name to identify the test.
 
 *Type*: `string`
 
+=== `tests[].label`
+
+A label to assign to this template when running the test.
+
+*Type*: `string`
+
+*Default*: `""`
 
 === `tests[].config`
 
-A configuration to run this test with, the config resulting from applying the template with this config will be linted.
-
+A configuration to run this test against. Redpanda Connect checks the results of applying the template with this configuration using a linter.
 
 *Type*: `object`
 
