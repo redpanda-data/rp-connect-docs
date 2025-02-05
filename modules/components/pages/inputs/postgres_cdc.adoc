@@ -31,6 +31,7 @@ input:
     pg_standby_timeout: 10s
     pg_wal_monitor_interval: 3s
     max_parallel_snapshot_tables: 1
+    unchanged_toast_value: null
     auto_replay_nacks: true
     batching:
       count: 0
@@ -373,6 +374,21 @@ Specify the maximum number of tables that are processed in parallel when the ini
 *Type*: `int`
 
 *Default*: `1`
+
+
+=== `unchanged_toast_value`
+
+Specify the value to emit when unchanged <<receive-toast-and-deleted-values, TOAST values>> appear in the message stream. Unchanged values occur for data updates and deletes when `REPLICA IDENTITY` is not set to `FULL`.
+
+*Type*: `unknown`
+
+*Default*: `null`
+
+```yml
+# Examples
+
+unchanged_toast_value: __redpanda_connect_unchanged_toast_value__
+```
 
 === `auto_replay_nacks`
 
