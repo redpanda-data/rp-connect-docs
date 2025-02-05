@@ -380,14 +380,15 @@ Specify the maximum number of tables that are processed in parallel when the ini
 
 Specify the value to emit when unchanged <<receive-toast-and-deleted-values, TOAST values>> appear in the message stream. Unchanged values occur for data updates and deletes when `REPLICA IDENTITY` is not set to `FULL`.
 
-*Type*: `unknown`
+*Type*: `any`
 
 *Default*: `null`
 
 ```yml
 # Examples
 
-unchanged_toast_value: __redpanda_connect_unchanged_toast_value__
+unchanged_toast_value: __redpanda_connect_unchanged_toast_value__ 
+# Appears as {"toast":"__redpanda_connect_unchanged_toast_value__"} in a message
 ```
 
 === `auto_replay_nacks`
