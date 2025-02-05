@@ -56,7 +56,7 @@ pipeline:
 
 == Logging errors
 
-When an error occurs, there may be useful information stored in the error flag. You can use the xref:guides:bloblang/functions.adoc#error[`error`] interpolation functions to write this information to logs. You can also add the following Bloblang functions to expose additional details about the processor.
+When an error occurs, there may be useful information stored in the error flag. You can use xref:guides:bloblang/functions.adoc#error[`error`] Bloblang function interpolations to write this information to logs. You can also add the following Bloblang functions to expose additional details about the processor.
 
 - xref:guides:bloblang/functions.adoc#error_source_label[`error_source_label`]
 - xref:guides:bloblang/functions.adoc#error_source_name[`error_source_name`]
@@ -64,22 +64,20 @@ When an error occurs, there may be useful information stored in the error flag. 
 
 For example, this configuration catches processor failures and writes the following information to logs: 
 
-- A heading, which includes the cause of the error (`${!error()}`)
-- Error text, which includes the label of the processor (`${!error_source_label()}`) that failed along with the cause of the error
+- The label of the processor (`${!error_source_label()}`) that failed
+- The cause of the failure (`${!error()}`) 
 
 [source,yaml]
 ----
 pipeline:
   processors:
-    - resource: processor_1 # Processor that might fail
-      - try:
-        - resource: processor_1 # Processor that might fail
-        - resource: processor_2 # Processor that might fail
-        - resource: processor_3 # Processor that might fail
+    - try:
+      - resource: processor_1 # Processor that might fail
+      - resource: processor_2 # Processor that might fail
+      - resource: processor_3 # Processor that might fail
     - catch:
       - log:
-          message: "Processing failed due to: ${!error()}"
-            message: "Processor ${!error_source_label()} failed due to: ${!error()}"
+          message: "Processor ${!error_source_label()} failed due to: ${!error()}"
 ----
 
 You could also add an error message to the message payload:
