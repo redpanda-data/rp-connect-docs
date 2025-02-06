@@ -25,6 +25,9 @@ Common::
 # Common configuration fields, showing default values
 label: ""
 schema_registry_decode:
+  avro:
+    raw_unions: false # No default (optional)
+    preserve_logical_types: false
   url: "" # No default (required)
 ```
 
@@ -37,7 +40,9 @@ Advanced::
 # All configuration fields, showing default values
 label: ""
 schema_registry_decode:
-  avro_raw_json: false
+  avro:
+    raw_unions: false
+    preserve_logical_types: false
   url: "" # No default (required)
   oauth:
     enabled: false
@@ -75,19 +80,19 @@ Avro, Protobuf and JSON schemas are supported, all are capable of expanding from
 By default, this processor expects documents formatted as https://avro.apache.org/docs/current/specification/[Avro JSON^] when decoding with Avro schemas. In this format, the value of a union is encoded in JSON as follows:
 
 - If the union's type is `null`, it is encoded as a JSON `null`.
-- Otherwise, the union is encoded as a JSON object with one name/value pair. The `"name"` is the type's name and the `"value"` is the recursively encoded value. For Avro's named types (record, fixed or enum), the user-specified name is used. For other types, the type name is used.
+- Otherwise, the union is encoded as a JSON object with one name/value pair. The `"name"` is the type's name and the `"value"` is the recursively-encoded value. For Avro's named types (record, fixed or enum), the user-specified name is used. For other types, the type name is used.
 
 For example, the union schema `["null","string","Transaction"]`, where `Transaction` is a record name, would encode:
 
-- The `null` as a JSON `null`
+- `null` as a JSON `null`
 - The string `"a"` as `{"string": "a"}`
 - A `Transaction` instance as `{"Transaction": {...}}`, where `{...}` indicates the JSON encoding of a `Transaction` instance
 
-Alternatively, you can create documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting the field <<avro_raw_json,`avro_raw_json`>> to `true`.
+Alternatively, you can create documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting the field <<avro-raw_unions,`avro.raw_unions`>> to `true`.
 
 == Protobuf format
 
-This processor decodes protobuf messages to JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json
+This processor decodes Protobuf messages to JSON documents For more information about the JSON mapping of Protobuf messages, see the https://developers.google.com/protocol-buffers/docs/proto3#json[Protocol Buffers Documentation^].
 
 == Metadata
 
@@ -97,10 +102,38 @@ This processor adds the following metadata to processed messages:
 
 == Fields
 
-=== `avro_raw_json`
+=== `avro.raw_unions`
 
-Whether messages should be decoded into normal JSON (JSON that meets the expectations of regular internet JSON) rather than https://avro.apache.org/docs/current/specification/[Avro JSON^]. If `true`, the schema returned from the subject is decoded as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard JSON^] instead of as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[Avro JSON^]. For more details on the difference between standard JSON and Avro JSON, see the https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in Goavro^] and the https://github.com/linkedin/goavro[underlying library used for Avro serialization^].
+Whether Avro messages should be decoded into normal JSON (JSON that meets the expectations of regular internet JSON) rather than https://avro.apache.org/docs/current/specification/[Avro JSON^]. 
 
+If set to `false`, Avro messages are decoded as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[Avro JSON^].
+
+For example, the union schema `["null","string","Transaction"]`, where `Transaction` is a record name, would be decoded as:
+
+- A `null` as a JSON `null`
+- The string `"a"` as `{"string": "a"}`
+- A `Transaction` instance as `{"Transaction": {...}}`, where `{...}` indicates the JSON encoding of a `Transaction` instance.
+
+If set to `true`, Avro messages are decoded as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard JSON^].
+
+For example, the same union schema `["null","string","Transaction"]` is decoded as:
+
+- A `null` as JSON `null`
+- The string `"a"` as `"a"`
+- A `Transaction` instance as `{...}`, where `{...}` indicates the JSON encoding of a `Transaction` instance.
+
+For more details on the difference between standard JSON and Avro JSON, see the https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in Goavro^] and the https://github.com/linkedin/goavro[underlying library used for Avro serialization^].
+
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `avro.preserve_logical_types`
+
+Whether to preserve logical types or transform them back into their primitive type.
+
+When set to `false`, logical types are transformed. For example, decimals are decoded as raw bytes and timestamps are decoded as plain integers. 
 
 *Type*: `bool`
 

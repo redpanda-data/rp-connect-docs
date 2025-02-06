@@ -77,7 +77,7 @@ Encodes messages automatically from schemas obtains from a https://docs.confluen
 
 If a message fails to encode under the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error-handling methods].
 
-Avro, Protobuf and Json schemas are supported, all are capable of expanding from schema references as of v4.22.0.
+Avro, Protobuf and JSON schemas are supported, all are capable of expanding from schema references as of v4.22.0.
 
 == Avro JSON format
 
@@ -88,7 +88,7 @@ By default, this processor expects documents formatted as https://avro.apache.or
 
 For example, the union schema `["null","string","Transaction"]`, where `Transaction` is a record name, would encode:
 
-- The `null` as a JSON `null`
+- A `null` as a JSON `null`
 - The string `"a"` as `{"string": "a"}`
 - A `Transaction` instance as `{"Transaction": {...}}`, where `{...}` indicates the JSON encoding of a `Transaction` instance
 
@@ -100,11 +100,11 @@ Important! There is an outstanding issue in the https://github.com/linkedin/goav
 
 == Protobuf format
 
-This processor encodes protobuf messages either from any format parsed within Redpanda Connect (encoded as JSON by default), or from raw JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json
+This processor encodes Protobuf messages either from any format parsed within Redpanda Connect (encoded as JSON by default), or from raw JSON documents, you can read more about JSON mapping of Protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json
 
 === Multiple message support
 
-When a target subject presents a protobuf schema that contains multiple messages it becomes ambiguous which message definition a given input data should be encoded against. In such scenarios Redpanda Connect will attempt to encode the data against each of them and select the first to successfully match against the data, this process currently *ignores all nested message definitions*. In order to speed up this exhaustive search the last known successful message will be attempted first for each subsequent input.
+When a target subject presents a Protobuf schema that contains multiple messages it becomes ambiguous which message definition a given input data should be encoded against. In such scenarios Redpanda Connect will attempt to encode the data against each of them and select the first to successfully match against the data, this process currently *ignores all nested message definitions*. In order to speed up this exhaustive search the last known successful message will be attempted first for each subsequent input.
 
 We will be considering alternative approaches in future so please https://redpanda.com/slack[get in touch^] with thoughts and feedback.
 
@@ -155,8 +155,9 @@ refresh_period: 1h
 
 === `avro_raw_json`
 
-Whether messages encoded in Avro format should be parsed as normal JSON (JSON that meets the expectations of regular internet JSON) rather than https://avro.apache.org/docs/current/specification/[Avro JSON^]. If `true`, the schema returned from the subject is parsed as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard JSON^] instead of as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[Avro JSON^]. For more details on the difference between standard JSON and Avro JSON, see the https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in Goavro^] and the https://github.com/linkedin/goavro[underlying library used for Avro serialization^].
+Whether messages encoded in Avro format should be parsed as normal JSON (JSON that meets the expectations of regular internet JSON) rather than https://avro.apache.org/docs/current/specification/[Avro JSON^]. 
 
+If set to `true`, the schema returned from the subject is parsed as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard JSON^] instead of as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[Avro JSON^]. For more details on the difference between standard JSON and Avro JSON, see the https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in Goavro^] and the https://github.com/linkedin/goavro[underlying library used for Avro serialization^].
 
 *Type*: `bool`
 
