@@ -39,6 +39,7 @@ Redpanda Connect now supports:
 - Calls to external tools when using the xref:components:processors/ollama_chat.adoc[`ollama_chat` processor].
 - The execution of multiple database queries as transactions when using the xref:components:inputs/sql_raw.adoc[`sql_raw` input], xref:components:outputs/sql_raw.adoc[output] and xref:components:processors/sql_raw.adoc[processor].
 - Using the xref:configuration:templating.adoc[`label` metadata field] within a template mapping to retrieve the template component `label` set in the corresponding configuration.
+- The following Bloblang functions for error handling: xref:guides:bloblang/functions.adoc#error_source_name[`error_source_name`], xref:guides:bloblang/functions.adoc#error_source_label[`error_source_label`], and xref:guides:bloblang/functions.adoc#error_source_path[`error_source_path`].
 
 ==== Deprecations
 
