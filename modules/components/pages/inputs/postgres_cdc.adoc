@@ -388,7 +388,8 @@ Specify the value to emit when unchanged <<receive-toast-and-deleted-values, TOA
 # Examples
 
 unchanged_toast_value: __redpanda_connect_unchanged_toast_value__ 
-# Appears as {"toast":"__redpanda_connect_unchanged_toast_value__"} in a message
+
+unchanged_toast_value: {"$": "unchanged_toast_value"}
 ```
 
 === `auto_replay_nacks`
