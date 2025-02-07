@@ -20,14 +20,14 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 input:
   label: ""
   kafka:
     addresses: [] # No default (required)
     topics: [] # No default (required)
     target_version: 2.1.0 # No default (optional)
-    consumer_group: ""
+    consumer_group: "" # No default (optional)
     checkpoint_limit: 1024
     auto_replay_nacks: true
 ```
@@ -38,9 +38,9 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 input:
-  label: ""
+  label:
   kafka:
     addresses: [] # No default (required)
     topics: [] # No default (required)
@@ -49,19 +49,20 @@ input:
       enabled: false
       skip_cert_verify: false
       enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
+      root_cas: "" # No default (optional)
+      root_cas_file: "" # No default (optional)
+      client_certs: [] # No default (optional)
     sasl:
       mechanism: none
-      user: ""
-      password: ""
-      access_token: ""
-      token_cache: ""
-      token_key: ""
-    consumer_group: ""
+      user: "" # No default (optional)
+      password: "" # No default (optional)
+      access_token: "" # No default (optional)
+      token_cache: "" # No default (optional)
+      token_key: "" # No default (optional)
+    consumer_group: "" # No default (optional)
     client_id: benthos
-    rack_id: ""
+    rack_id: "" # No default (optional)
+    instance_id: "" # No default (optional) 
     start_from_oldest: true
     checkpoint_limit: 1024
     auto_replay_nacks: true
@@ -77,8 +78,8 @@ input:
     batching:
       count: 0
       byte_size: 0
-      period: ""
-      check: ""
+      period: "" # No default (optional)
+      check: "" # No default (optional)
       processors: [] # No default (optional)
 ```
 
@@ -89,7 +90,7 @@ Offsets are managed within Kafka under the specified consumer group, and partiti
 
 The Kafka input allows parallel processing of messages from different topic partitions, and messages of the same topic partition are processed with a maximum parallelism determined by the field <<checkpoint_limit,`checkpoint_limit`>>.
 
-In order to enforce ordered processing of partition messages set the <checkpoint_limit,`checkpoint_limit`>> to `1` and this will force partitions to be processed in lock-step, where a message will only be processed once the prior message is delivered.
+In order to enforce ordered processing of partition messages set the <<checkpoint_limit,`checkpoint_limit`>> to `1` and this will force partitions to be processed in lock-step, where a message will only be processed once the prior message is delivered.
 
 Batching messages before processing can be enabled using the <<batching,`batching`>> field, and this batching is performed per-partition such that messages of a batch will always originate from the same partition. This batching mechanism is capable of creating batches of greater size than the <<checkpoint_limit,`checkpoint_limit`>>, in which case the next batch will only be created upon delivery of the current one.
 
@@ -129,9 +130,7 @@ Unfortunately this error message will appear for a wide range of connection prob
 
 A list of broker addresses to connect to. If an item of the list contains commas it will be expanded into multiple addresses.
 
-
 *Type*: `array`
-
 
 ```yml
 # Examples
@@ -450,7 +449,6 @@ Required when using a `token_cache`, the key to query the cache with for tokens.
 
 An identifier for the consumer group of the connection. This field can be explicitly made empty in order to disable stored offsets for the consumed topic partitions.
 
-
 *Type*: `string`
 
 *Default*: `""`
@@ -462,7 +460,7 @@ An identifier for the client connection.
 
 *Type*: `string`
 
-*Default*: `"benthos"`
+*Default*: `benthos`
 
 === `rack_id`
 
@@ -472,6 +470,22 @@ A rack identifier for this client.
 *Type*: `string`
 
 *Default*: `""`
+
+=== `instance_id`
+
+When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to help brokers identify each input after restarts and prevent unnecessary rebalances.
+
+*Type*: string
+
+*Default* `""`
+
+```yml
+# Examples
+
+instance_id: redpanda_input_5
+
+instance_id: redpanda_input_6
+```
 
 === `start_from_oldest`
 
@@ -511,7 +525,7 @@ The period of time between each commit of the current partition offsets. Offsets
 
 *Type*: `string`
 
-*Default*: `"1s"`
+*Default*: `1s`
 
 === `max_processing_period`
 
@@ -520,7 +534,7 @@ A maximum estimate for the time taken to process a message, this is used for tun
 
 *Type*: `string`
 
-*Default*: `"100ms"`
+*Default*: `100ms`
 
 === `extract_tracing_map`
 
@@ -556,7 +570,7 @@ A period after which a consumer of the group is kicked after no heartbeats.
 
 *Type*: `string`
 
-*Default*: `"10s"`
+*Default*: `10s`
 
 === `group.heartbeat_interval`
 
@@ -565,7 +579,7 @@ A period in which heartbeats should be sent out.
 
 *Type*: `string`
 
-*Default*: `"3s"`
+*Default*: `3s`
 
 === `group.rebalance_timeout`
 
@@ -574,7 +588,7 @@ A period after which rebalancing is abandoned if unresolved.
 
 *Type*: `string`
 
-*Default*: `"60s"`
+*Default*: `60s`
 
 === `fetch_buffer_cap`
 

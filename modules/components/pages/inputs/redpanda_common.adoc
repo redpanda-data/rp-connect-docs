@@ -45,7 +45,8 @@ input:
   redpanda_common:
     topics: [] # No default (required)
     regexp_topics: false
-    rack_id: ""
+    rack_id: "" # No default (optional)
+    instance_id: "" # No default (optional)
     start_from_oldest: true
     fetch_max_bytes: 50MiB
     fetch_max_wait: 5s
@@ -210,6 +211,24 @@ A rack specifies where the client is physically located, and changes fetch reque
 *Type*: `string`
 
 *Default*: `""`
+
+=== `instance_id`
+
+When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. 
+
+When you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.
+
+*Type*: string
+
+*Default* `""`
+
+```yml
+# Examples
+
+instance_id: redpanda_input_5
+
+instance_id: redpanda_input_6
+```
 
 === `start_from_oldest`
 
