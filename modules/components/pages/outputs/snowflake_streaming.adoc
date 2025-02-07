@@ -51,8 +51,8 @@ output:
     batching:
       count: 0
       byte_size: 0
-      period: ""
-      check: ""
+      period: "" # No default (optional)
+      check: "" # No default (optional)
     max_in_flight: 4
 ```
 
@@ -96,8 +96,8 @@ output:
     batching:
       count: 0
       byte_size: 0
-      period: ""
-      check: ""
+      period: "" # No default (optional)
+      check: "" # No default (optional)
       processors: [] # No default (optional)
     max_in_flight: 4
     channel_prefix: channel-${HOST} # No default (optional)
