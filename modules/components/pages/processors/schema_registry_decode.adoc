@@ -131,9 +131,12 @@ For more details on the difference between standard JSON and Avro JSON, see the 
 
 === `avro.preserve_logical_types`
 
-Whether to preserve logical types or transform them back into their primitive type.
+Choose whether to:
 
-When set to `false`, logical types are transformed. For example, decimals are decoded as raw bytes and timestamps are decoded as plain integers. 
+- Transform logical types into their primitive type (default). For example, decimals become raw bytes and timestamps become plain integers.
+- Preserve logical types
+
+Set to `true` to preserve logical types.
 
 *Type*: `bool`
 

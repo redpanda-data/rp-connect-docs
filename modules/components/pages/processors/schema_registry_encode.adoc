@@ -155,9 +155,25 @@ refresh_period: 1h
 
 === `avro_raw_json`
 
-Whether messages encoded in Avro format should be parsed as normal JSON (JSON that meets the expectations of regular internet JSON) rather than https://avro.apache.org/docs/current/specification/[Avro JSON^]. 
+Whether Avro messages should be parsed as normal JSON (JSON that meets the expectations of regular internet JSON) rather than https://avro.apache.org/docs/current/specification/[Avro JSON^]. 
 
-If set to `true`, the schema returned from the subject is parsed as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard JSON^] instead of as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[Avro JSON^]. For more details on the difference between standard JSON and Avro JSON, see the https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in Goavro^] and the https://github.com/linkedin/goavro[underlying library used for Avro serialization^].
+If set to `false`, the schema returned from the subject is parsed as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[Avro JSON^].
+
+For example, the union schema `["null","string","Transaction"]`, where `Transaction` is a record name, would be decoded as:
+
+- A `null` as a JSON `null`
+- The string `"a"` as `{"string": "a"}`
+- A `Transaction` instance as `{"Transaction": {...}}`, where `{...}` indicates the JSON encoding of a `Transaction` instance.
+
+If set to `true`, the schema returned from the subject is parsed as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard JSON^].
+
+For example, the same union schema `["null","string","Transaction"]` is decoded as:
+
+- A `null` as JSON `null`
+- The string `"a"` as `"a"`
+- A `Transaction` instance as `{...}`, where `{...}` indicates the JSON encoding of a `Transaction` instance.
+
+For more details on the difference between standard JSON and Avro JSON, see the https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in Goavro^] and the https://github.com/linkedin/goavro[underlying library used for Avro serialization^].
 
 *Type*: `bool`
 
