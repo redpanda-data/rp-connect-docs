@@ -80,15 +80,6 @@ output:
       CREATE TABLE IF NOT EXISTS mytable (amount NUMBER);
     schema_evolution:
       enabled: false # No default (required)
-      new_column_type_mapping: |-
-        root = match this.value.type() {
-          this == "string" => "STRING"
-          this == "bytes" => "BINARY"
-          this == "number" => "DOUBLE"
-          this == "bool" => "BOOLEAN"
-          this == "timestamp" => "TIMESTAMP"
-          _ => "VARIANT"
-        }
       processors: [] # No default (optional)
     build_options:
       parallelism: 1
@@ -330,36 +321,6 @@ Whether schema evolution is enabled. When set to `true`, the Snowflake table is 
 
 *Type*: `bool`
 
-=== `schema_evolution.new_column_type_mapping`
-
-A mapping function from Redpanda Connect data types to column data types in Snowflake. This mapping should result in the assignment of a string to the `root` variable with the data type for the new column in Snowflake.
-
-The input to this mapping is either:
-
-- The output of <<processors, `processors`>> (when specified)
-- An object with the value and name of the new column, the original message, and details of the Snowflake table the output writes to. 
-
-+
-For example: `{"value": 42.3, "name":"new_data_field", "message": {"existing_data_field": 42, "new_data_field": "db_field_name"}, "db": MY_DATABASE", "schema": "MY_SCHEMA", "table": "MY_TABLE"}`
-
-+
-The metadata remains the same as in the original message that triggered the schema update.
-
-*Type*: `string`
-
-*Default*: 
-
-```yml
-root = match this.value.type() {
-    this == "string" => "STRING"
-    this == "bytes" => "BINARY"
-    this == "number" => "DOUBLE"
-    this == "bool" => "BOOLEAN"
-    this == "timestamp" => "TIMESTAMP"
-    _ => "VARIANT"
-  }
-```
-
 === `schema_evolution.processors`
 
 A series of processors to execute when new columns are added to the Snowflake table. You can use these processors to perform tasks, including:
@@ -373,7 +334,7 @@ The input to these processors is an object with the value and name of the new co
 
 For example: `{"value": 42.3, "name":"new_data_field", "message": {"existing_data_field": 42, "new_data_field": "db_field_name"}, "db": MY_DATABASE", "schema": "MY_SCHEMA", "table": "MY_TABLE"}`
 
-The metadata remains the same as in the original message that triggered the schema update.
+The output from the processors must be a valid message, which contains a string that specifies the column type for the new column in Snowflake. The metadata remains the same as in the original message that triggered the schema update.
 
 *Type*: `array`
 
