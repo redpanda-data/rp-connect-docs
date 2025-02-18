@@ -80,7 +80,7 @@ Avro, Protobuf and JSON schemas are supported, all are capable of expanding from
 By default, this processor expects documents formatted as https://avro.apache.org/docs/current/specification/[Avro JSON^] when decoding with Avro schemas. In this format, the value of a union is encoded in JSON as follows:
 
 - If the union's type is `null`, it is encoded as a JSON `null`.
-- Otherwise, the union is encoded as a JSON object with one name/value pair. The `"name"` is the type's name and the `"value"` is the recursively-encoded value. For Avro's named types (record, fixed or enum), the user-specified name is used. For other types, the type name is used.
+- Otherwise, the union is encoded as a JSON object with one name/value pair. The name is the type's name, and the value is the recursively-encoded value. The user-specified name is used for Avro's named types (record, fixed, or enum). For other types, the type name is used.
 
 For example, the union schema `["null","string","Transaction"]`, where `Transaction` is a record name, would encode:
 
@@ -92,7 +92,7 @@ Alternatively, you can create documents in https://pkg.go.dev/github.com/linkedi
 
 == Protobuf format
 
-This processor decodes Protobuf messages to JSON documents For more information about the JSON mapping of Protobuf messages, see the https://developers.google.com/protocol-buffers/docs/proto3#json[Protocol Buffers Documentation^].
+This processor decodes Protobuf messages to JSON documents. For more information about the JSON mapping of Protobuf messages, see the https://developers.google.com/protocol-buffers/docs/proto3#json[Protocol Buffers documentation^].
 
 == Metadata
 
