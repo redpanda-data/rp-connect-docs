@@ -82,8 +82,31 @@ endif::[]
   * Binary logging enabled
   * `binlog_format` variable set to `ROW`
   * `binlog_row_image` variable set to `FULL`
-  * A database user with the `REPLICATION SLAVE` role
+  * A database user with the `REPLICATION SLAVE` privilege
 - The mysqldump tool installed on the operating system where your database is hosted
+
+=== Configuration resources
+
+[tabs]
+=====
+Cloud platforms::
++
+--
+
+- https://aws.amazon.com/blogs/database/enable-change-data-capture-on-amazon-rds-for-mysql-applications-that-are-using-xa-transactions/[Change data capture on Amazon RDS for MySQL^]
+- https://learn.microsoft.com/en-us/fabric/real-time-hub/add-source-mysql-database-cdc[Azure MySQL Database (CDC)^]
+- https://cloud.google.com/datastream/docs/configure-cloudsql-mysql[Google Cloud SQL for MySQL^]
+
+--
+Self-hosted MySQL::
++
+--
+
+- https://dev.mysql.com/doc/refman/8.4/en/replication-options-binary-log.html[Binary Logging Options and Variables^]
+- https://dev.mysql.com/doc/refman/8.4/en/replication-howto-repuser.html[Creating a User for Replication^]
+
+--
+=====
 
 == Choose a replication mode
 
@@ -115,7 +138,7 @@ Finally, the input uses the stored binlog position to catchup with changes that 
 
 == Binlog rotation
 
-While the `mysql_cdc` input is streaming changes to Redpanda Connect, the MySQL server may rotate the binlog file. When this occurs, Redpanda Connect flushes the existing message batch and stores the new binlog position so that it can resume processing using the latest offset.
+While the `mysql_cdc` input is streaming changes to Redpanda Connect, your MySQL server may rotate the binlog file. When this occurs, Redpanda Connect flushes the existing message batch and stores the new binlog position so that it can resume processing using the latest offset.
 
 == Monitor the replication process
 
@@ -221,7 +244,6 @@ The maximum number of table rows to fetch in each batch when taking a snapshot. 
 *Type*: `int`
 
 *Default*: `1000`
-
 
 === `stream_snapshot`
 
