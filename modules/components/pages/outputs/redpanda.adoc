@@ -544,7 +544,7 @@ Override the default murmur2 hashing partitioner.
 | Option | Summary
 
 | `least_backup`
-| Chooses the least backed up partition. The partition with the fewest buffered records. Partitions are selected per batch.
+| Choose the partition with the fewest buffered records. Partitions are selected per batch.
 | `manual`
 | Manually select a partition for each message. You must also specify a value for the `partition` field.
 | `murmur2_hash`
