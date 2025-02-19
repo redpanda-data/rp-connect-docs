@@ -114,19 +114,19 @@ You can run the `mysql_cdc` input in one of two modes, depending on whether you 
 If you set the <<stream_snapshot,`stream_snapshot` field>> to `true`, Redpanda Connect connects to your MySQL database and does the following to capture a snapshot of all data in the selected tables:
 
 . Executes the `FLUSH TABLES WITH READ LOCK` query to write any outstanding table updates to disk, and locks the tables. 
-. Runs the `START TRANSACTION WITH CONSISTENT SNAPSHOT` to create a new transaction with a consistent view of all data, capturing the state of the database at the moment the transaction started.
+. Runs the `START TRANSACTION WITH CONSISTENT SNAPSHOT` statement to create a new transaction with a consistent view of all data, capturing the state of the database at the moment the transaction started.
 . Reads the current binlog position.
 . Runs the `UNLOCK TABLES` statement to release the database.
 . Preserves the initial transaction for data integrity.
 
 NOTE: If the pipeline restarts during this process, Redpanda Connect must start the snapshot capture from scratch to store the current binlog position in the <<checkpoint_cache,`checkpoint_cache`>>.
 
-After the snapshot is taken, the input executes SELECT statements to extract data from the selected tables in two stages, it:
+After the snapshot is taken, the input executes SELECT statements to extract data from the selected tables in two stages:
 
-. Finds the primary keys of a table.
-. Selects the data ordered by primary key.
+. The input finds the primary keys of a table.
+. It selects the data ordered by primary key.
 
-Finally, the input uses the stored binlog position to catchup with changes that occurred during snapshot processing.
+Finally, the input uses the stored binlog position to catch up with changes that occurred during snapshot processing.
 
 === Streaming mode
 
@@ -153,7 +153,7 @@ The following table shows how selected MySQL data types are mapped to data types
 | A standard numeric type, for example: `123`
 
 | FLOAT, DOUBLE
-| A 64-bit decimal (`float64)`, for example: `123.1234`
+| A 64-bit decimal (`float64`), for example: `123.1234`
 
 | DATETIME, TIMESTAMP
 | A Bloblang timestamp, for example: 
