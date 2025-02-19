@@ -175,7 +175,7 @@ This input adds the following metadata fields to each message:
 
 - `operation`: The type of database operation that generated the message, such as `read`, `insert`, `update`, `delete`. A `read` operation occurs when a snapshot of the database is processed.
 - `table`: The name of the database table from which the message originated.
-- `binlog_position`: The https://dev.mysql.com/doc/refman/8.0/en/binary-log.html[Binary Log (binlog)^] position of each data update streamed from the source MySQL database, excluding the initial snapshot. The `binlog` values are strings that you can sort to determine the order in which data updates occurred.
+- `binlog_position`: The https://dev.mysql.com/doc/refman/8.0/en/binary-log.html[Binary Log (binlog)^] position of each data update streamed from the source MySQL database. No `binlog_position` is set for data extracted from the initial snapshot. The `binlog` values are strings that you can sort to determine the order in which data updates occurred.
 
 == Fields
 
