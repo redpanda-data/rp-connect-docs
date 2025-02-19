@@ -78,12 +78,7 @@ Redpanda Connect allows you to specify which <<tables,database tables>> in your 
 ifdef::env-cloud[]
 - Network access from the cluster where your Redpanda Connect pipeline is running to the source database environment. For detailed networking information, including how to set up a VPC peering connection, see xref:networking:index.adoc[Redpanda Cloud Networking].
 endif::[]
-- A correctly configured MySQL instance with:
-  * Binary logging enabled
-  * `binlog_format` variable set to `ROW`
-  * `binlog_row_image` variable set to `FULL`
-  * A database user with the `REPLICATION SLAVE` privilege
-- The mysqldump tool installed on the operating system where your database is hosted
+- A MySQL instance with binary logging enabled
 
 === Configuration resources
 
@@ -103,27 +98,24 @@ Self-hosted MySQL::
 --
 
 - https://dev.mysql.com/doc/refman/8.4/en/replication-options-binary-log.html[Binary Logging Options and Variables^]
-- https://dev.mysql.com/doc/refman/8.4/en/replication-howto-repuser.html[Creating a User for Replication^]
 
 --
 =====
 
 == Choose a replication mode
 
-You can run the `mysql_cdc` input in streaming or snapshot mode.
+You can run the `mysql_cdc` input in one of two modes, depending on whether you need a snapshot of existing data.
 
-In snapshot mode, Redpanda Connect first takes a snapshot of all data in the selected tables and streams the contents before processing changes from the last recorded binlog position. In streaming mode, Redpanda Connect only processes the most recent changes starting from the latest binlog position.
-
-=== Streaming mode
-
-If you set the <<stream_snapshot,`stream_snapshot` field>> to `false`, Redpanda Connect connects to your MySQL database and starts processing data changes from the latest binlog position. If the pipeline restarts, Redpanda Connect resumes processing updates from the last binlog position written to the <<checkpoint_cache,`checkpoint_cache`>>.
+- Snapshot mode: Redpanda Connect first captures a snapshot of all data in the selected tables and streams the contents before processing changes from the last recorded binlog position.
+- Streaming mode: Redpanda Connect skips the snapshot and processes only the most recent data changes, starting from the latest binlog position.
 
 === Snapshot mode
 
 If you set the <<stream_snapshot,`stream_snapshot` field>> to `true`, Redpanda Connect connects to your MySQL database and does the following to capture a snapshot of all data in the selected tables:
 
-. Runs the `START TRANSACTION WITH CONSISTENT SNAPSHOT` command to gain exclusive use of the database.
-. Executes the `FLUSH TABLES WITH READ LOCK` query to force outstanding updates to be written to disk and locks them while recording the current binlog position.
+. Executes the `FLUSH TABLES WITH READ LOCK` query to write any outstanding table updates to disk, and locks the tables. 
+. Runs the `START TRANSACTION WITH CONSISTENT SNAPSHOT` to create a new transaction with a consistent view of all data, capturing the state of the database at the moment the transaction started.
+. Reads the current binlog position.
 . Runs the `UNLOCK TABLES` statement to release the database.
 . Preserves the initial transaction for data integrity.
 
@@ -136,20 +128,13 @@ After the snapshot is taken, the input executes SELECT statements to extract dat
 
 Finally, the input uses the stored binlog position to catchup with changes that occurred during snapshot processing.
 
+=== Streaming mode
+
+If you set the <<stream_snapshot,`stream_snapshot` field>> to `false`, Redpanda Connect connects to your MySQL database and starts processing data changes from the latest binlog position. If the pipeline restarts, Redpanda Connect resumes processing updates from the last binlog position written to the <<checkpoint_cache,`checkpoint_cache`>>.
+
 == Binlog rotation
 
 While the `mysql_cdc` input is streaming changes to Redpanda Connect, your MySQL server may rotate the binlog file. When this occurs, Redpanda Connect flushes the existing message batch and stores the new binlog position so that it can resume processing using the latest offset.
-
-== Monitor the replication process
-
-You can monitor the initial replication of data using the following metrics:
-
-TODO
-
-
-== Troubleshoot replication failures
-
-TODO
 
 == Data mappings
 
@@ -158,20 +143,26 @@ The following table shows how selected MySQL data types are mapped to data types
 |===
 | MySQL data type | Bloblang value
 
+| TEXT, VARCHAR
+| A string value, for example: `"this data"`
+
 | BINARY, VARBINARY, TINYBLOB, BLOB, MEDIUMBLOB, LONGBLOB
 | An array of byte values, for example: `[byte1,byte2,byte3]`
 
-| TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT, YEAR
-| A 64-bit integer (`Int64`), for example: `123`
-
-| DECIMAL, NUMERIC
-| JSON number types, for example: `1`
+| DECIMAL, NUMERIC, TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT, YEAR
+| A standard numeric type, for example: `123`
 
 | FLOAT, DOUBLE
 | A 64-bit decimal (`float64)`, for example: `123.1234`
 
+| DATETIME, TIMESTAMP
+| A Bloblang timestamp, for example: 
+
+`1257894000000
+2009-11-10 23:00:00 +0000 UTC`
+
 | SET
-| An array of strings, for example: ["apple", "banana", "orange"]
+| An array of strings, for example: `["apple", "banana", "orange"]`
 
 | JSON
 | A map object of the JSON, for example: `{"red": 1, "blue": 2, "green": 3}`
@@ -184,7 +175,7 @@ This input adds the following metadata fields to each message:
 
 - `operation`: The type of database operation that generated the message, such as `read`, `insert`, `update`, `delete`. A `read` operation occurs when a snapshot of the database is processed.
 - `table`: The name of the database table from which the message originated.
-- `binlog_position`: The https://dev.mysql.com/doc/refman/8.0/en/binary-log.html[Binary Log (binlog)^] position of each data update from the source MySQL database. The `binlog` values are strings that you can sort to determine the order in which data updates occurred.
+- `binlog_position`: The https://dev.mysql.com/doc/refman/8.0/en/binary-log.html[Binary Log (binlog)^] position of each data update streamed from the source MySQL database, excluding the initial snapshot. The `binlog` values are strings that you can sort to determine the order in which data updates occurred.
 
 == Fields
 
@@ -226,7 +217,15 @@ Specify a `cache` resource to store the binlog position of the most recent data 
 ```yml
 # Examples
 
-TODO
+input:
+  mysql_cdc:
+    dsn: username:password@tcp(localhost:3306)/database
+    tables: [my_table]
+    checkpoint_cache: "my_cdc_cache"
+cache_resources:
+  - label: "my_cdc_cache"
+    redis:
+      url: redis://:6379
 ```
 
 === `checkpoint_key`
@@ -369,9 +368,5 @@ processors:
   - archive:
       format: json_array
 ```
-
-== Example pipeline
-
-TODO
 
 // end::single-source[]
