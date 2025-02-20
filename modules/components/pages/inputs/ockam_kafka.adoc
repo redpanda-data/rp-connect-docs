@@ -55,12 +55,13 @@ input:
         enabled: false
         skip_cert_verify: false
         enable_renegotiation: false
-        root_cas: ""
-        root_cas_file: ""
-        client_certs: []
+        root_cas: "" # No default (optional)
+        root_cas_file: "" # No default (optional)
+        client_certs: [] # No default (optional)
       topics: [] # No default (required)
       regexp_topics: false
-      rack_id: ""
+      rack_id: "" # No default (optional)
+      instance_id: "" # No default (optional)
       rebalance_timeout: 45s
       session_timeout: 1m
       heartbeat_interval: 3s
@@ -76,8 +77,8 @@ input:
       batching:
         count: 0
         byte_size: 0
-        period: ""
-        check: ""
+        period: "" # No default (optional)
+        check: "" # No default (optional)
         processors: [] # No default (optional)
       disable_content_encryption: false
       enrollment_ticket: "" # No default (optional)
@@ -302,6 +303,24 @@ A rack identifier for this client.
 
 *Default*: `""`
 
+
+=== `kafka.instance_id`
+
+When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. 
+
+When you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.
+
+*Type*: string
+
+*Default* `""`
+
+```yml
+# Examples
+
+instance_id: redpanda_input_5
+
+instance_id: redpanda_input_6
+```
 === `kafka.rebalance_timeout`
 
 When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required.
