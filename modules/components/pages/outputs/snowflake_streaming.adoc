@@ -314,10 +314,10 @@ Whether schema evolution is enabled. When set to `true`, the Snowflake table is 
 
 === `schema_evolution.processors`
 
-A series of processors to execute when new columns are added to the Snowflake table. You can use these processors to perform tasks, including:
+A series of processors to execute when new columns are added to the Snowflake table. You can use these processors to:
 
-- Running side effects when the schema evolves.
-- Enriching the message with additional information to guide the schema changes.
+- Run side effects when the schema evolves.
+- Enrich the message with additional information to guide the schema changes.
 
 For example, a processor could read the schema from the schema registry that a message was produced with and use that schema to determine the data type of the new column in Snowflake.
 
