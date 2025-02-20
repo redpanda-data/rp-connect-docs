@@ -7,6 +7,45 @@ This topic includes new content added from version 4.29.0 onwards.
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
 
+== Version 4.46.0
+
+This release introduces a xref:components:inputs/mysql_cdc.adoc[change data capture (CDC) input for MySQL], and enhancements to the xref:guides:bloblang/playground.adoc[Bloblang playground], making it easier to test and debug your pipeline configurations. The enhancements include: 
+
+- A **Run** button in Bloblang code snippets, which opens each snippet in the playground with a pre-filled input and mapping ready for testing.
+- A **Get help from AI** button, which appears in the playground when an error occurs.
+
+=== Components for Cloud and Self-Managed Redpanda Connect (beta)
+
+- xref:components:inputs/mysql_cdc.adoc[`mysql_cdc` input]
+
+=== Component updates
+
+This release adds:
+
+- The `instance_id` field to the xref:components:inputs/kafka.adoc[`kafka`], xref:components:inputs/kafka_franz.adoc[`kafka_franz`], xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], and xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`] inputs.
+- The `rebalance_timeout`, `session_timeout`, and `heartbeat_interval` fields to the xref:components:inputs/kafka_franz.adoc[`kafka_franz`], xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], and xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`] inputs.
+- The `preserve_logical_types` and `raw_unions` fields (for Avro messages), and a `schema_id` metadata field to the xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode`] processor.
+- The `unchanged_toast_value` field to the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input].
+- A `processors` field to the `schema_evolution` object in the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output].
+- New default values to the `max_message_bytes` and `broker_write_max_bytes` fields in the xref:components:outputs/kafka_franz.adoc[`kafka_franz`], xref:components:outputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:outputs/redpanda.adoc[`redpanda`], xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`], and xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets`] outputs, using IEC instead of SI units.
+
+Other changes:
+
+- The xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input] no longer supports PostgreSQL 10 or 11.
+
+==== Deprecations
+
+All changes are backward-compatible. No action is required if you are using an earlier version of Redpanda Connect.
+
+|===
+| Deprecated fields | Affected components
+
+| `new_column_type_mapping`
+| xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]
+
+|===
+
+
 == Version 4.45.0
 
 Highlights of this update include the beta release of two components for Self-Managed and Cloud Redpanda Connect, and xref:cookbooks:snowflake_ingestion.adoc[a new cookbook] that explains how to ingest data from a Redpanda topic into Snowflake using Snowpipe Streaming. You can also now share links to code snippets in the xref:guides:bloblang/playground.adoc[Bloblang playground] using the **Share link** button.
@@ -196,13 +235,15 @@ This release adds:
 ** `compression`
 ** `broker_write_max_bytes`
 
+* The `metadata_max_age` field to the xref:components:outputs/kafka_franz.adoc[`kafka_franz` output].
+
 * The following fields to the xref:components:inputs/kafka_franz.adoc[`kafka_franz`] and xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`] inputs:
 
 ** `fetch_max_bytes`
 ** `fetch_min_bytes`
 ** `fetch_max_partition_bytes`
 
-The `url` field of the xref:components:outputs/aws_sqs.adoc[`aws_sqs` output] now supports interpolation functions.
+* The `url` field of the xref:components:outputs/aws_sqs.adoc[`aws_sqs` output] now supports interpolation functions.
 
 ==== Deprecations
 
@@ -213,6 +254,13 @@ All changes are backward-compatible. No action is required if you are using an e
 
 | `auto_replay_nacks`, `sasl`, `metadata_max_age`
 | xref:components:inputs/ockam_kafka.adoc[`ockam_kafka` input]
+
+| `client_id`, `rack_id`, `sasl`
+| xref:components:outputs/ockam_kafka.adoc[`ockam_kafka` output]
+
+| `rack_id`
+| xref:components:outputs/ockam_kafka.adoc[`kafka_franz` output]
+
 
 |===
 
@@ -284,7 +332,7 @@ This release adds:
 
 * The `metadata_max_age` field to xref:components:inputs/kafka_franz.adoc[`kafka_franz`] and xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`] inputs.
 * The `fetch_in_order` field to the xref:components:inputs/schema_registry.adoc[`schema_registry` input].
-* The `encrypted_fields` fields to the xref:components:inputs/ockam_kafka.adoc[`ockam_kafka` input]. 
+* The `encrypted_fields` fields to the `ockam_kafka` xref:components:inputs/ockam_kafka.adoc[input] and xref:components:outputs/ockam_kafka.adoc[output]. 
 
 == Version 4.36.0
 
@@ -312,6 +360,7 @@ This release adds:
 
 * OAuth, basic authentication, and JSON Web Token fields to the xref:components:inputs/schema_registry.adoc[`schema_registry` input] and xref:components:outputs/schema_registry.adoc[output].
 * The `job_project` field to the xref:components:outputs/gcp_bigquery.adoc[`gcp_bigquery` output].
+* The `broker_write_max_bytes` field to the xref:components:outputs/kafka_franz.adoc[`kafka_franz`] and xref:components:outputs/ockam_kafka.adoc[`ockam_kafka`] outputs.
 
 == Version 4.34.0
 
