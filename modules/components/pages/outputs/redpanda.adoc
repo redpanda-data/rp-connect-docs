@@ -71,8 +71,8 @@ output:
     idempotent_write: true
     compression: "" # No default (optional)
     timeout: 10s
-    max_message_bytes: 1MB
-    broker_write_max_bytes: 100MB
+    max_message_bytes: 1MiB
+    broker_write_max_bytes: 100MiB
 ```
 
 --
@@ -544,7 +544,7 @@ Override the default murmur2 hashing partitioner.
 | Option | Summary
 
 | `least_backup`
-| Chooses the least backed up partition. The partition with the fewest buffered records. Partitions are selected per batch.
+| Choose the partition with the fewest buffered records. Partitions are selected per batch.
 | `manual`
 | Manually select a partition for each message. You must also specify a value for the `partition` field.
 | `murmur2_hash`
@@ -592,30 +592,30 @@ The maximum space (in bytes) that an individual message may use. Messages larger
 
 *Type*: `string`
 
-*Default*: `1MB`
+*Default*: `1MiB`
 
 ```yml
 # Examples
 
-max_message_bytes: 100MB
+max_message_bytes: 100MiB
 
-max_message_bytes: 50mib
+max_message_bytes: 50MiB
 ```
 
 === `broker_write_max_bytes`
 
-The upper bound for the number of bytes written to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.
+The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.
 
 *Type*: `string`
 
-*Default*: `100MB`
+*Default*: `100MiB`
 
 ```yml
 # Examples
 
-broker_write_max_bytes: 128MB
+broker_write_max_bytes: 128MiB
 
-broker_write_max_bytes: 50mib
+broker_write_max_bytes: 50MiB
 ```
 
 // end::single-source[]
