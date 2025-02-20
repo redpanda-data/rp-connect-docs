@@ -23,7 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 input:
   label: ""
   kafka_franz:
@@ -40,7 +40,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 input:
   label: ""
   kafka_franz:
@@ -50,14 +50,18 @@ input:
       enabled: false
       skip_cert_verify: false
       enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
+      root_cas: "" # No default (optional)
+      root_cas_file: "" # No default (optional)
+      client_certs: [] # No default (optional)
     sasl: [] # No default (optional)
     metadata_max_age: 5m
     topics: [] # No default (required)
     regexp_topics: false
-    rack_id: ""
+    rack_id: "" # No default (optional)
+    instance_id: "" No default (optional)
+    rebalance_timeout: 45s
+    session_timeout: 1m
+    heartbeat_interval: 3s
     start_from_oldest: true
     fetch_max_bytes: 50MiB
     fetch_max_wait: 5s
@@ -70,8 +74,8 @@ input:
     batching:
       count: 0
       byte_size: 0
-      period: ""
-      check: ""
+      period: "" # No default (optional)
+      check: "" # No default (optional)
       processors: [] # No default (optional)
     auto_replay_nacks: true
     
@@ -525,6 +529,55 @@ A rack specifies where the client is physically located, and changes fetch reque
 *Type*: `string`
 
 *Default*: `""`
+
+=== `instance_id`
+
+When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. 
+
+When you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.
+
+*Type*: string
+
+*Default* `""`
+
+```yml
+# Examples
+
+instance_id: redpanda_input_5
+
+instance_id: redpanda_input_6
+```
+=== `rebalance_timeout`
+
+When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required.
+
+*Type*: `string`
+
+*Default*: `45s`
+
+=== `session_timeout`
+
+When you specify a <<consumer_group,`consumer_group`>>, `session_timeout` sets the maximum interval between heartbeats sent by a consumer group member to the broker. If a broker doesn't receive a heartbeat from a group member before the timeout expires, it removes the member from the consumer group and initiates a rebalance.
+
+broker
+
+*Type*: `string`
+
+*Default*: `1m`
+
+=== `heartbeat_interval`
+
+When you specify a <<consumer_group,`consumer_group`>>, `heartbeat_interval` sets how frequently a consumer group member should send heartbeats to Apache Kafka. Apache Kafka uses heartbeats to make sure that a group member's session is active. 
+
+You must set `heartbeat_interval` to less than one-third of `session_timeout`.
+
+This field is equivalent to the Java `heartbeat.interval.ms` setting.
+
+client
+
+*Type*: `string`
+
+*Default*: `3s`
 
 === `start_from_oldest`
 

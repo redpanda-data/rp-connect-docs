@@ -47,6 +47,7 @@ input:
     route_to_kafka_outlet: self
     allow_consumer: self
     route_to_consumer: /ip4/127.0.0.1/tcp/6262
+    encrypted_fields: []
 ```
 --
 Advanced::
@@ -63,8 +64,6 @@ input:
       key: "" # No default (optional)
       partitioner: "" # No default (optional)
       partition: ${! meta("partition") } # No default (optional)
-      client_id: benthos
-      rack_id: ""
       idempotent_write: true
       metadata:
         include_prefixes: []
@@ -77,7 +76,8 @@ input:
         period: ""
         check: ""
         processors: [] # No default (optional)
-      max_message_bytes: 1MB
+      max_message_bytes: 1MiB
+      broker_write_max_bytes: 100MiB
       compression: "" # No default (optional)
       tls:
         enabled: false
@@ -86,7 +86,6 @@ input:
         root_cas: ""
         root_cas_file: ""
         client_certs: []
-      sasl: [] # No default (optional)
       timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
     disable_content_encryption: false
     enrollment_ticket: "" # No default (optional)
@@ -95,6 +94,7 @@ input:
     route_to_kafka_outlet: self
     allow_consumer: self
     route_to_consumer: /ip4/127.0.0.1/tcp/6262
+    encrypted_fields: []
 ```
 --
 ======
@@ -138,7 +138,7 @@ Override the default murmur2 hashing partitioner (optional).
 |===
 | Option | Summary
 | `least_backup`
-| Chooses the least backed up partition, which has the fewest buffered records. Partitions are selected per batch.
+| Choose the partition with the fewest buffered records. Partitions are selected per batch.
 | `manual`
 | Manually select a partition for each message. To use this option, specify a value in the `partition` field.
 | `murmur2_hash`
@@ -160,23 +160,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 # Examples
 partition: ${! meta("partition") }
 ```
-
-=== `kafka.client_id`
-
-An identifier for the client connection.
-
-*Type*: `string`
-
-*Default*: `benthos`
-
-
-=== `kafka.rack_id`
-
-A rack identifier for this client.
-
-*Type*: `string`
-
-*Default*: `""`
 
 
 === `kafka.idempotent_write`
@@ -335,12 +318,28 @@ The maximum size of an individual message in bytes. Messages larger than this va
 
 *Type*: `string`
 
-*Default*: `1MB`
+*Default*: `1MiB`
 
 ```yml
 # Examples
-max_message_bytes: 100MB
-max_message_bytes: 50mib
+max_message_bytes: 100MiB
+max_message_bytes: 50MiB
+```
+
+=== `kafka.broker_write_max_bytes`
+
+The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.
+
+*Type*: `string`
+
+*Default*: `100MiB`
+
+```yml
+# Examples
+
+broker_write_max_bytes: 128MiB
+
+broker_write_max_bytes: 50MiB
 ```
 
 === `kafka.compression`
@@ -355,6 +354,9 @@ Options:
 , `gzip`
 , `none`
 , `zstd`
+
+
+
 
 === `kafka.tls`
 
@@ -488,162 +490,6 @@ password: foo
 password: ${KEY_PASSWORD}
 ```
 
-=== `kafka.sasl`
-
-Specify one or more methods or mechanisms of SASL authentication, which are attempted in order (optional). If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.
-
-*Type*: `array`
-
-```yml
-# Examples
-sasl:
-  - mechanism: SCRAM-SHA-512
-    password: bar
-    username: foo
-```
-
-=== `kafka.sasl[].mechanism`
-
-The SASL mechanism to use.
-
-*Type*: `string`
-
-|===
-| Option | Summary
-| `AWS_MSK_IAM`
-| AWS IAM-based authentication as specified by the `aws-msk-iam-auth` Java library.
-| `OAUTHBEARER`
-| OAuth bearer-based authentication.
-| `PLAIN`
-| Plain text authentication.
-| `SCRAM-SHA-256`
-| SCRAM-based authentication as specified in RFC5802.
-| `SCRAM-SHA-512`
-| SCRAM-based authentication as specified in RFC5802.
-| `none`
-| Disable SASL authentication
-|===
-
-=== `kafka.sasl[].username`
-
-A username for `PLAIN` or `SCRAM-*` authentication.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].password`
-
-A password for `PLAIN` or `SCRAM-*` authentication.
-
-include::components:partial$secret_warning.adoc[]
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].token`
-
-The token to use for a single session's `OAUTHBEARER` authentication.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].extensions`
-
-Key/value pairs to add to `OAUTHBEARER` authentication requests.
-
-*Type*: `object`
-
-=== `kafka.sasl[].aws`
-
-AWS specific fields for when the `mechanism` is set to `AWS_MSK_IAM`.
-
-*Type*: `object`
-
-=== `kafka.sasl[].aws.region`
-
-The AWS region to target.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].aws.endpoint`
-
-Specify a custom endpoint for the AWS API.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].aws.credentials`
-
-Manually configure the AWS credentials to use (optional). For more information, see the xref:guides:cloud/aws.adoc[Amazon Web Services guide].
-
-*Type*: `object`
-
-=== `kafka.sasl[].aws.credentials.profile`
-
-The profile from `~/.aws/credentials` to use.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].aws.credentials.id`
-
-The ID of credentials to use.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].aws.credentials.secret`
-
-The secret for the AWS credentials in use.
-
-include::components:partial$secret_warning.adoc[]
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].aws.credentials.token`
-
-The token for the AWS credentials in use. This is a required value for short-term credentials.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].aws.credentials.from_ec2_role`
-
-Use the credentials of a host EC2 machine configured to assume an https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[IAM role associated with the instance^].
-
-*Type*: `bool`
-
-*Default*: `false`
-
-Requires version 4.2.0 or newer
-
-=== `kafka.sasl[].aws.credentials.role`
-
-The role ARN to assume.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `kafka.sasl[].aws.credentials.role_external_id`
-
-An external ID to use when assuming a role.
-
-*Type*: `string`
-
-*Default*: `""`
-
 === `kafka.timestamp_ms`
 
 Set a timestamp (in milliseconds) for each message (optional). Leave this field empty to use the current timestamp.
@@ -718,3 +564,11 @@ The route to the Kafka consumer. For example, `/project/default/service/forward_
 *Type*: `string`
 
 *Default*: `/ip4/127.0.0.1/tcp/6262`
+
+=== `kafka.encrypted_fields`
+
+Fields to encrypt in the Kafka messages when the record is a valid JSON map. By default, the whole record is encrypted.
+
+*Type*: `array`
+
+*Default*: `[]`
