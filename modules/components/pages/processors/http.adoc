@@ -138,11 +138,11 @@ If a request returns a response code that matches an entry in:
 
 - The <<drop_on,`drop_on` field>>, the request is immediately treated as a failure.
 
-== Add metadata
+== Add metadata to errors
 
 If a request returns an error response code, this processor sets a  `http_status_code` metadata field in the resulting message.
 
-TIP: You can use the <`extract_headers`> field to define rules for copying headers into messages generated from the response.
+TIP: You can use the <<extract_headers, `extract_headers`>> field to define rules for copying headers into messages generated from the response.
 
 == Error handling
 
@@ -155,6 +155,8 @@ When all retry attempts for a message are exhausted, this processor cancels the 
 The URL to connect to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
+
+*Default*: `""`
 
 === `verb`
 
@@ -370,7 +372,7 @@ endif::[]
 
 === `oauth2.endpoint_params`
 
-A list of optional endpoint parameters specified as arrays of strings (optional).
+A list of endpoint parameters specified as arrays of strings (optional).
 
 
 *Type*: `object`
