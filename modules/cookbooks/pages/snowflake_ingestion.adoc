@@ -185,7 +185,7 @@ output:
     role: REDPANDA_CONNECT
     database: STREAMING_DB
     schema: STREAMING_SCHEMA
-    table: STREAMING_TABLE
+    table: STREAMING_DATA
     # Inject your private key and password
     private_key_file: rsa_key.p8
     private_key_pass: "${SNOWFLAKE_KEY_PASS}"
@@ -243,7 +243,7 @@ output:
     role: REDPANDA_CONNECT
     database: STREAMING_DB
     schema: STREAMING_SCHEMA
-    table: STREAMING_TABLE
+    table: STREAMING_DATA
     # Inject your private key and password
     private_key_file: "${secrets.SNOWFLAKE_KEY}"
     private_key_pass: "${secrets.SNOWFLAKE_KEY_PASS}"
