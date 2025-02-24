@@ -143,7 +143,7 @@ TIP: If pagination requires more complex logic, consider using the xref:componen
 
 == Streaming messages
 
-If you <<stream_enabled,enable streaming>>, Redpanda Connect consumes the body of the server response as a continuous stream of data, and breaks down the stream into smaller, logical messages using the <<stream_scanner,specified scanner>>. This functionality allows you to consume APIs that provide long-lived streamed data feeds, such as stock market feeds.
+If you <<stream-enabled,enable streaming>>, Redpanda Connect consumes the body of the server response as a continuous stream of data, and breaks the stream down into smaller, logical messages using the <<stream-scanner,specified scanner>>. This functionality allows you to consume APIs that provide long-lived streamed data feeds, such as stock market feeds.
 
 == Fields
 
@@ -152,6 +152,8 @@ If you <<stream_enabled,enable streaming>>, Redpanda Connect consumes the body o
 The URL to connect to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
+
+*Default*: `""`
 
 === `verb`
 
@@ -794,7 +796,7 @@ Enables streaming mode.
 
 === `stream.reconnect`
 
-Whether to automatically re-establish the HTTP connection if it is lost.
+Whether to automatically reestablish the HTTP connection if it is lost.
 
 
 *Type*: `bool`
@@ -803,7 +805,7 @@ Whether to automatically re-establish the HTTP connection if it is lost.
 
 === `stream.scanner`
 
-The xref:components:scanners/about.adoc[scanner] used to split the stream of bytes into individual messages. Scanners are useful for processing large data sources efficiently without holding the entire data set in memory. For example, the `csv` scanner processes individual rows in a CSV file, which allows you to process large files without consuming excessive memory.
+The xref:components:scanners/about.adoc[scanner] used to split the stream of bytes into individual messages. Scanners are useful for processing large data sources efficiently without holding the entire data set in memory. For example, the `csv` scanner processes individual rows in a CSV file without loading the entire file in memory.
 
 *Type*: `scanner`
 
