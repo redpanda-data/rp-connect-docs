@@ -10,7 +10,7 @@
 component_type_dropdown::[]
 
 
-Sends messages to an HTTP server.
+Sends messages to a HTTP server.
 
 
 [tabs]
@@ -20,7 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 output:
   label: ""
   http_client:
@@ -33,8 +33,8 @@ output:
     batching:
       count: 0
       byte_size: 0
-      period: ""
-      check: ""
+      period: "" # No default (optional)
+      check: "" # No default (optional)
 ```
 
 --
@@ -43,7 +43,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 output:
   label: ""
   http_client:
@@ -53,28 +53,28 @@ output:
     metadata:
       include_prefixes: []
       include_patterns: []
-    dump_request_log_level: ""
+    dump_request_log_level: "" # No default (optional)
     oauth:
       enabled: false
-      consumer_key: ""
-      consumer_secret: ""
-      access_token: ""
-      access_token_secret: ""
+      consumer_key: "" # No default (optional)
+      consumer_secret: "" # No default (optional)
+      access_token: "" # No default (optional)
+      access_token_secret: "" # No default (optional)
     oauth2:
       enabled: false
-      client_key: ""
-      client_secret: ""
-      token_url: ""
+      client_key: "" # No default (optional)
+      client_secret: "" # No default (optional)
+      token_url: "" # No default (optional)
       scopes: []
       endpoint_params: {}
     basic_auth:
       enabled: false
-      username: ""
-      password: ""
+      username: "" # No default (optional)
+      password: "" # No default (optional)
     jwt:
       enabled: false
-      private_key_file: ""
-      signing_method: ""
+      private_key_file: "" # No default (optional)
+      signing_method: "" # No default (optional)
       claims: {}
       headers: {}
     tls:
@@ -103,8 +103,8 @@ output:
     batching:
       count: 0
       byte_size: 0
-      period: ""
-      check: ""
+      period: "" # No default (optional)
+      check: "" # No default (optional)
       processors: [] # No default (optional)
     multipart: []
 ```
@@ -112,28 +112,32 @@ output:
 --
 ======
 
-When the number of retries expires the output will reject the message, the behavior after this will depend on the pipeline but usually this simply means the send is attempted again until successful whilst applying back pressure.
+== Message sends
 
-The URL and header values of this type can be dynamically set using function interpolations described in xref:configuration:interpolation.adoc#bloblang-queries[Bloblang queries].
+The body of the request sent to the HTTP server is the raw contents of the message payload. If the message has multiple parts (is a batch), the request is sent according to https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html[RFC1341^]. To disable this behavior, set the <<batch_as_multipart, `batch_as_multipart`>> field to `false`.
 
-The body of the HTTP request is the raw contents of the message payload. If the message has multiple parts (is a batch) the request will be sent according to https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html[RFC1341^]. This behavior can be disabled by setting the field <<batch_as_multipart, `batch_as_multipart`>> to `false`.
+When message retries are exhausted, this output rejects a message. Typically, a pipeline then continues attempts to send the message until it succeeds, whilst applying back pressure.
+
+== Dynamic URL and header settings
+
+You can set the <<url,`url`>> and <<headers,`headers`>> values dynamically using xref:configuration:interpolation.adoc#bloblang-queries[function interpolations].
 
 == Propagate responses
 
-It's possible to propagate the response from each HTTP request back to the input source by setting `propagate_response` to `true`. Only inputs that support xref:guides:sync_responses.adoc[synchronous responses] are able to make use of these propagated responses.
+To propagate HTTP responses back to the input source, set the <<propagate_response,`propagate_response`>> field to `true` . This feature is only available for inputs that support xref:guides:sync_responses.adoc[synchronous responses].
 
 == Performance
 
-This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.
+For improved performance, this output sends:
 
-This output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].
+- Multiple messages in parallel. Adjust the `max_in_flight` field value to tune the maximum number of in-flight messages (or message batches). 
+- Messages as batches. You can configure batches at both input and output level. For more information, see xref:configuration:batching.adoc[Message Batching].
 
 == Fields
 
 === `url`
 
-The URL to connect to.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The URL to connect to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
 *Type*: `string`
@@ -141,12 +145,12 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 === `verb`
 
-A verb to connect with
+A verb to connect with.
 
 
 *Type*: `string`
 
-*Default*: `"POST"`
+*Default*: `POST`
 
 ```yml
 # Examples
@@ -160,8 +164,7 @@ verb: DELETE
 
 === `headers`
 
-A map of headers to add to the request.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+A map of headers to add to the request. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
 *Type*: `object`
@@ -178,7 +181,7 @@ headers:
 
 === `metadata`
 
-Specify optional matching rules to determine which metadata keys should be added to the HTTP request as headers.
+Specify matching rules that determine which metadata keys to add to the HTTP request as headers (optional).
 
 
 *Type*: `object`
@@ -228,7 +231,7 @@ include_patterns:
 
 === `dump_request_log_level`
 
-EXPERIMENTAL: Optionally set a level at which the request and response payload of each request made will be logged.
+EXPERIMENTAL: Set the logging level for the request and response payloads of each HTTP request.
 
 
 *Type*: `string`
@@ -246,12 +249,10 @@ Options:
 , `WARN`
 , `ERROR`
 , `FATAL`
-, ``
-.
 
 === `oauth`
 
-Allows you to specify open authentication via OAuth version 1.
+Allows you to specify open authentication using OAuth version 1.
 
 
 *Type*: `object`
@@ -277,10 +278,9 @@ A value used to identify the client to the service provider.
 
 === `oauth.consumer_secret`
 
-A secret used to establish ownership of the consumer key.
+The secret used to establish ownership of the consumer key.
 
 include::components:partial$secret_warning.adoc[]
-
 
 
 *Type*: `string`
@@ -289,7 +289,7 @@ include::components:partial$secret_warning.adoc[]
 
 === `oauth.access_token`
 
-A value used to gain access to the protected resources on behalf of the user.
+The value used to gain access to the protected resources on behalf of the user.
 
 
 *Type*: `string`
@@ -298,11 +298,9 @@ A value used to gain access to the protected resources on behalf of the user.
 
 === `oauth.access_token_secret`
 
-A secret provided in order to establish ownership of a given access token.
+The secret that establishes ownership of the `oauth.access_token`.
 
 include::components:partial$secret_warning.adoc[]
-
-
 
 *Type*: `string`
 
@@ -310,7 +308,7 @@ include::components:partial$secret_warning.adoc[]
 
 === `oauth2`
 
-Allows you to specify open authentication via OAuth version 2 using the client credentials token flow.
+Allows you to specify open authentication using OAuth version 2 and the client credentials token flow.
 
 
 *Type*: `object`
@@ -336,10 +334,9 @@ A value used to identify the client to the token provider.
 
 === `oauth2.client_secret`
 
-A secret used to establish ownership of the client key.
+The secret used to establish ownership of the client key.
 
 include::components:partial$secret_warning.adoc[]
-
 
 
 *Type*: `string`
@@ -357,7 +354,7 @@ The URL of the token provider.
 
 === `oauth2.scopes`
 
-A list of optional requested permissions.
+A list of requested permissions (optional).
 
 
 *Type*: `array`
@@ -370,7 +367,7 @@ endif::[]
 
 === `oauth2.endpoint_params`
 
-A list of optional endpoint parameters, values should be arrays of strings.
+A list of endpoint parameters specified as arrays of strings (optional).
 
 
 *Type*: `object`
@@ -385,11 +382,11 @@ endif::[]
 # Examples
 
 endpoint_params:
-  bar:
-    - woof
-  foo:
-    - meow
-    - quack
+  grant_type:
+    - client_credentials
+  audience:
+    - https://api.example.com/
+    - https://auth.example.com/
 ```
 
 === `basic_auth`
@@ -431,8 +428,7 @@ include::components:partial$secret_warning.adoc[]
 
 === `jwt`
 
-BETA: Allows you to specify JWT authentication.
-
+BETA: Allows you to specify JSON Web Token (JWT) authentication.
 
 *Type*: `object`
 
@@ -448,7 +444,7 @@ Whether to use JWT authentication in requests.
 
 === `jwt.private_key_file`
 
-A file with the PEM encoded via PKCS1 or PKCS8 as private key.
+A file with the PEM encoded using PKCS1 or PKCS8 as private key.
 
 
 *Type*: `string`
@@ -457,7 +453,7 @@ A file with the PEM encoded via PKCS1 or PKCS8 as private key.
 
 === `jwt.signing_method`
 
-A method used to sign the token such as RS256, RS384, RS512 or EdDSA.
+A method used to sign the token, such as RS256, RS384, RS512 or EdDSA.
 
 
 *Type*: `string`
@@ -475,7 +471,7 @@ A value used to identify the claims that issued the JWT.
 
 === `jwt.headers`
 
-Add optional key/value headers to the JWT.
+Add key/value headers to the JWT (optional).
 
 
 *Type*: `object`
@@ -484,7 +480,7 @@ Add optional key/value headers to the JWT.
 
 === `tls`
 
-Custom TLS settings can be used to override system defaults.
+Override system defaults with custom TLS settings.
 
 
 *Type*: `object`
@@ -501,7 +497,7 @@ Whether custom TLS settings are enabled.
 
 === `tls.skip_cert_verify`
 
-Whether to skip server side certificate verification.
+Whether to skip server-side certificate verification.
 
 
 *Type*: `bool`
@@ -523,7 +519,7 @@ endif::[]
 
 === `tls.root_cas`
 
-An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
+Specify a root certificate authority to use (optional). This is a string, representing a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -543,7 +539,7 @@ root_cas: |-
 
 === `tls.root_cas_file`
 
-An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 
 *Type*: `string`
@@ -558,7 +554,7 @@ root_cas_file: ./root_cas.pem
 
 === `tls.client_certs`
 
-A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
+A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields.
 
 
 *Type*: `array`
@@ -579,7 +575,7 @@ client_certs:
 
 === `tls.client_certs[].cert`
 
-A plain text certificate to use.
+The plain text certificate to use.
 
 
 *Type*: `string`
@@ -588,11 +584,9 @@ A plain text certificate to use.
 
 === `tls.client_certs[].key`
 
-A plain text certificate key to use.
+The plain text certificate key to use.
 
 include::components:partial$secret_warning.adoc[]
-
-
 
 *Type*: `string`
 
@@ -620,7 +614,7 @@ The path of a certificate key to use.
 
 A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.
 
-Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
+WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding oracle attacks that may allow an attacker to recover the plain text password.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -639,8 +633,9 @@ password: ${KEY_PASSWORD}
 
 === `extract_headers`
 
-Specify which response headers should be added to resulting synchronous response messages as metadata. Header keys are lowercased before matching, so ensure that your patterns target lowercased versions of the header keys that you expect. This field is not applicable unless `propagate_response` is set to `true`.
+Specify which response headers to add to the resulting synchronous response messages as metadata. Header keys are automatically converted to lowercase before matching, so make sure that your patterns target the lowercase versions of the expected header keys.
 
+This field is only applicable when `propagate_response` is set to `true`.
 
 *Type*: `object`
 
@@ -658,8 +653,8 @@ Provide a list of explicit metadata key prefixes to match against.
 # Examples
 
 include_prefixes:
-  - foo_
-  - bar_
+  - content-
+  - user_
 
 include_prefixes:
   - kafka_
@@ -689,7 +684,7 @@ include_patterns:
 
 === `rate_limit`
 
-An optional xref:components:rate_limits/about.adoc[rate limit] to throttle requests by.
+A xref:components:rate_limits/about.adoc[rate limit] to throttle requests by (optional).
 
 
 *Type*: `string`
@@ -706,12 +701,12 @@ A static timeout to apply to requests.
 
 === `retry_period`
 
-The base period to wait between failed requests.
+The initial period to wait between failed requests before retrying.
 
 
 *Type*: `string`
 
-*Default*: `"1s"`
+*Default*: `1s`
 
 === `max_retry_backoff`
 
@@ -720,7 +715,7 @@ The maximum period to wait between failed requests.
 
 *Type*: `string`
 
-*Default*: `"300s"`
+*Default*: `300s`
 
 === `retries`
 
@@ -733,7 +728,7 @@ The maximum number of retry attempts to make.
 
 === `backoff_on`
 
-A list of status codes whereby the request should be considered to have failed and retries should be attempted, but the period between them should be increased gradually.
+A list of status codes that indicate a request failure and trigger retries with an increasing backoff period between attempts.
 
 
 *Type*: `array`
@@ -742,7 +737,9 @@ A list of status codes whereby the request should be considered to have failed a
 
 === `drop_on`
 
-A list of status codes whereby the request should be considered to have failed but retries should not be attempted. This is useful for preventing wasted retries for requests that will never succeed. Note that with these status codes the _request_ is dropped, but _message_ that caused the request will not be dropped.
+A list of status codes that indicate a request failure where the input should not attempt retries. This helps avoid unnecessary retries for requests that are unlikely to succeed.
+
+NOTE: In these cases, the _request_ is dropped, but the _message_ that triggered the request is retained.
 
 
 *Type*: `array`
@@ -751,8 +748,9 @@ A list of status codes whereby the request should be considered to have failed b
 
 === `successful_on`
 
-A list of status codes whereby the attempt should be considered successful, this is useful for dropping requests that return non-2XX codes indicating that the message has been dealt with, such as a 303 See Other or a 409 Conflict. All 2XX codes are considered successful unless they are present within `backoff_on` or `drop_on`, regardless of this field.
+A list of HTTP status codes that should be considered as successful, even if they are not 2XX codes. This is useful for handling cases where non-2XX codes indicate that the request was processed successfully, such as `303 See Other` or `409 Conflict`. 
 
+By default, all 2XX codes are considered successful unless they are specified in `backoff_on` or `drop_on` fields.
 
 *Type*: `array`
 
@@ -760,7 +758,7 @@ A list of status codes whereby the attempt should be considered successful, this
 
 === `proxy_url`
 
-An optional HTTP proxy URL.
+A HTTP proxy URL (optional).
 
 
 *Type*: `string`
@@ -768,7 +766,9 @@ An optional HTTP proxy URL.
 
 === `batch_as_multipart`
 
-Send message batches as a single request using https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html[RFC1341^]. If disabled messages in batches will be sent as individual requests.
+When set to `true`, sends all message in a batch as a single request using https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html[RFC1341^]. 
+
+When set to `false`, sends messages in a batch as individual requests.
 
 
 *Type*: `bool`
@@ -777,7 +777,7 @@ Send message batches as a single request using https://www.w3.org/Protocols/rfc1
 
 === `propagate_response`
 
-Whether responses from the server should be xref:guides:sync_responses.adoc[propagated back] to the input.
+Whether to xref:guides:sync_responses.adoc[propagate server responses back] to the input.
 
 
 *Type*: `bool`
@@ -786,8 +786,7 @@ Whether responses from the server should be xref:guides:sync_responses.adoc[prop
 
 === `max_in_flight`
 
-The maximum number of parallel message batches to have in flight at any given time.
-
+The maximum number of messages to have in flight at a given time. Increase this to improve throughput.
 
 *Type*: `int`
 
@@ -821,8 +820,7 @@ batching:
 
 === `batching.count`
 
-A number of messages at which the batch should be flushed. If `0` disables count based batching.
-
+The number of messages after which the batch is flushed. Set to `0` to disable count-based batching.
 
 *Type*: `int`
 
@@ -830,7 +828,7 @@ A number of messages at which the batch should be flushed. If `0` disables count
 
 === `batching.byte_size`
 
-An amount of bytes at which the batch should be flushed. If `0` disables size based batching.
+The amount of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 
 *Type*: `int`
@@ -839,7 +837,7 @@ An amount of bytes at which the batch should be flushed. If `0` disables size ba
 
 === `batching.period`
 
-A period in which an incomplete batch should be flushed regardless of its size.
+The period after which an incomplete batch is flushed regardless of its size.
 
 
 *Type*: `string`
@@ -873,11 +871,9 @@ check: this.type == "end_of_transaction"
 
 === `batching.processors`
 
-A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
-
+For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
 
 *Type*: `array`
-
 
 ```yml
 # Examples
@@ -897,8 +893,9 @@ processors:
 
 === `multipart`
 
-EXPERIMENTAL: Create explicit multipart HTTP requests by specifying an array of parts to add to the request, each part specified consists of content headers and a data field that can be populated dynamically. If this field is populated it will override the default request creation behavior.
+EXPERIMENTAL: Create explicit multipart HTTP requests by specifying an array of parts to add to a request. Each part consists of content headers and a data field, which can be populated dynamically. 
 
+If populated, this field overrides the <<message_sends, default request creation behavior>>. 
 
 *Type*: `array`
 
@@ -910,9 +907,7 @@ endif::[]
 
 === `multipart[].content_type`
 
-The content type of the individual message part.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
+The content type of the individual message part. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -926,9 +921,7 @@ content_type: application/bin
 
 === `multipart[].content_disposition`
 
-The content disposition of the individual message part.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
+The https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition?utm_source=chatgpt.com#as_a_header_for_a_multipart_body[content disposition^] of the individual message part. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]. For more information, see 
 
 *Type*: `string`
 
@@ -942,9 +935,7 @@ content_disposition: form-data; name="bin"; filename='${! @AttachmentName }
 
 === `multipart[].body`
 
-The body of the individual message part.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
+The body of the individual message part. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
