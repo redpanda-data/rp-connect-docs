@@ -152,7 +152,7 @@ The base URL of the schema registry service.
 
 === `oauth`
 
-Allows you to specify open authentication via OAuth version 1.
+Allows you to specify open authentication using OAuth version 1.
 
 
 *Type*: `object`
@@ -185,8 +185,6 @@ A secret used to establish ownership of the consumer key.
 
 include::components:partial$secret_warning.adoc[]
 
-
-
 *Type*: `string`
 
 *Default*: `""`
@@ -194,7 +192,6 @@ include::components:partial$secret_warning.adoc[]
 === `oauth.access_token`
 
 A value used to gain access to the protected resources on behalf of the user.
-
 
 *Type*: `string`
 
@@ -206,8 +203,6 @@ A secret provided in order to establish ownership of a given access token.
 
 include::components:partial$secret_warning.adoc[]
 
-
-
 *Type*: `string`
 
 *Default*: `""`
@@ -215,7 +210,6 @@ include::components:partial$secret_warning.adoc[]
 === `basic_auth`
 
 Allows you to specify basic authentication.
-
 
 *Type*: `object`
 
@@ -227,7 +221,6 @@ endif::[]
 
 Whether to use basic authentication in requests.
 
-
 *Type*: `bool`
 
 *Default*: `false`
@@ -235,7 +228,6 @@ Whether to use basic authentication in requests.
 === `basic_auth.username`
 
 A username to authenticate as.
-
 
 *Type*: `string`
 
@@ -247,16 +239,13 @@ A password to authenticate with.
 
 include::components:partial$secret_warning.adoc[]
 
-
-
 *Type*: `string`
 
 *Default*: `""`
 
 === `jwt`
 
-BETA: Allows you to specify JWT authentication.
-
+BETA: Allows you to specify JSON Web Token (JWT) authentication.
 
 *Type*: `object`
 
@@ -275,7 +264,7 @@ Whether to use JWT authentication in requests.
 
 === `jwt.private_key_file`
 
-A file with the PEM encoded via PKCS1 or PKCS8 as private key.
+A file with the PEM encoded using PKCS1 or PKCS8 as private key.
 
 
 *Type*: `string`
@@ -284,7 +273,7 @@ A file with the PEM encoded via PKCS1 or PKCS8 as private key.
 
 === `jwt.signing_method`
 
-A method used to sign the token such as RS256, RS384, RS512 or EdDSA.
+A method used to sign the token, such as RS256, RS384, RS512 or EdDSA.
 
 
 *Type*: `string`
@@ -302,7 +291,7 @@ A value used to identify the claims that issued the JWT.
 
 === `jwt.headers`
 
-Add optional key/value headers to the JWT.
+Add key/value headers to the JWT (optional).
 
 
 *Type*: `object`
