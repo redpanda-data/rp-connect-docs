@@ -188,9 +188,12 @@ When message retries are exhausted, this output rejects a message. Typically, a 
 You can set the <<url,`url`>> and <<headers,`headers`>> values dynamically using xref:configuration:interpolation.adoc#bloblang-queries[function interpolations].
 
 
+ifndef::env-cloud[]
 == Propagate responses
 
 To propagate HTTP responses back to the input source, set the <<propagate_response,`propagate_response`>> field to `true` . This feature is only available for inputs that support xref:guides:sync_responses.adoc[synchronous responses].
+
+endif[]
 
 == Performance
 
