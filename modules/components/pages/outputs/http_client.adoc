@@ -33,8 +33,8 @@ output:
     batching:
       count: 0
       byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
+      period: "" # Optional
+      check: "" # Optional
 ```
 
 --
@@ -53,28 +53,28 @@ output:
     metadata:
       include_prefixes: []
       include_patterns: []
-    dump_request_log_level: "" # No default (optional)
+    dump_request_log_level: "" # Optional
     oauth:
       enabled: false
-      consumer_key: "" # No default (optional)
-      consumer_secret: "" # No default (optional)
-      access_token: "" # No default (optional)
-      access_token_secret: "" # No default (optional)
+      consumer_key: "" # Optional
+      consumer_secret: "" # Optional
+      access_token: "" # Optional
+      access_token_secret: "" # Optional
     oauth2:
       enabled: false
-      client_key: "" # No default (optional)
-      client_secret: "" # No default (optional)
-      token_url: "" # No default (optional)
+      client_key: "" # Optional
+      client_secret: "" # Optional
+      token_url: "" # Optional
       scopes: []
       endpoint_params: {}
     basic_auth:
       enabled: false
-      username: "" # No default (optional)
-      password: "" # No default (optional)
+      username: "" # Optional
+      password: "" # Optional
     jwt:
       enabled: false
-      private_key_file: "" # No default (optional)
-      signing_method: "" # No default (optional)
+      private_key_file: "" # Optional
+      signing_method: "" # Optional
       claims: {}
       headers: {}
     tls:
@@ -103,8 +103,8 @@ output:
     batching:
       count: 0
       byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
+      period: "" # Optional
+      check: "" # Optional
       processors: [] # No default (optional)
     multipart: []
 ```
