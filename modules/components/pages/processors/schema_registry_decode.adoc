@@ -43,29 +43,29 @@ schema_registry_decode:
   avro:
     raw_unions: false
     preserve_logical_types: false
-    mapping: | # No default (optional)
+    mapping: "" # No default (optional)
   url: "" # No default (required)
   oauth:
     enabled: false
-    consumer_key: ""
-    consumer_secret: ""
-    access_token: ""
-    access_token_secret: ""
+    consumer_key: "" # Optional
+    consumer_secret: "" # Optional
+    access_token: "" # Optional
+    access_token_secret: "" # Optional
   basic_auth:
     enabled: false
-    username: ""
-    password: ""
+    username: "" # Optional
+    password: "" # Optional
   jwt:
     enabled: false
-    private_key_file: ""
-    signing_method: ""
+    private_key_file: "" # Optional
+    signing_method: "" # Optional
     claims: {}
     headers: {}
   tls:
     skip_cert_verify: false
     enable_renegotiation: false
-    root_cas: ""
-    root_cas_file: ""
+    root_cas: "" # Optional
+    root_cas_file: "" # Optional
     client_certs: []
 ```
 
