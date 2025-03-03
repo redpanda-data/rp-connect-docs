@@ -13,7 +13,7 @@ component_type_dropdown::[]
 Publishes messages into an https://www.elastic.co/guide/en/elasticsearch/reference/current/documents-indices.html[Elasticsearch index^]. If the index does not exist, this output creates it using dynamic mapping.
 
 ifndef::env-cloud[]
-Introduced in version 3.43.0.
+Introduced in version 4.47g.0.
 endif::[]
 
 
@@ -486,7 +486,7 @@ output:
   processors:
     - mapping: |
         meta id = this.id
-        # Performs a partial update on the document.
+      # Performs a partial update on the document.
         root.doc = this
   elasticsearch_v8:
     urls: [localhost:9200]
@@ -502,7 +502,7 @@ output:
   processors:
     - mapping: |
         meta id = this.id
-        # Increments the counter field by 1 using a script.
+        # Increments the counter field by 1 using a script
         root.script.source = "ctx._source.counter += 1"
   elasticsearch_v8:
     urls: [localhost:9200]
