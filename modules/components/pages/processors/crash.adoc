@@ -9,11 +9,17 @@ Stops the current pipeline process with a fatal log message. You can use xref:co
 label: ""
 crash: "" # No default (required)
 ```
+This processor is useful for detecting unhandled errors during development and testing. For more information about common patterns for trapping errors, see xref:configuration:error_handling.adoc[Error-Handling].
 
-This processor is useful for halting pipeline execution in the event of critical failures. For example:
+== Fields
 
-- To detect silent or unrecoverable errors.
-- To prevent data corruption caused by unexpected data formats.
-- To notify observability tools, such as monitoring dashboards, for immediate action.
+=== `crash`
 
-For more information about catching fatal errors, see xref:configuration:error_handling.adoc[Error Handling].
+Define the fatal log message that is written when an unhandled error occurs. This field supports xref:configuration:interpolation.adoc#bloblang-queries[function interpolations].
+
+```
+# Examples
+
+crash: "Processor ${!error_source_label()} failed due to: ${!error()}"
+
+```
