@@ -303,7 +303,7 @@ The path of a certificate key to use.
 
 A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.
 
-WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding oracle attacks that may allow an attacker to recover the plain text password.
+WARNING: The `pbeWithMD5AndDES-CBC` algorithm does not authenticate ciphertext, and is vulnerable to padding oracle attacks, which may allow an attacker to recover the plain text password.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -473,9 +473,9 @@ To update documents in the target index, the top level of the request body must 
 
 - `doc`: Performs partial updates on a document.
 - `upsert`: Updates an existing document or inserts a document if it doesn't exist.
-- `script`: Performs an update using a scripting language, such as Elasticsearch's Painless scripting language. 
+- `script`: Performs an update using a scripting language, such as https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-painless.html[Elasticsearch's Painless scripting language^]. 
 
-The following examples show how to configure mapping processors with this output to achieve different types of update.
+The following examples show how to configure mapping processors with this output to achieve different types of updates.
   
 Example 1: Partial document update
 
@@ -509,6 +509,7 @@ output:
     index: my_target_index # The name of the Elasticsearch index.
     id: ${! @id } # Sets the document ID to the value of the metadata ID field.
     action: update # The action to perform on each document.
+```
 
 Example 3: Upsert
 
@@ -516,13 +517,11 @@ Example 3: Upsert
 output:
   processors:
     # Sets the metadata ID field to the message ID.
-    # If the product with the specified ID exists, updates its `product_price` to `100`.
-    # If the document does not exist, insert a new document with the ID set to `1` 
+    # If the product with the specified ID exists, update its product_price to 100.
+    # If the document does not exist, insert a new document with the ID set to 1 
     # and the `product_price` set to 50.
     - mapping: |     
-        meta id = this.id 
-      # If the document with the specified ID exists, update its product_price to 100.
-      # If the document does not exist, insert a new document with product_price set to 50.
+        meta id = this.id
         root.doc.product_price = 100
         root.upsert.product_price = 50
   elasticsearch_v8:
