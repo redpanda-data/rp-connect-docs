@@ -1,0 +1,19 @@
+= crash
+:type: processor
+:categories: ["Utility"]
+
+Stops the current pipeline process with a fatal log message. You can use xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] to define the log message, including the message contents and metadata that caused the fatal error.
+
+```yml
+# Configuration fields, showing default values
+label: ""
+crash: "" # No default (required)
+```
+
+This processor is useful for halting pipeline execution in the event of critical failures. For example:
+
+- To detect silent or unrecoverable errors.
+- To prevent data corruption caused by unexpected data formats.
+- To notify observability tools, such as monitoring dashboards, for immediate action.
+
+For more information about catching fatal errors, see xref:configuration:error_handling.adoc[Error Handling].
