@@ -103,6 +103,8 @@ xref:configuration:interpolation.adoc#bloblang-queries[Bloblang queries]. When u
 stage and Snowpipe and are streamed to individual files in their corresponding stage and, optionally, a Snowpipe
 `insertFiles` REST API call will be made for each individual file.
 
+include::components:partial$external_connectivity_outputs.adoc[]
+
 == Credentials
 
 Two authentication mechanisms are supported:
