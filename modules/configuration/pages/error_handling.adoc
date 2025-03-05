@@ -103,18 +103,16 @@ pipeline:
 ifndef::env-cloud[]
 === Logging fatal errors
 
-During development and testing, you can use the xref:components:processors/crash.adoc[`crash` processor] to halt pipeline execution when an unhandled error occurs and log a fatal message. Use Bloblang functions to customize the message. For example:
+During development and testing, you can use the xref:components:processors/crash.adoc[`crash` processor] to halt pipeline execution and log a fatal message when an unhandled error occurs. Use Bloblang functions to customize the message. For example:
 
 [source,yaml]
 ----
 pipeline:
   processors:
-    - try:
-      - resource: foo # Processor that might fail
-      - resource: bar # Processor that might fail
-      - resource: baz # Processor that might fail
+  - resource: processor_1 # Processor that might fail
+  - catch:
     # Writes a custom fatal log message
-    - crash: "Processor ${!error_source_label()} failed due to: ${!error()}"
+    - crash: "Processing failed at ${!error_source_label()} due to: ${!error()}"
 ----
 endif::[]
 
