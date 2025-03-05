@@ -91,6 +91,7 @@ http:
   drop_on: []
   successful_on: []
   proxy_url: "" # No default (optional)
+  disable_http2: false
   batch_as_multipart: false
   parallel: false
 ```
@@ -592,8 +593,6 @@ The plain text certificate key to use.
 
 include::components:partial$secret_warning.adoc[]
 
-
-
 *Type*: `string`
 
 *Default*: `""`
@@ -774,6 +773,18 @@ A HTTP proxy URL (optional).
 
 
 *Type*: `string`
+
+=== `disable_http2`
+
+Whether to disable disable HTTP/2. By default, HTTP/2 is enabled.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+ifndef::env-cloud[]
+Requires version 4.47.0 or later
+endif::[]
 
 
 === `batch_as_multipart`
