@@ -3,7 +3,7 @@
 
 Redpanda Connect supports a range of xref:components:processors/about.adoc[processors], such as `http` and `aws_lambda`, that may fail when retry attempts are exhausted. When a processor fails, the message data continues through the pipeline mostly unchanged, except for the addition of a metadata flag, which you can use for handling errors.
 
-This topic explains some common error-handling patterns, including dropping messages, recovering them with more processing, and routing them to a dead-letter queue. It also shows how to combine these approaches, where appropriate.
+This topic explains some common error-handling patterns, including dropping messages, recovering them with more processing, and routing them to a dead-letter queue. It also shows how to combine these approaches, where appropriate, and provides a method for <<logging-fatal-errors, trapping unhandled errors>>.
 
 == Abandon on failure
 
@@ -93,6 +93,22 @@ pipeline:
       - mapping: |
           root = this
           root.meta.error = error()
+----
+
+=== Logging fatal errors
+
+During development and testing, you can use the xref:components:processors/crash.adoc[`crash` processor] to halt pipeline execution when an unhandled error occurs and log a fatal message. Use Bloblang functions to customize the message. For example:
+
+[source,yaml]
+----
+pipeline:
+  processors:
+    - try:
+      - resource: foo # Processor that might fail
+      - resource: bar # Processor that might fail
+      - resource: baz # Processor that might fail
+    # Writes a custom fatal log message
+    - crash: "Processor ${!error_source_label()} failed due to: ${!error()}"
 ----
 
 == Attempt until success
