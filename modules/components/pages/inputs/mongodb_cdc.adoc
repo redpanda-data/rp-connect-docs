@@ -354,7 +354,7 @@ For more information, see the https://www.mongodb.com/docs/manual/changeStreams/
 
 === `json_marshal_mode`
 
-Controls how MongoDB formats messages sent to Redpanda Connect.
+Controls the format of the message output to Redpanda Connect.
 
 *Type*: `string`
 
@@ -364,7 +364,7 @@ Controls how MongoDB formats messages sent to Redpanda Connect.
 | Option | Description
 
 | `canonical`
-| A string format that preserves type information at the expense of readability and interoperability. Conversion from canonical to Binary JSON (BSON) generally retains type information, except in specific cases.
+| A string format that preserves the exact data types of values stored in MongoDB at the expense of readability and interoperability. Conversion from canonical to Binary JSON (BSON) generally retains type information, except in specific cases.
 | `relaxed`
 | A string format that is human-readable and compatible with most JSON parsers but may lose type fidelity. Conversion from relaxed format to BSON can lose type information.
 
