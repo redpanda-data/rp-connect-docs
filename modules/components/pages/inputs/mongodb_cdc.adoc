@@ -314,7 +314,7 @@ The mode in which MongoDB emits document changes to Redpanda Connect, specifical
 
 [cols="1,2"]
 |===
-| Option | Description the document mode
+| Option | Description
 
 | `update_lookup`
 a| Emits full documents for insert, replace, and update operations, but only the `_id` field for delete operations.  
