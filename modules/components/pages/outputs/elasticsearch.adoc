@@ -54,6 +54,7 @@ output:
     id: ${!counter()}-${!timestamp_unix()}
     type: ""
     routing: ""
+    retry_on_conflict: 0
     sniff: true
     healthcheck: true
     timeout: 5s
