@@ -187,6 +187,14 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Default*: `""`
 
+=== `retry_on_conflict`
+
+The number of times to retry an update operation when a version conflict occurs.
+
+*Type*: `int`
+
+*Default*: `0`
+
 === `sniff`
 
 Prompts Redpanda Connect to sniff for brokers to connect to when establishing a connection.
