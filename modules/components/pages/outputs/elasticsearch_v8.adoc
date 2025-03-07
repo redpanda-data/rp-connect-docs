@@ -12,7 +12,7 @@ component_type_dropdown::[]
 
 Publishes messages into an https://www.elastic.co/guide/en/elasticsearch/reference/current/documents-indices.html[Elasticsearch index^]. If the index does not exist, this output creates it using dynamic mapping.
 
-NOTE: The xref:components:outputs/elasticsearch_v8.adoc[`elasticsearch_v8` output] is based on the the https://github.com/elastic/go-elasticsearch?tab=readme-ov-file[go-elasticsearch/v8] library. For full information about breaking changes and version compatibility, see https://www.elastic.co/guide/en/elasticsearch/reference/current/migrating-8.0.html[Elastic's Migrating to 8.0 guide^]. 
+NOTE: The xref:components:outputs/elasticsearch_v8.adoc[`elasticsearch_v8` output] is based on the the https://github.com/elastic/go-elasticsearch?tab=readme-ov-file[go-elasticsearch/v8] library. For full information about breaking changes from previous versions, see https://www.elastic.co/guide/en/elasticsearch/reference/current/migrating-8.0.html#breaking_80_rest_api_changes[Elastic's Migrating to 8.0 guide^]. 
 
 To help configure your own `elasticsearch_v8` output, this page includes <<example-pipelines, example pipeline configurations>>.
 
@@ -84,6 +84,10 @@ output:
 --
 ======
 
+== Set values dynamically
+
+You can use xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] to dynamically set values for the <<id, `id`>> and <<index, `index`>> fields. When message batches are sent, interpolations are performed per message part.
+
 == Performance
 
 For improved performance, this output sends:
@@ -91,15 +95,11 @@ For improved performance, this output sends:
 - Multiple messages in parallel. Adjust the `max_in_flight` field value to tune the maximum number of in-flight messages (or message batches). 
 - Messages as batches. You can configure batches at both input and output level. For more information, see xref:configuration:batching.adoc[Message Batching].
 
-You can use xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] to dynamically set values for the <<id, `id`>> and <<index, `index`>> fields. When message batches are sent, interpolations are performed per message part.
-
 == Fields
 
 === `urls`
 
-A list of URLs to connect to. This output attempts to connect to each URL in the list, in order, until a successful connection is established. The output then continues to use that URL until the connection is closed.
-
-If an item in the list contains commas, it is split into multiple URLs.
+A list of URLs to connect to. This output attempts to connect to each URL in the list, in order, until a successful connection is established. If an item in the list contains commas, it is split into multiple URLs.
 
 *Type*: `array`
 
