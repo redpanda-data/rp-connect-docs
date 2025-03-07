@@ -120,7 +120,7 @@ If you set the <<stream_snapshot,`stream_snapshot` field>> to `true`, Redpanda C
 . Records the latest oplog position.
 . Determines the strategy for splitting the snapshot data down into shards or chunks for more efficient processing:
 .. If <<snapshot_auto_bucket_sharding,`snapshot_auto_bucket_sharding`>> is set to `false`, the internal `$splitVector` command is used to compute shards.  
-.. If <<snapshot_auto_bucket_sharding,`snapshot_auto_bucket_sharding`>> is set to `true`, the https://www.mongodb.com/docs/manual/reference/operator/aggregation/bucketAuto/[`$bucketAuto`^] command is used instead. This setting is for environments, such as MongoDB Atlas, where privileged access is restricted.
+.. If <<snapshot_auto_bucket_sharding,`snapshot_auto_bucket_sharding`>> is set to `true`, the https://www.mongodb.com/docs/manual/reference/operator/aggregation/bucketAuto/[`$bucketAuto`^] command is used instead. This setting is for environments, such as MongoDB Atlas, where the `$splitVector` command is not available.
 . This input then uses the number of connections specified in <<snapshot_parallelism,`snapshot-parallelism`>> to read the selected collections.
 +
 NOTE: If the pipeline restarts during this process, Redpanda Connect must start the snapshot capture from scratch to store the current oplog position in the <<checkpoint_cache,`checkpoint_cache`>>.
@@ -201,7 +201,7 @@ collections:
 
 === `checkpoint_cache`
 
-Specify a `cache` resource to store the oplog position for the most recent data update streamed to Redpanda Connect. After a restart, Redpanda Connect can continue processing changes from this position, avoiding the need to reprocess all collection updates.
+Specify a xref:components:caches/about.adoc[`cache` resource] to store the oplog position for the most recent data update streamed to Redpanda Connect. After a restart, Redpanda Connect can continue processing changes from this position, avoiding the need to reprocess all collection updates.
 
 *Type*: `string`
 
@@ -294,7 +294,7 @@ This field is only applicable when `stream_snapshot` is set to `true`.
 
 === `snapshot_auto_bucket_sharding`
 
-Uses the https://www.mongodb.com/docs/manual/reference/operator/aggregation/bucketAuto/[`$bucketAuto`^] command instead of the default, `$splitVector`, to split the snapshot data into chunks for processing. This is required for environments, such as MongoDB Atlas, where privileged access is restricted. To enable parallel processing in these environments:
+Uses the https://www.mongodb.com/docs/manual/reference/operator/aggregation/bucketAuto/[`$bucketAuto`^] command instead of the default, `$splitVector`, to split the snapshot data into chunks for processing. This is required for environments, such as MongoDB Atlas, where the `$splitVector` command is not available. To enable parallel processing in these environments:
 
 - Set this field to to `true`.
 - Set `stream_snapshot` to `true`.
