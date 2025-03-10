@@ -304,7 +304,7 @@ Whether to store delivered messages on disk. By default, message delivery is tra
 
 === `mandatory`
 
-Whether to set the mandatory flag on published messages. When set to `true`, a published message that cannot be routed to any queues it is returned to the sender.
+Whether to set the mandatory flag on published messages. When set to `true`, a published message that cannot be routed to any queues is returned to the sender.
 
 *Type*: `bool`
 
