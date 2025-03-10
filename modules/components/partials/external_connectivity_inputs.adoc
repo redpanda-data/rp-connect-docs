@@ -1,0 +1,15 @@
+ifndef::env-cloud[]
+
+== Enable connectivity from cloud-based data sources
+
+To establish a secure connection between a cloud-based data source and Redpanda Connect, you must add the IP addresses of your Redpanda Connect instances to your firewall rules.
+
+endif::[]
+
+ifdef::env-cloud[]
+
+== Enable connectivity from cloud-based data sources (BYOC only)
+
+To establish a secure connection between a cloud-based data source and Redpanda Connect, you must add the NAT Gateway IP address of your Redpanda cluster to the allowlist of your data source.
+
+endif::[]
