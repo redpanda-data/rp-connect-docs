@@ -43,28 +43,29 @@ schema_registry_decode:
   avro:
     raw_unions: false
     preserve_logical_types: false
+    mapping: "" # No default (optional)
   url: "" # No default (required)
   oauth:
     enabled: false
-    consumer_key: ""
-    consumer_secret: ""
-    access_token: ""
-    access_token_secret: ""
+    consumer_key: "" # Optional
+    consumer_secret: "" # Optional
+    access_token: "" # Optional
+    access_token_secret: "" # Optional
   basic_auth:
     enabled: false
-    username: ""
-    password: ""
+    username: "" # Optional
+    password: "" # Optional
   jwt:
     enabled: false
-    private_key_file: ""
-    signing_method: ""
+    private_key_file: "" # Optional
+    signing_method: "" # Optional
     claims: {}
     headers: {}
   tls:
     skip_cert_verify: false
     enable_renegotiation: false
-    root_cas: ""
-    root_cas_file: ""
+    root_cas: "" # Optional
+    root_cas_file: "" # Optional
     client_certs: []
 ```
 
@@ -142,6 +143,44 @@ Set to `true` to preserve logical types.
 
 *Default*: `false`
 
+=== `avro.mapping`
+
+Define a custom mapping to apply to the JSON representation of Avro schemas. You can use mappings to convert custom types emitted by other tools, such as Debezium, into standard Avro types.
+
+*Type*: `string`
+
+*Default*: `""`
+
+The following example converts custom Debezium timestamp types into standard Avro timestamp types.
+
+```yml
+# Examples
+
+mapping: |2
+  # Define a mapping to identify Debezium timestamp types
+  map isDebeziumTimestampType {
+    root = this.type == "long" && this."connect.name" == "io.debezium.time.Timestamp" && !this.exists("logicalType")
+  }
+  # Define a mapping to convert Debezium timestamp types to Avro timestamp types
+  map debeziumTimestampToAvroTimestamp {
+    # Recursively apply the mapping to each field in the record
+    let mapped_fields = this.fields.or([]).map_each(item -> item.apply("debeziumTimestampToAvroTimestamp"))
+    root = match {
+      # If the type is a record, apply the mapping to its fields
+      this.type == "record" => this.assign({"fields": $mapped_fields})
+      # If the type is an array, apply the mapping to each item in the array
+      this.type.type() == "array" => this.assign({"type": this.type.map_each(item -> item.apply("debeziumTimestampToAvroTimestamp"))})
+      # If the type is an object and matches the Debezium timestamp type, add a logical type to decode it as an Avro timestamp instead of a long
+      this.type.type() == "object" && this.type.apply("isDebeziumTimestampType") => this.merge({"type":{"logicalType": "timestamp-millis"}})
+      # Otherwise, return the type as is
+      _ => this
+    }
+  }
+  # Apply the Debezium to Avro timestamp mapping to the root
+  root = this.apply("debeziumTimestampToAvroTimestamp")
+
+```
+
 === `url`
 
 The base URL of the schema registry service.
@@ -152,7 +191,7 @@ The base URL of the schema registry service.
 
 === `oauth`
 
-Allows you to specify open authentication via OAuth version 1.
+Allows you to specify open authentication using OAuth version 1.
 
 
 *Type*: `object`
@@ -185,8 +224,6 @@ A secret used to establish ownership of the consumer key.
 
 include::components:partial$secret_warning.adoc[]
 
-
-
 *Type*: `string`
 
 *Default*: `""`
@@ -194,7 +231,6 @@ include::components:partial$secret_warning.adoc[]
 === `oauth.access_token`
 
 A value used to gain access to the protected resources on behalf of the user.
-
 
 *Type*: `string`
 
@@ -206,8 +242,6 @@ A secret provided in order to establish ownership of a given access token.
 
 include::components:partial$secret_warning.adoc[]
 
-
-
 *Type*: `string`
 
 *Default*: `""`
@@ -215,7 +249,6 @@ include::components:partial$secret_warning.adoc[]
 === `basic_auth`
 
 Allows you to specify basic authentication.
-
 
 *Type*: `object`
 
@@ -227,7 +260,6 @@ endif::[]
 
 Whether to use basic authentication in requests.
 
-
 *Type*: `bool`
 
 *Default*: `false`
@@ -235,7 +267,6 @@ Whether to use basic authentication in requests.
 === `basic_auth.username`
 
 A username to authenticate as.
-
 
 *Type*: `string`
 
@@ -247,16 +278,13 @@ A password to authenticate with.
 
 include::components:partial$secret_warning.adoc[]
 
-
-
 *Type*: `string`
 
 *Default*: `""`
 
 === `jwt`
 
-BETA: Allows you to specify JWT authentication.
-
+BETA: Allows you to specify JSON Web Token (JWT) authentication.
 
 *Type*: `object`
 
@@ -275,7 +303,7 @@ Whether to use JWT authentication in requests.
 
 === `jwt.private_key_file`
 
-A file with the PEM encoded via PKCS1 or PKCS8 as private key.
+A file with the PEM encoded using PKCS1 or PKCS8 as private key.
 
 
 *Type*: `string`
@@ -284,7 +312,7 @@ A file with the PEM encoded via PKCS1 or PKCS8 as private key.
 
 === `jwt.signing_method`
 
-A method used to sign the token such as RS256, RS384, RS512 or EdDSA.
+A method used to sign the token, such as RS256, RS384, RS512 or EdDSA.
 
 
 *Type*: `string`
@@ -302,7 +330,7 @@ A value used to identify the claims that issued the JWT.
 
 === `jwt.headers`
 
-Add optional key/value headers to the JWT.
+Add key/value headers to the JWT (optional).
 
 
 *Type*: `object`
