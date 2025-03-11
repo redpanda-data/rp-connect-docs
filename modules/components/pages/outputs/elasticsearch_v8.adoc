@@ -86,7 +86,7 @@ output:
 
 == Set values dynamically
 
-You can use xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] to dynamically set values for the <<id, `id`>> and <<index, `index`>> fields. When message batches are sent, interpolations are performed per message part.
+You can use xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] to dynamically set values for the <<id, `id`>> and <<index, `index`>> fields, as well as other fields where xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] are supported. When message batches are sent, interpolations are performed per message.
 
 == Performance
 
@@ -181,7 +181,7 @@ Override system defaults with custom TLS settings.
 
 === `tls.enabled`
 
-Whether custom TLS settings are enabled.
+Enable custom TLS settings. By default, custom settings are disabled.
 
 
 *Type*: `bool`
@@ -265,7 +265,7 @@ client_certs:
 
 === `tls.client_certs[].cert`
 
-A plain text certificate to use.
+The plain text certificate to use.
 
 
 *Type*: `string`
@@ -346,7 +346,7 @@ Whether to use basic authentication in requests.
 
 === `basic_auth.username`
 
-A username to authenticate as.
+The username to use for authentication.
 
 
 *Type*: `string`
@@ -399,7 +399,7 @@ The number of messages after which the batch is flushed. Set to `0` to disable c
 
 === `batching.byte_size`
 
-The amount of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 
 *Type*: `int`
@@ -562,8 +562,7 @@ output:
     urls: ['http://localhost:9200'] # The URL of the Elasticsearch server.
     index: "product_code" # The name of the Elasticsearch index.
     action: "index" # The action to perform on each document. 
-  # Sets the document ID to the value of the metadata ID field. 
-    id: ${! meta("id") }
+    id: ${! meta("id") } # Sets the document ID to the value of the metadata ID field. 
 ```
 
 --
