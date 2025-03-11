@@ -98,6 +98,7 @@ output:
     drop_on: []
     successful_on: []
     proxy_url: "" # No default (optional)
+    disable_http2: false
     batch_as_multipart: false
     propagate_response: false
     max_in_flight: 64
@@ -835,6 +836,18 @@ A HTTP proxy URL (optional).
 
 
 *Type*: `string`
+
+=== `disable_http2`
+
+Whether to disable HTTP/2. By default, HTTP/2 is enabled.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+ifndef::env-cloud[]
+Requires version 4.47.0 or later
+endif::[]
 
 
 === `batch_as_multipart`
