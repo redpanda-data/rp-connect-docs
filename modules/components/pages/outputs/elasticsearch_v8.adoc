@@ -12,7 +12,7 @@ component_type_dropdown::[]
 
 Publishes messages into an https://www.elastic.co/guide/en/elasticsearch/reference/current/documents-indices.html[Elasticsearch index^]. If the index does not exist, this output creates it using dynamic mapping.
 
-NOTE: The xref:components:outputs/elasticsearch_v8.adoc[`elasticsearch_v8` output] is based on the the https://github.com/elastic/go-elasticsearch?tab=readme-ov-file[go-elasticsearch/v8] library. For full information about breaking changes from previous versions, see https://www.elastic.co/guide/en/elasticsearch/reference/current/migrating-8.0.html#breaking_80_rest_api_changes[Elastic's Migrating to 8.0 guide^]. 
+NOTE: The `elasticsearch_v8` output is based on the the https://github.com/elastic/go-elasticsearch?tab=readme-ov-file[go-elasticsearch/v8] library. For full information about breaking changes from previous versions, see https://www.elastic.co/guide/en/elasticsearch/reference/current/migrating-8.0.html#breaking_80_rest_api_changes[Elastic's Migrating to 8.0 guide^]. 
 
 To help configure your own `elasticsearch_v8` output, this page includes <<example-pipelines, example pipeline configurations>>.
 
