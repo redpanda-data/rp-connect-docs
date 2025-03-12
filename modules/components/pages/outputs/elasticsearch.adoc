@@ -11,6 +11,8 @@ component_type_dropdown::[]
 
 Publishes messages into an Elasticsearch index. If the index does not exist then it is created with a dynamic mapping.
 
+NOTE: The underlying library for this output has been deprecated. The xref:components:outputs/elasticsearch_v8.adoc[`elasticsearch_v8` output] offers an up-to-date alternative based on the the https://github.com/elastic/go-elasticsearch?tab=readme-ov-file[go-elasticsearch/v8] library. For full information about breaking changes from previous versions, see https://www.elastic.co/guide/en/elasticsearch/reference/current/migrating-8.0.html#breaking_80_rest_api_changes[Elastic's Migrating to 8.0 guide^]. 
+
 
 [tabs]
 ======
@@ -52,6 +54,7 @@ output:
     id: ${!counter()}-${!timestamp_unix()}
     type: ""
     routing: ""
+    retry_on_conflict: 0
     sniff: true
     healthcheck: true
     timeout: 5s
@@ -183,6 +186,14 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 *Type*: `string`
 
 *Default*: `""`
+
+=== `retry_on_conflict`
+
+The number of times to retry an update operation when a version conflict occurs.
+
+*Type*: `int`
+
+*Default*: `0`
 
 === `sniff`
 

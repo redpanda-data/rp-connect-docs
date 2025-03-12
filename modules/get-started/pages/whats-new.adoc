@@ -12,7 +12,10 @@ This release introduces a xref:components:inputs/mongodb_cdc.adoc[change data ca
 
 == Version 4.47.0 to 4.47.1
 
-This release introduces the xref:components:processors/crash.adoc[`crash` processor], which can help you detect unhandled pipeline errors during development and testing.
+This release introduces:
+
+- The xref:components:outputs/elasticsearch_v8.adoc[`elasticsearch_v8` output]: A certified, up-to-date alternative to the existing `elasticsearch` output.
+- The xref:components:processors/crash.adoc[`crash` processor]: A tool for detecting unhandled pipeline errors during development and testing.
 
 === Component updates
 
@@ -21,6 +24,7 @@ This release adds:
 - The `arguments` field to the xref:components:inputs/amqp_0_9.adoc[`amqp_0_9` input] and xref:components:outputs/amqp_0_9.adoc[output].
 - The `mapping` field (for Avro messages) to the xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode` processor].
 - The `disable_http2` field to the xref:components:inputs/http_client.adoc[`http_client` input], xref:components:outputs/http_client.adoc[output], and xref:components:processors/http.adoc[`http` processor].
+- The `retry_on_conflict` field to the xref:components:outputs/elasticsearch.adoc[`elasticsearch` output].
 
 Redpanda Connect also now supports the xref:guides:bloblang/functions.adoc#uuid_v7[`uuid_v7` Bloblang function], which is useful for scenarios when the exact timing of events is important, such as during data migration or replication.
 
