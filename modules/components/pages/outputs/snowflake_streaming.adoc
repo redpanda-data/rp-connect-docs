@@ -90,6 +90,106 @@ output:
 --
 ======
 
+== Column mapping between Redpanda Connect and Snowflake
+
+The column mapping behavior of the `snowflake_streaming` output is determined by: 
+
+- The output message contents.
+- The <<schema_evolution, schema evolution settings>>.
+- The schema of the <<table, target Snowflake table>>. 
+
+The following scenarios highlight how these three factors affect data written to the target table.
+
+=== Scenario one
+
+An output message matches the existing table schema and the `schema_evolution.enabled` field is set to `true` or `false`.
+
+The target Snowflake table has two columns:
+
+- `product_id` (NUMBER)
+- `product_code` (STRING)
+
+A pipeline generates the following message:
+
+```json
+{"product_id": 521, "product_code": “EST-PR”}
+```
+
+In this scenario:
+
+- The JSON keys in the message (`"product_id"` and `"product_code"`) match column names in the target Snowflake table.
+- The message values match the column data types.
+- Redpanda Connect inserts the message values into a new row in the target Snowflake table.
++
+|===
+| product_id | product_code
+
+^| 521
+^| EST-PR
+|===
+
+=== Scenario two
+
+An output message includes schema updates and the `schema_evolution.enabled` field is set to `true`.
+
+The target Snowflake table has the same two columns as scenario one:
+
+- `product_id` (NUMBER)
+- `product_code` (STRING)
+
+This time the pipeline generates the following message:
+
+```json
+{"product_batch": 11111, "product_color": “yellow”}
+```
+
+In this scenario:
+
+- The JSON keys (`"product_batch"` and `"product_color"`) do not match column names in the target Snowflake table.
+- As schema evolution is enabled, Redpanda Connect adds two new columns to the target table with data types derived from the output message values. 
+- Redpanda Connect inserts the message values into a new table row.
++
+|===
+| product_id | product_code | product_batch | product_color
+
+^| (null)
+^| (null)
+^| 11111
+^| yellow
+
+|===
++
+NOTE: You can <<schema_evolution-processors,configure processors>> to override the schema updates derived from the message values.
+
+
+=== Scenario three
+
+An output message includes schema updates and the `schema_evolution.enabled` field is set to `false`.
+
+The target Snowflake table has the same two columns:
+
+- `product_id` (NUMBER)
+- `product_code` (STRING)
+
+The pipeline generates the same message as for scenario two:
+
+```json
+{"product_batch": 11111, "product_color": “yellow”}
+```
+
+In this scenario:
+
+- The JSON keys (`"product_batch"` and `"product_color"`) do not match any existing column names.
+- As schema evolution is disabled, Redpanda Connect ignores the new column names and inserts a row with null values.
++
+|===
+| product_id | product_code
+
+^| (null)
+^| (null)
+
+|===
+
 == Supported data formats for Snowflake columns
 
 The message data from your output must match the columns in the Snowflake table that you want to write data to. The following table shows you the https://docs.snowflake.com/en/sql-reference/intro-summary-data-types[column data types supported by Snowflake^] and how they correspond to the xref:guides:bloblang/methods.adoc#type[Bloblang data types] in Redpanda Connect.
