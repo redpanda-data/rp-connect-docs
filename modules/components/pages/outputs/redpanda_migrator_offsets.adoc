@@ -11,11 +11,11 @@
 
 component_type_dropdown::[]
 
-
-Use the `redpanda_migrator_offsets` output in conjunction with a `kafka_franz` input that is configured to read the `__consumer_offsets` topic.
-This output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
+Migrates offset data to a Redpanda cluster. To achieve this, pair the `redpanda_migrator_offsets` output with a `kafka_franz` input that is configured to consume the `__consumer_offsets` topic.
 
 Alternatively, use the `redpanda_migrator_bundle` xref:components:inputs/redpanda_migrator_bundle.adoc[input] and xref:components:outputs/redpanda_migrator_bundle.adoc[output] to complete the migration of topics, messages, and schemas to a Redpanda cluster.
+
+This output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
 
 
 ifndef::env-cloud[]
@@ -39,6 +39,7 @@ output:
     offset_partition: ${! @kafka_offset_partition }
     offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
     offset_metadata: ${! @kafka_offset_metadata }
+    is_high_watermark: ${! @kafka_is_high_watermark }
 ```
 
 --
@@ -57,9 +58,9 @@ output:
       enabled: false
       skip_cert_verify: false
       enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
+      root_cas: "" # Optional
+      root_cas_file: "" # Optional
+      client_certs: [] # Optional
     sasl: [] # No default (optional)
     metadata_max_age: 5m
     offset_topic: ${! @kafka_offset_topic }
@@ -67,6 +68,7 @@ output:
     offset_partition: ${! @kafka_offset_partition }
     offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
     offset_metadata: ${! @kafka_offset_metadata }
+    is_high_watermark: ${! @kafka_is_high_watermark }
     timeout: 10s
     max_message_bytes: 1MiB
     broker_write_max_bytes: 100MiB
@@ -301,7 +303,7 @@ The SASL mechanism to use.
 | `SCRAM-SHA-512`
 | SCRAM-based authentication as specified in RFC 5802.
 | `none`
-| Disable SASL authentication
+| Disable SASL authentication.
 
 |===
 
@@ -443,7 +445,7 @@ An external ID to provide when assuming a role.
 *Default*: `""`
 
 
-=== metadata_max_age
+=== `metadata_max_age`
 
 The maximum period of time after which metadata is refreshed.
 
@@ -451,7 +453,7 @@ The maximum period of time after which metadata is refreshed.
 
 *Default*: `5m`
 
-=== offset_topic
+=== `offset_topic`
 
 The name of the Kafka offset topic to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
@@ -459,7 +461,7 @@ The name of the Kafka offset topic to process. This field supports xref:configur
 
 *Default*: `${! @kafka_offset_topic }`
 
-=== offset_group
+=== `offset_group`
 
 The name of the Kafka offset consumer group to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
@@ -467,7 +469,7 @@ The name of the Kafka offset consumer group to process. This field supports xref
 
 *Default*: `${! @kafka_offset_group }`
 
-=== offset_partition
+=== `offset_partition`
 
 The Kafka offset partition ID to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
@@ -475,7 +477,7 @@ The Kafka offset partition ID to process. This field supports xref:configuration
 
 *Default*: `${! @kafka_offset_partition }`
 
-=== offset_commit_timestamp
+=== `offset_commit_timestamp`
 
 The Kafka offset commit timestamp to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
@@ -483,13 +485,14 @@ The Kafka offset commit timestamp to process. This field supports xref:configura
 
 *Default*: `${! @kafka_offset_commit_timestamp }`
 
-=== offset_metadata
+=== `is_high_watermark`
 
-The Kafka offset metadata value to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Indicates whether the processed message is the high watermark, which is the offset of the last fully replicated message in the Kafka topic partition. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
-*Default*: `${! @kafka_offset_metadata }`
+*Default*: `${! @kafka_is_high_watermark }`
+
 
 === `timeout`
 
