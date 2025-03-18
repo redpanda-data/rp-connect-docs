@@ -485,6 +485,14 @@ The Kafka offset commit timestamp to process. This field supports xref:configura
 
 *Default*: `${! @kafka_offset_commit_timestamp }`
 
+=== `offset_metadata`
+
+The Kafka offset metadata value to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `${! @kafka_offset_metadata }`
+
 === `is_high_watermark`
 
 Indicates whether the processed message is the high watermark, which is the offset of the last fully replicated message in the Kafka topic partition. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
