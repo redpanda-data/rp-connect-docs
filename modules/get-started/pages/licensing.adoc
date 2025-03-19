@@ -33,23 +33,31 @@ When you have downloaded the license key, you can apply it in the following ways
 If you have a license key file, either:
 
 - Save the license key to the following directory: `/etc/redpanda/redpanda.license`. 
-- Set the environment variable: `$\{REDPANDA_LICENSE_FILEPATH}` to point to the file where the license key is stored.
+- Set the environment variable `REDPANDA_LICENSE_FILEPATH` to point to the file where the license key is stored.
 
-=== Apply the license using an inline license string
+=== Apply the license using a license string
 
-If you do not have a license key file, run the following command using the full license string.
+If you do not have a license key file, either:
 
+- Set the environment variable `REDPANDA_LICENSE` to the value of the full license string.
+- Run the following command using the full license string.
++
 ```bash
 rpk connect run --redpanda-license <license-string> ./<connect-configuration>.yaml
 ```
-
++
 Replace the following placeholders: 
 
-- `<license-string>`: The full license key string.
-- `<connect-configuration>`: The name of your Redpanda Connect configuration file.
+  ** `<license-string>`: The full license key string.
+  ** `<connect-configuration>`: The name of your Redpanda Connect configuration file.
 
 == Verify a license
 
 Redpanda Connect checks the license key status at runtime. If the license key is unavailable or has expired, you are blocked from using enterprise connectors.
 
-You can view the license key’s expiration date at any time in the Redpanda Connect logs.
+You can view the license key’s expiration date at any time in the Redpanda Connect logs:
+
+```
+INFO Running main config from specified file       @service=benthos benthos_version=4.50.0 path=connect_2.yaml
+INFO Successfully loaded Redpanda license          @service=benthos expires_at="2025-04-18T15:41:56+01:00" license_org=67XXX license_type="free trial"
+```
