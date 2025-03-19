@@ -84,7 +84,11 @@ output:
 --
 ======
 
-You must specify the label of the associated xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] in the <<input_resource,`input_resource` field>>. When connected, this output queries the `redpanda_migrator` input for topic and ACL configurations. If the broker does not contain the current message topic, this output attempts to create the topic along with its ACLs.
+You must specify the label of the associated xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] in the <<input_resource,`input_resource` field>>. When connected, this output queries the `redpanda_migrator` input for topic and ACL configurations. 
+
+== Topic and ACL creation
+
+If the destination broker does not contain the topic in the current message, this output attempts to create the topic along with its access control lists (ACLs). If the topic already exists on the broker, only missing ACLs are migrated.
 
 ACL migration adheres to the following principles:
 
