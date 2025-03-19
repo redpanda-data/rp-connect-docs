@@ -329,7 +329,9 @@ If the pipeline is restarted, another data snapshot is taken before data updates
 
 The name of the PostgreSQL logical replication slot to use. If not provided, a random name is generated unless you create a replication slot manually before starting replication.
 
-NOTE: Starting from version 4.48.1, replication slot names are no longer created with the prefix `rs_`. To continue to use a replication slot created by an earlier version of Redpanda Connect, add the `rs_` prefix to the slot name.
+ifndef::env-cloud[]
+NOTE: Starting from version 4.48.1, Redpanda Connect no longer adds the prefix `rs_` to replication slot names. To continue to use an existing replication slot after upgrading, manually add the `rs_` prefix to the slot name.
+endif::[]
 
 *Type*: `string`
 
