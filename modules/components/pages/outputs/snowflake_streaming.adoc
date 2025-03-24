@@ -199,7 +199,7 @@ account: ORG-ACCOUNT
 
 === `url`
 
-Specify a custom URL to connect to Snowflake, which overrides the default URL: `\https://ORG-ACCOUNT.snowflakecomputing.com`.
+Specify a custom URL to connect to Snowflake. This parameter overrides the default URL, which is automatically generated from the value of `output.snowflake_streaming.account`. By default, the URL is constructed as follows: `https://<output.snowflake_streaming.account>.snowflakecomputing.com`.
 
 *Type*: `string`
 
