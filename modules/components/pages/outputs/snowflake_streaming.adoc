@@ -157,16 +157,16 @@ This output emits the following metrics.
 | The time taken to convert messages into the Snowflake column data types.
 
 | `snowflake_serialize_latency_ns`
-| The time taken to serialize the converted columnar data into a Parquet file to upload to Snowflake.
+| The time taken to serialize the converted columnar data into a file for upload to Snowflake.
 
 | `snowflake_build_output_latency_ns`
-| The time taken to build the Parquet file that is uploaded to Snowflake. This metric is the sum of `snowflake_convert_latency_ns` + `snowflake_serialize_latency_ns`. 
+| The time taken to build the file that is uploaded to Snowflake. This metric is the sum of `snowflake_convert_latency_ns` + `snowflake_serialize_latency_ns`. 
 
 | `snowflake_upload_latency_ns`
-| The time taken to upload the output Parquet file to Snowflake.
+| The time taken to upload the output file to Snowflake.
 
 | `snowflake_register_latency_ns`
-| The time taken to register the uploaded Parquet file with Snowflake.
+| The time taken to register the uploaded output file with Snowflake.
 
 | `snowflake_commit_latency_ns`
 | The time taken to commit the uploaded data updates to the target Snowflake table.
