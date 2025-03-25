@@ -121,7 +121,7 @@ A pipeline generates the following message:
 In this scenario:
 
 - The JSON keys in the message (`"product_id"` and `"product_code"`) match column names in the target Snowflake table.
-- The message values match the column data types. (If there was a data mismatch, an error would be logged.)
+- The message values match the column data types. (If there was a data mismatch, the message would be rejected.)
 - Redpanda Connect inserts the message values into a new row in the target Snowflake table.
 +
 |===
@@ -182,7 +182,7 @@ The pipeline generates the same message as for the <<scenario-data-and-table-sch
 In this scenario:
 
 - The JSON keys (`"product_batch"` and `"product_color"`) do not match any existing column names.
-- As schema evolution is disabled, Redpanda Connect ignores the mismatched column names and values and inserts a row of null values.
+- As schema evolution is disabled, Redpanda Connect ignores the extra column names and values and inserts a row of null values.
 +
 |===
 | product_id | product_code
@@ -410,16 +410,12 @@ Options to control schema updates when messages are written to the Snowflake tab
 
 === `schema_evolution.enabled`
 
-Whether schema evolution is enabled. When set to `true`, the Snowflake table is automatically created based on the schema of the first message written to it, if the table does not already exist. As new fields are added to subsequent messages in the pipeline, new columns are created in the Snowflake table.
+Whether schema evolution is enabled. When set to `true`, the Snowflake table is automatically created based on the schema of the first message written to it, if the table does not already exist. As new fields are added to subsequent messages in the pipeline, new columns are created in the Snowflake table. Any required columns are marked as `nullable` if new messages do not include data for them.
 
 *Type*: `bool`
 
 === `schema_evolution.ignore_nulls`
 
-ifndef::env-cloud[]
-NOTE: Versions 4.48.1 and earlier do not include this setting. New columns with `null` values were automatically added to the Snowflake table when schema evolution was enabled.
-endif::[]
- 
 When set to `true` and schema evolution is enabled, new columns that have `null` values _are not_ added to the Snowflake table. This behavior:
 
 -  Prevents unnecessary schema changes caused by placeholder or incomplete data.
