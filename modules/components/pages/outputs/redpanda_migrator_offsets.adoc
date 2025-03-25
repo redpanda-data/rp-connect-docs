@@ -11,7 +11,7 @@
 
 component_type_dropdown::[]
 
-Migrates offset data to a Redpanda cluster. To achieve this, pair the `redpanda_migrator_offsets` output with a `kafka_franz` input that is configured to consume the `__consumer_offsets` topic.
+Migrates offset data to a Redpanda cluster. To achieve this, pair the `redpanda_migrator_offsets` output with a matching xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input].
 
 Alternatively, use the `redpanda_migrator_bundle` xref:components:inputs/redpanda_migrator_bundle.adoc[input] and xref:components:outputs/redpanda_migrator_bundle.adoc[output] to complete the migration of topics, messages, and schemas to a Redpanda cluster.
 
