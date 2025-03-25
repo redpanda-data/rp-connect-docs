@@ -101,9 +101,9 @@ The conversion of message data to Snowflake table rows is determined by the:
 
 The following scenarios highlight how these three factors affect data written to the target table.
 
-NOTE: For reduced complexity, consider <<schema_evolution, enabling schema evolution>>, which automatically creates and updates the Snowflake table schema based on message contents.
+NOTE: For reduced complexity, consider <<schema_evolution, turning on schema evolution>>, which automatically creates and updates the Snowflake table schema based on message contents.
 
-=== Scenario: Data and table schema match (schema evolution enabled or disabled) 
+=== Scenario: Data and table schema match (schema evolution turned on or off) 
 
 An output message matches the existing table schema and the `schema_evolution.enabled` field is set to `true` or `false`.
 
@@ -131,11 +131,11 @@ In this scenario:
 ^| EST-PR
 |===
  
-=== Scenario: Data and table schema mismatch (schema evolution enabled) 
+=== Scenario: Data and table schema mismatch (schema evolution turned on) 
 
 An output message includes schema updates and the `schema_evolution.enabled` field is set to `true`.
 
-The target Snowflake table has the same two columns as for the <<scenario-data-and-table-schema-match-schema-evolution-enabled-or-disabled, previous scenario>>:
+The target Snowflake table has the same two columns as for the <<scenario-data-and-table-schema-match-schema-evolution-turned-on-or-off, previous scenario>>:
 
 - `product_id` (NUMBER)
 - `product_code` (STRING)
@@ -164,7 +164,7 @@ In this scenario:
 +
 NOTE: You can <<schema_evolution-processors,configure processors>> to override the schema updates derived from the message values.
 
-=== Scenario: Data and table schema mismatch (schema evolution disabled)
+=== Scenario: Data and table schema mismatch (schema evolution turned off)
 
 An output message includes schema updates and the `schema_evolution.enabled` field is set to `false`.
 
@@ -173,7 +173,7 @@ The target Snowflake table has the same two columns:
 - `product_id` (NUMBER)
 - `product_code` (STRING)
 
-The pipeline generates the same message as for the <<scenario-data-and-table-schema-mismatch-schema-evolution-enabled,previous scenario>>:
+The pipeline generates the same message as for the <<scenario-data-and-table-schema-mismatch-schema-evolution-turned-on,previous scenario>>:
 
 ```json
 {"product_batch": 11111, "product_color": “yellow”}
@@ -182,7 +182,7 @@ The pipeline generates the same message as for the <<scenario-data-and-table-sch
 In this scenario:
 
 - The JSON keys (`"product_batch"` and `"product_color"`) do not match any existing column names.
-- As schema evolution is disabled, Redpanda Connect ignores the extra column names and values and inserts a row of null values.
+- As schema evolution is turned off, Redpanda Connect ignores the extra column names and values and inserts a row of null values.
 +
 |===
 | product_id | product_code
