@@ -18,8 +18,7 @@ This release adds:
 - Two new metrics to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]: `snowflake_register_latency_ns` and `snowflake_commit_latency_ns`.
 - An `ignore_nulls` option for schema evolution in the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]. 
 
-
-This release also deprecates the `snapshot_memory_factor` field from the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input]. Instead, you must set a batch size, which defaults to `1000` messages. This change is backward compatible. No action is required if you are using an earlier version of Redpanda Connect.
+Deprecated: This release also deprecates the `snapshot_memory_factor` field from the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input]. Instead, you must set a batch size, which defaults to `1000` messages. Redpanda recommends upgrading to benefit from this update.
 
 == Version 4.48.1
 
