@@ -93,7 +93,7 @@ output:
 
 == Conversion of message data into Snowflake table rows
 
-The conversion of message data to Snowflake table rows is determined by the: 
+Message data conversion to Snowflake table rows is determined by the: 
 
 - Output message contents.
 - <<schema_evolution, Schema evolution settings>>.
@@ -105,7 +105,7 @@ NOTE: For reduced complexity, consider <<schema_evolution, turning on schema evo
 
 === Scenario: Data and table schema match (schema evolution turned on or off) 
 
-An output message matches the existing table schema and the `schema_evolution.enabled` field is set to `true` or `false`.
+An output message matches the existing table schema, and the `schema_evolution.enabled` field is set to `true` or `false`.
 
 The target Snowflake table has two columns:
 
@@ -133,14 +133,14 @@ In this scenario:
  
 === Scenario: Data and table schema mismatch (schema evolution turned on) 
 
-An output message includes schema updates and the `schema_evolution.enabled` field is set to `true`.
+An output message includes schema updates, and the `schema_evolution.enabled` field is set to `true`.
 
-The target Snowflake table has the same two columns as for the <<scenario-data-and-table-schema-match-schema-evolution-turned-on-or-off, previous scenario>>:
+The target Snowflake table has the same two columns as the <<scenario-data-and-table-schema-match-schema-evolution-turned-on-or-off, previous scenario>>:
 
 - `product_id` (NUMBER)
 - `product_code` (STRING)
 
-This time the pipeline generates the following message:
+This time, the pipeline generates the following message:
 
 ```json
 {"product_batch": 11111, "product_color": “yellow”}
@@ -149,7 +149,7 @@ This time the pipeline generates the following message:
 In this scenario:
 
 - The JSON keys (`"product_batch"` and `"product_color"`) do not match column names in the target Snowflake table.
-- As schema evolution is enabled, Redpanda Connect adds two new columns to the target table with data types derived from the output message values. For more information about the mapping of data types, see <<supported-data-formats-for-snowflake-columns, Supported data formats for Snowflake columns>>  
+- As schema evolution is enabled, Redpanda Connect adds two new columns to the target table with data types derived from the output message values. For more information about the mapping of data types, see <<supported-data-formats-for-snowflake-columns, Supported data formats for Snowflake columns>>.
 - Redpanda Connect inserts the message values into a new table row.
 +
 |===
@@ -166,14 +166,14 @@ NOTE: You can <<schema_evolution-processors,configure processors>> to override t
 
 === Scenario: Data and table schema mismatch (schema evolution turned off)
 
-An output message includes schema updates and the `schema_evolution.enabled` field is set to `false`.
+An output message includes schema updates, and the `schema_evolution.enabled` field is set to `false`.
 
 The target Snowflake table has the same two columns:
 
 - `product_id` (NUMBER)
 - `product_code` (STRING)
 
-The pipeline generates the same message as for the <<scenario-data-and-table-schema-mismatch-schema-evolution-turned-on,previous scenario>>:
+The pipeline generates the same message as the <<scenario-data-and-table-schema-mismatch-schema-evolution-turned-on,previous scenario>>:
 
 ```json
 {"product_batch": 11111, "product_color": “yellow”}
@@ -182,7 +182,7 @@ The pipeline generates the same message as for the <<scenario-data-and-table-sch
 In this scenario:
 
 - The JSON keys (`"product_batch"` and `"product_color"`) do not match any existing column names.
-- As schema evolution is turned off, Redpanda Connect ignores the extra column names and values and inserts a row of null values.
+- Because schema evolution is turned off, Redpanda Connect ignores the extra column names and values and inserts a row of null values.
 +
 |===
 | product_id | product_code
