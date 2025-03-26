@@ -172,7 +172,7 @@ output:
     - resource: processor_2 # Only errored messages, or delivery failures to processor_1, go here
 ----
 
-In cases where you want to route data differently depending on the type of error message, you can use a xref:components:outputs/switch.adoc[`switch` output]:
+If you want to route data differently based on the type of error message, you can use a xref:components:outputs/switch.adoc[`switch` output]:
 
 [source,yaml]
 ----
@@ -194,7 +194,7 @@ output:
           resource: processor_3
 ----
 
-Finally, you can also attach additional metadata when routing to the DLQ like what the error message is by running a series of xref:components:processors/about.adoc[processors] before sending to the final xref:components:outputs/about.adoc[output].
+Finally, you can attach additional metadata when routing to the DLQ, such as the error message. This can be done by running a series of xref:components:processors/about.adoc[processors] before sending the data to the final xref:components:outputs/about.adoc[output].
 
 [source,yaml]
 ----
