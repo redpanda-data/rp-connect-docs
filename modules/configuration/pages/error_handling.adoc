@@ -203,7 +203,7 @@ output:
     - reject_errored:
         resource: processor_1 # Only non-errored messages go here
     - processors:
-        - mapping: |
+        - mutation: |
             root.error = error() # Add the error message to the message we're sending to the DLQ output
       resource: processor_2 # Only errored messages, or delivery failures to processor_1, go here
 ----
