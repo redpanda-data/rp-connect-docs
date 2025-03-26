@@ -84,7 +84,7 @@ output:
 --
 ======
 
-By default, the <<input_resource,`input_resource`>> from which topics and access control lists (ACLs) are read, is set to `redpanda_migrator_input`. If your input uses a custom label, you must update this value. 
+The default source for reading topics and access control lists (ACLs) is the <<input_resource,`input_resource`>>, which is set to `redpanda_migrator_input`. If your input uses a custom label, you must update this value.
 
 When connected, this output queries the `redpanda_migrator` input for topic and ACL configurations. If the destination broker does not contain the topic in the current message, this output attempts to create the topic along with its ACLs. If the topic already exists on the broker, only missing ACLs are migrated.
 
