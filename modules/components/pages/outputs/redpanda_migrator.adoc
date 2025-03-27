@@ -84,7 +84,9 @@ output:
 --
 ======
 
-You must specify the label of the associated xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] in the <<input_resource,`input_resource` field>>. When connected, this output queries the `redpanda_migrator` input for topic and ACL configurations. If the broker does not contain the current message topic, this output attempts to create the topic along with its ACLs.
+The default source for reading topics and access control lists (ACLs) is the <<input_resource,`input_resource`>>, which is set to `redpanda_migrator_input`. If your input uses a custom label, you must update this value.
+
+When connected, this output queries the `redpanda_migrator` input for topic and ACL configurations. If the destination broker does not contain the topic in the current message, this output attempts to create the topic along with its ACLs. If the topic already exists on the broker, only missing ACLs are migrated.
 
 ACL migration adheres to the following principles:
 
@@ -584,7 +586,7 @@ The maximum number of batches to send in parallel at any given time.
 
 === `input_resource`
 
-The label of the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] from which to read the configurations of topics and ACLs for creation.
+The xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] used to read topics and ACLs. If your input has a custom label, update this field to match the custom label value.
 
 *Type*: `string`
 
