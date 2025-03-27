@@ -58,6 +58,7 @@ output:
   label: ""
   snowflake_streaming:
     account: ORG-ACCOUNT # No default (required)
+    url: https://org-account.privatelink.snowflakecomputing.com # No default (optional)
     user: "" # No default (required)
     role: ACCOUNTADMIN # No default (required)
     database: MYDATABASE # No default (required)
@@ -201,6 +202,19 @@ WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 # Examples
 
 account: ORG-ACCOUNT
+```
+
+=== `url`
+
+Specify a custom URL to connect to Snowflake. This parameter overrides the default URL, which is automatically generated from the value of `output.snowflake_streaming.account`. By default, the URL is constructed as follows: `https://<output.snowflake_streaming.account>.snowflakecomputing.com`.
+
+*Type*: `string`
+
+```yml
+# Examples
+
+url: https://org-account.privatelink.snowflakecomputing.com
+
 ```
 
 === `user`
