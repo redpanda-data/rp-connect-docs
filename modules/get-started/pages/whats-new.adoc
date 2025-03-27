@@ -6,9 +6,42 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+
+== Version 4.49.1
+
+This release introduces further updates to the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input] and xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output].
+
+=== Component updates
+
+This release adds:
+
+- Two new metrics to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]: `snowflake_register_latency_ns` and `snowflake_commit_latency_ns`.
+- An `ignore_nulls` option for schema evolution in the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]. 
+
+==== Deprecations
+
+This release deprecates the `snapshot_memory_factor` field from the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input]. Now, you must set a batch size, which defaults to `1000` messages. Redpanda recommends upgrading to benefit from this update.
+
 == Version 4.48.1
 
-This release introduces a xref:components:inputs/mongodb_cdc.adoc[change data capture (CDC) input for MongoDB] on Cloud and Self-Managed Redpanda Connect. 
+This release introduces a xref:components:inputs/mongodb_cdc.adoc[change data capture (CDC) input for MongoDB] on Cloud and Self-Managed Redpanda Connect, along with improvements to the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input] and xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output].
+
+=== Component updates
+
+This release adds:
+
+- The `heartbeat_interval` field to the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input], which helps manage the size of the Write-Ahead Log when you subscribe to data changes from tables with low activity.
+- The `commit_timeout` field to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output].
+- The `url` field to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output], which allows you to override the default connection URL.
+- The `is_high_watermark` field to the xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` output].
+- The `kafka_is_high_watermark` metadata field to the xref:components:inputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` input].
+
+Other changes:
+
+- You can now xref:get-started:licensing.adoc[load an Enterprise Edition license] using the `REDPANDA_LICENSE` environment variable.
+- The xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input] no longer adds the prefix `_rs` to the replication slots it creates.
+- The `clickhouse` driver is now supported in Redpanda Cloud for all components with the prefix `sql_`. 
+- The xref:components:outputs/redpanda_migrator.adoc[`redpanda migrator` output] now attempts to transfer access control lists for topics that already exist on the destination broker.
 
 == Version 4.47.0 to 4.47.1
 
