@@ -72,6 +72,7 @@ output:
       CREATE TABLE IF NOT EXISTS mytable (amount NUMBER);
     schema_evolution:
       enabled: false # No default (required)
+      ignore_nulls: true
       processors: [] # No default (optional)
     build_options:
       parallelism: 1
@@ -91,6 +92,107 @@ output:
 
 --
 ======
+
+== Conversion of message data into Snowflake table rows
+
+Message data conversion to Snowflake table rows is determined by the: 
+
+- Output message contents.
+- <<schema_evolution, Schema evolution settings>>.
+- Schema of the <<table, target Snowflake table>>. 
+
+The following scenarios highlight how these three factors affect data written to the target table.
+
+NOTE: For reduced complexity, consider <<schema_evolution, turning on schema evolution>>, which automatically creates and updates the Snowflake table schema based on message contents.
+
+=== Scenario: Data and table schema match (schema evolution turned on or off) 
+
+An output message matches the existing table schema, and the `schema_evolution.enabled` field is set to `true` or `false`.
+
+The target Snowflake table has two columns:
+
+- `product_id` (NUMBER)
+- `product_code` (STRING)
+
+A pipeline generates the following message:
+
+```json
+{"product_id": 521, "product_code": “EST-PR”}
+```
+
+In this scenario:
+
+- The JSON keys in the message (`"product_id"` and `"product_code"`) match column names in the target Snowflake table.
+- The message values match the column data types. (If there was a data mismatch, the message would be rejected.)
+- Redpanda Connect inserts the message values into a new row in the target Snowflake table.
++
+|===
+| product_id | product_code
+
+^| 521
+^| EST-PR
+|===
+ 
+=== Scenario: Data and table schema mismatch (schema evolution turned on) 
+
+An output message includes schema updates, and the `schema_evolution.enabled` field is set to `true`.
+
+The target Snowflake table has the same two columns as the <<scenario-data-and-table-schema-match-schema-evolution-turned-on-or-off, previous scenario>>:
+
+- `product_id` (NUMBER)
+- `product_code` (STRING)
+
+This time, the pipeline generates the following message:
+
+```json
+{"product_batch": 11111, "product_color": “yellow”}
+```
+
+In this scenario:
+
+- The JSON keys (`"product_batch"` and `"product_color"`) do not match column names in the target Snowflake table.
+- As schema evolution is enabled, Redpanda Connect adds two new columns to the target table with data types derived from the output message values. For more information about the mapping of data types, see <<supported-data-formats-for-snowflake-columns, Supported data formats for Snowflake columns>>.
+- Redpanda Connect inserts the message values into a new table row.
++
+|===
+| product_id | product_code | product_batch | product_color
+
+^| (null)
+^| (null)
+^| 11111
+^| yellow
+
+|===
++
+NOTE: You can <<schema_evolution-processors,configure processors>> to override the schema updates derived from the message values.
+
+=== Scenario: Data and table schema mismatch (schema evolution turned off)
+
+An output message includes schema updates, and the `schema_evolution.enabled` field is set to `false`.
+
+The target Snowflake table has the same two columns:
+
+- `product_id` (NUMBER)
+- `product_code` (STRING)
+
+The pipeline generates the same message as the <<scenario-data-and-table-schema-mismatch-schema-evolution-turned-on,previous scenario>>:
+
+```json
+{"product_batch": 11111, "product_color": “yellow”}
+```
+
+In this scenario:
+
+- The JSON keys (`"product_batch"` and `"product_color"`) do not match any existing column names.
+- Because schema evolution is turned off, Redpanda Connect ignores the extra column names and values and inserts a row of null values.
++
+|===
+| product_id | product_code
+
+^| (null)
+^| (null)
+
+|===
 
 == Supported data formats for Snowflake columns
 
@@ -329,9 +431,22 @@ Options to control schema updates when messages are written to the Snowflake tab
 
 === `schema_evolution.enabled`
 
-Whether schema evolution is enabled. When set to `true`, the Snowflake table is automatically created based on the schema of the first message written to it, if the table does not already exist. As new fields are added to subsequent messages in the pipeline, existing columns are created in the Snowflake table. Any required columns are marked as `nullable` if new messages do not include data for them.
+Whether schema evolution is enabled. When set to `true`, the Snowflake table is automatically created based on the schema of the first message written to it, if the table does not already exist. As new fields are added to subsequent messages in the pipeline, new columns are created in the Snowflake table. Any required columns are marked as `nullable` if new messages do not include data for them.
 
 *Type*: `bool`
+
+=== `schema_evolution.ignore_nulls`
+
+When set to `true` and schema evolution is enabled, new columns that have `null` values _are not_ added to the Snowflake table. This behavior:
+
+-  Prevents unnecessary schema changes caused by placeholder or incomplete data.
+-  Avoids creating table columns with incorrect data types.
+
+NOTE: Redpanda does not recommend updating the default setting unless you are confident about the data type of `null` columns in advance.
+
+*Type*: `bool`
+ 
+*Default*: `true`
 
 === `schema_evolution.processors`
 
