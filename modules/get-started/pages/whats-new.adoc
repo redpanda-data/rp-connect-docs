@@ -34,7 +34,7 @@ This release adds:
 - The `commit_timeout` field to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output].
 - The `url` field to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output], which allows you to override the default connection URL.
 - The `is_high_watermark` field to the xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` output].
-- The `kafka_is_high_watermark` field to the xref:components:inputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` input].
+- The `kafka_is_high_watermark` metadata field to the xref:components:inputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` input].
 
 Other changes:
 
