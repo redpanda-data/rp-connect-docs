@@ -1,173 +1,70 @@
 = memory
 // tag::single-source[]
-:type: buffer
-:status: stable
-:categories: ["Utility"]
 
-// © 2024 Redpanda Data Inc.
-
-
-component_type_dropdown::[]
-
-
-Stores consumed messages in memory and acknowledges them at the input level. During shutdown Redpanda Connect will make a best attempt at flushing all remaining messages before exiting cleanly.
-
-
-[tabs]
-======
-Common::
-+
+[data_template, ROOT:example$connect.json]
 --
 
-```yml
-# Common config fields, showing default values
-buffer:
-  memory:
-    limit: 524288000
-    batch_policy:
-      enabled: false
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-```
+{{#each buffers}}
+  {{#if (eq this.name 'memory')}}
 
---
-Advanced::
-+
---
+{{this.summary}}
 
-```yml
-# All config fields, showing default values
-buffer:
-  memory:
-    limit: 524288000
-    batch_policy:
-      enabled: false
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
-```
+Introduced in version: {{{../version}}}
 
---
-======
+<tabs-placeholder>
 
-This buffer is appropriate when consuming messages from inputs that do not gracefully handle back pressure and where delivery guarantees aren't critical.
-
-This buffer has a configurable limit, where consumption will be stopped with back pressure upstream if the total size of messages in the buffer reaches this amount. Since this calculation is only an estimate, and the real size of messages in RAM is always higher, it is recommended to set the limit significantly below the amount of RAM available.
-
-== Delivery guarantees
-
-This buffer intentionally weakens the delivery guarantees of the pipeline and therefore should never be used in places where data loss is unacceptable.
-
-== Batching
-
-It is possible to batch up messages sent from this buffer using a xref:configuration:batching.adoc#batch-policy[batch policy].
+{{{this.description}}}
 
 == Fields
+    {{#each config.children}}
 
-=== `limit`
+=== `{{{this.name}}}`
 
-The maximum buffer size (in bytes) to allow before applying backpressure upstream.
+{{{this.description}}}
 
+*Type*: `{{{this.type}}}`
 
-*Type*: `int`
+      {{#if (ne this.type 'object')}}
+*Default*: `{{{this.default}}}`
 
-*Default*: `524288000`
+{{else}}
+  {{#each this.children}}
 
-=== `batch_policy`
+=== `{{{../name}}}.{{{this.name}}}`
 
-Optionally configure a policy to flush buffered messages in batches.
+{{{this.description}}}
 
+*Type*: `{{{this.type}}}`
 
-*Type*: `object`
+*Default*: {{#if this.default}}`{{{this.default}}}`{{else}}`""`{{/if}}
 
+{{#if this.examples}}
+```yaml 
+#Examples:
 
-=== `batch_policy.enabled`
+        {{#if (eq this.type 'string')}} 
+          {{#each this.examples}}
+{{{../name}}}: {{{this}}}
 
-Whether to batch messages as they are flushed.
-
-
-*Type*: `bool`
-
-*Default*: `false`
-
-=== `batch_policy.count`
-
-A number of messages at which the batch should be flushed. If `0` disables count based batching.
-
-
-*Type*: `int`
-
-*Default*: `0`
-
-=== `batch_policy.byte_size`
-
-An amount of bytes at which the batch should be flushed. If `0` disables size based batching.
-
-
-*Type*: `int`
-
-*Default*: `0`
-
-=== `batch_policy.period`
-
-A period in which an incomplete batch should be flushed regardless of its size.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-```yml
-# Examples
-
-period: 1s
-
-period: 1m
-
-period: 500ms
-```
-
-=== `batch_policy.check`
-
-A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-```yml
-# Examples
-
-check: this.type == "end_of_transaction"
-```
-
-=== `batch_policy.processors`
-
-A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
-
-
-*Type*: `array`
-
-
-```yml
-# Examples
-
-processors:
+          {{/each}}
+        {{/if}}
+        {{#if (eq this.type 'processor')}} 
+          {{#each this.examples}}
+{{{../name}}}:
+          {{#each this}}
   - archive:
-      format: concatenate
-
-processors:
-  - archive:
-      format: lines
-
-processors:
-  - archive:
-      format: json_array
+      format: {{{this.archive.format}}}
+      
+          {{/each}}
+          {{/each}}
+        {{/if}}
 ```
+{{/if}}
+        {{/each}}
+      {{/if}}
+    {{/each}}
+  {{/if}}
+{{/each}}
+--
 
 // end::single-source[]
