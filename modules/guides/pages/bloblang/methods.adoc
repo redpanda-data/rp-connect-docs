@@ -702,11 +702,11 @@ root.unescaped = this.value.unescape_url_query()
 
 include::components:partial$feature_stability_caution.adoc[]
 
-Splits a string into segments using Unicode text segmentation rules.
+Splits a string into segments using https://hexdocs.pm/unicode_string/readme.html#segmentation[Unicode text segmentation rules^].
 
 ==== Parameters
 
-*`segmentation_type`* &lt;string&gt; The text segmentation rule to use, either: "sentence", "grapheme" or "word".   
+*`segmentation_type`* &lt;string&gt; The text segmentation rule to use, either: `"sentence"`, `"grapheme"` or `"word"`.
 
 ==== Examples
 
