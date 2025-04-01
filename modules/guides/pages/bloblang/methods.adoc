@@ -698,6 +698,43 @@ root.unescaped = this.value.unescape_url_query()
 # Out: {"unescaped":"foo & bar"}
 ```
 
+=== `unicode_segments`
+
+include::components:partial$feature_stability_caution.adoc[]
+
+Splits a string into segments using Unicode text segmentation rules.
+
+==== Parameters
+
+*`segmentation_type`* &lt;string&gt; The text segmentation rule to use, either: "sentence", "grapheme" or "word".   
+
+==== Examples
+
+* Splits a string into separate sentences.
++
+```coffeescript
+root.sentences = this.value.unicode_segments("sentence")
+
+# In:  {"value":"This is sentence 1.0. And this is sentence two."}
+# Out: {"sentences":["This is sentence 1.0.","And this is sentence two."]}
+```
+* Splits a string into separate graphemes.
++
+```coffeescript
+root.graphemes = this.value.unicode_segments("grapheme")
+
+# In:  {"value":"🐕‍🦺 🫠"}
+# Out: {"graphemes":["🐕‍🦺"," ","🫠"]}
+```
+* Splits a string into separate words.
++
+```coffeescript
+root.words = this.value.unicode_segments("word")
+
+# In:  {"value":"Hello, world!"}
+# Out: {"words":["Hello",","," ","world","!"]}
+```
+
 === `unquote`
 
 Unquotes a target string, expanding any escape sequences (`\t`, `\n`, `\xFF`, `\u0100`) for control characters and non-printable characters.
