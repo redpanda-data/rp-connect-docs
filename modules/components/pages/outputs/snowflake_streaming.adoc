@@ -210,7 +210,7 @@ The message data from your output must match the columns in the Snowflake table 
 | NUMBER
 | `number`, or `string` where the `string` is parsed into a `number`
 
-| FLOAT 
+| FLOAT, including special values, such as `NaN` (Not a Number), `-inf` (negative infinity), and `inf` (positive infinity)
 | `number`
 
 | BOOLEAN
