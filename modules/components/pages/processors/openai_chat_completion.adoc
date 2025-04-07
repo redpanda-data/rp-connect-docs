@@ -559,7 +559,7 @@ Specify up to four stop sequences to use. When the model encounters a stop patte
 
 External tools the model can invoke, such as functions, APIs, or web browsing. You can build a series of processors that include definitions of these tools, and the specified model can choose when to invoke them to help answer a prompt. For more information, see <<Examples, Examples>>.
 
-*Type*: `string`
+*Type*: `array`
 
 
 === `tools[].name`
