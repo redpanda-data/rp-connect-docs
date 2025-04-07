@@ -470,9 +470,9 @@ include::components:partial$secret_warning.adoc[]
 
 *Default*: `""`
 
-=== `schema_registry.jwt`
+=== `schema_registry.jwt` (beta)
 
-BETA: Configure JSON Web Token (JWT) authentication for the secure transmission of data from your schema registry to this component.
+Configure JSON Web Token (JWT) authentication for the secure transmission of data from your schema registry to this component.
 
 *Type*: `object`
 
@@ -494,7 +494,7 @@ A file in PEM format, encoded using PKCS1 or PKCS8 as private key.
 
 === `schema_registry.jwt.signing_method`
 
-The method used to sign the token, such as RS256, RS384, RS512 or EdDSA.
+The method used to sign the token, such as RS256, RS384, RS512, or EdDSA.
 
 *Type*: `string`
 
@@ -557,7 +557,7 @@ Specify up to four stop sequences to use. When the model encounters a stop patte
 
 === `tools`
 
-The external tools the model can invoke, such as functions, APIs, or web browsing. You can build a series of processors that include definitions of these tools, and the specified model can choose when to invoke them to help answer a prompt. For more information, see <<Examples, Examples>>.
+External tools the model can invoke, such as functions, APIs, or web browsing. You can build a series of processors that include definitions of these tools, and the specified model can choose when to invoke them to help answer a prompt. For more information, see <<Examples, Examples>>.
 
 *Type*: `string`
 
@@ -615,7 +615,7 @@ A description of the parameter.
 
 === `tools[].parameters.properties.<name>.enum`
 
-Sets this parameter to a enum, and defines the specific set of values the model must use.
+Defines this parameter as an enumeration and specifies the set of values the model is allowed to use.
 
 *Type*: `array`
 
@@ -636,7 +636,7 @@ The pipeline to execute when the model invokes the external tool.
 Analyze an image and generate a description::
 +
 --
-This configuration fetches image URLs from stdin and uses the GPT-4o LLM to describe the images.
+This configuration fetches image URLs from the `stdin` input, and uses the GPT-4o LLM to describe the images.
 
 ```yaml
 input:
