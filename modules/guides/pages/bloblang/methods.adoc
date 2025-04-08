@@ -726,7 +726,7 @@ root.graphemes = this.value.unicode_segments("grapheme")
 # In:  {"value":"🐕‍🦺 🫠"}
 # Out: {"graphemes":["🐕‍🦺"," ","🫠"]}
 ```
-* Splits a string into separate words.
+* Tokenizes a string based on Unicode word segmentation rules, including punctuation and spaces.
 +
 ```coffeescript
 root.words = this.value.unicode_segments("word")
