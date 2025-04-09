@@ -45,7 +45,12 @@ The xref:components:outputs/schema_registry.adoc[`schema_registry` output] confi
 
 === `translate_schema_ids`
 
-When set to `true`, this field automatically translates the schema ID in each message to match the corresponding schema in the destination schema registry. The updated message is then written to the destination schema registry.
+When set to `true`, this field enables:
+
+- The `translate_schema_ids` field in the specified xref:components:outputs/redpanda_migrator.adoc#translate_schema_ids[`redpanda_migrator` output].
+- The `translate_ids` field in the specified xref:components:outputs/schema_registry.adoc#translate_ids[`schema_registry` output].
+
+When set to `false`, both fields are disabled.
 
 *Type*: `bool`
 
