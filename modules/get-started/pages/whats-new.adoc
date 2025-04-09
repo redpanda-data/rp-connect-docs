@@ -6,6 +6,18 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.50.0
+
+This release introduces agentic behavior to the xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion` processor]. You can now specify external tools to enrich the responses of OpenAI large language models.
+
+=== Component updates
+
+This release:
+
+- Adds a set of `tools` fields to the xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion` processor].
+- Extends support for FLOAT values in the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output] to include special values, such as NaN (Not a Number), -inf (negative infinity), and inf (positive infinity). 
+
+Redpanda Connect also now supports the xref:guides:bloblang/methods.adoc#unicode_segments[`unicode_segments` Bloblang method], which splits a string into segments using https://hexdocs.pm/unicode_string/readme.html#segmentation[Unicode text segmentation rules^].
 
 == Version 4.49.1
 
@@ -17,6 +29,11 @@ This release adds:
 
 - Two new metrics to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]: `snowflake_register_latency_ns` and `snowflake_commit_latency_ns`.
 - An `ignore_nulls` option for schema evolution in the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]. 
+- The `translate_ids` field to the xref:components:outputs/schema_registry.adoc[`schema_registry` output].
+- The `translate_schema_ids` field to the xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` output].
+
+Also, the `translate_schema_ids` field in the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] now defaults to `false`.
+
 
 ==== Deprecations
 
@@ -155,8 +172,7 @@ All changes are backward-compatible. No action is required if you are using an e
 
 == Version 4.44.0
 
-No documentation updates were made.
-
+This release extends the functionality of the xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion` processor] to include the following fields: `max_tokens`, `temperature`, `user`, `top_p`, `frequency_penalty`, `presence_penalty`, `seed`, and `stop`.
 
 == Version 4.43.1
 
