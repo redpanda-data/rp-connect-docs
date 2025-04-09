@@ -72,7 +72,7 @@ output:
     input_resource: redpanda_migrator_input
     replication_factor_override: true
     replication_factor: 3
-    translate_schema_ids: true
+    translate_schema_ids: false
     schema_registry_output_resource: schema_registry_output
     idempotent_write: true
     compression: "" # No default (optional)
@@ -611,11 +611,11 @@ The replication factor for created topics. This is only used when `replication_f
 
 === `translate_schema_ids`
 
-When set to `true`, this field translates the schema ID in each message ready to write to the destination schema registry.
+When set to `true`, this field automatically translates the schema ID in each message to match the corresponding schema in the destination schema registry.
 
 *Type*: `bool`
 
-*Default*: `true`
+*Default*: `false`
 
 === `schema_registry_output_resource`
 
