@@ -25,6 +25,7 @@ output:
   redpanda_migrator_bundle:
     redpanda_migrator: {} # No default (required)
     schema_registry: {} # No default (optional)
+    translate_schema_ids: false
 ```
 
 == Fields
@@ -40,7 +41,14 @@ The xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] c
 
 The xref:components:outputs/schema_registry.adoc[`schema_registry` output] configuration. The `subject` field must be left empty.
 
-
 *Type*: `object`
+
+=== `translate_schema_ids`
+
+When set to `true`, this field automatically translates the schema ID in each message to match the corresponding schema in the destination schema registry. The updated message is then written to the destination schema registry.
+
+*Type*: `bool`
+
+*Default*: `false`
 
 // end::single-source[]
