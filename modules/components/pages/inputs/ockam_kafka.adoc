@@ -362,7 +362,7 @@ Whether to consume from the oldest available offset. Otherwise, messages are con
 
 *Default*: `true`
 
-=== `fetch_max_bytes`
+=== `kafka.fetch_max_bytes`
 
 The maximum size of a message batch (in bytes) that a broker tries to send during a client fetch. If individual records exceed the `fetch_max_bytes` value, brokers will still send them.
 
@@ -371,7 +371,7 @@ The maximum size of a message batch (in bytes) that a broker tries to send durin
 
 *Default*: `50MiB`
 
-=== `fetch_max_wait`
+=== `kafka.fetch_max_wait`
 
 The maximum period of time a broker can wait for a fetch response to reach the required minimum number of bytes (`fetch_min_bytes`).
 
@@ -379,7 +379,7 @@ The maximum period of time a broker can wait for a fetch response to reach the r
 
 *Default*: `5s`
 
-=== `fetch_min_bytes`
+=== `kafka.fetch_min_bytes`
 
 The minimum number of bytes that a broker tries to send during a fetch. This field is equivalent to the Java setting `fetch.min.bytes`.
 
@@ -387,7 +387,7 @@ The minimum number of bytes that a broker tries to send during a fetch. This fie
 
 *Default*: `1B`
 
-=== `fetch_max_partition_bytes`
+=== `kafka.fetch_max_partition_bytes`
 
 The maximum number of bytes that are consumed from a single partition in a fetch request. This field is equivalent to the Java setting `fetch.max.partition.bytes`.
 
