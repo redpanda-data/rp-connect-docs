@@ -39,6 +39,7 @@ input:
     allow_producer: self
     relay: "" # No default (optional)
     node_address: 127.0.0.1:6262
+    encrypted_fields: []
 ```
 --
 Advanced::
@@ -80,15 +81,15 @@ input:
         period: "" # No default (optional)
         check: "" # No default (optional)
         processors: [] # No default (optional)
-      disable_content_encryption: false
-      enrollment_ticket: "" # No default (optional)
-      identity_name: "" # No default (optional)
-      allow: self
-      route_to_kafka_outlet: self
-      allow_producer: self
-      relay: "" # No default (optional)
-      node_address: 127.0.0.1:6262
-      encrypted_fields: []
+    disable_content_encryption: false
+    enrollment_ticket: "" # No default (optional)
+    identity_name: "" # No default (optional)
+    allow: self
+    route_to_kafka_outlet: self
+    allow_producer: self
+    relay: "" # No default (optional)
+    node_address: 127.0.0.1:6262
+    encrypted_fields: []
 ```
 --
 ======
