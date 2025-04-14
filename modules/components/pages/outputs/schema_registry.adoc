@@ -46,6 +46,7 @@ output:
     url: "" # No default (required)
     subject: "" # No default (required)
     backfill_dependencies: true
+    translate_ids: false
     input_resource: schema_registry_input
     tls:
       enabled: false
@@ -127,6 +128,15 @@ Backfill missing schema references and previous schema versions. If set to `true
 *Type*: `bool`
 
 *Default*: `true`
+
+=== `translate_ids`
+
+When set to `true`, this field automatically translates the schema ID in each message to match the corresponding schema in the destination schema registry. The updated message is then written to the destination schema registry.
+
+*Type*: `bool`
+
+*Default*: `false`
+
 
 === `input_resource`
 
