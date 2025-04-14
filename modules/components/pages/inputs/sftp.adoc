@@ -23,16 +23,17 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 input:
   label: ""
   sftp:
     address: "" # No default (required)
     credentials:
-      username: ""
-      password: ""
-      private_key_file: ""
-      private_key_pass: ""
+      username: "" # No default (optional)
+      password: "" # No default (optional)
+      private_key_file: "" # No default (optional)
+      private_key: "" # No default (optional)
+      private_key_pass: "" # No default (optional)
     paths: [] # No default (required)
     auto_replay_nacks: true
     scanner:
@@ -41,7 +42,7 @@ input:
       enabled: false
       minimum_age: 1s
       poll_interval: 1s
-      cache: ""
+      cache: "" # No default (optional)
 ```
 
 --
@@ -50,16 +51,17 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 input:
   label: ""
   sftp:
     address: "" # No default (required)
     credentials:
-      username: ""
-      password: ""
-      private_key_file: ""
-      private_key_pass: ""
+      username: "" # No default (optional)
+      password: "" # No default (optional)
+      private_key_file: "" # No default (optional)
+      private_key: "" # No default (optional)
+      private_key_pass: "" # No default (optional)
     paths: [] # No default (required)
     auto_replay_nacks: true
     scanner:
@@ -69,7 +71,7 @@ input:
       enabled: false
       minimum_age: 1s
       poll_interval: 1s
-      cache: ""
+      cache: "" # No default (optional)
 ```
 
 --
@@ -87,15 +89,14 @@ You can access these metadata fields using xref:configuration:interpolation.adoc
 
 === `address`
 
-The address of the server to connect to.
-
+The address (hostname or IP address) of the SFTP server to connect to. 
 
 *Type*: `string`
 
 
 === `credentials`
 
-The credentials to use to log into the target server.
+The credentials required to log in to the SFTP server. This can include a username and password, or a private key for secure access.
 
 
 *Type*: `object`
@@ -103,7 +104,7 @@ The credentials to use to log into the target server.
 
 === `credentials.username`
 
-The username to connect to the SFTP server.
+The username required to authenticate with the SFTP server.
 
 
 *Type*: `string`
@@ -112,10 +113,9 @@ The username to connect to the SFTP server.
 
 === `credentials.password`
 
-The password for the username to connect to the SFTP server.
+The password for the username used to authenticate with the SFTP server.
 
 include::components:partial$secret_warning.adoc[]
-
 
 
 *Type*: `string`
@@ -124,8 +124,17 @@ include::components:partial$secret_warning.adoc[]
 
 === `credentials.private_key_file`
 
-The private key for the username to connect to the SFTP server.
+The path to a private key file used to authenticate with the SFTP server. You can also provide a private key using the <<credentials-private_key,`private_key`>> field.
 
+*Type*: `string`
+
+*Default*: `""`
+
+=== `credentials.private_key`
+
+The private key used to authenticate with the SFTP server. This field provides an alternative to the <<credentials-private_key_file, `private_key_file`>>.
+
+include::components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -133,10 +142,9 @@ The private key for the username to connect to the SFTP server.
 
 === `credentials.private_key_pass`
 
-Optional passphrase for private key.
+A passphrase for the private key.
 
 include::components:partial$secret_warning.adoc[]
-
 
 *Type*: `string`
 
@@ -145,7 +153,6 @@ include::components:partial$secret_warning.adoc[]
 === `paths`
 
 A list of paths to consume sequentially. Glob patterns are supported.
-
 
 *Type*: `array`
 

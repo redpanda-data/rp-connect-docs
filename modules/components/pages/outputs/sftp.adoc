@@ -17,7 +17,7 @@ Introduced in version 3.39.0.
 endif::[]
 
 ```yml
-# Config fields, showing default values
+# Configuration fields, showing default values
 output:
   label: ""
   sftp:
@@ -25,10 +25,11 @@ output:
     path: "" # No default (required)
     codec: all-bytes
     credentials:
-      username: ""
-      password: ""
-      private_key_file: ""
-      private_key_pass: ""
+      username: "" # No default (optional)
+      password: "" # No default (optional)
+      private_key_file: "" # No default (optional)
+      private_key: "" # No default (optional)
+      private_key_pass: "" # No default (optional)
     max_in_flight: 64
 ```
 
@@ -42,16 +43,13 @@ This output benefits from sending multiple messages in flight in parallel for im
 
 === `address`
 
-The address of the server to connect to.
-
+The address (hostname or IP address) of the SFTP server to connect to.
 
 *Type*: `string`
 
-
 === `path`
 
-The file to save the messages to on the server.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The file to save the messages to on the SFTP server. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 
 *Type*: `string`
@@ -92,15 +90,14 @@ codec: delim:foobar
 
 === `credentials`
 
-The credentials to use to log into the target server.
-
+The credentials required to log in to the SFTP server. This can include a username and password, or a private key for secure access.
 
 *Type*: `object`
 
 
 === `credentials.username`
 
-The username to connect to the SFTP server.
+The username required to authenticate with the SFTP server.
 
 
 *Type*: `string`
@@ -109,10 +106,9 @@ The username to connect to the SFTP server.
 
 === `credentials.password`
 
-The password for the username to connect to the SFTP server.
+The password for the username used to authenticate with the SFTP server.
 
 include::components:partial$secret_warning.adoc[]
-
 
 
 *Type*: `string`
@@ -121,16 +117,25 @@ include::components:partial$secret_warning.adoc[]
 
 === `credentials.private_key_file`
 
-The private key for the username to connect to the SFTP server.
-
+The path to a private key file used to authenticate with the SFTP server. You can also provide a private key using the <<credentials-private_key,`private_key`>> field.
 
 *Type*: `string`
 
 *Default*: `""`
 
+=== `credentials.private_key`
+
+The private key used to authenticate with the SFTP server. This field provides an alternative to the <<`credentials-private_key_file`,`private_key_file`>>.
+
+include::components:partial$secret_warning.adoc[]
+
+
+*Type*: `string`
+
+
 === `credentials.private_key_pass`
 
-Optional passphrase for private key.
+A passphrase for private key.
 
 include::components:partial$secret_warning.adoc[]
 
