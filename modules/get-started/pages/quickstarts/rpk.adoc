@@ -2,7 +2,7 @@
 :description: pass:q[Deploy your first pipelines using Redpanda Connect and `rpk`.]
 :page-aliases: getting_started:overview.adoc, ROOT:install.adoc, guides:getting_started.adoc
 
-This guide explains how to get started with Redpanda Connect using `rpk`, the Redpanda command-line interface (CLI).
+This guide explains how to get started with Redpanda Connect using `rpk`, the Redpanda command-line interface (CLI). You can also install and run `rpk` in <<fips-compliance,FIPS compliance mode>>.
 
 == Install
 
@@ -19,6 +19,92 @@ If you want to use `rpk` to also communicate with a Redpanda cluster, ensure the
 === Linux
 
 include::ROOT:get-started:partial$install-rpk-linux.adoc[]
+
+==== FIPS compliance
+
+include::components:partial$enterprise_feature_note.adoc[]
+
+To install `rpk` to run the latest version of Redpanda Connect in FIPS-compliant mode, you must install the `redpanda-rpk-fips` and `redpanda-connect-fips` packages. Both packages are built using the https://github.com/microsoft/go[Microsoft GoLang compiler^] and the https://github.com/microsoft/go-crypto-openssl[Microsoft’s Go Crypto OpenSSL package^], which uses the FIPS-approved version of OpenSSL.
+
+IMPORTANT: The packages for FIPS-compliant `rpk` (`redpanda-rpk-fips`) and Redpanda `rpk` (`redpanda-rpk`) are mutually exclusive, and so cannot be installed in the same environment.
+
+[tabs]
+=====
+RHEL::
++
+--
+. To make sure your distribution is up to date, run:
++
+[,bash]
+----
+sudo dnf upgrade
+----
+. Add `redpanda` to your `dnf` list of repositories. 
++
+[,bash]
+----
+curl -1sLf 'https://dl.redpanda.com/nzc4ZYQK3WRGd9sy/redpanda/cfg/setup/bash.rpm.sh' | \
+sudo -E bash
+----
+. Install Redpanda packages for FIPS compliance.
++
+[,bash]
+----
+sudo dnf install -y redpanda-rpk-fips redpanda-connect-fips
+----
+
+. Verify your installation.
++
+[,bash]
+----
+rpk connect --version
+----
+
+To keep up-to-date with Redpanda Connect releases, run the following command:
+
+[,bash]
+----
+sudo dnf update
+----
+
+--
+Debian/Ubuntu::
++
+--
+. To make sure your distribution is up to date, run:
++
+[,bash]
+----
+sudo apt upgrade 
+----
+. Add `redpanda` to your `apt` list of repositories. 
++
+[,bash]
+----
+curl -1sLf 'https://dl.redpanda.com/nzc4ZYQK3WRGd9sy/redpanda/cfg/setup/bash.deb.sh' | sudo -E bash 
+----
+. Install Redpanda packages for FIPS compliance.
++
+[,bash]
+----
+sudo apt install -y redpanda-rpk-fips redpanda-connect-fips 
+----
+. Verify your installation.
++
+[,bash]
+----
+rpk connect --version
+----
+
+To keep up-to-date with the Redpanda Connect releases, run the following command:
+
+[,bash]
+----
+sudo apt update
+----
+
+--
+=====
 
 === MacOS
 
