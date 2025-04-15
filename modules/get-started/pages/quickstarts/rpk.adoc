@@ -24,17 +24,9 @@ include::ROOT:get-started:partial$install-rpk-linux.adoc[]
 
 include::components:partial$enterprise_feature_note.adoc[]
 
-To install `rpk` to run the latest version of Redpanda Connect in FIPS-compliant mode, you must install the `redpanda-rpk-fips` and `redpanda-connect-fips` packages.
+To install `rpk` to run the latest version of Redpanda Connect in FIPS-compliant mode, you must install the `redpanda-rpk-fips` and `redpanda-connect-fips` packages. Both packages are built using the https://github.com/microsoft/go[Microsoft GoLang compiler^] and the https://github.com/microsoft/go-crypto-openssl[Microsoft’s Go Crypto OpenSSL package^], which uses the FIPS-approved version of OpenSSL.
 
-`redpanda-rpk-fips`
-
-Contains a version of `rpk` built with the https://github.com/microsoft/go[Microsoft GoLang compiler^] and https://github.com/microsoft/go-crypto-openssl[Microsoft’s Go Crypto OpenSSL package^] to which `rpk` is linked, and uses the FIPS-approved version of OpenSSL.
-
-`redpanda-connect-fips`
-
-TODO
-
-IMPORTANT: The package for FIPS-compliant `rpk` (`redpanda-rpk-fips`) and Redpanda `rpk` (`redpanda-rpk`) are mutually exclusive, and so cannot be installed in the same environment.
+IMPORTANT: The packages for FIPS-compliant `rpk` (`redpanda-rpk-fips`) and Redpanda `rpk` (`redpanda-rpk`) are mutually exclusive, and so cannot be installed in the same environment.
 
 [tabs]
 =====
@@ -68,6 +60,13 @@ sudo dnf install -y redpanda-rpk-fips redpanda-connect-fips
 rpk connect --version
 ----
 
+To keep up-to-date with Redpanda Connect releases, run the following command:
+
+[,bash]
+----
+sudo dnf update
+----
+
 --
 Debian/Ubuntu::
 +
@@ -95,6 +94,13 @@ sudo apt install -y redpanda-rpk-fips redpanda-connect-fips
 [,bash]
 ----
 rpk connect --version
+----
+
+To keep up-to-date with the Redpanda Connect releases, run the following command:
+
+[,bash]
+----
+sudo apt update
 ----
 
 --
