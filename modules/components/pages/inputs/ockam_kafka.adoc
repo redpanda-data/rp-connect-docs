@@ -66,7 +66,7 @@ input:
       rebalance_timeout: 45s
       session_timeout: 1m
       heartbeat_interval: 3s
-      start_from_oldest: true
+      start_offset: earliest
       fetch_max_bytes: 50MiB
       fetch_max_wait: 5s
       fetch_min_bytes: 1B
@@ -259,7 +259,7 @@ If you specify a `consumer_group`, partitions are automatically distributed acro
 
 Alternatively, add a colon after the topic name to set the explicit partitions to consume. For example, `foo:0` consumes the partition `0` of the topic `foo`. This syntax also supports ranges. For example, `foo:0-10` consumes all partitions from `0` through to `10` inclusively.
 
-Finally, add another colon after the partition to set an explicit offset to consume from. For example, `foo:0:10` consumes the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_from_oldest` determines which offset to start from.
+Finally, add another colon after the partition to set an explicit offset to consume from. For example, `foo:0:10` consumes the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_offset` determines which offset to start from.
 
 *Type*: `array`
 
@@ -354,13 +354,28 @@ client
 
 *Default*: `3s`
 
-=== `kafka.start_from_oldest`
+=== `kafka.start_offset`
 
-Whether to consume from the oldest available offset. Otherwise, messages are consumed from the latest offset. This setting is applied when creating a new consumer group or the saved offset no longer exists.
+Specify the offset from which this input starts or restarts consuming messages. Restarts occur when the `OffsetOutOfRange` error is seen during a fetch.
 
-*Type*: `bool`
+*Type*: `string`
 
-*Default*: `true`
+*Default*: `earliest`
+
+Options: 
+
+|===
+| Option | Description
+
+| `earliest` (default)
+| Start from the earliest offset. This option is equivalent to Kafka's `auto.offset.reset=earliest`.
+
+| `committed`
+| Start from the earliest committed offset, which prevents message consumption from a partition in a consumer group that has no prior commits. This option is equivalent to Kafka's `auto.offset.reset=none`.
+
+| `latest`
+| Start from the latest offset. This option is equivalent to Kafka's `auto.offset.reset=latest`.
+|===
 
 === `kafka.fetch_max_bytes`
 
