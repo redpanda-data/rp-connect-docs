@@ -10,7 +10,8 @@
 component_type_dropdown::[]
 
 
-Encodes https://parquet.apache.org/docs/[Parquet files^] from a batch of structured messages.
+Encodes https://parquet.apache.org/docs/[Parquet files^] from a batch of structured messages, using the https://github.com/parquet-go/parquet-go[https://github.com/parquet-go/parquet-go library^].
+
 
 ifndef::env-cloud[]
 Introduced in version 4.4.0.
@@ -23,7 +24,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 label: ""
 parquet_encode:
   schema: [] # No default (required)
@@ -36,48 +37,12 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 label: ""
 parquet_encode:
   schema: [] # No default (required)
   default_compression: uncompressed
   default_encoding: DELTA_LENGTH_BYTE_ARRAY
-```
-
---
-======
-
-This processor uses https://github.com/parquet-go/parquet-go[https://github.com/parquet-go/parquet-go^], which is itself experimental. Therefore changes could be made into how this processor functions outside of major version releases.
-
-
-== Examples
-
-[tabs]
-======
-Writing Parquet Files to AWS S3::
-+
---
-
-In this example we use the batching mechanism of an `aws_s3` output to collect a batch of messages in memory, which then converts it to a parquet file and uploads it.
-
-```yaml
-output:
-  aws_s3:
-    bucket: TODO
-    path: 'stuff/${! timestamp_unix() }-${! uuid_v4() }.parquet'
-    batching:
-      count: 1000
-      period: 10s
-      processors:
-        - parquet_encode:
-            schema:
-              - name: id
-                type: INT64
-              - name: weight
-                type: DOUBLE
-              - name: content
-                type: BYTE_ARRAY
-            default_compression: zstd
 ```
 
 --
@@ -89,13 +54,11 @@ output:
 
 Parquet schema.
 
-
 *Type*: `array`
-
 
 === `schema[].name`
 
-The name of the column.
+The name of the column you want to encode.
 
 
 *Type*: `string`
@@ -103,8 +66,7 @@ The name of the column.
 
 === `schema[].type`
 
-The type of the column, only applicable for leaf columns with no child fields. Some logical types can be specified here such as UTF8.
-
+The data type of the column to encode. This field is only applicable for leaf columns with no child fields. The following options also include logical types.
 
 *Type*: `string`
 
@@ -116,12 +78,15 @@ Options:
 , `FLOAT`
 , `DOUBLE`
 , `BYTE_ARRAY`
-, `UTF8`
-.
+, `TIMESTAMP`
+, `BSON`
+, `ENUM`
+, `JSON`
+, `UUID`
 
 === `schema[].repeated`
 
-Whether the field is repeated.
+Whether a field is repeated.
 
 
 *Type*: `bool`
@@ -130,7 +95,7 @@ Whether the field is repeated.
 
 === `schema[].optional`
 
-Whether the field is optional.
+Whether a field is optional.
 
 
 *Type*: `bool`
@@ -162,7 +127,7 @@ The default compression type to use for fields.
 
 *Type*: `string`
 
-*Default*: `"uncompressed"`
+*Default*: `uncompressed`
 
 Options:
 `uncompressed`
@@ -171,16 +136,14 @@ Options:
 , `brotli`
 , `zstd`
 , `lz4raw`
-.
 
 === `default_encoding`
 
-The default encoding type to use for fields. A custom default encoding is only necessary when consuming data with libraries that do not support `DELTA_LENGTH_BYTE_ARRAY` and is therefore best left unset where possible.
-
+The default encoding type to use for fields. A custom default encoding is only necessary when consuming data with libraries that do not support `DELTA_LENGTH_BYTE_ARRAY`.
 
 *Type*: `string`
 
-*Default*: `"DELTA_LENGTH_BYTE_ARRAY"`
+*Default*: `DELTA_LENGTH_BYTE_ARRAY`
 
 ifndef::env-cloud[]
 Requires version 4.11.0 or newer
@@ -189,6 +152,33 @@ endif::[]
 Options:
 `DELTA_LENGTH_BYTE_ARRAY`
 , `PLAIN`
-.
+
+== Examples
+
+=== Writing Parquet files to AWS S3
+
+In this example, a pipeline uses an `aws_s3` output as a batching mechanism. Messages are collected in memory and encoded into a Parquet file, which is then uploaded to an AWS S3 bucket.
+
+```yaml
+output:
+  aws_s3:
+    bucket: TODO
+    path: 'stuff/${! timestamp_unix() }-${! uuid_v4() }.parquet'
+    batching:
+      count: 1000
+      period: 10s
+      processors:
+        - parquet_encode:
+            schema:
+              - name: id
+                type: INT64
+              - name: weight
+                type: DOUBLE
+              - name: content
+                type: BYTE_ARRAY
+            default_compression: zstd
+```
+
+
 
 // end::single-source[]
