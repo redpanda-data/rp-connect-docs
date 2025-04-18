@@ -353,6 +353,14 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Default*: `{}`
 
+```yml
+# Examples
+
+fields:
+  foo: "${!this.foo}"
+  bar: 'pew-${!this.bar.trim_prefix("sku-")}'
+```
+
 === `max_in_flight`
 
 The maximum number of messages to have in flight at a given time. Increase this to improve throughput.
