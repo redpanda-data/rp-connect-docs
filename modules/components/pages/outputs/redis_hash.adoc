@@ -358,7 +358,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 fields:
   foo: "${!this.foo}"
-  bar: "pew-${!this.bar.trim_prefix("sku-")}"
+  bar: 'pew-${!this.bar.trim_prefix("sku-")}'
 ```
 
 === `max_in_flight`
