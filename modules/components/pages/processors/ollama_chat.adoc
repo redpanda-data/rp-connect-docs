@@ -35,6 +35,7 @@ ollama_chat:
   max_tokens: 0 # No default (optional)
   temperature: 0 # No default (optional)
   save_prompt_metadata: false
+  history: "" # No default (optional)
   tools: [] # No default (required)
   runner:
     context_size: 0 # No default (optional)
@@ -67,6 +68,7 @@ ollama_chat:
   frequency_penalty: 0 # No default (optional)
   stop: [] # No default (optional)
   save_prompt_metadata: false
+  history: "" # No default (optional)
   max_tool_calls: 3
   tools: [] # No default (required)
   runner:
@@ -245,6 +247,18 @@ Set to `true` to save the prompt value to a metadata field (`@prompt`) on the co
 *Type*: `bool`
 
 *Default*: `false`
+
+
+=== `history`
+
+Include historical messages in a chat request. You must use a Bloblang query to create an array of objects in the form of `[{"role": "", "content":""}]` where:
+
+- `role` is the sender of the original messages, either `system`, `user`, `assistant`, or `tool`.
+- `content` is the text of the original messages.
+
+*Type*: `string`
+
+*Default*: `""`
 
 
 === `max_tool_calls`
@@ -448,6 +462,7 @@ output:
     codec: lines
 ```
 --
+
 
 Use a series of processors to make calls to external tools::
 +

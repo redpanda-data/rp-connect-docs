@@ -31,6 +31,7 @@ openai_chat_completion:
   model: gpt-4o # No default (required)
   prompt: "" # No default (optional)
   system_prompt: "" # No default (optional)
+  history: "" # No default (optional)
   image: 'root = this.image.decode("base64") # decode base64 encoded image' # No default (optional)
   max_tokens: 0 # No default (optional)
   temperature: 0 # No default (optional)
@@ -56,6 +57,7 @@ openai_chat_completion:
   model: gpt-4o # No default (required)
   prompt: "" # No default (optional)
   system_prompt: "" # No default (optional)
+  history: "" # No default (optional)
   image: 'root = this.image.decode("base64") # decode base64 encoded image' # No default (optional)
   max_tokens: 0 # No default (optional)
   temperature: 0 # No default (optional)
@@ -155,6 +157,19 @@ The user prompt for which a response is generated. By default, the processor sen
 The system prompt to submit along with the user prompt. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
+
+=== `history`
+
+Include messages from a prior conversation. You must use a Bloblang query to create an array of objects in the form of `[{"role": "user", "content": "<text>"}, {"role":"assistant", "content":"<text>"}]` where:
+
+- `role` is the sender of the original messages, either `system`, `user`, or `assistant`.
+- `content` is the text of the original messages.
+
+For more information, see <<Examples, Examples>>.
+
+*Type*: `string`
+
+*Default*: `""`
 
 === `image`
 
@@ -660,6 +675,58 @@ output:
     codec: lines: lines
 ```
 
+--
+Generate chat history::
++
+--
+In this configuration, a pipeline executes a number of processors, including a cache, to generate and send chat history to a GPT-4o model.
+
+```yaml
+input: 
+  stdin:
+    scanner:
+      lines: {}
+pipeline:
+  processors:
+    - mapping: |
+        root.prompt = content().string()
+    - branch:
+        processors: 
+          - cache:
+              resource: mem
+              operator: get
+              key: history
+          - catch: 
+            - mapping: 'root = []'
+        result_map: 'root.history = this'
+    - branch:
+        processors:
+        - openai_chat_completion:
+            model: gpt-4o
+            api_key: TODO
+            prompt: "${!this.prompt}"
+            history: 'root = this.history'
+        result_map: 'root.response = content().string()'
+    - mutation: |
+        root.history = this.history.concat([
+          {"role": "user", "content": this.prompt},
+          {"role": "assistant", "content": this.response},
+         ])
+    - cache:
+        resource: mem
+        operator: set
+        key: history
+        value: '${!this.history}'
+    - mapping: |
+        root = this.response
+output:
+  stdout:
+    codec: lines
+ 
+cache_resources:
+  - label: mem 
+    memory: {}
+```
 --
 
 Make calls to external tools::
