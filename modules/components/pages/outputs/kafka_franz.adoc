@@ -722,7 +722,7 @@ The maximum period of time after which metadata is refreshed.
 
 === `request_timeout_overhead`
 
-Grants an additional buffer or overhead to requests that have timeout fields defined. This field is based on the behavior of `request.timeout.ms`, but with the option to extend the timeout deadline.
+Grants an additional buffer or overhead to requests that have timeout fields defined. This field is based on the behavior of Apache Kafka's `request.timeout.ms` parameter, but with the option to extend the timeout deadline.
 
 *Type*: `string`
 
