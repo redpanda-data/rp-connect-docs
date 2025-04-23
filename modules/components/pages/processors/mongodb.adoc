@@ -241,8 +241,7 @@ hint_map: |-
 
 === `upsert`
 
-The `upsert` parameter is optional, and only applies for `update-one` and `replace-one` operations. If the filter specified in `filter_map` matches the `upsert` value, the document is updated or replaced, otherwise it is created.
-
+The `upsert` parameter is optional, and only applies for `update-one` and `replace-one` operations. If the filter specified in `filter_map` matches an existing document, this operation updates or replaces the document, otherwise the document is created.
 
 *Type*: `bool`
 
