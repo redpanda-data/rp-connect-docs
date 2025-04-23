@@ -1,0 +1,50 @@
+= slack_users
+// tag::single-source[]
+:type: input
+:page-beta: true
+
+component_type_dropdown::[]
+
+Reads all users in a Slack organization, and optionally filters the list of returned users by team ID.
+
+ifndef::env-cloud[]
+Introduced in version 4.52.0.
+endif::[]
+
+```yml
+# Common configuration fields, showing default values
+input:
+  label: ""
+  slack_users:
+    bot_token: "" # No default (required)
+    team_id: "" No default (optional)
+    auto_replay_nacks: true
+```
+
+== Fields
+
+=== `bot_token`
+
+Your https://api.slack.com/concepts/token-types[Slack bot user's OAuth token^], which must have the correct permissions to access your Slack organization.
+
+*Type*: `string`
+
+=== `team_id`
+
+The encoded ID of a Slack team by which to filter the list of returned users. If left empty, users from all teams within the organization are returned.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `auto_replay_nacks`
+
+Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+
+Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+// end::single-source[]
