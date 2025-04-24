@@ -1,0 +1,51 @@
+= slack
+// tag::single-source[]
+:type: input
+:page-beta: true
+
+component_type_dropdown::[]
+
+Connects to Slack using https://api.slack.com/apis/socket-mode[Socket Mode^], and can receive events, automated or user interactions, and slash commands.
+
+ifndef::env-cloud[]
+Introduced in version 4.52.0.
+endif::[]
+
+```yml
+# Common configuration fields, showing default values
+input: 
+  label: ""
+  slack:
+    app_token: "" # No default (required)
+    bot_token: "" # No default (required)
+    auto_replay_nacks: true
+```
+== Metadata
+
+Each message emitted from this input has an `@type` metadata flag to indicate the event type, either `"events_api"`, `"interactions"`, or `"slash_commands"`.
+
+== Fields
+
+=== `app_token`
+
+The app-level token to use to authenticate and connect to Slack.
+
+*Type*: `string`
+
+=== `bot_token`
+
+Your Slack bot user's OAuth token, which must have the correct permissions to access your Slack app's https://api.slack.com/methods/apps.connections.open[Socket Mode WebSocket URL^].
+
+*Type*: `string`
+
+=== `auto_replay_nacks`
+
+Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+
+Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+// end::single-source[]
