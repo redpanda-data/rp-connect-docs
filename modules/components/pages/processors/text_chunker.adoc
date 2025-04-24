@@ -1,0 +1,195 @@
+= text_chunker
+// tag::single-source[]
+:type: processor
+:page-beta: true
+:categories: ["AI"]
+
+component_type_dropdown::[]
+
+Breaks down text-based message content into manageable chunks using a configurable strategy. This processor is ideal for creating vector embeddings of large text documents.
+
+ifndef::env-cloud[]
+Introduced in version 4.51.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+# Common configuration fields, showing default values
+label: ""
+text_chunker:
+  strategy: "" # No default (required)
+  chunk_size: 512
+  chunk_overlap: 100
+  separators:
+    - |2+
+    - ""
+    - ' '
+    - ""
+  length_measure: runes
+  include_code_blocks: false
+  keep_reference_links: false
+```
+
+--
+Advanced::
++
+--
+
+```yml
+# All configuration fields, showing default values
+label: ""
+text_chunker:
+  strategy: "" # No default (required)
+  chunk_size: 512
+  chunk_overlap: 100
+  separators:
+    - |2+
+    - ""
+    - ' '
+    - ""
+  length_measure: runes
+  token_encoding: cl100k_base # No default (optional)
+  allowed_special: []
+  disallowed_special:
+    - all
+  include_code_blocks: false
+  keep_reference_links: false
+```
+
+--
+======
+
+== Fields
+
+=== `strategy`
+
+Choose a strategy for breaking content down into chunks.
+
+*Type*: `string`
+
+Options:
+
+|===
+| Option | Description
+
+| `markdown`
+| Use Markdown headers as the separators between chunks.
+
+| `recursive_character`
+| <<separators, Specify character strings>> to use as separators between chunks.
+
+| `token`
+| Split text into tokens up to the maximum chunk size.
+
+|===
+
+
+=== `chunk_size`
+
+The maximum size of each chunk (in tokens).
+
+*Type*: `int`
+
+*Default*: `512`
+
+=== `chunk_overlap`
+
+The number of characters duplicated in adjacent chunks of text.
+
+*Type*: `int`
+
+*Default*: `100`
+
+=== `separators`
+
+A list of strings to use as separators between chunks when the <<strategy, `recursive_character` strategy option>> is specified.
+
+By default, the following separators are tried in turn until one is successful:
+
+- Double newlines (`\n\n`).
+- Single newlines (`\n`)
+- Spaces (`" "`,`""`)
+
+*Type*: `array`
+
+*Default*: `["\n\n","\n"," ",""]`
+
+=== `length_measure`
+
+Choose a method to measure the length of a string.
+
+*Type*: `string`
+
+*Default*: `runes`
+
+|===
+| Option | Description
+
+| `graphemes`
+| Count the number of Unicode graphemes.
+
+| `runes`
+| Count the number of Unicode code points.
+
+| `token`
+| Count the number of tokens using the `token_encoding` tokenizer.
+
+| `utf8`
+| Count the number of UTF-8 bytes.
+
+|===
+
+
+=== `token_encoding`
+
+The type of encoding to use for tokenization.
+
+*Type*: `string`
+
+```yml
+# Examples
+
+token_encoding: cl100k_base
+
+token_encoding: r50k_base
+```
+
+=== `allowed_special`
+
+A list of special tokens to include in the output from this processor.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+=== `disallowed_special`
+
+A list of special tokens to exclude from the output of this processor.
+
+*Type*: `array`
+
+*Default*: `["all"]`
+
+=== `include_code_blocks`
+
+When set to `true`, this processor includes code blocks in the output.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `keep_reference_links`
+
+When set to `true`, this processor includes reference links in the output.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+
+// end::single-source[]
