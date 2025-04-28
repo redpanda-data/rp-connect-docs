@@ -1,0 +1,246 @@
+= git
+// tag::single-source[]
+:type: input
+:page-beta: true
+:categories: ["Services"]
+
+component_type_dropdown::[]
+
+Clones a Git repository, reads its contents, then polls for new commits at a configurable interval. Any updates are emitted as new messages.
+
+ifndef::env-cloud[]
+Introduced in version 4.51.0.
+endif::[]
+
+```yml
+# Configuration fields, showing default values
+input:
+  label: ""
+  git:
+    repository_url: https://github.com/username/repo.git # No default (required)
+    branch: main
+    poll_interval: 10s
+    include_patterns: []
+    exclude_patterns: []
+    max_file_size: 10485760
+    checkpoint_cache: "" # No default (optional)
+    checkpoint_key: git_last_commit
+    auth:
+      basic:
+        username: "" # No default (optional)
+        password: "" # No default (optional)
+      ssh_key:
+        private_key_path: "" # No default (optional)
+        private_key: "" # No default (optional)
+        passphrase: "" # No default (optional)
+      token:
+        value: "" # No default (optional)
+    auto_replay_nacks: true
+```
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `git_file_path`
+- `git_file_size`
+- `git_file_mode`
+- `git_file_modified`
+- `git_commit`
+- `git_mime_type`
+- `git_is_binary`
+- `git_encoding` (when a source file is base64 encoded)
+- `git_deleted` (when a source file is deleted)
+
+You can access these metadata fields using using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+
+== Fields
+
+=== `repository_url`
+
+The URL of the Git repository to clone.
+
+*Type*: `string`
+
+```yml
+# Examples
+
+repository_url: https://github.com/username/repo.git
+```
+
+=== `branch`
+
+The repository branch to check out.
+
+*Type*: `string`
+
+*Default*: `main`
+
+=== `poll_interval`
+
+How frequently this input polls the Git repository for changes.
+
+*Type*: `string`
+
+*Default*: `10s`
+
+=== `include_patterns`
+
+A list of file patterns to read from. For example, you could read content from only Markdown and YAML files: `'**/*.md', 'configs/*.yaml'`. 
+
+The following patterns are supported:
+
+- Glob patterns: `*`, `/**/`, `?`
+- Character ranges: `[a-z]`. Escape any character with a special meaning using a backslash.
+
+If this field is left empty, all files are read from.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+=== `exclude_patterns`
+
+A list of file patterns to exclude. For example, you could choose not to read content from certain Git directories or image files: `'.git/**', '**/*.png'`. These patterns take precedence over `include_patterns`.
+
+The following patterns are supported:
+
+- Glob patterns: `*`, `/**/`, `?`
+- Character ranges: `[a-z]`. Escape any character with a special meaning using a backslash.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+=== `max_file_size`
+
+The maximum size of files to read from (in bytes). Files that exceed this limit are skipped. Set to `0` for unlimited file sizes.
+
+*Type*: `int`
+
+*Default*: `10485760`
+
+=== `checkpoint_cache`
+
+Specify a xref:components:caches/about.adoc[`cache`] resource to store the last processed commit hash. After a restart, Redpanda Connect can then continue processing changes from where it left off, avoiding the need to reprocess all detected updates.
+
+*Type*: `string`
+
+```yml
+# Examples
+
+input:
+  git:
+    poll_interval: 10s
+    include_patterns: []
+    exclude_patterns: []
+    max_file_size: 10485760
+    checkpoint_cache: "my_git_cache"
+    checkpoint_key: git_last_commit
+    auto_replay_nacks: true
+cache_resources:
+  - label: "my_git_cache"
+    redis:
+      url: redis://:6379
+```
+
+=== `checkpoint_key`
+
+The key to use when storing the last processed commit hash in the cache.
+
+*Type*: `string`
+
+*Default*: `git_last_commit`
+
+
+=== `auth`
+
+Options for authenticating with your Git repository.
+
+*Type*: `object`
+
+=== `auth.basic`
+
+Allows you to specify basic authentication.
+
+*Type*: `object`
+
+=== `auth.basic.username`
+
+The username to use for authentication.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `auth.basic.password`
+
+A password to authenticate with.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `auth.ssh_key`
+
+Allows you to specify SSH key authentication.
+
+*Type*: `object`
+
+=== `auth.ssh_key.private_key_path`
+
+The path to your private SSH key file. When using encrypted keys, you must also set a value for <<auth-ssh_key-passphrase, `private_key_passphrase`>>.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `auth.ssh_key.private_key`
+
+Your private SSH key. When using encrypted keys, you must also set a value for <<auth-ssh_key-passphrase, `private_key_passphrase`>>. 
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `auth.ssh_key.passphrase`
+
+The passphrase for your SSH private key.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `auth.token`
+ 
+Allows you to specify token-based authentication.
+
+*Type*: `object`
+
+=== `auth.token.value`
+
+The token value to use for token-based authentication.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `auto_replay_nacks`
+
+Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+
+Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+// end::single-source[]
