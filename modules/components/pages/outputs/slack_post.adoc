@@ -27,6 +27,8 @@ output:
     link_names: 0
 ```
 
+See also: <<Examples, Examples>>
+
 == Fields
 
 === `bot_token`
@@ -99,5 +101,32 @@ When set to `1`, this output finds and links to https://api.slack.com/reference/
 
 *Default*: `0`
 
+== Examples
+
+The following pipeline reposts messages created by a Slack app to a new channel, excluding hidden or non-message events, and any activity originating from the Slack bot.
+
+```yml
+input:
+  slack:
+    app_token: "${APP_TOKEN:xapp-demo}"
+    bot_token: "${BOT_TOKEN:xoxb-demo}"
+pipeline:
+  processors:
+    - mutation: |
+        # Ignore hidden or non-message events.
+        if this.event.type != "message" || (this.event.hidden | false) {
+          root = deleted()
+        }
+        # Ignore messages sent by the bot.
+        if this.authorizations.any(auth -> auth.user_id == this.event.user) {
+          root = deleted()
+        }
+output:
+  slack_post:
+    bot_token: "${BOT_TOKEN:xoxb-demo}"
+    channel_id: "${!this.event.channel}"
+    thread_ts: "${!this.event.ts}"
+    text: "ECHO: ${!this.event.text}"
+```
 
 // end::single-source[]
