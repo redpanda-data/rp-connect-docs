@@ -112,12 +112,11 @@ input:
     bot_token: "${BOT_TOKEN:xoxb-demo}"
 pipeline:
   processors:
+    # Ignore hidden or non-message events, and messages sent by the bot.
     - mutation: |
-        # Ignore hidden or non-message events.
         if this.event.type != "message" || (this.event.hidden | false) {
           root = deleted()
         }
-        # Ignore messages sent by the bot.
         if this.authorizations.any(auth -> auth.user_id == this.event.user) {
           root = deleted()
         }
