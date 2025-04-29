@@ -135,11 +135,11 @@ input:
     include_patterns: []
     exclude_patterns: []
     max_file_size: 10485760
-    checkpoint_cache: "my_git_cache"
+    checkpoint_cache: "postgres_cache"
     checkpoint_key: git_last_commit
     auto_replay_nacks: true
 cache_resources:
-  - label: "postgres_cache"
+  - label: "postgres_cache" # Must match the checkpoint_cache value.
     sql:
       driver: "postgres"
       dsn: "postgresql://user:password@hostname/db?sslmode=require"
