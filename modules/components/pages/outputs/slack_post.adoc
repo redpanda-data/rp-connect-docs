@@ -1,7 +1,6 @@
 = slack_post
 // tag::single-source[]
 :type: output
-:page-beta: true
 
 component_type_dropdown::[]
 
@@ -103,7 +102,7 @@ When set to `1`, this output finds and links to https://api.slack.com/reference/
 
 == Examples
 
-The following pipeline reposts messages created by a Slack app to a new channel, excluding hidden or non-message events, and any activity originating from the Slack bot.
+The following pipeline reposts messages created by a Slack app to the same thread in the same channel, adding `ECHO:` to the original message text. All hidden or non-message events, and any activity originating from the Slack bot, are excluded.
 
 ```yml
 input:
