@@ -171,6 +171,15 @@ For more information, see <<Examples, Examples>>.
 
 *Default*: `""`
 
+```yml
+# Examples
+
+history: [{"role": "user", "content": "My favorite color is blue"}, {"role":"assistant", "content":"Nice"}]
+
+```
+If the `prompt` is set to `"What is my favorite color?"`, the specified `model` responds with `blue`.
+
+
 === `image`
 
 An optional image to submit along with the prompt. The result of the Bloblang mapping must be a byte array.

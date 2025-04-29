@@ -260,6 +260,14 @@ Include historical messages in a chat request. You must use a Bloblang query to 
 
 *Default*: `""`
 
+```yml
+# Examples
+
+history: [{"role": "user", "content": "My favorite color is blue"}, {"role":"assistant", "content":"Nice"}]
+
+```
+If the `prompt` is set to `"What is my favorite color?"`, the specified `model` responds with `blue`.
+
 
 === `max_tool_calls`
 
