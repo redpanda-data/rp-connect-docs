@@ -712,7 +712,7 @@ pipeline:
         processors:
         - openai_chat_completion:
             model: gpt-4o
-            api_key: TODO
+            api_key: "${OPENAI_API_KEY}"
             prompt: "${!this.prompt}"
             history: 'root = this.history'
         result_map: 'root.response = content().string()'
