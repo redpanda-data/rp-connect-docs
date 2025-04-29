@@ -1,7 +1,6 @@
 = git
 // tag::single-source[]
 :type: input
-:page-beta: true
 :categories: ["Services"]
 
 component_type_dropdown::[]
@@ -49,7 +48,6 @@ This input adds the following metadata fields to each message:
 - `git_commit`
 - `git_mime_type`
 - `git_is_binary`
-- `git_encoding` (when a source file is base64 encoded)
 - `git_deleted` (when a source file is deleted)
 
 You can access these metadata fields using using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
@@ -126,6 +124,8 @@ Specify a xref:components:caches/about.adoc[`cache`] resource to store the last 
 
 *Type*: `string`
 
+The following example caches the `checkpoint_key` and associated commit SHA in separate columns of a PostgreSQL database.
+
 ```yml
 # Examples
 
@@ -139,9 +139,19 @@ input:
     checkpoint_key: git_last_commit
     auto_replay_nacks: true
 cache_resources:
-  - label: "my_git_cache"
-    redis:
-      url: redis://:6379
+  - label: "postgres_cache"
+    sql:
+      driver: "postgres"
+      dsn: "postgresql://user:password@hostname/db?sslmode=require"
+      table: "checkpoint_git_input"
+      key_column: "key"
+      value_column: "commit_sha"
+      init_statement: |
+        CREATE TABLE IF NOT EXISTS checkpoint_git_input (
+          key TEXT PRIMARY KEY,
+          commit_sha TEXT
+        )
+      set_suffix: ON CONFLICT (key) DO UPDATE SET commit_sha=EXCLUDED.commit_sha
 ```
 
 === `checkpoint_key`
