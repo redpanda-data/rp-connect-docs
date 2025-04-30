@@ -4,14 +4,14 @@
 
 component_type_dropdown::[]
 
-Connects to Slack using https://api.slack.com/apis/socket-mode[Socket Mode^], and can receive events, interactions (automated and user initiated), and slash commands.
+Connects to Slack using https://api.slack.com/apis/socket-mode[Socket Mode^], and can receive events, interactions (automated and user-initiated), and slash commands.
 
 This input is useful for:
 
 - Building bots that can query or write data.
 - Sending events to data warehouses.
 
-You could also try pairing this input with Redpanda Connect's AI processors. Search for processors with the prefix `cohere`, `openai`, and `ollama`.
+You could also try pairing this input with Redpanda Connect's AI processors, which use the prefixes `cohere`, `openai`, and `ollama`.
 
 ifndef::env-cloud[]
 Introduced in version 4.51.0.
