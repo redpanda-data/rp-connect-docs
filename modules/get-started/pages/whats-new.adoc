@@ -6,6 +6,49 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+
+== Version 4.53.0
+
+This release adds:
+
+- The `transaction_isolation_level` field to the following inputs: xref:components:inputs/kafka_franz.adoc[`kafka_franz`], xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`].
+- The `request_timeout_overhead` and `conn_idle_timout` fields to the following components: xref:components:inputs/kafka_franz.adoc[`kafka_franz` input], xref:components:inputs/redpanda.adoc[`redpanda`] input, xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input], xref:components:outputs/kafka_franz.adoc[`kafka_franz` output], `redpanda` output, `redpanda_migrator` output, `redpanda_migrator_offsets` output, `redpanda` configuration service.
+- `start_offset` field to the following components: `kafka_franz` input, `ockam_kafka` input, `redpanda` input, `redpanda_common` input, `redpanda_migrator` input.
+
+==== Deprecations
+
+This release deprecates the ` start_from_oldest` field from the following components: `kafka_franz` input, `ockam_kafka` input, `redpanda` input, `redpanda_common` input, `redpanda_migrator` input. Now, you must use the `start_offset` field , which defaults to `earliest`. Redpanda recommends upgrading to benefit from this update.
+
+== Version 4.52.0
+
+This release introduces three new Slack components:
+
+- xref:components:inputs/slack_users.adoc[`slack_users` input]: Reads the full profiles of users in a Slack organization.
+- xref:components:processors/slack_thread.adoc[`slack_thread` processor]: Reads all messages in a Slack thread.
+- xref:components:outputs/slack_post.adoc[`slack_post` output]: Posts messages to Slack channel.
+
+== Version 4.51.0
+
+Highlights of this update include the introduction of three new components that you could use as part of an AI toolchain:
+
+- xref:components:inputs/git.adoc[`git` input]
+- xref:components:processors/text_chunker.adoc[`text_chunker` processor]
+- xref:components:inputs/slack.adoc[`slack` input]
+
+You can also now xref:get-started:quickstarts/rpk.adoc#fips-compliance[install a FIPS-compliant version of Redpanda Connect] (for RHEL/Debian Ubuntu).
+
+=== Component updates
+
+This release adds:
+
+- The `private_key` field to the xref:components:inputs/sftp.adoc[SFTP input] and xref:components:outputs/sftp.adoc[output]
+- The `history` field to the xref:components:processors/ollama_chat.adoc[`ollama_chat`] and xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion`] processors, which allows you to include historical messages in a chat request.
+- The `handle_logical_types` fields to the xref:components:inputs/parquet_decode.adoc[`parquet_decode` input].
+- The `aggregate` operation to the xref:components:processors/mongodb.adoc[`mongodb` processor], which provides support for aggregation pipelines.
+- The `headers` option to the `type` field in the xref:components:outputs/amqp_0_9.adoc[`amqp_0_9` output].
+
+
+
 == Version 4.50.0
 
 This release introduces agentic behavior to the xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion` processor]. You can now specify external tools to enrich the responses of OpenAI large language models.
