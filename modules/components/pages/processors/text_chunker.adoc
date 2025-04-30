@@ -25,9 +25,9 @@ text_chunker:
   chunk_size: 512
   chunk_overlap: 100
   separators:
-    - |2+
-    - ""
-    - ' '
+    - "\n\n"
+    - "\n"
+    - " "
     - ""
   length_measure: runes
   include_code_blocks: false
@@ -47,9 +47,9 @@ text_chunker:
   chunk_size: 512
   chunk_overlap: 100
   separators:
-    - |2+
-    - ""
-    - ' '
+    - "\n\n"
+    - "\n"
+    - " "
     - ""
   length_measure: runes
   token_encoding: cl100k_base # No default (optional)
