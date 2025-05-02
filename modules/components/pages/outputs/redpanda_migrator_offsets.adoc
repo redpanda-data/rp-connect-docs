@@ -63,6 +63,8 @@ output:
       client_certs: [] # Optional
     sasl: [] # No default (optional)
     metadata_max_age: 5m
+    request_timeout_overhead: 10s
+    conn_idle_timeout: 20s
     offset_topic: ${! @kafka_offset_topic }
     offset_group: ${! @kafka_offset_group }
     offset_partition: ${! @kafka_offset_partition }
@@ -452,6 +454,23 @@ The maximum period of time after which metadata is refreshed.
 *Type*: `string`
 
 *Default*: `5m`
+
+=== `request_timeout_overhead`
+
+Grants an additional buffer or overhead to requests that have timeout fields defined. This field is based on the behavior of Apache Kafka's `request.timeout.ms` parameter, but with the option to extend the timeout deadline.
+
+*Type*: `string`
+
+*Default*: `10s`
+
+=== `conn_idle_timeout`
+
+Define how long connections can remain idle before they are closed.
+
+*Type*: `string`
+
+*Default*: `20s`
+
 
 === `offset_topic`
 

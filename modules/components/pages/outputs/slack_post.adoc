@@ -1,0 +1,130 @@
+= slack_post
+// tag::single-source[]
+:type: output
+
+component_type_dropdown::[]
+
+Posts a new message to a Slack channel using the Slack API method https://api.slack.com/methods/chat.postMessage[chat.postMessage^].
+
+ifndef::env-cloud[]
+Introduced in version 4.52.0.
+endif::[]
+
+```yml
+# Common configuration fields, showing default values
+output:
+  label: ""
+  slack_post:
+    bot_token: "" # No default (required)
+    channel_id: "" # No default (required)
+    thread_ts: "" # No default (optional)
+    text: "" # No default (optional)
+    blocks: "" # No default (optional)
+    markdown: true
+    unfurl_links: false
+    unfurl_media: true
+    link_names: 0
+```
+
+See also: <<Examples, Examples>>
+
+== Fields
+
+=== `bot_token`
+
+Your Slack bot user's OAuth token, which must have the correct permissions to post messages to the target Slack channel.
+
+*Type*: `string`
+
+=== `channel_id`
+
+The encoded ID of the target Slack channel. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+=== `thread_ts`
+
+Specify the thread timestamp (`ts` value) of another message to post a reply within the same thread. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `text`
+
+The text content of the message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+You can either specify message content in the `text` or `blocks` fields, but not both.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `blocks`
+
+A Bloblang query that should return a JSON array of https://api.slack.com/reference/block-kit/blocks[Slack blocks^].
+
+You can either specify message content in the `text` or `blocks` fields, but not both.
+
+*Type*: `string`
+
+=== `markdown`
+
+When set to `true`, this output accepts message content in Markdown format.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `unfurl_links`
+
+When set to `true`, this output provides previews of linked content in Slack messages. For more information about unfurling links, see the https://api.slack.com/reference/messaging/link-unfurling[Slack documentation^].
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `unfurl_media`
+
+When set to `true`, this output provides previews of rich content in Slack messages, such as videos or embedded tweets.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `link_names`
+
+When set to `1`, this output finds and links to https://api.slack.com/reference/surfaces/formatting#mentioning-groups[user groups^] mentioned in Slack messages. 
+
+*Type*: `bool`
+
+*Default*: `0`
+
+== Examples
+
+The following pipeline reposts messages created by a Slack app to the same thread in the same channel, adding `ECHO:` to the original message text. All hidden or non-message events, and any activity originating from the Slack bot, are excluded.
+
+```yml
+input:
+  slack:
+    app_token: "${APP_TOKEN:xapp-demo}"
+    bot_token: "${BOT_TOKEN:xoxb-demo}"
+pipeline:
+  processors:
+    # Ignore hidden or non-message events, and messages sent by the bot.
+    - mutation: |
+        if this.event.type != "message" || (this.event.hidden | false) {
+          root = deleted()
+        }
+        if this.authorizations.any(auth -> auth.user_id == this.event.user) {
+          root = deleted()
+        }
+output:
+  slack_post:
+    bot_token: "${BOT_TOKEN:xoxb-demo}"
+    channel_id: "${!this.event.channel}"
+    thread_ts: "${!this.event.ts}"
+    text: "ECHO: ${!this.event.text}"
+```
+
+// end::single-source[]
