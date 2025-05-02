@@ -142,6 +142,8 @@ Whether to enable exchange declaration.
 
 The type of the exchange, which determines how messages are routed to queues.
 
+NOTE: Dots (`.`) in message keys are only enforced in routing keys and message types for `topic` exchanges.
+
 *Type*: `string`
 
 *Default*: `direct`
@@ -150,6 +152,7 @@ Options:
 `direct`
 , `fanout`
 , `topic`
+, `headers`
 , `x-custom`
 
 === `exchange_declare.durable`
