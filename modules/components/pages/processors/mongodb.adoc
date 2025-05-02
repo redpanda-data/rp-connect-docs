@@ -222,7 +222,7 @@ filter_map: |-
 
 === `hint_map`
 
-A bloblang map that represents a hint or index for a MongoDB command to use, expressed as https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/[extended JSON in canonical form^]. This map is optional, and is used with all operations except `insert-one`. 
+A Bloblang map that represents a hint or index for a MongoDB command to use, expressed as https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/[extended JSON in canonical form^]. This map is optional, and is used with all operations except `insert-one`. 
 
 Define a `hint_map` to improve performance when finding documents in the MongoDB database.
 
