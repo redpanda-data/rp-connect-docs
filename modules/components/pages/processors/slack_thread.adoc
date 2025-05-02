@@ -1,0 +1,42 @@
+= slack_thread
+// tag::single-source[]
+:type: processor
+
+component_type_dropdown::[]
+
+Reads a Slack thread using the Slack API method https://api.slack.com/methods/conversations.replies[conversations.replies^].
+
+ifndef::env-cloud[]
+Introduced in version 4.52.0.
+endif::[]
+
+```yml
+# Common configuration fields, showing default values
+label: ""
+slack_thread:
+  bot_token: "" # No default (required)
+  channel_id: "" # No default (required)
+  thread_ts: "" # No default (required)
+```
+
+== Fields
+
+=== `bot_token`
+
+Your Slack bot user's OAuth token, which must have the correct permissions to read messages from the Slack channel specified in `channel_id`.
+
+*Type*: `string`
+
+=== `channel_id`
+
+The encoded ID of the Slack channel from which to read threads. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+=== `thread_ts`
+
+The timestamp of the parent message of the thread you want to read. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+// end::single-source[]
