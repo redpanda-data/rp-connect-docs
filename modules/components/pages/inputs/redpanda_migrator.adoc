@@ -63,7 +63,7 @@ input:
     rebalance_timeout: 45s
     session_timeout: 1m
     heartbeat_interval: 3s
-    start_from_oldest: true
+    start_offset: earliest
     fetch_max_bytes: 50MiB
     fetch_max_wait: 5s
     fetch_min_bytes: 1B
@@ -72,6 +72,8 @@ input:
     consumer_group: "" # No default (optional)
     commit_period: 5s
     metadata_max_age: 5m
+    request_timeout_overhead: 10s
+    conn_idle_timeout: 20s
     partition_buffer_bytes: 1MB
     auto_replay_nacks: true
     topic_lag_refresh_period: 5s
@@ -478,7 +480,7 @@ When a `consumer_group` is specified, partitions are automatically distributed a
 
 Alternatively, you can specify explicit partitions to consume by using a colon after the topic name. For example, `foo:0` would consume the partition `0` of the topic foo. This syntax supports ranges. For example, `foo:0-10` would consume partitions `0` through to `10` inclusive.
 
-It is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_from_oldest` determines which offset to start from.
+It is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_offset` determines which offset to start from.
 
 
 *Type*: `array`
@@ -576,14 +578,28 @@ client
 
 *Default*: `3s`
 
-=== `start_from_oldest`
+=== `start_offset`
 
-Determines whether to consume from the oldest available offset, otherwise messages are consumed from the latest offset. This setting is applied when creating a new consumer group or the saved offset no longer exists.
+Specify the offset from which this input starts or restarts consuming messages. Restarts occur when the `OffsetOutOfRange` error is seen during a fetch.
 
+*Type*: `string`
 
-*Type*: `bool`
+*Default*: `earliest`
 
-*Default*: `true`
+Options: 
+
+|===
+| Option | Description
+
+| `earliest` (default)
+| Start from the earliest offset. This option is equivalent to Kafka's `auto.offset.reset=earliest`.
+
+| `committed`
+| Start from the earliest committed offset, which prevents message consumption from a partition in a consumer group that has no prior commits. This option is equivalent to Kafka's `auto.offset.reset=none`.
+
+| `latest`
+| Start from the latest offset. This option is equivalent to Kafka's `auto.offset.reset=latest`.
+|===
 
 === `fetch_max_bytes`
 
@@ -665,6 +681,22 @@ The maximum period of time after which metadata is refreshed. Reducing this valu
 *Type*: `string`
 
 *Default*: `5m`
+
+=== `request_timeout_overhead`
+
+Grants an additional buffer or overhead to requests that have timeout fields defined. This field is based on the behavior of Apache Kafka's `request.timeout.ms` parameter.
+
+*Type*: `string`
+
+*Default*: `10s`
+
+=== `conn_idle_timeout`
+
+Define how long connections can remain idle before they are closed.
+
+*Type*: `string`
+
+*Default*: `20s`
 
 === `partition_buffer_bytes`
 
