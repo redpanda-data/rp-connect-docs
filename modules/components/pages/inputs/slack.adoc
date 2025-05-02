@@ -1,0 +1,88 @@
+= slack
+// tag::single-source[]
+:type: input
+
+component_type_dropdown::[]
+
+Connects to Slack using https://api.slack.com/apis/socket-mode[Socket Mode^], and can receive events, interactions (automated and user-initiated), and slash commands.
+
+This input is useful for:
+
+- Building bots that can query or write data.
+- Sending events to data warehouses.
+
+You could also try pairing this input with Redpanda Connect's AI processors, which use the prefixes `cohere`, `openai`, and `ollama`.
+
+ifndef::env-cloud[]
+Introduced in version 4.51.0.
+endif::[]
+
+```yml
+# Common configuration fields, showing default values
+input: 
+  label: ""
+  slack:
+    app_token: "" # No default (required)
+    bot_token: "" # No default (required)
+    auto_replay_nacks: true
+```
+
+See also: <<Examples, Examples>>
+
+== Metadata
+
+Each message emitted from this input has an `@type` metadata flag to indicate the event type, either `"events_api"`, `"interactions"`, or `"slash_commands"`.
+
+== Fields
+
+=== `app_token`
+
+The app-level token to use to authenticate and connect to Slack.
+
+*Type*: `string`
+
+=== `bot_token`
+
+Your Slack bot user's OAuth token, which must have the https://api.slack.com/scopes/connections:write[`connections.write` scope^] to access your Slack app's https://api.slack.com/methods/apps.connections.open[Socket Mode WebSocket URL^].
+
+*Type*: `string`
+
+=== `auto_replay_nacks`
+
+Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+
+Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+== Examples
+
+The following pipeline reposts messages created by a Slack app to the same thread in the same channel, adding `ECHO:` to the original message text. All hidden or non-message events, and any activity originating from the Slack bot, are excluded.
+
+```yml
+input:
+  slack:
+    app_token: "${APP_TOKEN:xapp-demo}"
+    bot_token: "${BOT_TOKEN:xoxb-demo}"
+    auto_replay_nacks: true
+pipeline:
+  processors:
+    # Ignore hidden or non-message events, and messages sent by the bot.
+    - mutation: |
+        if this.event.type != "message" || (this.event.hidden | false) {
+          root = deleted()
+        }
+        if this.authorizations.any(auth -> auth.user_id == this.event.user) {
+          root = deleted()
+        }
+output:
+  slack_post:
+    bot_token: "${BOT_TOKEN:xoxb-demo}"
+    channel_id: "${!this.event.channel}"
+    thread_ts: "${!this.event.ts}"
+    text: "ECHO: ${!this.event.text}"
+```
+
+// end::single-source[]

@@ -31,6 +31,7 @@ input:
     seed_brokers: [] # No default (required)
     topics: [] # No default (required)
     regexp_topics: false
+    transaction_isolation_level: read_uncommitted
     consumer_group: "" # No default (optional)
     auto_replay_nacks: true
 ```
@@ -67,6 +68,7 @@ input:
     fetch_max_wait: 5s
     fetch_min_bytes: 1B
     fetch_max_partition_bytes: 1MiB
+    transaction_isolation_level: read_uncommitted
     consumer_group: "" # No default (optional)
     commit_period: 5s
     metadata_max_age: 5m
@@ -634,6 +636,28 @@ If a single batch is larger than the `fetch_max_partition_bytes` value, the batc
 *Type*: `string`
 
 *Default*: `1MiB`
+
+=== `transaction_isolation_level`
+
+Defines how transactional messages are handled.
+
+*Type*: `string`
+
+*Default*: `read_uncommitted`
+
+Options:
+
+|===
+| Option | Description
+
+| `read_uncommitted` (default)
+| Processes all messages, including uncommitted transactional records.
+
+| `read_committed`
+| Processes only committed transactional records to ensure data consistency.
+
+|===
+
 
 === `consumer_group`
 
