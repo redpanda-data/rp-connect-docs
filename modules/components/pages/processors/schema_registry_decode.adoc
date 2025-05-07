@@ -28,6 +28,7 @@ schema_registry_decode:
   avro:
     raw_unions: false # No default (optional)
     preserve_logical_types: false
+  cache_duration: 10m
   url: "" # No default (required)
 ```
 
@@ -44,6 +45,7 @@ schema_registry_decode:
     raw_unions: false
     preserve_logical_types: false
     mapping: "" # No default (optional)
+  cache_duration: 10m
   url: "" # No default (required)
   oauth:
     enabled: false
@@ -179,6 +181,22 @@ mapping: |2
   # Apply the Debezium to Avro timestamp mapping to the root
   root = this.apply("debeziumTimestampToAvroTimestamp")
 
+```
+
+=== `cache_duration`
+
+The duration after which a cached schema is considered stale and is removed from the cache.
+
+*Type*: `string`
+
+*Default*: `10m`
+
+```yml
+# Examples
+
+cache_duration: 1h
+
+cache_duration: 5m
 ```
 
 === `url`
