@@ -156,29 +156,31 @@ The following example converts custom Debezium timestamp types into standard Avr
 ```yml
 # Examples
 
-mapping: |2
-  # Define a mapping to identify Debezium timestamp types
+mapping: |
   map isDebeziumTimestampType {
     root = this.type == "long" && this."connect.name" == "io.debezium.time.Timestamp" && !this.exists("logicalType")
   }
-  # Define a mapping to convert Debezium timestamp types to Avro timestamp types
-  map debeziumTimestampToAvroTimestamp {
-    # Recursively apply the mapping to each field in the record
-    let mapped_fields = this.fields.or([]).map_each(item -> item.apply("debeziumTimestampToAvroTimestamp"))
+  map isDebeziumMicroTimestampType {
+    root = this.type == "long" && this."connect.name" == "io.debezium.time.MicroTimestamp" && !this.exists("logicalType")
+  }
+  map isDebeziumZonedTimestampType {
+    root = this.type == "string" && this."connect.name" == "io.debezium.time.ZonedTimestamp" && !this.exists("logicalType")
+  }
+  map debeziumAddLogicalTypes {
+    let mapped_fields = this.fields.or([]).map_each(item -> item.apply("debeziumAddLogicalTypes"))
     root = match {
-      # If the type is a record, apply the mapping to its fields
       this.type == "record" => this.assign({"fields": $mapped_fields})
-      # If the type is an array, apply the mapping to each item in the array
-      this.type.type() == "array" => this.assign({"type": this.type.map_each(item -> item.apply("debeziumTimestampToAvroTimestamp"))})
-      # If the type is an object and matches the Debezium timestamp type, add a logical type to decode it as an Avro timestamp instead of a long
-      this.type.type() == "object" && this.type.apply("isDebeziumTimestampType") => this.merge({"type":{"logicalType": "timestamp-millis"}})
-      # Otherwise, return the type as is
+      this.type == "long" && this.apply("isDebeziumTimestampType") => this.assign({"logicalType":"timestamp-millis"})
+      this.type == "long" && this.apply("isDebeziumMicroTimestampType") => this.assign({"logicalType":"timestamp-micros"})
+      this.type == "string" && this.apply("isDebeziumZonedTimestampType") => this.assign({"logicalType":"timestamp-millis"})
+      this.type.type() == "array" => this.assign({"type": this.type.map_each(item -> item.apply("debeziumAddLogicalTypes"))})
+      this.type.type() == "object" && this.type.apply("isDebeziumTimestampType") => this.merge({"type":{"logicalType":"timestamp-millis"}})
+      this.type.type() == "object" && this.type.apply("isDebeziumMicroTimestampType") => this.merge({"type":{"logicalType":"timestamp-micros"}})
+      this.type.type() == "object" && this.type.apply("isDebeziumZonedTimestampType") => this.merge({"type":{"logicalType":"timestamp-millis"}})
       _ => this
     }
   }
-  # Apply the Debezium to Avro timestamp mapping to the root
-  root = this.apply("debeziumTimestampToAvroTimestamp")
-
+  root = this.apply("debeziumAddLogicalTypes")
 ```
 
 === `url`
