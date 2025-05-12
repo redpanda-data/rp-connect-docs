@@ -24,6 +24,7 @@ input:
       cert_file: "" # No default (optional)
       key_file: "" # No default (optional)
       self_signed: false
+      client_auth: no
     auto_replay_nacks: true
     scanner:
       lines: {}
@@ -103,6 +104,38 @@ Whether to generate self signed certificates.
 *Type*: `bool`
 
 *Default*: `false`
+
+=== `tls.client_auth`
+
+Specifies how client authentication is handled when using TLS.
+
+*Type*: `string`
+
+*Default*: `no`
+
+Requires version 4.45.0 or newer.
+
+Options:
+
+|===
+| Option | Description
+
+| `no`
+| Client certificate is neither requested nor required.
+
+| `request`
+| Client certificate is requested but not required.
+
+| `require_valid` 
+| Requires a valid client certificate.
+
+| `require_any`
+| Accepts any client certificate, even if invalid.
+
+| `verify_if_given` 
+| Verifies the client certificate if one is provided.
+
+|===
 
 === `auto_replay_nacks`
 
