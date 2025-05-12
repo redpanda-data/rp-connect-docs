@@ -23,7 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 input:
   label: ""
   aws_kinesis:
@@ -48,38 +48,46 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 input:
   label: ""
   aws_kinesis:
     streams: [] # No default (required)
     dynamodb:
-      table: ""
+      table: "" # No default (required)
       create: false
       billing_mode: PAY_PER_REQUEST
       read_capacity_units: 0
       write_capacity_units: 0
+      credentials:
+        profile: "" # No default (optional)
+        id: "" # No default (optional)
+        secret: "" # No default (optional)
+        token: "" # No default (optional)
+        from_ec2_role: false # No default (optional)
+        role: "" # No default (optional)
+        role_external_id: "" # No default (optional)
     checkpoint_limit: 1024
     auto_replay_nacks: true
     commit_period: 5s
     rebalance_period: 30s
     lease_period: 30s
     start_from_oldest: true
-    region: ""
-    endpoint: ""
+    region: "" # No default (optional)
+    endpoint: "" # No default (optional)
     credentials:
-      profile: ""
-      id: ""
-      secret: ""
-      token: ""
+      profile: "" # No default (optional)
+      id: "" # No default (optional)
+      secret: "" # No default (optional)
+      token: "" # No default (optional)
       from_ec2_role: false
-      role: ""
-      role_external_id: ""
+      role: "" # No default (optional)
+      role_external_id: "" # No default (optional)
     batching:
       count: 0
       byte_size: 0
-      period: ""
-      check: ""
+      period: "" # No default (optional)
+      check: "" # No default (optional)
       processors: [] # No default (optional)
 ```
 
@@ -179,6 +187,97 @@ Set the provisioned write capacity when creating the table with a `billing_mode`
 
 *Default*: `0`
 
+
+=== `dynamodb.region`
+
+The AWS region to target.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `dynamodb.endpoint`
+
+Specify a custom endpoint for the AWS API.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `dynamodb.credentials`
+
+Manually configure the AWS credentials to use (optional). For more information, see the xref:guides:cloud/aws.adoc[].
+
+*Type*: `object`
+
+=== `dynamodb.credentials.profile`
+
+The profile from `~/.aws/credentials` to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `dynamodb.credentials.id`
+
+The ID of the AWS credentials to use.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `dynamodb.credentials.secret`
+
+The secret for the AWS credentials in use.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `dynamodb.credentials.token`
+
+The token for the AWS credentials in use. This is a required value for short-term credentials.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `dynamodb.credentials.from_ec2_role`
+
+Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].
+
+
+*Type*: `bool`
+
+*Default*: `false`
+
+ifndef::env-cloud[]
+Requires version 4.2.0 or newer
+endif::[]
+
+=== `dynamodb.credentials.role`
+
+The role ARN to assume.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `dynamodb.credentials.role_external_id`
+
+An external ID to use when assuming a role.
+
+
+*Type*: `string`
+
+*Default*: `""`
+
 === `checkpoint_limit`
 
 The maximum gap between the in flight sequence versus the latest acknowledged sequence at a given time. Increasing this limit enables parallel processing and batching at the output level to work on individual shards. Any given sequence will not be committed unless all messages under that offset are delivered in order to preserve at least once delivery guarantees.
@@ -244,7 +343,7 @@ The AWS region to target.
 
 === `endpoint`
 
-Allows you to specify a custom endpoint for the AWS API.
+Specify a custom endpoint for the AWS API.
 
 
 *Type*: `string`
@@ -253,16 +352,13 @@ Allows you to specify a custom endpoint for the AWS API.
 
 === `credentials`
 
-Optional manual configuration of AWS credentials to use. More information can be found in xref:guides:cloud/aws.adoc[].
-
+Manually configure the AWS credentials to use (optional). For more information, see the xref:guides:cloud/aws.adoc[].
 
 *Type*: `object`
 
-
 === `credentials.profile`
 
-A profile from `~/.aws/credentials` to use.
-
+The profile from `~/.aws/credentials` to use.
 
 *Type*: `string`
 
@@ -270,8 +366,7 @@ A profile from `~/.aws/credentials` to use.
 
 === `credentials.id`
 
-The ID of credentials to use.
-
+The ID of the AWS credentials to use.
 
 *Type*: `string`
 
@@ -279,7 +374,7 @@ The ID of credentials to use.
 
 === `credentials.secret`
 
-The secret for the credentials being used.
+The secret for the AWS credentials in use.
 
 include::components:partial$secret_warning.adoc[]
 
@@ -289,7 +384,7 @@ include::components:partial$secret_warning.adoc[]
 
 === `credentials.token`
 
-The token for the credentials being used, required when using short term credentials.
+The token for the AWS credentials in use. This is a required value for short-term credentials.
 
 
 *Type*: `string`
@@ -311,7 +406,7 @@ endif::[]
 
 === `credentials.role`
 
-A role ARN to assume.
+The role ARN to assume.
 
 
 *Type*: `string`
@@ -320,7 +415,7 @@ A role ARN to assume.
 
 === `credentials.role_external_id`
 
-An external ID to provide when assuming a role.
+An external ID to use when assuming a role.
 
 
 *Type*: `string`
