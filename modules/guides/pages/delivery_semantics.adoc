@@ -3,7 +3,7 @@
 
 Redpanda Connect (RPCN) guarantees strong message delivery semantics across its data pipelines by leveraging a transactional model centered around message batch acknowledgment. This ensures reliable, scalable, and predictable data movement between input and output systems, with particular support for *at-least-once delivery* — without requiring intermediate message persistence.
 
-This page outlines how Redpanda Connect manages message delivery across the Input → Pipeline → Output architecture.
+This topic describes how Redpanda Connect manages message delivery across the Input → Pipeline → Output architecture.
 
 image::../../shared/images/delivery-semantics-arch.svg[]
 
