@@ -72,7 +72,7 @@ Replace the `<project-id>` placeholder with your Google Cloud project ID
 
 To use a service account instead, create a JSON key for the account and add it to the <<credentials_json,`credentials_json`>> field. To access Google Drive files using a service account, either:
 
-- Explicitly share files with the service accounts email account
+- Explicitly share files with the service account's email account
 - Use https://support.google.com/a/answer/162106[domain-wide delegation^] to share all files within a Google Workspace
 
 == Fields
