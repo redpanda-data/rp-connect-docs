@@ -4,9 +4,6 @@
 :page-beta: true
 :categories: ["AI"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
 
 
@@ -22,7 +19,7 @@ Common::
 +
 --
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 label: ""
 cohere_chat:
   base_url: https://api.cohere.com
@@ -34,13 +31,15 @@ cohere_chat:
   temperature: 0 # No default (optional)
   response_format: text
   json_schema: "" # No default (optional)
+  max_tool_calls: 10
+  tools: []
 ```
 --
 Advanced::
 +
 --
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 label: ""
 cohere_chat:
   base_url: https://api.cohere.com
@@ -83,11 +82,13 @@ cohere_chat:
   presence_penalty: 0 # No default (optional)
   seed: 0 # No default (optional)
   stop: [] # No default (optional)
+  max_tool_calls: 10
+  tools: []
 ```
 --
 ======
 
-This processor sends the contents of user prompts to the Cohere API, which generates responses. By default, the processor submits the entire payload of each message as a string, unless you use the `prompt` field to customize it.
+This processor sends the contents of user prompts to the Cohere API, which generates responses using all available context, including supplementary data provided by external tools. By default, the processor submits the entire payload of each message as a string, unless you use the `prompt` field to customize it.
 
 To learn more about chat completion, see the https://docs.cohere.com/docs/chat-api[Cohere API documentation^].
 
@@ -481,6 +482,82 @@ If specified, Redpanda Connect makes a best effort to sample deterministically. 
 === `stop`
 
 Specify up to four sequences to stop the API from generating further tokens.
+
+*Type*: `array`
+
+=== `max_tool_calls`
+
+The maximum number of tool calls the model can perform.
+
+*Type*: `int`
+
+*Default*: `10`
+
+=== `tools`
+
+External tools that the model can invoke, such as functions, APIs, or web browsing. You can define a series of processors that describe these tools, enabling the model to use agent-like behavior to decide when and how to invoke them to enhance response generation.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+=== `tools[].name`
+
+The name of the external tool you want to use.
+
+*Type*: `string`
+
+=== `tools[].description`
+
+A description of what the tool does. The model uses this to decide when to invoke the tool.
+
+*Type*: `string`
+
+=== `tools[].parameters`
+
+The parameters the model needs to invoke the tool.
+
+*Type*: `object`
+
+=== `tools[].parameters.required`
+
+The parameters you must define.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+=== `tools[].parameters.properties`
+
+The required inputs to invoke the tool.
+
+*Type*: `object`
+
+=== `tools[].parameters.properties.<name>.type`
+
+The data type of the parameter.
+
+*Type*: `string`
+
+=== `tools[].parameters.properties.<name>.description`
+
+A description of the parameter.
+
+*Type*: `string`
+
+=== `tools[].parameters.properties.<name>.enum`
+
+Defines this parameter as an enumeration and specifies the set of values the model is allowed to use.
+
+
+*Type*: `array`
+
+*Default*: `[]`
+
+=== `tools[].processors`
+
+The pipeline to execute when the model invokes the external tool.
+
 
 *Type*: `array`
 
