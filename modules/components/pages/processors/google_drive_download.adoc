@@ -1,0 +1,152 @@
+= google_drive_download
+// tag::single-source[]
+:type: processor
+:categories: ["AI"]
+
+component_type_dropdown::[]
+
+Downloads files from Google Drive that contain matching file IDs.
+
+Try out the <<example,example pipeline on this page>>, which downloads all files from your Google Drive.
+
+ifndef::env-cloud[]
+Introduced in version 4.53.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+# Common configuration fields, showing default values
+label: ""
+google_drive_download:
+  credentials_json: "" # No default (optional)
+  file_id: "" # No default (required)
+  mime_type: "" # No default (required)
+```
+
+--
+Advanced::
++
+--
+
+```yml
+# All configuration fields, showing default values
+label: ""
+google_drive_download:
+  credentials_json: "" # No default (optional)
+  file_id: "" # No default (required)
+  mime_type: "" # No default (required)
+  export_mime_types:
+    application/vnd.google-apps.document: text/markdown
+    application/vnd.google-apps.drawing: image/png
+    application/vnd.google-apps.presentation: application/pdf
+    application/vnd.google-apps.script: application/vnd.google-apps.script+json
+    application/vnd.google-apps.spreadsheet: text/csv
+```
+
+--
+======
+
+== Authentication
+
+By default, this processor uses https://cloud.google.com/docs/authentication/application-default-credentials[Google Application Default Credentials (ADC)^] to authenticate with Google APIs.
+
+To set up local ADC authentication, use the following `gcloud` commands:
+
+- Authenticate using Application Default Credentials and grant read-only access to your Google Drive.
++
+```bash
+gcloud auth application-default login --scopes='openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/drive.readonly'
+```
+- Assign a quota project to the Application Default Credentials when using a user account.
++
+```bash
+gcloud auth application-default set-quota-project <project-id>
+```
++
+Replace the `<project-id>` placeholder with your Google Cloud project ID
+
+To use a service account instead, create a JSON key for the account and add it to the <<credentials_json,`credentials_json`>> field. To access Google Drive files using a service account, either:
+
+- Explicitly share files with the service accounts email account
+- Use https://support.google.com/a/answer/162106[domain-wide delegation^] to share all files within a Google Workspace
+
+== Fields
+
+=== `credentials_json`
+
+The JSON key for your service account (optional). If left empty, Application Default Credentials are used. For more details, see <<authentication, Authentication>>.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `file_id`
+
+The ID of the file to download from Google Drive. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `mime_type`
+
+The https://developers.google.com/workspace/drive/api/guides/mime-types[MIME type^] of the file for download. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `export_mime_types`
+
+Maps Google Drive MIME types to https://developers.google.com/workspace/drive/api/guides/ref-export-formats[supported file export formats^]. The MIME type is the key, and the export format is the value.
+
+*Type*: `object`
+
+*Default*: `{"application/vnd.google-apps.document":"text/markdown","application/vnd.google-apps.drawing":"image/png","application/vnd.google-apps.presentation":"application/pdf","application/vnd.google-apps.script":"application/vnd.google-apps.script+json","application/vnd.google-apps.spreadsheet":"text/csv"}`
+
+```yml
+# Examples
+
+export_mime_types:
+  application/vnd.google-apps.document: application/pdf
+  application/vnd.google-apps.drawing: application/pdf
+  application/vnd.google-apps.presentation: application/pdf
+  application/vnd.google-apps.spreadsheet: application/pdf
+
+export_mime_types:
+  application/vnd.google-apps.document: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  application/vnd.google-apps.drawing: image/svg+xml
+  application/vnd.google-apps.presentation: application/vnd.openxmlformats-officedocument.presentationml.presentation
+  application/vnd.google-apps.spreadsheet: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+```
+
+== Example
+
+This example downloads all files from a Google Drive.
+
+```yaml
+input:
+  stdin: {}
+pipeline:
+  processors:
+    - google_drive_search:
+        query: "${!content().string()}"
+    - mutation: 'meta path = this.name'
+    - google_drive_download:
+        file_id: "${!this.id}"
+        mime_type: "${!this.mimeType}"
+output:
+  file:
+    path: "${!@path}"
+    codec: all-bytes
+```
+
+
+// end::single-source[]
