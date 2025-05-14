@@ -66,6 +66,7 @@ output:
     request_timeout_overhead: 10s
     conn_idle_timeout: 20s
     offset_topic: ${! @kafka_offset_topic }
+    offset_topic_prefix: source. # No default (optional)
     offset_group: ${! @kafka_offset_group }
     offset_partition: ${! @kafka_offset_partition }
     offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
@@ -479,6 +480,20 @@ The name of the Kafka offset topic to process. This field supports xref:configur
 *Type*: `string`
 
 *Default*: `${! @kafka_offset_topic }`
+
+=== `offset_topic_prefix`
+
+Adds the specified prefix to the name of each migrated Kafka offset topic. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `""`
+
+```yml
+# Examples
+
+offset_topic_prefix: source.
+```
 
 === `offset_group`
 
