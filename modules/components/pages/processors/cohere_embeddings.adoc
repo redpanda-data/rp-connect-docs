@@ -17,7 +17,7 @@ Introduced in version 4.37.0.
 endif::[]
 
 ```yml
-# Config fields, showing default values
+# Configuration fields, showing default values
 label: ""
 cohere_embeddings:
   base_url: https://api.cohere.com
@@ -25,7 +25,7 @@ cohere_embeddings:
   model: embed-english-v3.0 # No default (required)
   text_mapping: "" # No default (optional)
   input_type: search_document
-  dimensions: 0
+  dimensions: "" # No default (optional)
 ```
 
 This processor sends text strings to your chosen large language model (LLM), which generates vector embeddings for them using the Cohere API. By default, the processor submits the entire payload of each message as a string, unless you use the `text_mapping` field to customize it.
@@ -132,8 +132,8 @@ The number of dimensions (numerical values) in each vector embedding generated b
 
 *Type*: `int`
 
-*Default*: `0`
+*Default*: `""`
 
-Options: `0`, `256`, `512`, `1024`, `1536`
+Options: `256`, `512`, `1024`, `1536`
 
 // end::single-source[]
