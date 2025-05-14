@@ -66,7 +66,7 @@ output:
     request_timeout_overhead: 10s
     conn_idle_timeout: 20s
     offset_topic: ${! @kafka_offset_topic }
-    offset_topic_prefix: source. No default (optional)
+    offset_topic_prefix: source. # No default (optional)
     offset_group: ${! @kafka_offset_group }
     offset_partition: ${! @kafka_offset_partition }
     offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
