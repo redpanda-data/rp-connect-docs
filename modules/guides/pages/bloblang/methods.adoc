@@ -3412,6 +3412,26 @@ root.h2 = this.value.hash(algorithm: "crc32", polynomial: "Koopman").encode("hex
 # Out: {"h1":"c99465aa","h2":"df373d3c"}
 ```
 
+=== `uuid_v5`
+
+Generates a name-based UUID (version 5) for the given string.
+
+==== Parameters
+
+*`ns`* &lt;(optional) string&gt; An optional namespace name or UUID. Supported predefined namespaces include: `dns`, `url`, `oid`, and `x500`, but you can use any valid RFC-9562 UUID.
+
+If omitted, the nil UUID is used as the default namespace.
+
+==== Examples
+
+```coffeescript
+root.id = "example".uuid_v5()
+
+root.id = "example".uuid_v5("x500")
+
+root.id = "example".uuid_v5("77f836b7-9f61-46c0-851e-9b6ca3535e69")
+```
+
 == SQL
 
 === `vector`
