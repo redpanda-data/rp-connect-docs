@@ -77,7 +77,7 @@ When set to `true`, the `to_json` operator deserializes fields exactly as named 
 
 === `import_paths`
 
-A list of directories containing `.proto` files, including all definitions required for parsing the target message. If left empty, the current directory is used. This processor imports all `.proto` files listed within specified or default directories.
+A list of directories that contain `.proto` files, including all definitions required for parsing the target message. If left empty, the current directory is used. This processor imports all `.proto` files listed within specified or default directories.
 
 *Type*: `array`
 
