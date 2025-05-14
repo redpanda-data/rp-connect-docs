@@ -7,7 +7,7 @@
 component_type_dropdown::[]
 
 
-Generates responses to messages in a chat conversation, using the https://docs.cohere.com/docs/chat-api[Cohere API^].
+Generates responses to messages in a chat conversation, using the https://docs.cohere.com/docs/chat-api[Cohere API^] and external tools.
 
 ifndef::env-cloud[]
 Introduced in version 4.37.0.
@@ -560,5 +560,42 @@ The pipeline to execute when the model invokes the external tool.
 
 
 *Type*: `array`
+
+
+== Example
+
+In this pipeline configuration, the Command R+ model executes a number of processors, which make a tool call to retrieve weather data for a specific city.
+
+```yaml
+input:
+  generate:
+    count: 1
+    mapping: |
+      root = "What is the weather like in Chicago?"
+pipeline:
+  processors:
+    - cohere_chat::
+        base_url: https://api.cohere.com
+        auth_token: my_cohere_api_token
+        model: command-r-plus
+        prompt: "${!content().string()}"
+        tools:
+          - name: GetWeather
+            description: "Retrieve the weather for a specific city"
+            parameters:
+              required: ["city"]
+              properties:
+                city:
+                  type: string
+                  description: the city to look up the weather for
+            processors:
+              - http:
+                  verb: GET
+                  url: 'https://wttr.in/${!this.city}?T'
+                  headers:
+                    User-Agent: curl/8.11.1 # Returns a text string from the weather website
+output:
+  stdout: {}
+```
 
 // end::single-source[]
