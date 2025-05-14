@@ -4,18 +4,16 @@
 :status: stable
 :categories: ["Parsing"]
 
-// © 2024 Redpanda Data Inc.
-
 
 component_type_dropdown::[]
 
+Handles conversions between JSON documents and protobuf messages using reflection, which allows you to make conversions from or to the target `.proto` files.
 
-
-Performs conversions to or from a protobuf message. This processor uses reflection, meaning conversions can be made directly from the target .proto files.
+For more information about JSON mapping of protobuf messages, see https://protobuf.dev/programming-guides/json/[ProtoJSON Format^] and <<Examples, Examples>>.
 
 
 ```yml
-# Config fields, showing default values
+# Configuration fields, showing default values
 label: ""
 protobuf:
   operator: "" # No default (required)
@@ -25,31 +23,85 @@ protobuf:
   import_paths: []
 ```
 
-The main functionality of this processor is to map to and from JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json[https://developers.google.com/protocol-buffers/docs/proto3#json^]
+== Performance considerations
 
-Using reflection for processing protobuf messages in this way is less performant than generating and using native code. Therefore when performance is critical it is recommended that you use Redpanda Connect plugins instead for processing protobuf messages natively, you can find an example of Redpanda Connect plugins at https://github.com/benthosdev/benthos-plugin-example[https://github.com/benthosdev/benthos-plugin-example^]
+Processing protobuf messages using reflection is less performant than using generated native code. For scenarios where performance is critical, consider using https://github.com/benthosdev/benthos-plugin-example[Redpanda Connect plugins^].
 
 == Operators
 
 === `to_json`
 
-Converts protobuf messages into a generic JSON structure. This makes it easier to manipulate the contents of the document within Benthos.
+Converts protobuf messages into a generic JSON structure, which makes it easier to manipulate the contents of the JSON document within Redpanda Connect.
 
 === `from_json`
 
 Attempts to create a target protobuf message from a generic JSON structure.
+
+== Fields
+
+=== `operator`
+
+The <<operators, operator>> to execute.
+
+*Type*: `string`
+
+
+Options:
+`to_json`
+, `from_json`
+
+
+=== `message`
+
+The fully-qualified name of the protobuf message to convert from or to JSON.
+
+
+*Type*: `string`
+
+
+=== `discard_unknown`
+
+When set to `true`, the `from_json` operator discards fields that are unknown to the schema.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `use_proto_names`
+
+When set to `true`, the `to_json` operator deserializes fields exactly as named in schema file.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `import_paths`
+
+A list of directories containing `.proto` files, including all definitions required for parsing the target message. If left empty, the current directory is used. This processor imports all `.proto` files listed within specified or default directories.
+
+*Type*: `array`
+
+*Default*: `[]`
+
+=== `use_enum_numbers`
+
+When set to `true`, the `to_json` operator deserializes enumeration fields as their numerical values instead of their string names. For example, an enum field with a value of `ENUM_VALUE_ONE` is represented as `1` in the JSON output.
+
+*Type*: `bool`
+
+*Default*: `false`
 
 
 == Examples
 
 [tabs]
 ======
-JSON to Protobuf::
+JSON to Protobuf conversion::
 +
 --
 
 
-If we have the following protobuf definition within a directory called `testing/schema`:
+A protobuf definition is stored in the `testing/schema` directory:
 
 ```protobuf
 syntax = "proto3";
@@ -69,7 +121,7 @@ message Person {
 }
 ```
 
-And a stream of JSON documents of the form:
+And you have a stream of JSON documents with the format:
 
 ```json
 {
@@ -79,7 +131,7 @@ And a stream of JSON documents of the form:
 }
 ```
 
-We can convert the documents into protobuf messages with the following config:
+The following configuration converts the JSON documents into protobuf messages:
 
 ```yaml
 pipeline:
@@ -91,12 +143,12 @@ pipeline:
 ```
 
 --
-Protobuf to JSON::
+Protobuf to JSON conversion::
 +
 --
 
 
-If we have the following protobuf definition within a directory called `testing/schema`:
+A protobuf definition is stored in the `testing/schema` directory:
 
 ```protobuf
 syntax = "proto3";
@@ -116,7 +168,7 @@ message Person {
 }
 ```
 
-And a stream of protobuf messages of the type `Person`, we could convert them into JSON documents of the format:
+And you have a stream of protobuf messages of the type `Person`:
 
 ```json
 {
@@ -126,7 +178,7 @@ And a stream of protobuf messages of the type `Person`, we could convert them in
 }
 ```
 
-With the following config:
+The following configuration converts the messages into JSON documents:
 
 ```yaml
 pipeline:
@@ -139,55 +191,5 @@ pipeline:
 
 --
 ======
-
-== Fields
-
-=== `operator`
-
-The <<operators, operator>> to execute
-
-
-*Type*: `string`
-
-
-Options:
-`to_json`
-, `from_json`
-.
-
-=== `message`
-
-The fully qualified name of the protobuf message to convert to/from.
-
-
-*Type*: `string`
-
-
-=== `discard_unknown`
-
-If `true`, the `from_json` operator discards fields that are unknown to the schema.
-
-
-*Type*: `bool`
-
-*Default*: `false`
-
-=== `use_proto_names`
-
-If `true`, the `to_json` operator deserializes fields exactly as named in schema file.
-
-
-*Type*: `bool`
-
-*Default*: `false`
-
-=== `import_paths`
-
-A list of directories containing .proto files, including all definitions required for parsing the target message. If left empty the current directory is used. Each directory listed will be walked with all found .proto files imported.
-
-
-*Type*: `array`
-
-*Default*: `[]`
 
 // end::single-source[]
