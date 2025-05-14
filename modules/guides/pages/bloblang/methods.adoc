@@ -8,7 +8,7 @@
 Methods provide most of the power in Bloblang as they allow you to augment values and can be added to any expression (including other methods):
 
 ```coffeescript
-root.doc.id = this.thing.id.string().catch(uuid_v5())
+root.doc.id = this.thing.id.string().catch(uuid_v4())
 root.doc.reduced_nums = this.thing.nums.map_each(num -> if num < 10 {
   deleted()
 } else {
@@ -73,7 +73,7 @@ If the result of a target query fails (due to incorrect types, failed parsing, e
 
 
 ```coffeescript
-root.doc.id = this.thing.id.string().catch(uuid_v5())
+root.doc.id = this.thing.id.string().catch(uuid_v4())
 ```
 
 The fallback argument can be a mapping, allowing you to capture the error string and yield structured data back.
@@ -163,7 +163,7 @@ If the result of the target query fails or resolves to `null`, returns the argum
 
 
 ```coffeescript
-root.doc.id = this.thing.id.or(uuid_v5())
+root.doc.id = this.thing.id.or(uuid_v4())
 ```
 
 == String Manipulation
