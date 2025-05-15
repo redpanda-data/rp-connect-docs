@@ -574,7 +574,7 @@ input:
       root = "What is the weather like in Chicago?"
 pipeline:
   processors:
-    - cohere_chat::
+    - cohere_chat:
         base_url: https://api.cohere.com
         auth_token: my_cohere_api_token
         model: command-r-plus
