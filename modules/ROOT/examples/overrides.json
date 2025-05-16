@@ -1,16 +1,81 @@
 {
   "buffers": [{
     "name": "memory",
-    "description": "Custom description override for memory buffer.",
     "config": {
       "children": [
         {
           "name": "batch_policy",
-          "description": "Custom description override for batch_policy.",
+          "description": "Configure a policy to flush batches of buffered messages.",
           "children": [
             {
-              "name": "enabled",
-              "description": "Custom description override for enabled."
+              "name": "count",
+              "description": "The number of messages after which the batch is flushed. Set to `0` to disable count-based batching."
+            },
+            {
+              "name": "byte_size",
+              "description": "The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching."
+            },
+            {
+              "name": "period",
+              "description": "The period of time after which an incomplete batch is flushed regardless of its size."
+            },
+            {
+              "name": "check",
+              "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch."
+            },
+            {
+              "name": "processors",
+              "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op."
+            }
+
+          ]
+        }
+      ]
+    }
+  }],
+  "caches": [{
+    "name": "aws_dynamodb",
+    "config": {
+      "children": [
+        {
+          "name": "region",
+          "description": "The AWS region to target."
+        },
+        {
+          "name": "endpoint",
+          "description": "Specify a custom endpoint for the AWS API."
+        },
+        {
+          "name": "credentials",
+          "description": "Manually configure the AWS credentials to use (optional). For more information, see xref:guides:cloud/aws.adoc[].",
+          "children": [
+            {
+              "name": "profile",
+              "description": "A profile from `~/.aws/credentials` to use."
+            },
+            {
+              "name": "id",
+              "description": "The ID of credentials to use."
+            },
+            {
+              "name": "secret",
+              "description": "The secret for the credentials you want to use."
+            },
+            {
+              "name": "token",
+              "description": "The token for the credentials you want to use. You must enter this value when using short-term credentials."
+            },
+            {
+              "name": "from_ec2_role",
+              "description": "Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^]."
+            },
+            {
+              "name": "role",
+              "description": "The role ARN to assume."
+            },
+            {
+              "name": "role_external_id",
+              "description": "The external ID to use when assuming a role."
             }
           ]
         }
@@ -18,3 +83,4 @@
     }
   }]
 }
+

@@ -4,9 +4,6 @@
 :status: stable
 :categories: ["Utility"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
 
 
@@ -20,7 +17,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 buffer:
   memory:
     limit: 524288000
@@ -28,8 +25,8 @@ buffer:
       enabled: false
       count: 0
       byte_size: 0
-      period: ""
-      check: ""
+      period: "" # No default (optional)
+      check: "" # No default (optional)
 ```
 
 --
@@ -38,7 +35,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 buffer:
   memory:
     limit: 524288000
@@ -46,8 +43,8 @@ buffer:
       enabled: false
       count: 0
       byte_size: 0
-      period: ""
-      check: ""
+      period: "" # No default (optional)
+      check: "" # No default (optional)
       processors: [] # No default (optional)
 ```
 
@@ -74,6 +71,8 @@ It is possible to batch up messages sent from this buffer using a xref:configura
 {{#selectByJsonPath this "$.buffers[?(@.name=='memory')]"}}
 
 {{renderConnectFields this.config.children}}
+
+{{renderConnectExamples this.config.children}}
 
 {{/selectByJsonPath}}
 

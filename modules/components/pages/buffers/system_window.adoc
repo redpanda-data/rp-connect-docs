@@ -15,14 +15,14 @@ Introduced in version 3.53.0.
 endif::[]
 
 ```yml
-# Config fields, showing default values
+# Configuration fields, showing default values
 buffer:
   system_window:
     timestamp_mapping: root = now()
     size: 30s # No default (required)
-    slide: ""
-    offset: ""
-    allowed_lateness: ""
+    slide: "" # No default (optional)
+    offset: "" # No default (optional)
+    allowed_lateness: "" # No default (optional)
 ```
 
 A window is a grouping of messages that fit within a discrete measure of time following the system clock. Messages are allocated to a window either by the processing time (the time at which they're ingested) or by the event time, and this is controlled via the <<timestamp_mapping, `timestamp_mapping` field>>.
@@ -50,6 +50,19 @@ This buffer honours the transaction model within Redpanda Connect in order to en
 When this buffer is configured with a slide duration it is possible for messages to belong to multiple windows, and therefore be delivered multiple times. In this case the first time the message is delivered it will be acked (or nacked) and subsequent deliveries of the same message will be a "best attempt".
 
 During graceful termination if the current window is partially populated with messages they will be nacked such that they are re-consumed the next time the service starts.
+
+== Examples
+
+[data_template, redpanda-connect:ROOT:example$connect.json, redpanda-connect:ROOT:example$overrides.json]
+--
+
+{{#selectByJsonPath this "$.buffers[?(@.name=='system_window')]"}}
+
+{{renderConnectExamples this.config.children}}
+
+{{/selectByJsonPath}}
+
+--
 
 == Fields
 
