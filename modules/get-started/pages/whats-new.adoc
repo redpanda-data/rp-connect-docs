@@ -6,14 +6,44 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.54.0 to 4.54.1
+
+These releases introduce the xref:components:processors/qdrant.adoc[`qdrant` processor], which allows you to query items within a Qdrant collection and filter the returned results.
+
+=== Component updates
+
+These releases add:
+
+- The `topic_lag_refresh_period` field to the xref:components:inputs/kafka_franz.adoc[`kafka_franz`] and xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`] inputs.
+- The `cache_duration` field to the xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode` processor].
+- The `client_auth` field to the xref:components:inputs/socket_server.adoc[`socket_server` input].
+
+You can also now use Bloblang to generate a xref:guides:bloblang/methods.adoc#uuid_v5[name-based UUID (version 5)] for a given string.
+
 
 == Version 4.53.0
+
+This release introduces three new Google Drive processors:
+
+- xref:components:processors/google_drive_search.adoc[`google_drive_search` processor]: Searches Google Drive for files that match a specified query and emits the results as a batch of messages.
+- xref:components:processors/google_drive_download.adoc[`google_drive_download` processor]: Downloads files from Google Drive that contain matching file IDs.
+- xref:components:processors/google_drive_list_labels.adoc[`google_drive_list_labels` processor]: Lists labels for files on a Google Drive.
+
+The release also adds the xref:components:processors/cohere_rerank.adoc[`cohere_rerank` processor], which sends document strings to the Cohere API, and returns them ranked by their relevance to a specified query.
+
+=== Component updates
 
 This release adds:
 
 - The `transaction_isolation_level` field to the following inputs: xref:components:inputs/kafka_franz.adoc[`kafka_franz`], xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`].
 - The `request_timeout_overhead` and `conn_idle_timeout` fields to the following components: xref:components:inputs/kafka_franz.adoc[`kafka_franz` input], xref:components:inputs/redpanda.adoc[`redpanda` input], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input], xref:components:outputs/kafka_franz.adoc[`kafka_franz` output], xref:components:outputs/redpanda.adoc[`redpanda` output], xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output], xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` output], xref:components:redpanda/about.adoc[`redpanda` configuration service].
 - The `start_offset` field to the following components: xref:components:inputs/kafka_franz.adoc[`kafka_franz` input], xref:components:inputs/ockam_kafka.adoc[`ockam_kafka` input], xref:components:inputs/redpanda.adoc[`redpanda` input], xref:components:inputs/redpanda_common.adoc[`redpanda_common` input], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input].
+- The `topic_prefix` field to the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output], and the `offset_topic_prefix` field to the xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` output], to more easily identify migrated topics.
+- The `use_enum_numbers` field to the xref:components:processors/protobuf.adoc[`protobuf` processor].
+- The `dimensions` field to the xref:components:processors/cohere_embeddings.adoc[`cohere_embeddings` processor].
+- The `region`, `endpoint`, and `credentials` fields to the `dynamodb` section of the xref:components:inputs/aws_kinesis.adoc[`aws_kinesis` input].
+- A `tools` section to the xref:components:processors/cohere_chat.adoc[`cohere_chat` processor] to enhance response generation with agentic-like behavior.
+
 
 === Deprecations
 
