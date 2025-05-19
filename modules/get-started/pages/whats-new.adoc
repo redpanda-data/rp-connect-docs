@@ -23,11 +23,11 @@ You can also now use Bloblang to generate a xref:guides:bloblang/methods.adoc#uu
 
 == Version 4.53.0
 
-This release introduces three new Google components:
+This release introduces three new Google Drive processors:
 
 - xref:components:processors/google_drive_search.adoc[`google_drive_search` processor]: Searches Google Drive for files that match a specified query and emits the results as a batch of messages.
 - xref:components:processors/google_drive_download.adoc[`google_drive_download` processor]: Downloads files from Google Drive that contain matching file IDs.
-- xref:components:processors/google_drive_list_labels.adoc[`google_drive_list_labels` processors]: Lists labels for files on a Google Drive.
+- xref:components:processors/google_drive_list_labels.adoc[`google_drive_list_labels` processor]: Lists labels for files on a Google Drive.
 
 The release also adds the xref:components:processors/cohere_rerank.adoc[`cohere_rerank` processor], which sends document strings to the Cohere API, and returns them ranked by their relevance to a specified query.
 
