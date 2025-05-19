@@ -61,7 +61,7 @@ input:
     topics: [] # No default (required)
     regexp_topics: false
     rack_id: "" # No default (optional)
-    instance_id: "" No default (optional)
+    instance_id: "" # No default (optional)
     rebalance_timeout: 45s
     session_timeout: 1m
     heartbeat_interval: 3s
@@ -81,6 +81,7 @@ input:
       period: "" # No default (optional)
       check: "" # No default (optional)
       processors: [] # No default (optional)
+    topic_lag_refresh_period: 5s
     auto_replay_nacks: true
     
 ```
@@ -822,6 +823,14 @@ processors:
   - archive:
       format: json_array
 ```
+
+=== `topic_lag_refresh_period`
+
+The interval between refresh cycles. During each cycle, this input queries the Redpanda Connect server to calculate the topic lag - the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
+
+*Type*: `string`
+
+*Default*: `5s`
 
 === `auto_replay_nacks`
 

@@ -1,0 +1,57 @@
+= google_drive_list_labels
+// tag::single-source[]
+:type: processor
+:categories: ["AI"]
+
+component_type_dropdown::[]
+
+Lists https://developers.google.com/workspace/drive/api/guides/about-labels[labels] for files on a Google Drive.
+
+ifndef::env-cloud[]
+Introduced in version 4.53.0.
+endif::[]
+
+```yml
+# Configuration fields, showing default values
+label: ""
+google_drive_list_labels:
+  credentials_json: "" # No default (optional)
+```
+
+== Authentication
+
+By default, this processor uses https://cloud.google.com/docs/authentication/application-default-credentials[Google Application Default Credentials (ADC)^] to authenticate with Google APIs.
+
+To set up local ADC authentication, use the following `gcloud` commands:
+
+- Authenticate using Application Default Credentials and grant read-only access to your Google Drive.
++
+```bash
+gcloud auth application-default login --scopes='openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/drive.readonly'
+```
+- Assign a quota project to the Application Default Credentials when using a user account.
++
+```bash
+gcloud auth application-default set-quota-project <project-id>
+```
++
+Replace the `<project-id>` placeholder with your Google Cloud project ID
+
+To use a service account instead, create a JSON key for the account and add it to the <<credentials_json,`credentials_json`>> field. To access Google Drive files using a service account, either:
+
+- Explicitly share files with the service account's email account
+- Use https://support.google.com/a/answer/162106[domain-wide delegation^] to share all files within a Google Workspace
+
+== Fields
+
+=== `credentials_json`
+
+The JSON key for your service account (optional). If left empty, Application Default Credentials are used. For more details, see <<authentication, Authentication>>.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+// end::single-source[]
