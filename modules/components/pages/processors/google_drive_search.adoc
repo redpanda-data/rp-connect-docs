@@ -1,0 +1,125 @@
+= google_drive_search
+// tag::single-source[]
+:type: processor
+:categories: ["AI"]
+
+component_type_dropdown::[]
+
+Searches Google Drive for files that match a specified query and emits the results as a batch of messages. Each message contains the https://developers.google.com/workspace/drive/api/reference/rest/v3/files#File[metadata of a Google Drive file^].
+
+Try out the <<example,example pipeline on this page>>, which searches for and downloads all Google Drive files that match the specified query.
+
+ifndef::env-cloud[]
+Introduced in version 4.53.0.
+endif::[]
+
+```yml
+# Configuration fields, showing default values
+label: ""
+google_drive_search:
+  credentials_json: "" # No default (optional)
+  query: "" # No default (required)
+  projection:
+    - id
+    - name
+    - mimeType
+    - size
+    - labelInfo
+  include_label_ids: "" # No default (optional)
+  max_results: 64
+```
+
+== Authentication
+
+By default, this processor uses https://cloud.google.com/docs/authentication/application-default-credentials[Google Application Default Credentials (ADC)^] to authenticate with Google APIs.
+
+To set up local ADC authentication, use the following `gcloud` commands:
+
+- Authenticate using Application Default Credentials and grant read-only access to your Google Drive.
++
+```bash
+gcloud auth application-default login --scopes='openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/drive.readonly'
+```
+- Assign a quota project to the Application Default Credentials when using a user account.
++
+```bash
+gcloud auth application-default set-quota-project <project-id>
+```
++
+Replace the `<project-id>` placeholder with your Google Cloud project ID
+
+To use a service account instead, create a JSON key for the account and add it to the <<credentials_json,`credentials_json`>> field. To access Google Drive files using a service account, either:
+
+- Explicitly share files with the service account's email account
+- Use https://support.google.com/a/answer/162106[domain-wide delegation^] to share all files within a Google Workspace
+
+== Fields
+
+=== `credentials_json`
+
+The JSON key for your service account (optional). If left empty, Application Default Credentials are used. For more details, see <<authentication, Authentication>>.
+
+include::components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `query`
+
+Specify a search query to locate matching files in Google Drive. This field supports:
+
+- The same query syntax as the Google Drive UI
+- xref:configuration:interpolation.adoc#bloblang-queries[Bloblang interpolation functions] for dynamic query generation
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `projection`
+
+Partial fields to include in the Google Drive search result.
+
+*Type*: `array`
+
+*Default*: `["id", "name", "mimeType", "size", "labelInfo"]`
+
+=== `include_label_ids`
+
+A comma delimited list of label IDs to include in the Google Drive search result. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `max_results`
+
+The maximum number of search results to return.
+
+*Type*: `int`
+
+*Default*: `64`
+
+== Example
+
+This example searches Google Drive for files matching a query and downloads each file to a specified location. It uses the `google_drive_search` processor to perform the search and the xref:components:processors/google_drive_download.adoc[`google_drive_download` processor] to retrieve the files.
+
+```yaml
+input:
+  stdin: {}
+pipeline:
+  processors:
+    - google_drive_search:
+        query: "${!content().string()}"
+    - mutation: 'meta path = this.name'
+    - google_drive_download:
+        file_id: "${!this.id}"
+        mime_type: "${!this.mimeType}"
+output:
+  file:
+    path: "${!@path}"
+    codec: all-bytes
+```
+
+
+// end::single-source[]
