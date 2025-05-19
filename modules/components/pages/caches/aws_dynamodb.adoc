@@ -23,7 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
+# Common configuration fields, showing default values
 label: ""
 aws_dynamodb:
   table: "" # No default (required)
@@ -37,7 +37,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
+# All configuration fields, showing default values
 label: ""
 aws_dynamodb:
   table: "" # No default (required)
@@ -50,16 +50,16 @@ aws_dynamodb:
     initial_interval: 1s
     max_interval: 5s
     max_elapsed_time: 30s
-  region: ""
-  endpoint: ""
+  region: "" # No default (optional)
+  endpoint: "" # No default (optional)
   credentials:
-    profile: ""
-    id: ""
-    secret: ""
-    token: ""
+    profile: "" # No default (optional)
+    id: "" # No default (optional)
+    secret: "" # No default (optional)
+    token: "" # No default (optional)
     from_ec2_role: false
-    role: ""
-    role_external_id: ""
+    role: "" # No default (optional)
+    role_external_id: "" # No default (optional)
 ```
 
 --
@@ -72,206 +72,16 @@ Strong read consistency can be enabled using the `consistent_read` configuration
 
 == Fields
 
-=== `table`
+[data_template, redpanda-connect:ROOT:example$connect.json, redpanda-connect:ROOT:example$overrides.json]
+--
 
-The table to store items in.
+{{#selectByJsonPath this "$.caches[?(@.name=='aws_dynamodb')]"}}
 
+{{renderConnectFields this.config.children}}
 
-*Type*: `string`
+{{renderConnectExamples this.config.children}}
 
+{{/selectByJsonPath}}
 
-=== `hash_key`
-
-The key of the table column to store item keys within.
-
-
-*Type*: `string`
-
-
-=== `data_key`
-
-The key of the table column to store item values within.
-
-
-*Type*: `string`
-
-
-=== `consistent_read`
-
-Whether to use strongly consistent reads on Get commands.
-
-
-*Type*: `bool`
-
-*Default*: `false`
-
-=== `default_ttl`
-
-An optional default TTL to set for items, calculated from the moment the item is cached. A `ttl_key` must be specified in order to set item TTLs.
-
-
-*Type*: `string`
-
-
-=== `ttl_key`
-
-The column key to place the TTL value within.
-
-
-*Type*: `string`
-
-
-=== `retries`
-
-Determine time intervals and cut offs for retry attempts.
-
-
-*Type*: `object`
-
-
-=== `retries.initial_interval`
-
-The initial period to wait between retry attempts.
-
-
-*Type*: `string`
-
-*Default*: `"1s"`
-
-```yml
-# Examples
-
-initial_interval: 50ms
-
-initial_interval: 1s
-```
-
-=== `retries.max_interval`
-
-The maximum period to wait between retry attempts
-
-
-*Type*: `string`
-
-*Default*: `"5s"`
-
-```yml
-# Examples
-
-max_interval: 5s
-
-max_interval: 1m
-```
-
-=== `retries.max_elapsed_time`
-
-The maximum overall period of time to spend on retry attempts before the request is aborted.
-
-
-*Type*: `string`
-
-*Default*: `"30s"`
-
-```yml
-# Examples
-
-max_elapsed_time: 1m
-
-max_elapsed_time: 1h
-```
-
-=== `region`
-
-The AWS region to target.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `endpoint`
-
-Allows you to specify a custom endpoint for the AWS API.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `credentials`
-
-Optional manual configuration of AWS credentials to use. More information can be found in xref:guides:cloud/aws.adoc[].
-
-
-*Type*: `object`
-
-
-=== `credentials.profile`
-
-A profile from `~/.aws/credentials` to use.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `credentials.id`
-
-The ID of credentials to use.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `credentials.secret`
-
-The secret for the credentials being used.
-
-include::components:partial$secret_warning.adoc[]
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `credentials.token`
-
-The token for the credentials being used, required when using short term credentials.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `credentials.from_ec2_role`
-
-Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].
-
-
-*Type*: `bool`
-
-*Default*: `false`
-
-ifndef::env-cloud[]
-Requires version 4.2.0 or newer
-endif::[]
-
-=== `credentials.role`
-
-A role ARN to assume.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `credentials.role_external_id`
-
-An external ID to provide when assuming a role.
-
-
-*Type*: `string`
-
-*Default*: `""`
 
 // end::single-source[]
