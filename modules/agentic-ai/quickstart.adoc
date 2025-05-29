@@ -1,0 +1,158 @@
+= Agentic AI Quickstart with Redpanda Connect
+
+This quickstart shows how to build an agentic workflow using Redpanda Connect, the Python SDK, and an LLM-powered agent to monitor and reason about real-time financial transactions. It also demonstrates how to enrich each decision with relevant historical context.
+
+== Goal
+
+Create an agent that:
+
+* Monitors streaming transaction data
+* Retrieves the last 5 transactions for the user
+* Performs contextual fraud analysis using an LLM
+* Flags suspicious activity based on historical patterns and live signals
+* Takes action when fraud is detected
+
+Agentic AI is especially valuable in domains like fraud detection because it moves beyond rigid, rule-based systems and enables dynamic decision-making based on evolving context. Hardcoded thresholds like `amount > 800` miss nuanced patterns and are difficult to scale or adapt without manual intervention.
+
+Traditional rule engines work like checklists. They're fast and reliable for predictable inputs. But when ambiguity, subtlety, or edge cases arise, those systems either fail silently or generate excessive false positives.
+
+By using Redpanda to combine real-time streams with rich historical context, and an LLM to reason over it all, you empower your system to make intelligent decisions the same way a human analyst would, only faster, cheaper, and at scale.
+Empowering code to take control of the full workflow means agents need access to both real-time signals and past behavior.
+
+== Prerequisites
+
+* Redpanda Connect installed and running
+* Python 3.10+
+* https://docs.astral.sh/uv/getting-started/installation/[Install `uv`]
+* Access to a local or remote LLM (such as OpenRouter or a local GGUF model)
+* `redpanda-agent-sdk`, `openai`, or similar installed
+* Redpanda topic with historical transactions persisted
+* https://platform.openai.com/api-keys[OpenAI API key]
+
+```
+rpk connect agent init my_first_agent
+```
+
+export OPENAI_API_KEY=<api-key>
+
+
+== Step 1: Simulate Streaming Data with Redpanda Connect
+
+Use a `generate` input processor to create synthetic transaction data:
+
+```yaml
+pipelines:
+  transaction_generator:
+    input:
+      generate:
+        interval: 1s
+        mapping: |
+          root.transaction_id = uuid_v4()
+          root.amount = random_int(min: 1, max: 1000)
+          root.user_id = random_int(min: 1000, max: 5000)
+          root.location = random_choice(["NY", "CA", "TX", "FL"])
+          root.timestamp = now()
+    output:
+      redpanda:
+        topic: transactions
+```
+
+Deploy with:
+
+```bash
+rpk connect deploy -f pipeline.yaml
+```
+
+== Step 2: Define the Context-Enriched Agent
+This agent pulls the user's recent transactions from Redpanda and gives the LLM both real-time and historical context. It also streams alerts to Redpanda when fraud is detected.
+
+```python
+from redpanda_agent_sdk import Agent
+from redpanda_agent_sdk.connectors import RedpandaClient
+import openai
+import requests
+
+class ContextualFraudAgent(Agent):
+    def __init__(self):
+        super().__init__()
+        self.client = RedpandaClient()
+        self.system_prompt = """
+        You are a fraud analyst. Evaluate if a transaction is fraudulent based on user behavior.
+        You'll receive the current transaction and the user's recent 5 transactions.
+        Respond with 'fraud' or 'safe' and give a reason.
+        """
+
+    def analyze_transaction(self, transaction):
+        user_id = transaction["user_id"]
+        history = self.client.query_last_n("transactions", key="user_id", value=user_id, n=5)
+
+        prompt = {
+            "current": transaction,
+            "history": history
+        }
+
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": str(prompt)}
+            ]
+        )
+
+        verdict = response["choices"][0]["message"]["content"]
+        if "fraud" in verdict.lower():
+            self.flag_suspicious(transaction, verdict)
+
+    def flag_suspicious(self, transaction, reason):
+        print(f"⚠️ FRAUD DETECTED: {transaction['transaction_id']} | {reason.strip()}")
+
+        # Stream alert to a Redpanda topic
+        self.client.send("alerts", {
+            "type": "fraud_alert",
+            "transaction_id": transaction["transaction_id"],
+            "user_id": transaction["user_id"],
+            "reason": reason,
+            "timestamp": transaction["timestamp"]
+        })
+
+        # (Optional) Notify support system
+        # requests.post("https://your-internal-api/fraud/flag", json={
+        #     "user_id": transaction["user_id"],
+        #     "transaction_id": transaction["transaction_id"],
+        #     "reason": reason
+        # })
+```
+
+== Step 3: Run the Agent
+
+```python
+agent = ContextualFraudAgent()
+agent.connect_stream("transactions")
+agent.run()
+```
+
+== Step 4: Observe and Iterate
+You'll see contextual outputs like:
+
+```
+⚠️ FRAUD DETECTED: 8f3c... | fraud - unusual location and large amount, inconsistent with user's last 5 purchases
+```
+
+== Why This Matters
+
+Empowering code to take control of the full workflow means agents need access to both real-time signals and past behavior. It isn't enough to train a fraud model — at inference time, you must:
+
+* Pass the last few transactions
+* Include user-level attributes like credit score or spending habits
+* Provide operational context for the current event
+
+Redpanda gives agents durable, queryable context from the past and low-latency access to the now.
+
+== Next Steps
+
+* Add RAG-based enrichment using product or geo metadata
+* Replace OpenAI with a local model for private inference
+* Log flagged transactions for replay/audit with Redpanda
+* Notify support or trigger workflows via internal APIs when fraud is detected
+
+This setup showcases what true agentic AI looks like in practice: LLMs making decisions, not in isolation, but embedded in context-aware workflows backed by durable infrastructure.

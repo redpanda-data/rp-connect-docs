@@ -1,0 +1,114 @@
+= MCP Server for Redpanda Connect
+
+Redpanda Connect's MCP server is a lightweight tool designed for AI-native environments. It enables you to expose internal tools as AI-consumable HTTP endpoints—giving language models like Claude or ChatGPT structured access to business logic, APIs, and workflows.
+
+Modern AI agents can perform complex tasks, but they need actionable interfaces to interact with real systems. The MCP server provides a simple way to expose your internal tools as structured, typed HTTP endpoints that AI systems can understand and use.
+It allows you to:
+
+* Expose your internal tools as structured, typed HTTP endpoints
+* Embed metadata and documentation LLMs can parse and understand
+* Allow tools to be invoked via natural language with zero prompt engineering
+
+This means you can build *LLM-native* applications where the AI dynamically selects and invokes your tools based on user intent.
+
+== How it works
+
+Each tool is defined as a small, independent unit. Tools are described with metadata and parameters so that AI systems can:
+
+- Discover available capabilities
+- Understand tool inputs and outputs
+- Construct valid calls programmatically
+
+For example, an internal system that fetches customer data, sends alerts, or generates reports can be exposed as a tool with:
+
+- A unique `label`
+- A plain-English `description`
+- A structured list of input `properties`
+
+== Key Features
+
+[cols="1,3",options="header"]
+|===
+|Feature |Description
+
+|**AI-Optimized Tool Descriptions**
+|Each tool is self-documented in a format that LLMs can read. No extra API docs or plugins required.
+
+|**Minimal Surface Area**
+|Expose only the tools you want via `--tag`, reducing attack and confusion surface.
+
+|**Composability**
+|Each tool runs independently over HTTP. They can be composed by the AI into chains or workflows.
+
+|**Fast Iteration**
+|Define tools as YAML files, reload your server, and your AI agents can use the new logic instantly.
+|===
+
+== Example: Exposing a Search Tool
+
+[source,yaml]
+----
+label: search-bluesky-posts
+try:
+  - mutation: |
+      root.limit = root.limit.number(25)
+      root.limit = [ root.limit, 100 ].min()
+      root.limit = [ root.limit, 1 ].max()
+      meta query_string = "q=" + root.query.escape_url_query() + "&limit=%v".format(root.limit)
+      root = ""
+  - http:
+      url: "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?${! @query_string }"
+      verb: GET
+  - mapping: 'root = this.posts'
+  - unarchive:
+      format: json_array
+
+meta:
+  tags: [ bluesky, social ]
+  mcp:
+    enabled: true
+    description: Search public Bluesky posts based on a query string.
+  properties:
+    - name: query
+      type: string
+      required: true
+      description: A Lucene-style query string to search posts.
+    - name: limit
+      type: number
+      description: Number of posts to return (1–100). Defaults to 25.
+----
+
+== Starting the Server
+
+To launch the MCP server and expose your tools:
+
+[source,bash]
+----
+rpk connect mcp-server --address localhost:8080
+----
+
+To limit to tools with the `demo` tag:
+
+[source,bash]
+----
+rpk connect mcp-server --tag demo
+----
+
+== Best Practices for AI Tooling
+
+* Use **unique, descriptive labels** - avoid generic patterns like `*-search`
+* Write **clear, plain-language descriptions** that explain what the tool does
+* Define **structured inputs** so the AI can build correct requests
+
+== Designed for LLM Pre-seeding
+
+MCP tools are automatically described in a format suitable for LLMs to parse and use directly—no OpenAPI, Swagger, or external registries required. This makes it ideal for:
+
+- Claude CLI
+- Redpanda Copilot integrations
+- LangChain, AutoGPT, and other agentic frameworks
+
+== What's Next
+
+MCP currently supports stateless *tools*. Future releases will include *resources*—stateful components like sessions, conversations, or documents.
+
