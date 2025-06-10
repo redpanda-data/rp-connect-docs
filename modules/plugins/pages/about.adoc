@@ -1,8 +1,7 @@
 = Plugins
-:description: Create and load dynmaic plugins at runtime with gRPC.
+:description: Create and load dynamic plugins at runtime with gRPC.
 :page-categories: Development, Stream Processing
-:page-aliases: 
-:page-toclevels: 2
+:page-toclevels: 3
 
 Redpanda Connect's RPC plugin framework is a powerful Apache 2.0 licensed feature that takes data streaming flexibility to the next level. By enabling you to create and load plugins at runtime using any programming language that supports gRPC, this framework opens up a world of new integration possibilities beyond Go. Whether you need to leverage specialized libraries, integrate with AI/ML tools, or build custom components in your preferred language, Redpanda Connect plugins provide the extensibility and interoperability to make it happen.
 
@@ -84,7 +83,7 @@ This example demonstrates creating a simple FizzBuzz processor plugin in Python.
 mkdir fizzbuzz_plugin
 cd fizzbuzz_plugin
 
-# Initialize with uv (or use pip/conda)
+# Initialize with link:https://docs.astral.sh/uv/[uv] (or use pip/conda)
 uv init .
 uv add redpanda_connect
 ----
