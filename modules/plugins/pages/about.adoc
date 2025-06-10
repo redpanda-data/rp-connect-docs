@@ -17,7 +17,7 @@ This documentation focuses on dynamic plugins.
 
 == When to use dynamic plugins
 
-Dynamic plugins are ideal when you need to:
+Dynamic plugins are ideal when you need to extend Redpanda Connect's capabilities without the constraints of Go. Use cases include:
 
 * Use existing libraries not available in Go
 * Write plugins in languages other than Go (such as Python)
@@ -27,31 +27,29 @@ Dynamic plugins are ideal when you need to:
 
 == Architecture
 
-Dynamic plugins run as separate processes and communicate with the main Redpanda Connect process through gRPC over Unix sockets. This architecture provides:
+Dynamic plugins run as separate processes and communicate with the main Redpanda Connect process through gRPC over Unix sockets. This architecture provides the following benefits: 
 
-* Process isolation - plugin crashes don't affect the main engine
-* Language agnostic - support for any language with gRPC libraries
-* Modular design - each plugin maps to a single subprocess
-* Battle-tested communication - using proven gRPC technology
+* Process isolation: Plugin crashes don't affect the main engine.
+* Language agnostic: Support for any language with gRPC libraries.
+* Modular design: Each plugin maps to a single subprocess.
+* Battle-tested communication. Uses proven gRPC technology.
 
 The system includes three compiled plugin wrappers (one for each component type: `BatchInput`, `BatchProcessor`, and `BatchOutput`) that handle the communication with external plugin executables.
 
 == Supported languages
 
-Redpanda Connect currently provides official SDKs for:
+Redpanda Connect currently provides the following SDKs:
 
-* **Go** - Familiar environment for existing Redpanda Connect developers with type-safe interfaces
-* **Python** - Access to rich ecosystem including PyTorch, TensorFlow, Hugging Face Transformers, LangChain, Pandas, and NumPy
-
-Additional language support will be added in future releases.
+* **Go**: Familiar environment for existing Redpanda Connect developers with type-safe interfaces
+* **Python**: Access to rich ecosystem including PyTorch, TensorFlow, Hugging Face Transformers, LangChain, Pandas, and NumPy
 
 == Performance considerations
 
 Dynamic plugins introduce some serialization and IPC overhead compared to compiled plugins. To minimize performance impact:
 
-* The system uses batch components exclusively to amortize cross-process communication costs
-* Each plugin runs in a separate process with predictable resource usage
-* For maximum performance in critical workloads, use compiled plugins instead
+* The system uses batch components exclusively to amortize cross-process communication costs.
+* Each plugin runs in a separate process with predictable resource usage.
+* For maximum performance in critical workloads, use compiled plugins instead.
 
 == Prerequisites
 
@@ -61,9 +59,9 @@ Before creating dynamic plugins, ensure you have:
 * Python environment (for Python plugins)
 * Required language SDKs installed
 
-=== Installing Redpanda Connect
+=== Install Redpanda Connect
 
-Verify your version and upgrade if necessary:
+Verify your version, and upgrade if necessary:
 
 [source,shell]
 ----
@@ -71,7 +69,7 @@ rpk --version
 rpk connect upgrade
 ----
 
-== Creating your first plugin
+== Create your first plugin
 
 This example demonstrates creating a simple FizzBuzz processor plugin in Python.
 
@@ -83,7 +81,7 @@ This example demonstrates creating a simple FizzBuzz processor plugin in Python.
 mkdir fizzbuzz_plugin
 cd fizzbuzz_plugin
 
-# Initialize with link:https://docs.astral.sh/uv/[uv] (or use pip/conda)
+# Initialize with link:https://docs.astral.sh/uv/[uv] (or use pip/conda) 
 uv init .
 uv add redpanda_connect
 ----
@@ -211,12 +209,12 @@ The Python SDK provides access to message properties:
 
 == Next steps
 
-* Explore the https://github.com/redpanda-data/connect/tree/main/public/plugin/python/examples[example plugins] in the Redpanda Connect repository
-* Join the https://redpanda.com/slack[Redpanda Community Slack] to discuss plugin development
-* Review the https://github.com/redpanda-data/connect[Redpanda Connect source code] for advanced use cases
+* Explore the https://github.com/redpanda-data/connect/tree/main/public/plugin/python/examples[example plugins^] in the Redpanda Connect repository
+* Join the https://redpanda.com/slack[Redpanda Community Slack^] to discuss plugin development
+* Review the https://github.com/redpanda-data/connect[Redpanda Connect source code^] for advanced use cases
 
 == Related topics
 
 * xref:components:about.adoc[Components overview]
-* xref:configuration:configuration.adoc[Configuration]
+* xref:configuration:about.adoc[Configuration overview]
 * xref:guides:getting_started.adoc[Getting started with Redpanda Connect]
