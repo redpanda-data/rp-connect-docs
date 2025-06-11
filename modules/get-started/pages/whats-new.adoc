@@ -6,6 +6,10 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.56.0
+
+This release introduces a dynamic xref:plugins:about.adoc[plugins] framework. It enables you to create and load custom plugins at runtime using any programming language that supports gRPC, with initial SDKs for Go and Python.
+
 == Version 4.54.0 to 4.54.1
 
 These releases introduce the xref:components:processors/qdrant.adoc[`qdrant` processor], which allows you to query items within a Qdrant collection and filter the returned results.
