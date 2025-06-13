@@ -1,0 +1,63 @@
+name: Update RPCN Connector Docs
+
+on:
+  workflow_dispatch:
+  repository_dispatch:  # Allows other repositories to trigger this workflow
+    types: [generate-rpcn-docs]
+
+jobs:
+  generate-and-pr:
+    runs-on: ubuntu-latest
+
+    # cancel any previous runs for this workflow
+    concurrency:
+      group: update-rpcn-connector-docs
+      cancel-in-progress: true
+
+    env:
+      NODE_VERSION: '16'
+      DOCS_OVERRIDES: docs-data/overrides.json
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+
+      - name: Set up Node.js (with npm cache)
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate RPCN Connector docs
+        id: generate
+        run: |
+          npx doc-tools generate rpcn-connector-docs \
+            --fetch-connectors \
+            --overrides $DOCS_OVERRIDES \
+            --draft-missing > full_output.txt
+
+          # Extract the “Δ Report” section
+          awk '/📋 RPCN Connector Delta Report/' full_output.txt \
+            | sed '$d' > delta_report.md
+
+          # expose it for the PR body
+          echo "delta_report<<EOF" >> $GITHUB_OUTPUT
+          cat delta_report.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+          base: main
+          branch: auto-docs/update-rpcn-connector-docs
+          title: 'auto-docs: Update RPCN connector docs'
+          commit-message: 'docs: Update RPCN connector docs'
+          body: ${{ steps.generate.outputs.delta_report }}
+          labels: auto-docs
+          allow-empty: false
