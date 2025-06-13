@@ -1,445 +1,523 @@
 name: redpanda-connect
 title: Connect
-version: ~
+version: null
 start_page: home:index.adoc
 nav:
-- modules/ROOT/nav.adoc
+  - modules/ROOT/nav.adoc
 asciidoc:
   attributes:
     page-header-data:
       order: 3
       color: '#54478C'
     project-github: redpanda-data/connect
-    # Fallback for the latest version of Redpanda
-    # This is replaced by the version fetcher extension
-    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#version-fetcher
     full-version: 24.1.4
-    latest-release-commit: 'b5ade3f40'
-    # Fallback version for the latest version of Redpanda Connect
-    # This is replaced by the version fetcher extension
-    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#version-fetcher
-    latest-connect-version: 4.30.1
-    # Data for the home page
-    page-home-intro: Redpanda Connect is a data streaming service for building scalable, high-performance data pipelines that drive real-time analytics and actionable business insights. Integrate data across systems with hundreds of prebuilt connectors, change data capture (CDC) capabilities, and YAML-configurable pipelines.
-    page-home-image: connect.svg # images must be in modules/ROOT/images
+    latest-release-commit: b5ade3f40
+    latest-connect-version: 4.57.1
+    page-home-intro: >-
+      Redpanda Connect is a data streaming service for building scalable, high-performance data pipelines that drive
+      real-time analytics and actionable business insights. Integrate data across systems with hundreds of prebuilt
+      connectors, change data capture (CDC) capabilities, and YAML-configurable pipelines.
+    page-home-image: connect.svg
     page-home-intro-learn-more: get-started:about.adoc
     page-home-primary-row-title: Deploy
     page-home-primary-row:
-      - title: 'Cloud'
-        description: 'Start using Redpanda Connect in Redpanda Cloud.'
-        url: 'redpanda-cloud:develop:connect/connect-quickstart.adoc'
-        link-text: 'Get started'
-      - title: 'Self Managed'
-        description: 'Deploy Redpanda Connect on your own hardware using a CLI.'
-        url: 'get-started:quickstarts/rpk.adoc'
-        link-text: 'Get started'
-      - title: 'Kubernetes'
-        description: 'Deploy Redpanda Connect on Kubernetes using the official Helm chart.'
-        url: 'get-started:quickstarts/helm-chart.adoc'
-        link-text: 'Get started'
+      - title: Cloud
+        description: Start using Redpanda Connect in Redpanda Cloud.
+        url: redpanda-cloud:develop:connect/connect-quickstart.adoc
+        link-text: Get started
+      - title: Self Managed
+        description: Deploy Redpanda Connect on your own hardware using a CLI.
+        url: get-started:quickstarts/rpk.adoc
+        link-text: Get started
+      - title: Kubernetes
+        description: Deploy Redpanda Connect on Kubernetes using the official Helm chart.
+        url: get-started:quickstarts/helm-chart.adoc
+        link-text: Get started
     page-home-secondary-row-title: Popular topics
     page-home-secondary-row:
-      - title: "What's new"
-        description: 'Explore new features in the latest releases.'
-        url: 'get-started:whats-new.adoc'
-        link-text: 'Learn more'
-      - title: 'Bloblang playground'
-        description: 'Experiment with Bloblang in the browser.'
-        url: 'guides:bloblang/playground.adoc'
-        link-text: 'Learn more'
-      - title: 'Connector catalog'
-        description: 'Explore all available connectors.'
-        url: 'components:catalog.adoc'
-        link-text: 'Learn more'
-      - title: 'Cookbooks'
-        description: 'Explore tutorials and real-world use cases for Redpanda Connect.'
-        url: 'cookbooks:index.adoc'
-        link-text: 'Learn more'
-    # Used to display common names for connectors in macro-generated content.
-    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#components_by_category
+      - title: What's new
+        description: Explore new features in the latest releases.
+        url: get-started:whats-new.adoc
+        link-text: Learn more
+      - title: Bloblang playground
+        description: Experiment with Bloblang in the browser.
+        url: guides:bloblang/playground.adoc
+        link-text: Learn more
+      - title: Connector catalog
+        description: Explore all available connectors.
+        url: components:catalog.adoc
+        link-text: Learn more
+      - title: Cookbooks
+        description: Explore tutorials and real-world use cases for Redpanda Connect.
+        url: cookbooks:index.adoc
+        link-text: Learn more
     components:
       - key: aws_kinesis_data_streams
-        name: "AWS Kinesis Data Streams"
+        name: AWS Kinesis Data Streams
       - key: aws_kinesis_firehose
-        name: "AWS Kinesis Firehose"
+        name: AWS Kinesis Firehose
       - key: aws_kinesis
-        name: "AWS Kinesis"
+        name: AWS Kinesis
       - key: aws_sqs
-        name: "AWS SQS"
+        name: AWS SQS
       - key: aws_sns
-        name: "AWS SNS"
+        name: AWS SNS
       - key: azure_cosmosdb
-        name: "Azure Cosmos DB"
+        name: Azure Cosmos DB
       - key: azure_table_storage
-        name: "Azure Table Storage"
+        name: Azure Table Storage
       - key: gcp_bigquery
-        name: "GCP BigQuery"
+        name: GCP BigQuery
       - key: oracle
-        name: "Oracle"
+        name: Oracle
       - key: snowflake_put
-        name: "Snowflake"
+        name: Snowflake
       - key: aws_dynamodb
-        name: "AWS DynamoDB"
+        name: AWS DynamoDB
       - key: azure_blob_storage
-        name: "Azure Blob Storage"
+        name: Azure Blob Storage
       - key: aws_s3
-        name: "AWS S3"
+        name: AWS S3
       - key: cassandra
-        name: "Cassandra"
+        name: Cassandra
       - key: gcp_cloud_storage
-        name: "GCP Cloud Storage"
+        name: GCP Cloud Storage
       - key: amqp
-        name: "AMQP"
+        name: AMQP
       - key: avro
-        name: "Avro"
+        name: Avro
       - key: awk
-        name: "AWK"
+        name: AWK
       - key: aws_lambda
-        name: "AWS Lambda"
+        name: AWS Lambda
       - key: azure_queue_storage
-        name: "Azure Queue Storage"
+        name: Azure Queue Storage
       - key: clickhouse
-        name: "ClickHouse"
+        name: ClickHouse
       - key: cockroachdb_changefeed
-        name: "CockroachDB"
+        name: CockroachDB
       - key: couchbase
-        name: "Couchbase"
+        name: Couchbase
       - key: csv
-        name: "CSV"
+        name: CSV
       - key: discord
-        name: "Discord"
+        name: Discord
       - key: elasticsearch
-        name: "Elasticsearch"
+        name: Elasticsearch
       - key: kafka_franz
-        name: "Franz-go"
+        name: Franz-go
       - key: gcp_pubsub
-        name: "GCP Pub/Sub"
+        name: GCP Pub/Sub
       - key: grok
-        name: "Grok"
+        name: Grok
       - key: hdfs
-        name: "HDFS"
+        name: HDFS
       - key: http
-        name: "HTTP"
+        name: HTTP
       - key: javascript
-        name: "JavaScript"
+        name: JavaScript
       - key: jmespath
-        name: "JMESPath"
+        name: JMESPath
       - key: json_schema
-        name: "JSON Schema"
+        name: JSON Schema
       - key: kafka
-        name: "Kafka"
+        name: Kafka
       - key: memcached
-        name: "Memcached"
+        name: Memcached
       - key: msgpack
-        name: "MessagePack"
+        name: MessagePack
       - key: mongodb
-        name: "MongoDB"
+        name: MongoDB
       - key: mqtt
-        name: "MQTT"
+        name: MQTT
       - key: mysql
-        name: "MySQL"
+        name: MySQL
       - key: nats
-        name: "NATS"
+        name: NATS
       - key: nsq
-        name: "NSQ"
+        name: NSQ
       - key: opensearch
-        name: "OpenSearch"
+        name: OpenSearch
       - key: parquet
-        name: "Parquet"
+        name: Parquet
       - key: postgresql
-        name: "PostgreSQL"
+        name: PostgreSQL
       - key: protobuf
-        name: "Protobuf"
+        name: Protobuf
       - key: pulsar
-        name: "Pulsar"
+        name: Pulsar
       - key: redis
-        name: "Redis"
+        name: Redis
       - key: ristretto
-        name: "Ristretto"
+        name: Ristretto
       - key: schema_registry
-        name: "Schema Registry"
+        name: Schema Registry
       - key: sentry
-        name: "Sentry"
+        name: Sentry
       - key: splunk_hec
-        name: "Splunk"
+        name: Splunk
       - key: snowflake_put
-        name: "Snowflake"
+        name: Snowflake
       - key: socket
-        name: "Socket"
+        name: Socket
       - key: sql
-        name: "SQL"
+        name: SQL
       - key: sqlite
-        name: "SQLite"
+        name: SQLite
       - key: trino
-        name: "Trino"
+        name: Trino
       - key: wasm
-        name: "WebAssembly"
+        name: WebAssembly
       - key: websocket
-        name: "WebSocket"
+        name: WebSocket
       - key: twitter_search
-        name: "X/Twitter"
+        name: X/Twitter
       - key: xml
-        name: "XML"
-    # Used to display common names for drivers in macro-generated content.
-    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#components_by_category
+        name: XML
     drivers:
-      - key: "gocosmos"
-        name: "Azure Cosmos DB"
-      - key: "clickhouse"
-        name: "ClickHouse"
-      - key: "oracle"
-        name: "Oracle"
-      - key: "mssql"
-        name: "Microsoft SQL Server"
-      - key: "mysql"
-        name: "MYSQL"
-      - key: "snowflake"
-        name: "Snowflake"
-      - key: "postgresql"
-        name: "PostgreSQL"
-      - key: "postgres"
-        name: "PostgreSQL"
-      - key: "sqlite"
-        name: "SQLite"
-      - key: "trino"
-        name: "Trino"
-    # Used to display common names for caches in macro-generated content.
-    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#components_by_category
+      - key: gocosmos
+        name: Azure Cosmos DB
+      - key: clickhouse
+        name: ClickHouse
+      - key: oracle
+        name: Oracle
+      - key: mssql
+        name: Microsoft SQL Server
+      - key: mysql
+        name: MYSQL
+      - key: snowflake
+        name: Snowflake
+      - key: postgresql
+        name: PostgreSQL
+      - key: postgres
+        name: PostgreSQL
+      - key: sqlite
+        name: SQLite
+      - key: trino
+        name: Trino
     caches:
-      - key: "aws_dynamodb"
-        name: "AWS DynamoDB"
-      - key: "memcached"
-        name: "Memcached"
-      - key: "redis"
-        name: "Redis"
-      - key: "aws_s3"
-        name: "AWS S3"
-      - key: "memory"
-        name: "Memory"
-      - key: "ristretto"
-        name: "Ristretto"
-      - key: "couchbase"
-        name: "Couchbase"
-      - key: "mongodb"
-        name: "MongoDB"
-      - key: "sql"
-        name: "SQL"
-      - key: "file"
-        name: "File"
-      - key: "multilevel"
-        name: "Multilevel"
-      - key: "ttlru"
-        name: "TTL LRU"
-      - key: "gcp_cloud_storage"
-        name: "GCP Cloud Storage"
-      - key: "nats_kv"
-        name: "NATS KV"
-      - key: "lru"
-        name: "LRU"
-      - key: "noop"
-        name: "Noop"
-    # Defines the connectors that are marked 'enterprise'.
+      - key: aws_dynamodb
+        name: AWS DynamoDB
+      - key: memcached
+        name: Memcached
+      - key: redis
+        name: Redis
+      - key: aws_s3
+        name: AWS S3
+      - key: memory
+        name: Memory
+      - key: ristretto
+        name: Ristretto
+      - key: couchbase
+        name: Couchbase
+      - key: mongodb
+        name: MongoDB
+      - key: sql
+        name: SQL
+      - key: file
+        name: File
+      - key: multilevel
+        name: Multilevel
+      - key: ttlru
+        name: TTL LRU
+      - key: gcp_cloud_storage
+        name: GCP Cloud Storage
+      - key: nats_kv
+        name: NATS KV
+      - key: lru
+        name: LRU
+      - key: noop
+        name: Noop
     enterprise-components:
-      - "splunk_hec"
-      - "snowflake_put"
-      - "openai_chat_completion"
-      - "openai_embeddings"
-      - "openai_image_generation"
-      - "openai_speech"
-      - "openai_transcription"
-      - "openai_translation"
-      - "ollama_chat"
-      - "ollama_embeddings"
-      - "aws_bedrock_chat"
-      - "gcp_vertex_ai_chat"
-      - "kafka_migrator"
-      - "kafka_migrator_bundle"
-      - "kafka_migrator_offsets"
-    # Defines the connectors that are marked 'certified'.
-    # This list is a temporary solution until each connector's source code includes the correct support level information. https://github.com/redpanda-data/benthos/pull/21/commits/aba447436e44faf7d4279d3394d82084ea0ed1e1#diff-26839711b0903fcf81e360ea17690bd67eb5e924cbabb62ffe85202c98c2a0a6
+      - splunk_hec
+      - snowflake_put
+      - openai_chat_completion
+      - openai_embeddings
+      - openai_image_generation
+      - openai_speech
+      - openai_transcription
+      - openai_translation
+      - ollama_chat
+      - ollama_embeddings
+      - aws_bedrock_chat
+      - gcp_vertex_ai_chat
+      - kafka_migrator
+      - kafka_migrator_bundle
+      - kafka_migrator_offsets
     certified-components:
-      - name: "amqp_0_9"
-        types: ["input", "output"]
-      - name: "archive"
-        types: ["processor"]
-      - name: "aws_dynamodb_partiql"
-        types: ["processor"]
-      - name: "aws_kinesis"
-        types: ["input", "output"]
-      - name: "aws_kinesis_firehose"
-        types: ["output"]
-      - name: "aws_lambda"
-        types: ["processor"]
-      - name: "aws_s3"
-        types: ["input", "output"]
-      - name: "aws_sqs"
-        types: ["input", "output"]
-      - name: "bloblang"
-        types: ["processor"]
-      - name: "bounds_check"
-        types: ["processor"]
-      - name: "cache"
-        types: ["processor"]
-      - name: "cached"
-        types: ["processor"]
-      - name: "command"
-        types: ["processor"]
-      - name: "compress"
-        types: ["processor"]
-      - name: "csv"
-        types: ["input"]
-      - name: "decompress"
-        types: ["processor"]
-      - name: "dedupe"
-        types: ["processor"]
-      - name: "file"
-        types: ["input","output"]
-      - name: "generate"
-        types: ["input"]
-      - name: "group_by"
-        types: ["processor"]
-      - name: "group_by_value"
-        types: ["processor"]
-      - name: "http"
-        types: ["processor"]
-      - name: "http_client"
-        types: ["input", "output"]
-      - name: "http_server"
-        types: ["input", "output"]
-      - name: "javascript"
-        types: ["processor"]
-      - name: "jmespath"
-        types: ["processor"]
-      - name: "jq"
-        types: ["processor"]
-      - name: "json_schema"
-        types: ["processor"]
-      - name: "kafka"
-        types: ["input", "output"]
-      - name: "kafka_franz"
-        types: ["input", "output"]
-      - name: "kafka_bundle"
-        types: ["input", "output"]  
-      - name: "kafka_migrator"
-        types: ["input", "output"]
-      - name: "kafka_migrator_offsets"
-        types: ["output"]
-      - name: "log"
-        types: ["processor"]
-      - name: "mapping"
-        types: ["processor"]
-      - name: "metric"
-        types: ["processor"]
-      - name: "mutation"
-        types: ["processor"]
-      - name: "nats"
-        types: ["input", "output"]
-      - name: "nats_jetstream"
-        types: ["input", "output"]
-      - name: "nats_kv"
-        types: ["input", "output", "processor"]
-      - name: "nats_request_reply"
-        types: ["processor"]
-      - name: "opensearch"
-        types: ["output"]
-      - name: "parquet_decode"
-        types: ["processor"]
-      - name: "parquet_encode"
-        types: ["processor"]
-      - name: "protobuf"
-        types: ["processor"]
-      - name: "rate_limit"
-        types: ["processor"]
-      - name: "redis"
-        types: ["processor"]
-      - name: "redis_hash"
-        types: ["output"]
-      - name: "redis_list"
-        types: ["input", "output"]
-      - name: "redis_pubsub"
-        types: ["input", "output"]
-      - name: "redis_script"
-        types: ["processor"]
-      - name: "redis_streams"
-        types: ["input", "output"]
-      - name: "schema_registry"
-        types: ["input", "output"]  
-      - name: "schema_registry_decode"
-        types: ["processor"]
-      - name: "schema_registry_encode"
-        types: ["processor"]
-      - name: "select_parts"
-        types: ["processor"]
-      - name: "sftp"
-        types: ["output"]
-      - name: "sleep"
-        types: ["processor"]
-      - name: "socket"
-        types: ["input", "output"]
-      - name: "socket_server"
-        types: ["input", "output"]
-      - name: "sql_insert"
-        types: ["output", "processor"]
-      - name: "sql_raw"
-        types: ["input", "output", "processor"]
-      - name: "sql_select"
-        types: ["input", "output", "processor"]
-      - name: "unarchive"
-        types: ["processor"]
-      - name: "websocket"
-        types: ["input", "output"]
-      - name: "workflow"
-        types: ["processor"]
-    # Used to group components into categories in the component macros
-    # https://github.com/redpanda-data/docs-extensions-and-macros/blob/main/README.adoc#components_by_category
+      - name: amqp_0_9
+        types:
+          - input
+          - output
+      - name: archive
+        types:
+          - processor
+      - name: aws_dynamodb_partiql
+        types:
+          - processor
+      - name: aws_kinesis
+        types:
+          - input
+          - output
+      - name: aws_kinesis_firehose
+        types:
+          - output
+      - name: aws_lambda
+        types:
+          - processor
+      - name: aws_s3
+        types:
+          - input
+          - output
+      - name: aws_sqs
+        types:
+          - input
+          - output
+      - name: bloblang
+        types:
+          - processor
+      - name: bounds_check
+        types:
+          - processor
+      - name: cache
+        types:
+          - processor
+      - name: cached
+        types:
+          - processor
+      - name: command
+        types:
+          - processor
+      - name: compress
+        types:
+          - processor
+      - name: csv
+        types:
+          - input
+      - name: decompress
+        types:
+          - processor
+      - name: dedupe
+        types:
+          - processor
+      - name: file
+        types:
+          - input
+          - output
+      - name: generate
+        types:
+          - input
+      - name: group_by
+        types:
+          - processor
+      - name: group_by_value
+        types:
+          - processor
+      - name: http
+        types:
+          - processor
+      - name: http_client
+        types:
+          - input
+          - output
+      - name: http_server
+        types:
+          - input
+          - output
+      - name: javascript
+        types:
+          - processor
+      - name: jmespath
+        types:
+          - processor
+      - name: jq
+        types:
+          - processor
+      - name: json_schema
+        types:
+          - processor
+      - name: kafka
+        types:
+          - input
+          - output
+      - name: kafka_franz
+        types:
+          - input
+          - output
+      - name: kafka_bundle
+        types:
+          - input
+          - output
+      - name: kafka_migrator
+        types:
+          - input
+          - output
+      - name: kafka_migrator_offsets
+        types:
+          - output
+      - name: log
+        types:
+          - processor
+      - name: mapping
+        types:
+          - processor
+      - name: metric
+        types:
+          - processor
+      - name: mutation
+        types:
+          - processor
+      - name: nats
+        types:
+          - input
+          - output
+      - name: nats_jetstream
+        types:
+          - input
+          - output
+      - name: nats_kv
+        types:
+          - input
+          - output
+          - processor
+      - name: nats_request_reply
+        types:
+          - processor
+      - name: opensearch
+        types:
+          - output
+      - name: parquet_decode
+        types:
+          - processor
+      - name: parquet_encode
+        types:
+          - processor
+      - name: protobuf
+        types:
+          - processor
+      - name: rate_limit
+        types:
+          - processor
+      - name: redis
+        types:
+          - processor
+      - name: redis_hash
+        types:
+          - output
+      - name: redis_list
+        types:
+          - input
+          - output
+      - name: redis_pubsub
+        types:
+          - input
+          - output
+      - name: redis_script
+        types:
+          - processor
+      - name: redis_streams
+        types:
+          - input
+          - output
+      - name: schema_registry
+        types:
+          - input
+          - output
+      - name: schema_registry_decode
+        types:
+          - processor
+      - name: schema_registry_encode
+        types:
+          - processor
+      - name: select_parts
+        types:
+          - processor
+      - name: sftp
+        types:
+          - output
+      - name: sleep
+        types:
+          - processor
+      - name: socket
+        types:
+          - input
+          - output
+      - name: socket_server
+        types:
+          - input
+          - output
+      - name: sql_insert
+        types:
+          - output
+          - processor
+      - name: sql_raw
+        types:
+          - input
+          - output
+          - processor
+      - name: sql_select
+        types:
+          - input
+          - output
+          - processor
+      - name: unarchive
+        types:
+          - processor
+      - name: websocket
+        types:
+          - input
+          - output
+      - name: workflow
+        types:
+          - processor
     categories:
       input:
-        - name: "Services"
-          description: "Inputs that consume from storage or message streaming services."
-        - name: "Network"
-          description: "Inputs that consume directly from low level network protocols."
-        - name: "AWS"
-          description: "Inputs that consume from Amazon Web Services products."
-        - name: "GCP"
-          description: "Inputs that consume from Google Cloud Platform services."
-        - name: "Azure"
-          description: "Inputs that consume from Microsoft Azure services."
-        - name: "Social"
-          description: "Inputs that consume from social applications and services."
-        - name: "Local"
-          description: "Inputs that consume from the local machine/filesystem."
-        - name: "Utility"
-          description: "Inputs that provide utility by generating data or combining/wrapping other inputs."
+        - name: Services
+          description: Inputs that consume from storage or message streaming services.
+        - name: Network
+          description: Inputs that consume directly from low level network protocols.
+        - name: AWS
+          description: Inputs that consume from Amazon Web Services products.
+        - name: GCP
+          description: Inputs that consume from Google Cloud Platform services.
+        - name: Azure
+          description: Inputs that consume from Microsoft Azure services.
+        - name: Social
+          description: Inputs that consume from social applications and services.
+        - name: Local
+          description: Inputs that consume from the local machine/filesystem.
+        - name: Utility
+          description: Inputs that provide utility by generating data or combining/wrapping other inputs.
       buffer:
-        - name: "Windowing"
-          description: "Buffers that provide message windowing capabilities."
-        - name: "Utility"
-          description: "Buffers that are intended for niche but general use."
+        - name: Windowing
+          description: Buffers that provide message windowing capabilities.
+        - name: Utility
+          description: Buffers that are intended for niche but general use.
       processor:
-        - name: "Mapping"
-          description: "Processors that specialize in restructuring messages."
-        - name: "Integration"
-          description: "Processors that interact with external services."
-        - name: "Parsing"
-          description: "Processors that specialize in translating messages from one format to another."
-        - name: "Composition"
-          description: "Higher level processors that compose other processors and modify their behavior."
-        - name: "Utility"
-          description: "Processors that provide general utility or do not fit in another category."
+        - name: Mapping
+          description: Processors that specialize in restructuring messages.
+        - name: Integration
+          description: Processors that interact with external services.
+        - name: Parsing
+          description: Processors that specialize in translating messages from one format to another.
+        - name: Composition
+          description: Higher level processors that compose other processors and modify their behavior.
+        - name: Utility
+          description: Processors that provide general utility or do not fit in another category.
       output:
-        - name: "Services"
-          description: "Outputs that write to storage or message streaming services."
-        - name: "Network"
-          description: "Outputs that write directly to low level network protocols."
-        - name: "AWS"
-          description: "Outputs that write to Amazon Web Services products."
-        - name: "GCP"
-          description: "Outputs that write to Google Cloud Platform services."
-        - name: "Azure"
-          description: "Outputs that write to Microsoft Azure services."
-        - name: "Social"
-          description: "Outputs that write to social applications and services."
-        - name: "Local"
-          description: "Outputs that write to the local machine/filesystem."
-        - name: "Utility"
-          description: "Outputs that provide utility by combining/wrapping other outputs."
+        - name: Services
+          description: Outputs that write to storage or message streaming services.
+        - name: Network
+          description: Outputs that write directly to low level network protocols.
+        - name: AWS
+          description: Outputs that write to Amazon Web Services products.
+        - name: GCP
+          description: Outputs that write to Google Cloud Platform services.
+        - name: Azure
+          description: Outputs that write to Microsoft Azure services.
+        - name: Social
+          description: Outputs that write to social applications and services.
+        - name: Local
+          description: Outputs that write to the local machine/filesystem.
+        - name: Utility
+          description: Outputs that provide utility by combining/wrapping other outputs.
