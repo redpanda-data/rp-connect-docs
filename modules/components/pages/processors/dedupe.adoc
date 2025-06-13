@@ -35,66 +35,8 @@ Performing deduplication on a stream using a distributed cache voids any at-leas
 
 This problem can be mitigated by using an in-memory cache and distributing messages to horizontally scaled Redpanda Connect pipelines partitioned by the deduplication key. However, in situations where at-least-once delivery guarantees are important it is worth avoiding deduplication in favour of implement idempotent behavior at the edge of your stream pipelines.
 
-== Fields
+include::redpanda-connect:components:partial$fields/processors/dedupe.adoc[]
 
-=== `cache`
-
-The xref:components:caches/about.adoc[`cache` resource] to target with this processor.
-
-
-*Type*: `string`
-
-
-=== `key`
-
-An interpolated string yielding the key to deduplicate by for each message.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-key: ${! meta("kafka_key") }
-
-key: ${! content().hash("xxhash64") }
-```
-
-=== `drop_on_err`
-
-Whether messages should be dropped when the cache returns a general error such as a network issue.
-
-
-*Type*: `bool`
-
-*Default*: `true`
-
-== Examples
-
-[tabs]
-======
-Deduplicate based on Kafka key::
-+
---
-
-The following configuration demonstrates a pipeline that deduplicates messages based on the Kafka key.
-
-```yaml
-pipeline:
-  processors:
-    - dedupe:
-        cache: keycache
-        key: ${! meta("kafka_key") }
-
-cache_resources:
-  - label: keycache
-    memory:
-      default_ttl: 60s
-```
-
---
-======
+include::redpanda-connect:components:partial$examples/processors/dedupe.adoc[]
 
 // end::single-source[]

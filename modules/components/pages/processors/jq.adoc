@@ -63,72 +63,8 @@ The full query syntax is described in https://stedolan.github.io/jq/manual/[jq's
 
 Queries can fail, in which case the message remains unchanged, errors are logged, and the message is flagged as having failed, allowing you to use xref:configuration:error_handling.adoc[standard processor error handling patterns].
 
-== Fields
+include::redpanda-connect:components:partial$fields/processors/jq.adoc[]
 
-=== `query`
-
-The jq query to filter and transform messages with.
-
-
-*Type*: `string`
-
-
-=== `raw`
-
-Whether to process the input as a raw string instead of as JSON.
-
-
-*Type*: `bool`
-
-*Default*: `false`
-
-=== `output_raw`
-
-Whether to output raw text (unquoted) instead of JSON strings when the emitted values are string types.
-
-
-*Type*: `bool`
-
-*Default*: `false`
-
-== Examples
-
-[tabs]
-======
-Mapping::
-+
---
-
-
-When receiving JSON documents of the form:
-
-```json
-{
-  "locations": [
-    {"name": "Seattle", "state": "WA"},
-    {"name": "New York", "state": "NY"},
-    {"name": "Bellevue", "state": "WA"},
-    {"name": "Olympia", "state": "WA"}
-  ]
-}
-```
-
-We could collapse the location names from the state of Washington into a field `Cities`:
-
-```json
-{"Cities": "Bellevue, Olympia, Seattle"}
-```
-
-With the following config:
-
-```yaml
-pipeline:
-  processors:
-    - jq:
-        query: '{Cities: .locations | map(select(.state == "WA").name) | sort | join(", ") }'
-```
-
---
-======
+include::redpanda-connect:components:partial$examples/processors/jq.adoc[]
 
 // end::single-source[]

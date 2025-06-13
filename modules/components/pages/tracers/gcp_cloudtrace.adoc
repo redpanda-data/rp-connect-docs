@@ -48,45 +48,6 @@ tracer:
 --
 ======
 
-== Fields
-
-=== `project`
-
-The google project with Cloud Trace API enabled. If this is omitted then the Google Cloud SDK will attempt auto-detect it from the environment.
-
-
-*Type*: `string`
-
-
-=== `sampling_ratio`
-
-Sets the ratio of traces to sample. Tuning the sampling ratio is recommended for high-volume production workloads.
-
-
-*Type*: `float`
-
-*Default*: `1`
-
-```yml
-# Examples
-
-sampling_ratio: 1
-```
-
-=== `tags`
-
-A map of tags to add to tracing spans.
-
-
-*Type*: `object`
-
-*Default*: `{}`
-
-=== `flush_interval`
-
-The period of time between each flush of tracing spans.
-
-
-*Type*: `string`
+include::redpanda-connect:components:partial$fields/tracers/gcp_cloudtrace.adoc[]
 
 // end::single-source[]

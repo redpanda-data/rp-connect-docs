@@ -22,25 +22,7 @@ output:
 
 The broker pattern used is always `fan_out`, meaning each message will be delivered to each dynamic output.
 
-== Fields
-
-=== `outputs`
-
-A map of outputs to statically create.
-
-
-*Type*: `object`
-
-*Default*: `{}`
-
-=== `prefix`
-
-A path prefix for HTTP endpoints that are registered.
-
-
-*Type*: `string`
-
-*Default*: `""`
+include::redpanda-connect:components:partial$fields/outputs/dynamic.adoc[]
 
 == Endpoints
 

@@ -39,22 +39,6 @@ When the processor shuts down, it also logs a summary of the number and size of 
 INFO total stats: 1.00186 msg/sec, 425 B/sec 
 ```
 
-== Fields
-
-=== `interval`
-
-How often to emit rolling statistics. Set to `0`, if you only want to log summary statistics when the processor shuts down.
-
-*Type*: `string`
-
-*Default*: `5s`
-
-=== `count_bytes`
-
-Whether to measure the number of bytes per second of throughput. If set to `true`, Redpanda Connect must serialize structured data to count the number of bytes processed, which can unnecessarily degrade performance if serialization is not required elsewhere in your pipeline.
-
-*Type*: `bool`
-
-*Default*: `true`
+include::redpanda-connect:components:partial$fields/processors/benchmark.adoc[]
 
 // end::single-source[]

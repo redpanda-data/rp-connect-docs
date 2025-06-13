@@ -66,64 +66,7 @@ cache_resources:
 
 These values can be overridden during execution.
 
-== Fields
-
-=== `cap`
-
-The cache maximum capacity (number of entries)
-
-
-*Type*: `int`
-
-*Default*: `1024`
-
-=== `default_ttl`
-
-The cache ttl of each element
-
-
-*Type*: `string`
-
-*Default*: `"5m0s"`
-
-ifndef::env-cloud[]
-Requires version 4.21.0 or newer
-endif::[]
-
-=== `ttl`
-
-Deprecated. Please use `default_ttl` field
-
-
-*Type*: `string`
-
-
-=== `init_values`
-
-A table of key/value pairs that should be present in the cache on initialization. This can be used to create static lookup tables.
-
-
-*Type*: `object`
-
-*Default*: `{}`
-
-```yml
-# Examples
-
-init_values:
-  Nickelback: "1995"
-  Spice Girls: "1994"
-  The Human League: "1977"
-```
-
-=== `optimistic`
-
-If true, we do not lock on read/write events. The ttlru package is thread-safe, however the ADD operation is not atomic.
-
-
-*Type*: `bool`
-
-*Default*: `false`
+include::redpanda-connect:components:partial$fields/caches/ttlru.adoc[]
 
 // end::single-source[]
 

@@ -27,32 +27,6 @@ input:
     migrate_schemas_before_data: true
 ```
 
-
-== Fields
-
-=== `redpanda_migrator`
-
-The xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] configuration.
-
-
-*Type*: `object`
-
-
-=== `schema_registry`
-
-The xref:components:inputs/schema_registry.adoc[`schema_registry` input] configuration.
-
-
-*Type*: `object`
-
-
-=== `migrate_schemas_before_data`
-
-Migrate all schemas first before starting to migrate data.
-
-
-*Type*: `bool`
-
-*Default*: `true`
+include::redpanda-connect:components:partial$fields/inputs/redpanda_migrator_bundle.adoc[]
 
 // end::single-source[]

@@ -21,38 +21,6 @@ metrics:
   mapping: ""
 ```
 
-== Fields
-
-=== `address`
-
-The address to send metrics to.
-
-
-*Type*: `string`
-
-
-=== `flush_period`
-
-The time interval between metrics flushes.
-
-
-*Type*: `string`
-
-*Default*: `"100ms"`
-
-=== `tag_format`
-
-Metrics tagging is supported in a variety of formats.
-
-
-*Type*: `string`
-
-*Default*: `"none"`
-
-Options:
-`none`
-, `datadog`
-, `influxdb`
-.
+include::redpanda-connect:components:partial$fields/metrics/statsd.adoc[]
 
 // end::single-source[]
