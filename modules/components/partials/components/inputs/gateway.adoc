@@ -1,0 +1,74 @@
+= gateway
+// tag::single-source[]
+:type: input
+:status: stable
+:categories: [Network]
+:description: Receive messages delivered over HTTP.
+
+component_type_dropdown::[]
+
+Receive messages delivered over HTTP.
+
+[tabs]
+======
+Common::
++
+--
+```yaml
+input:
+  label: ""
+  gateway:
+    path: /
+    rate_limit: ""
+
+```
+--
+Advanced::
++
+--
+```yaml
+input:
+  label: ""
+  gateway:
+    path: /
+    rate_limit: ""
+
+    sync_response:
+      status: "200"
+      headers:
+        Content-Type: application/octet-stream
+      metadata_headers:
+        include_prefixes:
+          []
+        include_patterns:
+          []
+```
+--
+======
+
+The field `rate_limit` allows you to specify an optional xref:components:rate_limits/about.adoc[`rate_limit` resource], which will be applied to each HTTP request made and each websocket payload received.
+
+When the rate limit is breached HTTP requests will have a 429 response returned with a Retry-After header.
+
+== Responses
+
+It's possible to return a response for each message received using xref:guides:sync_responses.adoc[synchronous responses]. When doing so you can customize headers with the `sync_response` field `headers`, which can also use xref:configuration:interpolation.adoc#bloblang-queries[function interpolation] in the value based on the response message contents.
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `http_server_user_agent`
+- `http_server_request_path`
+- `http_server_verb`
+- `http_server_remote_ip`
+- All headers (only first values are taken)
+- All query parameters
+- All path parameters
+- All cookies
+
+You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+
+include::redpanda-connect:components:partial$fields/inputs/gateway.adoc[]
+
+// end::single-source[]

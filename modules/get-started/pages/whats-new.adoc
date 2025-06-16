@@ -2,13 +2,68 @@
 :description: Summary of new features in Redpanda Connect.
 :page-aliases: ROOT:whats_new_rpcn.adoc
 
-This topic includes new content added from version 4.29.0 onwards. 
+This topic includes new content added from version 4.29.0 onwards.
 
-For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/releases[Redpanda Connect release notes^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
+For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
+
+== Version 4.57.0
+
+This release adds support for the following fields:
+
+* `protobuf.use_proto_names`, `protobuf.use_enum_numbers`, `protobuf.emit_unpopulated`, and `protobuf.emit_default_values` in the xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode`] processor.
 
 == Version 4.56.0
 
 This release introduces a dynamic xref:plugins:about.adoc[plugins] framework. It enables you to create and load custom plugins at runtime using any programming language that supports gRPC, with initial SDKs for Go and Python.
+
+=== New components
+
+* xref:components:inputs/gcp_spanner_cdc.adoc[`gcp_spanner_cdc`] (beta): Streams change data from a Google Cloud Spanner instance.
+
+=== Component updates
+
+This release adds support for the following fields:
+
+* `scope` in the xref:components:caches/couchbase.adoc[`couchbase`] cache.
+* `poll_interval` and `max_yield_batch_bytes` in the xref:components:inputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets`] input.
+* `consumer_group_offsets_poll_interval` in the xref:components:inputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle`] input.
+* `input_bundle_label` in the xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle`] output.
+* `object_canned_acl` in the xref:components:outputs/aws_s3.adoc[`aws_s3`] output.
+* `history`, `max_tool_calls`, and `tools` in the xref:components:processors/gcp_vertex_ai_chat.adoc[`gcp_vertex_ai_chat`] processor.
+
+== Version 4.55.1
+
+This release adds support for the following fields:
+
+* `is_serverless` in the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`] output.
+
+== Version 4.55.0
+
+This release introduces a new beta Redpanda cache component and new fields across several inputs and outputs.
+
+=== New components
+
+* xref:components:caches/redpanda.adoc[`redpanda`] (beta): A new cache that stores key/value pairs in a compacted Redpanda topic.
+
+=== Component updates
+
+This release adds support for the following fields:
+
+* `steal_grace_period` in the xref:components:inputs/aws_kinesis.adoc[`aws_kinesis`] input.
+* `max_yield_batch_bytes` in:
+** xref:components:inputs/redpanda.adoc[`redpanda`]
+** xref:components:inputs/redpanda_common.adoc[`redpanda_common`]
+** xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`]
+** xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`]
+* `extras` in the xref:components:processors/sentry_capture.adoc[`sentry_capture`] processor.
+
+=== Removed components
+
+The deprecated `elasticsearch` output has been removed. Use the xref:components:outputs/elasticsearch_v8.adoc[`elasticsearch_v8`] output instead.
+
+=== New Bloblang features
+
+* xref:guides:bloblang/methods.adoc#bitwise_and[`bitwise_and`], xref:guides:bloblang/methods.adoc#bitwise_or[`bitwise_or`], and xref:guides:bloblang/methods.adoc#bitwise_xor[`bitwise_xor`] methods added for performing bitwise operations on integers.
 
 == Version 4.54.0 to 4.54.1
 
