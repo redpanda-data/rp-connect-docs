@@ -272,6 +272,18 @@
       }
     },
     {
+      "name": "gcp_spanner_cdc",
+      "description": "\nConsumes change records from a Google Cloud Spanner change stream. This input allows\nyou to track and process database changes in real-time, making it useful for data\nreplication, event-driven architectures, and maintaining derived data stores.\n\nThe input reads from a specified change stream within a Spanner database and converts\neach change record into a message. The message payload contains the change records in\nJSON format, and metadata is added with details about the Spanner instance, database,\nand stream.\n\nChange streams provide a way to track mutations to your Spanner database tables. For\nmore information about Spanner change streams, refer to the link:https://cloud.google.com/spanner/docs/change-streams[Google Cloud documentation^].",
+      "config": {
+        "children": [
+          {
+            "name": "stream_id",
+            "description": "The name of the change stream to track, the stream must exist in the database. To create a change stream, see the link:https://cloud.google.com/spanner/docs/change-streams/manage[Google Cloud documentation^]."
+          }
+        ]
+      }
+    },
+    {
       "name": "git",
       "config": {
         "children": [
@@ -6501,6 +6513,12 @@
           }
         ]
       }
+    }
+  ],
+  "caches": [
+    {
+      "name": "redpanda",
+      "description": "\nA cache that stores data in a Kafka topic.\n\nThis cache is useful for data that is written frequently and queried infrequently.\nReads of the cache require reading the entire topic partition, so if there is a need for frequent reads, it's recommended to put an in memory caching layer infront of this cache.\n\nTopics that are used as caches should be compacted so that reads are less expensive when they rescan the topic, as only the latest value is needed.\n\nThis cache does not support any special TTL mechanism, any TTL should be handled by the Kafka topic itself using data retention policies.\n"
     }
   ]
 }
