@@ -60,4 +60,4 @@ jobs:
           commit-message: 'docs: Update RPCN connector docs'
           body: ${{ steps.generate.outputs.delta_report }}
           labels: auto-docs
-          allow-empty: false
+          allow-empty-commits: false
