@@ -235,6 +235,10 @@
       }
     },
     {
+      "name": "gateway",
+      "description": "The `gateway` input listens for incoming HTTP or WebSocket requests and turns each request into a message. It's useful for receiving webhooks, events from third-party systems, or client-published messages over HTTP or WebSocket."
+    },
+    {
       "name": "gcp_bigquery_select",
       "config": {
         "children": [
