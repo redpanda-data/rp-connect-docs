@@ -1,7 +1,3 @@
-= Ingest Real-Time Sensor Telemetry with the HTTP Gateway
-:description: Learn how to stream sensor telemetry data into Redpanda Cloud using the gateway input in Redpanda Connect.
-:page-categories: Redpanda Connect, Cloud, Tutorials, Gateway, IoT
-
 In this guide, you'll build a pipeline that uses the `gateway` input to receive real-time telemetry data from sensors over HTTP. Each incoming message is normalized, published to a Redpanda topic, and acknowledged back to the sender.
 
 This setup is ideal for IoT, mobile, and embedded systems that need to stream data to Redpanda Cloud without using a Kafka client.
