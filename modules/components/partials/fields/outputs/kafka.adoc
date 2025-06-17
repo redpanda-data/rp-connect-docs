@@ -295,11 +295,7 @@ Provide a list of explicit metadata key prefixes to be excluded when adding meta
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `partition`
 
@@ -436,7 +432,9 @@ An optional map of static headers that should be added to messages in addition t
 [source,yaml]
 ----
 # Examples:
-static_headers: [object Object]
+static_headers:
+  first-static-header: value-1
+  second-static-header: value-2
 
 ----
 

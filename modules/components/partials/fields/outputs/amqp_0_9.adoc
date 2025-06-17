@@ -55,7 +55,8 @@ Arguments for server-specific implementations of the exchange (optional). You ca
 [source,yaml]
 ----
 # Examples:
-arguments: [object Object]
+arguments:
+  alternate-exchange: my-ae
 
 ----
 
@@ -147,11 +148,7 @@ Provide a list of explicit metadata key prefixes to exclude when adding metadata
 
 *Type*: `array`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `persistent`
 

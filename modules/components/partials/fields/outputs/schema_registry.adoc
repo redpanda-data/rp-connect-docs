@@ -62,11 +62,7 @@ Values used to pass the identity of the authenticated entity to the service prov
 
 *Type*: `unknown`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 === `jwt.enabled`
 
@@ -82,11 +78,7 @@ The key/value pairs that identify the type of token and signing algorithm.
 
 *Type*: `unknown`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 === `jwt.private_key_file`
 

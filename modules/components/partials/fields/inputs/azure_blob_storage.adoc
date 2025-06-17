@@ -90,8 +90,30 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-targets_input: [object Object]
-
+targets_input:
+  kafka:
+    addresses:
+      - <event-hub-hostname>:9093
+    topics: [ <event-hub-name> ]
+    tls:
+      enabled: true
+      skip_cert_verify: false
+    sasl:
+      mechanism: "PLAIN"
+      user: "$ConnectionString"
+      password: <eventhub-connection-string>
+    consumer_group: <consumer-group>
+    start_from_oldest: true
+  processors:
+    - unarchive:
+        format: json_array
+    - mapping: |-
+        if this.subject.contains("/containers/<container-name>/") && this.eventType == "Microsoft.Storage.BlobCreated" {
+          root.name = this.data.url.parse_url().path.trim_prefix("/<container-name>/")
+        }
+        else {
+          root = deleted()
+        }
 ----
 
 

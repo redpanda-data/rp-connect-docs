@@ -39,11 +39,7 @@ The fields to encrypt in the kafka messages, assuming the record is a valid JSON
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `enrollment_ticket`
 
@@ -229,11 +225,7 @@ A list of explicit metadata key regular expression (re2) patterns to match again
 
 *Type*: `array`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -249,11 +241,7 @@ A list of explicit metadata key prefixes to match against.
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 [source,yaml]
 ----

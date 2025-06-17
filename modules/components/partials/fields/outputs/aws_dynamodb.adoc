@@ -191,17 +191,17 @@ A map of column keys to xref:configuration:field_paths.adoc[field paths] pointin
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 [source,yaml]
 ----
 # Examples:
-json_map_columns: [object Object]
-json_map_columns: [object Object]
+json_map_columns:
+  user: path.to.user
+  whole_document: .
+
+json_map_columns:
+  "": .
 
 ----
 
@@ -234,16 +234,16 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 [source,yaml]
 ----
 # Examples:
-string_columns: [object Object]
+string_columns:
+  full_content: ${!content()}
+  id: ${!json("id")}
+  title: ${!json("body.title")}
+  topic: ${!meta("kafka_topic")}
 
 ----
 

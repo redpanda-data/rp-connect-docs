@@ -12,7 +12,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 [source,yaml]
 ----
 # Examples:
-labels: [object Object]
+labels:
+  topic: ${! meta("kafka_topic") }
+  type: ${! json("doc.type") }
 
 ----
 

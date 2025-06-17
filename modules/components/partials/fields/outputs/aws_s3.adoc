@@ -259,11 +259,7 @@ Provide a list of explicit metadata key prefixes to be excluded when adding meta
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `object_canned_acl`
 
@@ -328,16 +324,14 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 [source,yaml]
 ----
 # Examples:
-tags: [object Object]
+tags:
+  Key1: Value1
+  Timestamp: ${!meta("Timestamp")}
 
 ----
 

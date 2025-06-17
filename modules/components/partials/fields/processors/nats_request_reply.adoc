@@ -76,16 +76,14 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 [source,yaml]
 ----
 # Examples:
-headers: [object Object]
+headers:
+  Content-Type: application/json
+  Timestamp: ${!meta("Timestamp")}
 
 ----
 
@@ -120,11 +118,7 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -142,11 +136,7 @@ Provide a list of explicit metadata key prefixes to match against.
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 [source,yaml]
 ----

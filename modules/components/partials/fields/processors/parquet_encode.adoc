@@ -41,8 +41,11 @@ A list of child fields.
 [source,yaml]
 ----
 # Examples:
-fields: [object Object],[object Object]
-
+fields:
+  - name: foo
+    type: INT64
+  - name: bar
+    type: BYTE_ARRAY
 ----
 
 === `schema[].name`

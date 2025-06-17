@@ -169,11 +169,7 @@ NOTE: In these cases, the _request_ is dropped, but the _message_ that triggered
 
 *Type*: `int`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `dump_request_log_level`
 
@@ -204,11 +200,7 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -226,11 +218,7 @@ Provide a list of explicit metadata key prefixes to match against.
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -259,16 +247,14 @@ A map of headers to add to the request. This field supports xref:configuration:i
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 [source,yaml]
 ----
 # Examples:
-headers: [object Object]
+headers:
+  Content-Type: application/octet-stream
+  traceparent: ${! tracing_span().traceparent }
 
 ----
 
@@ -284,11 +270,7 @@ A value used to identify the claims that issued the JWT.
 
 *Type*: `unknown`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 === `jwt.enabled`
 
@@ -304,11 +286,7 @@ Add key/value headers to the JWT (optional).
 
 *Type*: `unknown`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 === `jwt.private_key_file`
 
@@ -354,11 +332,7 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -376,11 +350,7 @@ Provide a list of explicit metadata key prefixes to match against.
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -541,16 +511,17 @@ endif::[]
 
 *Type*: `unknown`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 [source,yaml]
 ----
 # Examples:
-endpoint_params: [object Object]
+endpoint_params:
+  grant_type:
+    - client_credentials
+  audience:
+    - https://api.example.com/
+    - https://auth.example.com/
 
 ----
 
@@ -564,11 +535,7 @@ endif::[]
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `oauth2.token_url`
 
@@ -625,11 +592,7 @@ By default, all 2XX codes are considered successful unless they are specified in
 
 *Type*: `int`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `timeout`
 

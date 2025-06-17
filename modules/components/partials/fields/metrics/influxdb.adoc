@@ -90,16 +90,14 @@ Global tags added to each metric.
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 [source,yaml]
 ----
 # Examples:
-tags: [object Object]
+tags:
+  hostname: localhost
+  zone: danger
 
 ----
 

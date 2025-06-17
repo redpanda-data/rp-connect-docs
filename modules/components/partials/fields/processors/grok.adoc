@@ -22,11 +22,7 @@ A map of pattern definitions that can be referenced within `patterns`.
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 === `pattern_paths[]`
 
@@ -34,11 +30,7 @@ A list of paths to load Grok patterns from. This field supports wildcards, inclu
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `remove_empty_values`
 

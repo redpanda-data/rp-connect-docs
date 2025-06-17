@@ -135,8 +135,11 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-sort: [object Object]
-sort: [object Object]
+sort:
+  name: 1
+
+sort:
+  age: -1
 
 ----
 

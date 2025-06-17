@@ -28,10 +28,19 @@ application/vnd.google-apps.spreadsheet: text/csv
 
 [source,yaml]
 ----
-# Examples:
-export_mime_types: [object Object]
-export_mime_types: [object Object]
+# Examples
 
+export_mime_types:
+  application/vnd.google-apps.document: application/pdf
+  application/vnd.google-apps.drawing: application/pdf
+  application/vnd.google-apps.presentation: application/pdf
+  application/vnd.google-apps.spreadsheet: application/pdf
+
+export_mime_types:
+  application/vnd.google-apps.document: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  application/vnd.google-apps.drawing: image/svg+xml
+  application/vnd.google-apps.presentation: application/vnd.openxmlformats-officedocument.presentationml.presentation
+  application/vnd.google-apps.spreadsheet: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 ----
 
 === `file_id`

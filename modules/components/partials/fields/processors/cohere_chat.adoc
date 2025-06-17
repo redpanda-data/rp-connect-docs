@@ -134,11 +134,7 @@ Values used to pass the identity of the authenticated entity to the service prov
 
 *Type*: `unknown`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 === `schema_registry.jwt.enabled`
 
@@ -154,11 +150,7 @@ The key/value pairs that identify the type of token and signing algorithm.
 
 *Type*: `unknown`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 === `schema_registry.jwt.private_key_file`
 
@@ -452,11 +444,7 @@ Specifies that this parameter is an enum and only these specific values should b
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `tools[].parameters.properties.type`
 
@@ -470,11 +458,7 @@ The required parameters for this pipeline.
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-[]
-----
+*Default*: `[]`
 
 === `tools[].processors[]`
 

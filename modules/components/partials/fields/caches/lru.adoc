@@ -39,16 +39,15 @@ A table of key/value pairs that should be present in the cache on initialization
 
 *Type*: `string`
 
-*Default*:
-[source,yaml]
-----
-{}
-----
+*Default*: `{}`
 
 [source,yaml]
 ----
 # Examples:
-init_values: [object Object]
+init_values:
+  Nickelback: "1995"
+  Spice Girls: "1994"
+  The Human League: "1977"
 
 ----
 
