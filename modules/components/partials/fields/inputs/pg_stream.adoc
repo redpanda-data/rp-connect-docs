@@ -270,7 +270,7 @@ If set to true, creates a temporary replication slot that is automatically dropp
 
 The value to emit when there are unchanged TOAST values in the stream. This occurs for updates and deletes where REPLICA IDENTITY is not FULL.
 
-*Type*: `unknown`
+*Type*: `object`
 
 *Default*:
 [source,yaml]

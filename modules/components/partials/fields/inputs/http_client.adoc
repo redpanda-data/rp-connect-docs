@@ -180,7 +180,7 @@ BETA: Allows you to specify JSON Web Token (JWT) authentication.
 
 A value used to identify the claims that issued the JWT.
 
-*Type*: `unknown`
+*Type*: `object`
 
 *Default*: `{}`
 
@@ -196,7 +196,7 @@ Whether to use JWT authentication in requests.
 
 Add key/value headers to the JWT (optional).
 
-*Type*: `unknown`
+*Type*: `object`
 
 *Default*: `{}`
 
@@ -359,7 +359,7 @@ ifndef::env-cloud[]
 Requires version 4.21.0 or later.
 endif::[]
 
-*Type*: `unknown`
+*Type*: `object`
 
 *Default*: `{}`
 

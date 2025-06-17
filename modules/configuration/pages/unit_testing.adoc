@@ -391,7 +391,7 @@ The raw content of the input message.
 Sets the raw content of the message to a JSON document matching the structure of the value.
 
 
-*Type*: `unknown`
+*Type*: `object`
 
 
 ```yml
@@ -447,7 +447,7 @@ The raw content of the input message.
 Sets the raw content of the message to a JSON document matching the structure of the value.
 
 
-*Type*: `unknown`
+*Type*: `object`
 
 
 ```yml
@@ -574,7 +574,7 @@ file_json_equals: ./foo/bar.json
 Checks that both the message and the condition are valid JSON documents, and that they are structurally equivalent. Will ignore formatting and ordering differences.
 
 
-*Type*: `unknown`
+*Type*: `object`
 
 
 ```yml
@@ -589,7 +589,7 @@ json_equals:
 Checks that both the message and the condition are valid JSON documents, and that the message is a superset of the condition.
 
 
-*Type*: `unknown`
+*Type*: `object`
 
 
 ```yml

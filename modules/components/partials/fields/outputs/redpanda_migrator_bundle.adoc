@@ -15,13 +15,13 @@ Specify the redpanda_migrator_bundle input label if one is assigned to it.
 
 The xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] configuration.
 
-*Type*: `unknown`
+*Type*: `object`
 
 === `schema_registry`
 
 The xref:components:outputs/schema_registry.adoc[`schema_registry` output] configuration. The `subject` field must be left empty.
 
-*Type*: `unknown`
+*Type*: `object`
 
 === `translate_schema_ids`
 
