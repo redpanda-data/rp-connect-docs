@@ -236,7 +236,7 @@
     },
     {
       "name": "gateway",
-      "description": "The `gateway` input listens for incoming HTTP or WebSocket requests and turns each request into a message. It's useful for receiving webhooks, events from third-party systems, or client-published messages over HTTP or WebSocket."
+      "description": "The `gateway` input is a Cloud-only component that receives messages over HTTP or WebSocket and injects them into a running Redpanda Connect pipeline.\n\nIt's ideal for:\n- Receiving webhook events from third-party services\n- Accepting real-time telemetry or sensor data through WebSockets\n- Building lightweight ingest endpoints for client apps\n\nFor on-premises or self-managed deployments, use the xref:redpanda-connect:components:inputs/http_server.adoc[`http_server`] input instead.\n\nThis component is fully managed and available in the following Redpanda Cloud deployment types:\n\n- **Serverless**\n- **Dedicated**\n- **Bring Your Own Cloud (BYOC)**\n\nWhen a pipeline with a `gateway` input is deployed, Redpanda Cloud provisions a secure URL that you can use to send HTTP requests or open WebSocket connections. You can post raw payloads, JSON messages, or stream events in real time.\n\nAuthentication and access control are handled through standard Redpanda Cloud API tokens. For more information, see xref:redpanda-cloud:manage:api/cloud-api-authentication.adoc[].\n\nNetwork access:\n- On **public clusters** (Serverless and Dedicated), the gateway URL is accessible over the public internet.\n- On **private clusters** (BYOC), the gateway is accessible only from within your configured VPC."
     },
     {
       "name": "gcp_bigquery_select",

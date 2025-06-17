@@ -1,0 +1,199 @@
+= Ingest Real-Time Sensor Telemetry with the HTTP Gateway
+:description: Learn how to stream sensor telemetry data into Redpanda Cloud using the gateway input in Redpanda Connect.
+:page-categories: Redpanda Connect, Cloud, Tutorials, Gateway, IoT
+
+In this guide, you'll build a pipeline that uses the `gateway` input to receive real-time telemetry data from sensors over HTTP. Each incoming message is normalized, published to a Redpanda topic, and acknowledged back to the sender.
+
+This setup is ideal for IoT, mobile, and embedded systems that need to stream data to Redpanda Cloud without using a Kafka client.
+
+The `gateway` input exposes a secure HTTP endpoint, simplifying ingestion from devices. Because HTTP is universally supported, it's easier to integrate on constrained devices, microcontrollers, or languages that don't support Kafka natively.
+
+Additional benefits:
+
+- *Simplified security*: Devices authenticate with Redpanda Cloud API tokens (using Bearer headers). No need to embed Kafka credentials, manage TLS, or expose brokers publicly.
+
+- *Operational flexibility*: Devices are decoupled from Kafka internals like topics or schemas. You can evolve pipeline logic without touching device code.
+
+- *Automatic provisioning*: Redpanda Cloud generates a secure endpoint URL when you deploy the pipeline.
+
+== Prerequisites
+
+* A Redpanda Cloud cluster (Serverless, Dedicated, or BYOC)
+* cURL or another compatible HTTP client
+
+== Create a sensor user in Redpanda Cloud
+
+A sensor user is required to securely authenticate and manage access to the `sensor.telemetry` topic, ensuring that only authorized devices can produce messages to the topic.
+
+. link:https://cloud.redpanda.com[Log in to Redpanda Cloud^].
+. Go to *Topics* and create a topic named `sensor.telemetry`. This topic will be used to store incoming telemetry messages.
+. Go to *Security* and create a user with the following details:
+- **Username**: `sensor-sasl-user`
+- **Password**: `<password>` (choose a secure password)
+- **SASL Mechanism**: `SCRAM-SHA-256`
+. Copy the password and save it securely for the next step.
+. Go to *Secrets Store* and create a new secret named `SENSOR_SASL_PASSWORD` with the value of the password you set for the user.
+- Set the scope of the secret to Redpanda Cluster and Redpanda Connect.
+. Go to *Security > ACLs* and create an access policy for the `sensor-sasl-user` user. This policy should allow the user to produce messages to the `sensor.telemetry` topic.
+
+== Create a service account
+
+The service account is used to authenticate requests to the gateway endpoint. It provides a secure way to manage access to the gateway without embedding sensitive credentials in your devices.
+
+. link:https://cloud.redpanda.com/service-accounts/new[Create a new service account^] in Redpanda Cloud named `sensor-ingest` and give it a description like "Service account for sensor telemetry ingestion".
+. Copy the client ID and secret.
+. Request a new API token for the service account. This token will be used to authenticate requests to the gateway.
++
+[,bash]
+----
+curl --request POST \
+  --url 'https://auth.prd.cloud.redpanda.com/oauth/token' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data grant_type=client_credentials \
+  --data client_id=<client-id> \
+  --data client_secret=<client-secret> \
+  --data audience=cloudv2-production.redpanda.cloud
+----
++
+Replace `<client-id>` and `<client-secret>` with the values you copied from the service account.
+The request response provides an access token that remains *valid for one hour*.
+
+. Set the access token as an environment variable:
++
+[,bash]
+----
+export CLOUD_API_TOKEN=<access_token>
+----
+
+== Create a Redpanda Cloud pipeline
+
+. Go to *Connect* and click *Create Pipeline*.
+. Name the pipeline `sensor-telemetry-ingest` and give it a description like "Ingest real-time sensor telemetry data".
+. Paste the following pipeline configuration into the editor:
++
+[source,yaml]
+----
+input:
+  gateway:
+    rate_limit: "limit"
+
+rate_limit_resources:
+  - label: limit
+    local:
+      count: 100
+      interval: 1s
+
+pipeline:
+  processors:
+    - bloblang: |
+        root.sensor_id = this.sensor_id
+        root.type = this.type
+        root.value = this.value
+        root.unit = this.unit
+        root.received_at = now()
+
+output:
+  broker:
+    pattern: fan_out_sequential
+    outputs:
+      - redpanda:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: sensor.telemetry
+          tls:
+            enabled: true
+          sasl:
+            - mechanism: SCRAM-SHA-256
+              username: sensor-sasl-user
+              password: ${secrets.SENSOR_SASL_PASSWORD}
+      - sync_response:
+          processors:
+            - mapping: |
+                root = {
+                  "status": "ok",
+                  "received_at": now()
+                }
+----
++
+This pipeline listens for incoming telemetry messages over HTTP and processes each one in real time. Here's what each section does:
++
+- `input.gateway`: Defines the input source. It exposes a secure HTTP endpoint that devices can post to. The optional `rate_limit` named `limit` is applied to protect the pipeline from overload.
+- `rate_limit_resources.limit`: Limits traffic to 100 requests per second. If this rate is exceeded, HTTP requests are rejected with a 429 response.
+- `pipeline.processors.bloblang`: Normalizes the incoming message by copying fields and adding a `received_at` timestamp (using the current time).
+- `output.broker`: Uses a `fan_out_sequential` pattern to send each message to two outputs:
+** The first output publishes the normalized message to the `sensor.telemetry` Redpanda topic.
+** The second output sends a synchronous JSON response back to the sender confirming receipt.
+
+. Click *Start*.
++
+The pipeline starts deploying. When the state changes to "Running", the pipeline is ready to accept incoming messages.
+
+. Click the pipeline to view its details.
++
+When the pipeline is deployed, a URL is displayed. This is the HTTP endpoint to which you'll post sensor data.
+
+. Copy the URL.
+
+== Send sensor data
+
+Send test data using cURL. Replace `<gateway-url>` with the URL provided by Redpanda Cloud when you deployed the pipeline.
+
+[source,bash]
+----
+curl -X POST <gateway-url> \
+  -H "Authorization: Bearer $CLOUD_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sensor_id": "thermo-42",
+    "type": "temperature",
+    "value": 21.7,
+    "unit": "C"
+  }'
+----
+
+Expected response:
+
+[source,json]
+----
+{
+  "received_at":"2025-06-17T09:48:50.986719231Z",
+  "sensor_id":"thermo-42",
+  "type":"temperature",
+  "unit":"C",
+  "value":21.7
+}
+----
+
+You can verify that the message was successfully ingested by checking the `sensor.telemetry` topic in Redpanda Cloud.
+
+To verify that the rate limit is working, try sending more than 100 requests per second. You should receive a 429 response with a `Retry-After` header indicating when to retry.
+
+[,bash]
+----
+seq 1 300 | xargs -n1 -P50 -I{} curl -s -o /dev/null -w "%{http_code}\n" \
+  -X POST <gateway-url> \
+  -H "Authorization: Bearer $CLOUD_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sensor_id":"test", "value": 42}'
+----
+
+You should see a mixture of `200` and `429` responses, indicating that the rate limit is being enforced.
+
+== Monitor the pipeline
+
+You can monitor the pipeline's logs in the Redpanda Cloud UI.
+
+. Go to *Connect* and select the `sensor-telemetry-ingest` pipeline.
+. Click on the *Logs* tab to view real-time logs of the pipeline's activity.
+You can see any errors that occur during processing.
+
+== Next steps
+
+- Filter or enrich events with conditional Bloblang.
+- Route messages by `sensor.type` to different topics.
+
+== Suggested reading
+
+- xref:components:inputs/gateway.adoc[`gateway` input reference]
+- xref:configuration:interpolation.adoc[Bloblang functions]
+- xref:redpanda-cloud:manage:api/cloud-api-authentication.adoc[Redpanda Cloud API authentication]
