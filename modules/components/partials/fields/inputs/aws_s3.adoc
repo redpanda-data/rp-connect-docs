@@ -143,7 +143,6 @@ An optional period of time to wait from when a notification was originally sent 
 # Examples:
 delay_period: 10s
 delay_period: 5m
-
 ----
 
 === `sqs.endpoint`
@@ -166,7 +165,6 @@ A xref:configuration:field_paths.adoc[dot path] of a field to extract an envelop
 ----
 # Examples:
 envelope_path: Message
-
 ----
 
 === `sqs.key_path`

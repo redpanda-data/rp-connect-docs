@@ -30,7 +30,6 @@ request_map: |-
   } else {
   	deleted()
   }
-
 ----
 
 === `result_map`
@@ -61,7 +60,6 @@ result_map: |-
 result_map: |-
   # Retain only the updated metadata fields which were present in the origin message
   meta = metadata().filter(v -> @.get(v.key) != null)
-
 ----
 
 

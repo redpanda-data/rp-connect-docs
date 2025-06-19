@@ -185,7 +185,6 @@ The period after which a schema is refreshed for each subject, this is done by p
 # Examples:
 refresh_period: 60s
 refresh_period: 1h
-
 ----
 
 === `subject`
@@ -200,7 +199,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 # Examples:
 subject: foo
 subject: ${! meta("kafka_topic") }
-
 ----
 
 === `tls`
@@ -214,6 +212,8 @@ Custom TLS settings can be used to override system defaults.
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -279,7 +279,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -311,7 +310,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -326,7 +324,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`

@@ -12,7 +12,7 @@ Determine which (if any) metadata values should be added to messages as headers.
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -30,7 +30,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -84,7 +84,7 @@ Determine which (if any) message headers should be added to the output as metada
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -102,7 +102,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -138,7 +138,6 @@ An optional timestamp to set for each message. When left empty, the current time
 # Examples:
 timestamp: ${! timestamp_unix() }
 timestamp: ${! metadata("kafka_timestamp_ms") }
-
 ----
 
 

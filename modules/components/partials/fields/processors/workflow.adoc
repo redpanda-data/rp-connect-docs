@@ -10,7 +10,7 @@ ifndef::env-cloud[]
 Requires version 3.38.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -19,6 +19,8 @@ endif::[]
 An object of named xref:components:processors/branch.adoc[`branch` processors] that make up the workflow. The order and parallelism in which branches are executed can either be made explicit with the field `order`, or if omitted an attempt is made to automatically resolve an ordering based on the mappings of each branch.
 
 *Type*: `object`
+
+*Default*: `{}`
 
 === `branches.processors[]`
 
@@ -48,7 +50,6 @@ request_map: |-
   } else {
   	deleted()
   }
-
 ----
 
 === `branches.result_map`
@@ -79,7 +80,6 @@ result_map: |-
 result_map: |-
   # Retain only the updated metadata fields which were present in the origin message
   meta = metadata().filter(v -> @.get(v.key) != null)
-
 ----
 
 === `meta_path`
@@ -101,9 +101,14 @@ An explicit declaration of branch ordered tiers, which describes the order in wh
 [source,yaml]
 ----
 # Examples:
-order: foo,bar,baz
-order: foo,bar,baz
-
+order:
+  - - foo
+    - bar
+  - - baz
+order:
+  - - foo
+  - - bar
+  - - baz
 ----
 
 

@@ -53,7 +53,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -76,7 +75,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -101,7 +99,6 @@ A period in which an incomplete batch should be flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -199,10 +196,8 @@ A map of column keys to xref:configuration:field_paths.adoc[field paths] pointin
 json_map_columns:
   user: path.to.user
   whole_document: .
-
 json_map_columns:
   "": .
-
 ----
 
 === `max_in_flight`
@@ -244,7 +239,6 @@ string_columns:
   id: ${!json("id")}
   title: ${!json("body.title")}
   topic: ${!meta("kafka_topic")}
-
 ----
 
 === `table`

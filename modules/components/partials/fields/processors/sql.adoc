@@ -13,7 +13,6 @@ An optional xref:guides:bloblang/about.adoc[Bloblang mapping] which should evalu
 # Examples:
 args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
 args_mapping: root = [ meta("user.id") ]
-
 ----
 
 === `data_source_name`
@@ -42,7 +41,6 @@ include::components:partial$query_table.adoc[]
 ----
 # Examples:
 query: INSERT INTO footable (foo, bar, baz) VALUES (?, ?, ?);
-
 ----
 
 === `result_codec`

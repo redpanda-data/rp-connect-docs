@@ -2,6 +2,14 @@
 
 == Fields
 
+=== `allow_auto_topic_creation`
+
+Enables topics to be auto created if they do not exist when fetching their metadata.
+
+*Type*: `bool`
+
+*Default*: `true`
+
 === `broker_write_max_bytes`
 
 The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.
@@ -15,7 +23,6 @@ The maximum number of bytes this output can write to a broker connection in a si
 # Examples:
 broker_write_max_bytes: 128MB
 broker_write_max_bytes: 50mib
-
 ----
 
 === `client_id`
@@ -95,7 +102,6 @@ The maximum space in bytes that an individual message may use. Messages larger t
 # Examples:
 max_message_bytes: 100MB
 max_message_bytes: 50mib
-
 ----
 
 === `metadata`
@@ -108,7 +114,7 @@ Specify which (if any) metadata values are added to messages as headers.
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -126,7 +132,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -163,7 +169,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 partition: ${! meta("partition") }
-
 ----
 
 === `partitioner`
@@ -376,18 +381,18 @@ The label of the xref:components:outputs/schema_registry.adoc[`schema_registry` 
 
 A list of broker addresses to connect to. Use commas to separate multiple addresses in a single list item.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
 seed_brokers:
-  - localhost:9092
+  - "localhost:9092"
 
-  - foo:9092
-  - bar:9092
+  - "foo:9092"
+  - "bar:9092"
 
-  - foo:9092,bar:9092
+  - "foo:9092,bar:9092"
 
 ----
 
@@ -411,7 +416,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 # Examples:
 timestamp_ms: ${! timestamp_unix_milli() }
 timestamp_ms: ${! metadata("kafka_timestamp_ms") }
-
 ----
 
 === `tls`
@@ -425,6 +429,8 @@ Override system defaults with custom TLS settings.
 A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -490,7 +496,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -530,7 +535,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -545,7 +549,6 @@ Specify the path to a root certificate authority file (optional). This is a file
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`

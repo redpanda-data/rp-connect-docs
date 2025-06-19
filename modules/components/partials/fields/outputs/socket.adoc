@@ -13,7 +13,6 @@ The address to connect to.
 # Examples:
 address: /tmp/benthos.sock
 address: 127.0.0.1:6000
-
 ----
 
 === `codec`
@@ -48,7 +47,6 @@ The way in which the bytes of messages should be written out into the output dat
 codec: lines
 codec: delim:	
 codec: delim:foobar
-
 ----
 
 === `network`

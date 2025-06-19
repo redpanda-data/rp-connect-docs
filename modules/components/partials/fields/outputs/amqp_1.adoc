@@ -38,7 +38,7 @@ Specify criteria for which metadata values are attached to messages as headers.
 
 Provide a list of explicit metadata key prefixes to be excluded when adding metadata to sent messages.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -85,7 +85,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: ${PASSWORD}
-
 ----
 
 === `sasl.user`
@@ -100,7 +99,6 @@ A SASL plain text username. It is recommended that you use environment variables
 ----
 # Examples:
 user: ${USER}
-
 ----
 
 === `target_address`
@@ -115,7 +113,6 @@ The target address to write to.
 target_address: /foo
 target_address: queue:/bar
 target_address: topic:/baz
-
 ----
 
 === `tls`
@@ -129,6 +126,8 @@ Custom TLS settings can be used to override system defaults.
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -194,7 +193,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -234,7 +232,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -249,7 +246,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`
@@ -268,18 +264,18 @@ ifndef::env-cloud[]
 Requires version 4.23.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
 urls:
-  - amqp://guest:guest@127.0.0.1:5672/
+  - "amqp://guest:guest@127.0.0.1:5672/"
 
-  - amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/
+  - "amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/"
 
-  - amqp://127.0.0.1:5672/
-  - amqp://127.0.0.2:5672/
+  - "amqp://127.0.0.1:5672/"
+  - "amqp://127.0.0.2:5672/"
 
 ----
 

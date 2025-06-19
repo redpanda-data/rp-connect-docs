@@ -34,7 +34,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 # Examples:
 queue_name: foo_queue
 queue_name: ${! env("MESSAGE_TYPE").lowercase() }
-
 ----
 
 === `storage_access_key`

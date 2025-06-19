@@ -77,7 +77,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -100,7 +99,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -125,7 +123,6 @@ The period after which an incomplete batch is flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -198,7 +195,7 @@ This field is only applicable when `propagate_response` is set to `true`.
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -216,7 +213,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -232,7 +229,9 @@ include_prefixes:
   - content-
 
 ----
+
 endif::[]
+
 === `follow_redirects`
 
 Whether or not to transparently follow redirects, i.e. responses with 300-399 status codes. If disabled, the response message will contain the body, status, and headers from the redirect response and the processor will not make a request to the URL set in the Location header of the response.
@@ -255,7 +254,6 @@ A map of headers to add to the request. This field supports xref:configuration:i
 headers:
   Content-Type: application/octet-stream
   traceparent: ${! tracing_span().traceparent }
-
 ----
 
 === `jwt`
@@ -330,7 +328,7 @@ Specify matching rules that determine which metadata keys to add to the HTTP req
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -348,7 +346,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -358,8 +356,11 @@ Provide a list of explicit metadata key prefixes to match against.
 include_prefixes:
   - foo_
   - bar_
+
   - kafka_
+
   - content-
+
 ----
 
 === `multipart[]`
@@ -374,6 +375,8 @@ endif::[]
 
 *Type*: `object`
 
+*Default*: `[]`
+
 === `multipart[].body`
 
 The body of the individual message part.
@@ -386,7 +389,6 @@ The body of the individual message part.
 ----
 # Examples:
 body: ${! this.data.part1 }
-
 ----
 
 === `multipart[].content_disposition`
@@ -401,7 +403,6 @@ The content disposition of the individual message part.
 ----
 # Examples:
 content_disposition: form-data; name="bin"; filename='${! @AttachmentName }
-
 ----
 
 === `multipart[].content_type`
@@ -416,7 +417,6 @@ The content type of the individual message part.
 ----
 # Examples:
 content_type: application/bin
-
 ----
 
 === `oauth`
@@ -517,12 +517,11 @@ endif::[]
 ----
 # Examples:
 endpoint_params:
-  grant_type:
-    - client_credentials
-  audience:
-    - https://api.example.com/
-    - https://auth.example.com/
-
+  bar:
+    - woof
+  foo:
+    - meow
+    - quack
 ----
 
 === `oauth2.scopes[]`
@@ -533,7 +532,7 @@ ifndef::env-cloud[]
 Requires version 3.45.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -614,6 +613,8 @@ A list of client certificates to use. For each certificate, specify values for e
 
 *Type*: `object`
 
+*Default*: `[]`
+
 [source,yaml]
 ----
 # Examples:
@@ -678,7 +679,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -718,7 +718,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -733,7 +732,6 @@ Specify the path to a root certificate authority file (optional). This is a file
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`
@@ -764,7 +762,6 @@ A verb to connect with.
 verb: POST
 verb: GET
 verb: DELETE
-
 ----
 
 

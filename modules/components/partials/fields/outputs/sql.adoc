@@ -13,7 +13,6 @@ An optional xref:guides:bloblang/about.adoc[Bloblang mapping] which should evalu
 # Examples:
 args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
 args_mapping: root = [ meta("user.id") ]
-
 ----
 
 === `batching`
@@ -37,7 +36,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -60,7 +58,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -85,7 +82,6 @@ A period in which an incomplete batch should be flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -143,7 +139,6 @@ include::components:partial$query_table.adoc[]
 ----
 # Examples:
 query: INSERT INTO footable (foo, bar, baz) VALUES (?, ?, ?);
-
 ----
 
 

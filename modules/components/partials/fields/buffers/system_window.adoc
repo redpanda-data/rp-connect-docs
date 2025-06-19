@@ -15,7 +15,6 @@ An optional duration string describing the length of time to wait after a window
 # Examples:
 allowed_lateness: 10s
 allowed_lateness: 1m
-
 ----
 
 === `offset`
@@ -31,7 +30,6 @@ An optional duration string to offset the beginning of each window by, otherwise
 # Examples:
 offset: -6h
 offset: 30m
-
 ----
 
 === `size`
@@ -45,7 +43,6 @@ A duration string describing the size of each window. By default windows are ali
 # Examples:
 size: 30s
 size: 10m
-
 ----
 
 === `slide`
@@ -61,7 +58,6 @@ An optional duration string describing by how much time the beginning of each wi
 # Examples:
 slide: 30s
 slide: 10m
-
 ----
 
 === `timestamp_mapping`
@@ -81,7 +77,6 @@ The timestamp value assigned to `root` must either be a numerical unix time in s
 # Examples:
 timestamp_mapping: root = this.created_at
 timestamp_mapping: root = meta("kafka_timestamp_unix").number()
-
 ----
 
 

@@ -12,7 +12,6 @@ The name of the data lake storage file system you want to upload messages to. Th
 ----
 # Examples:
 filesystem: messages-${!timestamp("2006")}
-
 ----
 
 === `max_in_flight`
@@ -37,7 +36,6 @@ The path (file name) of each message to upload to the data lake storage file sys
 path: ${!counter()}-${!timestamp_unix_nano()}.json
 path: ${!meta("kafka_key")}.json
 path: ${!json("doc.namespace")}/${!json("doc.id")}.json
-
 ----
 
 === `storage_access_key`

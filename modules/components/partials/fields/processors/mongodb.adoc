@@ -36,7 +36,6 @@ A Bloblang map that represents a document to store in MongoDB, expressed as http
 document_map: |-
   root.a = this.foo
   root.b = this.bar
-
 ----
 
 === `filter_map`
@@ -55,7 +54,6 @@ This output uses `filter_map` to find documents for the specified operation. For
 filter_map: |-
   root.a = this.foo
   root.b = this.bar
-
 ----
 
 === `hint_map`
@@ -74,7 +72,6 @@ Define a `hint_map` to improve performance when finding documents in the MongoDB
 hint_map: |-
   root.a = this.foo
   root.b = this.bar
-
 ----
 
 === `json_marshal_mode`
@@ -143,7 +140,6 @@ The URL of the target MongoDB server.
 ----
 # Examples:
 url: mongodb://localhost:27017
-
 ----
 
 === `username`

@@ -6,7 +6,7 @@
 
 A list of special tokens to include in the output from this processor.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -30,7 +30,7 @@ The maximum size of each chunk, using the selected <<length_measure,`length_meas
 
 A list of special tokens to exclude from the output of this processor.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*:
 [source,yaml]
@@ -93,7 +93,7 @@ By default, the following separators are tried in turn until one is successful:
 `)
 - Spaces (`" "`,`""`)
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*:
 [source,yaml]
@@ -136,7 +136,6 @@ The type of encoding to use for tokenization.
 # Examples:
 token_encoding: cl100k_base
 token_encoding: r50k_base
-
 ----
 
 

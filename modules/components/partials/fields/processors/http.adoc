@@ -102,7 +102,7 @@ Specify which response headers to add to the resulting messages as metadata. Hea
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -120,7 +120,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -159,7 +159,6 @@ A map of headers to add to the request. This field supports xref:configuration:i
 headers:
   Content-Type: application/octet-stream
   traceparent: ${! tracing_span().traceparent }
-
 ----
 
 === `jwt`
@@ -226,7 +225,7 @@ Specify matching rules that determine which metadata keys should be added to the
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -244,7 +243,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -359,12 +358,11 @@ endif::[]
 ----
 # Examples:
 endpoint_params:
-  grant_type:
-    - client_credentials
-  audience:
-    - https://api.example.com/
-    - https://api.example.com/resource
-
+  bar:
+    - woof
+  foo:
+    - meow
+    - quack
 ----
 
 === `oauth2.scopes[]`
@@ -375,7 +373,7 @@ ifndef::env-cloud[]
 Requires version 3.45.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -453,6 +451,8 @@ A list of client certificates to use. For each certificate, specify values for e
 
 *Type*: `object`
 
+*Default*: `[]`
+
 [source,yaml]
 ----
 # Examples:
@@ -517,7 +517,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -557,7 +556,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -572,7 +570,6 @@ Specify the path to a root certificate authority file (optional). This is a file
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`
@@ -603,7 +600,6 @@ A verb to connect with.
 verb: POST
 verb: GET
 verb: DELETE
-
 ----
 
 

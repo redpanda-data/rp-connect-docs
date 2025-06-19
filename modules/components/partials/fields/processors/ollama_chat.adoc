@@ -12,7 +12,6 @@ If `server_address` is not set - the directory to download the Ollama binary and
 ----
 # Examples:
 cache_directory: /opt/cache/connect/ollama
-
 ----
 
 === `download_url`
@@ -50,7 +49,6 @@ endif::[]
 ----
 # Examples:
 image: root = this.image.decode("base64") # decode base64 encoded image
-
 ----
 
 === `max_tokens`
@@ -80,7 +78,6 @@ model: llama3.1
 model: gemma2
 model: qwen2
 model: phi3
-
 ----
 
 === `num_keep`
@@ -172,7 +169,6 @@ Sets the random number seed to use for generation. Setting this to a specific nu
 ----
 # Examples:
 seed: 42
-
 ----
 
 === `server_address`
@@ -185,14 +181,13 @@ The address of the Ollama server to use. Leave the field blank and the processor
 ----
 # Examples:
 server_address: http://127.0.0.1:11434
-
 ----
 
 === `stop[]`
 
 Sets the stop sequences to use. When this pattern is encountered, the LLM stops generating text and returns the final response.
 
-*Type*: `string`
+*Type*: `array`
 
 === `system_prompt`
 
@@ -212,6 +207,8 @@ The temperature of the model. Increasing the temperature makes the model answer 
 The external tools the LLM can invoke, such as functions, APIs, or web browsing. You can build a series of processors that include definitions of these tools, and the specified LLM can choose when to invoke them to help answer a prompt. For more information, see <<Examples, examples>>.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 === `tools[].description`
 
@@ -247,7 +244,7 @@ A description of this parameter.
 
 Specifies that this parameter is an enum and only these specific values should be used.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -261,7 +258,7 @@ The type of this parameter.
 
 The required parameters for this pipeline.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 

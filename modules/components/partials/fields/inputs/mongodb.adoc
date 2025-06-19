@@ -32,7 +32,6 @@ endif::[]
 ----
 # Examples:
 batch_size: 1000
-
 ----
 
 === `collection`
@@ -119,7 +118,6 @@ query: |-
     root.from = {"$lte": timestamp_unix()}
     root.to = {"$gte": timestamp_unix()}
   
-
 ----
 
 === `sort`
@@ -137,10 +135,8 @@ endif::[]
 # Examples:
 sort:
   name: 1
-
 sort:
   age: -1
-
 ----
 
 === `url`
@@ -153,7 +149,6 @@ The URL of the target MongoDB server.
 ----
 # Examples:
 url: mongodb://localhost:27017
-
 ----
 
 === `username`

@@ -15,7 +15,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 labels:
   topic: ${! meta("kafka_topic") }
   type: ${! json("doc.type") }
-
 ----
 
 === `name`

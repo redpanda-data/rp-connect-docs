@@ -6,7 +6,7 @@
 
 One or more Grok expressions to attempt against incoming messages. The first expression to match at least one value will be used to form a result.
 
-*Type*: `string`
+*Type*: `array`
 
 === `named_captures_only`
 
@@ -28,7 +28,7 @@ A map of pattern definitions that can be referenced within `patterns`.
 
 A list of paths to load Grok patterns from. This field supports wildcards, including super globs (double star).
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 

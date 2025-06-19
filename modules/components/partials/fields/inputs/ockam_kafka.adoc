@@ -39,7 +39,7 @@ If this value is set to `true`:
 
 The fields to encrypt in the Kafka messages when the record is a valid JSON map. By default, the whole record is encrypted.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -81,7 +81,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `kafka.batching.byte_size`
@@ -104,7 +103,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value i
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `kafka.batching.count`
@@ -129,7 +127,6 @@ The period of time after which an incomplete batch is flushed regardless of its 
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `kafka.batching.processors[]`
@@ -276,18 +273,18 @@ Whether listed topics are interpreted as regular expression patterns for matchin
 
 A list of broker addresses to connect to (optional). List items that contain commas are expanded into multiple addresses.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
 seed_brokers:
-  - localhost:9092
+  - "localhost:9092"
 
-  - foo:9092
-  - bar:9092
+  - "foo:9092"
+  - "bar:9092"
 
-  - foo:9092,bar:9092
+  - "foo:9092,bar:9092"
 
 ----
 
@@ -335,6 +332,8 @@ Override system defaults with custom TLS settings.
 A list of client certificates to use. For each certificate, specify either the fields `cert` and `key` or `cert_file` and `key_file`.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -400,7 +399,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `kafka.tls.enable_renegotiation`
@@ -440,7 +438,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `kafka.tls.root_cas_file`
@@ -455,7 +452,6 @@ Specify the path to a root certificate authority file (optional). This is a file
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `kafka.tls.skip_cert_verify`
@@ -484,7 +480,7 @@ Alternatively, add a colon after the topic name to set the explicit partitions t
 
 Finally, add another colon after the partition to set an explicit offset to consume from. For example, `foo:0:10` consumes the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_offset` determines which offset to start from.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -495,15 +491,15 @@ topics:
 
   - things.*
 
-  - foo,bar
+  - "foo,bar"
 
-  - foo:0
-  - bar:1
-  - bar:3
+  - "foo:0"
+  - "bar:1"
+  - "bar:3"
 
-  - foo:0,bar:1,bar:3
+  - "foo:0,bar:1,bar:3"
 
-  - foo:0-5
+  - "foo:0-5"
 
 ----
 

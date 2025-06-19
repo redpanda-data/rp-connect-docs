@@ -12,14 +12,13 @@ An optional xref:guides:bloblang/about.adoc[Bloblang mapping] which should evalu
 ----
 # Examples:
 args_mapping: root = [ "article", now().ts_format("2006-01-02") ]
-
 ----
 
 === `columns[]`
 
 A list of columns to query.
 
-*Type*: `string`
+*Type*: `array`
 
 === `credentials_json`
 
@@ -67,7 +66,6 @@ Fully-qualified BigQuery table name to query.
 ----
 # Examples:
 table: bigquery-public-data.samples.shakespeare
-
 ----
 
 === `where`
@@ -81,7 +79,6 @@ An optional where clause to add. Placeholder arguments are populated with the `a
 # Examples:
 where: type = ? and created_at > ?
 where: user_id = ?
-
 ----
 
 

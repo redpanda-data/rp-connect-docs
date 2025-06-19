@@ -59,7 +59,6 @@ An optional limit to the number of consecutive retry attempts that will be made 
 # Examples:
 max_retries: -1
 max_retries: 10
-
 ----
 
 === `jwt`
@@ -202,6 +201,8 @@ A list of client certificates to use. For each certificate either the fields `ce
 
 *Type*: `object`
 
+*Default*: `[]`
+
 [source,yaml]
 ----
 # Examples:
@@ -266,7 +267,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -306,7 +306,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -321,7 +320,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`
@@ -342,7 +340,6 @@ The URL to connect to.
 ----
 # Examples:
 url: ws://localhost:4195/get/ws
-
 ----
 
 

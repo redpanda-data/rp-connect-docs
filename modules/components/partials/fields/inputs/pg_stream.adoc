@@ -31,7 +31,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -54,7 +53,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -79,7 +77,6 @@ A period in which an incomplete batch should be flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -121,7 +118,6 @@ The Data Source Name for the PostgreSQL database in the form of `postgres://[use
 ----
 # Examples:
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
-
 ----
 
 === `heartbeat_interval`
@@ -137,7 +133,6 @@ The interval at which to write heartbeat messages. Heartbeat messages are needed
 # Examples:
 heartbeat_interval: 0s
 heartbeat_interval: 24h
-
 ----
 
 === `include_transaction_markers`
@@ -168,7 +163,6 @@ Specify the standby timeout before refreshing an idle connection.
 ----
 # Examples:
 pg_standby_timeout: 30s
-
 ----
 
 === `pg_wal_monitor_interval`
@@ -183,7 +177,6 @@ How often to report changes to the replication lag.
 ----
 # Examples:
 pg_wal_monitor_interval: 6s
-
 ----
 
 === `schema`
@@ -197,7 +190,6 @@ The PostgreSQL schema from which to replicate data.
 # Examples:
 schema: public
 schema: "MyCaseSensitiveSchemaNeedingQuotes"
-
 ----
 
 === `slot_name`
@@ -210,7 +202,6 @@ The name of the PostgreSQL logical replication slot to use. If not provided, a r
 ----
 # Examples:
 slot_name: my_test_slot
-
 ----
 
 === `snapshot_batch_size`
@@ -225,7 +216,6 @@ The number of rows to fetch in each batch when querying the snapshot.
 ----
 # Examples:
 snapshot_batch_size: 10000
-
 ----
 
 === `stream_snapshot`
@@ -240,21 +230,20 @@ When set to true, the plugin will first stream a snapshot of all existing data i
 ----
 # Examples:
 stream_snapshot: true
-
 ----
 
 === `tables[]`
 
 A list of table names to include in the logical replication. Each table should be specified as a separate item.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
 tables:
   - my_table_1
-  - '"MyCaseSensitiveTableNeedingQuotes"'
+  - "MyCaseSensitiveTableNeedingQuotes"
 
 ----
 
@@ -270,7 +259,7 @@ If set to true, creates a temporary replication slot that is automatically dropp
 
 The value to emit when there are unchanged TOAST values in the stream. This occurs for updates and deletes where REPLICA IDENTITY is not FULL.
 
-*Type*: `object`
+*Type*: `unknown`
 
 *Default*:
 [source,yaml]
@@ -282,7 +271,6 @@ null
 ----
 # Examples:
 unchanged_toast_value: __redpanda_connect_unchanged_toast_value__
-
 ----
 
 

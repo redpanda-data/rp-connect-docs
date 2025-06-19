@@ -14,7 +14,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 account_key: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
-
 ----
 
 === `auto_id`
@@ -37,7 +36,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 connection_string: AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;
-
 ----
 
 === `container`
@@ -50,7 +48,6 @@ Container.
 ----
 # Examples:
 container: testcontainer
-
 ----
 
 === `database`
@@ -63,7 +60,6 @@ Database.
 ----
 # Examples:
 database: testdb
-
 ----
 
 === `enable_content_response_on_write`
@@ -84,7 +80,6 @@ CosmosDB endpoint.
 ----
 # Examples:
 endpoint: https://localhost:8081
-
 ----
 
 === `item_id`
@@ -98,7 +93,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 item_id: ${! json("id") }
-
 ----
 
 === `operation`
@@ -147,7 +141,6 @@ partition_keys_map: root = 41
 partition_keys_map: root = true
 partition_keys_map: root = null
 partition_keys_map: root = json("blobfish").depth
-
 ----
 
 === `patch_condition`
@@ -161,7 +154,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 patch_condition: from c where not is_defined(c.blobfish)
-
 ----
 
 === `patch_operations[]`
@@ -209,7 +201,6 @@ Path.
 ----
 # Examples:
 path: /foo/bar/baz
-
 ----
 
 === `patch_operations[].value_map`
@@ -226,7 +217,6 @@ value_map: root = 41
 value_map: root = true
 value_map: root = json("blobfish").depth
 value_map: root = [1, 2, 3]
-
 ----
 
 

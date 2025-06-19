@@ -23,7 +23,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -46,7 +45,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -71,7 +69,6 @@ A period in which an incomplete batch should be flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -189,7 +186,6 @@ The path of each message to upload. This field supports xref:configuration:inter
 path: ${!counter()}-${!timestamp_unix_nano()}.txt
 path: ${!meta("kafka_key")}.json
 path: ${!json("doc.namespace")}/${!json("doc.id")}.json
-
 ----
 
 === `timeout`
@@ -205,7 +201,6 @@ The maximum period to wait on an upload before abandoning it and reattempting.
 # Examples:
 timeout: 1s
 timeout: 500ms
-
 ----
 
 

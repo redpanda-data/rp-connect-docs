@@ -54,7 +54,7 @@ The maximum number of in-flight messages emitted from this input. Increasing thi
 
 A list of collections to stream changes from. Specify each collection name as a separate item.
 
-*Type*: `string`
+*Type*: `array`
 
 === `database`
 
@@ -188,7 +188,6 @@ The URL of the target MongoDB server.
 ----
 # Examples:
 url: mongodb://localhost:27017
-
 ----
 
 === `username`

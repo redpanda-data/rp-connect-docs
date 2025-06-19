@@ -12,7 +12,6 @@ An optional xref:guides:bloblang/about.adoc[Bloblang mapping] which should evalu
 ----
 # Examples:
 args_mapping: root = [ "article", now().ts_format("2006-01-02") ]
-
 ----
 
 === `auto_replay_nacks`
@@ -27,7 +26,7 @@ Whether messages that are rejected (nacked) at the output level should be automa
 
 A list of columns to select.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -88,7 +87,6 @@ dsn: clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=
 dsn: foouser:foopassword@tcp(localhost:3306)/foodb
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
 dsn: oracle://foouser:foopass@localhost:1521/service_name
-
 ----
 
 === `init_files[]`
@@ -105,7 +103,7 @@ ifndef::env-cloud[]
 Requires version 4.10.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -146,7 +144,6 @@ init_statement: |-
     primary key (foo)
   ) WITHOUT ROWID;
   
-
 ----
 
 === `prefix`
@@ -171,7 +168,6 @@ The table to select from.
 ----
 # Examples:
 table: foo
-
 ----
 
 === `where`
@@ -185,7 +181,6 @@ An optional where clause to add. Placeholder arguments are populated with the `a
 # Examples:
 where: type = ? and created_at > ?
 where: user_id = ?
-
 ----
 
 

@@ -24,7 +24,6 @@ endif::[]
 ----
 # Examples:
 nkey: UDXU4RCSJNZOIQHZNWXHXORDPRTGNJAHAHFRGZNEEJCPQTT2M7NLCNF4
-
 ----
 
 === `auth.nkey_file`
@@ -37,7 +36,6 @@ An optional file containing a NKey seed.
 ----
 # Examples:
 nkey_file: ./seed.nk
-
 ----
 
 === `auth.user_credentials_file`
@@ -50,7 +48,6 @@ An optional file containing user credentials which consist of a user JWT and cor
 ----
 # Examples:
 user_credentials_file: ./user.creds
-
 ----
 
 === `auth.user_jwt`
@@ -79,7 +76,6 @@ The name of the KV bucket.
 ----
 # Examples:
 bucket: my_kv_bucket
-
 ----
 
 === `key`
@@ -97,7 +93,6 @@ key: foo.bar.baz
 key: foo.*
 key: foo.>
 key: foo.${! json("meta.type") }
-
 ----
 
 === `max_reconnects`
@@ -157,7 +152,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 # Examples:
 revision: 42
 revision: ${! @nats_kv_revision }
-
 ----
 
 === `timeout`
@@ -179,6 +173,8 @@ Custom TLS settings can be used to override system defaults.
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -244,7 +240,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -284,7 +279,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -299,7 +293,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`
@@ -319,8 +312,10 @@ A list of URLs to connect to. If a list item contains commas, it will be expande
 [source,yaml]
 ----
 # Examples:
-urls: nats://127.0.0.1:4222
-urls: nats://username:password@127.0.0.1:4222
+urls:
+  - "nats://127.0.0.1:4222"
+
+  - "nats://username:password@127.0.0.1:4222"
 
 ----
 

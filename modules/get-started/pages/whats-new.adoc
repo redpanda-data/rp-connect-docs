@@ -6,6 +6,25 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.58.2
+
+This release introduces an experimental Slack output and expands support for automatic topic creation across Redpanda-related components.
+
+=== New components
+
+* xref:components:outputs/slack_reaction.adoc[`slack_reaction`] (experimental): Adds or removes emoji reactions from Slack messages by channel ID and timestamp.
+
+=== Component updates
+
+This release adds support for the `allow_auto_topic_creation` field in the following components:
+
+* xref:components:redpanda/about.adoc[`redpanda`] configuration block.
+* xref:components:outputs/kafka_franz.adoc[`kafka_franz`] output.
+* xref:components:outputs/redpanda.adoc[`redpanda`] output.
+* xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`] output.
+
+This field allows components to create topics automatically when publishing data, if the underlying Kafka/Redpanda broker is configured to allow it.
+
 == Version 4.57.0
 
 This release adds support for the following fields:

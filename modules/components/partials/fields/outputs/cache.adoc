@@ -17,7 +17,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 key: ${!count("items")}-${!timestamp_unix_nano()}
 key: ${!json("doc.id")}
 key: ${!meta("kafka_key")}
-
 ----
 
 === `max_in_flight`
@@ -51,7 +50,6 @@ endif::[]
 ttl: 60s
 ttl: 5m
 ttl: 36h
-
 ----
 
 

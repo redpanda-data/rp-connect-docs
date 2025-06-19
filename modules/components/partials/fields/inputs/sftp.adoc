@@ -80,7 +80,7 @@ Whether to delete files from the server once they are processed.
 
 A list of paths to consume sequentially. Glob patterns are supported.
 
-*Type*: `string`
+*Type*: `array`
 
 === `scanner`
 
@@ -138,7 +138,6 @@ The minimum period of time since a file was last updated before attempting to co
 minimum_age: 10s
 minimum_age: 1m
 minimum_age: 10m
-
 ----
 
 === `watcher.poll_interval`
@@ -154,7 +153,6 @@ The interval between each attempt to scan the target paths for new files.
 # Examples:
 poll_interval: 100ms
 poll_interval: 1s
-
 ----
 
 

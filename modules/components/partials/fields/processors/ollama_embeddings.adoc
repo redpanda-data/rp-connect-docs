@@ -12,7 +12,6 @@ If `server_address` is not set - the directory to download the ollama binary and
 ----
 # Examples:
 cache_directory: /opt/cache/connect/ollama
-
 ----
 
 === `download_url`
@@ -34,7 +33,6 @@ model: nomic-embed-text
 model: mxbai-embed-large
 model: snowflake-artic-embed
 model: all-minilm
-
 ----
 
 === `runner`
@@ -83,7 +81,6 @@ The address of the Ollama server to use. Leave the field blank and the processor
 ----
 # Examples:
 server_address: http://127.0.0.1:11434
-
 ----
 
 === `text`

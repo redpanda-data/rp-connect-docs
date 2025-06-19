@@ -27,7 +27,6 @@ endif::[]
 # Examples:
 connect_timeout: 1s
 connect_timeout: 500ms
-
 ----
 
 === `dynamic_client_id_suffix`
@@ -110,6 +109,8 @@ A list of client certificates to use. For each certificate either the fields `ce
 
 *Type*: `object`
 
+*Default*: `[]`
+
 [source,yaml]
 ----
 # Examples:
@@ -174,7 +175,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -214,7 +214,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -229,7 +228,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`
@@ -262,7 +260,8 @@ If an item in the list contains commas, it is expanded into multiple URLs.
 [source,yaml]
 ----
 # Examples:
-urls: tcp://localhost:1883
+urls:
+  - "tcp://localhost:1883"
 
 ----
 
@@ -337,7 +336,6 @@ endif::[]
 # Examples:
 write_timeout: 1s
 write_timeout: 500ms
-
 ----
 
 

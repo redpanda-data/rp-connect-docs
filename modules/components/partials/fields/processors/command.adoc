@@ -12,7 +12,6 @@ An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that, when specifi
 ----
 # Examples:
 args_mapping: [ "-c", this.script_path ]
-
 ----
 
 === `name`
@@ -28,7 +27,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 name: bash
 name: go
 name: ${! @command }
-
 ----
 
 

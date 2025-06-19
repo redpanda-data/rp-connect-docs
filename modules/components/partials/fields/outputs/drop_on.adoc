@@ -13,7 +13,6 @@ An optional duration string that determines the maximum length of time to wait f
 # Examples:
 back_pressure: 30s
 back_pressure: 1m
-
 ----
 
 === `error`
@@ -32,7 +31,7 @@ ifndef::env-cloud[]
 Requires version 4.27.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -40,7 +39,7 @@ endif::[]
 error_patterns:
   - and that was really bad$
 
-  - roughly [0-9]+ issues occurred
+  - "roughly [0-9]+ issues occurred"
 
 ----
 

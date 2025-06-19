@@ -4323,6 +4323,42 @@
       }
     },
     {
+      "name": "slack_reaction",
+      "type": "output",
+      "status": "experimental",
+      "plugin": true,
+      "description": "Add or remove an emoji reaction from a Slack message.",
+      "categories": null,
+      "config": {
+        "children": [
+          {
+            "name": "bot_token",
+            "description": "Your Slack Bot User OAuth token used to authenticate the API request. This token must have the necessary `reactions:write` and `channels:read` (or related) scopes. It typically begins with `xoxb-`."
+          },
+          {
+            "name": "channel_id",
+            "description": "The unique Slack channel ID where the target message resides. Channel IDs usually start with `C` for public channels or `G` for private channels. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "timestamp",
+            "description": "The timestamp of the message to react to. This is a unique identifier for the message, usually obtained from a previous Slack API call (such as `chat.postMessage` or `conversations.history`). It typically looks like a Unix timestamp with a decimal. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "emoji",
+            "description": "The name of the emoji to be added or removed, without surrounding colons. Use the plain emoji name, such as `thumbsup` or `tada`. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "action",
+            "description": "Whether to add or remove the reaction. When set to `add`, the specified emoji reaction is applied to the target message. When set to `remove`, the emoji reaction is removed from the target message."
+          },
+          {
+            "name": "max_in_flight",
+            "description": "The maximum number of messages to have in flight at a given time. Increasing this value can improve throughput in high-volume scenarios, but be cautious not to exceed Slack's API rate limits."
+          }
+        ]
+      }
+    },
+    {
       "name": "schema_registry",
       "config": {
         "children": [

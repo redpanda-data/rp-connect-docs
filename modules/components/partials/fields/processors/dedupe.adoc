@@ -28,7 +28,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 # Examples:
 key: ${! meta("kafka_key") }
 key: ${! content().hash("xxhash64") }
-
 ----
 
 

@@ -14,18 +14,18 @@ Ensure that messages have been copied across all replicas before acknowledging r
 
 A list of broker addresses to connect to. If an item of the list contains commas it will be expanded into multiple addresses.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
 addresses:
-  - localhost:9092
+  - "localhost:9092"
 
-  - localhost:9041,localhost:9042
+  - "localhost:9041,localhost:9042"
 
-  - localhost:9041
-  - localhost:9042
+  - "localhost:9041"
+  - "localhost:9042"
 
 ----
 
@@ -48,7 +48,6 @@ The initial period to wait between retry attempts. The retry interval increases 
 # Examples:
 initial_interval: 50ms
 initial_interval: 1s
-
 ----
 
 === `backoff.max_elapsed_time`
@@ -64,7 +63,6 @@ The maximum overall period of time to spend on retry attempts before the request
 # Examples:
 max_elapsed_time: 1m
 max_elapsed_time: 1h
-
 ----
 
 === `backoff.max_interval`
@@ -80,7 +78,6 @@ The maximum period to wait between retry attempts
 # Examples:
 max_interval: 5s
 max_interval: 1m
-
 ----
 
 === `batching`
@@ -104,7 +101,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -127,7 +123,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -152,7 +147,6 @@ A period in which an incomplete batch should be flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -247,7 +241,6 @@ endif::[]
 # Examples:
 inject_tracing_map: meta = @.merge(this)
 inject_tracing_map: root.meta.span = this
-
 ----
 
 === `key`
@@ -293,7 +286,7 @@ Specify criteria for which metadata values are sent with messages as headers.
 
 Provide a list of explicit metadata key prefixes to be excluded when adding metadata to sent messages.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -389,7 +382,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: ${PASSWORD}
-
 ----
 
 === `sasl.token_cache`
@@ -420,7 +412,6 @@ A PLAIN username. It is recommended that you use environment variables to popula
 ----
 # Examples:
 user: ${USER}
-
 ----
 
 === `static_headers`
@@ -435,7 +426,6 @@ An optional map of static headers that should be added to messages in addition t
 static_headers:
   first-static-header: value-1
   second-static-header: value-2
-
 ----
 
 === `target_version`
@@ -449,7 +439,6 @@ The version of the Kafka protocol to use. This limits the capabilities used by t
 # Examples:
 target_version: 2.1.0
 target_version: 3.1.0
-
 ----
 
 === `timeout`
@@ -472,7 +461,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 # Examples:
 timestamp_ms: ${! timestamp_unix_milli() }
 timestamp_ms: ${! metadata("kafka_timestamp_ms") }
-
 ----
 
 === `tls`
@@ -486,6 +474,8 @@ Custom TLS settings can be used to override system defaults.
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -551,7 +541,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -591,7 +580,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -606,7 +594,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`

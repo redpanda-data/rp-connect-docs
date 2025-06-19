@@ -22,7 +22,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -45,7 +44,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value i
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -70,7 +68,6 @@ The period of time after which an incomplete batch is flushed regardless of its 
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -124,7 +121,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 id: ${! json("id") }
-
 ----
 
 === `max_in_flight`
@@ -222,7 +218,6 @@ The Couchbase connection string.
 ----
 # Examples:
 url: couchbase://localhost:11210
-
 ----
 
 === `username`

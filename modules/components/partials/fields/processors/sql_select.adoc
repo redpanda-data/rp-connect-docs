@@ -13,14 +13,13 @@ An optional xref:guides:bloblang/about.adoc[Bloblang mapping] which should evalu
 # Examples:
 args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
 args_mapping: root = [ meta("user.id") ]
-
 ----
 
 === `columns[]`
 
 A list of columns to query.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -81,7 +80,6 @@ dsn: clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=
 dsn: foouser:foopassword@tcp(localhost:3306)/foodb
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
 dsn: oracle://foouser:foopass@localhost:1521/service_name
-
 ----
 
 === `init_files[]`
@@ -98,7 +96,7 @@ ifndef::env-cloud[]
 Requires version 4.10.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -139,7 +137,6 @@ init_statement: |-
     primary key (foo)
   ) WITHOUT ROWID;
   
-
 ----
 
 === `prefix`
@@ -164,7 +161,6 @@ The table to query.
 ----
 # Examples:
 table: foo
-
 ----
 
 === `where`
@@ -178,7 +174,6 @@ An optional where clause to add. Placeholder arguments are populated with the `a
 # Examples:
 where: meow = ? and woof = ?
 where: user_id = ?
-
 ----
 
 

@@ -14,7 +14,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 check: this.type == "foo"
 check: this.contents.urls.contains("https://benthos.dev/")
 check: true
-
 ----
 
 === `processors[]`

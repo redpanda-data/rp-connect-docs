@@ -33,7 +33,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -56,7 +55,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value i
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -81,7 +79,6 @@ The period of time after which an incomplete batch is flushed regardless of its 
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -123,7 +120,6 @@ The data source name (DSN) of the PostgreSQL database from which you want to str
 ----
 # Examples:
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
-
 ----
 
 === `heartbeat_interval`
@@ -143,7 +139,6 @@ Set `heartbeat_interval` to `0s` to disable heartbeats.
 # Examples:
 heartbeat_interval: 0s
 heartbeat_interval: 24h
-
 ----
 
 === `include_transaction_markers`
@@ -174,7 +169,6 @@ Specify the standby timeout after which an idle connection is refreshed to keep 
 ----
 # Examples:
 pg_standby_timeout: 30s
-
 ----
 
 === `pg_wal_monitor_interval`
@@ -189,7 +183,6 @@ How often to report changes to the replication lag and write them to Redpanda Co
 ----
 # Examples:
 pg_wal_monitor_interval: 6s
-
 ----
 
 === `schema`
@@ -203,7 +196,6 @@ The PostgreSQL schema from which to replicate data.
 # Examples:
 schema: public
 schema: "MyCaseSensitiveSchemaNeedingQuotes"
-
 ----
 
 === `slot_name`
@@ -220,7 +212,6 @@ endif::[]
 ----
 # Examples:
 slot_name: my_test_slot
-
 ----
 
 === `snapshot_batch_size`
@@ -237,7 +228,6 @@ This option is only available when `stream_snapshot` is set to `true`.
 ----
 # Examples:
 snapshot_batch_size: 10000
-
 ----
 
 === `stream_snapshot`
@@ -252,21 +242,20 @@ When set to `true`, this input streams a snapshot of all existing data in the so
 ----
 # Examples:
 stream_snapshot: true
-
 ----
 
 === `tables[]`
 
 A list of database table names to include in the snapshot and logical replication. Specify each table name as a separate item.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
 tables:
   - my_table_1
-  - '"MyCaseSensitiveTableNeedingQuotes"'
+  - "MyCaseSensitiveTableNeedingQuotes"
 
 ----
 
@@ -287,7 +276,7 @@ If the pipeline is restarted, another data snapshot is taken before data updates
 
 Specify the value to emit when unchanged <<receive-toast-and-deleted-values, TOAST values>> appear in the message stream. Unchanged values occur for data updates and deletes when `REPLICA IDENTITY` is not set to `FULL`.
 
-*Type*: `object`
+*Type*: `unknown`
 
 *Default*:
 [source,yaml]
@@ -299,7 +288,6 @@ null
 ----
 # Examples:
 unchanged_toast_value: __redpanda_connect_unchanged_toast_value__
-
 ----
 
 

@@ -34,7 +34,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -57,7 +56,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value i
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -82,7 +80,6 @@ The period of time after which an incomplete batch is flushed regardless of its 
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -173,7 +170,7 @@ The separator for fields in a CSV file. The output uses this value when reading 
 
 A list of values to use as the header for each batch of messages. If not specified, the first line of each message is used as the header.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 

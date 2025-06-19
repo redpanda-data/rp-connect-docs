@@ -14,7 +14,6 @@ OData filter expression. Is not set all rows are returned. Valid operators are `
 ----
 # Examples:
 filter: PartitionKey eq 'foo' and RowKey gt '1000'
-
 ----
 
 === `page_size`
@@ -37,7 +36,6 @@ Select expression using OData notation. Limits the columns on each record to jus
 ----
 # Examples:
 select: PartitionKey,RowKey,Foo,Bar,Timestamp
-
 ----
 
 === `storage_access_key`
@@ -82,7 +80,6 @@ The table to read messages from.
 ----
 # Examples:
 table_name: Foo
-
 ----
 
 

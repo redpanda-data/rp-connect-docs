@@ -6,18 +6,18 @@
 
 A list of Cassandra nodes to connect to. Multiple comma separated addresses can be specified on a single line.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
 addresses:
-  - localhost:9042
+  - "localhost:9042"
 
-  - foo:9042
-  - bar:9042
+  - "foo:9042"
+  - "bar:9042"
 
-  - foo:9042,bar:9042
+  - "foo:9042,bar:9042"
 
 ----
 
@@ -125,6 +125,8 @@ A list of client certificates to use. For each certificate either the fields `ce
 
 *Type*: `object`
 
+*Default*: `[]`
+
 [source,yaml]
 ----
 # Examples:
@@ -189,7 +191,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -229,7 +230,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -244,7 +244,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`

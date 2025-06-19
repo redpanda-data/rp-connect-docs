@@ -40,7 +40,7 @@ The socket type to use.
 
 A list of subscription topic filters to use when consuming from a SUB socket. Specifying a single sub_filter of `''` will subscribe to everything.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -48,6 +48,6 @@ A list of subscription topic filters to use when consuming from a SUB socket. Sp
 
 A list of URLs to connect to (or as). If an item of the list contains commas it will be expanded into multiple URLs.
 
-*Type*: `string`
+*Type*: `array`
 
 

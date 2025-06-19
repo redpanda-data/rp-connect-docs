@@ -184,7 +184,7 @@ Alternatively, you can specify explicit partitions to consume by using a colon a
 
 It is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_offset` determines which offset to start from.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -195,15 +195,15 @@ topics:
 
   - things.*
 
-  - foo,bar
+  - "foo,bar"
 
-  - foo:0
-  - bar:1
-  - bar:3
+  - "foo:0"
+  - "bar:1"
+  - "bar:3"
 
-  - foo:0,bar:1,bar:3
+  - "foo:0,bar:1,bar:3"
 
-  - foo:0-5
+  - "foo:0-5"
 
 ----
 

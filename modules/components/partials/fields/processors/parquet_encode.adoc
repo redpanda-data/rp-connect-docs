@@ -36,7 +36,7 @@ Parquet schema.
 
 A list of child fields.
 
-*Type*: `object`
+*Type*: `unknown`
 
 [source,yaml]
 ----
@@ -46,6 +46,7 @@ fields:
     type: INT64
   - name: bar
     type: BYTE_ARRAY
+
 ----
 
 === `schema[].name`

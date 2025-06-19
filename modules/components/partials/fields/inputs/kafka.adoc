@@ -6,18 +6,18 @@
 
 A list of broker addresses to connect to. If an item of the list contains commas it will be expanded into multiple addresses.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
 addresses:
-  - localhost:9092
+  - "localhost:9092"
 
-  - localhost:9041,localhost:9042
+  - "localhost:9041,localhost:9042"
 
-  - localhost:9041
-  - localhost:9042
+  - "localhost:9041"
+  - "localhost:9042"
 
 ----
 
@@ -50,7 +50,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -73,7 +72,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -98,7 +96,6 @@ A period in which an incomplete batch should be flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -173,7 +170,6 @@ endif::[]
 # Examples:
 extract_tracing_map: root = @
 extract_tracing_map: root = this.meta.span
-
 ----
 
 === `fetch_buffer_cap`
@@ -301,7 +297,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: ${PASSWORD}
-
 ----
 
 === `sasl.token_cache`
@@ -332,7 +327,6 @@ A PLAIN username. It is recommended that you use environment variables to popula
 ----
 # Examples:
 user: ${USER}
-
 ----
 
 === `start_from_oldest`
@@ -354,7 +348,6 @@ The version of the Kafka protocol to use. This limits the capabilities used by t
 # Examples:
 target_version: 2.1.0
 target_version: 3.1.0
-
 ----
 
 === `tls`
@@ -368,6 +361,8 @@ Custom TLS settings can be used to override system defaults.
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -433,7 +428,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -473,7 +467,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -488,7 +481,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`
@@ -507,7 +499,7 @@ ifndef::env-cloud[]
 Requires version 3.33.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -516,15 +508,15 @@ topics:
   - foo
   - bar
 
-  - foo,bar
+  - "foo,bar"
 
-  - foo:0
-  - bar:1
-  - bar:3
+  - "foo:0"
+  - "bar:1"
+  - "bar:3"
 
-  - foo:0,bar:1,bar:3
+  - "foo:0,bar:1,bar:3"
 
-  - foo:0-5
+  - "foo:0-5"
 
 ----
 

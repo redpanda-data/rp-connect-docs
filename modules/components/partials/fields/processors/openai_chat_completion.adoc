@@ -41,7 +41,6 @@ endif::[]
 ----
 # Examples:
 image: root = this.image.decode("base64") # decode base64 encoded image
-
 ----
 
 === `json_schema`
@@ -87,7 +86,6 @@ model: gpt-4o
 model: gpt-4o-mini
 model: gpt-4
 model: gpt4-turbo
-
 ----
 
 === `presence_penalty`
@@ -280,6 +278,8 @@ A list of client certificates to use. For each certificate, specify values for e
 
 *Type*: `object`
 
+*Default*: `[]`
+
 [source,yaml]
 ----
 # Examples:
@@ -344,7 +344,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `schema_registry.tls.enable_renegotiation`
@@ -377,7 +376,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `schema_registry.tls.root_cas_file`
@@ -392,7 +390,6 @@ Specify the path to a root certificate authority file (optional). This is a file
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `schema_registry.tls.skip_cert_verify`
@@ -427,7 +424,7 @@ The OpenAI API endpoint to which the processor sends requests. Update the defaul
 
 Specify up to four stop sequences to use. When the model encounters a stop pattern, it stops generating text and returns the final response.
 
-*Type*: `string`
+*Type*: `array`
 
 === `system_prompt`
 
@@ -472,6 +469,8 @@ The parameters the LLM needs to provide to invoke this tool.
 
 *Type*: `object`
 
+*Default*: `[]`
+
 === `tools[].parameters.properties`
 
 The properties for the processor's input data
@@ -488,7 +487,7 @@ A description of this parameter.
 
 Specifies that this parameter is an enum and only these specific values should be used.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -502,7 +501,7 @@ The type of this parameter.
 
 The required parameters for this pipeline.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 

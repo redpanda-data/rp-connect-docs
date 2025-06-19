@@ -82,7 +82,6 @@ model: anthropic.claude-3-5-sonnet-20240620-v1:0
 model: cohere.command-text-v14
 model: meta.llama3-1-70b-instruct-v1:0
 model: mistral.mistral-large-2402-v1:0
-
 ----
 
 === `prompt`
@@ -101,7 +100,7 @@ The AWS region to target.
 
 The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options.
 
-*Type*: `string`
+*Type*: `array`
 
 === `system_prompt`
 

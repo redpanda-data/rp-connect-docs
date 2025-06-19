@@ -22,7 +22,7 @@ Optionally process records in batches. This can help to speed up the consumption
 
 A list of file paths to read from. Each file will be read sequentially until the list is exhausted, at which point the input will close. Glob patterns are supported, including super globs (double star).
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----

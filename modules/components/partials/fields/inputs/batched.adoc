@@ -29,7 +29,6 @@ policy:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `policy.byte_size`
@@ -52,7 +51,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `policy.count`
@@ -77,7 +75,6 @@ A period in which an incomplete batch should be flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `policy.processors[]`

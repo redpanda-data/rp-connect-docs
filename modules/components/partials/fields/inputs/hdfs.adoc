@@ -12,13 +12,13 @@ The directory to consume from.
 
 A list of target host addresses to connect to.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
 hosts:
-  - localhost:9000
+  - "localhost:9000"
 
 ----
 

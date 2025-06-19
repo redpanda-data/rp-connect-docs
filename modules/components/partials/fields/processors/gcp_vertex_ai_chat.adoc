@@ -16,7 +16,6 @@ endif::[]
 ----
 # Examples:
 attachment: root = this.image.decode("base64") # decode base64 encoded image
-
 ----
 
 === `credentials_json`
@@ -49,7 +48,6 @@ Specify the location of a fine tuned model. For base models, you can omit this f
 ----
 # Examples:
 location: us-central1
-
 ----
 
 === `max_tokens`
@@ -77,7 +75,6 @@ The name of the LLM to use. For a full list of models, see the https://console.c
 # Examples:
 model: gemini-1.5-pro-001
 model: gemini-1.5-flash-001
-
 ----
 
 === `presence_penalty`
@@ -113,7 +110,7 @@ The format of the generated response. You must also prompt the model to output t
 
 Sets the stop sequences to use. When this pattern is encountered the LLM stops generating text and returns the final response.
 
-*Type*: `string`
+*Type*: `array`
 
 === `system_prompt`
 
@@ -133,6 +130,8 @@ Controls the randomness of predictions.
 The tools to allow the LLM to invoke. This allows building subpipelines that the LLM can choose to invoke to execute agentic-like actions.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 === `tools[].description`
 
@@ -168,7 +167,7 @@ A description of this parameter.
 
 Specifies that this parameter is an enum and only these specific values should be used.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -182,7 +181,7 @@ The type of this parameter.
 
 The required parameters for this pipeline.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 

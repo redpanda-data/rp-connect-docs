@@ -46,7 +46,6 @@ Name of the redis master when `kind` is `failover`
 ----
 # Examples:
 master: mymaster
-
 ----
 
 === `tls`
@@ -64,6 +63,8 @@ Some cloud hosted instances of Redis (such as Azure Cache) might need some hand 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -129,7 +130,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -169,7 +169,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -184,7 +183,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`
@@ -210,7 +208,6 @@ url: redis://foousername:foopassword@redisplace:6379
 url: redis://:foopassword@redisplace:6379
 url: redis://localhost:6379/1
 url: redis://localhost:6379/1,redis://localhost:6380/1
-
 ----
 
 

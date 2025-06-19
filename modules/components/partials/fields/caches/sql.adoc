@@ -95,7 +95,6 @@ dsn: clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=
 dsn: foouser:foopassword@tcp(localhost:3306)/foodb
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
 dsn: oracle://foouser:foopass@localhost:1521/service_name
-
 ----
 
 === `init_files[]`
@@ -112,7 +111,7 @@ ifndef::env-cloud[]
 Requires version 4.10.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -153,7 +152,6 @@ init_statement: |-
     primary key (foo)
   ) WITHOUT ROWID;
   
-
 ----
 
 === `key_column`
@@ -166,7 +164,6 @@ The name of a column to be used for storing cache item keys. This column should 
 ----
 # Examples:
 key_column: foo
-
 ----
 
 === `set_suffix`
@@ -181,7 +178,6 @@ An optional suffix to append to each insert query for a cache `set` operation. T
 set_suffix: ON DUPLICATE KEY UPDATE bar=VALUES(bar)
 set_suffix: ON CONFLICT (foo) DO UPDATE SET bar=excluded.bar
 set_suffix: ON CONFLICT (foo) DO NOTHING
-
 ----
 
 === `table`
@@ -194,7 +190,6 @@ The table to insert/read/delete cache items.
 ----
 # Examples:
 table: foo
-
 ----
 
 === `value_column`
@@ -207,7 +202,6 @@ The name of a column to be used for storing cache item values. This column shoul
 ----
 # Examples:
 value_column: bar
-
 ----
 
 

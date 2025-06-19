@@ -126,14 +126,13 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `topics[]`
 
 A list of topics to subscribe to. This or topics_pattern must be set.
 
-*Type*: `string`
+*Type*: `array`
 
 === `topics_pattern`
 
@@ -153,7 +152,6 @@ A URL to connect to.
 url: pulsar://localhost:6650
 url: pulsar://pulsar.us-west.example.com:6650
 url: pulsar+ssl://pulsar.us-west.example.com:6651
-
 ----
 
 

@@ -13,14 +13,13 @@ A xref:guides:bloblang/about.adoc[Bloblang mapping] which should evaluate to an 
 # Examples:
 args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
 args_mapping: root = [ meta("user.id") ]
-
 ----
 
 === `columns[]`
 
 A list of columns to insert.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -79,7 +78,6 @@ dsn: clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=
 dsn: foouser:foopassword@tcp(localhost:3306)/foodb
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
 dsn: oracle://foouser:foopass@localhost:1521/service_name
-
 ----
 
 === `init_files[]`
@@ -96,7 +94,7 @@ ifndef::env-cloud[]
 Requires version 4.10.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -137,14 +135,13 @@ init_statement: |-
     primary key (foo)
   ) WITHOUT ROWID;
   
-
 ----
 
 === `options[]`
 
 A list of keyword options to add before the INTO clause of the query.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -171,7 +168,6 @@ An optional suffix to append to the insert query.
 ----
 # Examples:
 suffix: ON CONFLICT (name) DO NOTHING
-
 ----
 
 === `table`
@@ -184,7 +180,6 @@ The table to insert to.
 ----
 # Examples:
 table: foo
-
 ----
 
 

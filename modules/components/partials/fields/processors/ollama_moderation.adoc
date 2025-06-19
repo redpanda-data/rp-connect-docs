@@ -12,7 +12,6 @@ If the `server_address` is not set, download the Ollama binary to this directory
 ----
 # Examples:
 cache_directory: /opt/cache/connect/ollama
-
 ----
 
 === `download_url`
@@ -44,7 +43,6 @@ The name of the Ollama LLM to use.
 # Examples:
 model: llama-guard3
 model: shieldgemma
-
 ----
 
 === `prompt`
@@ -113,7 +111,6 @@ The address of the Ollama server to use. Leave this field blank and the processo
 ----
 # Examples:
 server_address: http://127.0.0.1:11434
-
 ----
 
 

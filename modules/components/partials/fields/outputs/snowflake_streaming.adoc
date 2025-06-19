@@ -27,7 +27,6 @@ WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 ----
 # Examples:
 account: ORG-ACCOUNT
-
 ----
 
 === `batching`
@@ -66,7 +65,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -89,7 +87,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -114,7 +111,6 @@ The period after which an incomplete batch is flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -176,7 +172,6 @@ NOTE: Snowflake limits the number of streams per table to 10,000. If you need to
 ----
 # Examples:
 channel_name: partition-${!@kafka_partition}
-
 ----
 
 === `channel_prefix`
@@ -195,7 +190,6 @@ NOTE: Snowflake limits the number of streams per table to 10,000. If you need to
 ----
 # Examples:
 channel_prefix: channel-${HOST}
-
 ----
 
 === `commit_timeout`
@@ -211,7 +205,6 @@ The maximum duration to wait while data updates from a message batch are asynchr
 # Examples:
 commit_timeout: 10s
 commit_timeout: 10m
-
 ----
 
 === `database`
@@ -224,7 +217,6 @@ The Snowflake database you want to write data to.
 ----
 # Examples:
 database: MY_DATABASE
-
 ----
 
 === `init_statement`
@@ -247,7 +239,6 @@ init_statement: |-
   ALTER TABLE t1 ALTER COLUMN c1 DROP NOT NULL;
   ALTER TABLE t1 ADD COLUMN a2 NUMBER;
   
-
 ----
 
 === `mapping`
@@ -283,7 +274,6 @@ For more information about offset tokens, see https://docs.snowflake.com/en/user
 # Examples:
 offset_token: offset-${!"%016X".format(@kafka_offset)}
 offset_token: postgres-${!@lsn}
-
 ----
 
 === `private_key`
@@ -318,7 +308,6 @@ The role of the user specified in the `user` field. The user's role must have th
 ----
 # Examples:
 role: ACCOUNTADMIN
-
 ----
 
 === `schema`
@@ -331,7 +320,6 @@ The schema of the Snowflake database you want to write data to.
 ----
 # Examples:
 schema: PUBLIC
-
 ----
 
 === `schema_evolution`
@@ -402,7 +390,6 @@ The Snowflake table you want to write data to. This field supports xref:configur
 ----
 # Examples:
 table: MY_TABLE
-
 ----
 
 === `url`
@@ -415,7 +402,6 @@ Specify a custom URL to connect to Snowflake. This parameter overrides the defau
 ----
 # Examples:
 url: https://org-account.privatelink.snowflakecomputing.com
-
 ----
 
 === `user`

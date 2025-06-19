@@ -34,7 +34,6 @@ mapping: |-
   }
   root = this.apply("debeziumTimestampToAvroTimestamp")
   
-
 ----
 
 === `avro.preserve_logical_types`
@@ -177,7 +176,6 @@ The duration after which a cached schema is considered stale and is removed from
 # Examples:
 cache_duration: 1h
 cache_duration: 5m
-
 ----
 
 === `jwt`
@@ -334,6 +332,8 @@ A list of client certificates to use. For each certificate either the fields `ce
 
 *Type*: `object`
 
+*Default*: `[]`
+
 [source,yaml]
 ----
 # Examples:
@@ -398,7 +398,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -430,7 +429,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -445,7 +443,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`

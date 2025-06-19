@@ -14,7 +14,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 account_key: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
-
 ----
 
 === `args_mapping`
@@ -30,7 +29,6 @@ args_mapping: |-
   root = [
     { "Name": "@name", "Value": "benthos" },
   ]
-
 ----
 
 === `auto_replay_nacks`
@@ -61,7 +59,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 connection_string: AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;
-
 ----
 
 === `container`
@@ -74,7 +71,6 @@ Container.
 ----
 # Examples:
 container: testcontainer
-
 ----
 
 === `database`
@@ -87,7 +83,6 @@ Database.
 ----
 # Examples:
 database: testdb
-
 ----
 
 === `endpoint`
@@ -100,7 +95,6 @@ CosmosDB endpoint.
 ----
 # Examples:
 endpoint: https://localhost:8081
-
 ----
 
 === `partition_keys_map`
@@ -117,7 +111,6 @@ partition_keys_map: root = 41
 partition_keys_map: root = true
 partition_keys_map: root = null
 partition_keys_map: root = now().ts_format("2006-01-02")
-
 ----
 
 === `query`
@@ -130,7 +123,6 @@ The query to execute
 ----
 # Examples:
 query: SELECT c.foo FROM testcontainer AS c WHERE c.bar = "baz" AND c.timestamp < @timestamp
-
 ----
 
 

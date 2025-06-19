@@ -22,7 +22,6 @@ key: my_foo_result
 key: ${! this.document.id }
 key: ${! meta("kafka_key") }
 key: ${! meta("kafka_topic") }
-
 ----
 
 === `processors[]`
@@ -41,7 +40,6 @@ A condition that can be used to skip caching the results from the processors.
 ----
 # Examples:
 skip_on: errored()
-
 ----
 
 === `ttl`

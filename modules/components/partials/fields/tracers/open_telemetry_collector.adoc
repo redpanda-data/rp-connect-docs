@@ -18,7 +18,6 @@ The endpoint of a collector to send tracing events to.
 ----
 # Examples:
 address: localhost:4317
-
 ----
 
 === `grpc[].secure`
@@ -45,7 +44,6 @@ The endpoint of a collector to send tracing events to.
 ----
 # Examples:
 address: localhost:4318
-
 ----
 
 === `http[].secure`
@@ -85,7 +83,6 @@ Sets the ratio of traces to sample.
 # Examples:
 ratio: 0.85
 ratio: 0.5
-
 ----
 
 === `service`

@@ -15,7 +15,6 @@ A default TTL to set for items, calculated from the moment the item is cached. S
 # Examples:
 default_ttl: 5m
 default_ttl: 60s
-
 ----
 
 === `get_retries`
@@ -45,7 +44,6 @@ The initial period to wait between retry attempts.
 # Examples:
 initial_interval: 50ms
 initial_interval: 1s
-
 ----
 
 === `get_retries.max_elapsed_time`
@@ -61,7 +59,6 @@ The maximum overall period of time to spend on retry attempts before the request
 # Examples:
 max_elapsed_time: 1m
 max_elapsed_time: 1h
-
 ----
 
 === `get_retries.max_interval`
@@ -77,7 +74,6 @@ The maximum period to wait between retry attempts
 # Examples:
 max_interval: 5s
 max_interval: 1m
-
 ----
 
 

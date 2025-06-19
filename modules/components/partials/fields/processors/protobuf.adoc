@@ -14,7 +14,7 @@ When set to `true`, the `from_json` operator discards fields that are unknown to
 
 A list of directories that contain `.proto` files, including all definitions required for parsing the target message. If left empty, the current directory is used. This processor imports all `.proto` files listed within specified or default directories.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 

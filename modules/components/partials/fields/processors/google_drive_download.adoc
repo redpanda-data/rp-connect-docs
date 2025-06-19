@@ -28,14 +28,12 @@ application/vnd.google-apps.spreadsheet: text/csv
 
 [source,yaml]
 ----
-# Examples
-
+# Examples:
 export_mime_types:
   application/vnd.google-apps.document: application/pdf
   application/vnd.google-apps.drawing: application/pdf
   application/vnd.google-apps.presentation: application/pdf
   application/vnd.google-apps.spreadsheet: application/pdf
-
 export_mime_types:
   application/vnd.google-apps.document: application/vnd.openxmlformats-officedocument.wordprocessingml.document
   application/vnd.google-apps.drawing: image/svg+xml

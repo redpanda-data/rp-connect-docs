@@ -92,6 +92,17 @@ endif::[]
 
 *Type*: `object`
 
+*Default*:
+[source,yaml]
+----
+- error: 0.05
+  quantile: 0.5
+- error: 0.01
+  quantile: 0.9
+- error: 0.001
+  quantile: 0.99
+----
+
 [source,yaml]
 ----
 # Examples:

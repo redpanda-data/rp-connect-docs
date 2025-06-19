@@ -33,7 +33,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -56,7 +55,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value i
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -81,7 +79,6 @@ The period of time after which an incomplete batch is flushed regardless of its 
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -137,7 +134,6 @@ The data source name (DSN) of the MySQL database from which you want to stream u
 ----
 # Examples:
 dsn: user:password@tcp(localhost:3306)/database
-
 ----
 
 === `flavor`
@@ -178,7 +174,7 @@ When set to `true`, this input streams a snapshot of all existing data in the so
 
 A list of the database table names to stream changes from. Specify each table name as a separate item.
 
-*Type*: `string`
+*Type*: `array`
 
 [source,yaml]
 ----

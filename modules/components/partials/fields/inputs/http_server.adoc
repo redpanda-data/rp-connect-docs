@@ -18,7 +18,7 @@ ifndef::env-cloud[]
 Requires version 3.33.0 or later.
 endif::[]
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*:
 [source,yaml]
@@ -48,7 +48,7 @@ endif::[]
 
 An explicit list of origins that are allowed for CORS requests.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -113,7 +113,7 @@ Specify criteria for which metadata values are added to the response as headers.
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -131,7 +131,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `string`
+*Type*: `array`
 
 *Default*: `[]`
 
@@ -162,7 +162,6 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 # Examples:
 status: ${! json("status") }
 status: ${! meta("status") }
-
 ----
 
 === `timeout`

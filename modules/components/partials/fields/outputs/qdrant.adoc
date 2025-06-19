@@ -33,7 +33,6 @@ batching:
   check: this.contains("END BATCH")
   count: 0
   period: 1m
-
 ----
 
 === `batching.byte_size`
@@ -56,7 +55,6 @@ A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean v
 ----
 # Examples:
 check: this.type == "end_of_transaction"
-
 ----
 
 === `batching.count`
@@ -81,7 +79,6 @@ A period in which an incomplete batch should be flushed regardless of its size.
 period: 1s
 period: 1m
 period: 500ms
-
 ----
 
 === `batching.processors[]`
@@ -123,7 +120,6 @@ The gRPC host of the Qdrant server.
 # Examples:
 grpc_host: localhost:6334
 grpc_host: xyz-example.eu-central.aws.cloud.qdrant.io:6334
-
 ----
 
 === `id`
@@ -137,7 +133,6 @@ The ID of the point to insert. Can be a UUID string or positive integer.
 # Examples:
 id: root = "dc88c126-679f-49f5-ab85-04b77e8c2791"
 id: root = 832
-
 ----
 
 === `max_in_flight`
@@ -161,7 +156,6 @@ An optional mapping of message to payload associated with the point.
 # Examples:
 payload_mapping: root = {"field": this.value, "field_2": 987}
 payload_mapping: root = metadata()
-
 ----
 
 === `tls`
@@ -175,6 +169,8 @@ Specify a secure TLS (HTTPS) connection to the Qdrant server.
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
 *Type*: `object`
+
+*Default*: `[]`
 
 [source,yaml]
 ----
@@ -240,7 +236,6 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 # Examples:
 password: foo
 password: ${KEY_PASSWORD}
-
 ----
 
 === `tls.enable_renegotiation`
@@ -280,7 +275,6 @@ root_cas: |-
   -----BEGIN CERTIFICATE-----
   ...
   -----END CERTIFICATE-----
-
 ----
 
 === `tls.root_cas_file`
@@ -295,7 +289,6 @@ An optional path of a root certificate authority file to use. This is a file, of
 ----
 # Examples:
 root_cas_file: ./root_cas.pem
-
 ----
 
 === `tls.skip_cert_verify`
@@ -322,7 +315,6 @@ vector_mapping: root = [[0.352,0.532,0.532,0.234],[0.352,0.532,0.532,0.234]]
 vector_mapping: root = {"some_sparse": {"indices":[23,325,532],"values":[0.352,0.532,0.532]}}
 vector_mapping: root = {"some_multi": [[0.352,0.532,0.532,0.234],[0.352,0.532,0.532,0.234]]}
 vector_mapping: root = {"some_dense": [0.352,0.532,0.532,0.234]}
-
 ----
 
 
