@@ -909,6 +909,93 @@ root.outs = this.ins.map_each(ele -> ele.abs())
 # Out: {"outs":[9,18,1.23,4.56]}
 ```
 
+=== `bitwise_and`
+
+Returns the result of a bitwise AND operation between the input number and the specified value.
+
+The bitwise AND operation compares each bit of two integers:
+
+- If both bits are `1`, the result bit is `1`
+- Otherwise, the result bit is `0`
+
+This operation is often used for masking bits.
+
+==== Parameters
+
+*`value`* &lt;integer&gt; The value to AND with.
+
+==== Examples
+
+
+```coffeescript
+root.new_value = this.value.bitwise_and(6)
+
+# In:  {"value":12}
+# Out: {"new_value":4}
+
+# In:  {"value":0}
+# Out: {"new_value":0}
+
+# In:  {"value":-4}
+# Out: {"new_value":4}
+```
+
+=== `bitwise_or`
+
+Returns the result of a bitwise OR operation between the input number and the specified value.
+
+The bitwise OR operation compares each bit of two integers:
+
+- If either bit is `1`, the result bit is `1`
+
+- If both are `0`, the result bit is `0`
+
+This operation is useful for setting or combining flags.
+
+==== Parameters
+
+*`value`* <integer> The value to OR with.
+
+==== Examples
+
+
+```coffeescript
+root.new_value = this.value.bitwise_or(6)
+
+# In:  {"value":12}
+# Out: {"new_value":14}
+
+# In:  {"value":0}
+# Out: {"new_value":6}
+
+# In:  {"value":-2}
+# Out: {"new_value":-2}
+```
+
+=== `bitwise_xor`
+
+Returns the result of bitwise XOR between the input number and a specified value. Bitwise XOR is a binary operation that compares two bits and returns `1` if they are different and `0` if they are the same. This operation is commonly used in cryptography and error detection.
+
+==== Parameters
+
+*`value`* <integer> The integer value to XOR with the current number.
+
+==== Examples
+
+
+```coffeescript
+root.new_value = this.value.bitwise_xor(6)
+
+# In:  {"value":12}
+# Out: {"new_value":10}
+
+# In:  {"value":0}
+# Out: {"new_value":6}
+
+# In:  {"value":-2}
+# Out: {"new_value":-8}
+```
+
 === `ceil`
 
 Returns the least integer value greater than or equal to a number. If the resulting value fits within a 64-bit integer then that is returned, otherwise a new floating point number is returned.

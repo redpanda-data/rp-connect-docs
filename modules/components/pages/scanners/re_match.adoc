@@ -18,29 +18,6 @@ re_match:
   max_buffer_size: 65536
 ```
 
-== Fields
-
-=== `pattern`
-
-The pattern to match against.
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-pattern: (?m)^\d\d:\d\d:\d\d
-```
-
-=== `max_buffer_size`
-
-Set the maximum buffer size for storing line data, this limits the maximum size that a message can be without causing an error.
-
-
-*Type*: `int`
-
-*Default*: `65536`
+include::redpanda-connect:components:partial$fields/scanners/re_match.adoc[]
 
 // end::single-source[]

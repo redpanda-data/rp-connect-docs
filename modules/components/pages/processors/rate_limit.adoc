@@ -19,13 +19,6 @@ rate_limit:
   resource: "" # No default (required)
 ```
 
-== Fields
-
-=== `resource`
-
-The target xref:components:rate_limits/about.adoc[`rate_limit` resource].
-
-
-*Type*: `string`
+include::redpanda-connect:components:partial$fields/processors/rate_limit.adoc[]
 
 // end::single-source[]

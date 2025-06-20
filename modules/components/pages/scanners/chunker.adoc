@@ -17,13 +17,6 @@ chunker:
   size: 0 # No default (required)
 ```
 
-== Fields
-
-=== `size`
-
-The size of each chunk in bytes.
-
-
-*Type*: `int`
+include::redpanda-connect:components:partial$fields/scanners/chunker.adoc[]
 
 // end::single-source[]

@@ -53,52 +53,7 @@ To use a service account instead, create a JSON key for the account and add it t
 - Explicitly share files with the service account's email account
 - Use https://support.google.com/a/answer/162106[domain-wide delegation^] to share all files within a Google Workspace
 
-== Fields
-
-=== `credentials_json`
-
-The JSON key for your service account (optional). If left empty, Application Default Credentials are used. For more details, see <<authentication, Authentication>>.
-
-include::components:partial$secret_warning.adoc[]
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `query`
-
-Specify a search query to locate matching files in Google Drive. This field supports:
-
-- The same query syntax as the Google Drive UI
-- xref:configuration:interpolation.adoc#bloblang-queries[Bloblang interpolation functions] for dynamic query generation
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `projection`
-
-Partial fields to include in the Google Drive search result.
-
-*Type*: `array`
-
-*Default*: `["id", "name", "mimeType", "size", "labelInfo"]`
-
-=== `include_label_ids`
-
-A comma delimited list of label IDs to include in the Google Drive search result. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `max_results`
-
-The maximum number of search results to return.
-
-*Type*: `int`
-
-*Default*: `64`
+include::redpanda-connect:components:partial$fields/processors/google_drive_search.adoc[]
 
 == Example
 

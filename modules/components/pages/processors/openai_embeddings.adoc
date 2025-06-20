@@ -30,49 +30,6 @@ This processor sends text strings to the OpenAI API, which generates vector embe
 
 To learn more about vector embeddings, see the https://platform.openai.com/docs/guides/embeddings[OpenAI API documentation^].
 
-== Fields
-
-=== `server_address`
-
-The Open API endpoint that the processor sends requests to. Update the default value to use another OpenAI compatible service.
-
-
-*Type*: `string`
-
-*Default*: `"https://api.openai.com/v1"`
-
-=== `api_key`
-
-The API key for OpenAI API.
-
-include::components:partial$secret_warning.adoc[]
-
-*Type*: `string`
-
-
-=== `model`
-
-The name of the OpenAI model to use.
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-model: text-embedding-3-large
-
-model: text-embedding-3-small
-
-model: text-embedding-ada-002
-```
-
-=== `text_mapping`
-
-The text you want to generate a vector embedding for. By default, the processor submits the entire payload as a string.
-
-
-*Type*: `string`
+include::redpanda-connect:components:partial$fields/processors/openai_embeddings.adoc[]
 
 // end::single-source[]

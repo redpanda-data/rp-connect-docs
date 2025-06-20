@@ -59,16 +59,6 @@ This scanner emits the following metadata for each message:
 - The `@avro_schema` field: The canonical Avro schema.
 - The `@avro_schema_fingerprint` field: The schema ID or fingerprint.
 
-
-== Fields
-
-=== `raw_json`
-
-Whether messages should be decoded into normal JSON (JSON that meets the expectations of regular internet JSON) rather than https://avro.apache.org/docs/current/specification/[Avro JSON^]. If `true`, the schema returned from the subject is decoded as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard JSON^] instead of as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[Avro JSON^]. For more details on the difference between standard JSON and Avro JSON, see the https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in Goavro^] and the https://github.com/linkedin/goavro[underlying library used for Avro serialization^].
-
-
-*Type*: `bool`
-
-*Default*: `false`
+include::redpanda-connect:components:partial$fields/scanners/avro.adoc[]
 
 // end::single-source[]

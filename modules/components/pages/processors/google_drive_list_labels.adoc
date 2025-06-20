@@ -42,16 +42,6 @@ To use a service account instead, create a JSON key for the account and add it t
 - Explicitly share files with the service account's email account
 - Use https://support.google.com/a/answer/162106[domain-wide delegation^] to share all files within a Google Workspace
 
-== Fields
-
-=== `credentials_json`
-
-The JSON key for your service account (optional). If left empty, Application Default Credentials are used. For more details, see <<authentication, Authentication>>.
-
-include::components:partial$secret_warning.adoc[]
-
-*Type*: `string`
-
-*Default*: `""`
+include::redpanda-connect:components:partial$fields/processors/google_drive_list_labels.adoc[]
 
 // end::single-source[]

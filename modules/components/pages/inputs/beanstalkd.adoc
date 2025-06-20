@@ -21,20 +21,5 @@ input:
     address: 127.0.0.1:11300 # No default (required)
 ```
 
-== Fields
-
-=== `address`
-
-An address to connect to.
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-address: 127.0.0.1:11300
-```
-
+include::redpanda-connect:components:partial$fields/inputs/beanstalkd.adoc[]
 

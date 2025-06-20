@@ -19,23 +19,6 @@ decompress:
     to_the_end: {}
 ```
 
-== Fields
-
-=== `algorithm`
-
-One of `gzip`, `pgzip`, `zlib`, `bzip2`, `flate`, `snappy`, `lz4`, `zstd`.
-
-
-*Type*: `string`
-
-
-=== `into`
-
-The child scanner to feed the decompressed stream into.
-
-
-*Type*: `scanner`
-
-*Default*: `{"to_the_end":{}}`
+include::redpanda-connect:components:partial$fields/scanners/decompress.adoc[]
 
 // end::single-source[]

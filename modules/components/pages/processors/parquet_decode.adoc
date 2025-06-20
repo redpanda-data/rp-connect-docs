@@ -23,66 +23,8 @@ parquet_decode:
   handle_logical_types: v1
 ```
 
-== Fields
+include::redpanda-connect:components:partial$fields/processors/parquet_decode.adoc[]
 
-=== `handle_logical_types`
- 
-Set to `v2` to enable enhanced decoding of logical types, or keep the default value (`v1`) to ignore logical type metadata when decoding values.
-
-In Parquet format, logical types are represented using standard physical types along with metadata that provides additional context. For example, UUIDs are stored as a `FIXED_LEN_BYTE_ARRAY` physical type, but the schema metadata identifies them as UUIDs. By enabling `v2`, this processor uses the metadata descriptions of logical types to produce more meaningful values during decoding.
-
-NOTE: For backward compatibility, this field enables logical-type handling for the specified Parquet format version, and all earlier versions. When creating new pipelines, Redpanda recommends that you use the newest documented version.
-
-*Type*: `string`
- 
-*Default*: `v1`
-
-Options:
- 
-[cols="2,8"]
-|===
-| Option | Description
- 
-| `v1`
-| No special handling of logical types.
-
-| `v2`
-a| Logical types with enhanced decoding:
-
-* `TIMESTAMP`: Decodes as an RFC3339 string describing the time. If the `isAdjustedToUTC` flag is set to `true` in the Parquet file, the time zone is set to UTC. If the flag is set to `false`, the time zone is set to local time.
-
-* `UUID`: Decodes as a string: `00112233-4455-6677-8899-aabbccddeeff`.
- 
-|===
- 
-```yml
- # Examples
- 
-handle_logical_types: v2
-```
-
-== Examples
-
-=== Reading Parquet files from AWS S3
-
-In this example, a pipeline consumes Parquet files as soon as they are uploaded to an AWS S3 bucket. The pipeline listens to an SQS queue for upload events, and uses the `to_the_end` scanner to read the files into memory in full. The `parquet_decode` processor then decodes each file into a batch of structured messages. Finally, the data is written to local files in newline-delimited JSON format.
-
-```yaml
-input:
-  aws_s3:
-    bucket: TODO
-    prefix: files/
-    scanner:
-      to_the_end: {}
-    sqs:
-      url: TODO
-  processors:
-    - parquet_decode:
-        handle_logical_types: v2
-output:
-  file:
-    codec: lines
-    path: './files/${! meta("s3_key") }.jsonl'
-```
+include::redpanda-connect:components:partial$examples/processors/parquet_decode.adoc[]
 
 // end::single-source[]

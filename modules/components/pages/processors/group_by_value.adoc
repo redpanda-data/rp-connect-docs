@@ -23,24 +23,7 @@ This allows you to group messages using arbitrary fields within their content or
 
 The functionality of this processor depends on being applied across messages that are batched. You can find out more about batching xref:configuration:batching.adoc[in this doc].
 
-== Fields
-
-=== `value`
-
-The interpolated string to group based on.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-value: ${! meta("kafka_key") }
-
-value: ${! json("foo.bar") }-${! meta("baz") }
-```
+include::redpanda-connect:components:partial$fields/processors/group_by_value.adoc[]
 
 == Examples
 

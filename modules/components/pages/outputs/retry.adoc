@@ -54,57 +54,6 @@ This output type is useful whenever we wish to avoid reprocessing a message on t
 
 Rather than retrying the same output you may wish to retry the send using a different output target (a dead letter queue). In which case you should instead use the xref:components:outputs/fallback.adoc[`fallback`] output type.
 
-== Fields
-
-=== `max_retries`
-
-The maximum number of retries before giving up on the request. If set to zero there is no discrete limit.
-
-
-*Type*: `int`
-
-*Default*: `0`
-
-=== `backoff`
-
-Control time intervals between retry attempts.
-
-
-*Type*: `object`
-
-
-=== `backoff.initial_interval`
-
-The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value. 
-
-
-*Type*: `string`
-
-*Default*: `"500ms"`
-
-=== `backoff.max_interval`
-
-The maximum period to wait between retry attempts.
-
-
-*Type*: `string`
-
-*Default*: `"3s"`
-
-=== `backoff.max_elapsed_time`
-
-The maximum period to wait before retry attempts are abandoned. If zero then no limit is used.
-
-
-*Type*: `string`
-
-*Default*: `"0s"`
-
-=== `output`
-
-A child output.
-
-
-*Type*: `output`
+include::redpanda-connect:components:partial$fields/outputs/retry.adoc[]
 
 // end::single-source[]

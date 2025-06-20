@@ -27,36 +27,5 @@ If the subprocess exits unexpectedly then Redpanda Connect will log anything pri
 
 The execution environment of the subprocess is the same as the Redpanda Connect instance, including environment variables and the current working directory.
 
-== Fields
-
-=== `name`
-
-The command to execute as a subprocess.
-
-
-*Type*: `string`
-
-
-=== `args`
-
-A list of arguments to provide the command.
-
-
-*Type*: `array`
-
-*Default*: `[]`
-
-=== `codec`
-
-The way in which messages should be written to the subprocess.
-
-
-*Type*: `string`
-
-*Default*: `"lines"`
-
-Options:
-`lines`
-.
-
+include::redpanda-connect:components:partial$fields/outputs/subprocess.adoc[]
 

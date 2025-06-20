@@ -81,29 +81,7 @@ With cast set to true, the resulting JSON structure would look like this:
 }
 ```
 
-== Fields
-
-=== `operator`
-
-An XML <<operators, operation>> to apply to messages.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-Options:
-`to_json`
-.
-
-=== `cast`
-
-Whether to try to cast values that are numbers and booleans to the right type. Default: all values are strings.
-
-
-*Type*: `bool`
-
-*Default*: `false`
+include::redpanda-connect:components:partial$fields/processors/xml.adoc[]
 
 // end::single-source[]
 

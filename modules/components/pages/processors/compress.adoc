@@ -22,32 +22,6 @@ compress:
 
 The 'level' field might not apply to all algorithms.
 
-== Fields
-
-=== `algorithm`
-
-The compression algorithm to use.
-
-
-*Type*: `string`
-
-
-Options:
-`flate`
-, `gzip`
-, `lz4`
-, `pgzip`
-, `snappy`
-, `zlib`
-.
-
-=== `level`
-
-The level of compression to use. May not be applicable to all algorithms.
-
-
-*Type*: `int`
-
-*Default*: `-1`
+include::redpanda-connect:components:partial$fields/processors/compress.adoc[]
 
 // end::single-source[]

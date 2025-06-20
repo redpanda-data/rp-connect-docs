@@ -28,67 +28,9 @@ Imports via `require` should work similarly to NodeJS, and access to the console
 
 This processor is implemented using the https://github.com/dop251/goja[github.com/dop251/goja^] library.
 
-== Fields
+include::redpanda-connect:components:partial$fields/processors/javascript.adoc[]
 
-=== `code`
-
-An inline JavaScript program to run. You must specify a value for either the `code` or `file` field.
-
-*Type*: `string`
-
-=== `file`
-
-A file containing a JavaScript program to run. You must specify a value for either the `code` or `file` field.
-
-*Type*: `string`
-
-=== `global_folders`
-
-A list of directories to load modules from if the requested JavaScript module is not found elsewhere.
-
-*Type*: `array`
-
-*Default*: `[]`
-
-== Examples
-
-[tabs]
-======
-Simple mutation::
-+
---
-
-In this example we define a simple function that performs a basic mutation against messages, treating their contents as raw strings.
-
-```yaml
-pipeline:
-  processors:
-    - javascript:
-        code: 'benthos.v0_msg_set_string(benthos.v0_msg_as_string() + "hello world");'
-```
-
---
-Structured mutation::
-+
---
-
-In this example we define a function that performs basic mutations against a structured message. Note that we encapsulate the logic within an anonymous function that is called for each invocation, this is required in order to avoid duplicate variable declarations in the global state.
-
-```yaml
-pipeline:
-  processors:
-    - javascript:
-        code: |
-          (() => {
-            let thing = benthos.v0_msg_as_structured();
-            thing.num_keys = Object.keys(thing).length;
-            delete thing["b"];
-            benthos.v0_msg_set_structured(thing);
-          })();
-```
-
---
-======
+include::redpanda-connect:components:partial$examples/processors/javascript.adoc[]
 
 == Runtime
 

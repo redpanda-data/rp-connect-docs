@@ -62,51 +62,6 @@ cache_resources:
 
 These values can be overridden during execution, at which point the configured TTL is respected as usual.
 
-== Fields
-
-=== `default_ttl`
-
-The default TTL of each item. After this period an item will be eligible for removal during the next compaction.
-
-
-*Type*: `string`
-
-*Default*: `"5m"`
-
-=== `compaction_interval`
-
-The period of time to wait before each compaction, at which point expired items are removed. This field can be set to an empty string in order to disable compactions/expiry entirely.
-
-
-*Type*: `string`
-
-*Default*: `"60s"`
-
-=== `init_values`
-
-A table of key/value pairs that should be present in the cache on initialization. This can be used to create static lookup tables.
-
-
-*Type*: `object`
-
-*Default*: `{}`
-
-```yml
-# Examples
-
-init_values:
-  Nickelback: "1995"
-  Spice Girls: "1994"
-  The Human League: "1977"
-```
-
-=== `shards`
-
-A number of logical shards to spread keys across, increasing the shards can have a performance benefit when processing a large number of keys.
-
-
-*Type*: `int`
-
-*Default*: `1`
+include::redpanda-connect:components:partial$fields/caches/memory.adoc[]
 
 // end::single-source[]
