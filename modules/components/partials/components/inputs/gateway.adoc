@@ -7,10 +7,10 @@
 
 component_type_dropdown::[]
 
-The `gateway` input is a Cloud-only component that receives messages over HTTP or WebSocket and injects them into a running Redpanda Connect pipeline. It's ideal for:
+The `gateway` input is a Cloud-only component that receives messages over HTTP and injects them into a running Redpanda Connect pipeline. It's ideal for:
 
 - Receiving webhook events from third-party services
-- Accepting real-time telemetry or sensor data through WebSockets
+- Accepting real-time telemetry or sensor data over HTTP
 - Building lightweight ingest endpoints for client apps
 
 For on-premises or self-managed deployments, use the xref:redpanda-connect:components:inputs/http_server.adoc[`http_server`] input instead.
@@ -21,7 +21,7 @@ This component is fully managed and available in the following Redpanda Cloud de
 - **Dedicated**
 - **Bring Your Own Cloud (BYOC)**
 
-When a pipeline with a `gateway` input is deployed, Redpanda Cloud provisions a secure URL that you can use to send HTTP requests or open WebSocket connections. You can post raw payloads, JSON messages, or stream events in real time.
+When a pipeline with a `gateway` input is deployed, Redpanda Cloud provisions a secure URL that you can use to send HTTP requests. You can post raw payloads, JSON messages, or stream events in real time.
 
 Authentication and access control are handled through standard Redpanda Cloud API tokens. For more information, see xref:redpanda-cloud:manage:api/cloud-api-authentication.adoc[].
 
@@ -68,7 +68,7 @@ input:
 --
 ======
 
-The field `rate_limit` allows you to specify an optional xref:components:rate_limits/about.adoc[`rate_limit` resource], which will be applied to each HTTP request made and each websocket payload received.
+The field `rate_limit` allows you to specify an optional xref:components:rate_limits/about.adoc[`rate_limit` resource], which will be applied to each HTTP request made.
 
 When the rate limit is breached, HTTP requests will have a 429 response returned with a Retry-After header.
 
@@ -95,11 +95,11 @@ include::redpanda-connect:components:partial$fields/inputs/gateway.adoc[]
 
 == Examples
 
-=== Ingest a real-time stream of sensor data through a WebSocket
+=== Ingest a real-time stream of sensor data
 
-Use the `gateway` input to stream telemetry data from edge devices or browser clients that connect over WebSocket.
+Use the `gateway` input to stream telemetry data from edge devices or browser clients that connect over HTTP.
 
-Suppose a client connects and sends JSON-encoded sensor readings over WebSocket like this:
+Suppose a client connects and sends JSON-encoded sensor readings like this:
 
 [source,json]
 ----
@@ -115,7 +115,7 @@ The following pipeline sets up a `gateway` input to handle these connections and
 [source,yaml]
 ----
 input:
-  label: websocket_sensor_stream
+  label: sensor_stream
   gateway:
     path: /ws/sensors
     rate_limit: ""
@@ -129,7 +129,7 @@ pipeline:
 
 This configuration:
 
-* Accepts WebSocket connections on `/ws/sensors`
+* Accepts HTTP connections on `/ws/sensors`
 * Receives a stream of messages over a single connection
 * Logs each message using Bloblang interpolation
 
