@@ -148,10 +148,10 @@ The SASL mechanism to use.
 |Plaintext authentication.
 
 |SCRAM-SHA-256
-|SCRAM based authentication as specified in RFC5802.
+|SCRAM authentication as specified in RFC5802.
 
 |SCRAM-SHA-512
-|SCRAM based authentication as specified in RFC5802.
+|SCRAM authentication as specified in RFC5802.
 
 |none
 |Disable SASL authentication.
@@ -205,7 +205,7 @@ seed_brokers:
 
 === `tls`
 
-Custom TLS settings can be used to override system defaults.
+Use this field for custom TLS settings that override system defaults.
 
 *Type*: `object`
 
