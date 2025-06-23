@@ -68,13 +68,13 @@ input:
 --
 ======
 
-The field `rate_limit` allows you to specify an optional xref:components:rate_limits/about.adoc[`rate_limit` resource], which will be applied to each HTTP request made.
+The field `rate_limit` allows you to specify an optional xref:components:rate_limits/about.adoc[`rate_limit` resource] that applies to all HTTP requests.
 
-When the rate limit is breached, HTTP requests will have a 429 response returned with a Retry-After header.
+When the rate limit is breached, HTTP requests return a 429 response with a Retry-After header.
 
 == Responses
 
-It's possible to return a response for each message received using xref:guides:sync_responses.adoc[synchronous responses]. When doing so you can customize headers with the `sync_response` field `headers`, which can also use xref:configuration:interpolation.adoc#bloblang-queries[function interpolation] in the value based on the response message contents.
+You can also return a response for each message received using xref:guides:sync_responses.adoc[synchronous responses]. When doing so, you can customize headers using the `sync_response.headers` field, which supports xref:configuration:interpolation.adoc#bloblang-queries[function interpolation] in the value based on the response message contents.
 
 == Metadata
 
@@ -108,7 +108,7 @@ Suppose a client connects and sends JSON-encoded sensor readings like this:
 { "sensor_id": "temp-001", "value": 23.1, "unit": "C" }
 ----
 
-Each line is treated as an individual message by Redpanda Connect.
+Redpanda Connect treats each line as an individual message.
 
 The following pipeline sets up a `gateway` input to handle these connections and logs each message:
 
@@ -133,6 +133,6 @@ This configuration:
 * Receives a stream of messages over a single connection
 * Logs each message using Bloblang interpolation
 
-You could replace the `log` processor with any downstream output, such as Redpanda or Amazon S3, to persist or analyze the data in real time.
+You can replace the `log` processor with any downstream output, such as Redpanda or Amazon S3, to persist or analyze the data in real time.
 
 // end::single-source[]
