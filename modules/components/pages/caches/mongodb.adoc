@@ -1,17 +1,16 @@
 = mongodb
+//tag::single-source[]
 :type: cache
 :status: experimental
-
-// © 2024 Redpanda Data Inc.
-
 
 component_type_dropdown::[]
 
 
 Use a MongoDB instance as a cache.
 
+ifndef::env-cloud[]
 Introduced in version 3.43.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -56,3 +55,4 @@ mongodb:
 
 include::redpanda-connect:components:partial$fields/caches/mongodb.adoc[]
 
+//end::single-source[]

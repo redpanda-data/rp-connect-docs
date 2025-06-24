@@ -1,18 +1,17 @@
 = mongodb
+//tag::single-source[]
 :type: output
 :status: experimental
 :categories: ["Services"]
 
-// © 2024 Redpanda Data Inc.
-
 
 component_type_dropdown::[]
 
-
 Inserts items into a MongoDB collection.
 
+ifndef::env-cloud[]
 Introduced in version 3.43.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -93,3 +92,4 @@ This output benefits from sending messages as a batch for improved performance. 
 
 include::redpanda-connect:components:partial$fields/outputs/mongodb.adoc[]
 
+//end::single-source[]
