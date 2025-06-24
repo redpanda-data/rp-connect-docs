@@ -20,7 +20,9 @@ allowed_mod_types:
 
 === `auto_replay_nacks`
 
-Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.
+Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+
+Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation.
 
 *Type*: `bool`
 
@@ -51,7 +53,9 @@ batching:
 
 === `batching.byte_size`
 
-An amount of bytes at which the batch should be flushed. If `0` disables size based batching.
+The maximum total size (in bytes) that a batch can reach before it is passed on for processing or delivery (flushed). When the combined size of all messages in the batch exceeds this limit, the batch is immediately sent to the next stage (such as a processor or output).
+
+Set to `0` to disable size-based batching. When disabled, messages are flushed based on other conditions (such as `batching.count` or `batching.period`).
 
 *Type*: `int`
 
@@ -59,7 +63,7 @@ An amount of bytes at which the batch should be flushed. If `0` disables size ba
 
 === `batching.check`
 
-A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.
+A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch.
 
 *Type*: `string`
 
@@ -73,7 +77,7 @@ check: this.type == "end_of_transaction"
 
 === `batching.count`
 
-A number of messages at which the batch should be flushed. If `0` disables count based batching.
+The number of messages at which the batch should be flushed. Set the value to `0` to disable count-based batching.
 
 *Type*: `int`
 
@@ -81,7 +85,7 @@ A number of messages at which the batch should be flushed. If `0` disables count
 
 === `batching.period`
 
-A period in which an incomplete batch should be flushed regardless of its size.
+The length of time after which an incomplete batch should be flushed regardless of its size. Supported time units are `ns`, `us`, `ms`, `s`, `m`, and `h`. For example, `1s` flushes a batch after one second.
 
 *Type*: `string`
 
@@ -97,7 +101,7 @@ period: 500ms
 
 === `batching.processors[]`
 
-A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
+A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, so any attempt to split it into smaller batches with these processors will be ignored.
 
 *Type*: `processor`
 
@@ -118,7 +122,9 @@ processors:
 
 === `credentials_json`
 
-Base64 encoded GCP service account JSON credentials file for authentication. If not provided, Application Default Credentials (ADC) will be used.
+Base64-encoded JSON credentials file for authenticating to GCP with a service account. If not provided, Application Default Credentials (ADC) is used.
+
+For more information about how to create a service account and obtain the credentials JSON, see the link:https://cloud.google.com/docs/authentication/getting-started[Google Cloud documentation^].
 
 *Type*: `string`
 
@@ -126,13 +132,17 @@ Base64 encoded GCP service account JSON credentials file for authentication. If 
 
 === `database_id`
 
-Spanner database ID
+The ID of the Spanner database to read from. This is the name of the database as it appears in the Spanner console or API.
+
+For more information about how to create a Spanner database, see the link:https://cloud.google.com/spanner/docs/create-manage-databases[Google Cloud documentation^].
 
 *Type*: `string`
 
 === `end_timestamp`
 
-RFC3339 formatted exclusive timestamp to stop reading at (default: no end time)
+The timestamp at which to stop reading change records from the change stream. This is an optional field that allows you to limit the range of change records processed by the input.
+
+The timestamp should be in RFC3339 format, such as `2023-10-01T00:00:00Z`. If not provided, the input reads all available change records up to the current time.
 
 *Type*: `string`
 
@@ -146,7 +156,9 @@ end_timestamp: 2022-01-01T00:00:00Z
 
 === `heartbeat_interval`
 
-Duration string for heartbeat interval
+The interval at which to send heartbeat messages to the output. Heartbeat messages are sent to indicate that the input is still active and processing changes. This can help prevent timeouts in downstream systems.
+
+Supported time units are `ns`, `us`, `ms`, `s`, `m`, and `h`. For example, `1s` sends a heartbeat every second.
 
 *Type*: `string`
 
@@ -154,13 +166,15 @@ Duration string for heartbeat interval
 
 === `instance_id`
 
-Spanner instance ID
+The ID of the Spanner instance to read from. This is the name of the instance as it appears in the Spanner console or API.
+
+For more information about how to create a Spanner instance, see the link:https://cloud.google.com/spanner/docs/create-manage-instances[Google Cloud documentation^].
 
 *Type*: `string`
 
 === `metadata_table`
 
-The table to store metadata in (default: cdc_metadata_<stream_id>)
+The table to store metadata in (default: `cdc_metadata_<stream_id>`).
 
 *Type*: `string`
 
@@ -168,7 +182,7 @@ The table to store metadata in (default: cdc_metadata_<stream_id>)
 
 === `min_watermark_cache_ttl`
 
-Duration string for frequency of querying Spanner for minimum watermark.
+Sets how frequently to query Spanner for the minimum watermark.
 
 *Type*: `string`
 
@@ -176,13 +190,17 @@ Duration string for frequency of querying Spanner for minimum watermark.
 
 === `project_id`
 
-GCP project ID containing the Spanner instance
+The ID of the GCP project that contains the Spanner instance and database. This is the name of the project as it appears in the GCP console or API.
+
+For more information about how to create a GCP project, see the link:https://cloud.google.com/resource-manager/docs/creating-managing-projects[Google Cloud documentation^].
 
 *Type*: `string`
 
 === `start_timestamp`
 
-RFC3339 formatted inclusive timestamp to start reading from the change stream (default: current time)
+The timestamp at which to start reading change records from the change stream. This is an optional field that allows you to limit the range of change records processed by the input.
+
+The timestamp should be in RFC3339 format, such as `2023-10-01T00:00:00Z` (default: current time).
 
 *Type*: `string`
 
@@ -196,7 +214,7 @@ start_timestamp: 2022-01-01T00:00:00Z
 
 === `stream_id`
 
-The name of the change stream to track, the stream must exist in the database. To create a change stream, see the link:https://cloud.google.com/spanner/docs/change-streams/manage[Google Cloud documentation^].
+The name of the change stream to track. The stream must exist in the Spanner database. To create a change stream, follow the link:https://cloud.google.com/spanner/docs/change-streams/manage[Google Cloud documentation^].
 
 *Type*: `string`
 
