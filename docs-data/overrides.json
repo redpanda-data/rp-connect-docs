@@ -283,6 +283,75 @@
           {
             "name": "stream_id",
             "description": "The name of the change stream to track, the stream must exist in the database. To create a change stream, see the link:https://cloud.google.com/spanner/docs/change-streams/manage[Google Cloud documentation^]."
+          },
+          {
+            "name": "auto_replay_nacks",
+            "description": "Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.\n\nSet `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation."
+          },
+          {
+            "name": "credentials_json",
+            "description": "Base64-encoded JSON credentials file for authenticating to GCP with a service account. If not provided, Application Default Credentials (ADC) is used.\n\nFor more information about how to create a service account and obtain the credentials JSON, see the link:https://cloud.google.com/docs/authentication/getting-started[Google Cloud documentation^]."
+          },
+          {
+            "name": "database_id",
+            "description": "The ID of the Spanner database to read from. This is the name of the database as it appears in the Spanner console or API.\n\nFor more information about how to create a Spanner database, see the link:https://cloud.google.com/spanner/docs/create-manage-databases[Google Cloud documentation^]."
+          },
+          {
+            "name": "end_timestamp",
+            "description": "The timestamp at which to stop reading change records from the change stream. This is an optional field that allows you to limit the range of change records processed by the input.\n\nThe timestamp should be in RFC3339 format, such as `2023-10-01T00:00:00Z`. If not provided, the input reads all available change records up to the current time."
+          },
+          {
+            "name": "heartbeat_interval",
+            "description": "The interval at which to send heartbeat messages to the output. Heartbeat messages are sent to indicate that the input is still active and processing changes. This can help prevent timeouts in downstream systems.\n\nSupported time units are `ns`, `us`, `ms`, `s`, `m`, and `h`. For example, `1s` sends a heartbeat every second."
+          },
+          {
+            "name": "instance_id",
+            "description": "The ID of the Spanner instance to read from. This is the name of the instance as it appears in the Spanner console or API.\n\nFor more information about how to create a Spanner instance, see the link:https://cloud.google.com/spanner/docs/create-manage-instances[Google Cloud documentation^]."
+          },
+          {
+            "name": "metadata_table",
+            "description": "The table to store metadata in (default: `cdc_metadata_<stream_id>`)."
+          },
+          {
+            "name": "min_watermark_cache_ttl",
+            "description": "Sets how frequently to query Spanner for the minimum watermark."
+          },
+          {
+            "name": "project_id",
+            "description": "The ID of the GCP project that contains the Spanner instance and database. This is the name of the project as it appears in the GCP console or API.\n\nFor more information about how to create a GCP project, see the link:https://cloud.google.com/resource-manager/docs/creating-managing-projects[Google Cloud documentation^]."
+          },
+          {
+            "name": "start_timestamp",
+            "description": "The timestamp at which to start reading change records from the change stream. This is an optional field that allows you to limit the range of change records processed by the input.\n\nThe timestamp should be in RFC3339 format, such as `2023-10-01T00:00:00Z` (default: current time)."
+          },
+          {
+            "name": "stream_id",
+            "description": "The name of the change stream to track. The stream must exist in the Spanner database. To create a change stream, follow the link:https://cloud.google.com/spanner/docs/change-streams/manage[Google Cloud documentation^]."
+          },
+          {
+            "name": "batching",
+            "children": [
+              {
+                "name": "byte_size",
+                "description": "The maximum total size (in bytes) that a batch can reach before it is passed on for processing or delivery (flushed). When the combined size of all messages in the batch exceeds this limit, the batch is immediately sent to the next stage (such as a processor or output).\n\nSet to `0` to disable size-based batching. When disabled, messages are flushed based on other conditions (such as `batching.count` or `batching.period`)."
+              },
+              {
+                "name": "check",
+                "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch."
+              },
+              {
+                "name": "count",
+                "description": "The number of messages at which the batch should be flushed. Set the value to `0` to disable count-based batching."
+              },
+              {
+                "name": "period",
+                "description": "The length of time after which an incomplete batch should be flushed regardless of its size. Supported time units are `ns`, `us`, `ms`, `s`, `m`, and `h`. For example, `1s` flushes a batch after one second."
+              },
+              {
+                "name": "processors",
+                "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, so any attempt to split it into smaller batches with these processors will be ignored."
+              }
+            ]
           }
         ]
       }
@@ -6559,7 +6628,7 @@
     {
       "name": "redpanda",
       "summary": "A Kafka cache implemented using the https://github.com/twmb/franz-go[Franz Kafka client library^].",
-      "description": "\nA cache that stores data in a Kafka topic.\n\nThis cache is useful for data that is written frequently and queried infrequently.\nReads of the cache require reading the entire topic partition, so if there is a need for frequent reads, it's recommended to put an in memory caching layer infront of this cache.\n\nTopics that are used as caches should be compacted so that reads are less expensive when they rescan the topic, as only the latest value is needed.\n\nThis cache does not support any special TTL mechanism, any TTL should be handled by the Kafka topic itself using data retention policies.\n",
+      "description": "\nA cache that stores data in a Kafka topic.\n\nThis cache is useful for data that is written frequently and queried infrequently.\nReads from the cache require scanning the entire topic partition. If you expect frequent access, consider placing an in-memory caching layer in front of this one.\n\nBecause only the latest values are needed, configure compaction for topics used as caches so that reads are less expensive when topics are rescanned. See xref:ROOT:manage:cluster-maintenance/compaction-settings.adoc[].\n\nThe cache does not have any time-to-live (TTL) mechanism. Use the Kafka topic retention policies to manage TTL.\n",
       "config": {
         "children": [
           {
