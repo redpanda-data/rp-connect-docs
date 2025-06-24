@@ -1,18 +1,17 @@
 = mongodb
+//tag::single-source[]
 :type: processor
 :status: experimental
 :categories: ["Services"]
-
-// © 2024 Redpanda Data Inc.
-
 
 component_type_dropdown::[]
 
 
 Performs operations against MongoDB for each message, allowing you to store or retrieve data within message payloads.
 
+ifndef::env-cloud[]
 Introduced in version 3.43.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -72,3 +71,4 @@ mongodb:
 
 include::redpanda-connect:components:partial$fields/processors/mongodb.adoc[]
 
+//end::single-source[]
