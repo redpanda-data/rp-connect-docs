@@ -19,14 +19,5 @@ file:
 
 This type currently offers no form of item expiry or garbage collection, and is intended to be used for development and debugging purposes only.
 
-== Fields
-
-=== `directory`
-
-The directory within which to store items.
-
-
-*Type*: `string`
-
-
+include::redpanda-connect:components:partial$fields/caches/file.adoc[]
 

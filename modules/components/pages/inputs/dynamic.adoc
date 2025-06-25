@@ -20,25 +20,7 @@ input:
     prefix: ""
 ```
 
-== Fields
-
-=== `inputs`
-
-A map of inputs to statically create.
-
-
-*Type*: `object`
-
-*Default*: `{}`
-
-=== `prefix`
-
-A path prefix for HTTP endpoints that are registered.
-
-
-*Type*: `string`
-
-*Default*: `""`
+include::redpanda-connect:components:partial$fields/inputs/dynamic.adoc[]
 
 == Endpoints
 

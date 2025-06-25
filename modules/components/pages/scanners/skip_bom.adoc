@@ -18,15 +18,6 @@ skip_bom:
     to_the_end: {}
 ```
 
-== Fields
-
-=== `into`
-
-The child scanner to feed the resulting stream into.
-
-
-*Type*: `scanner`
-
-*Default*: `{"to_the_end":{}}`
+include::redpanda-connect:components:partial$fields/scanners/skip_bom.adoc[]
 
 // end::single-source[]

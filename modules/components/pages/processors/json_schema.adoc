@@ -22,23 +22,7 @@ json_schema:
 
 Please refer to the https://json-schema.org/[JSON Schema website^] for information and tutorials regarding the syntax of the schema.
 
-== Fields
-
-=== `schema`
-
-A schema to apply. Use either this or the `schema_path` field.
-
-
-*Type*: `string`
-
-
-=== `schema_path`
-
-The path of a schema document to apply. Use either this or the `schema` field.
-
-
-*Type*: `string`
-
+include::redpanda-connect:components:partial$fields/processors/json_schema.adoc[]
 
 == Examples
 

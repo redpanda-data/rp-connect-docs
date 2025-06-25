@@ -217,7 +217,7 @@ The scalar type of the field.
 | A boolean true/false
 | `bloblang`
 | A bloblang mapping
-| `unknown`
+| `object`
 | Allows for nesting arbitrary configuration inside a field
 
 |===
@@ -242,7 +242,7 @@ Options:
 An optional default value for the field. If a default value is not specified then a configuration without the field is considered incorrect.
 
 
-*Type*: `unknown`
+*Type*: `object`
 
 
 === `fields[].advanced`

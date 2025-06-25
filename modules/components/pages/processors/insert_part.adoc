@@ -26,25 +26,6 @@ The new message will have metadata copied from the first pre-existing message of
 
 This processor will interpolate functions within the 'content' field, you can find a list of functions xref:configuration:interpolation.adoc#bloblang-queries[here].
 
-== Fields
-
-=== `index`
-
-The index within the batch to insert the message at.
-
-
-*Type*: `int`
-
-*Default*: `-1`
-
-=== `content`
-
-The content of the message being inserted.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-
-*Type*: `string`
-
-*Default*: `""`
+include::redpanda-connect:components:partial$fields/processors/insert_part.adoc[]
 
 // end::single-source[]

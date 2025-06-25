@@ -22,29 +22,5 @@ output:
     max_in_flight: 64
 ```
 
-== Fields
-
-=== `address`
-
-An address to connect to.
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-address: 127.0.0.1:11300
-```
-
-=== `max_in_flight`
-
-The maximum number of messages to have in flight at a given time. Increase to improve throughput.
-
-
-*Type*: `int`
-
-*Default*: `64`
-
+include::redpanda-connect:components:partial$fields/outputs/beanstalkd.adoc[]
 

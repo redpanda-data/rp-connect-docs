@@ -1,18 +1,17 @@
 = mongodb
+//tag::single-source[]
 :type: processor
 :status: experimental
 :categories: ["Services"]
-
-// © 2024 Redpanda Data Inc.
-
 
 component_type_dropdown::[]
 
 
 Performs operations against MongoDB for each message, allowing you to store or retrieve data within message payloads.
 
+ifndef::env-cloud[]
 Introduced in version 3.43.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -70,201 +69,6 @@ mongodb:
 --
 ======
 
-== Fields
+include::redpanda-connect:components:partial$fields/processors/mongodb.adoc[]
 
-=== `url`
-
-The URL of the target MongoDB server.
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-url: mongodb://localhost:27017
-```
-
-=== `database`
-
-The name of the target MongoDB database.
-
-
-*Type*: `string`
-
-
-=== `username`
-
-The username required to connect to the database.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `password`
-
-The password required to connect to the database.
-
-include::components:partial$secret_warning.adoc[]
-
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `app_name`
-
-The client application name.
-
-
-*Type*: `string`
-
-*Default*: `benthos`
-
-=== `collection`
-
-The name of the target collection.
-
-
-*Type*: `string`
-
-
-=== `operation`
-
-The MongoDB database operation to perform.
-
-
-*Type*: `string`
-
-*Default*: `insert-one`
-
-Options:
-`insert-one`
-, `delete-one`
-, `delete-many`
-, `replace-one`
-, `update-one`
-, `find-one`
-, `aggregate`
-
-=== `write_concern`
-
-The https://www.mongodb.com/docs/manual/reference/write-concern/[write concern settings^] for the MongoDB connection.
-
-
-*Type*: `object`
-
-
-=== `write_concern.w`
-
-The `w` requests acknowledgement, which write operations propagate to the specified number of MongoDB instances.
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `write_concern.j`
-
-The `j` requests acknowledgement from MongoDB, which is created when write operations are written to the journal.
-
-
-*Type*: `bool`
-
-*Default*: `false`
-
-=== `write_concern.w_timeout`
-
-The write concern timeout.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `document_map`
-
-A Bloblang map that represents a document to store in MongoDB, expressed as https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/[extended JSON in canonical form^]. The `document_map` parameter is required for the following database operations: `insert-one`, `replace-one`, `update-one`, and `aggregate`.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-```yml
-# Examples
-
-document_map: |-
-  root.a = this.foo
-  root.b = this.bar
-```
-
-=== `filter_map`
-
-A Bloblang map that represents a filter for a MongoDB command, expressed as https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/[extended JSON in canonical form^]. The `filter_map` parameter is required for all database operations except `insert-one`. 
-
-This output uses `filter_map` to find documents for the specified operation. For example, for a `delete-one` operation, the filter map should include the fields required to locate the document for deletion.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-```yml
-# Examples
-
-filter_map: |-
-  root.a = this.foo
-  root.b = this.bar
-```
-
-=== `hint_map`
-
-A Bloblang map that represents a hint or index for a MongoDB command to use, expressed as https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/[extended JSON in canonical form^]. This map is optional, and is used with all operations except `insert-one`. 
-
-Define a `hint_map` to improve performance when finding documents in the MongoDB database.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-```yml
-# Examples
-
-hint_map: |-
-  root.a = this.foo
-  root.b = this.bar
-```
-
-=== `upsert`
-
-The `upsert` parameter is optional, and only applies for `update-one` and `replace-one` operations. If the filter specified in `filter_map` matches an existing document, this operation updates or replaces the document, otherwise a new document is created.
-
-*Type*: `bool`
-
-*Default*: `false`
-
-Requires version 3.60.0 or newer
-
-=== `json_marshal_mode`
-
-Controls the format of the output message (optional).
-
-*Type*: `string`
-
-*Default*: `canonical`
-
-Requires version 3.60.0 or newer
-
-|===
-| Option | Description
-
-| `canonical`
-| A string format that preserves the exact data types of values stored in MongoDB at the expense of readability and interoperability. Conversion from `canonical` to JSON generally preserves type information.
-| `relaxed`
-| A string format that is human-readable and compatible with most JSON parsers but may lose type fidelity. Conversion from `relaxed` format to JSON can lose type information.
-
-|===
+//end::single-source[]

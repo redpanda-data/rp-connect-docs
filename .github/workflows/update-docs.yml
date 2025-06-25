@@ -1,0 +1,82 @@
+name: Update RPCN Connector Docs
+
+on:
+  workflow_dispatch:
+  repository_dispatch:  # Allows other repositories to trigger this workflow
+    types: [generate-rpcn-docs]
+
+jobs:
+  generate-and-pr:
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: update-rpcn-connector-docs
+      cancel-in-progress: true
+
+    env:
+      NODE_VERSION: '16'
+      DOCS_OVERRIDES: docs-data/overrides.json
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+
+      - name: Set up Node.js (with npm cache)
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate RPCN Connector docs
+        id: generate
+        run: |
+          npx doc-tools generate rpcn-connector-docs \
+            --fetch-connectors \
+            --overrides $DOCS_OVERRIDES \
+            --draft-missing > full_output.txt
+
+          # Extract full delta report block (stopping at the first non-bullet or EOF)
+          awk '/📋 RPCN Connector Delta Report/{flag=1; next} flag {if (/^➤/ || /^•/) print; else exit}' full_output.txt > raw_delta.txt
+
+          {
+            echo "📋 RPCN Connector Delta Report"
+            echo ""
+
+            if grep -q 'components:' raw_delta.txt; then
+              echo "<details>"
+              echo "<summary>Newly added components:</summary>"
+              grep '• ' raw_delta.txt | grep 'components:' -A 1000 | grep -v 'fields:' | grep '• ' | sed 's/• /- /'
+              echo "</details>"
+              echo ""
+            fi
+
+            if grep -q 'fields:' raw_delta.txt; then
+              echo "<details>"
+              echo "<summary>Newly added fields:</summary>"
+              grep '• ' raw_delta.txt | grep 'fields:' -A 1000 | sed 's/• /- /'
+              echo "</details>"
+            fi
+          } > delta_report.md
+
+          # Set multiline output safely
+          {
+            echo "delta_report<<EOF"
+            cat delta_report.md
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+          base: main
+          branch: auto-docs/update-rpcn-connector-docs
+          title: 'auto-docs: Update RPCN connector docs'
+          commit-message: 'docs: Update RPCN connector docs'
+          body: ${{ steps.generate.outputs.delta_report }}
+          labels: auto-docs

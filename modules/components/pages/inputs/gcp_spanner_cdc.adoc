@@ -1,0 +1,100 @@
+= gcp_spanner_cdc
+// tag::single-source[]
+:type: input
+:status: beta
+:categories: [Services, GCP]
+:description: Creates an input that consumes from a spanner change stream.
+
+component_type_dropdown::[]
+
+Creates an input that consumes from a spanner change stream.
+
+ifndef::env-cloud[]
+Introduced in version 4.56.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+```yaml
+input:
+  label: ""
+  gcp_spanner_cdc:
+    credentials_json: ""
+
+    project_id: "" # No default (required)
+    instance_id: "" # No default (required)
+    database_id: "" # No default (required)
+    stream_id: "" # No default (required)
+    start_timestamp: ""
+
+    end_timestamp: ""
+
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+
+      check: ""
+
+      processors: [] # No default (optional)
+    auto_replay_nacks: true
+```
+--
+Advanced::
++
+--
+```yaml
+input:
+  label: ""
+  gcp_spanner_cdc:
+    credentials_json: ""
+
+    project_id: "" # No default (required)
+    instance_id: "" # No default (required)
+    database_id: "" # No default (required)
+    stream_id: "" # No default (required)
+    start_timestamp: ""
+
+    end_timestamp: ""
+
+    heartbeat_interval: 10s
+
+    metadata_table: ""
+
+    min_watermark_cache_ttl: 5s
+
+    allowed_mod_types: [] # No default (optional)
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+
+      check: ""
+
+      processors: [] # No default (optional)
+    auto_replay_nacks: true
+```
+--
+======
+
+
+Consumes change records from a Google Cloud Spanner change stream. This input allows
+you to track and process database changes in real-time, making it useful for data
+replication, event-driven architectures, and maintaining derived data stores.
+
+The input reads from a specified change stream within a Spanner database and converts
+each change record into a message. The message payload contains the change records in
+JSON format, and metadata is added with details about the Spanner instance, database,
+and stream.
+
+Change streams provide a way to track mutations to your Spanner database tables. For
+more information about Spanner change streams, refer to the link:https://cloud.google.com/spanner/docs/change-streams[Google Cloud documentation^].
+
+
+include::redpanda-connect:components:partial$fields/inputs/gcp_spanner_cdc.adoc[]
+
+
+// end::single-source[]

@@ -1,7 +1,6 @@
 = openai_transcription
 // tag::single-source[]
 :type: processor
-:page-beta: true
 :categories: ["AI"]
 
 // © 2024 Redpanda Data Inc.
@@ -56,77 +55,6 @@ This processor sends an audio file object along with the input language to OpenA
 
 To learn more about audio transcription, see the: https://platform.openai.com/docs/guides/speech-to-text[OpenAI API documentation^].
 
-== Fields
-
-=== `server_address`
-
-The Open API endpoint that the processor sends requests to. Update the default value to use another OpenAI compatible service.
-
-
-*Type*: `string`
-
-*Default*: `"https://api.openai.com/v1"`
-
-=== `api_key`
-
-The API key for OpenAI API.
-
-include::components:partial$secret_warning.adoc[]
-
-
-
-*Type*: `string`
-
-
-=== `model`
-
-The name of the OpenAI model to use.
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-model: whisper-1
-```
-
-=== `file`
-
-The audio file object (not file name) to transcribe, in one of the following formats: `flac`, `mp3`, `mp4`, `mpeg`, `mpga`, `m4a`, `ogg`, `wav`, or `webm`.
-
-
-*Type*: `string`
-
-
-=== `language`
-
-The language of the input audio. Supplying the input language in ISO-639-1 format improves accuracy and latency.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-language: en
-
-language: fr
-
-language: de
-
-language: zh
-```
-
-=== `prompt`
-
-Optional text to guide the model's style or continue a previous audio segment. The prompt should match the audio language.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-
-*Type*: `string`
+include::redpanda-connect:components:partial$fields/processors/openai_transcription.adoc[]
 
 // end::single-source[]
