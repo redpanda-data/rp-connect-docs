@@ -6720,46 +6720,46 @@
                   {
                     "name": "endpoint",
                     "description": "Specify a custom endpoint for the AWS API."
-                  },
-                  {
-                    "name": "mechanism",
-                    "description": "The SASL mechanism to use for authentication.",
-                    "annotated_options": [
-                      [
-                        "AWS_MSK_IAM",
-                        "AWS IAM based authentication as specified by the 'aws-msk-iam-auth' Java library."
-                      ],
-                      [
-                        "OAUTHBEARER",
-                        "OAuth Bearer authentication."
-                      ],
-                      [
-                        "PLAIN",
-                        "Plaintext authentication."
-                      ],
-                      [
-                        "SCRAM-SHA-256",
-                        "SCRAM authentication as specified in RFC5802."
-                      ],
-                      [
-                        "SCRAM-SHA-512",
-                        "SCRAM authentication as specified in RFC5802."
-                      ],
-                      [
-                        "none",
-                        "Disable SASL authentication"
-                      ]
-                    ]
-                  },
-                  {
-                    "name": "password",
-                    "description": "The password to use for PLAIN or SCRAM-* authentication."
-                  },
-                  {
-                    "name": "username",
-                    "description": "The username to use for PLAIN or SCRAM-* authentication."
                   }
                 ]
+              },
+              {
+                "name": "mechanism",
+                "description": "The SASL mechanism to use for authentication.",
+                "annotated_options": [
+                  [
+                    "AWS_MSK_IAM",
+                    "AWS IAM based authentication as specified by the 'aws-msk-iam-auth' Java library."
+                  ],
+                  [
+                    "OAUTHBEARER",
+                    "OAuth Bearer authentication."
+                  ],
+                  [
+                    "PLAIN",
+                    "Plaintext authentication."
+                  ],
+                  [
+                    "SCRAM-SHA-256",
+                    "SCRAM authentication as specified in RFC5802."
+                  ],
+                  [
+                    "SCRAM-SHA-512",
+                    "SCRAM authentication as specified in RFC5802."
+                  ],
+                  [
+                    "none",
+                    "Disable SASL authentication"
+                  ]
+                ]
+              },
+              {
+                "name": "password",
+                "description": "The password to use for PLAIN or SCRAM-* authentication."
+              },
+              {
+                "name": "username",
+                "description": "The username to use for PLAIN or SCRAM-* authentication."
               }
             ]
           }
