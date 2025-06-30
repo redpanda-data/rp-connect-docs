@@ -2,6 +2,14 @@
 
 == Fields
 
+=== `allow_auto_topic_creation`
+
+Enables topics to be auto created if they do not exist when fetching their metadata.
+
+*Type*: `bool`
+
+*Default*: `true`
+
 === `client_id`
 
 An identifier for the client connection.
@@ -130,7 +138,7 @@ Key/value pairs to add to OAUTHBEARER authentication requests.
 
 === `sasl[].mechanism`
 
-The SASL mechanism to use.
+The SASL mechanism to use for authentication.
 
 *Type*: `string`
 
@@ -139,7 +147,7 @@ The SASL mechanism to use.
 |Option |Summary
 
 |AWS_MSK_IAM
-|AWS IAM-based authentication as specified by the 'aws-msk-iam-auth' Java library.
+|AWS IAM based authentication as specified by the 'aws-msk-iam-auth' Java library.
 
 |OAUTHBEARER
 |OAuth Bearer authentication.
@@ -154,7 +162,7 @@ The SASL mechanism to use.
 |SCRAM authentication as specified in RFC5802.
 
 |none
-|Disable SASL authentication.
+|Disable SASL authentication
 
 |===
 
@@ -178,7 +186,7 @@ The token to use for a single session's OAUTHBEARER authentication.
 
 === `sasl[].username`
 
-The username for PLAIN or SCRAM-* authentication.
+The username to use for PLAIN or SCRAM-* authentication.
 
 *Type*: `string`
 
@@ -265,10 +273,9 @@ The path to a file containing the private key to use for TLS authentication.
 
 === `tls.client_certs[].password`
 
-A plaintext password to decrypt the private key in PKCS#1 or PKCS#8 format. 
+The password to use for the private key, if it is encrypted. This field is optional and only required if the private key is encrypted. The PKCS#1 and PKCS#8 formats are supported.
 
 The `pbeWithMD5AndDES-CBC` algorithm is obsolete and not supported for the PKCS#8 format. This algorithm does not authenticate the ciphertext, making it vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
-
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 

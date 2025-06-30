@@ -42,11 +42,31 @@ codec: delim:
 codec: delim:foobar
 ----
 
+=== `connection_timeout`
+
+The connection timeout to use when connecting to the target server.
+
+*Type*: `string`
+
+*Default*: `30s`
+
 === `credentials`
 
 The credentials required to log in to the SFTP server. This can include a username and password, or a private key for secure access.
 
 *Type*: `object`
+
+=== `credentials.host_public_key`
+
+The public key file of the SFTP server.
+
+*Type*: `string`
+
+=== `credentials.host_public_key_file`
+
+The public key of the SFTP server.
+
+*Type*: `string`
 
 === `credentials.password`
 
@@ -66,15 +86,11 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
-*Default*: `""`
-
 === `credentials.private_key_file`
 
 The path to a private key file used to authenticate with the SFTP server. You can also provide a private key using the <<credentials-private_key,`private_key`>> field.
 
 *Type*: `string`
-
-*Default*: `""`
 
 === `credentials.private_key_pass`
 
