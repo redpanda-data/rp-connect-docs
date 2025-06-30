@@ -236,7 +236,15 @@
     },
     {
       "name": "gateway",
-      "description": "The `gateway` input is a Cloud-only component that receives messages over HTTP and injects them into a running Redpanda Connect pipeline.\n\nIt's ideal for:\n- Receiving webhook events from third-party services\n- Accepting real-time telemetry or sensor data over HTTP\n- Building lightweight ingest endpoints for client apps\n\nFor on-premises or self-managed deployments, use the xref:redpanda-connect:components:inputs/http_server.adoc[`http_server`] input instead.\n\nThis component is fully managed and available in the following Redpanda Cloud deployment types:\n\n- **Serverless**\n- **Dedicated**\n- **Bring Your Own Cloud (BYOC)**\n\nWhen a pipeline with a `gateway` input is deployed, Redpanda Cloud provisions a secure URL that you can use to send HTTP requests. You can post raw payloads, JSON messages, or stream events in real time.\n\nAuthentication and access control are handled through standard Redpanda Cloud API tokens. For more information, see xref:redpanda-cloud:manage:api/cloud-api-authentication.adoc[].\n\nNetwork access:\n- On **public clusters** (Serverless and Dedicated), the gateway URL is accessible over the public internet.\n- On **private clusters** (BYOC), the gateway is accessible only from within your configured VPC.\n\n== Responses\n\nYou can return a response for each message received using xref:guides:sync_responses.adoc[synchronous responses]. When doing so, you can customize headers using the `sync_response.headers` field, which supports xref:configuration:interpolation.adoc#bloblang-queries[function interpolation] in the value based on the response message contents.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `http_server_user_agent`\n- `http_server_request_path`\n- `http_server_verb`\n- `http_server_remote_ip`\n- All headers (only first values are taken)\n- All query parameters\n- All path parameters\n- All cookies\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation]."
+      "description": "The `gateway` input is a Cloud-only component that receives messages over HTTP and injects them into a running Redpanda Connect pipeline.\n\nIt's ideal for:\n- Receiving webhook events from third-party services\n- Accepting real-time telemetry or sensor data over HTTP\n- Building lightweight ingest endpoints for client apps\n\nFor on-premises or self-managed deployments, use the xref:redpanda-connect:components:inputs/http_server.adoc[`http_server`] input instead.\n\nThis component is fully managed and available in the following Redpanda Cloud deployment types:\n\n- **Serverless**\n- **Dedicated**\n- **Bring Your Own Cloud (BYOC)**\n\nWhen a pipeline with a `gateway` input is deployed, Redpanda Cloud provisions a secure URL that you can use to send HTTP requests. You can post raw payloads, JSON messages, or stream events in real time.\n\nAuthentication and access control are handled through standard Redpanda Cloud API tokens. For more information, see xref:redpanda-cloud:manage:api/cloud-api-authentication.adoc[].\n\nNetwork access:\n- On **public clusters** (Serverless and Dedicated), the gateway URL is accessible over the public internet.\n- On **private clusters** (BYOC), the gateway is accessible only from within your configured VPC.\n\n== Responses\n\nYou can return a response for each message received using xref:guides:sync_responses.adoc[synchronous responses]. When doing so, you can customize headers using the `sync_response.headers` field, which supports xref:configuration:interpolation.adoc#bloblang-queries[function interpolation] in the value based on the response message contents.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `http_server_user_agent`\n- `http_server_request_path`\n- `http_server_verb`\n- `http_server_remote_ip`\n- All headers (only first values are taken)\n- All query parameters\n- All path parameters\n- All cookies\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
+      "config": {
+        "children": [
+          {
+            "name": "sync_response",
+            "description": "Customize messages returned using xref:guides:sync_responses.adoc[synchronous responses]."
+          }
+        ]
+      }
     },
     {
       "name": "gcp_bigquery_select",
@@ -282,7 +290,7 @@
         "children": [
           {
             "name": "stream_id",
-            "description": "The name of the change stream to track, the stream must exist in the database. To create a change stream, see the link:https://cloud.google.com/spanner/docs/change-streams/manage[Google Cloud documentation^]."
+            "description": "The name of the change stream to track. The stream must exist in the Spanner database. To create a change stream, follow the link:https://cloud.google.com/spanner/docs/change-streams/manage[Google Cloud documentation^]."
           },
           {
             "name": "auto_replay_nacks",
@@ -6720,46 +6728,46 @@
                   {
                     "name": "endpoint",
                     "description": "Specify a custom endpoint for the AWS API."
-                  },
-                  {
-                    "name": "mechanism",
-                    "description": "The SASL mechanism to use for authentication.",
-                    "annotated_options": [
-                      [
-                        "AWS_MSK_IAM",
-                        "AWS IAM based authentication as specified by the 'aws-msk-iam-auth' Java library."
-                      ],
-                      [
-                        "OAUTHBEARER",
-                        "OAuth Bearer authentication."
-                      ],
-                      [
-                        "PLAIN",
-                        "Plaintext authentication."
-                      ],
-                      [
-                        "SCRAM-SHA-256",
-                        "SCRAM authentication as specified in RFC5802."
-                      ],
-                      [
-                        "SCRAM-SHA-512",
-                        "SCRAM authentication as specified in RFC5802."
-                      ],
-                      [
-                        "none",
-                        "Disable SASL authentication"
-                      ]
-                    ]
-                  },
-                  {
-                    "name": "password",
-                    "description": "The password to use for PLAIN or SCRAM-* authentication."
-                  },
-                  {
-                    "name": "username",
-                    "description": "The username to use for PLAIN or SCRAM-* authentication."
                   }
                 ]
+              },
+              {
+                "name": "mechanism",
+                "description": "The SASL mechanism to use for authentication.",
+                "annotated_options": [
+                  [
+                    "AWS_MSK_IAM",
+                    "AWS IAM based authentication as specified by the 'aws-msk-iam-auth' Java library."
+                  ],
+                  [
+                    "OAUTHBEARER",
+                    "OAuth Bearer authentication."
+                  ],
+                  [
+                    "PLAIN",
+                    "Plaintext authentication."
+                  ],
+                  [
+                    "SCRAM-SHA-256",
+                    "SCRAM authentication as specified in RFC5802."
+                  ],
+                  [
+                    "SCRAM-SHA-512",
+                    "SCRAM authentication as specified in RFC5802."
+                  ],
+                  [
+                    "none",
+                    "Disable SASL authentication"
+                  ]
+                ]
+              },
+              {
+                "name": "password",
+                "description": "The password to use for PLAIN or SCRAM-* authentication."
+              },
+              {
+                "name": "username",
+                "description": "The username to use for PLAIN or SCRAM-* authentication."
               }
             ]
           }
