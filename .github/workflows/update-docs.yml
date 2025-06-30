@@ -6,8 +6,12 @@ on:
     types: [generate-rpcn-docs]
 
 jobs:
-  generate-and-pr:
+  generate-docs-and-submit-pull-request:
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
 
     concurrency:
       group: update-rpcn-connector-docs
