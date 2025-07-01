@@ -1,13 +1,17 @@
 = MCP Server for Redpanda Connect
 
-Redpanda Connect's MCP server is a lightweight tool designed for AI-native environments. It enables you to expose internal tools as AI-consumable HTTP endpoints—giving language models like Claude or ChatGPT structured access to business logic, APIs, and workflows.
+Redpanda Connect's MCP (Model Context Protocol) server enables you to expose your pipelines as MCP tools (AI-consumable HTTP endpoints). MCP provides a standardized way for AI systems to interact with tools and services. Learn more about MCP in the link:https://docs.anthropic.com/en/docs/mcp[official documentation^].
+
+In Redpanda Connect, pipelines are declarative YAML files composed of inputs, processors, and outputs.
+In MCP, these pipelines are referred to as *tools*, which are discrete units of functionality that AI system can discover and execute through the MCP interface.
 
 Modern AI agents can perform complex tasks, but they need actionable interfaces to interact with real systems. The MCP server provides a simple way to expose your internal tools as structured, typed HTTP endpoints that AI systems can understand and use.
-It allows you to:
 
-* Expose your internal tools as structured, typed HTTP endpoints
+MCP allows you to:
+
+* Expose your tools as structured, typed HTTP endpoints
 * Embed metadata and documentation LLMs can parse and understand
-* Allow tools to be invoked via natural language with zero prompt engineering
+* Allow tools to be invoked using natural language with zero prompt engineering
 
 This means you can build *LLM-native* applications where the AI dynamically selects and invokes your tools based on user intent.
 
@@ -25,26 +29,26 @@ For example, an internal system that fetches customer data, sends alerts, or gen
 - A plain-English `description`
 - A structured list of input `properties`
 
-== Key Features
+== Key features
 
 [cols="1,3",options="header"]
 |===
 |Feature |Description
 
-|**AI-Optimized Tool Descriptions**
+|**AI-optimized tool descriptions**
 |Each tool is self-documented in a format that LLMs can read. No extra API docs or plugins required.
 
-|**Minimal Surface Area**
-|Expose only the tools you want via `--tag`, reducing attack and confusion surface.
+|**Minimal surface area**
+|Expose only the tools you want, reducing attack and confusion surface.
 
 |**Composability**
 |Each tool runs independently over HTTP. They can be composed by the AI into chains or workflows.
 
-|**Fast Iteration**
+|**Fast iteration**
 |Define tools as YAML files, reload your server, and your AI agents can use the new logic instantly.
 |===
 
-== Example: Exposing a Search Tool
+== Example of exposing a search tool
 
 [source,yaml]
 ----
@@ -75,40 +79,25 @@ meta:
       description: A Lucene-style query string to search posts.
     - name: limit
       type: number
-      description: Number of posts to return (1–100). Defaults to 25.
+      description: Number of posts to return (1-100). Defaults to 25.
 ----
 
-== Starting the Server
+This example defines a tool that searches public Bluesky posts based on a query string. The tool:
+- Has a unique `label` for identification
+- Provides a clear `description` for LLMs
+- Defines structured `properties` for inputs like `query` and `limit`
+- Uses a series of processors to build the HTTP request, handle the response, and format the output
+- Is tagged with `bluesky` and `social` for discoverability
 
-To launch the MCP server and expose your tools:
+When this tool is registered with the MCP server, LLMs can invoke it using natural language like "find recent posts about AI on Bluesky" without needing to know the exact API details.
 
-[source,bash]
-----
-rpk connect mcp-server --address localhost:8080
-----
+== Best practices for AI tooling
 
-To limit to tools with the `demo` tag:
-
-[source,bash]
-----
-rpk connect mcp-server --tag demo
-----
-
-== Best Practices for AI Tooling
-
-* Use **unique, descriptive labels** - avoid generic patterns like `*-search`
+* Use **unique, descriptive labels** and avoid generic patterns like `*-search`
 * Write **clear, plain-language descriptions** that explain what the tool does
 * Define **structured inputs** so the AI can build correct requests
 
-== Designed for LLM Pre-seeding
+== Get started
 
-MCP tools are automatically described in a format suitable for LLMs to parse and use directly—no OpenAPI, Swagger, or external registries required. This makes it ideal for:
-
-- Claude CLI
-- Redpanda Copilot integrations
-- LangChain, AutoGPT, and other agentic frameworks
-
-== What's Next
-
-MCP currently supports stateless *tools*. Future releases will include *resources*—stateful components like sessions, conversations, or documents.
+To start using the MCP server, try the xref:agentic-ai:quickstart.adoc[quickstart].
 
