@@ -66,6 +66,8 @@ jobs:
             cat full_output.txt
             echo ""
             echo "</details>"
+            echo ""
+            echo "For help reviewing this content, see our [wiki](https://redpandadata.atlassian.net/wiki/spaces/DOC/pages/1185054748/Doc+Tools+CLI)."
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
