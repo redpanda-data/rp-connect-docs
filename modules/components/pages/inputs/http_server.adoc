@@ -1,4 +1,5 @@
 = http_server
+// tag::single-source[]
 :type: input
 :status: stable
 :categories: ["Network"]
@@ -143,4 +144,5 @@ x-api-key available as metadata("X-Api-Key")
 include::redpanda-connect:components:partial$examples/inputs/http_server.adoc[]
 
 include::redpanda-connect:components:partial$fields/inputs/http_server.adoc[]
+// end::single-source[]
 

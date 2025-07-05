@@ -230,4 +230,12 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 *Type*: `string`
 
+=== `validate_topic`
+
+Whether to validate the existence of the topic before publishing. If set to false and the topic does not exist, messages will be lost.
+
+*Type*: `bool`
+
+*Default*: `true`
+
 
