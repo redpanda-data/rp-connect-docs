@@ -58,6 +58,7 @@ redpanda:
   timeout: 10s
   max_message_bytes: 1MB
   broker_write_max_bytes: 100MB
+  allow_auto_topic_creation: true
 ```
 --
 ======
