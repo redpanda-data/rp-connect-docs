@@ -6,6 +6,35 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.59.0
+
+=== Redpanda Connect in Redpanda Cloud: GA
+
+Redpanda Connect is now generally available (GA) in all Redpanda Cloud clusters: BYOC (including BYOVPC/BYOVNet), Dedicated, and Serverless.
+
+Redpanda Connect has been GA in Redpanda Self-Managed clusters since version 4.29.0.
+
+=== Component updates
+
+This release adds support for the following fields:
+
+* SFTP input components
+** xref:components:inputs/sftp.adoc#connection_timeout[`connection_timeout`]
+** xref:components:inputs/sftp.adoc#credentials-host_public_key[`credentials.host_public_key`]
+** xref:components:inputs/sftp.adoc#credentials-host_public_key_file[`credentials.host_public_key_file`]
+** xref:components:inputs/sftp.adoc#max_sftp_sessions[`max_sftp_sessions`]
+
+* SFTP output components
+** xref:components:outputs/sftp.adoc#connection_timeout[`connection_timeout`]
+** xref:components:outputs/sftp.adoc#credentials-host_public_key[`credentials.host_public_key`]
+** xref:components:outputs/sftp.adoc#credentials-host_public_key_file[`credentials.host_public_key_file`]
+
+* GCP Pub/Sub output components
+** xref:components:outputs/gcp_pubsub.adoc#validate_topic[`validate_topic`]
+
+* Redpanda cache components
+** xref:components:caches/redpanda.adoc#allow_auto_topic_creation[`allow_auto_topic_creation`] 
+
 == Version 4.58.2
 
 This release introduces an experimental Slack output and expands support for automatic topic creation across Redpanda-related components.

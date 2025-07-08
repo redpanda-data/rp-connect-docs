@@ -30,7 +30,10 @@ output:
       private_key_file: "" # No default (optional)
       private_key: "" # No default (optional)
       private_key_pass: "" # No default (optional)
+      host_public_key: "" # No default (optional)
+      host_public_key_file: "" # No default (optional)
     max_in_flight: 64
+    connection_timeout: 30s
 ```
 
 In order to have a different path for each object you should use function interpolations described xref:configuration:interpolation.adoc#bloblang-queries[here].

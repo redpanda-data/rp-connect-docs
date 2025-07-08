@@ -62,11 +62,14 @@ input:
       private_key_file: "" # No default (optional)
       private_key: "" # No default (optional)
       private_key_pass: "" # No default (optional)
+      host_public_key: "" # No default (optional)
+      host_public_key_file: "" # No default (optional)
     paths: [] # No default (required)
     auto_replay_nacks: true
     scanner:
       to_the_end: {}
     delete_on_finish: false
+    connection_timeout: 30s
     watcher:
       enabled: false
       minimum_age: 1s

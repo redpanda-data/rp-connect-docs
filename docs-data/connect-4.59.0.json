@@ -1,6 +1,6 @@
 {
-  "version": "4.57.1",
-  "date": "2025-06-10T11:05:32Z",
+  "version": "4.59.0",
+  "date": "2025-06-27T16:14:07Z",
   "config": [
     {
       "name": "http",
@@ -1127,6 +1127,14 @@
             "zstd"
           ],
           "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+        },
+        {
+          "name": "allow_auto_topic_creation",
+          "type": "bool",
+          "kind": "scalar",
+          "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+          "is_advanced": true,
+          "default": true
         },
         {
           "name": "timeout",
@@ -3143,6 +3151,14 @@
             "type": "string",
             "kind": "scalar",
             "description": "The topic to store data in."
+          },
+          {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
           }
         ]
       }
@@ -10274,7 +10290,8 @@
                 "table1",
                 "table2"
               ]
-            ]
+            ],
+            "linter": "root = if this.length() == 0 { [ \"field 'tables' must contain at least one table\" ] }"
           },
           {
             "name": "checkpoint_cache",
@@ -16557,7 +16574,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Consumes files from an SFTP server.",
-      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- sftp_path\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
+      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- sftp_path\n- sftp_mod_time\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
       "categories": [
         "Network"
       ],
@@ -16571,6 +16588,14 @@
             "type": "string",
             "kind": "scalar",
             "description": "The address of the server to connect to."
+          },
+          {
+            "name": "connection_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The connection timeout to use when connecting to the target server.",
+            "is_advanced": true,
+            "default": "30s"
           },
           {
             "name": "credentials",
@@ -16595,20 +16620,33 @@
                 "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
               },
               {
+                "name": "host_public_key_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The public key of the SFTP server.",
+                "is_optional": true
+              },
+              {
+                "name": "host_public_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The public key file of the SFTP server.",
+                "is_optional": true
+              },
+              {
                 "name": "private_key_file",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The private key for the username to connect to the SFTP server.",
-                "default": ""
+                "description": "The private key file for the username to connect to the SFTP server.",
+                "is_optional": true
               },
               {
                 "name": "private_key",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The private key file for the username to connect to the SFTP server.",
+                "description": "The private key for the username to connect to the SFTP server.",
+                "is_optional": true,
                 "is_secret": true,
-                "default": "",
-                "linter": "root = match { this.exists(\"private_key\") && this.exists(\"private_key_file\") => [ \"both private_key and private_key_file can't be set simultaneously\" ], }",
                 "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
               },
               {
@@ -16620,7 +16658,16 @@
                 "default": "",
                 "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
               }
-            ]
+            ],
+            "linter": "\nroot = match {\n  this.exists(\"host_public_key\") && this.exists(\"host_public_key_file\") => \"both host_public_key and host_public_key_file can't be set simultaneously\"\n  this.exists(\"private_key\") && this.exists(\"private_key_file\") => \"both private_key and private_key_file can't be set simultaneously\"\n}"
+          },
+          {
+            "name": "max_sftp_sessions",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of SFTP sessions.",
+            "is_advanced": true,
+            "default": 10
           },
           {
             "name": "paths",
@@ -23350,6 +23397,16 @@
           "title": "Indexing documents from S3",
           "summary": "Here we read messages from a AWS S3 bucket and write them to an Elasticsearch index using the S3 key as the ID for the Elasticsearch document.",
           "config": "\ninput:\n  aws_s3:\n    bucket: \"my-cool-bucket\"\n    prefix: \"bug-facts/\"\n    scanner:\n      to_the_end: {}\noutput:\n  elasticsearch_v8:\n    urls: ['http://localhost:9200']\n    index: \"cool-bug-facts\"\n    action: \"index\"\n    id: ${! meta(\"s3_key\") }\n"
+        },
+        {
+          "title": "Create Documents",
+          "summary": "When using the `create` action, a new document will be created if the document ID does not already exist. If the document ID already exists, the operation will fail.",
+          "config": "\noutput:\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! json(\"id\") }\n    action: create\n"
+        },
+        {
+          "title": "Upserting Documents",
+          "summary": "When using the `upsert` action, if the document ID already exists, it will be updated. If the document ID does not exist, a new document will be inserted. The request body should contain the document to be indexed.",
+          "config": "\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        root = this.doc\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: upsert\n"
         }
       ],
       "config": {
@@ -23379,7 +23436,7 @@
             "name": "action",
             "type": "string",
             "kind": "scalar",
-            "description": "The action to take on the document. This field must resolve to one of the following action types: `index`, `update` or `delete`. See the `Updating Documents` example for more on how the `update` action works.",
+            "description": "The action to take on the document. This field must resolve to one of the following action types: `index`, `update`, `delete`, `create` or `upsert`. See the `Updating Documents` example for more on how the `update` action works and the `Create Documents` and `Upserting Documents` examples for how to use the `create` and `upsert` actions respectively.",
             "interpolated": true
           },
           {
@@ -24359,6 +24416,14 @@
               "5m",
               "60m"
             ]
+          },
+          {
+            "name": "validate_topic",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether to validate the existence of the topic before publishing. If set to false and the topic does not exist, messages will be lost.",
+            "is_advanced": true,
+            "default": true
           },
           {
             "name": "metadata",
@@ -26797,6 +26862,14 @@
             "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
             "name": "timeout",
             "type": "string",
             "kind": "scalar",
@@ -29188,6 +29261,14 @@
                   "zstd"
                 ],
                 "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+              },
+              {
+                "name": "allow_auto_topic_creation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+                "is_advanced": true,
+                "default": true
               },
               {
                 "name": "timeout",
@@ -32709,6 +32790,14 @@
             "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
             "name": "timeout",
             "type": "string",
             "kind": "scalar",
@@ -33662,6 +33751,14 @@
               "zstd"
             ],
             "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
           },
           {
             "name": "timeout",
@@ -34767,6 +34864,78 @@
             "description": "The address of the server to connect to."
           },
           {
+            "name": "connection_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The connection timeout to use when connecting to the target server.",
+            "is_advanced": true,
+            "default": "30s"
+          },
+          {
+            "name": "credentials",
+            "type": "object",
+            "kind": "scalar",
+            "description": "The credentials to use to log into the target server.",
+            "children": [
+              {
+                "name": "username",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The username to connect to the SFTP server.",
+                "default": ""
+              },
+              {
+                "name": "password",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The password for the username to connect to the SFTP server.",
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "host_public_key_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The public key of the SFTP server.",
+                "is_optional": true
+              },
+              {
+                "name": "host_public_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The public key file of the SFTP server.",
+                "is_optional": true
+              },
+              {
+                "name": "private_key_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The private key file for the username to connect to the SFTP server.",
+                "is_optional": true
+              },
+              {
+                "name": "private_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The private key for the username to connect to the SFTP server.",
+                "is_optional": true,
+                "is_secret": true,
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "private_key_pass",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optional passphrase for private key.",
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              }
+            ],
+            "linter": "\nroot = match {\n  this.exists(\"host_public_key\") && this.exists(\"host_public_key_file\") => \"both host_public_key and host_public_key_file can't be set simultaneously\"\n  this.exists(\"private_key\") && this.exists(\"private_key_file\") => \"both private_key and private_key_file can't be set simultaneously\"\n}"
+          },
+          {
             "name": "path",
             "type": "string",
             "kind": "scalar",
@@ -34801,56 +34970,6 @@
                 "lines",
                 "Append each message to the output stream followed by a line break."
               ]
-            ]
-          },
-          {
-            "name": "credentials",
-            "type": "object",
-            "kind": "scalar",
-            "description": "The credentials to use to log into the target server.",
-            "children": [
-              {
-                "name": "username",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The username to connect to the SFTP server.",
-                "default": ""
-              },
-              {
-                "name": "password",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The password for the username to connect to the SFTP server.",
-                "is_secret": true,
-                "default": "",
-                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
-              },
-              {
-                "name": "private_key_file",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The private key for the username to connect to the SFTP server.",
-                "default": ""
-              },
-              {
-                "name": "private_key",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The private key file for the username to connect to the SFTP server.",
-                "is_secret": true,
-                "default": "",
-                "linter": "root = match { this.exists(\"private_key\") && this.exists(\"private_key_file\") => [ \"both private_key and private_key_file can't be set simultaneously\" ], }",
-                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
-              },
-              {
-                "name": "private_key_pass",
-                "type": "string",
-                "kind": "scalar",
-                "description": "Optional passphrase for private key.",
-                "is_secret": true,
-                "default": "",
-                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
-              }
             ]
           },
           {
@@ -34948,6 +35067,68 @@
             "kind": "scalar",
             "description": "Enable link names in the message.",
             "default": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "slack_reaction",
+      "type": "output",
+      "status": "experimental",
+      "plugin": true,
+      "description": "Add or remove an emoji reaction to a Slack message using https://api.slack.com/methods/reactions.add[^reactions.add] and https://api.slack.com/methods/reactions.remove[^reactions.remove]",
+      "categories": null,
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "bot_token",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The Slack Bot User OAuth token to use.",
+            "linter": "\n        root = if !this.has_prefix(\"xoxb-\") { [ \"field must start with xoxb-\" ] }\n      "
+          },
+          {
+            "name": "channel_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The channel ID containing the message to react to.",
+            "interpolated": true
+          },
+          {
+            "name": "timestamp",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The timestamp of the message to react to.",
+            "interpolated": true
+          },
+          {
+            "name": "emoji",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The name of the emoji to react with (without colons).",
+            "interpolated": true
+          },
+          {
+            "name": "action",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Whether to add or remove the reaction.",
+            "default": "add",
+            "options": [
+              "add",
+              "remove"
+            ],
+            "linter": "\nlet options = {\n  \"add\": true,\n  \"remove\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "max_in_flight",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "default": 64
           }
         ]
       }
@@ -39285,7 +39466,7 @@
       "status": "experimental",
       "plugin": true,
       "summary": "Generates vector embeddings to represent input text, using the Cohere API.",
-      "description": "\nThis processor sends document strings to the Cohere API, which reranks them based on the relevance to the query.\n\nTo learn more about reranking, see the https://docs.cohere.com/docs/rerank-2[Cohere API documentation^].\n\nThe output of this processor is an array of strings that are ordered by their relevance.\n\n== Metadata\n\nrelevance_scores: an array of scores for each document, indicating how relevant it is to the query. The scores are in the same order as the documents in the input. The higher the score, the more relevant the document is to the query.\n\n\t\t",
+      "description": "\nThis processor sends document strings to the Cohere API, which reranks them based on the relevance to the query.\n\nTo learn more about reranking, see the https://docs.cohere.com/docs/rerank-2[Cohere API documentation^].\n\nThe output of this processor is an array of objects, each containing a \"document\" field with the original document content and a \"relevance_score\" field indicating how relevant it is to the query. The objects are ordered by their relevance score (highest first).\n\n\t\t",
       "categories": [
         "AI"
       ],
