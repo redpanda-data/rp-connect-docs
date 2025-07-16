@@ -318,6 +318,14 @@ Whether to skip server side certificate verification.
 
 *Default*: `false`
 
+=== `tls_handshake_first`
+
+Perform a TLS handshake before sending the INFO protocol message.
+
+*Type*: `bool`
+
+*Default*: `false`
+
 === `urls[]`
 
 A list of URLs to connect to. If a list item contains commas, it will be expanded into multiple URLs.
