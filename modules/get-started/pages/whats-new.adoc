@@ -6,6 +6,29 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.60.0
+
+=== Component updates
+
+The 4.60.0 release adds support for the following fields:
+
+* NATS components
+** `tls_handshake_first` - Enhanced TLS configuration option for NATS connections that require the initial TLS handshake to be performed before sending the NATS INFO protocol message. This is required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.
+
+This field is available in the following NATS components:
+
+* xref:components:inputs/nats.adoc#tls_handshake_first[`nats` input]
+* xref:components:inputs/nats_jetstream.adoc#tls_handshake_first[`nats_jetstream` input]
+* xref:components:inputs/nats_kv.adoc#tls_handshake_first[`nats_kv` input]
+* xref:components:inputs/nats_stream.adoc#tls_handshake_first[`nats_stream` input]
+* xref:components:outputs/nats.adoc#tls_handshake_first[`nats` output]
+* xref:components:outputs/nats_jetstream.adoc#tls_handshake_first[`nats_jetstream` output]
+* xref:components:outputs/nats_kv.adoc#tls_handshake_first[`nats_kv` output]
+* xref:components:outputs/nats_stream.adoc#tls_handshake_first[`nats_stream` output]
+* xref:components:processors/nats_kv.adoc#tls_handshake_first[`nats_kv` processor]
+* xref:components:processors/nats_request_reply.adoc#tls_handshake_first[`nats_request_reply` processor]
+* xref:components:caches/nats_kv.adoc#tls_handshake_first[`nats_kv` cache]
+
 == Version 4.59.0
 
 === Redpanda Connect in Redpanda Cloud: GA

@@ -225,6 +225,18 @@ Whether to skip server side certificate verification.
 
 *Default*: `false`
 
+=== `tls_handshake_first`
+
+Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This is required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.
+
+ifndef::env-cloud[]
+Requires version 4.60.0 or later.
+endif::[]
+
+*Type*: `bool`
+
+*Default*: `false`
+
 === `urls[]`
 
 A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.
