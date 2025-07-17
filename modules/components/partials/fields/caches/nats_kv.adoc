@@ -227,7 +227,11 @@ Whether to skip server side certificate verification.
 
 === `tls_handshake_first`
 
-Perform a TLS handshake before sending the INFO protocol message.
+Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.
+
+ifndef::env-cloud[]
+Requires version 4.60.0 or later.
+endif::[]
 
 *Type*: `bool`
 

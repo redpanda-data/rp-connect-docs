@@ -948,6 +948,11 @@
                 "description": "An optional plain text user NKey seed to use along with the corresponding user JWT."
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -989,6 +994,11 @@
                 "description": "An optional plain text user NKey seed to use along with the user JWT."
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -1022,6 +1032,11 @@
                 "description": "An optional plain text user NKey seed to use along with the corresponding user JWT."
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -1059,6 +1074,11 @@
           {
             "name": "extract_tracing_map",
             "description": "EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] that attempts to extract an object containing tracing propagation information, which is then used as the root tracing span for the message. The specification of the extracted fields must match the format used by the service wide tracer."
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -3445,6 +3465,11 @@
                 "description": "An optional plain text user NKey seed to use along with the corresponding user JWT."
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -3486,6 +3511,11 @@
                 "description": "An optional plain text user NKey seed to use along with the corresponding user JWT."
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -3523,6 +3553,11 @@
                 "description": "An optional plain text user NKey seed to use along with the corresponding user JWT."
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -3556,6 +3591,11 @@
                 "description": "An optional plain text user NKey seed to use along with the corresponding user JWT."
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -5818,6 +5858,11 @@
                 "description": "An optional plain text user NKey seed to use along with the corresponding user JWT."
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -5859,6 +5904,11 @@
                 "description": "An optional plain text user NKey seed to use along with the corresponding user JWT."
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
@@ -6770,6 +6820,18 @@
                 "description": "The username to use for PLAIN or SCRAM-* authentication."
               }
             ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "nats_kv",
+      "config": {
+        "children": [
+          {
+            "name": "tls_handshake_first",
+            "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This can be required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.",
+            "version": "4.60.0"
           }
         ]
       }
