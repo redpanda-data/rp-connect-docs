@@ -209,6 +209,10 @@ The scalar type of the field.
 
 | `string`
 | standard string type
+| `string_enum`
+| string type which can have one of a discrete list of values
+| `string_annotated_enum`
+| string type which can have one of a discrete list of values, where each value must be accompanied by a description that annotates its behaviour in the documentation
 | `int`
 | standard integer type
 | `float`
