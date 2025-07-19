@@ -104,6 +104,14 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 *Default*: `64`
 
+=== `normalize`
+
+Normalize schemas.
+
+*Type*: `bool`
+
+*Default*: `true`
+
 === `oauth`
 
 Configure OAuth version 1.0 to give this component authorized access to your schema registry.
@@ -153,6 +161,22 @@ Whether to use OAuth version 1 in requests.
 *Type*: `bool`
 
 *Default*: `false`
+
+=== `remove_metadata`
+
+Remove metadata from schemas.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `remove_rule_set`
+
+Remove rule set from schemas.
+
+*Type*: `bool`
+
+*Default*: `true`
 
 === `subject`
 
