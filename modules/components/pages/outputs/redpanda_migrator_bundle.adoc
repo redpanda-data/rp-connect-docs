@@ -2,7 +2,6 @@
 :page-aliases: components:outputs/kafka_migrator_bundle.adoc
 // tag::single-source[]
 :type: output
-:page-beta: true
 :categories: ["Services"]
 
 
@@ -25,22 +24,9 @@ output:
   redpanda_migrator_bundle:
     redpanda_migrator: {} # No default (required)
     schema_registry: {} # No default (optional)
+    translate_schema_ids: false
 ```
 
-== Fields
-
-=== `redpanda_migrator`
-
-The xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] configuration.
-
-*Type*: `object`
-
-
-=== `schema_registry`
-
-The xref:components:outputs/schema_registry.adoc[`schema_registry` output] configuration. The `subject` field must be left empty.
-
-
-*Type*: `object`
+include::redpanda-connect:components:partial$fields/outputs/redpanda_migrator_bundle.adoc[]
 
 // end::single-source[]

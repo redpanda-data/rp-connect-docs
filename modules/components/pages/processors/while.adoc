@@ -54,48 +54,6 @@ If following a loop execution the number of messages in a batch is reduced to ze
 
 The conditions of this processor are applied across entire message batches. You can find out more about batching xref:configuration:batching.adoc[in this doc].
 
-== Fields
-
-=== `at_least_once`
-
-Whether to always run the child processors at least one time.
-
-
-*Type*: `bool`
-
-*Default*: `false`
-
-=== `max_loops`
-
-An optional maximum number of loops to execute. Helps protect against accidentally creating infinite loops.
-
-
-*Type*: `int`
-
-*Default*: `0`
-
-=== `check`
-
-A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether the while loop should execute again.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-```yml
-# Examples
-
-check: errored()
-
-check: this.urls.unprocessed.length() > 0
-```
-
-=== `processors`
-
-A list of child processors to execute on each loop.
-
-
-*Type*: `array`
+include::redpanda-connect:components:partial$fields/processors/while.adoc[]
 
 // end::single-source[]

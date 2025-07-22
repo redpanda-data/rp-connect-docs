@@ -1,0 +1,29 @@
+= slack_reaction
+// tag::single-source[]
+:type: output
+:status: experimental
+:categories: []
+:description: Add or remove an emoji reaction to a Slack message.
+
+component_type_dropdown::[]
+
+Add or remove an emoji reaction to a Slack message using https://api.slack.com/methods/reactions.add[`reactions.add`^] and https://api.slack.com/methods/reactions.remove[`reactions.remove`^].
+
+
+[,yaml]
+----
+output:
+  label: ""
+  slack_reaction:
+    bot_token: "" # No default (required)
+    channel_id: "" # No default (required)
+    timestamp: "" # No default (required)
+    emoji: "" # No default (required)
+    action: add
+    max_in_flight: 64
+----
+
+include::redpanda-connect:components:partial$fields/outputs/slack_reaction.adoc[]
+
+
+// end::single-source[]

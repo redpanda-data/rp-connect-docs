@@ -1,0 +1,35 @@
+= slack_post
+// tag::single-source[]
+:type: output
+
+component_type_dropdown::[]
+
+Posts a new message to a Slack channel using the Slack API method https://api.slack.com/methods/chat.postMessage[chat.postMessage^].
+
+ifndef::env-cloud[]
+Introduced in version 4.52.0.
+endif::[]
+
+```yml
+# Common configuration fields, showing default values
+output:
+  label: ""
+  slack_post:
+    bot_token: "" # No default (required)
+    channel_id: "" # No default (required)
+    thread_ts: "" # No default (optional)
+    text: "" # No default (optional)
+    blocks: "" # No default (optional)
+    markdown: true
+    unfurl_links: false
+    unfurl_media: true
+    link_names: 0
+```
+
+See also: <<Examples, Examples>>
+
+include::redpanda-connect:components:partial$fields/outputs/slack_post.adoc[]
+
+include::redpanda-connect:components:partial$examples/outputs/slack_post.adoc[]
+
+// end::single-source[]

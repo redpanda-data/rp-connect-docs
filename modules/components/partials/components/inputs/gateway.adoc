@@ -1,0 +1,138 @@
+= gateway
+// tag::single-source[]
+:type: input
+:status: stable
+:categories: [Network]
+:description: Receive messages delivered over HTTP.
+
+component_type_dropdown::[]
+
+The `gateway` input is a Cloud-only component that receives messages over HTTP and injects them into a running Redpanda Connect pipeline. It's ideal for:
+
+- Receiving webhook events from third-party services
+- Accepting real-time telemetry or sensor data over HTTP
+- Building lightweight ingest endpoints for client apps
+
+For on-premises or self-managed deployments, use the xref:redpanda-connect:components:inputs/http_server.adoc[`http_server`] input instead.
+
+This component is fully managed and available in the following Redpanda Cloud deployment types:
+
+- **Serverless**
+- **Dedicated**
+- **Bring Your Own Cloud (BYOC)**
+
+When a pipeline with a `gateway` input is deployed, Redpanda Cloud provisions a secure URL that you can use to send HTTP requests. You can post raw payloads, JSON messages, or stream events in real time.
+
+Authentication and access control are handled through standard Redpanda Cloud API tokens. For more information, see xref:redpanda-cloud:manage:api/cloud-api-authentication.adoc[].
+
+Network access:
+
+- On **public clusters** (Serverless and Dedicated), the gateway URL is accessible over the public internet.
+- On **private clusters** (BYOC), the gateway is accessible only from within your configured VPC.
+
+
+[tabs]
+======
+Common::
++
+--
+```yaml
+input:
+  label: ""
+  gateway:
+    path: /
+    rate_limit: ""
+
+```
+--
+Advanced::
++
+--
+```yaml
+input:
+  label: ""
+  gateway:
+    path: /
+    rate_limit: ""
+
+    sync_response:
+      status: "200"
+      headers:
+        Content-Type: application/octet-stream
+      metadata_headers:
+        include_prefixes:
+          []
+        include_patterns:
+          []
+```
+--
+======
+
+The field `rate_limit` allows you to specify an optional xref:components:rate_limits/about.adoc[`rate_limit` resource] that applies to all HTTP requests.
+
+When the rate limit is breached, HTTP requests return a 429 response with a Retry-After header.
+
+== Responses
+
+You can also return a response for each message received using xref:guides:sync_responses.adoc[synchronous responses]. When doing so, you can customize headers using the `sync_response.headers` field, which supports xref:configuration:interpolation.adoc#bloblang-queries[function interpolation] in the value based on the response message contents.
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `http_server_user_agent`
+- `http_server_request_path`
+- `http_server_verb`
+- `http_server_remote_ip`
+- All headers (only first values are taken)
+- All query parameters
+- All path parameters
+- All cookies
+
+You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+
+include::redpanda-connect:components:partial$fields/inputs/gateway.adoc[]
+
+== Examples
+
+=== Ingest a real-time stream of sensor data
+
+Use the `gateway` input to stream telemetry data from edge devices or browser clients that connect over HTTP.
+
+Suppose a client connects and sends JSON-encoded sensor readings like this:
+
+[source,json]
+----
+{ "sensor_id": "temp-001", "value": 22.5, "unit": "C" }
+{ "sensor_id": "temp-001", "value": 22.8, "unit": "C" }
+{ "sensor_id": "temp-001", "value": 23.1, "unit": "C" }
+----
+
+Redpanda Connect treats each line as an individual message.
+
+The following pipeline sets up a `gateway` input to handle these connections and logs each message:
+
+[source,yaml]
+----
+input:
+  label: sensor_stream
+  gateway:
+    path: /ws/sensors
+    rate_limit: ""
+
+pipeline:
+  processors:
+    - log:
+        level: INFO
+        message: "Received reading from ${! json(\"sensor_id\") }: ${! json(\"value\") } ${! json(\"unit\") }"
+----
+
+This configuration:
+
+* Accepts HTTP connections on `/ws/sensors`
+* Receives a stream of messages over a single connection
+* Logs each message using Bloblang interpolation
+
+You can replace the `log` processor with any downstream output, such as Redpanda or Amazon S3, to persist or analyze the data in real time.
+
+// end::single-source[]

@@ -31,37 +31,5 @@ This input adds the following metadata fields to each message:
 You can access these metadata fields using
 xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
 
-== Fields
-
-=== `hosts`
-
-A list of target host addresses to connect to.
-
-
-*Type*: `array`
-
-
-```yml
-# Examples
-
-hosts: localhost:9000
-```
-
-=== `user`
-
-A user ID to connect as.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `directory`
-
-The directory to consume from.
-
-
-*Type*: `string`
-
-
+include::redpanda-connect:components:partial$fields/inputs/hdfs.adoc[]
 

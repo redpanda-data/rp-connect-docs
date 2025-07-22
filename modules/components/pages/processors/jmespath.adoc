@@ -25,55 +25,8 @@ jmespath:
 For better performance and improved capabilities try native Redpanda Connect mapping with the xref:components:processors/mapping.adoc[`mapping` processor].
 ====
 
+include::redpanda-connect:components:partial$fields/processors/jmespath.adoc[]
 
-== Fields
-
-=== `query`
-
-The JMESPath query to apply to messages.
-
-
-*Type*: `string`
-
-
-== Examples
-
-[tabs]
-======
-Mapping::
-+
---
-
-
-When receiving JSON documents of the form:
-
-```json
-{
-  "locations": [
-    {"name": "Seattle", "state": "WA"},
-    {"name": "New York", "state": "NY"},
-    {"name": "Bellevue", "state": "WA"},
-    {"name": "Olympia", "state": "WA"}
-  ]
-}
-```
-
-We could collapse the location names from the state of Washington into a field `Cities`:
-
-```json
-{"Cities": "Bellevue, Olympia, Seattle"}
-```
-
-With the following config:
-
-```yaml
-pipeline:
-  processors:
-    - jmespath:
-        query: "locations[?state == 'WA'].name | sort(@) | {Cities: join(', ', @)}"
-```
-
---
-======
+nclude::redpanda-connect:components:partial$examples/processors/jmespath.adoc[]
 
 // end::single-source[]

@@ -1,0 +1,40 @@
+= slack
+// tag::single-source[]
+:type: input
+
+component_type_dropdown::[]
+
+Connects to Slack using https://api.slack.com/apis/socket-mode[Socket Mode^], and can receive events, interactions (automated and user-initiated), and slash commands.
+
+This input is useful for:
+
+- Building bots that can query or write data.
+- Sending events to data warehouses.
+
+You could also try pairing this input with Redpanda Connect's AI processors, which use the prefixes `cohere`, `openai`, and `ollama`.
+
+ifndef::env-cloud[]
+Introduced in version 4.51.0.
+endif::[]
+
+```yml
+# Common configuration fields, showing default values
+input: 
+  label: ""
+  slack:
+    app_token: "" # No default (required)
+    bot_token: "" # No default (required)
+    auto_replay_nacks: true
+```
+
+See also: <<Examples, Examples>>
+
+== Metadata
+
+Each message emitted from this input has an `@type` metadata flag to indicate the event type, either `"events_api"`, `"interactions"`, or `"slash_commands"`.
+
+include::redpanda-connect:components:partial$fields/inputs/slack.adoc[]
+
+include::redpanda-connect:components:partial$examples/inputs/slack.adoc[]
+
+// end::single-source[]

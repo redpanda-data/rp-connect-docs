@@ -2,7 +2,7 @@
 // tag::single-source[]
 :description: Understand synchronous response handling in Redpanda Connect, ensuring reliable and efficient data processing.
 
-In a regular Redpanda Connect pipeline messages will flow in one direction and acknowledgements flow in the other:
+In a regular Redpanda Connect pipeline, messages flow in one direction and acknowledgements in the other:
 
 [source,text]
 ----
@@ -13,127 +13,206 @@ Input (AMQP) -> Processors -> Output (AMQP)
     <------- Acknowledgement ---------
 ----
 
-However, Redpanda Connect has support for a number of protocols where this limitation is not the case.
+However, Redpanda Connect supports bidirectional protocols like HTTP and WebSocket, which allow responses to be returned directly from the pipeline.
 
-For example, HTTP is a request/response protocol, and so our `http_server` input is capable of returning a response payload after consuming a message from a request.
-
-When using these protocols it's possible to configure Redpanda Connect stream pipelines that allow messages to pass in the opposite direction, resulting in response messages at the input level:
+For example, HTTP is a request/response protocol, and inputs like `http_server` (Self-Managed) or `gateway` (Redpanda Cloud) support returning response payloads to the requester.
 
 [source,text]
 ----
            --------- Request Body -------->
 
-Input (HTTP Server) -> Processors -> Output (Sync Response)
+Input (HTTP) -> Processors -> Output (Sync Response)
 
            <--- Response Body (and ack) ---
 ----
 
 == Routing processed messages back
 
-It's possible to route the result of any Redpanda Connect processing pipeline directly back to an input with a xref:components:outputs/sync_response.adoc[`sync_response`] output:
+To return a processed response, use the xref:components:outputs/sync_response.adoc[`sync_response`] output.
+
+ifdef::env-cloud[]
+Use the `gateway` input in Redpanda Cloud:
 
 [source,yaml]
 ----
 input:
-  http_server:
-    path: /post
+  gateway: {}
+
 pipeline:
   processors:
-    - mapping: root = content().uppercase()
+    - mapping: |
+        root = {
+          city: json("location"),
+          forecast: "Clear skies with light winds",
+          temperature_c: 22
+        }
+
 output:
   sync_response: {}
 ----
+endif::[]
 
-Using the above example, sending a request 'foo bar' to the path `/post` returns the response 'FOO BAR'.
-
-It's also possible to combine a `sync_response` output with other outputs using a xref:components:outputs/broker.adoc[`broker`]:
+ifndef::env-cloud[]
+Use the `http_server` input in Self-Managed deployments:
 
 [source,yaml]
 ----
 input:
   http_server:
-    path: /post
+    path: /weather
+
+pipeline:
+  processors:
+    - mapping: |
+        root = {
+          city: json("location"),
+          forecast: "Clear skies with light winds",
+          temperature_c: 22
+        }
+
+output:
+  sync_response: {}
+----
+endif::[]
+
+Sending this request:
+
+[source,json]
+----
+{ "location": "Berlin" }
+----
+
+Returns:
+
+[source,json]
+----
+{
+  "city": "Berlin",
+  "forecast": "Clear skies with light winds",
+  "temperature_c": 22
+}
+----
+
+== Combine with other outputs
+
+You can route processed messages to storage and return a response using a xref:components:outputs/broker.adoc[`broker`] output.
+
+ifdef::env-cloud[]
+[source,yaml]
+----
+input:
+  gateway: {}
+
+output:
+  broker:
+    pattern: fan_out
+    outputs:
+      - redpanda:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: weather.requests
+          tls:
+            enabled: true
+          sasl:
+            - mechanism: SCRAM-SHA-256
+              username: ${secrets.USERNAME}
+              password: ${secrets.PASSWORD}
+      - sync_response:
+          processors:
+            - mapping: |
+                root = {
+                  status: "received",
+                  received_at: now()
+                }
+----
+endif::[]
+
+ifndef::env-cloud[]
+[source,yaml]
+----
+input:
+  http_server:
+    path: /weather
+
 output:
   broker:
     pattern: fan_out
     outputs:
       - kafka:
-          addresses: [ TODO:9092 ]
-          topic: foo_topic
-      - sync_response: {}
-        processors:
-          - mapping: root = content().uppercase()
+          addresses: [localhost:9092]
+          topic: weather.requests
+      - sync_response:
+          processors:
+            - mapping: |
+                root = {
+                  status: "received",
+                  received_at: now()
+                }
 ----
-
-Using the above example, sending a request 'foo bar' to the path `/post` passes the message unchanged to the Kafka topic `foo_topic` and also returns the response 'FOO BAR'.
-
-[NOTE]
-====
-It's safe to use these mechanisms even when combining multiple inputs with a broker, a response payload will always be routed back to the original source of the message.
-====
+endif::[]
 
 == Returning partially processed messages
 
-It's possible to set the state of a message to be the synchronous response before processing is finished by using the xref:components:processors/sync_response.adoc[`sync_response` processor]. This allows you to further mutate the payload without changing the response returned to the input:
+You can return a response before the message is fully processed by using the xref:components:processors/sync_response.adoc[`sync_response` processor].
+
+This allows continued processing after the response is set.
 
 [source,yaml]
 ----
-input:
-  http_server:
-    path: /post
-
 pipeline:
   processors:
-    - mapping: root = "%v baz".format(content().string())
+    - mapping: root = "Received weather report for %s".format(json("location"))
     - sync_response: {}
-    - mapping: root = content().uppercase()
-
-output:
-  kafka:
-    addresses: [ TODO:9092 ]
-    topic: foo_topic
+    - mapping: root.reported_at = now()
 ----
 
-Using the above example, sending a request 'foo bar' to the path `/post` passes the message 'FOO BAR BAZ' to the Kafka topic `foo_topic`, and also returns the response 'foo bar baz'.
+This returns `"Received weather report for Berlin"` to the client, but continues modifying the message before storing or forwarding it.
 
-However, it is important to keep in mind that due to Redpanda Connect's strict delivery guarantees the response message will not actually be returned until the message has reached its output destination and an acknowledgement can be made.
+[NOTE]
+====
+Due to delivery guarantees, the response is not sent until all downstream processing and acknowledgements are complete.
+====
 
+ifndef::env-cloud[]
 == Routing output responses back
 
-Some outputs, such as xref:components:outputs/http_client.adoc[`http_client`], have the potential to propagate payloads received from their destination after sending a message back to the input:
+Some outputs, such as xref:components:outputs/http_client.adoc[`http_client`], support returning a downstream response back to the input.
 
 [source,yaml]
 ----
 input:
   http_server:
-    path: /post
+    path: /proxy-weather
+
 output:
   http_client:
-    url: http://localhost:4196/post
+    url: https://api.example.com/forecast
     verb: POST
     propagate_response: true
 ----
 
-With the above example a message received from the endpoint `/post` would be sent unchanged to the address `+http://localhost:4196/post+`, and then the response from that request would get returned back. This basically turns Redpanda Connect into a proxy server with the potential to mutate payloads between requests.
+This forwards the request to an external weather API and returns its response to the original requester.
 
-The following config turns Redpanda Connect into an HTTP proxy server that also sends all request payloads to a Kafka topic:
+You can combine this with other outputs:
 
 [source,yaml]
 ----
 input:
   http_server:
-    path: /post
+    path: /proxy-weather
+
 output:
   broker:
     pattern: fan_out
     outputs:
       - kafka:
-          addresses: [ TODO:9092 ]
-          topic: foo_topic
+          addresses: [localhost:9092]
+          topic: weather.proxy
       - http_client:
-          url: http://localhost:4196/post
+          url: https://api.example.com/forecast
           verb: POST
           propagate_response: true
 ----
+endif::[]
 
 // end::single-source[]

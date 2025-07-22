@@ -19,24 +19,6 @@ decompress:
   algorithm: "" # No default (required)
 ```
 
-== Fields
-
-=== `algorithm`
-
-The decompression algorithm to use.
-
-
-*Type*: `string`
-
-
-Options:
-`bzip2`
-, `flate`
-, `gzip`
-, `lz4`
-, `pgzip`
-, `snappy`
-, `zlib`
-.
+include::redpanda-connect:components:partial$fields/processors/decompress.adoc[]
 
 // end::single-source[]

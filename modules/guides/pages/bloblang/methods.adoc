@@ -698,6 +698,43 @@ root.unescaped = this.value.unescape_url_query()
 # Out: {"unescaped":"foo & bar"}
 ```
 
+=== `unicode_segments`
+
+include::components:partial$feature_stability_caution.adoc[]
+
+Splits a string into segments using https://hexdocs.pm/unicode_string/readme.html#segmentation[Unicode text segmentation rules^].
+
+==== Parameters
+
+*`segmentation_type`* &lt;string&gt; The text segmentation rule to use, either: `"sentence"`, `"grapheme"`, or `"word"`.
+
+==== Examples
+
+* Splits a string into separate sentences.
++
+```coffeescript
+root.sentences = this.value.unicode_segments("sentence")
+
+# In:  {"value":"This is sentence 1.0. And this is sentence two."}
+# Out: {"sentences":["This is sentence 1.0.","And this is sentence two."]}
+```
+* Splits a string into separate graphemes.
++
+```coffeescript
+root.graphemes = this.value.unicode_segments("grapheme")
+
+# In:  {"value":"🐕‍🦺 🫠"}
+# Out: {"graphemes":["🐕‍🦺"," ","🫠"]}
+```
+* Tokenizes a string based on Unicode word segmentation rules, including punctuation and spaces.
++
+```coffeescript
+root.words = this.value.unicode_segments("word")
+
+# In:  {"value":"Hello, world!"}
+# Out: {"words":["Hello",","," ","world","!"]}
+```
+
 === `unquote`
 
 Unquotes a target string, expanding any escape sequences (`\t`, `\n`, `\xFF`, `\u0100`) for control characters and non-printable characters.
@@ -870,6 +907,93 @@ root.outs = this.ins.map_each(ele -> ele.abs())
 
 # In:  {"ins":[9,-18,1.23,-4.56]}
 # Out: {"outs":[9,18,1.23,4.56]}
+```
+
+=== `bitwise_and`
+
+Returns the result of a bitwise AND operation between the input number and the specified value.
+
+The bitwise AND operation compares each bit of two integers:
+
+- If both bits are `1`, the result bit is `1`
+- Otherwise, the result bit is `0`
+
+This operation is often used for masking bits.
+
+==== Parameters
+
+*`value`* &lt;integer&gt; The value to AND with.
+
+==== Examples
+
+
+```coffeescript
+root.new_value = this.value.bitwise_and(6)
+
+# In:  {"value":12}
+# Out: {"new_value":4}
+
+# In:  {"value":0}
+# Out: {"new_value":0}
+
+# In:  {"value":-4}
+# Out: {"new_value":4}
+```
+
+=== `bitwise_or`
+
+Returns the result of a bitwise OR operation between the input number and the specified value.
+
+The bitwise OR operation compares each bit of two integers:
+
+- If either bit is `1`, the result bit is `1`
+
+- If both are `0`, the result bit is `0`
+
+This operation is useful for setting or combining flags.
+
+==== Parameters
+
+*`value`* <integer> The value to OR with.
+
+==== Examples
+
+
+```coffeescript
+root.new_value = this.value.bitwise_or(6)
+
+# In:  {"value":12}
+# Out: {"new_value":14}
+
+# In:  {"value":0}
+# Out: {"new_value":6}
+
+# In:  {"value":-2}
+# Out: {"new_value":-2}
+```
+
+=== `bitwise_xor`
+
+Returns the result of bitwise XOR between the input number and a specified value. Bitwise XOR is a binary operation that compares two bits and returns `1` if they are different and `0` if they are the same. This operation is commonly used in cryptography and error detection.
+
+==== Parameters
+
+*`value`* <integer> The integer value to XOR with the current number.
+
+==== Examples
+
+
+```coffeescript
+root.new_value = this.value.bitwise_xor(6)
+
+# In:  {"value":12}
+# Out: {"new_value":10}
+
+# In:  {"value":0}
+# Out: {"new_value":6}
+
+# In:  {"value":-2}
+# Out: {"new_value":-8}
 ```
 
 === `ceil`
@@ -3373,6 +3497,26 @@ root.h2 = this.value.hash(algorithm: "crc32", polynomial: "Koopman").encode("hex
 
 # In:  {"value":"hello world"}
 # Out: {"h1":"c99465aa","h2":"df373d3c"}
+```
+
+=== `uuid_v5`
+
+Generates a name-based UUID (version 5) for the given string.
+
+==== Parameters
+
+*`ns`* &lt;(optional) string&gt; An optional namespace name or UUID. Supported predefined namespaces include: `dns`, `url`, `oid`, and `x500`, but you can use any valid RFC-9562 UUID.
+
+If omitted, the nil UUID is used as the default namespace.
+
+==== Examples
+
+```coffeescript
+root.id = "example".uuid_v5()
+
+root.id = "example".uuid_v5("x500")
+
+root.id = "example".uuid_v5("77f836b7-9f61-46c0-851e-9b6ca3535e69")
 ```
 
 == SQL

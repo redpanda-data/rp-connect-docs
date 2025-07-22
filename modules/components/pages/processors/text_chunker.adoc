@@ -1,0 +1,68 @@
+= text_chunker
+// tag::single-source[]
+:type: processor
+:categories: ["AI"]
+
+component_type_dropdown::[]
+
+Breaks down text-based message content into manageable chunks using a configurable strategy. This processor is ideal for creating vector embeddings of large text documents.
+
+ifndef::env-cloud[]
+Introduced in version 4.51.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+# Common configuration fields, showing default values
+label: ""
+text_chunker:
+  strategy: "" # No default (required)
+  chunk_size: 512
+  chunk_overlap: 100
+  separators:
+    - "\n\n"
+    - "\n"
+    - " "
+    - ""
+  length_measure: runes
+  include_code_blocks: false
+  keep_reference_links: false
+```
+
+--
+Advanced::
++
+--
+
+```yml
+# All configuration fields, showing default values
+label: ""
+text_chunker:
+  strategy: "" # No default (required)
+  chunk_size: 512
+  chunk_overlap: 100
+  separators:
+    - "\n\n"
+    - "\n"
+    - " "
+    - ""
+  length_measure: runes
+  token_encoding: cl100k_base # No default (optional)
+  allowed_special: []
+  disallowed_special:
+    - all
+  include_code_blocks: false
+  keep_reference_links: false
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/processors/text_chunker.adoc[]
+
+// end::single-source[]

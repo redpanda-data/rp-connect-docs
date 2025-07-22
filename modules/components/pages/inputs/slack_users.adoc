@@ -1,0 +1,31 @@
+= slack_users
+// tag::single-source[]
+:type: input
+
+component_type_dropdown::[]
+
+Returns https://api.slack.com/methods/users.list#examples[the full profile^] of all users in your Slack organization using the API method https://api.slack.com/methods/users.list[users.list^]. Optionally, you can filter the list of returned users by team ID.
+
+This input is useful when you need to:
+
+- Join user information to Slack posts.
+- Ingest user information into a data lakehouse to create joins with other fields. 
+
+
+ifndef::env-cloud[]
+Introduced in version 4.52.0.
+endif::[]
+
+```yml
+# Common configuration fields, showing default values
+input:
+  label: ""
+  slack_users:
+    bot_token: "" # No default (required)
+    team_id: "" # No default (optional)
+    auto_replay_nacks: true
+```
+
+include::redpanda-connect:components:partial$fields/inputs/slack_users.adoc[]
+
+// end::single-source[]

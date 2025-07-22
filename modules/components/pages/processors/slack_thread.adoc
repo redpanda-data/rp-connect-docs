@@ -1,0 +1,24 @@
+= slack_thread
+// tag::single-source[]
+:type: processor
+
+component_type_dropdown::[]
+
+Reads a Slack thread using the Slack API method https://api.slack.com/methods/conversations.replies[conversations.replies^].
+
+ifndef::env-cloud[]
+Introduced in version 4.52.0.
+endif::[]
+
+```yml
+# Common configuration fields, showing default values
+label: ""
+slack_thread:
+  bot_token: "" # No default (required)
+  channel_id: "" # No default (required)
+  thread_ts: "" # No default (required)
+```
+
+include::redpanda-connect:components:partial$fields/processors/slack_thread.adoc[]
+
+// end::single-source[]

@@ -1,17 +1,16 @@
 = mongodb
+//tag::single-source[]
 :type: cache
 :status: experimental
-
-// © 2024 Redpanda Data Inc.
-
 
 component_type_dropdown::[]
 
 
 Use a MongoDB instance as a cache.
 
+ifndef::env-cloud[]
 Introduced in version 3.43.0.
-
+endif::[]
 
 [tabs]
 ======
@@ -54,81 +53,6 @@ mongodb:
 --
 ======
 
-== Fields
+include::redpanda-connect:components:partial$fields/caches/mongodb.adoc[]
 
-=== `url`
-
-The URL of the target MongoDB server.
-
-
-*Type*: `string`
-
-
-```yml
-# Examples
-
-url: mongodb://localhost:27017
-```
-
-=== `database`
-
-The name of the target MongoDB database.
-
-
-*Type*: `string`
-
-
-=== `username`
-
-The username to connect to the database.
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `password`
-
-The password to connect to the database.
-
-include::components:partial$secret_warning.adoc[]
-
-
-*Type*: `string`
-
-*Default*: `""`
-
-=== `app_name`
-
-The client application name.
-
-
-*Type*: `string`
-
-*Default*: `"benthos"`
-
-=== `collection`
-
-The name of the target collection.
-
-
-*Type*: `string`
-
-
-=== `key_field`
-
-The field in the document that is used as the key.
-
-
-*Type*: `string`
-
-
-=== `value_field`
-
-The field in the document that is used as the value.
-
-
-*Type*: `string`
-
-
-
+//end::single-source[]

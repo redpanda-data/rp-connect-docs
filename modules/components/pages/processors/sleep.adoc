@@ -19,14 +19,6 @@ sleep:
   duration: "" # No default (required)
 ```
 
-== Fields
-
-=== `duration`
-
-The duration of time to sleep for each execution.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-
-*Type*: `string`
+include::redpanda-connect:components:partial$fields/processors/sleep.adoc[]
 
 // end::single-source[]
