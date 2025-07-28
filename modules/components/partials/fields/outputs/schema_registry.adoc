@@ -108,6 +108,10 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 Normalize schemas.
 
+ifndef::env-cloud[]
+Requires version 4.61.0 or later.
+endif::[]
+
 *Type*: `bool`
 
 *Default*: `true`
@@ -164,7 +168,11 @@ Whether to use OAuth version 1 in requests.
 
 === `remove_metadata`
 
-Remove metadata from schemas.
+Removes metadata fields from schema output. Use this to produce leaner schema definitions for downstream consumers or when metadata is not required.
+
+ifndef::env-cloud[]
+Requires version 4.61.0 or later.
+endif::[]
 
 *Type*: `bool`
 
@@ -172,7 +180,11 @@ Remove metadata from schemas.
 
 === `remove_rule_set`
 
-Remove rule set from schemas.
+Removes rule set definitions from schema output. Useful for simplifying schemas when rule sets are not required by consumers or applications.
+
+ifndef::env-cloud[]
+Requires version 4.61.0 or later.
+endif::[]
 
 *Type*: `bool`
 
