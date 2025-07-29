@@ -219,6 +219,27 @@
                 "description": "The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value."
               }
             ]
+          },
+          {
+            "name": "host_selection_policy",
+            "description": "Advanced host selection policy settings for Cassandra clusters. Use these options to optimize query routing in multi-datacenter (DC) and multi-rack deployments. By specifying a local DC and rack, you can ensure queries are directed to the closest nodes, reducing latency and improving fault tolerance. If not set, the default policy is round-robin across all available nodes. Host selection is always token-aware if the token can be calculated from query.",
+            "children": [
+              {
+                "name": "local_dc",
+                "description": "The name of the local datacenter to prioritize for query routing. Enables DC-aware host selection, ensuring queries are sent to nodes within this datacenter whenever possible. Recommended for clusters spanning multiple datacenters to minimize cross-DC traffic."
+              },
+              {
+                "name": "local_rack",
+                "description": "The name of the local rack to prioritize for query routing. Requires `local_dc` to be set. Enables rack-aware host selection, further optimizing query placement within the specified datacenter. Useful for deployments with multiple racks per datacenter to improve resilience and reduce intra-DC latency."
+              }
+            ],
+            "examples": [
+              {
+                "local_dc": "dc-east",
+                "local_rack": "rack1"
+              }
+            ],
+            "version": "4.61.0"
           }
         ]
       }
@@ -2533,6 +2554,27 @@
                 "description": "The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value."
               }
             ]
+          },
+          {
+            "name": "host_selection_policy",
+            "description": "Advanced host selection policy settings for Cassandra clusters. Use these options to optimize query routing in multi-datacenter (DC) and multi-rack deployments. By specifying a local DC and rack, you can ensure queries are directed to the closest nodes, reducing latency and improving fault tolerance. If not set, the default policy is round-robin across all available nodes. Host selection is always token-aware if the token can be calculated from query.",
+            "children": [
+              {
+                "name": "local_dc",
+                "description": "The name of the local datacenter to prioritize for query routing. Enables DC-aware host selection, ensuring queries are sent to nodes within this datacenter whenever possible. Recommended for clusters spanning multiple datacenters to minimize cross-DC traffic."
+              },
+              {
+                "name": "local_rack",
+                "description": "The name of the local rack to prioritize for query routing. Requires `local_dc` to be set. Enables rack-aware host selection, further optimizing query placement within the specified datacenter. Useful for deployments with multiple racks per datacenter to improve resilience and reduce intra-DC latency."
+              }
+            ],
+            "examples": [
+              {
+                "local_dc": "dc-east",
+                "local_rack": "rack1"
+              }
+            ],
+            "version": "4.61.0"
           }
         ]
       }
@@ -4574,6 +4616,21 @@
                 "description": "The key/value pairs that identify the type of token and signing algorithm."
               }
             ]
+          },
+                    {
+            "name": "normalize",
+            "description": "Normalize schemas.",
+            "version": "4.61.0"
+          },
+          {
+            "name": "remove_metadata",
+            "description": "Removes metadata fields from schema output. Use this to produce leaner schema definitions for downstream consumers or when metadata is not required.",
+            "version": "4.61.0"
+          },
+          {
+            "name": "remove_rule_set",
+            "description": "Removes rule set definitions from schema output. Useful for simplifying schemas when rule sets are not required by consumers or applications.",
+            "version": "4.61.0"
           }
         ]
       }

@@ -1,6 +1,6 @@
 {
-  "version": "4.58.2",
-  "date": "2025-06-17T11:08:15Z",
+  "version": "4.61.0",
+  "date": "2025-07-18T22:42:24Z",
   "config": [
     {
       "name": "http",
@@ -2441,6 +2441,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -3151,6 +3159,14 @@
             "type": "string",
             "kind": "scalar",
             "description": "The topic to store data in."
+          },
+          {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
           }
         ]
       }
@@ -5914,6 +5930,32 @@
             "kind": "scalar",
             "description": "The client connection timeout.",
             "default": "600ms"
+          },
+          {
+            "name": "host_selection_policy",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional host selection policy configurations. Highly recommended in deployments with multiple DCs. Host selection is always token aware if the token can be calculated from query. By default the underlying policy is round robin over all nodes. Users can specify a local DC and rack to use for the DC Aware & Rack Aware policies. ",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "local_dc",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local DC to use, enables DC aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "local_rack",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local rack to use, requires local_dc to be set, enables rack aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              }
+            ],
+            "linter": "root = if this.local_rack != \"\" && (!this.exists(\"local_dc\") || this.local_dc == \"\") { \"local_dc must be set if local_rack is set\" }"
           },
           {
             "name": "query",
@@ -10282,7 +10324,8 @@
                 "table1",
                 "table2"
               ]
-            ]
+            ],
+            "linter": "root = if this.length() == 0 { [ \"field 'tables' must contain at least one table\" ] }"
           },
           {
             "name": "checkpoint_cache",
@@ -10707,6 +10750,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -11043,6 +11094,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -11347,6 +11406,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -11646,6 +11713,14 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
           },
           {
             "name": "auth",
@@ -16565,7 +16640,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Consumes files from an SFTP server.",
-      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- sftp_path\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
+      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- sftp_path\n- sftp_mod_time\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
       "categories": [
         "Network"
       ],
@@ -16581,6 +16656,14 @@
             "description": "The address of the server to connect to."
           },
           {
+            "name": "connection_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The connection timeout to use when connecting to the target server.",
+            "is_advanced": true,
+            "default": "30s"
+          },
+          {
             "name": "credentials",
             "type": "object",
             "kind": "scalar",
@@ -16590,45 +16673,67 @@
                 "name": "username",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The username to connect to the SFTP server.",
+                "description": "The username to authenticate with the SFTP server.",
                 "default": ""
               },
               {
                 "name": "password",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The password for the username to connect to the SFTP server.",
+                "description": "The password for the specified username to connect to the SFTP server.",
                 "is_secret": true,
                 "default": "",
                 "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
               },
               {
+                "name": "host_public_key_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The path to the SFTP server's public key file, used for host key verification.",
+                "is_optional": true
+              },
+              {
+                "name": "host_public_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The raw contents of the SFTP server's public key, used for host key verification.",
+                "is_optional": true
+              },
+              {
                 "name": "private_key_file",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The private key for the username to connect to the SFTP server.",
-                "default": ""
+                "description": "The path to the private key file, used for authenticating the username.",
+                "is_optional": true
               },
               {
                 "name": "private_key",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The private key file for the username to connect to the SFTP server.",
+                "description": "The raw contents of the private key, used for authenticating the username.",
+                "is_optional": true,
                 "is_secret": true,
-                "default": "",
-                "linter": "root = match { this.exists(\"private_key\") && this.exists(\"private_key_file\") => [ \"both private_key and private_key_file can't be set simultaneously\" ], }",
                 "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
               },
               {
                 "name": "private_key_pass",
                 "type": "string",
                 "kind": "scalar",
-                "description": "Optional passphrase for private key.",
+                "description": "Optional passphrase for decrypting the private key, if it's encrypted.",
                 "is_secret": true,
                 "default": "",
                 "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
               }
-            ]
+            ],
+            "linter": "\nroot = match {\n  this.exists(\"host_public_key\") && this.exists(\"host_public_key_file\") => \"both host_public_key and host_public_key_file can't be set simultaneously\"\n  this.exists(\"private_key\") && this.exists(\"private_key_file\") => \"both private_key and private_key_file can't be set simultaneously\"\n}"
+          },
+          {
+            "name": "max_sftp_sessions",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of SFTP sessions.",
+            "is_advanced": true,
+            "default": 10
           },
           {
             "name": "paths",
@@ -22453,6 +22558,32 @@
             "default": "600ms"
           },
           {
+            "name": "host_selection_policy",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional host selection policy configurations. Highly recommended in deployments with multiple DCs. Host selection is always token aware if the token can be calculated from query. By default the underlying policy is round robin over all nodes. Users can specify a local DC and rack to use for the DC Aware & Rack Aware policies. ",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "local_dc",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local DC to use, enables DC aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "local_rack",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local rack to use, requires local_dc to be set, enables rack aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              }
+            ],
+            "linter": "root = if this.local_rack != \"\" && (!this.exists(\"local_dc\") || this.local_dc == \"\") { \"local_dc must be set if local_rack is set\" }"
+          },
+          {
             "name": "query",
             "type": "string",
             "kind": "scalar",
@@ -24124,28 +24255,17 @@
             "name": "collision_mode",
             "type": "string",
             "kind": "scalar",
-            "description": "Determines how file path collisions should be dealt with.",
+            "description": "Determines how file path collisions should be dealt with. Options are \"overwrite\", which replaces the existing file with the new one, \"append\", which appends the message bytes to the original file, \"error-if-exists\", which returns an error and rejects the message if the file exists, and \"ignore\", does not modify the original file and drops the message.",
             "default": "overwrite",
-            "annotated_options": [
-              [
-                "append",
-                "Append the message bytes to the original file."
-              ],
-              [
-                "error-if-exists",
-                "Return an error, this is the equivalent of a nack."
-              ],
-              [
-                "ignore",
-                "Do not modify the original file, the new data will be dropped."
-              ],
-              [
-                "overwrite",
-                "Replace the existing file with the new one."
-              ]
+            "interpolated": true,
+            "options": [
+              "overwrite",
+              "append",
+              "error-if-exists",
+              "ignore"
             ],
             "version": "3.53.0",
-            "linter": "\nlet options = {\n  \"append\": true,\n  \"error-if-exists\": true,\n  \"ignore\": true,\n  \"overwrite\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"overwrite\": true,\n  \"append\": true,\n  \"error-if-exists\": true,\n  \"ignore\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "chunk_size",
@@ -24377,6 +24497,14 @@
               "5m",
               "60m"
             ]
+          },
+          {
+            "name": "validate_topic",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether to validate the existence of the topic before publishing. If set to false and the topic does not exist, messages will be lost.",
+            "is_advanced": true,
+            "default": true
           },
           {
             "name": "metadata",
@@ -27775,6 +27903,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -28101,6 +28237,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -28379,6 +28523,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -28639,6 +28791,14 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
           },
           {
             "name": "auth",
@@ -34508,6 +34668,30 @@
             "default": false
           },
           {
+            "name": "normalize",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Normalize schemas.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
+            "name": "remove_metadata",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Remove metadata from schemas.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
+            "name": "remove_rule_set",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Remove rule set from schemas.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
             "name": "input_resource",
             "type": "string",
             "kind": "scalar",
@@ -34817,6 +35001,78 @@
             "description": "The address of the server to connect to."
           },
           {
+            "name": "connection_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The connection timeout to use when connecting to the target server.",
+            "is_advanced": true,
+            "default": "30s"
+          },
+          {
+            "name": "credentials",
+            "type": "object",
+            "kind": "scalar",
+            "description": "The credentials to use to log into the target server.",
+            "children": [
+              {
+                "name": "username",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The username to authenticate with the SFTP server.",
+                "default": ""
+              },
+              {
+                "name": "password",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The password for the specified username to connect to the SFTP server.",
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "host_public_key_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The path to the SFTP server's public key file, used for host key verification.",
+                "is_optional": true
+              },
+              {
+                "name": "host_public_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The raw contents of the SFTP server's public key, used for host key verification.",
+                "is_optional": true
+              },
+              {
+                "name": "private_key_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The path to the private key file, used for authenticating the username.",
+                "is_optional": true
+              },
+              {
+                "name": "private_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The raw contents of the private key, used for authenticating the username.",
+                "is_optional": true,
+                "is_secret": true,
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "private_key_pass",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optional passphrase for decrypting the private key, if it's encrypted.",
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              }
+            ],
+            "linter": "\nroot = match {\n  this.exists(\"host_public_key\") && this.exists(\"host_public_key_file\") => \"both host_public_key and host_public_key_file can't be set simultaneously\"\n  this.exists(\"private_key\") && this.exists(\"private_key_file\") => \"both private_key and private_key_file can't be set simultaneously\"\n}"
+          },
+          {
             "name": "path",
             "type": "string",
             "kind": "scalar",
@@ -34851,56 +35107,6 @@
                 "lines",
                 "Append each message to the output stream followed by a line break."
               ]
-            ]
-          },
-          {
-            "name": "credentials",
-            "type": "object",
-            "kind": "scalar",
-            "description": "The credentials to use to log into the target server.",
-            "children": [
-              {
-                "name": "username",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The username to connect to the SFTP server.",
-                "default": ""
-              },
-              {
-                "name": "password",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The password for the username to connect to the SFTP server.",
-                "is_secret": true,
-                "default": "",
-                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
-              },
-              {
-                "name": "private_key_file",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The private key for the username to connect to the SFTP server.",
-                "default": ""
-              },
-              {
-                "name": "private_key",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The private key file for the username to connect to the SFTP server.",
-                "is_secret": true,
-                "default": "",
-                "linter": "root = match { this.exists(\"private_key\") && this.exists(\"private_key_file\") => [ \"both private_key and private_key_file can't be set simultaneously\" ], }",
-                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
-              },
-              {
-                "name": "private_key_pass",
-                "type": "string",
-                "kind": "scalar",
-                "description": "Optional passphrase for private key.",
-                "is_secret": true,
-                "default": "",
-                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
-              }
             ]
           },
           {
@@ -39397,7 +39603,7 @@
       "status": "experimental",
       "plugin": true,
       "summary": "Generates vector embeddings to represent input text, using the Cohere API.",
-      "description": "\nThis processor sends document strings to the Cohere API, which reranks them based on the relevance to the query.\n\nTo learn more about reranking, see the https://docs.cohere.com/docs/rerank-2[Cohere API documentation^].\n\nThe output of this processor is an array of strings that are ordered by their relevance.\n\n== Metadata\n\nrelevance_scores: an array of scores for each document, indicating how relevant it is to the query. The scores are in the same order as the documents in the input. The higher the score, the more relevant the document is to the query.\n\n\t\t",
+      "description": "\nThis processor sends document strings to the Cohere API, which reranks them based on the relevance to the query.\n\nTo learn more about reranking, see the https://docs.cohere.com/docs/rerank-2[Cohere API documentation^].\n\nThe output of this processor is an array of objects, each containing a \"document\" field with the original document content, a \"relevance_score\" field indicating how relevant it is to the query, and an index field that refers to the document's position within the input documents array. The objects are ordered by their relevance score (highest first).\n\n\t\t",
       "categories": [
         "AI"
       ],
@@ -39453,10 +39659,11 @@
           },
           {
             "name": "top_n",
-            "type": "int",
+            "type": "string",
             "kind": "scalar",
             "description": "The number of documents to return, if 0 all documents are returned.",
-            "default": 0
+            "default": "0",
+            "interpolated": true
           },
           {
             "name": "max_tokens_per_doc",
@@ -42116,6 +42323,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -42439,6 +42654,14 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
           },
           {
             "name": "auth",

@@ -104,6 +104,18 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 *Default*: `64`
 
+=== `normalize`
+
+Normalize schemas.
+
+ifndef::env-cloud[]
+Requires version 4.61.0 or later.
+endif::[]
+
+*Type*: `bool`
+
+*Default*: `true`
+
 === `oauth`
 
 Configure OAuth version 1.0 to give this component authorized access to your schema registry.
@@ -153,6 +165,30 @@ Whether to use OAuth version 1 in requests.
 *Type*: `bool`
 
 *Default*: `false`
+
+=== `remove_metadata`
+
+Removes metadata fields from schema output. Use this to produce leaner schema definitions for downstream consumers or when metadata is not required.
+
+ifndef::env-cloud[]
+Requires version 4.61.0 or later.
+endif::[]
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `remove_rule_set`
+
+Removes rule set definitions from schema output. Useful for simplifying schemas when rule sets are not required by consumers or applications.
+
+ifndef::env-cloud[]
+Requires version 4.61.0 or later.
+endif::[]
+
+*Type*: `bool`
+
+*Default*: `true`
 
 === `subject`
 

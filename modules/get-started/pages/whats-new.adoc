@@ -6,6 +6,21 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.61.0
+
+=== Component updates
+
+This release adds support for the following new fields:
+
+* Cassandra input and output components
+** Input: xref:components:inputs/cassandra.adoc#host_selection_policy[`host_selection_policy`]
+** Output: xref:components:outputs/cassandra.adoc#host_selection_policy[`host_selection_policy`]
+
+* Schema Registry output component
+** xref:components:outputs/schema_registry.adoc#normalize[`normalize`]
+** xref:components:outputs/schema_registry.adoc#remove_metadata[`remove_metadata`]
+** xref:components:outputs/schema_registry.adoc#remove_rule_set[`remove_rule_set`]
+
 == Version 4.60.0
 
 === Component updates
