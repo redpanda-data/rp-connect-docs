@@ -171,6 +171,14 @@ endif::[]
 
 *Type*: `object`
 
+[source,yaml]
+----
+# Examples:
+host_selection_policy:
+  local_dc: dc-east
+  local_rack: rack1
+----
+
 === `host_selection_policy.local_dc`
 
 The name of the local datacenter to prioritize for query routing. Enables DC-aware host selection, ensuring queries are sent to nodes within this datacenter whenever possible. Recommended for clusters spanning multiple datacenters to minimize cross-DC traffic.
