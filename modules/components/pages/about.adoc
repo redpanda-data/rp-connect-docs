@@ -1,8 +1,22 @@
-= Components
-:description: Learn about components.
-:page-aliases: ROOT:components.adoc, components:conditions.adoc 
+= Components Catalog
+:description: A searchable catalog of available Redpanda Connect components.
+:page-aliases: components:catalog.adoc
 
 // tag::single-source[]
+
+Use the following table to search for available inputs, outputs, and processors.
+
+ifdef::env-cloud[]
+component_table::[]
+endif::[]
+ifndef::env-cloud[]
+
+For a description of the support levels, see <<Support levels>>.
+
+component_table::[all]
+endif::[]
+
+== About Components
 
 Every Redpanda Connect pipeline has at least one xref:components:inputs/about.adoc[input], an optional xref:components:buffers/about.adoc[buffer], an xref:components:outputs/about.adoc[output] and any number of xref:components:processors/about.adoc[processors]:
 
@@ -108,3 +122,13 @@ For more information about any of these component types check out their sections
 * xref:components:rate_limits/about.adoc[rate limits]
 
 // end::single-source[]
+ifndef::env-cloud[]
+== Support levels
+
+Each connector has a corresponding level of support, which determines whether it is suitable for production environments or community-driven projects.
+
+- *Certified*: Production-ready and available to purchase with Redpanda support.
+- *Community*: Not considered production-ready and available only for community support in https://redpanda.com/slack[Slack^].
+
+Anyone can use the Certified and Community connectors. However, to use Enterprise connectors, you need an xref:get-started:licensing.adoc[Enterprise Edition license].
+endif::[]
