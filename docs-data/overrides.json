@@ -51,23 +51,23 @@
           },
           {
             "name": "tls",
-            "description": "Override system defaults with custom TLS settings.",
+            "description": "Configure Transport Layer Security (TLS) encryption and mutual TLS (mTLS) authentication for secure connections. Supports both basic TLS encryption and mTLS with client certificate authentication.",
             "children": [
               {
                 "name": "skip_cert_verify",
-                "description": "Whether to skip server-side certificate verification."
+                "description": "Whether to skip server-side certificate verification. Set to `true` only for testing environments as it reduces security."
               },
               {
                 "name": "root_cas",
-                "description": "Specify a certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate."
+                "description": "Root certificate authorities as inline PEM data. Used to verify the server certificate in both TLS and mTLS configurations."
               },
               {
                 "name": "root_cas_file",
-                "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, that contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate."
+                "description": "Path to a root certificate authority file in PEM format. Used to verify the server certificate in both TLS and mTLS configurations."
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           }
@@ -566,7 +566,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -688,7 +688,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -1137,7 +1137,7 @@
                   },
                   {
                     "name": "client_certs",
-                    "description": "A list of client certificates to use. For each certificate, specify either the fields `cert` and `key` or `cert_file` and `key_file`."
+                    "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
                   }
                 ]
               },
@@ -1394,7 +1394,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -1586,7 +1586,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -1718,7 +1718,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key`, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -1791,7 +1791,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -1997,7 +1997,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           }
@@ -2224,7 +2224,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           }
@@ -2712,7 +2712,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -2848,7 +2848,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -3148,7 +3148,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -3345,7 +3345,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -3767,7 +3767,7 @@
                   },
                   {
                     "name": "client_certs",
-                    "description": "A list of client certificates to use. For each certificate, specify either the fields `cert` and `key` or `cert_file` and `key_file`."
+                    "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
                   }
                 ]
               },
@@ -3950,7 +3950,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -4095,7 +4095,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -4240,7 +4240,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -4380,7 +4380,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key`, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -4551,7 +4551,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -4617,7 +4617,7 @@
               }
             ]
           },
-                    {
+          {
             "name": "normalize",
             "description": "Normalize schemas.",
             "version": "4.61.0"
@@ -5279,7 +5279,7 @@
                   },
                   {
                     "name": "client_certs",
-                    "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                    "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
                   }
                 ]
               },
@@ -5718,7 +5718,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -6193,7 +6193,7 @@
                   },
                   {
                     "name": "client_certs",
-                    "description": "A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                    "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
                   }
                 ]
               },
@@ -6430,7 +6430,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields."
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields."
               }
             ]
           },
@@ -6776,7 +6776,7 @@
               },
               {
                 "name": "client_certs",
-                "description": "A list of client certificates to use. For each certificate, specify only one of the field pairs `cert` and `key`, or `cert_file` and `key_file`. Do not include both pairs.",
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields.",
                 "children": [
                   {
                     "name": "cert",
@@ -6788,15 +6788,15 @@
                   },
                   {
                     "name": "key",
-                    "description": "The plaintext private key to use for TLS authentication."
+                    "description": "Private key for mTLS client certificate as inline PEM data. Must correspond to the client certificate specified in the `cert` field."
                   },
                   {
                     "name": "key_file",
-                    "description": "The path to a file containing the private key to use for TLS authentication."
+                    "description": "Path to private key file for mTLS client certificate in PEM format. Must correspond to the client certificate specified in the `cert_file` field."
                   },
                   {
                     "name": "password",
-                    "description": "The password to use for the private key, if it is encrypted. This field is optional and only required if the private key is encrypted. The PKCS#1 and PKCS#8 formats are supported.\n\nThe `pbeWithMD5AndDES-CBC` algorithm is obsolete and not supported for the PKCS#8 format. This algorithm does not authenticate the ciphertext, making it vulnerable to padding oracle attacks that can let an attacker recover the plaintext."
+                    "description": "Password for encrypted private key used in mTLS authentication. Supports environment variable interpolation for secure password management."
                   }
                 ]
               }

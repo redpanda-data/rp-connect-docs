@@ -219,7 +219,7 @@ Use this field for custom TLS settings that override system defaults.
 
 === `tls.client_certs[]`
 
-A list of client certificates to use. For each certificate, specify only one of the field pairs `cert` and `key`, or `cert_file` and `key_file`. Do not include both pairs.
+A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields.
 
 *Type*: `object`
 
@@ -255,7 +255,7 @@ The path to a file containing the certificate to use for TLS authentication.
 
 === `tls.client_certs[].key`
 
-The plaintext private key to use for TLS authentication.
+Private key for mTLS client certificate as inline PEM data. Must correspond to the client certificate specified in the `cert` field.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -265,7 +265,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 === `tls.client_certs[].key_file`
 
-The path to a file containing the private key to use for TLS authentication.
+Path to private key file for mTLS client certificate in PEM format. Must correspond to the client certificate specified in the `cert_file` field.
 
 *Type*: `string`
 
@@ -273,9 +273,7 @@ The path to a file containing the private key to use for TLS authentication.
 
 === `tls.client_certs[].password`
 
-The password to use for the private key, if it is encrypted. This field is optional and only required if the private key is encrypted. The PKCS#1 and PKCS#8 formats are supported.
-
-The `pbeWithMD5AndDES-CBC` algorithm is obsolete and not supported for the PKCS#8 format. This algorithm does not authenticate the ciphertext, making it vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
+Password for encrypted private key used in mTLS authentication. Supports environment variable interpolation for secure password management.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 

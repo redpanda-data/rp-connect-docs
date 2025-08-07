@@ -349,7 +349,7 @@ Override system defaults with custom TLS settings.
 
 === `kafka.tls.client_certs[]`
 
-A list of client certificates to use. For each certificate, specify either the fields `cert` and `key` or `cert_file` and `key_file`.
+A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields.
 
 *Type*: `object`
 
