@@ -31,7 +31,7 @@ Whether to use basic authentication in requests.
 
 === `basic_auth.password`
 
-The password of the account credentials to authenticate with.
+The password for the username used to authenticate with the SFTP server.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -258,7 +258,8 @@ password: ${KEY_PASSWORD}
 
 === `tls.enable_renegotiation`
 
-Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.
+Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: 
+tls: no renegotiation`.
 
 ifndef::env-cloud[]
 Requires version 3.45.0 or later.
@@ -289,7 +290,7 @@ root_cas: |-
 
 === `tls.root_cas_file`
 
-Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate.
 
 *Type*: `string`
 

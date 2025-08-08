@@ -160,7 +160,7 @@ payload_mapping: root = metadata()
 
 === `tls`
 
-Specify a secure TLS (HTTPS) connection to the Qdrant server.
+Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates.
 
 *Type*: `object`
 

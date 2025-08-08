@@ -82,8 +82,7 @@ Actual base64 encoded token.
 
 === `key`
 
-The key to publish messages with.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

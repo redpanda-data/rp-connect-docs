@@ -1,172 +1,151 @@
 {
   "definitions": {
-    "client_certs_description": {
+    "client_certs": {
       "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. Each certificate entry should specify either `cert` and `key` fields for inline certificates, or `cert_file` and `key_file` fields for certificate files stored on disk."
     },
-    "skip_cert_verify_description": {
+    "skip_cert_verify": {
       "description": "Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production."
     },
-    "tls_description": {
+    "tls": {
       "description": "Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates."
     },
-    "count_description": {
+    "count": {
       "description": "The number of messages after which the batch is flushed. Set to `0` to disable count-based batching."
     },
-    "root_cas_file_description": {
-      "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate."
-    },
-    "processors_description": {
+    "processors": {
       "description": "For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches."
     },
-    "tls_handshake_first_description": {
+    "tls_handshake_first": {
       "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This is required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation."
     },
-    "initial_interval_description": {
+    "initial_interval": {
       "description": "The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value."
     },
-    "check_description": {
+    "check": {
       "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch."
     },
-    "urls_description": {
+    "urls": {
       "description": "A list of URLs to connect to. If a list item contains commas, it will be expanded into multiple URLs."
     },
-    "nkey_description": {
+    "nkey": {
       "description": "Your NKey seed or private key."
     },
-    "user_credentials_file_description": {
+    "user_credentials_file": {
       "description": "An optional file containing user credentials which consist of a user JWT and corresponding NKey seed."
     },
-    "user_jwt_description": {
+    "user_jwt": {
       "description": "An optional plain text user JWT to use along with the corresponding user NKey seed."
     },
-    "byte_size_description": {
+    "byte_size": {
       "description": "The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching."
     },
-    "period_description": {
+    "period": {
       "description": "The period of time after which an incomplete batch is flushed regardless of its size."
     },
-    "user_nkey_seed_description": {
+    "user_nkey_seed": {
       "description": "An optional plain text user NKey seed to use along with the corresponding user JWT."
     },
-    "auto_replay_nacks_description": {
+    "auto_replay_nacks": {
       "description": "Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.\n\nSet `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation."
     },
-    "oauth_description": {
+    "oauth": {
       "description": "Allows you to specify open authentication using OAuth version 1."
     },
-    "access_token_secret_description": {
+    "access_token_secret": {
       "description": "The secret that establishes ownership of the `oauth.access_token`."
     },
-    "jwt_description": {
+    "jwt": {
       "description": "BETA: Allows you to specify JSON Web Token (JWT) authentication."
     },
-    "private_key_file_description": {
+    "private_key_file": {
       "description": "A file with the PEM encoded using PKCS1 or PKCS8 as private key."
     },
-    "signing_method_description": {
+    "signing_method": {
       "description": "A method used to sign the token, such as RS256, RS384, RS512 or EdDSA."
     },
-    "headers_description": {
+    "headers": {
       "description": "Add key/value headers to the JWT (optional)."
     },
-    "conn_idle_timeout_description": {
+    "conn_idle_timeout": {
       "description": "Define how long connections can remain idle before they are closed."
     },
-    "dsn_description": {
+    "dsn": {
       "description": "A Data Source Name to identify the target database."
     },
-    "credentials_json_description": {
+    "credentials_json": {
       "description": "Optional field to set https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google Service Account Credentials JSON^]."
     },
-    "consumer_secret_description": {
+    "consumer_secret": {
       "description": "The secret used to establish ownership of the consumer key."
     },
-    "topic_lag_refresh_period_description": {
+    "topic_lag_refresh_period": {
       "description": "The interval between refresh cycles. During each cycle, this input queries the Redpanda Connect server to calculate the topic lag - the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group."
     },
-    "endpoint_description": {
+    "endpoint": {
       "description": "Specify a custom endpoint for the AWS API."
     },
-    "seed_brokers_description": {
+    "seed_brokers": {
       "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item."
     },
-    "metadata_max_age_description": {
+    "metadata_max_age": {
       "description": "The maximum period of time after which metadata is refreshed."
     },
-    "instance_id_description": {
+    "instance_id": {
       "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group\u2019s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
     },
-    "rebalance_timeout_description": {
+    "rebalance_timeout": {
       "description": "When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required."
     },
-    "session_timeout_description": {
+    "session_timeout": {
       "description": "When you specify a <<consumer_group,`consumer_group`>>, `session_timeout` sets the maximum interval between heartbeats sent by a consumer group member to the broker. If a broker doesn't receive a heartbeat from a group member before the timeout expires, it removes the member from the consumer group and initiates a rebalance.\n\nbroker"
     },
-    "heartbeat_interval_description": {
+    "heartbeat_interval": {
       "description": "When you specify a <<consumer_group,`consumer_group`>>, `heartbeat_interval` sets how frequently a consumer group member should send heartbeats to Apache Kafka. Apache Kafka uses heartbeats to make sure that a group member's session is active. \n\nYou must set `heartbeat_interval` to less than one-third of `session_timeout`.\n\nThis field is equivalent to the Java `heartbeat.interval.ms` setting.\n\nclient"
     },
-    "start_offset_description": {
+    "start_offset": {
       "description": "Specify the offset from which this input starts or restarts consuming messages. Restarts occur when the `OffsetOutOfRange` error is seen during a fetch."
     },
-    "fetch_max_wait_description": {
+    "fetch_max_wait": {
       "description": "The maximum period of time a broker can wait for a fetch response to reach the required minimum number of bytes (`fetch_min_bytes`)."
     },
-    "fetch_min_bytes_description": {
+    "fetch_min_bytes": {
       "description": "The minimum number of bytes that a broker tries to send during a fetch. This field is equivalent to the Java setting `fetch.min.bytes`."
     },
-    "fetch_max_partition_bytes_description": {
+    "fetch_max_partition_bytes": {
       "description": "The maximum number of bytes that are consumed from a single partition in a fetch request. This field is equivalent to the Java setting `fetch.max.partition.bytes`.\n\nIf a single batch is larger than the `fetch_max_partition_bytes` value, the batch is still sent so that the client can make progress."
     },
-    "transaction_isolation_level_description": {
+    "transaction_isolation_level": {
       "description": "Defines how transactional messages are handled."
     },
-    "enable_renegotiation_description": {
-      "description": "Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`."
-    },
-    "username_description": {
+    "username": {
       "description": "The username of the account credentials to authenticate as."
     },
-    "password_description": {
-      "description": "The password of the account credentials to authenticate with."
-    },
-    "metadata_description": {
+    "metadata": {
       "description": "Specify which (if any) metadata values are added to messages as headers."
     },
-    "batching_description": {
+    "batching": {
       "description": "Configure a xref:configuration:batching.adoc[batching policy]."
     },
-    "broker_write_max_bytes_description": {
+    "broker_write_max_bytes": {
       "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka\u2019s `socket.request.max.bytes`."
     },
-    "root_cas_file_description_1": {
-      "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate."
+    "enabled": {
+      "description": "Whether to use OAuth version 1 in requests to the schema registry."
     },
-    "enable_renegotiation_description_1": {
-      "description": "Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: \ntls: no renegotiation`."
-    },
-    "root_cas_description_3": {
+    "root_cas": {
       "description": "Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate."
     },
-    "root_cas_file_description_2": {
-      "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate."
+    "root_cas_file": {
+      "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate."
     },
-    "password_description_1": {
+    "enable_renegotiation": {
+      "description": "Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: \ntls: no renegotiation`."
+    },
+    "password": {
       "description": "The password for the username used to authenticate with the SFTP server."
     },
-    "key_description": {
-      "description": "The key to publish messages with.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
-    },
-    "key_description_1": {
+    "key": {
       "description": "An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
-    },
-    "password_description_2": {
-      "description": "The password required to connect to the database."
-    },
-    "tls_description_1": {
-      "description": "Specify a secure TLS (HTTPS) connection to the Qdrant server."
-    },
-    "enabled_description": {
-      "description": "Whether to use OAuth version 1 in requests to the schema registry."
     }
   },
   "inputs": [
@@ -225,7 +204,7 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
@@ -237,7 +216,7 @@
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ]
           }
@@ -253,7 +232,7 @@
             "children": [
               {
                 "name": "endpoint",
-                "$ref": "#/definitions/endpoint_description"
+                "$ref": "#/definitions/endpoint"
               },
               {
                 "name": "credentials",
@@ -289,7 +268,7 @@
           },
           {
             "name": "endpoint",
-            "$ref": "#/definitions/endpoint_description"
+            "$ref": "#/definitions/endpoint"
           },
           {
             "name": "credentials",
@@ -386,7 +365,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           },
@@ -443,7 +422,7 @@
         "children": [
           {
             "name": "credentials_json",
-            "$ref": "#/definitions/credentials_json_description"
+            "$ref": "#/definitions/credentials_json"
           }
         ]
       }
@@ -458,7 +437,7 @@
           },
           {
             "name": "credentials_json",
-            "$ref": "#/definitions/credentials_json_description"
+            "$ref": "#/definitions/credentials_json"
           }
         ]
       }
@@ -469,7 +448,7 @@
         "children": [
           {
             "name": "credentials_json",
-            "$ref": "#/definitions/credentials_json_description"
+            "$ref": "#/definitions/credentials_json"
           }
         ]
       }
@@ -485,7 +464,7 @@
           },
           {
             "name": "auto_replay_nacks",
-            "$ref": "#/definitions/auto_replay_nacks_description"
+            "$ref": "#/definitions/auto_replay_nacks"
           },
           {
             "name": "credentials_json",
@@ -536,7 +515,7 @@
               },
               {
                 "name": "check",
-                "$ref": "#/definitions/check_description"
+                "$ref": "#/definitions/check"
               },
               {
                 "name": "count",
@@ -635,7 +614,7 @@
           },
           {
             "name": "auto_replay_nacks",
-            "$ref": "#/definitions/auto_replay_nacks_description"
+            "$ref": "#/definitions/auto_replay_nacks"
           }
         ]
       }
@@ -669,7 +648,7 @@
             "children": [
               {
                 "name": "consumer_secret",
-                "$ref": "#/definitions/consumer_secret_description"
+                "$ref": "#/definitions/consumer_secret"
               },
               {
                 "name": "access_token",
@@ -677,10 +656,10 @@
               },
               {
                 "name": "access_token_secret",
-                "$ref": "#/definitions/access_token_secret_description"
+                "$ref": "#/definitions/access_token_secret"
               }
             ],
-            "$ref": "#/definitions/oauth_description"
+            "$ref": "#/definitions/oauth"
           },
           {
             "name": "oauth2",
@@ -705,40 +684,40 @@
             "children": [
               {
                 "name": "private_key_file",
-                "$ref": "#/definitions/private_key_file_description"
+                "$ref": "#/definitions/private_key_file"
               },
               {
                 "name": "signing_method",
-                "$ref": "#/definitions/signing_method_description"
+                "$ref": "#/definitions/signing_method"
               },
               {
                 "name": "headers",
-                "$ref": "#/definitions/headers_description"
+                "$ref": "#/definitions/headers"
               }
             ],
-            "$ref": "#/definitions/jwt_description"
+            "$ref": "#/definitions/jwt"
           },
           {
             "name": "tls",
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "extract_headers",
@@ -838,29 +817,29 @@
         "children": [
           {
             "name": "seed_brokers",
-            "$ref": "#/definitions/seed_brokers_description"
+            "$ref": "#/definitions/seed_brokers"
           },
           {
             "name": "tls",
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "sasl",
@@ -868,7 +847,7 @@
           },
           {
             "name": "metadata_max_age",
-            "$ref": "#/definitions/metadata_max_age_description"
+            "$ref": "#/definitions/metadata_max_age"
           },
           {
             "name": "request_timeout_overhead",
@@ -876,7 +855,7 @@
           },
           {
             "name": "conn_idle_timeout",
-            "$ref": "#/definitions/conn_idle_timeout_description"
+            "$ref": "#/definitions/conn_idle_timeout"
           },
           {
             "name": "topics",
@@ -888,23 +867,23 @@
           },
           {
             "name": "instance_id",
-            "$ref": "#/definitions/instance_id_description"
+            "$ref": "#/definitions/instance_id"
           },
           {
             "name": "rebalance_timeout",
-            "$ref": "#/definitions/rebalance_timeout_description"
+            "$ref": "#/definitions/rebalance_timeout"
           },
           {
             "name": "session_timeout",
-            "$ref": "#/definitions/session_timeout_description"
+            "$ref": "#/definitions/session_timeout"
           },
           {
             "name": "heartbeat_interval",
-            "$ref": "#/definitions/heartbeat_interval_description"
+            "$ref": "#/definitions/heartbeat_interval"
           },
           {
             "name": "start_offset",
-            "$ref": "#/definitions/start_offset_description"
+            "$ref": "#/definitions/start_offset"
           },
           {
             "name": "fetch_max_bytes",
@@ -912,19 +891,19 @@
           },
           {
             "name": "fetch_max_wait",
-            "$ref": "#/definitions/fetch_max_wait_description"
+            "$ref": "#/definitions/fetch_max_wait"
           },
           {
             "name": "fetch_min_bytes",
-            "$ref": "#/definitions/fetch_min_bytes_description"
+            "$ref": "#/definitions/fetch_min_bytes"
           },
           {
             "name": "fetch_max_partition_bytes",
-            "$ref": "#/definitions/fetch_max_partition_bytes_description"
+            "$ref": "#/definitions/fetch_max_partition_bytes"
           },
           {
             "name": "transaction_isolation_level",
-            "$ref": "#/definitions/transaction_isolation_level_description"
+            "$ref": "#/definitions/transaction_isolation_level"
           },
           {
             "name": "consumer_group",
@@ -944,25 +923,25 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           },
           {
             "name": "topic_lag_refresh_period",
-            "$ref": "#/definitions/topic_lag_refresh_period_description"
+            "$ref": "#/definitions/topic_lag_refresh_period"
           },
           {
             "name": "auto_replay_nacks",
@@ -1083,23 +1062,23 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "check",
-                "$ref": "#/definitions/check_description"
+                "$ref": "#/definitions/check"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           }
@@ -1113,7 +1092,7 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "send_ack",
@@ -1124,26 +1103,26 @@
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
-                "$ref": "#/definitions/user_nkey_seed_description"
+                "$ref": "#/definitions/user_nkey_seed"
               }
             ]
           },
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -1155,7 +1134,7 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "queue",
@@ -1170,15 +1149,15 @@
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
@@ -1189,7 +1168,7 @@
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -1201,33 +1180,33 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "auth",
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
-                "$ref": "#/definitions/user_nkey_seed_description"
+                "$ref": "#/definitions/user_nkey_seed"
               }
             ]
           },
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -1239,26 +1218,26 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "auth",
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
-                "$ref": "#/definitions/user_nkey_seed_description"
+                "$ref": "#/definitions/user_nkey_seed"
               }
             ]
           },
@@ -1269,7 +1248,7 @@
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -1290,26 +1269,26 @@
                 "children": [
                   {
                     "name": "skip_cert_verify",
-                    "$ref": "#/definitions/skip_cert_verify_description"
+                    "$ref": "#/definitions/skip_cert_verify"
                   },
                   {
                     "name": "enable_renegotiation",
-                    "$ref": "#/definitions/enable_renegotiation_description"
+                    "$ref": "#/definitions/enable_renegotiation"
                   },
                   {
                     "name": "root_cas",
-                    "$ref": "#/definitions/root_cas_description_3"
+                    "$ref": "#/definitions/root_cas"
                   },
                   {
                     "name": "root_cas_file",
-                    "$ref": "#/definitions/root_cas_file_description"
+                    "$ref": "#/definitions/root_cas_file"
                   },
                   {
                     "name": "client_certs",
-                    "$ref": "#/definitions/client_certs_description"
+                    "$ref": "#/definitions/client_certs"
                   }
                 ],
-                "$ref": "#/definitions/tls_description"
+                "$ref": "#/definitions/tls"
               },
               {
                 "name": "topics",
@@ -1325,23 +1304,23 @@
               },
               {
                 "name": "instance_id",
-                "$ref": "#/definitions/instance_id_description"
+                "$ref": "#/definitions/instance_id"
               },
               {
                 "name": "rebalance_timeout",
-                "$ref": "#/definitions/rebalance_timeout_description"
+                "$ref": "#/definitions/rebalance_timeout"
               },
               {
                 "name": "session_timeout",
-                "$ref": "#/definitions/session_timeout_description"
+                "$ref": "#/definitions/session_timeout"
               },
               {
                 "name": "heartbeat_interval",
-                "$ref": "#/definitions/heartbeat_interval_description"
+                "$ref": "#/definitions/heartbeat_interval"
               },
               {
                 "name": "start_offset",
-                "$ref": "#/definitions/start_offset_description"
+                "$ref": "#/definitions/start_offset"
               },
               {
                 "name": "fetch_max_bytes",
@@ -1349,19 +1328,19 @@
               },
               {
                 "name": "fetch_max_wait",
-                "$ref": "#/definitions/fetch_max_wait_description"
+                "$ref": "#/definitions/fetch_max_wait"
               },
               {
                 "name": "fetch_min_bytes",
-                "$ref": "#/definitions/fetch_min_bytes_description"
+                "$ref": "#/definitions/fetch_min_bytes"
               },
               {
                 "name": "fetch_max_partition_bytes",
-                "$ref": "#/definitions/fetch_max_partition_bytes_description"
+                "$ref": "#/definitions/fetch_max_partition_bytes"
               },
               {
                 "name": "transaction_isolation_level",
-                "$ref": "#/definitions/transaction_isolation_level_description"
+                "$ref": "#/definitions/transaction_isolation_level"
               },
               {
                 "name": "consumer_group",
@@ -1381,19 +1360,19 @@
                 "children": [
                   {
                     "name": "count",
-                    "$ref": "#/definitions/count_description"
+                    "$ref": "#/definitions/count"
                   },
                   {
                     "name": "byte_size",
-                    "$ref": "#/definitions/byte_size_description"
+                    "$ref": "#/definitions/byte_size"
                   },
                   {
                     "name": "period",
-                    "$ref": "#/definitions/period_description"
+                    "$ref": "#/definitions/period"
                   },
                   {
                     "name": "check",
-                    "$ref": "#/definitions/check_description"
+                    "$ref": "#/definitions/check"
                   },
                   {
                     "name": "processors",
@@ -1403,7 +1382,7 @@
               },
               {
                 "name": "topic_lag_refresh_period",
-                "$ref": "#/definitions/topic_lag_refresh_period_description"
+                "$ref": "#/definitions/topic_lag_refresh_period"
               }
             ]
           },
@@ -1511,23 +1490,23 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "check",
-                "$ref": "#/definitions/check_description"
+                "$ref": "#/definitions/check"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           }
@@ -1540,14 +1519,14 @@
         "children": [
           {
             "name": "seed_brokers",
-            "$ref": "#/definitions/seed_brokers_description"
+            "$ref": "#/definitions/seed_brokers"
           },
           {
             "name": "tls",
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "enable_renegotiation",
@@ -1555,18 +1534,18 @@
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description_1"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "sasl",
@@ -1574,7 +1553,7 @@
           },
           {
             "name": "metadata_max_age",
-            "$ref": "#/definitions/metadata_max_age_description"
+            "$ref": "#/definitions/metadata_max_age"
           },
           {
             "name": "request_timeout_overhead",
@@ -1582,7 +1561,7 @@
           },
           {
             "name": "conn_idle_timeout",
-            "$ref": "#/definitions/conn_idle_timeout_description"
+            "$ref": "#/definitions/conn_idle_timeout"
           },
           {
             "name": "topics",
@@ -1598,23 +1577,23 @@
           },
           {
             "name": "instance_id",
-            "$ref": "#/definitions/instance_id_description"
+            "$ref": "#/definitions/instance_id"
           },
           {
             "name": "rebalance_timeout",
-            "$ref": "#/definitions/rebalance_timeout_description"
+            "$ref": "#/definitions/rebalance_timeout"
           },
           {
             "name": "session_timeout",
-            "$ref": "#/definitions/session_timeout_description"
+            "$ref": "#/definitions/session_timeout"
           },
           {
             "name": "heartbeat_interval",
-            "$ref": "#/definitions/heartbeat_interval_description"
+            "$ref": "#/definitions/heartbeat_interval"
           },
           {
             "name": "start_offset",
-            "$ref": "#/definitions/start_offset_description"
+            "$ref": "#/definitions/start_offset"
           },
           {
             "name": "fetch_max_bytes",
@@ -1622,19 +1601,19 @@
           },
           {
             "name": "fetch_max_wait",
-            "$ref": "#/definitions/fetch_max_wait_description"
+            "$ref": "#/definitions/fetch_max_wait"
           },
           {
             "name": "fetch_min_bytes",
-            "$ref": "#/definitions/fetch_min_bytes_description"
+            "$ref": "#/definitions/fetch_min_bytes"
           },
           {
             "name": "fetch_max_partition_bytes",
-            "$ref": "#/definitions/fetch_max_partition_bytes_description"
+            "$ref": "#/definitions/fetch_max_partition_bytes"
           },
           {
             "name": "transaction_isolation_level",
-            "$ref": "#/definitions/transaction_isolation_level_description"
+            "$ref": "#/definitions/transaction_isolation_level"
           },
           {
             "name": "consumer_group",
@@ -1646,11 +1625,11 @@
           },
           {
             "name": "topic_lag_refresh_period",
-            "$ref": "#/definitions/topic_lag_refresh_period_description"
+            "$ref": "#/definitions/topic_lag_refresh_period"
           },
           {
             "name": "auto_replay_nacks",
-            "$ref": "#/definitions/auto_replay_nacks_description"
+            "$ref": "#/definitions/auto_replay_nacks"
           }
         ]
       }
@@ -1673,23 +1652,23 @@
           },
           {
             "name": "instance_id",
-            "$ref": "#/definitions/instance_id_description"
+            "$ref": "#/definitions/instance_id"
           },
           {
             "name": "rebalance_timeout",
-            "$ref": "#/definitions/rebalance_timeout_description"
+            "$ref": "#/definitions/rebalance_timeout"
           },
           {
             "name": "session_timeout",
-            "$ref": "#/definitions/session_timeout_description"
+            "$ref": "#/definitions/session_timeout"
           },
           {
             "name": "heartbeat_interval",
-            "$ref": "#/definitions/heartbeat_interval_description"
+            "$ref": "#/definitions/heartbeat_interval"
           },
           {
             "name": "start_offset",
-            "$ref": "#/definitions/start_offset_description"
+            "$ref": "#/definitions/start_offset"
           },
           {
             "name": "fetch_max_bytes",
@@ -1697,19 +1676,19 @@
           },
           {
             "name": "fetch_max_wait",
-            "$ref": "#/definitions/fetch_max_wait_description"
+            "$ref": "#/definitions/fetch_max_wait"
           },
           {
             "name": "fetch_min_bytes",
-            "$ref": "#/definitions/fetch_min_bytes_description"
+            "$ref": "#/definitions/fetch_min_bytes"
           },
           {
             "name": "fetch_max_partition_bytes",
-            "$ref": "#/definitions/fetch_max_partition_bytes_description"
+            "$ref": "#/definitions/fetch_max_partition_bytes"
           },
           {
             "name": "transaction_isolation_level",
-            "$ref": "#/definitions/transaction_isolation_level_description"
+            "$ref": "#/definitions/transaction_isolation_level"
           },
           {
             "name": "consumer_group",
@@ -1721,11 +1700,11 @@
           },
           {
             "name": "topic_lag_refresh_period",
-            "$ref": "#/definitions/topic_lag_refresh_period_description"
+            "$ref": "#/definitions/topic_lag_refresh_period"
           },
           {
             "name": "auto_replay_nacks",
-            "$ref": "#/definitions/auto_replay_nacks_description"
+            "$ref": "#/definitions/auto_replay_nacks"
           }
         ]
       }
@@ -1736,29 +1715,29 @@
         "children": [
           {
             "name": "seed_brokers",
-            "$ref": "#/definitions/seed_brokers_description"
+            "$ref": "#/definitions/seed_brokers"
           },
           {
             "name": "tls",
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "sasl",
@@ -1778,23 +1757,23 @@
           },
           {
             "name": "instance_id",
-            "$ref": "#/definitions/instance_id_description"
+            "$ref": "#/definitions/instance_id"
           },
           {
             "name": "rebalance_timeout",
-            "$ref": "#/definitions/rebalance_timeout_description"
+            "$ref": "#/definitions/rebalance_timeout"
           },
           {
             "name": "session_timeout",
-            "$ref": "#/definitions/session_timeout_description"
+            "$ref": "#/definitions/session_timeout"
           },
           {
             "name": "heartbeat_interval",
-            "$ref": "#/definitions/heartbeat_interval_description"
+            "$ref": "#/definitions/heartbeat_interval"
           },
           {
             "name": "start_offset",
-            "$ref": "#/definitions/start_offset_description"
+            "$ref": "#/definitions/start_offset"
           },
           {
             "name": "fetch_max_bytes",
@@ -1802,19 +1781,19 @@
           },
           {
             "name": "fetch_max_wait",
-            "$ref": "#/definitions/fetch_max_wait_description"
+            "$ref": "#/definitions/fetch_max_wait"
           },
           {
             "name": "fetch_min_bytes",
-            "$ref": "#/definitions/fetch_min_bytes_description"
+            "$ref": "#/definitions/fetch_min_bytes"
           },
           {
             "name": "fetch_max_partition_bytes",
-            "$ref": "#/definitions/fetch_max_partition_bytes_description"
+            "$ref": "#/definitions/fetch_max_partition_bytes"
           },
           {
             "name": "transaction_isolation_level",
-            "$ref": "#/definitions/transaction_isolation_level_description"
+            "$ref": "#/definitions/transaction_isolation_level"
           },
           {
             "name": "consumer_group",
@@ -1822,7 +1801,7 @@
           },
           {
             "name": "metadata_max_age",
-            "$ref": "#/definitions/metadata_max_age_description"
+            "$ref": "#/definitions/metadata_max_age"
           },
           {
             "name": "request_timeout_overhead",
@@ -1830,7 +1809,7 @@
           },
           {
             "name": "conn_idle_timeout",
-            "$ref": "#/definitions/conn_idle_timeout_description"
+            "$ref": "#/definitions/conn_idle_timeout"
           },
           {
             "name": "partition_buffer_bytes",
@@ -1842,7 +1821,7 @@
           },
           {
             "name": "topic_lag_refresh_period",
-            "$ref": "#/definitions/topic_lag_refresh_period_description"
+            "$ref": "#/definitions/topic_lag_refresh_period"
           }
         ]
       }
@@ -1875,22 +1854,22 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "sasl",
@@ -1922,11 +1901,11 @@
           },
           {
             "name": "topic_lag_refresh_period",
-            "$ref": "#/definitions/topic_lag_refresh_period_description"
+            "$ref": "#/definitions/topic_lag_refresh_period"
           },
           {
             "name": "auto_replay_nacks",
-            "$ref": "#/definitions/auto_replay_nacks_description"
+            "$ref": "#/definitions/auto_replay_nacks"
           }
         ]
       }
@@ -1948,22 +1927,22 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description_1"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "auto_replay_nacks",
@@ -1979,7 +1958,7 @@
               },
               {
                 "name": "consumer_secret",
-                "$ref": "#/definitions/consumer_secret_description"
+                "$ref": "#/definitions/consumer_secret"
               },
               {
                 "name": "access_token",
@@ -1987,7 +1966,7 @@
               },
               {
                 "name": "access_token_secret",
-                "$ref": "#/definitions/access_token_secret_description"
+                "$ref": "#/definitions/access_token_secret"
               }
             ]
           },
@@ -1997,11 +1976,11 @@
             "children": [
               {
                 "name": "username",
-                "$ref": "#/definitions/username_description"
+                "$ref": "#/definitions/username"
               },
               {
                 "name": "password",
-                "$ref": "#/definitions/password_description"
+                "$ref": "#/definitions/password"
               }
             ]
           },
@@ -2048,7 +2027,7 @@
               },
               {
                 "name": "password",
-                "$ref": "#/definitions/password_description_1"
+                "$ref": "#/definitions/password"
               },
               {
                 "name": "private_key_file",
@@ -2081,7 +2060,7 @@
           },
           {
             "name": "auto_replay_nacks",
-            "$ref": "#/definitions/auto_replay_nacks_description"
+            "$ref": "#/definitions/auto_replay_nacks"
           }
         ]
       }
@@ -2100,7 +2079,7 @@
           },
           {
             "name": "auto_replay_nacks",
-            "$ref": "#/definitions/auto_replay_nacks_description"
+            "$ref": "#/definitions/auto_replay_nacks"
           }
         ]
       }
@@ -2150,26 +2129,26 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "enable_renegotiation",
-                "$ref": "#/definitions/enable_renegotiation_description"
+                "$ref": "#/definitions/enable_renegotiation"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description_1"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           }
         ]
       }
@@ -2180,7 +2159,7 @@
         "children": [
           {
             "name": "dsn",
-            "$ref": "#/definitions/dsn_description"
+            "$ref": "#/definitions/dsn"
           },
           {
             "name": "query",
@@ -2199,7 +2178,7 @@
         "children": [
           {
             "name": "dsn",
-            "$ref": "#/definitions/dsn_description"
+            "$ref": "#/definitions/dsn"
           }
         ]
       }
@@ -2241,25 +2220,25 @@
         "children": [
           {
             "name": "oauth",
-            "$ref": "#/definitions/oauth_description"
+            "$ref": "#/definitions/oauth"
           },
           {
             "name": "jwt",
             "children": [
               {
                 "name": "private_key_file",
-                "$ref": "#/definitions/private_key_file_description"
+                "$ref": "#/definitions/private_key_file"
               },
               {
                 "name": "signing_method",
-                "$ref": "#/definitions/signing_method_description"
+                "$ref": "#/definitions/signing_method"
               },
               {
                 "name": "headers",
-                "$ref": "#/definitions/headers_description"
+                "$ref": "#/definitions/headers"
               }
             ],
-            "$ref": "#/definitions/jwt_description"
+            "$ref": "#/definitions/jwt"
           }
         ]
       }
@@ -2350,7 +2329,7 @@
                 "description": "Provide a list of explicit metadata key prefixes to exclude when adding metadata to sent messages."
               }
             ],
-            "$ref": "#/definitions/metadata_description"
+            "$ref": "#/definitions/metadata"
           },
           {
             "name": "priority",
@@ -2381,11 +2360,11 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
@@ -2393,10 +2372,10 @@
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           }
         ]
       }
@@ -2425,7 +2404,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           }
@@ -2449,7 +2428,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           }
@@ -2465,7 +2444,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           }
@@ -2575,7 +2554,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           }
@@ -2721,7 +2700,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           },
@@ -2802,26 +2781,26 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "check",
-                "$ref": "#/definitions/check_description"
+                "$ref": "#/definitions/check"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ],
-            "$ref": "#/definitions/batching_description"
+            "$ref": "#/definitions/batching"
           }
         ]
       }
@@ -2848,11 +2827,11 @@
             "children": [
               {
                 "name": "username",
-                "$ref": "#/definitions/username_description"
+                "$ref": "#/definitions/username"
               },
               {
                 "name": "password",
-                "$ref": "#/definitions/password_description"
+                "$ref": "#/definitions/password"
               },
               {
                 "name": "realm",
@@ -2865,52 +2844,52 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "enable_renegotiation",
-                "$ref": "#/definitions/enable_renegotiation_description"
+                "$ref": "#/definitions/enable_renegotiation"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description_1"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "batching",
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "check",
-                "$ref": "#/definitions/check_description"
+                "$ref": "#/definitions/check"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ],
-            "$ref": "#/definitions/batching_description"
+            "$ref": "#/definitions/batching"
           },
           {
             "name": "max_in_flight",
@@ -2956,7 +2935,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           }
@@ -3005,22 +2984,22 @@
               },
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "basic_auth",
@@ -3036,19 +3015,19 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           }
@@ -3141,26 +3120,26 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "check",
-                "$ref": "#/definitions/check_description"
+                "$ref": "#/definitions/check"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ],
-            "$ref": "#/definitions/batching_description"
+            "$ref": "#/definitions/batching"
           }
         ]
       }
@@ -3183,7 +3162,7 @@
           },
           {
             "name": "credentials_json",
-            "$ref": "#/definitions/credentials_json_description"
+            "$ref": "#/definitions/credentials_json"
           }
         ]
       }
@@ -3194,7 +3173,7 @@
         "children": [
           {
             "name": "credentials_json",
-            "$ref": "#/definitions/credentials_json_description"
+            "$ref": "#/definitions/credentials_json"
           },
           {
             "name": "topic",
@@ -3251,7 +3230,7 @@
             "children": [
               {
                 "name": "consumer_secret",
-                "$ref": "#/definitions/consumer_secret_description"
+                "$ref": "#/definitions/consumer_secret"
               },
               {
                 "name": "access_token",
@@ -3259,10 +3238,10 @@
               },
               {
                 "name": "access_token_secret",
-                "$ref": "#/definitions/access_token_secret_description"
+                "$ref": "#/definitions/access_token_secret"
               }
             ],
-            "$ref": "#/definitions/oauth_description"
+            "$ref": "#/definitions/oauth"
           },
           {
             "name": "oauth2",
@@ -3287,40 +3266,40 @@
             "children": [
               {
                 "name": "private_key_file",
-                "$ref": "#/definitions/private_key_file_description"
+                "$ref": "#/definitions/private_key_file"
               },
               {
                 "name": "signing_method",
-                "$ref": "#/definitions/signing_method_description"
+                "$ref": "#/definitions/signing_method"
               },
               {
                 "name": "headers",
-                "$ref": "#/definitions/headers_description"
+                "$ref": "#/definitions/headers"
               }
             ],
-            "$ref": "#/definitions/jwt_description"
+            "$ref": "#/definitions/jwt"
           },
           {
             "name": "tls",
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "extract_headers",
@@ -3373,19 +3352,19 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           },
@@ -3406,7 +3385,7 @@
           },
           {
             "name": "key",
-            "$ref": "#/definitions/key_description"
+            "$ref": "#/definitions/key"
           },
           {
             "name": "partition",
@@ -3417,7 +3396,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           },
@@ -3434,7 +3413,7 @@
         "children": [
           {
             "name": "seed_brokers",
-            "$ref": "#/definitions/seed_brokers_description"
+            "$ref": "#/definitions/seed_brokers"
           },
           {
             "name": "topic",
@@ -3442,7 +3421,7 @@
           },
           {
             "name": "key",
-            "$ref": "#/definitions/key_description_1"
+            "$ref": "#/definitions/key"
           },
           {
             "name": "partition",
@@ -3454,7 +3433,7 @@
           },
           {
             "name": "metadata",
-            "$ref": "#/definitions/metadata_description"
+            "$ref": "#/definitions/metadata"
           },
           {
             "name": "max_in_flight",
@@ -3469,19 +3448,19 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           },
@@ -3491,7 +3470,7 @@
           },
           {
             "name": "broker_write_max_bytes",
-            "$ref": "#/definitions/broker_write_max_bytes_description"
+            "$ref": "#/definitions/broker_write_max_bytes"
           },
           {
             "name": "compression",
@@ -3502,22 +3481,22 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "sasl",
@@ -3525,7 +3504,7 @@
           },
           {
             "name": "metadata_max_age",
-            "$ref": "#/definitions/metadata_max_age_description"
+            "$ref": "#/definitions/metadata_max_age"
           },
           {
             "name": "request_timeout_overhead",
@@ -3533,7 +3512,7 @@
           },
           {
             "name": "conn_idle_timeout",
-            "$ref": "#/definitions/conn_idle_timeout_description"
+            "$ref": "#/definitions/conn_idle_timeout"
           },
           {
             "name": "timestamp_ms",
@@ -3552,7 +3531,7 @@
           },
           {
             "name": "password",
-            "$ref": "#/definitions/password_description_2"
+            "$ref": "#/definitions/password"
           },
           {
             "name": "collection",
@@ -3601,19 +3580,19 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           }
@@ -3647,7 +3626,7 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "subject",
@@ -3662,26 +3641,26 @@
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
-                "$ref": "#/definitions/user_nkey_seed_description"
+                "$ref": "#/definitions/user_nkey_seed"
               }
             ]
           },
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -3693,7 +3672,7 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "subject",
@@ -3708,26 +3687,26 @@
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
-                "$ref": "#/definitions/user_nkey_seed_description"
+                "$ref": "#/definitions/user_nkey_seed"
               }
             ]
           },
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -3739,7 +3718,7 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "key",
@@ -3750,26 +3729,26 @@
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
-                "$ref": "#/definitions/user_nkey_seed_description"
+                "$ref": "#/definitions/user_nkey_seed"
               }
             ]
           },
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -3781,33 +3760,33 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "auth",
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
-                "$ref": "#/definitions/user_nkey_seed_description"
+                "$ref": "#/definitions/user_nkey_seed"
               }
             ]
           },
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -3882,26 +3861,26 @@
                 "children": [
                   {
                     "name": "count",
-                    "$ref": "#/definitions/count_description"
+                    "$ref": "#/definitions/count"
                   },
                   {
                     "name": "byte_size",
-                    "$ref": "#/definitions/byte_size_description"
+                    "$ref": "#/definitions/byte_size"
                   },
                   {
                     "name": "period",
-                    "$ref": "#/definitions/period_description"
+                    "$ref": "#/definitions/period"
                   },
                   {
                     "name": "check",
-                    "$ref": "#/definitions/check_description"
+                    "$ref": "#/definitions/check"
                   },
                   {
                     "name": "processors",
                     "description": "For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed (optional). All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches."
                   }
                 ],
-                "$ref": "#/definitions/batching_description"
+                "$ref": "#/definitions/batching"
               },
               {
                 "name": "max_message_bytes",
@@ -3909,7 +3888,7 @@
               },
               {
                 "name": "broker_write_max_bytes",
-                "$ref": "#/definitions/broker_write_max_bytes_description"
+                "$ref": "#/definitions/broker_write_max_bytes"
               },
               {
                 "name": "compression",
@@ -3920,26 +3899,26 @@
                 "children": [
                   {
                     "name": "skip_cert_verify",
-                    "$ref": "#/definitions/skip_cert_verify_description"
+                    "$ref": "#/definitions/skip_cert_verify"
                   },
                   {
                     "name": "enable_renegotiation",
-                    "$ref": "#/definitions/enable_renegotiation_description"
+                    "$ref": "#/definitions/enable_renegotiation"
                   },
                   {
                     "name": "root_cas",
-                    "$ref": "#/definitions/root_cas_description_3"
+                    "$ref": "#/definitions/root_cas"
                   },
                   {
                     "name": "root_cas_file",
-                    "$ref": "#/definitions/root_cas_file_description"
+                    "$ref": "#/definitions/root_cas_file"
                   },
                   {
                     "name": "client_certs",
-                    "$ref": "#/definitions/client_certs_description"
+                    "$ref": "#/definitions/client_certs"
                   }
                 ],
-                "$ref": "#/definitions/tls_description"
+                "$ref": "#/definitions/tls"
               },
               {
                 "name": "timestamp_ms",
@@ -4030,7 +4009,7 @@
         "children": [
           {
             "name": "key",
-            "$ref": "#/definitions/key_description"
+            "$ref": "#/definitions/key"
           },
           {
             "name": "ordering_key",
@@ -4056,7 +4035,7 @@
         "children": [
           {
             "name": "tls",
-            "$ref": "#/definitions/tls_description_1"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "collection_name",
@@ -4078,23 +4057,23 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "check",
-                "$ref": "#/definitions/check_description"
+                "$ref": "#/definitions/check"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           },
@@ -4103,26 +4082,26 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "enable_renegotiation",
-                "$ref": "#/definitions/enable_renegotiation_description"
+                "$ref": "#/definitions/enable_renegotiation"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description_1"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "address",
@@ -4241,33 +4220,33 @@
         "children": [
           {
             "name": "seed_brokers",
-            "$ref": "#/definitions/seed_brokers_description"
+            "$ref": "#/definitions/seed_brokers"
           },
           {
             "name": "tls",
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "enable_renegotiation",
-                "$ref": "#/definitions/enable_renegotiation_description"
+                "$ref": "#/definitions/enable_renegotiation"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "sasl",
@@ -4275,7 +4254,7 @@
           },
           {
             "name": "metadata_max_age",
-            "$ref": "#/definitions/metadata_max_age_description"
+            "$ref": "#/definitions/metadata_max_age"
           },
           {
             "name": "request_timeout_overhead",
@@ -4283,7 +4262,7 @@
           },
           {
             "name": "conn_idle_timeout",
-            "$ref": "#/definitions/conn_idle_timeout_description"
+            "$ref": "#/definitions/conn_idle_timeout"
           },
           {
             "name": "topic",
@@ -4291,7 +4270,7 @@
           },
           {
             "name": "key",
-            "$ref": "#/definitions/key_description_1"
+            "$ref": "#/definitions/key"
           },
           {
             "name": "partition",
@@ -4299,7 +4278,7 @@
           },
           {
             "name": "metadata",
-            "$ref": "#/definitions/metadata_description"
+            "$ref": "#/definitions/metadata"
           },
           {
             "name": "timestamp_ms",
@@ -4327,7 +4306,7 @@
           },
           {
             "name": "broker_write_max_bytes",
-            "$ref": "#/definitions/broker_write_max_bytes_description"
+            "$ref": "#/definitions/broker_write_max_bytes"
           }
         ]
       }
@@ -4350,7 +4329,7 @@
           },
           {
             "name": "metadata",
-            "$ref": "#/definitions/metadata_description"
+            "$ref": "#/definitions/metadata"
           },
           {
             "name": "timestamp_ms",
@@ -4365,19 +4344,19 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           }
@@ -4397,22 +4376,22 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "sasl",
@@ -4424,7 +4403,7 @@
           },
           {
             "name": "key",
-            "$ref": "#/definitions/key_description_1"
+            "$ref": "#/definitions/key"
           },
           {
             "name": "partition",
@@ -4432,11 +4411,11 @@
           },
           {
             "name": "metadata",
-            "$ref": "#/definitions/metadata_description"
+            "$ref": "#/definitions/metadata"
           },
           {
             "name": "metadata_max_age",
-            "$ref": "#/definitions/metadata_max_age_description"
+            "$ref": "#/definitions/metadata_max_age"
           },
           {
             "name": "request_timeout_overhead",
@@ -4444,7 +4423,7 @@
           },
           {
             "name": "conn_idle_timeout",
-            "$ref": "#/definitions/conn_idle_timeout_description"
+            "$ref": "#/definitions/conn_idle_timeout"
           },
           {
             "name": "topic_prefix",
@@ -4500,7 +4479,7 @@
           },
           {
             "name": "broker_write_max_bytes",
-            "$ref": "#/definitions/broker_write_max_bytes_description"
+            "$ref": "#/definitions/broker_write_max_bytes"
           }
         ]
       }
@@ -4537,22 +4516,22 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "sasl",
@@ -4560,7 +4539,7 @@
           },
           {
             "name": "metadata_max_age",
-            "$ref": "#/definitions/metadata_max_age_description"
+            "$ref": "#/definitions/metadata_max_age"
           },
           {
             "name": "request_timeout_overhead",
@@ -4568,7 +4547,7 @@
           },
           {
             "name": "conn_idle_timeout",
-            "$ref": "#/definitions/conn_idle_timeout_description"
+            "$ref": "#/definitions/conn_idle_timeout"
           },
           {
             "name": "offset_topic",
@@ -4608,7 +4587,7 @@
           },
           {
             "name": "broker_write_max_bytes",
-            "$ref": "#/definitions/broker_write_max_bytes_description"
+            "$ref": "#/definitions/broker_write_max_bytes"
           },
           {
             "name": "max_retries",
@@ -4644,7 +4623,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           }
@@ -4712,18 +4691,18 @@
             "children": [
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "max_in_flight",
@@ -4739,7 +4718,7 @@
               },
               {
                 "name": "consumer_secret",
-                "$ref": "#/definitions/consumer_secret_description"
+                "$ref": "#/definitions/consumer_secret"
               },
               {
                 "name": "access_token",
@@ -4747,7 +4726,7 @@
               },
               {
                 "name": "access_token_secret",
-                "$ref": "#/definitions/access_token_secret_description"
+                "$ref": "#/definitions/access_token_secret"
               }
             ]
           },
@@ -4757,11 +4736,11 @@
             "children": [
               {
                 "name": "username",
-                "$ref": "#/definitions/username_description"
+                "$ref": "#/definitions/username"
               },
               {
                 "name": "password",
-                "$ref": "#/definitions/password_description"
+                "$ref": "#/definitions/password"
               }
             ]
           },
@@ -4827,7 +4806,7 @@
               },
               {
                 "name": "password",
-                "$ref": "#/definitions/password_description_1"
+                "$ref": "#/definitions/password"
               },
               {
                 "name": "private_key_file",
@@ -5022,19 +5001,19 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ]
           },
@@ -5078,7 +5057,7 @@
         "children": [
           {
             "name": "dsn",
-            "$ref": "#/definitions/dsn_description"
+            "$ref": "#/definitions/dsn"
           }
         ]
       }
@@ -5089,7 +5068,7 @@
         "children": [
           {
             "name": "dsn",
-            "$ref": "#/definitions/dsn_description"
+            "$ref": "#/definitions/dsn"
           },
           {
             "name": "query",
@@ -5151,26 +5130,26 @@
             "children": [
               {
                 "name": "count",
-                "$ref": "#/definitions/count_description"
+                "$ref": "#/definitions/count"
               },
               {
                 "name": "byte_size",
-                "$ref": "#/definitions/byte_size_description"
+                "$ref": "#/definitions/byte_size"
               },
               {
                 "name": "period",
-                "$ref": "#/definitions/period_description"
+                "$ref": "#/definitions/period"
               },
               {
                 "name": "check",
-                "$ref": "#/definitions/check_description"
+                "$ref": "#/definitions/check"
               },
               {
                 "name": "processors",
-                "$ref": "#/definitions/processors_description"
+                "$ref": "#/definitions/processors"
               }
             ],
-            "$ref": "#/definitions/batching_description"
+            "$ref": "#/definitions/batching"
           }
         ]
       }
@@ -5181,25 +5160,25 @@
         "children": [
           {
             "name": "oauth",
-            "$ref": "#/definitions/oauth_description"
+            "$ref": "#/definitions/oauth"
           },
           {
             "name": "jwt",
             "children": [
               {
                 "name": "private_key_file",
-                "$ref": "#/definitions/private_key_file_description"
+                "$ref": "#/definitions/private_key_file"
               },
               {
                 "name": "signing_method",
-                "$ref": "#/definitions/signing_method_description"
+                "$ref": "#/definitions/signing_method"
               },
               {
                 "name": "headers",
-                "$ref": "#/definitions/headers_description"
+                "$ref": "#/definitions/headers"
               }
             ],
-            "$ref": "#/definitions/jwt_description"
+            "$ref": "#/definitions/jwt"
           }
         ]
       }
@@ -5257,7 +5236,7 @@
           },
           {
             "name": "endpoint",
-            "$ref": "#/definitions/endpoint_description"
+            "$ref": "#/definitions/endpoint"
           },
           {
             "name": "temperature",
@@ -5288,7 +5267,7 @@
           },
           {
             "name": "endpoint",
-            "$ref": "#/definitions/endpoint_description"
+            "$ref": "#/definitions/endpoint"
           },
           {
             "name": "credentials",
@@ -5432,26 +5411,26 @@
                 "children": [
                   {
                     "name": "skip_cert_verify",
-                    "$ref": "#/definitions/skip_cert_verify_description"
+                    "$ref": "#/definitions/skip_cert_verify"
                   },
                   {
                     "name": "enable_renegotiation",
-                    "$ref": "#/definitions/enable_renegotiation_description"
+                    "$ref": "#/definitions/enable_renegotiation"
                   },
                   {
                     "name": "root_cas",
-                    "$ref": "#/definitions/root_cas_description_3"
+                    "$ref": "#/definitions/root_cas"
                   },
                   {
                     "name": "root_cas_file",
-                    "$ref": "#/definitions/root_cas_file_description_1"
+                    "$ref": "#/definitions/root_cas_file"
                   },
                   {
                     "name": "client_certs",
-                    "$ref": "#/definitions/client_certs_description"
+                    "$ref": "#/definitions/client_certs"
                   }
                 ],
-                "$ref": "#/definitions/tls_description"
+                "$ref": "#/definitions/tls"
               },
               {
                 "name": "oauth",
@@ -5459,7 +5438,7 @@
                 "children": [
                   {
                     "name": "enabled",
-                    "$ref": "#/definitions/enabled_description"
+                    "$ref": "#/definitions/enabled"
                   },
                   {
                     "name": "consumer_key",
@@ -5467,7 +5446,7 @@
                   },
                   {
                     "name": "consumer_secret",
-                    "$ref": "#/definitions/consumer_secret_description"
+                    "$ref": "#/definitions/consumer_secret"
                   },
                   {
                     "name": "access_token",
@@ -5475,7 +5454,7 @@
                   },
                   {
                     "name": "access_token_secret",
-                    "$ref": "#/definitions/access_token_secret_description"
+                    "$ref": "#/definitions/access_token_secret"
                   }
                 ]
               },
@@ -5485,11 +5464,11 @@
                 "children": [
                   {
                     "name": "username",
-                    "$ref": "#/definitions/username_description"
+                    "$ref": "#/definitions/username"
                   },
                   {
                     "name": "password",
-                    "$ref": "#/definitions/password_description"
+                    "$ref": "#/definitions/password"
                   }
                 ]
               },
@@ -5637,7 +5616,7 @@
         "children": [
           {
             "name": "credentials_json",
-            "$ref": "#/definitions/credentials_json_description"
+            "$ref": "#/definitions/credentials_json"
           }
         ]
       }
@@ -5829,10 +5808,10 @@
               },
               {
                 "name": "access_token_secret",
-                "$ref": "#/definitions/access_token_secret_description"
+                "$ref": "#/definitions/access_token_secret"
               }
             ],
-            "$ref": "#/definitions/oauth_description"
+            "$ref": "#/definitions/oauth"
           },
           {
             "name": "oauth2",
@@ -5857,40 +5836,40 @@
             "children": [
               {
                 "name": "private_key_file",
-                "$ref": "#/definitions/private_key_file_description"
+                "$ref": "#/definitions/private_key_file"
               },
               {
                 "name": "signing_method",
-                "$ref": "#/definitions/signing_method_description"
+                "$ref": "#/definitions/signing_method"
               },
               {
                 "name": "headers",
-                "$ref": "#/definitions/headers_description"
+                "$ref": "#/definitions/headers"
               }
             ],
-            "$ref": "#/definitions/jwt_description"
+            "$ref": "#/definitions/jwt"
           },
           {
             "name": "tls",
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "extract_headers",
@@ -6005,7 +5984,7 @@
           },
           {
             "name": "password",
-            "$ref": "#/definitions/password_description_2"
+            "$ref": "#/definitions/password"
           },
           {
             "name": "operation",
@@ -6055,7 +6034,7 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "key",
@@ -6070,26 +6049,26 @@
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
-                "$ref": "#/definitions/user_nkey_seed_description"
+                "$ref": "#/definitions/user_nkey_seed"
               }
             ]
           },
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -6101,7 +6080,7 @@
           {
             "name": "urls",
             "type": "array",
-            "$ref": "#/definitions/urls_description"
+            "$ref": "#/definitions/urls"
           },
           {
             "name": "subject",
@@ -6116,26 +6095,26 @@
             "children": [
               {
                 "name": "nkey",
-                "$ref": "#/definitions/nkey_description"
+                "$ref": "#/definitions/nkey"
               },
               {
                 "name": "user_credentials_file",
-                "$ref": "#/definitions/user_credentials_file_description"
+                "$ref": "#/definitions/user_credentials_file"
               },
               {
                 "name": "user_jwt",
-                "$ref": "#/definitions/user_jwt_description"
+                "$ref": "#/definitions/user_jwt"
               },
               {
                 "name": "user_nkey_seed",
-                "$ref": "#/definitions/user_nkey_seed_description"
+                "$ref": "#/definitions/user_nkey_seed"
               }
             ]
           },
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
@@ -6347,23 +6326,23 @@
                 "children": [
                   {
                     "name": "skip_cert_verify",
-                    "$ref": "#/definitions/skip_cert_verify_description"
+                    "$ref": "#/definitions/skip_cert_verify"
                   },
                   {
                     "name": "enable_renegotiation",
-                    "$ref": "#/definitions/enable_renegotiation_description_1"
+                    "$ref": "#/definitions/enable_renegotiation"
                   },
                   {
                     "name": "root_cas",
-                    "$ref": "#/definitions/root_cas_description_3"
+                    "$ref": "#/definitions/root_cas"
                   },
                   {
                     "name": "root_cas_file",
-                    "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, that contains a certificate chain from the parent trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate."
+                    "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, that contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate."
                   },
                   {
                     "name": "client_certs",
-                    "$ref": "#/definitions/client_certs_description"
+                    "$ref": "#/definitions/client_certs"
                   }
                 ]
               },
@@ -6373,7 +6352,7 @@
                 "children": [
                   {
                     "name": "enabled",
-                    "$ref": "#/definitions/enabled_description"
+                    "$ref": "#/definitions/enabled"
                   },
                   {
                     "name": "consumer_key",
@@ -6381,7 +6360,7 @@
                   },
                   {
                     "name": "consumer_secret",
-                    "$ref": "#/definitions/consumer_secret_description"
+                    "$ref": "#/definitions/consumer_secret"
                   },
                   {
                     "name": "access_token",
@@ -6389,7 +6368,7 @@
                   },
                   {
                     "name": "access_token_secret",
-                    "$ref": "#/definitions/access_token_secret_description"
+                    "$ref": "#/definitions/access_token_secret"
                   }
                 ]
               },
@@ -6399,11 +6378,11 @@
                 "children": [
                   {
                     "name": "username",
-                    "$ref": "#/definitions/username_description"
+                    "$ref": "#/definitions/username"
                   },
                   {
                     "name": "password",
-                    "$ref": "#/definitions/password_description"
+                    "$ref": "#/definitions/password"
                   }
                 ]
               },
@@ -6583,26 +6562,26 @@
             "children": [
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "enable_renegotiation",
-                "$ref": "#/definitions/enable_renegotiation_description"
+                "$ref": "#/definitions/enable_renegotiation"
               },
               {
                 "name": "root_cas",
-                "$ref": "#/definitions/root_cas_description_3"
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "$ref": "#/definitions/root_cas_file_description"
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ],
-            "$ref": "#/definitions/tls_description_1"
+            "$ref": "#/definitions/tls"
           },
           {
             "name": "collection_name",
@@ -6648,7 +6627,7 @@
         "children": [
           {
             "name": "input_key",
-            "$ref": "#/definitions/key_description_1"
+            "$ref": "#/definitions/key"
           }
         ]
       }
@@ -6662,7 +6641,7 @@
             "children": [
               {
                 "name": "initial_interval",
-                "$ref": "#/definitions/initial_interval_description"
+                "$ref": "#/definitions/initial_interval"
               }
             ]
           }
@@ -6696,25 +6675,25 @@
           },
           {
             "name": "oauth",
-            "$ref": "#/definitions/oauth_description"
+            "$ref": "#/definitions/oauth"
           },
           {
             "name": "jwt",
             "children": [
               {
                 "name": "private_key_file",
-                "$ref": "#/definitions/private_key_file_description"
+                "$ref": "#/definitions/private_key_file"
               },
               {
                 "name": "signing_method",
-                "$ref": "#/definitions/signing_method_description"
+                "$ref": "#/definitions/signing_method"
               },
               {
                 "name": "headers",
-                "$ref": "#/definitions/headers_description"
+                "$ref": "#/definitions/headers"
               }
             ],
-            "$ref": "#/definitions/jwt_description"
+            "$ref": "#/definitions/jwt"
           }
         ]
       }
@@ -6733,25 +6712,25 @@
           },
           {
             "name": "oauth",
-            "$ref": "#/definitions/oauth_description"
+            "$ref": "#/definitions/oauth"
           },
           {
             "name": "jwt",
             "children": [
               {
                 "name": "private_key_file",
-                "$ref": "#/definitions/private_key_file_description"
+                "$ref": "#/definitions/private_key_file"
               },
               {
                 "name": "signing_method",
-                "$ref": "#/definitions/signing_method_description"
+                "$ref": "#/definitions/signing_method"
               },
               {
                 "name": "headers",
-                "$ref": "#/definitions/headers_description"
+                "$ref": "#/definitions/headers"
               }
             ],
-            "$ref": "#/definitions/jwt_description"
+            "$ref": "#/definitions/jwt"
           }
         ]
       }
@@ -6818,7 +6797,7 @@
         "children": [
           {
             "name": "dsn",
-            "$ref": "#/definitions/dsn_description"
+            "$ref": "#/definitions/dsn"
           }
         ]
       }
@@ -6829,7 +6808,7 @@
         "children": [
           {
             "name": "dsn",
-            "$ref": "#/definitions/dsn_description"
+            "$ref": "#/definitions/dsn"
           },
           {
             "name": "query",
@@ -6856,7 +6835,7 @@
         "children": [
           {
             "name": "dsn",
-            "$ref": "#/definitions/dsn_description"
+            "$ref": "#/definitions/dsn"
           }
         ]
       }
@@ -6938,11 +6917,11 @@
               },
               {
                 "name": "root_cas_file",
-                "description": "An optional file path of a root certificate authority file to use, usually with the .pem extension. This file contains a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate."
+                "description": "An optional file path of a root certificate authority file to use, usually with the .pem extension. This file contains a certificate chain from the parent-trusted root certificate, to possible intermediate signing certificates, to the host certificate."
               },
               {
                 "name": "skip_cert_verify",
-                "$ref": "#/definitions/skip_cert_verify_description"
+                "$ref": "#/definitions/skip_cert_verify"
               },
               {
                 "name": "client_certs",
@@ -6968,7 +6947,7 @@
                     "description": "Password for encrypted private key used in mTLS authentication. Supports environment variable interpolation for secure password management."
                   }
                 ],
-                "$ref": "#/definitions/client_certs_description"
+                "$ref": "#/definitions/client_certs"
               }
             ]
           },
@@ -7004,7 +6983,7 @@
                   },
                   {
                     "name": "endpoint",
-                    "$ref": "#/definitions/endpoint_description"
+                    "$ref": "#/definitions/endpoint"
                   }
                 ]
               },
@@ -7058,7 +7037,7 @@
           {
             "name": "tls_handshake_first",
             "version": "4.60.0",
-            "$ref": "#/definitions/tls_handshake_first_description"
+            "$ref": "#/definitions/tls_handshake_first"
           }
         ]
       }
