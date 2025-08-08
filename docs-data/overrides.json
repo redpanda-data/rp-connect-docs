@@ -136,7 +136,7 @@
       "description": "Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate."
     },
     "root_cas_file": {
-      "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate."
+      "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate."
     },
     "enable_renegotiation": {
       "description": "Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: \ntls: no renegotiation`."
@@ -200,7 +200,7 @@
           },
           {
             "name": "tls",
-            "description": "Configure Transport Layer Security (TLS) encryption and mutual TLS (mTLS) authentication for secure connections. Supports both basic TLS encryption and mTLS with client certificate authentication.",
+            "$ref": "#/definitions/tls",
             "children": [
               {
                 "name": "skip_cert_verify",
@@ -208,11 +208,11 @@
               },
               {
                 "name": "root_cas",
-                "description": "Root certificate authorities as inline PEM data. Used to verify the server certificate in both TLS and mTLS configurations."
+                "$ref": "#/definitions/root_cas"
               },
               {
                 "name": "root_cas_file",
-                "description": "Path to a root certificate authority file in PEM format. Used to verify the server certificate in both TLS and mTLS configurations."
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
@@ -1530,7 +1530,7 @@
               },
               {
                 "name": "enable_renegotiation",
-                "description": "Whether to allow the remote server to request renegotiation. Enable this option if you\u2019re seeing the error message `local error: tls: no renegotiation`."
+                "$ref": "#/definitions/enable_renegotiation"
               },
               {
                 "name": "root_cas",
@@ -2368,7 +2368,7 @@
               },
               {
                 "name": "root_cas_file",
-                "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, that contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate."
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "client_certs",
@@ -6322,7 +6322,7 @@
               },
               {
                 "name": "tls",
-                "description": "Specify custom TLS settings to override system defaults.",
+                "$ref": "#/definitions/tls",
                 "children": [
                   {
                     "name": "skip_cert_verify",
@@ -6338,7 +6338,7 @@
                   },
                   {
                     "name": "root_cas_file",
-                    "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, that contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate."
+                    "$ref": "#/definitions/root_cas_file"
                   },
                   {
                     "name": "client_certs",
@@ -6909,15 +6909,15 @@
           },
           {
             "name": "tls",
-            "description": "Use this field for custom TLS settings that override system defaults.",
+            "$ref": "#/definitions/tls",
             "children": [
               {
                 "name": "enable_renegotiation",
-                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you see the error message `local error: tls: no renegotiation`."
+                "$ref": "#/definitions/enable_renegotiation"
               },
               {
                 "name": "root_cas_file",
-                "description": "An optional file path of a root certificate authority file to use, usually with the .pem extension. This file contains a certificate chain from the parent-trusted root certificate, to possible intermediate signing certificates, to the host certificate."
+                "$ref": "#/definitions/root_cas_file"
               },
               {
                 "name": "skip_cert_verify",

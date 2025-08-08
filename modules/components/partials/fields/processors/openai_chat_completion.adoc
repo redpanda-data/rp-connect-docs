@@ -268,7 +268,7 @@ The subject name used to fetch the schema from the schema registry.
 
 === `schema_registry.tls`
 
-Specify custom TLS settings to override system defaults.
+Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates.
 
 *Type*: `object`
 
@@ -380,7 +380,7 @@ root_cas: |-
 
 === `schema_registry.tls.root_cas_file`
 
-Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, that contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.certificate.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 *Type*: `string`
 

@@ -190,7 +190,7 @@ Whether to enable queue declaration.
 
 === `tls`
 
-Configure Transport Layer Security (TLS) encryption and mutual TLS (mTLS) authentication for secure connections. Supports both basic TLS encryption and mTLS with client certificate authentication.
+Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates.
 
 *Type*: `object`
 
@@ -290,7 +290,7 @@ Whether custom TLS settings are enabled.
 
 === `tls.root_cas`
 
-Root certificate authorities as inline PEM data. Used to verify the server certificate in both TLS and mTLS configurations.
+Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -309,7 +309,7 @@ root_cas: |-
 
 === `tls.root_cas_file`
 
-Path to a root certificate authority file in PEM format. Used to verify the server certificate in both TLS and mTLS configurations.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 *Type*: `string`
 
