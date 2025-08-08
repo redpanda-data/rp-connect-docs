@@ -441,13 +441,13 @@ A static timeout to apply to requests.
 
 === `tls`
 
-Override system defaults with custom TLS settings.
+Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates.
 
 *Type*: `object`
 
 === `tls.client_certs[]`
 
-A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. For each certificate, specify values for either the `cert` and `key` fields, or the `cert_file` and `key_file` fields.
+A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. Each certificate entry should specify either `cert` and `key` fields for inline certificates, or `cert_file` and `key_file` fields for certificate files stored on disk.
 
 *Type*: `object`
 
@@ -541,7 +541,7 @@ Whether custom TLS settings are enabled.
 
 === `tls.root_cas`
 
-Specify a root certificate authority to use (optional). This is a string, representing a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -574,7 +574,7 @@ root_cas_file: ./root_cas.pem
 
 === `tls.skip_cert_verify`
 
-Whether to skip server-side certificate verification.
+Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production.
 
 *Type*: `bool`
 
