@@ -239,13 +239,22 @@ seed_brokers:
 
 === `tls`
 
-Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates.
+Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates. Key configuration options include `enabled` to enable TLS, `client_certs` for mTLS authentication, `root_cas`/`root_cas_file` for custom certificate authorities, and `skip_cert_verify` for development environments.
 
 *Type*: `object`
 
 === `tls.client_certs[]`
 
-A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS and authenticate the client to the server using certificates. Each certificate entry should specify either `cert` and `key` fields for inline certificates, or `cert_file` and `key_file` fields for certificate files stored on disk.
+A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS, authenticating the client to the server with these certificates.
+
+You must set `tls.enabled: true` for the client certificates to take effect.
+
+**Certificate pairing rules**: For each certificate item, provide either:
+
+- Inline PEM data using both `cert` *and* `key` or
+- File paths using both `cert_file` *and* `key_file`.
+
+Mixing inline and file-based values within the same item is not supported.
 
 *Type*: `object`
 
@@ -339,7 +348,7 @@ Whether custom TLS settings are enabled.
 
 === `tls.root_cas`
 
-Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -358,7 +367,7 @@ root_cas: |-
 
 === `tls.root_cas_file`
 
-Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for file-based certificate loading or `root_cas` for inline certificate data.
 
 *Type*: `string`
 
@@ -372,7 +381,7 @@ root_cas_file: ./root_cas.pem
 
 === `tls.skip_cert_verify`
 
-Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production.
+Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production. Consider using `root_cas` or `root_cas_file` to specify trusted certificates instead of disabling verification entirely.
 
 *Type*: `bool`
 

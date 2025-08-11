@@ -44,7 +44,7 @@ The path to the SFTP server's public key file, used for host key verification.
 
 === `credentials.password`
 
-The password for the username used to authenticate with the SFTP server.
+The password to use for authentication. Used together with `username` for basic authentication or with encrypted private keys for secure access.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 

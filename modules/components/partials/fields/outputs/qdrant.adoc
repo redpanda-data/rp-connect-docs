@@ -160,7 +160,7 @@ payload_mapping: root = metadata()
 
 === `tls`
 
-Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates.
+Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates. Key configuration options include `enabled` to enable TLS, `client_certs` for mTLS authentication, `root_cas`/`root_cas_file` for custom certificate authorities, and `skip_cert_verify` for development environments.
 
 *Type*: `object`
 

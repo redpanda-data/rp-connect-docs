@@ -57,7 +57,7 @@ The number of messages after which the batch is flushed. Set to `0` to disable c
 
 === `batching.period`
 
-The period of time after which an incomplete batch is flushed regardless of its size.
+The period of time after which an incomplete batch is flushed regardless of its size. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -108,7 +108,7 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `metadata`
 
-Specify which (if any) metadata values are added to messages as headers.
+Configure which metadata values are added to messages as headers. This allows you to pass additional context information along with your messages.
 
 *Type*: `object`
 
