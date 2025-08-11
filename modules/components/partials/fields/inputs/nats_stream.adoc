@@ -18,7 +18,7 @@ Optional configuration of NATS authentication parameters.
 
 === `auth.nkey`
 
-Your NKey seed or private key.
+Your NKey seed or private key for NATS authentication. NKeys provide secure, cryptographic authentication without passwords.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -60,7 +60,7 @@ user_credentials_file: ./user.creds
 
 === `auth.user_jwt`
 
-An optional plain text user JWT to use along with the corresponding user NKey seed.
+An optional plaintext user JWT to use along with the corresponding user NKey seed.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -68,7 +68,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 === `auth.user_nkey_seed`
 
-An optional plain text user NKey seed to use along with the corresponding user JWT.
+An optional plaintext user NKey seed to use along with the corresponding user JWT.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 

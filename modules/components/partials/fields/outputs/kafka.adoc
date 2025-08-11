@@ -37,7 +37,7 @@ Control time intervals between retry attempts.
 
 === `backoff.initial_interval`
 
-The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value.
+The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -245,8 +245,7 @@ inject_tracing_map: root.meta.span = this
 
 === `key`
 
-The key to publish messages with.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

@@ -69,13 +69,11 @@ The minimum number of bytes that a broker tries to send during a fetch. This fie
 
 === `heartbeat_interval`
 
-When you specify a <<consumer_group,`consumer_group`>>, `heartbeat_interval` sets how frequently a consumer group member should send heartbeats to Apache Kafka. Apache Kafka uses heartbeats to make sure that a group member's session is active. 
+When you specify a `consumer_group`, `heartbeat_interval` sets how frequently a consumer group member should send heartbeats to Apache Kafka. Apache Kafka uses heartbeats to make sure that a group member's session is active. 
 
 You must set `heartbeat_interval` to less than one-third of `session_timeout`.
 
-This field is equivalent to the Java `heartbeat.interval.ms` setting.
-
-client
+This field is equivalent to the Java `heartbeat.interval.ms` setting and accepts Go duration format strings such as `10s` or `2m`.
 
 *Type*: `string`
 
@@ -119,7 +117,7 @@ A rack specifies where the client is physically located, and changes fetch reque
 
 === `rebalance_timeout`
 
-When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required.
+When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -135,9 +133,7 @@ Whether listed topics are interpreted as regular expression patterns for matchin
 
 === `session_timeout`
 
-When you specify a <<consumer_group,`consumer_group`>>, `session_timeout` sets the maximum interval between heartbeats sent by a consumer group member to the broker. If a broker doesn't receive a heartbeat from a group member before the timeout expires, it removes the member from the consumer group and initiates a rebalance.
-
-broker
+When you specify a `consumer_group`, `session_timeout` sets the maximum interval between heartbeats sent by a consumer group member to the broker. If a broker doesn't receive a heartbeat from a group member before the timeout expires, it removes the member from the consumer group and initiates a rebalance. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -168,7 +164,7 @@ Specify the offset from which this input starts or restarts consuming messages. 
 
 === `topic_lag_refresh_period`
 
-The interval between refresh cycles. During each cycle, this input queries the Redpanda Connect server to calculate the topic lag - the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
+The interval between refresh cycles. During each cycle, this input queries the Redpanda Connect server to calculate the topic lag minus the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -209,7 +205,7 @@ topics:
 
 === `transaction_isolation_level`
 
-Defines how transactional messages are handled.
+The isolation level for handling transactional messages. This setting determines how transactions are processed and affects data consistency guarantees.
 
 *Type*: `string`
 

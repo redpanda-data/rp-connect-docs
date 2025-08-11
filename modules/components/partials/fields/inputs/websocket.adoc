@@ -63,7 +63,7 @@ max_retries: 10
 
 === `jwt`
 
-BETA: Allows you to specify JSON Web Token (JWT) authentication.
+BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
 
 *Type*: `object`
 
@@ -85,7 +85,7 @@ Whether to use JWT authentication in requests.
 
 === `jwt.headers`
 
-Add key/value headers to the JWT (optional).
+Additional key-value pairs to include in the JWT header (optional). These headers provide extra metadata for JWT processing.
 
 *Type*: `object`
 
@@ -93,7 +93,7 @@ Add key/value headers to the JWT (optional).
 
 === `jwt.private_key_file`
 
-A file with the PEM encoded using PKCS1 or PKCS8 as private key.
+Path to a file containing the PEM-encoded private key using PKCS#1 or PKCS#8 format. The private key must be compatible with the algorithm specified in the `signing_method` field.
 
 *Type*: `string`
 
@@ -101,7 +101,7 @@ A file with the PEM encoded using PKCS1 or PKCS8 as private key.
 
 === `jwt.signing_method`
 
-A method used to sign the token, such as RS256, RS384, RS512 or EdDSA.
+The cryptographic algorithm used to sign the JWT token. Supported algorithms include RS256, RS384, RS512, and EdDSA. This algorithm must be compatible with the private key specified in the `private_key_file` field.
 
 *Type*: `string`
 
@@ -109,7 +109,7 @@ A method used to sign the token, such as RS256, RS384, RS512 or EdDSA.
 
 === `oauth`
 
-Allows you to specify open authentication using OAuth version 1.
+Configure OAuth version 1.0 authentication for secure API access.
 
 *Type*: `object`
 
