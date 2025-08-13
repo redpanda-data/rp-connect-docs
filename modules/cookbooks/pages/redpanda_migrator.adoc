@@ -23,6 +23,10 @@ For convenience, these components are bundled together into the following:
 
 This cookbook shows how to use the bundled components.
 
+== Limitations
+
+The Redpanda Migrator cannot migrate schemas between multi-tenant clusters.
+
 ifndef::env-cloud[]
 
 == Create the Docker containers
@@ -626,8 +630,6 @@ rpk connect run read_data_destination.yaml
 ----
 
 It's worth clarifying that the `source` cluster consumer uses the same `foobar` consumer group. As you can see, this consumer resumes reading messages from where the `source` consumer left off.
-
-And you're all done!
 
 Due to the mechanics of the Kafka protocol, Redpanda Migrator needs to perform offset remapping when migrating consumer group offsets to the `destination` cluster. While more sophisticated approaches are possible, Redpanda chose to use a simple timestamp-based approach. So, for each migrated offset, the `destination` cluster is queried to find the latest offset before the received offset timestamp. Redpanda Migrator then writes this offset as the `destination` consumer group offset for the corresponding topic and partition pair.
 
