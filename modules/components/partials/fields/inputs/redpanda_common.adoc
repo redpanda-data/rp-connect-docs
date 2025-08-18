@@ -162,6 +162,12 @@ Specify the offset from which this input starts or restarts consuming messages. 
 
 |===
 
+=== `timely_nacks_maximum_wait`
+
+EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.
+
+*Type*: `string`
+
 === `topic_lag_refresh_period`
 
 The interval between refresh cycles. During each cycle, this input queries the Redpanda Connect server to calculate the topic lag minus the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.

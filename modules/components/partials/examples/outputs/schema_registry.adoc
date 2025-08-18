@@ -13,6 +13,7 @@ output:
     - schema_registry:
         url: http://localhost:8082
         subject: ${! @schema_registry_subject }
+        subject_compatibility_level: ${! @schema_registry_subject_compatibility_level }
     - switch:
         cases:
           - check: '@fallback_error == "request returned status: 422"'
