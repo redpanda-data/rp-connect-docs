@@ -102,6 +102,15 @@
     "heartbeat_interval": {
       "description": "When you specify a `consumer_group`, `heartbeat_interval` sets how frequently a consumer group member should send heartbeats to Apache Kafka. Apache Kafka uses heartbeats to make sure that a group member's session is active. \n\nYou must set `heartbeat_interval` to less than one-third of `session_timeout`.\n\nThis field is equivalent to the Java `heartbeat.interval.ms` setting and accepts Go duration format strings such as `10s` or `2m`."
     },
+    "timely_nacks_maximum_wait": {
+      "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs. Accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
+    },
+    "subject_compatibility_level": {
+      "description": "The compatibility level for the subject. Can be one of BACKWARD, BACKWARD_TRANSITIVE, FORWARD, FORWARD_TRANSITIVE, FULL, FULL_TRANSITIVE, NONE."
+    },
+    "schema_metadata": {
+      "description": "Optionally specify a metadata field containing a schema definition to use for encoding instead of a statically defined schema. For batches of messages, the first message's schema will be applied to all subsequent messages of the batch."
+    },
     "start_offset": {
       "description": "Specify the offset from which this input starts or restarts consuming messages. Restarts occur when the `OffsetOutOfRange` error is seen during a fetch."
     },
@@ -825,6 +834,10 @@
           {
             "name": "instance_id",
             "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to help brokers identify each input after restarts and prevent unnecessary rebalances."
+          },
+          {
+            "name": "timely_nacks_maximum_wait",
+            "$ref": "#/definitions/timely_nacks_maximum_wait"
           }
         ]
       }
@@ -858,6 +871,10 @@
               }
             ],
             "$ref": "#/definitions/tls"
+          },
+          {
+            "name": "timely_nacks_maximum_wait",
+            "$ref": "#/definitions/timely_nacks_maximum_wait"
           },
           {
             "name": "sasl",
@@ -1536,6 +1553,10 @@
       "config": {
         "children": [
           {
+            "name": "timely_nacks_maximum_wait",
+            "$ref": "#/definitions/timely_nacks_maximum_wait"
+          },
+          {
             "name": "seed_brokers",
             "$ref": "#/definitions/seed_brokers"
           },
@@ -1657,6 +1678,10 @@
       "config": {
         "children": [
           {
+            "name": "timely_nacks_maximum_wait",
+            "$ref": "#/definitions/timely_nacks_maximum_wait"
+          },
+          {
             "name": "topics",
             "description": "A list of topics to consume from. Use commas to separate multiple topics in a single element.\n\nWhen a `consumer_group` is specified, partitions are automatically distributed across consumers of a topic. Otherwise, all partitions are consumed.\n\nAlternatively, you can specify explicit partitions to consume by using a colon after the topic name. For example, `foo:0` would consume the partition `0` of the topic foo. This syntax supports ranges. For example, `foo:0-10` would consume partitions `0` through to `10` inclusive.\n\nIt is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_offset` determines which offset to start from."
           },
@@ -1731,6 +1756,10 @@
       "name": "redpanda_migrator",
       "config": {
         "children": [
+          {
+            "name": "timely_nacks_maximum_wait",
+            "$ref": "#/definitions/timely_nacks_maximum_wait"
+          },
           {
             "name": "seed_brokers",
             "$ref": "#/definitions/seed_brokers"
@@ -4689,6 +4718,10 @@
       "config": {
         "children": [
           {
+            "name": "subject_compatibility_level",
+            "$ref": "#/definitions/subject_compatibility_level"
+          },
+          {
             "name": "subject",
             "description": "The subject name.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
           },
@@ -4798,6 +4831,65 @@
             "name": "remove_rule_set",
             "description": "Removes rule set definitions from schema output. Useful for simplifying schemas when rule sets are not required by consumers or applications.",
             "version": "4.61.0"
+          }
+        ]
+      }
+    },
+    {
+      "name": "socket",
+      "config": {
+        "children": [
+          {
+            "name": "tls",
+            "$ref": "#/definitions/tls",
+            "children": [
+              {
+                "name": "enabled",
+                "$ref": "#/definitions/tls_enabled"
+              },
+              {
+                "name": "client_certs",
+                "$ref": "#/definitions/client_certs",
+                "children": [
+                  {
+                    "name": "cert",
+                    "$ref": "#/definitions/tls_cert"
+                  },
+                  {
+                    "name": "cert_file",
+                    "$ref": "#/definitions/tls_cert_file"
+                  },
+                  {
+                    "name": "key",
+                    "$ref": "#/definitions/tls_key"
+                  },
+                  {
+                    "name": "key_file",
+                    "$ref": "#/definitions/tls_key_file"
+                  },
+                  {
+                    "name": "password",
+                    "$ref": "#/definitions/tls_password"
+                  }
+                ]
+              },
+              {
+                "name": "enable_renegotiation",
+                "$ref": "#/definitions/enable_renegotiation"
+              },
+              {
+                "name": "root_cas",
+                "$ref": "#/definitions/root_cas"
+              },
+              {
+                "name": "root_cas_file",
+                "$ref": "#/definitions/root_cas_file"
+              },
+              {
+                "name": "skip_cert_verify",
+                "$ref": "#/definitions/skip_cert_verify"
+              }
+            ]
           }
         ]
       }
@@ -6529,6 +6621,10 @@
       "name": "parquet_encode",
       "config": {
         "children": [
+          {
+            "name": "schema_metadata",
+            "$ref": "#/definitions/schema_metadata"
+          },
           {
             "name": "default_encoding",
             "description": "The default encoding type to use for fields. A custom default encoding is only necessary when consuming data with libraries that do not support `DELTA_LENGTH_BYTE_ARRAY`."

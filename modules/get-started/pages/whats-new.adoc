@@ -6,6 +6,30 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+
+== Version 4.62.0
+
+=== Component updates
+
+This release adds support for the following new fields and improvements:
+
+* Kafka, Redpanda, and Franz input components:
+** xref:components:inputs/kafka.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for improved message delivery guarantees and SLA enforcement.
+** xref:components:inputs/kafka_franz.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for improved message delivery guarantees and SLA enforcement.
+** xref:components:inputs/redpanda.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for improved message delivery guarantees and SLA enforcement.
+* Redpanda Migrator and Redpanda Common input components:
+** xref:components:inputs/redpanda_migrator.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for consistent negative acknowledgement handling.
+** xref:components:inputs/redpanda_common.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for consistent negative acknowledgement handling.
+* Schema Registry output component:
+** xref:components:outputs/schema_registry.adoc#subject_compatibility_level[`subject_compatibility_level`] field for explicit subject compatibility configuration.
+* Parquet Encode processor:
+** xref:components:processors/parquet_encode.adoc#schema_metadata[`schema_metadata`] field for dynamic schema assignment during encoding.
+* Socket output component:
+** xref:components:outputs/socket.adoc#tls[`Full TLS configuration support`], including all standard and mTLS fields, now deduplicated and centrally documented.
+
+* Bloblang:
+** xref:guides:bloblang/methods.adoc#infer_schema[`infer_schema`] method attempts to infer the schema of a given value. The resulting schema can then be used as an input to schema conversion and enforcement methods.
+
 == Version 4.61.0
 
 === Component updates
@@ -96,7 +120,7 @@ This field allows components to create topics automatically when publishing data
 
 This release adds support for the following fields:
 
-* `protobuf.use_proto_names`, `protobuf.use_enum_numbers`, `protobuf.emit_unpopulated`, and `protobuf.emit_default_values` in the xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode`] processor.
+* `protobuf.use_proto_names`, `protobuf.use_enum_numbers`, `protobuf.emit_unpopulated`, and `protobuf.emit_default_values` in the xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode` processor].
 
 == Version 4.56.0
 
