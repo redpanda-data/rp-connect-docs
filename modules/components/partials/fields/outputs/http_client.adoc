@@ -81,7 +81,7 @@ batching:
 
 === `batching.byte_size`
 
-The amount of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 *Type*: `int`
 
@@ -111,7 +111,7 @@ The number of messages after which the batch is flushed. Set to `0` to disable c
 
 === `batching.period`
 
-The period after which an incomplete batch is flushed regardless of its size.
+The period of time after which an incomplete batch is flushed regardless of its size. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -258,7 +258,7 @@ headers:
 
 === `jwt`
 
-BETA: Allows you to specify JSON Web Token (JWT) authentication.
+BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
 
 *Type*: `object`
 
@@ -280,7 +280,7 @@ Whether to use JWT authentication in requests.
 
 === `jwt.headers`
 
-Add key/value headers to the JWT (optional).
+Additional key-value pairs to include in the JWT header (optional). These headers provide extra metadata for JWT processing.
 
 *Type*: `object`
 
@@ -288,7 +288,7 @@ Add key/value headers to the JWT (optional).
 
 === `jwt.private_key_file`
 
-A file with the PEM encoded using PKCS1 or PKCS8 as private key.
+Path to a file containing the PEM-encoded private key using PKCS#1 or PKCS#8 format. The private key must be compatible with the algorithm specified in the `signing_method` field.
 
 *Type*: `string`
 
@@ -296,7 +296,7 @@ A file with the PEM encoded using PKCS1 or PKCS8 as private key.
 
 === `jwt.signing_method`
 
-A method used to sign the token, such as RS256, RS384, RS512 or EdDSA.
+The cryptographic algorithm used to sign the JWT token. Supported algorithms include RS256, RS384, RS512, and EdDSA. This algorithm must be compatible with the private key specified in the `private_key_file` field.
 
 *Type*: `string`
 
@@ -421,7 +421,7 @@ content_type: application/bin
 
 === `oauth`
 
-Allows you to specify open authentication using OAuth version 1.
+Configure OAuth version 1.0 authentication for secure API access.
 
 *Type*: `object`
 
@@ -435,7 +435,7 @@ The value used to gain access to the protected resources on behalf of the user.
 
 === `oauth.access_token_secret`
 
-The secret that establishes ownership of the `oauth.access_token`.
+The secret that establishes ownership of the `oauth.access_token` in OAuth 1.0 authentication.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -453,7 +453,7 @@ A value used to identify the client to the service provider.
 
 === `oauth.consumer_secret`
 
-The secret used to establish ownership of the consumer key.
+The secret that establishes ownership of the consumer key in OAuth 1.0 authentication.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -603,13 +603,22 @@ A static timeout to apply to requests.
 
 === `tls`
 
-Override system defaults with custom TLS settings.
+Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates. Key configuration options include `enabled` to enable TLS, `client_certs` for mTLS authentication, `root_cas`/`root_cas_file` for custom certificate authorities, and `skip_cert_verify` for development environments.
 
 *Type*: `object`
 
 === `tls.client_certs[]`
 
-A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields.
+A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS, authenticating the client to the server with these certificates.
+
+You must set `tls.enabled: true` for the client certificates to take effect.
+
+**Certificate pairing rules**: For each certificate item, provide either:
+
+- Inline PEM data using both `cert` *and* `key` or
+- File paths using both `cert_file` *and* `key_file`.
+
+Mixing inline and file-based values within the same item is not supported.
 
 *Type*: `object`
 
@@ -703,7 +712,7 @@ Whether custom TLS settings are enabled.
 
 === `tls.root_cas`
 
-Specify a root certificate authority to use (optional). This is a string, representing a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -722,7 +731,7 @@ root_cas: |-
 
 === `tls.root_cas_file`
 
-Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for file-based certificate loading or `root_cas` for inline certificate data.
 
 *Type*: `string`
 
@@ -736,7 +745,7 @@ root_cas_file: ./root_cas.pem
 
 === `tls.skip_cert_verify`
 
-Whether to skip server-side certificate verification.
+Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production. Consider using `root_cas` or `root_cas_file` to specify trusted certificates instead of disabling verification entirely.
 
 *Type*: `bool`
 
