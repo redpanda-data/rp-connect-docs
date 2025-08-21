@@ -73,6 +73,12 @@ For more details on the difference between standard JSON and Avro JSON, see the 
 
 *Type*: `bool`
 
+=== `avro.store_schema_metadata`
+
+Optionally store the schema used to decode messages as a metadata field under the given name. This field can later be referenced in other components such as a `parquet_encode` processor in order to automatically infer their schema.
+
+*Type*: `string`
+
 === `avro.translate_kafka_connect_types`
 
 Only valid if preserve_logical_types is true. This decodes various Kafka Connect types into their bloblang equivalents when not representable by standard logical types according to the Avro standard.

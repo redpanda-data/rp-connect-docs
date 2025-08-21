@@ -1,6 +1,6 @@
 {
-  "version": "4.60.2",
-  "date": "2025-07-15T07:50:41Z",
+  "version": "4.62.0",
+  "date": "2025-08-18T14:41:37Z",
   "config": [
     {
       "name": "http",
@@ -5932,6 +5932,32 @@
             "default": "600ms"
           },
           {
+            "name": "host_selection_policy",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional host selection policy configurations. Highly recommended in deployments with multiple DCs. Host selection is always token aware if the token can be calculated from query. By default the underlying policy is round robin over all nodes. Users can specify a local DC and rack to use for the DC Aware & Rack Aware policies. ",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "local_dc",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local DC to use, enables DC aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "local_rack",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local rack to use, requires local_dc to be set, enables rack aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              }
+            ],
+            "linter": "root = if this.local_rack != \"\" && (!this.exists(\"local_dc\") || this.local_dc == \"\") { \"local_dc must be set if local_rack is set\" }"
+          },
+          {
             "name": "query",
             "type": "string",
             "kind": "scalar",
@@ -8762,6 +8788,14 @@
             "default": true
           },
           {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
+          },
+          {
             "name": "commit_period",
             "type": "string",
             "kind": "scalar",
@@ -9617,6 +9651,14 @@
             "kind": "scalar",
             "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
             "default": true
+          },
+          {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
           }
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
@@ -14798,6 +14840,14 @@
             "kind": "scalar",
             "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
             "default": true
+          },
+          {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
           }
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
@@ -15021,6 +15071,14 @@
             "kind": "scalar",
             "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
             "default": true
+          },
+          {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
           }
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
@@ -15608,6 +15666,14 @@
             "default": true
           },
           {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
+          },
+          {
             "name": "output_resource",
             "type": "string",
             "kind": "scalar",
@@ -16184,7 +16250,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Reads schemas from SchemaRegistry.",
-      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- schema_registry_subject\n- schema_registry_version\n```\n\nYou can access these metadata fields using\nxref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n",
+      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- schema_registry_subject\n- schema_registry_subject_compatibility_level\n- schema_registry_version\n```\n\nYou can access these metadata fields using\nxref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n",
       "categories": [
         "Integration"
       ],
@@ -17008,6 +17074,136 @@
             "bloblang": true,
             "examples": [
               "root = \"username,password\""
+            ]
+          },
+          {
+            "name": "tls",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Custom TLS settings can be used to override system defaults.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether custom TLS settings are enabled.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "skip_cert_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to skip server side certificate verification.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "enable_renegotiation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "is_advanced": true,
+                "default": false,
+                "version": "3.45.0"
+              },
+              {
+                "name": "root_cas",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "examples": [
+                  "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                ],
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "root_cas_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "default": "",
+                "examples": [
+                  "./root_cas.pem"
+                ]
+              },
+              {
+                "name": "client_certs",
+                "type": "object",
+                "kind": "array",
+                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "is_advanced": true,
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "cert": "foo",
+                      "key": "bar"
+                    }
+                  ],
+                  [
+                    {
+                      "cert_file": "./example.pem",
+                      "key_file": "./example.key"
+                    }
+                  ]
+                ],
+                "children": [
+                  {
+                    "name": "cert",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate key to use.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "cert_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate key to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "foo",
+                      "${KEY_PASSWORD}"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -22530,6 +22726,32 @@
             "kind": "scalar",
             "description": "The client connection timeout.",
             "default": "600ms"
+          },
+          {
+            "name": "host_selection_policy",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional host selection policy configurations. Highly recommended in deployments with multiple DCs. Host selection is always token aware if the token can be calculated from query. By default the underlying policy is round robin over all nodes. Users can specify a local DC and rack to use for the DC Aware & Rack Aware policies. ",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "local_dc",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local DC to use, enables DC aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "local_rack",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local rack to use, requires local_dc to be set, enables rack aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              }
+            ],
+            "linter": "root = if this.local_rack != \"\" && (!this.exists(\"local_dc\") || this.local_dc == \"\") { \"local_dc must be set if local_rack is set\" }"
           },
           {
             "name": "query",
@@ -34578,7 +34800,7 @@
         {
           "title": "Write schemas",
           "summary": "Write schemas to a Schema Registry instance and log errors for schemas which already exist.",
-          "config": "\noutput:\n  fallback:\n    - schema_registry:\n        url: http://localhost:8082\n        subject: ${! @schema_registry_subject }\n    - switch:\n        cases:\n          - check: '@fallback_error == \"request returned status: 422\"'\n            output:\n              drop: {}\n              processors:\n                - log:\n                    message: |\n                      Subject '${! @schema_registry_subject }' version ${! @schema_registry_version } already has schema: ${! content() }\n          - output:\n              reject: ${! @fallback_error }\n"
+          "config": "\noutput:\n  fallback:\n    - schema_registry:\n        url: http://localhost:8082\n        subject: ${! @schema_registry_subject }\n        subject_compatibility_level: ${! @schema_registry_subject_compatibility_level }\n    - switch:\n        cases:\n          - check: '@fallback_error == \"request returned status: 422\"'\n            output:\n              drop: {}\n              processors:\n                - log:\n                    message: |\n                      Subject '${! @schema_registry_subject }' version ${! @schema_registry_version } already has schema: ${! content() }\n          - output:\n              reject: ${! @fallback_error }\n"
         }
       ],
       "config": {
@@ -34600,6 +34822,15 @@
             "interpolated": true
           },
           {
+            "name": "subject_compatibility_level",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The compatibility level for the subject. Can be one of BACKWARD, BACKWARD_TRANSITIVE, FORWARD, FORWARD_TRANSITIVE, FULL, FULL_TRANSITIVE, NONE.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
             "name": "backfill_dependencies",
             "type": "bool",
             "kind": "scalar",
@@ -34614,6 +34845,30 @@
             "description": "Translate schema IDs.",
             "is_advanced": true,
             "default": false
+          },
+          {
+            "name": "normalize",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Normalize schemas.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
+            "name": "remove_metadata",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Remove metadata from schemas.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
+            "name": "remove_rule_set",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Remove rule set from schemas.",
+            "is_advanced": true,
+            "default": true
           },
           {
             "name": "input_resource",
@@ -35983,6 +36238,136 @@
                 "delim:x",
                 "Append each message to the output stream followed by a custom delimiter."
               ]
+            ]
+          },
+          {
+            "name": "tls",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Custom TLS settings can be used to override system defaults.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether custom TLS settings are enabled.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "skip_cert_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to skip server side certificate verification.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "enable_renegotiation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "is_advanced": true,
+                "default": false,
+                "version": "3.45.0"
+              },
+              {
+                "name": "root_cas",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "examples": [
+                  "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                ],
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "root_cas_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "default": "",
+                "examples": [
+                  "./root_cas.pem"
+                ]
+              },
+              {
+                "name": "client_certs",
+                "type": "object",
+                "kind": "array",
+                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "is_advanced": true,
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "cert": "foo",
+                      "key": "bar"
+                    }
+                  ],
+                  [
+                    {
+                      "cert_file": "./example.pem",
+                      "key_file": "./example.key"
+                    }
+                  ]
+                ],
+                "children": [
+                  {
+                    "name": "cert",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate key to use.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "cert_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate key to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "foo",
+                      "${KEY_PASSWORD}"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
             ]
           }
         ]
@@ -44417,6 +44802,7 @@
             "type": "object",
             "kind": "array",
             "description": "Parquet schema.",
+            "is_optional": true,
             "children": [
               {
                 "name": "name",
@@ -44482,6 +44868,13 @@
             ]
           },
           {
+            "name": "schema_metadata",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Optionally specify a metadata field containing a schema definition to use for encoding instead of a statically defined schema. For batches of messages, the first message's schema will be applied to all subsequent messages of the batch.",
+            "default": ""
+          },
+          {
             "name": "default_compression",
             "type": "string",
             "kind": "scalar",
@@ -44511,7 +44904,8 @@
             "version": "4.11.0",
             "linter": "\nlet options = {\n  \"delta_length_byte_array\": true,\n  \"plain\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
-        ]
+        ],
+        "linter": "root = if this.schema.or([]).length() == 0 && this.schema_metadata.or(\"\") == \"\" { \"either a schema or schema_metadata must be specified\" }"
       },
       "version": "4.4.0"
     },
@@ -45636,7 +46030,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Attempts to execute a series of child processors until success.",
-      "description": "\nExecutes child processors and if a resulting message is errored then, after a specified backoff period, the same original message will be attempted again through those same processors. If the child processors result in more than one message then the retry mechanism will kick in if _any_ of the resulting messages are errored.\n\nIt is important to note that any mutations performed on the message during these child processors will be discarded for the next retry, and therefore it is safe to assume that each execution of the child processors will always be performed on the data as it was when it first reached the retry processor.\n\nBy default the retry backoff has a specified <<backoffmax_elapsed_time,`max_elapsed_time`>>, if this time period is reached during retries and an error still occurs these errored messages will proceed through to the next processor after the retry (or your outputs). Normal xref:configuration:error_handling.adoc[error handling patterns] can be used on these messages.\n\nIn order to avoid permanent loops any error associated with messages as they first enter a retry processor will be cleared.\n\n== Metadata\n\nThis processor adds the following metadata fields to each message:\n\n```text\n- retry_count - The number of retry attempts.\n- backoff_duration - The total time elapsed while performing retries.\n```\n\n[CAUTION]\n.Batching\n====\nIf you wish to wrap a batch-aware series of processors then take a look at the <<batching, batching section>>.\n====\n",
+      "description": "\nExecutes child processors and if a resulting message is errored then, after a specified backoff period, the same original message will be attempted again through those same processors. If the child processors result in more than one message then the retry mechanism will kick in if _any_ of the resulting messages are errored.\n\nIt is important to note that any mutations performed on the message during these child processors will be discarded for the next retry, and therefore it is safe to assume that each execution of the child processors will always be performed on the data as it was when it first reached the retry processor.\n\nBy default the retry backoff has a specified <<backoffmax_elapsed_time,`max_elapsed_time`>>, if this time period is reached during retries and an error still occurs these errored messages will proceed through to the next processor after the retry (or your outputs). Normal xref:configuration:error_handling.adoc[error handling patterns] can be used on these messages.\n\nIn order to avoid permanent loops any error associated with messages as they first enter a retry processor will be cleared.\n\n== Metadata\n\nThis processor adds the following metadata fields to each message:\n\n```text\n- retry_count - The number of retry attempts.\n- backoff_duration - The total time (in nanoseconds) elapsed while performing retries.\n```\n\n[CAUTION]\n.Batching\n====\nIf you wish to wrap a batch-aware series of processors then take a look at the <<batching, batching section>>.\n====\n",
       "categories": [
         "Composition"
       ],
@@ -45781,6 +46175,13 @@
                 "examples": [
                   "\nmap isDebeziumTimestampType {\n  root = this.type == \"long\" && this.\"connect.name\" == \"io.debezium.time.Timestamp\" && !this.exists(\"logicalType\")\n}\nmap debeziumTimestampToAvroTimestamp {\n  let mapped_fields = this.fields.or([]).map_each(item -> item.apply(\"debeziumTimestampToAvroTimestamp\"))\n  root = match {\n    this.type == \"record\" => this.assign({\"fields\": $mapped_fields})\n    this.type.type() == \"array\" => this.assign({\"type\": this.type.map_each(item -> item.apply(\"debeziumTimestampToAvroTimestamp\"))})\n    # Add a logical type so that it's decoded as a timestamp instead of a long.\n    this.type.type() == \"object\" && this.type.apply(\"isDebeziumTimestampType\") => this.merge({\"type\":{\"logicalType\": \"timestamp-millis\"}})\n    _ => this\n  }\n}\nroot = this.apply(\"debeziumTimestampToAvroTimestamp\")\n"
                 ]
+              },
+              {
+                "name": "store_schema_metadata",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optionally store the schema used to decode messages as a metadata field under the given name. This field can later be referenced in other components such as a `parquet_encode` processor in order to automatically infer their schema.",
+                "is_optional": true
               }
             ]
           },
@@ -53230,6 +53631,20 @@
               "skip_testing": false
             }
           ]
+        }
+      ],
+      "impure": false
+    },
+    {
+      "status": "stable",
+      "name": "infer_schema",
+      "description": "Attempt to infer the schema of a given value. The resulting schema can then be used as an input to schema conversion and enforcement methods.",
+      "params": {},
+      "categories": [
+        {
+          "Category": "Parsing",
+          "Description": "",
+          "Examples": null
         }
       ],
       "impure": false

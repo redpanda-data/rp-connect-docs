@@ -51,6 +51,9 @@ jobs:
           npx doc-tools install-test-dependencies
           rpk connect install
 
+      - name: Wait for registry update
+        run: sleep 300
+
       - name: Generate RPCN Connector docs
         id: generate
         run: |
