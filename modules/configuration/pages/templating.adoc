@@ -258,6 +258,14 @@ Whether this field is considered advanced.
 
 *Default*: `false`
 
+=== `fields[].options`
+
+List of options for `string_enum` fields or map of annotated options for `string_annotated_enum` fields.
+
+
+*Type*: `unknown`
+
+
 === `mapping`
 
 A xref:guides:bloblang/about.adoc[Bloblang] mapping that translates the fields of the template into a valid Redpanda Connect configuration for the target component type.
