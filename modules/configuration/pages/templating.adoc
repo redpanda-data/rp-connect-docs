@@ -258,6 +258,33 @@ Whether this field is considered advanced.
 
 *Default*: `false`
 
+=== `fields[].options`
+
+List of options for `string_enum` fields or map of annotated options for `string_annotated_enum` fields.
+
+Required when `fields[].type` is `string_enum` or `string_annotated_enum`.
+
+- For `string_enum`, provide a non-empty array of string values.
+- For `string_annotated_enum`, provide a map of `value: "description"` pairs used to annotate behaviour in the docs UI.
+
+*Type*: `unknown`
+
+```yml
+# Examples
+
+fields:
+  - name: mode
+    type: string_enum
+    options: ["fast", "balanced", "safe"]
+
+  - name: delivery
+    type: string_annotated_enum
+    options:
+      at_least_once: "May duplicate messages but never loses them."
+      exactly_once: "Stronger guarantees; higher cost and constraints."
+```
+
+
 === `mapping`
 
 A xref:guides:bloblang/about.adoc[Bloblang] mapping that translates the fields of the template into a valid Redpanda Connect configuration for the target component type.
