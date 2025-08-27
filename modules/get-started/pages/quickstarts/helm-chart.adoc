@@ -25,13 +25,37 @@ Common use cases for Redpanda Connect include:
 
 To deploy Redpanda Connect on Kubernetes, use the official Helm chart.
 
+You can optionally provide an enterprise license to enable enterprise connectors. If you have a license, follow these steps before installing:
+
+. Optional: Create a Kubernetes Secret with your license key:
++
+[source,bash]
+----
+kubectl create secret generic redpanda-connect-license \
+  --from-literal=license=<license-key> \
+  --namespace <namespace>
+----
+
+. Optional: Reference the license Secret in your `values.yaml` or as a Helm value:
++
+[source,yaml]
+----
+envFrom:
+  - secretRef:
+      name: redpanda-connect-license
+----
++
+This configuration mounts the license key as an environment variable, allowing Redpanda Connect to run enterprise connectors.
+
+. Install the chart:
++
 [source,bash]
 ----
 helm repo add redpanda https://charts.redpanda.com <1>
 helm repo update <2>
 helm install redpanda-connect redpanda/connect --namespace <namespace> --create-namespace <3>
 ----
-
++
 <1> Adds the Redpanda Helm repository.
 <2> Updates your local Helm repository cache.
 <3> Installs Redpanda Connect in the given namespace. You can customize this deployment by configuring values in the Helm chart.
