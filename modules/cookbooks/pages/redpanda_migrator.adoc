@@ -103,7 +103,7 @@ services:
 
 [source,bash]
 ----
-docker-compose -f docker-compose.yml up --force-recreate -V
+docker compose -f docker-compose.yml up --force-recreate -V
 ----
 
 NOTE: This command uses an `init` container to create two topics, `foo` and `bar`, each with two partitions and an associated ACL.
@@ -618,6 +618,7 @@ endif::[]
 
 
 ifdef::env-cloud[]
+. On the **Connect** page, stop the `read_data_source` pipeline you created earlier.
 . Go to the **Connect** page on your cluster and click **Create pipeline**.
 . In **Pipeline name**, enter a name and add a short description.
 . For **Compute units**, leave the default value of **1**.
@@ -667,6 +668,6 @@ The `source` cluster consumer uses the same `foobar` consumer group. This consum
 
 Redpanda Migrator needs to perform offset remapping when migrating consumer group offsets to the `destination` cluster. While more sophisticated approaches are possible, Redpanda chose to use a simple timestamp-based approach. So, for each migrated offset, the `destination` cluster is queried to find the latest offset before the received offset timestamp. Redpanda Migrator then writes this offset as the `destination` consumer group offset for the corresponding topic and partition pair.
 
-Although the timestamp-based approach doesn't guarantee exactly-once delivery, it minimises the likelihood of message duplication and avoids the need for complex and error-prone offset remapping logic.
+Although the timestamp-based approach doesn't guarantee exactly-once delivery, it minimizes the likelihood of message duplication and avoids the need for complex and error-prone offset remapping logic.
 
 // end::single-source[]
