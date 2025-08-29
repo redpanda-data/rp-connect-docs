@@ -25,9 +25,9 @@ This cookbook shows how to use the bundled components.
 
 == Limitations
 
-The Redpanda Migrator does not support migrations to or from Redpanda Cloud serverless (multi-tenant) clusters.
-ifndef::env-cloud[]
+The Redpanda Migrator does not support migrations to or from Redpanda Cloud Serverless (multi-tenant) clusters.
 
+ifndef::env-cloud[]
 == Create the Docker containers
 
 First, you'll need two clusters. To keep it simple, you can run the https://hub.docker.com/r/bitnami/kafka[Bitnami Kafka^] and https://hub.docker.com/r/bitnami/schema-registry[Schema Registry^] Docker containers for the source cluster and a https://hub.docker.com/r/redpandadata/redpanda[Redpanda Docker container^] for the destination cluster via https://docs.docker.com/compose[Docker Compose^].
@@ -101,9 +101,9 @@ services:
       - 9645:9644
 ----
 
-[source,console]
+[source,bash]
 ----
-docker-compose -f docker-compose.yml up --force-recreate -V
+docker compose -f docker-compose.yml up --force-recreate -V
 ----
 
 NOTE: This command uses an `init` container to create two topics, `foo` and `bar`, each with two partitions and an associated ACL.
@@ -111,12 +111,11 @@ NOTE: This command uses an `init` container to create two topics, `foo` and `bar
 endif::[]
 
 ifdef::env-cloud[]
-
 == Create a Kafka cluster and a Redpanda Cloud cluster
 
 First, you'll need to provision two clusters, a Kafka one called `source` and a Redpanda Cloud one called `destination`. We'll use the following sample connection details throughout the rest of this cookbook:
 
-`source`
+.Source
 ----
 broker:          source.cloud.kafka.com:9092
 schema registry: https://schema-registry-source.cloud.kafka.com:30081
@@ -124,7 +123,7 @@ username:        kafka
 password:        testpass
 ----
 
-`destination`
+.Destination
 ----
 broker:          destination.cloud.redpanda.com:9092
 schema registry: https://schema-registry-destination.cloud.redpanda.com:30081
@@ -134,7 +133,7 @@ password:        testpass
 
 Then you'll have to create two topics in the `source` Kafka cluster, `foo` and `bar`, and an ACL for each topic:
 
-[source,console]
+[source,bash]
 ----
 cat > ./config.properties <<EOF
 security.protocol=SASL_SSL
@@ -163,7 +162,7 @@ When the demo clusters are up and running, use https://curl.se[curl^] to create 
 
 ifndef::env-cloud[]
 
-[source,console]
+[source,bash]
 ----
 curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" --data '{"schema": "{\"name\": \"Foo\", \"type\": \"record\", \"fields\": [{\"name\": \"data\", \"type\": \"int\"}]}"}' http://localhost:8081/subjects/foo/versions
 
@@ -174,7 +173,7 @@ endif::[]
 
 ifdef::env-cloud[]
 
-[source,console]
+[source,bash]
 ----
 curl -X POST -u "kafka:testpass" -H "Content-Type: application/vnd.schemaregistry.v1+json" --data '{"schema": "{\"name\": \"Foo\", \"type\": \"record\", \"fields\": [{\"name\": \"data\", \"type\": \"int\"}]}"}' https://schema-registry-source.cloud.kafka.com:30081/subjects/foo/versions
 
@@ -187,10 +186,9 @@ endif::[]
 
 Let's simulate an application with a producer and consumer actively publishing and reading messages on the `source` cluster. You can use Redpanda Connect to generate some Avro-encoded messages and push them to the two topics from the `source` cluster.
 
-.`generate_data.yaml`
 
 ifndef::env-cloud[]
-
+.`generate_data.yaml`
 [source,yaml]
 ----
 http:
@@ -226,10 +224,22 @@ output:
     partition: ${! random_int(min:0, max:1) }
 ----
 
+Now, run this command to start the pipeline, and leave it running:
+
+[source,bash]
+----
+rpk connect run generate_data.yaml
+----
+
 endif::[]
 
 ifdef::env-cloud[]
-
+. Go to the **Connect** page on your cluster and click **Create pipeline**.
+. In **Pipeline name**, enter a name and add a short description.
+. For **Compute units**, leave the default value of **1**. Compute units are used to allocate server resources to a pipeline. One compute unit is equivalent to 0.1 CPU and 400 MB of memory.
+. For **Configuration**, paste the following configuration.
++
+.`generate_data.yaml`
 [source,yaml]
 ----
 http:
@@ -274,22 +284,16 @@ output:
         username: kafka
         password: testpass
 ----
++
+NOTE: The Brave browser does not fully support code snippets.
 
+. Click **Create**. Your pipeline details are displayed and the pipeline state changes from **Starting** to **Running**, which may take a few minutes. If you don't see this state change, refresh your page.
 endif::[]
-
-Now, run this command to start the pipeline, and leave it running:
-
-[source,console]
-----
-rpk connect run generate_data.yaml
-----
 
 Next, add a Redpanda Connect consumer, which reads messages from the `source` cluster topics, and leave it running. This consumer uses the `foobar` consumer group, which will be reused in a later step when consuming from the `destination` cluster.
 
-.`read_data_source.yaml`
-
 ifndef::env-cloud[]
-
+.`read_data_source.yaml`
 [source,yaml]
 ----
 http:
@@ -316,10 +320,22 @@ output:
         root = this.merge({"count": counter(), "topic": @kafka_topic, "partition": @kafka_partition})
 ----
 
+Launch the `source` consumer pipeline, and leave it running:
+
+[source,bash]
+----
+rpk connect run read_data_source.yaml
+----
+
 endif::[]
 
 ifdef::env-cloud[]
-
+. Go to the **Connect** page on your cluster and click **Create pipeline**.
+. In **Pipeline name**, enter a name and add a short description.
+. For **Compute units**, leave the default value of **1**.
+. For **Configuration**, paste the following configuration.
++
+.`read_data_source.yaml`
 [source,yaml]
 ----
 http:
@@ -355,15 +371,11 @@ output:
     - mapping: |
         root = this.merge({"count": counter(), "topic": @kafka_topic, "partition": @kafka_partition})
 ----
++
+NOTE: The Brave browser does not fully support code snippets.
 
+. Click **Create**. Your pipeline details are displayed and the pipeline state changes from **Starting** to **Running**, which may take a few minutes. If you don't see this state change, refresh your page.
 endif::[]
-
-Launch the `source` consumer pipeline, and leave it running:
-
-[source,console]
-----
-rpk connect run read_data_source.yaml
-----
 
 At this point, the `source` cluster should have some data in both `foo` and `bar` topics, and the consumer should print the messages it reads from these topics to `stdout`.
 
@@ -387,10 +399,8 @@ Now, use the following Redpanda Migrator Bundle configuration. See the xref:comp
 
 NOTE: The `max_in_flight: 1` setting is required to preserve message ordering at the partition level. See the xref:components:outputs/redpanda_migrator.adoc#max_in_flight[`redpanda_migrator` output documentation] for more details.
 
-.`redpanda_migrator_bundle.yaml`
-
 ifndef::env-cloud[]
-
+.`redpanda_migrator_bundle.yaml`
 [source,yaml]
 ----
 input:
@@ -425,10 +435,22 @@ metrics:
     meta label = if this == "input_redpanda_migrator_lag" { "source" }
 ----
 
+Launch the Redpanda Migrator Bundle pipeline, and leave it running:
+
+[source,bash]
+----
+rpk connect run redpanda_migrator_bundle.yaml
+----
+
 endif::[]
 
 ifdef::env-cloud[]
-
+. Go to the **Connect** page on your cluster and click **Create pipeline**.
+. In **Pipeline name**, enter a name and add a short description.
+. For **Compute units**, leave the default value of **1**.
+. For **Configuration**, paste the following configuration.
++
+.`redpanda_migrator_bundle.yaml`
 [source,yaml]
 ----
 input:
@@ -476,15 +498,11 @@ metrics:
   mapping: |
     meta label = if this == "input_redpanda_migrator_lag" { "source" }
 ----
++
+NOTE: The Brave browser does not fully support code snippets.
 
+. Click **Create**. Your pipeline details are displayed and the pipeline state changes from **Starting** to **Running**, which may take a few minutes. If you don't see this state change, refresh your page.
 endif::[]
-
-Launch the Redpanda Migrator Bundle pipeline, and leave it running:
-
-[source,console]
-----
-rpk connect run redpanda_migrator_bundle.yaml
-----
 
 == Check the status of migrated topics
 
@@ -494,7 +512,7 @@ NOTE: For now, users need to be migrated manually. However, this step is not req
 
 ifndef::env-cloud[]
 
-[source,console]
+[source,bash]
 ----
 rpk -X brokers=localhost:9093 topic list
 NAME      PARTITIONS  REPLICAS
@@ -512,7 +530,7 @@ endif::[]
 
 ifdef::env-cloud[]
 
-[source,console]
+[source,bash]
 ----
 rpk -X brokers=destination.cloud.redpanda.com:9092 -X tls.enabled=true -X sasl.mechanism=SCRAM-SHA-256 -X user=redpanda -X pass=testpass topic list
 NAME      PARTITIONS  REPLICAS
@@ -532,7 +550,8 @@ endif::[]
 
 Redpanda Connect provides a comprehensive suite of metrics in various formats, such as Prometheus, which you can use to monitor its performance in your observability stack. Besides the xref:components:metrics/about.adoc#metric-names[standard Redpanda Connect metrics], the `redpanda_migrator` input also emits an `input_redpanda_migrator_lag` metric for monitoring the migration progress of each topic and partition.
 
-[source,console]
+ifndef::env-cloud[]
+[source,bash]
 ----
 curl http://localhost:4195/metrics
 ...
@@ -546,15 +565,22 @@ input_redpanda_migrator_lag{label="source",partition="1",path="root.input.sequen
 input_redpanda_migrator_lag{label="source",partition="1",path="root.input.sequence.broker.inputs.0",topic="foo"} 0
 ...
 ----
+endif::[]
+
+ifdef::env-cloud[]
+To monitor the migration progress, use the Redpanda Cloud OpenMetrics endpoint, which exposes all Redpanda and connector metrics for your cluster. You can integrate this endpoint with Prometheus, Datadog, or other observability platforms.
+
+For step-by-step instructions on configuring monitoring and connecting your observability tool, see xref:redpanda-cloud:manage:monitor-cloud.adoc[Monitor Redpanda Cloud].
+
+After ingesting the metrics, search for the `input_redpanda_migrator_lag` metric in your monitoring tool and filter by `topic` and `partition` as needed to track migration lag for each topic and partition.
+endif::[]
 
 == Read from the migrated topics
 
 Stop the `read_data_source.yaml` consumer you started earlier and, afterwards, start a similar consumer for the `destination` cluster. Before starting the consumer up on the `destination` cluster, make sure you give the migrator bundle some time to replicate the translated offset.
 
-.`read_data_destination.yaml`
-
 ifndef::env-cloud[]
-
+.`read_data_destination.yaml`
 [source,yaml]
 ----
 http:
@@ -581,10 +607,24 @@ output:
         root = this.merge({"count": counter(), "topic": @kafka_topic, "partition": @kafka_partition})
 ----
 
+Now launch the `destination` consumer pipeline, and leave it running:
+
+[source,bash]
+----
+rpk connect run read_data_destination.yaml
+----
+
 endif::[]
 
-ifdef::env-cloud[]
 
+ifdef::env-cloud[]
+. On the **Connect** page, stop the `read_data_source` pipeline you created earlier.
+. Go to the **Connect** page on your cluster and click **Create pipeline**.
+. In **Pipeline name**, enter a name and add a short description.
+. For **Compute units**, leave the default value of **1**.
+. For **Configuration**, paste the following configuration.
++
+.`read_data_destination.yaml`
 [source,yaml]
 ----
 http:
@@ -618,22 +658,16 @@ output:
     - mapping: |
         root = this.merge({"count": counter(), "topic": @kafka_topic, "partition": @kafka_partition})
 ----
++
+NOTE: The Brave browser does not fully support code snippets.
 
+. Click **Create**. Your pipeline details are displayed and the pipeline state changes from **Starting** to **Running**, which may take a few minutes. If you don't see this state change, refresh your page.
 endif::[]
 
-Now launch the `destination` consumer pipeline, and leave it running:
+The `source` cluster consumer uses the same `foobar` consumer group. This consumer resumes reading messages from where the `source` consumer left off.
 
-[source,console]
-----
-rpk connect run read_data_destination.yaml
-----
+Redpanda Migrator needs to perform offset remapping when migrating consumer group offsets to the `destination` cluster. While more sophisticated approaches are possible, Redpanda chose to use a simple timestamp-based approach. So, for each migrated offset, the `destination` cluster is queried to find the latest offset before the received offset timestamp. Redpanda Migrator then writes this offset as the `destination` consumer group offset for the corresponding topic and partition pair.
 
-It's worth clarifying that the `source` cluster consumer uses the same `foobar` consumer group. As you can see, this consumer resumes reading messages from where the `source` consumer left off.
-
-Due to the mechanics of the Kafka protocol, Redpanda Migrator needs to perform offset remapping when migrating consumer group offsets to the `destination` cluster. While more sophisticated approaches are possible, Redpanda chose to use a simple timestamp-based approach. So, for each migrated offset, the `destination` cluster is queried to find the latest offset before the received offset timestamp. Redpanda Migrator then writes this offset as the `destination` consumer group offset for the corresponding topic and partition pair.
-
-Although the timestamp-based approach doesn't guarantee exactly-once delivery, it minimises the likelihood of message duplication and avoids the need for complex and error-prone offset remapping logic.
-
-The content from this cookbook was first introduced on the https://www.redpanda.com/blog/kafka-migrator-redpanda-connect[Redpanda Blog^].
+Although the timestamp-based approach doesn't guarantee exactly-once delivery, it minimizes the likelihood of message duplication and avoids the need for complex and error-prone offset remapping logic.
 
 // end::single-source[]

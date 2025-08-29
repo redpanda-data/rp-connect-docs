@@ -43,6 +43,9 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
+      - name: Wait for registry update
+        run: sleep 500
+
       - name: Install dependencies
         run: npm install
 
@@ -50,9 +53,6 @@ jobs:
         run: |
           npx doc-tools install-test-dependencies
           rpk connect install
-
-      - name: Wait for registry update
-        run: sleep 300
 
       - name: Generate RPCN Connector docs
         id: generate
