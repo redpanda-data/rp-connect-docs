@@ -281,7 +281,7 @@ fields:
     type: string_annotated_enum
     options:
       at_least_once: "May duplicate messages but never loses them."
-      exactly_once: "Stronger guarantees; higher cost and constraints."
+      exactly_once: "Stronger guarantees but with a higher cost and constraints."
 ```
 
 
