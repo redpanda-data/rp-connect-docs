@@ -262,7 +262,7 @@ Whether this field is considered advanced.
 
 A list of options for `string_enum` fields, or a map of annotated options for `string_annotated_enum` fields.
 
-Required when `fields[].type` is `string_enum` or `string_annotated_enum`.
+Required when `fields[].type` is set to `string_enum` or `string_annotated_enum`.
 
 - For `string_enum`, provide a non-empty array of string values.
 - For `string_annotated_enum`, provide a map of `value: "description"` pairs used to annotate behaviour in the docs UI.
