@@ -2,6 +2,46 @@
 
 == Fields
 
+=== `bsr[]`
+
+Buf Schema Registry configuration. Either this field or `import_paths` must be populated. Note that this field is an array, and multiple BSR configurations can be provided.
+
+*Type*: `object`
+
+*Default*: `[]`
+
+=== `bsr[].api_key`
+
+Buf Schema Registry server API key, can be left blank for a public registry.
+
+include::redpanda-connect:components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `bsr[].module`
+
+Module to fetch from a Buf Schema Registry e.g. 'buf.build/exampleco/mymodule'.
+
+*Type*: `string`
+
+=== `bsr[].url`
+
+Buf Schema Registry URL, leave blank to extract from module.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `bsr[].version`
+
+Version to retrieve from the Buf Schema Registry, leave blank for latest.
+
+*Type*: `string`
+
+*Default*: `""`
+
 === `discard_unknown`
 
 When set to `true`, the `from_json` operator discards fields that are unknown to the schema.
