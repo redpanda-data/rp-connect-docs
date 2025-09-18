@@ -16,15 +16,35 @@ Whether messages that are rejected (nacked) at the output level should be automa
 
 *Default*: `true`
 
+=== `connection_timeout`
+
+The connection timeout to use when connecting to the target server.
+
+*Type*: `string`
+
+*Default*: `30s`
+
 === `credentials`
 
 The credentials required to log in to the SFTP server. This can include a username and password, or a private key for secure access.
 
 *Type*: `object`
 
+=== `credentials.host_public_key`
+
+The raw contents of the SFTP server's public key, used for host key verification.
+
+*Type*: `string`
+
+=== `credentials.host_public_key_file`
+
+The path to the SFTP server's public key file, used for host key verification.
+
+*Type*: `string`
+
 === `credentials.password`
 
-The password for the username used to authenticate with the SFTP server.
+The password to use for authentication. Used together with `username` for basic authentication or with encrypted private keys for secure access.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -40,15 +60,11 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
-*Default*: `""`
-
 === `credentials.private_key_file`
 
 The path to a private key file used to authenticate with the SFTP server. You can also provide a private key using the <<credentials-private_key,`private_key`>> field.
 
 *Type*: `string`
-
-*Default*: `""`
 
 === `credentials.private_key_pass`
 
@@ -75,6 +91,14 @@ Whether to delete files from the server once they are processed.
 *Type*: `bool`
 
 *Default*: `false`
+
+=== `max_sftp_sessions`
+
+The maximum number of SFTP sessions.
+
+*Type*: `int`
+
+*Default*: `10`
 
 === `paths[]`
 

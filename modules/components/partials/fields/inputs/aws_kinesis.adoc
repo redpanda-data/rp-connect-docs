@@ -250,7 +250,7 @@ The token for the AWS credentials in use. This is a required value for short-ter
 
 === `dynamodb.endpoint`
 
-Specify a custom endpoint for the AWS API.
+A custom endpoint URL for AWS API requests. Use this to connect to AWS-compatible services or local testing environments instead of the standard AWS endpoints.
 
 *Type*: `string`
 
@@ -286,7 +286,7 @@ Set the provisioned write capacity when creating the table with a `billing_mode`
 
 === `endpoint`
 
-Specify a custom endpoint for the AWS API.
+A custom endpoint URL for AWS API requests. Use this to connect to AWS-compatible services or local testing environments instead of the standard AWS endpoints.
 
 *Type*: `string`
 

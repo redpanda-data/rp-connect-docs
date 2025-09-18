@@ -10,7 +10,7 @@ Optional configuration of NATS authentication parameters.
 
 === `auth.nkey`
 
-Your NKey seed or private key.
+Your NKey seed or private key for NATS authentication. NKeys provide secure, cryptographic authentication without passwords.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -52,7 +52,7 @@ user_credentials_file: ./user.creds
 
 === `auth.user_jwt`
 
-An optional plain text user JWT to use along with the corresponding user NKey seed.
+An optional plaintext user JWT to use along with the corresponding user NKey seed.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -60,7 +60,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 === `auth.user_nkey_seed`
 
-An optional plain text user NKey seed to use along with the corresponding user JWT.
+An optional plaintext user NKey seed to use along with the corresponding user JWT.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -298,6 +298,18 @@ root_cas_file: ./root_cas.pem
 === `tls.skip_cert_verify`
 
 Whether to skip server side certificate verification.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `tls_handshake_first`
+
+Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This is required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.
+
+ifndef::env-cloud[]
+Requires version 4.60.0 or later.
+endif::[]
 
 *Type*: `bool`
 

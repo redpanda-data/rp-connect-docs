@@ -30,7 +30,7 @@ The period of time between each commit of the current partition offsets. Offsets
 
 === `conn_idle_timeout`
 
-Define how long connections can remain idle before they are closed.
+The maximum duration that connections can remain idle before they are automatically closed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -80,13 +80,11 @@ The minimum number of bytes that a broker tries to send during a fetch. This fie
 
 === `heartbeat_interval`
 
-When you specify a <<consumer_group,`consumer_group`>>, `heartbeat_interval` sets how frequently a consumer group member should send heartbeats to Apache Kafka. Apache Kafka uses heartbeats to make sure that a group member's session is active. 
+When you specify a `consumer_group`, `heartbeat_interval` sets how frequently a consumer group member should send heartbeats to Apache Kafka. Apache Kafka uses heartbeats to make sure that a group member's session is active. 
 
 You must set `heartbeat_interval` to less than one-third of `session_timeout`.
 
-This field is equivalent to the Java `heartbeat.interval.ms` setting.
-
-client
+This field is equivalent to the Java `heartbeat.interval.ms` setting and accepts Go duration format strings such as `10s` or `2m`.
 
 *Type*: `string`
 
@@ -112,7 +110,7 @@ The maximum size (in bytes) for each batch yielded by this input. When routed to
 
 === `metadata_max_age`
 
-The maximum period of time after which metadata is refreshed. Reducing this value increases the frequency with which newly-created topics are identified.
+The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -138,7 +136,7 @@ A rack identifier for this client.
 
 === `rebalance_timeout`
 
-When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required.
+When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -331,9 +329,7 @@ seed_brokers:
 
 === `session_timeout`
 
-When you specify a <<consumer_group,`consumer_group`>>, `session_timeout` sets the maximum interval between heartbeats sent by a consumer group member to the broker. If a broker doesn't receive a heartbeat from a group member before the timeout expires, it removes the member from the consumer group and initiates a rebalance.
-
-broker
+When you specify a `consumer_group`, `session_timeout` sets the maximum interval between heartbeats sent by a consumer group member to the broker. If a broker doesn't receive a heartbeat from a group member before the timeout expires, it removes the member from the consumer group and initiates a rebalance. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -362,15 +358,30 @@ Specify the offset from which this input starts or restarts consuming messages. 
 
 |===
 
+=== `timely_nacks_maximum_wait`
+
+EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs. Accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
+
+*Type*: `string`
+
 === `tls`
 
-Override system defaults with custom TLS settings.
+Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates. Key configuration options include `enabled` to enable TLS, `client_certs` for mTLS authentication, `root_cas`/`root_cas_file` for custom certificate authorities, and `skip_cert_verify` for development environments.
 
 *Type*: `object`
 
 === `tls.client_certs[]`
 
-A list of client certificates to use. For each certificate, specify values for either the `cert` and `key` fields, or `cert_file` and `key_file` fields.
+A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS, authenticating the client to the server with these certificates.
+
+You must set `tls.enabled: true` for the client certificates to take effect.
+
+**Certificate pairing rules**: For each certificate item, provide either:
+
+- Inline PEM data using both `cert` *and* `key` or
+- File paths using both `cert_file` *and* `key_file`.
+
+Mixing inline and file-based values within the same item is not supported.
 
 *Type*: `object`
 
@@ -464,7 +475,7 @@ Whether custom TLS settings are enabled.
 
 === `tls.root_cas`
 
-Specify a certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -483,7 +494,7 @@ root_cas: |-
 
 === `tls.root_cas_file`
 
-Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for file-based certificate loading or `root_cas` for inline certificate data.
 
 *Type*: `string`
 
@@ -497,7 +508,7 @@ root_cas_file: ./root_cas.pem
 
 === `tls.skip_cert_verify`
 
-Whether to skip server-side certificate verification.
+Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production. Consider using `root_cas` or `root_cas_file` to specify trusted certificates instead of disabling verification entirely.
 
 *Type*: `bool`
 
@@ -505,7 +516,7 @@ Whether to skip server-side certificate verification.
 
 === `topic_lag_refresh_period`
 
-The interval between refresh cycles. During each cycle, this input queries the Redpanda Connect server to calculate the topic lag - the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
+The interval between refresh cycles. During each cycle, this input queries the Redpanda Connect server to calculate the topic lag minus the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -546,7 +557,7 @@ topics:
 
 === `transaction_isolation_level`
 
-Defines how transactional messages are handled.
+The isolation level for handling transactional messages. This setting determines how transactions are processed and affects data consistency guarantees.
 
 *Type*: `string`
 

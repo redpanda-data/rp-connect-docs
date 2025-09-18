@@ -21,9 +21,13 @@ Common use cases for Redpanda Connect include:
 * A running Kubernetes cluster.
 * The https://kubernetes.io/docs/tasks/tools/[`kubectl` CLI] and the https://helm.sh/docs/intro/install/[`helm` CLI] installed.
 
+You can optionally provide an enterprise license to enable enterprise connectors. If you have a license, see xref:get-started:licensing.adoc[Apply a license key to Redpanda Connect] before installing.
+
 == Install with Helm
 
 To deploy Redpanda Connect on Kubernetes, use the official Helm chart.
+
+To install the chart:
 
 [source,bash]
 ----

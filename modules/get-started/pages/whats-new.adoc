@@ -6,6 +6,97 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+
+== Version 4.62.0
+
+=== Component updates
+
+This release adds support for the following new fields and improvements:
+
+* Kafka, Redpanda, and Franz input components:
+** xref:components:inputs/kafka.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for improved message delivery guarantees and SLA enforcement.
+** xref:components:inputs/kafka_franz.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for improved message delivery guarantees and SLA enforcement.
+** xref:components:inputs/redpanda.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for improved message delivery guarantees and SLA enforcement.
+* Redpanda Migrator and Redpanda Common input components:
+** xref:components:inputs/redpanda_migrator.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for consistent negative acknowledgement handling.
+** xref:components:inputs/redpanda_common.adoc#timely_nacks_maximum_wait[`timely_nacks_maximum_wait`] field for consistent negative acknowledgement handling.
+* Schema Registry output component:
+** xref:components:outputs/schema_registry.adoc#subject_compatibility_level[`subject_compatibility_level`] field for explicit subject compatibility configuration.
+* Parquet Encode processor:
+** xref:components:processors/parquet_encode.adoc#schema_metadata[`schema_metadata`] field for dynamic schema assignment during encoding.
+* Socket output component:
+** xref:components:outputs/socket.adoc#tls[`Full TLS configuration support`], including all standard and mTLS fields, now deduplicated and centrally documented.
+
+* Bloblang:
+** xref:guides:bloblang/methods.adoc#infer_schema[`infer_schema`] method attempts to infer the schema of a given value. The resulting schema can then be used as an input to schema conversion and enforcement methods.
+
+== Version 4.61.0
+
+=== Component updates
+
+This release adds support for the following new fields:
+
+* Cassandra input and output components
+** Input: xref:components:inputs/cassandra.adoc#host_selection_policy[`host_selection_policy`]
+** Output: xref:components:outputs/cassandra.adoc#host_selection_policy[`host_selection_policy`]
+
+* Schema Registry output component
+** xref:components:outputs/schema_registry.adoc#normalize[`normalize`]
+** xref:components:outputs/schema_registry.adoc#remove_metadata[`remove_metadata`]
+** xref:components:outputs/schema_registry.adoc#remove_rule_set[`remove_rule_set`]
+
+== Version 4.60.0
+
+=== Component updates
+
+The 4.60.0 release adds support for the following fields:
+
+* NATS components
+** `tls_handshake_first` - Enhanced TLS configuration option for NATS connections that require the initial TLS handshake to be performed before sending the NATS INFO protocol message. This is required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation.
+
+This field is available in the following NATS components:
+
+* xref:components:inputs/nats.adoc#tls_handshake_first[`nats` input]
+* xref:components:inputs/nats_jetstream.adoc#tls_handshake_first[`nats_jetstream` input]
+* xref:components:inputs/nats_kv.adoc#tls_handshake_first[`nats_kv` input]
+* xref:components:inputs/nats_stream.adoc#tls_handshake_first[`nats_stream` input]
+* xref:components:outputs/nats.adoc#tls_handshake_first[`nats` output]
+* xref:components:outputs/nats_jetstream.adoc#tls_handshake_first[`nats_jetstream` output]
+* xref:components:outputs/nats_kv.adoc#tls_handshake_first[`nats_kv` output]
+* xref:components:outputs/nats_stream.adoc#tls_handshake_first[`nats_stream` output]
+* xref:components:processors/nats_kv.adoc#tls_handshake_first[`nats_kv` processor]
+* xref:components:processors/nats_request_reply.adoc#tls_handshake_first[`nats_request_reply` processor]
+* xref:components:caches/nats_kv.adoc#tls_handshake_first[`nats_kv` cache]
+
+== Version 4.59.0
+
+=== Redpanda Connect in Redpanda Cloud: GA
+
+Redpanda Connect is now generally available (GA) in all Redpanda Cloud clusters: BYOC (including BYOVPC/BYOVNet), Dedicated, and Serverless.
+
+Redpanda Connect has been GA in Redpanda Self-Managed clusters since version 4.29.0.
+
+=== Component updates
+
+This release adds support for the following fields:
+
+* SFTP input components
+** xref:components:inputs/sftp.adoc#connection_timeout[`connection_timeout`]
+** xref:components:inputs/sftp.adoc#credentials-host_public_key[`credentials.host_public_key`]
+** xref:components:inputs/sftp.adoc#credentials-host_public_key_file[`credentials.host_public_key_file`]
+** xref:components:inputs/sftp.adoc#max_sftp_sessions[`max_sftp_sessions`]
+
+* SFTP output components
+** xref:components:outputs/sftp.adoc#connection_timeout[`connection_timeout`]
+** xref:components:outputs/sftp.adoc#credentials-host_public_key[`credentials.host_public_key`]
+** xref:components:outputs/sftp.adoc#credentials-host_public_key_file[`credentials.host_public_key_file`]
+
+* GCP Pub/Sub output components
+** xref:components:outputs/gcp_pubsub.adoc#validate_topic[`validate_topic`]
+
+* Redpanda cache components
+** xref:components:caches/redpanda.adoc#allow_auto_topic_creation[`allow_auto_topic_creation`] 
+
 == Version 4.58.2
 
 This release introduces an experimental Slack output and expands support for automatic topic creation across Redpanda-related components.
@@ -29,7 +120,7 @@ This field allows components to create topics automatically when publishing data
 
 This release adds support for the following fields:
 
-* `protobuf.use_proto_names`, `protobuf.use_enum_numbers`, `protobuf.emit_unpopulated`, and `protobuf.emit_default_values` in the xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode`] processor.
+* `protobuf.use_proto_names`, `protobuf.use_enum_numbers`, `protobuf.emit_unpopulated`, and `protobuf.emit_default_values` in the xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode` processor].
 
 == Version 4.56.0
 
@@ -652,7 +743,7 @@ Redpanda Connect now includes a beta version of the xref:components:inputs/splun
 
 == Version 4.29.0
 
-Redpanda Connect now separates packages into an enterprise bundle and a free bundle, which contains community and selected certified connectors. To learn more about licensing and support levels, see xref:components:connector-support-levels.adoc[].
+Redpanda Connect now separates packages into an enterprise bundle and a free bundle, which contains community and selected certified connectors. To learn more about licensing and support levels, see xref:components:about.adoc#support-levels[].
 
 === Component updates
 

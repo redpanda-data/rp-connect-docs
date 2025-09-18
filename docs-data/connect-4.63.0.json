@@ -1,6 +1,6 @@
 {
-  "version": "4.57.1",
-  "date": "2025-06-10T11:05:32Z",
+  "version": "4.63.0",
+  "date": "2025-08-27T16:45:27Z",
   "config": [
     {
       "name": "http",
@@ -1127,6 +1127,14 @@
             "zstd"
           ],
           "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+        },
+        {
+          "name": "allow_auto_topic_creation",
+          "type": "bool",
+          "kind": "scalar",
+          "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+          "is_advanced": true,
+          "default": true
         },
         {
           "name": "timeout",
@@ -2433,6 +2441,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -3143,6 +3159,14 @@
             "type": "string",
             "kind": "scalar",
             "description": "The topic to store data in."
+          },
+          {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
           }
         ]
       }
@@ -5906,6 +5930,32 @@
             "kind": "scalar",
             "description": "The client connection timeout.",
             "default": "600ms"
+          },
+          {
+            "name": "host_selection_policy",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional host selection policy configurations. Highly recommended in deployments with multiple DCs. Host selection is always token aware if the token can be calculated from query. By default the underlying policy is round robin over all nodes. Users can specify a local DC and rack to use for the DC Aware & Rack Aware policies. ",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "local_dc",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local DC to use, enables DC aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "local_rack",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local rack to use, requires local_dc to be set, enables rack aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              }
+            ],
+            "linter": "root = if this.local_rack != \"\" && (!this.exists(\"local_dc\") || this.local_dc == \"\") { \"local_dc must be set if local_rack is set\" }"
           },
           {
             "name": "query",
@@ -8738,6 +8788,14 @@
             "default": true
           },
           {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
+          },
+          {
             "name": "commit_period",
             "type": "string",
             "kind": "scalar",
@@ -9593,6 +9651,14 @@
             "kind": "scalar",
             "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
             "default": true
+          },
+          {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
           }
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
@@ -10274,7 +10340,8 @@
                 "table1",
                 "table2"
               ]
-            ]
+            ],
+            "linter": "root = if this.length() == 0 { [ \"field 'tables' must contain at least one table\" ] }"
           },
           {
             "name": "checkpoint_cache",
@@ -10699,6 +10766,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -11035,6 +11110,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -11339,6 +11422,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -11638,6 +11729,14 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
           },
           {
             "name": "auth",
@@ -14741,6 +14840,14 @@
             "kind": "scalar",
             "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
             "default": true
+          },
+          {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
           }
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
@@ -14964,6 +15071,14 @@
             "kind": "scalar",
             "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
             "default": true
+          },
+          {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
           }
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
@@ -15551,6 +15666,14 @@
             "default": true
           },
           {
+            "name": "timely_nacks_maximum_wait",
+            "type": "string",
+            "kind": "scalar",
+            "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs.",
+            "is_advanced": true,
+            "is_optional": true
+          },
+          {
             "name": "output_resource",
             "type": "string",
             "kind": "scalar",
@@ -16127,7 +16250,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Reads schemas from SchemaRegistry.",
-      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- schema_registry_subject\n- schema_registry_version\n```\n\nYou can access these metadata fields using\nxref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n",
+      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- schema_registry_subject\n- schema_registry_subject_compatibility_level\n- schema_registry_version\n```\n\nYou can access these metadata fields using\nxref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n",
       "categories": [
         "Integration"
       ],
@@ -16557,7 +16680,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Consumes files from an SFTP server.",
-      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- sftp_path\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
+      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- sftp_path\n- sftp_mod_time\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
       "categories": [
         "Network"
       ],
@@ -16573,6 +16696,14 @@
             "description": "The address of the server to connect to."
           },
           {
+            "name": "connection_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The connection timeout to use when connecting to the target server.",
+            "is_advanced": true,
+            "default": "30s"
+          },
+          {
             "name": "credentials",
             "type": "object",
             "kind": "scalar",
@@ -16582,45 +16713,67 @@
                 "name": "username",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The username to connect to the SFTP server.",
+                "description": "The username to authenticate with the SFTP server.",
                 "default": ""
               },
               {
                 "name": "password",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The password for the username to connect to the SFTP server.",
+                "description": "The password for the specified username to connect to the SFTP server.",
                 "is_secret": true,
                 "default": "",
                 "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
               },
               {
+                "name": "host_public_key_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The path to the SFTP server's public key file, used for host key verification.",
+                "is_optional": true
+              },
+              {
+                "name": "host_public_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The raw contents of the SFTP server's public key, used for host key verification.",
+                "is_optional": true
+              },
+              {
                 "name": "private_key_file",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The private key for the username to connect to the SFTP server.",
-                "default": ""
+                "description": "The path to the private key file, used for authenticating the username.",
+                "is_optional": true
               },
               {
                 "name": "private_key",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The private key file for the username to connect to the SFTP server.",
+                "description": "The raw contents of the private key, used for authenticating the username.",
+                "is_optional": true,
                 "is_secret": true,
-                "default": "",
-                "linter": "root = match { this.exists(\"private_key\") && this.exists(\"private_key_file\") => [ \"both private_key and private_key_file can't be set simultaneously\" ], }",
                 "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
               },
               {
                 "name": "private_key_pass",
                 "type": "string",
                 "kind": "scalar",
-                "description": "Optional passphrase for private key.",
+                "description": "Optional passphrase for decrypting the private key, if it's encrypted.",
                 "is_secret": true,
                 "default": "",
                 "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
               }
-            ]
+            ],
+            "linter": "\nroot = match {\n  this.exists(\"host_public_key\") && this.exists(\"host_public_key_file\") => \"both host_public_key and host_public_key_file can't be set simultaneously\"\n  this.exists(\"private_key\") && this.exists(\"private_key_file\") => \"both private_key and private_key_file can't be set simultaneously\"\n}"
+          },
+          {
+            "name": "max_sftp_sessions",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of SFTP sessions.",
+            "is_advanced": true,
+            "default": 10
           },
           {
             "name": "paths",
@@ -16921,6 +17074,136 @@
             "bloblang": true,
             "examples": [
               "root = \"username,password\""
+            ]
+          },
+          {
+            "name": "tls",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Custom TLS settings can be used to override system defaults.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether custom TLS settings are enabled.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "skip_cert_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to skip server side certificate verification.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "enable_renegotiation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "is_advanced": true,
+                "default": false,
+                "version": "3.45.0"
+              },
+              {
+                "name": "root_cas",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "examples": [
+                  "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                ],
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "root_cas_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "default": "",
+                "examples": [
+                  "./root_cas.pem"
+                ]
+              },
+              {
+                "name": "client_certs",
+                "type": "object",
+                "kind": "array",
+                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "is_advanced": true,
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "cert": "foo",
+                      "key": "bar"
+                    }
+                  ],
+                  [
+                    {
+                      "cert_file": "./example.pem",
+                      "key_file": "./example.key"
+                    }
+                  ]
+                ],
+                "children": [
+                  {
+                    "name": "cert",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate key to use.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "cert_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate key to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "foo",
+                      "${KEY_PASSWORD}"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -22445,6 +22728,32 @@
             "default": "600ms"
           },
           {
+            "name": "host_selection_policy",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional host selection policy configurations. Highly recommended in deployments with multiple DCs. Host selection is always token aware if the token can be calculated from query. By default the underlying policy is round robin over all nodes. Users can specify a local DC and rack to use for the DC Aware & Rack Aware policies. ",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "local_dc",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local DC to use, enables DC aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "local_rack",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The local rack to use, requires local_dc to be set, enables rack aware policy.",
+                "is_advanced": true,
+                "is_optional": true
+              }
+            ],
+            "linter": "root = if this.local_rack != \"\" && (!this.exists(\"local_dc\") || this.local_dc == \"\") { \"local_dc must be set if local_rack is set\" }"
+          },
+          {
             "name": "query",
             "type": "string",
             "kind": "scalar",
@@ -23350,6 +23659,16 @@
           "title": "Indexing documents from S3",
           "summary": "Here we read messages from a AWS S3 bucket and write them to an Elasticsearch index using the S3 key as the ID for the Elasticsearch document.",
           "config": "\ninput:\n  aws_s3:\n    bucket: \"my-cool-bucket\"\n    prefix: \"bug-facts/\"\n    scanner:\n      to_the_end: {}\noutput:\n  elasticsearch_v8:\n    urls: ['http://localhost:9200']\n    index: \"cool-bug-facts\"\n    action: \"index\"\n    id: ${! meta(\"s3_key\") }\n"
+        },
+        {
+          "title": "Create Documents",
+          "summary": "When using the `create` action, a new document will be created if the document ID does not already exist. If the document ID already exists, the operation will fail.",
+          "config": "\noutput:\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! json(\"id\") }\n    action: create\n"
+        },
+        {
+          "title": "Upserting Documents",
+          "summary": "When using the `upsert` action, if the document ID already exists, it will be updated. If the document ID does not exist, a new document will be inserted. The request body should contain the document to be indexed.",
+          "config": "\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        root = this.doc\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: upsert\n"
         }
       ],
       "config": {
@@ -23379,7 +23698,7 @@
             "name": "action",
             "type": "string",
             "kind": "scalar",
-            "description": "The action to take on the document. This field must resolve to one of the following action types: `index`, `update` or `delete`. See the `Updating Documents` example for more on how the `update` action works.",
+            "description": "The action to take on the document. This field must resolve to one of the following action types: `index`, `update`, `delete`, `create` or `upsert`. See the `Updating Documents` example for more on how the `update` action works and the `Create Documents` and `Upserting Documents` examples for how to use the `create` and `upsert` actions respectively.",
             "interpolated": true
           },
           {
@@ -24106,28 +24425,17 @@
             "name": "collision_mode",
             "type": "string",
             "kind": "scalar",
-            "description": "Determines how file path collisions should be dealt with.",
+            "description": "Determines how file path collisions should be dealt with. Options are \"overwrite\", which replaces the existing file with the new one, \"append\", which appends the message bytes to the original file, \"error-if-exists\", which returns an error and rejects the message if the file exists, and \"ignore\", does not modify the original file and drops the message.",
             "default": "overwrite",
-            "annotated_options": [
-              [
-                "append",
-                "Append the message bytes to the original file."
-              ],
-              [
-                "error-if-exists",
-                "Return an error, this is the equivalent of a nack."
-              ],
-              [
-                "ignore",
-                "Do not modify the original file, the new data will be dropped."
-              ],
-              [
-                "overwrite",
-                "Replace the existing file with the new one."
-              ]
+            "interpolated": true,
+            "options": [
+              "overwrite",
+              "append",
+              "error-if-exists",
+              "ignore"
             ],
             "version": "3.53.0",
-            "linter": "\nlet options = {\n  \"append\": true,\n  \"error-if-exists\": true,\n  \"ignore\": true,\n  \"overwrite\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"overwrite\": true,\n  \"append\": true,\n  \"error-if-exists\": true,\n  \"ignore\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "chunk_size",
@@ -24359,6 +24667,14 @@
               "5m",
               "60m"
             ]
+          },
+          {
+            "name": "validate_topic",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether to validate the existence of the topic before publishing. If set to false and the topic does not exist, messages will be lost.",
+            "is_advanced": true,
+            "default": true
           },
           {
             "name": "metadata",
@@ -26797,6 +27113,14 @@
             "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
             "name": "timeout",
             "type": "string",
             "kind": "scalar",
@@ -27749,6 +28073,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -28075,6 +28407,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -28353,6 +28693,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -28613,6 +28961,14 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
           },
           {
             "name": "auth",
@@ -29188,6 +29544,14 @@
                   "zstd"
                 ],
                 "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+              },
+              {
+                "name": "allow_auto_topic_creation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+                "is_advanced": true,
+                "default": true
               },
               {
                 "name": "timeout",
@@ -32709,6 +33073,14 @@
             "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
             "name": "timeout",
             "type": "string",
             "kind": "scalar",
@@ -33664,6 +34036,14 @@
             "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
             "name": "timeout",
             "type": "string",
             "kind": "scalar",
@@ -34420,7 +34800,7 @@
         {
           "title": "Write schemas",
           "summary": "Write schemas to a Schema Registry instance and log errors for schemas which already exist.",
-          "config": "\noutput:\n  fallback:\n    - schema_registry:\n        url: http://localhost:8082\n        subject: ${! @schema_registry_subject }\n    - switch:\n        cases:\n          - check: '@fallback_error == \"request returned status: 422\"'\n            output:\n              drop: {}\n              processors:\n                - log:\n                    message: |\n                      Subject '${! @schema_registry_subject }' version ${! @schema_registry_version } already has schema: ${! content() }\n          - output:\n              reject: ${! @fallback_error }\n"
+          "config": "\noutput:\n  fallback:\n    - schema_registry:\n        url: http://localhost:8082\n        subject: ${! @schema_registry_subject }\n        subject_compatibility_level: ${! @schema_registry_subject_compatibility_level }\n    - switch:\n        cases:\n          - check: '@fallback_error == \"request returned status: 422\"'\n            output:\n              drop: {}\n              processors:\n                - log:\n                    message: |\n                      Subject '${! @schema_registry_subject }' version ${! @schema_registry_version } already has schema: ${! content() }\n          - output:\n              reject: ${! @fallback_error }\n"
         }
       ],
       "config": {
@@ -34442,6 +34822,15 @@
             "interpolated": true
           },
           {
+            "name": "subject_compatibility_level",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The compatibility level for the subject. Can be one of BACKWARD, BACKWARD_TRANSITIVE, FORWARD, FORWARD_TRANSITIVE, FULL, FULL_TRANSITIVE, NONE.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
             "name": "backfill_dependencies",
             "type": "bool",
             "kind": "scalar",
@@ -34456,6 +34845,30 @@
             "description": "Translate schema IDs.",
             "is_advanced": true,
             "default": false
+          },
+          {
+            "name": "normalize",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Normalize schemas.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
+            "name": "remove_metadata",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Remove metadata from schemas.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
+            "name": "remove_rule_set",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Remove rule set from schemas.",
+            "is_advanced": true,
+            "default": true
           },
           {
             "name": "input_resource",
@@ -34767,6 +35180,78 @@
             "description": "The address of the server to connect to."
           },
           {
+            "name": "connection_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The connection timeout to use when connecting to the target server.",
+            "is_advanced": true,
+            "default": "30s"
+          },
+          {
+            "name": "credentials",
+            "type": "object",
+            "kind": "scalar",
+            "description": "The credentials to use to log into the target server.",
+            "children": [
+              {
+                "name": "username",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The username to authenticate with the SFTP server.",
+                "default": ""
+              },
+              {
+                "name": "password",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The password for the specified username to connect to the SFTP server.",
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "host_public_key_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The path to the SFTP server's public key file, used for host key verification.",
+                "is_optional": true
+              },
+              {
+                "name": "host_public_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The raw contents of the SFTP server's public key, used for host key verification.",
+                "is_optional": true
+              },
+              {
+                "name": "private_key_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The path to the private key file, used for authenticating the username.",
+                "is_optional": true
+              },
+              {
+                "name": "private_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The raw contents of the private key, used for authenticating the username.",
+                "is_optional": true,
+                "is_secret": true,
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "private_key_pass",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optional passphrase for decrypting the private key, if it's encrypted.",
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              }
+            ],
+            "linter": "\nroot = match {\n  this.exists(\"host_public_key\") && this.exists(\"host_public_key_file\") => \"both host_public_key and host_public_key_file can't be set simultaneously\"\n  this.exists(\"private_key\") && this.exists(\"private_key_file\") => \"both private_key and private_key_file can't be set simultaneously\"\n}"
+          },
+          {
             "name": "path",
             "type": "string",
             "kind": "scalar",
@@ -34801,56 +35286,6 @@
                 "lines",
                 "Append each message to the output stream followed by a line break."
               ]
-            ]
-          },
-          {
-            "name": "credentials",
-            "type": "object",
-            "kind": "scalar",
-            "description": "The credentials to use to log into the target server.",
-            "children": [
-              {
-                "name": "username",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The username to connect to the SFTP server.",
-                "default": ""
-              },
-              {
-                "name": "password",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The password for the username to connect to the SFTP server.",
-                "is_secret": true,
-                "default": "",
-                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
-              },
-              {
-                "name": "private_key_file",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The private key for the username to connect to the SFTP server.",
-                "default": ""
-              },
-              {
-                "name": "private_key",
-                "type": "string",
-                "kind": "scalar",
-                "description": "The private key file for the username to connect to the SFTP server.",
-                "is_secret": true,
-                "default": "",
-                "linter": "root = match { this.exists(\"private_key\") && this.exists(\"private_key_file\") => [ \"both private_key and private_key_file can't be set simultaneously\" ], }",
-                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
-              },
-              {
-                "name": "private_key_pass",
-                "type": "string",
-                "kind": "scalar",
-                "description": "Optional passphrase for private key.",
-                "is_secret": true,
-                "default": "",
-                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
-              }
             ]
           },
           {
@@ -34948,6 +35383,68 @@
             "kind": "scalar",
             "description": "Enable link names in the message.",
             "default": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "slack_reaction",
+      "type": "output",
+      "status": "experimental",
+      "plugin": true,
+      "description": "Add or remove an emoji reaction to a Slack message using https://api.slack.com/methods/reactions.add[^reactions.add] and https://api.slack.com/methods/reactions.remove[^reactions.remove]",
+      "categories": null,
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "bot_token",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The Slack Bot User OAuth token to use.",
+            "linter": "\n        root = if !this.has_prefix(\"xoxb-\") { [ \"field must start with xoxb-\" ] }\n      "
+          },
+          {
+            "name": "channel_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The channel ID containing the message to react to.",
+            "interpolated": true
+          },
+          {
+            "name": "timestamp",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The timestamp of the message to react to.",
+            "interpolated": true
+          },
+          {
+            "name": "emoji",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The name of the emoji to react with (without colons).",
+            "interpolated": true
+          },
+          {
+            "name": "action",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Whether to add or remove the reaction.",
+            "default": "add",
+            "options": [
+              "add",
+              "remove"
+            ],
+            "linter": "\nlet options = {\n  \"add\": true,\n  \"remove\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "max_in_flight",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "default": 64
           }
         ]
       }
@@ -35741,6 +36238,136 @@
                 "delim:x",
                 "Append each message to the output stream followed by a custom delimiter."
               ]
+            ]
+          },
+          {
+            "name": "tls",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Custom TLS settings can be used to override system defaults.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether custom TLS settings are enabled.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "skip_cert_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to skip server side certificate verification.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "enable_renegotiation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "is_advanced": true,
+                "default": false,
+                "version": "3.45.0"
+              },
+              {
+                "name": "root_cas",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "examples": [
+                  "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                ],
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "root_cas_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "default": "",
+                "examples": [
+                  "./root_cas.pem"
+                ]
+              },
+              {
+                "name": "client_certs",
+                "type": "object",
+                "kind": "array",
+                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "is_advanced": true,
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "cert": "foo",
+                      "key": "bar"
+                    }
+                  ],
+                  [
+                    {
+                      "cert_file": "./example.pem",
+                      "key_file": "./example.key"
+                    }
+                  ]
+                ],
+                "children": [
+                  {
+                    "name": "cert",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate key to use.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "cert_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate key to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "foo",
+                      "${KEY_PASSWORD}"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
             ]
           }
         ]
@@ -39285,7 +39912,7 @@
       "status": "experimental",
       "plugin": true,
       "summary": "Generates vector embeddings to represent input text, using the Cohere API.",
-      "description": "\nThis processor sends document strings to the Cohere API, which reranks them based on the relevance to the query.\n\nTo learn more about reranking, see the https://docs.cohere.com/docs/rerank-2[Cohere API documentation^].\n\nThe output of this processor is an array of strings that are ordered by their relevance.\n\n== Metadata\n\nrelevance_scores: an array of scores for each document, indicating how relevant it is to the query. The scores are in the same order as the documents in the input. The higher the score, the more relevant the document is to the query.\n\n\t\t",
+      "description": "\nThis processor sends document strings to the Cohere API, which reranks them based on the relevance to the query.\n\nTo learn more about reranking, see the https://docs.cohere.com/docs/rerank-2[Cohere API documentation^].\n\nThe output of this processor is an array of objects, each containing a \"document\" field with the original document content, a \"relevance_score\" field indicating how relevant it is to the query, and an index field that refers to the document's position within the input documents array. The objects are ordered by their relevance score (highest first).\n\n\t\t",
       "categories": [
         "AI"
       ],
@@ -39341,10 +39968,11 @@
           },
           {
             "name": "top_n",
-            "type": "int",
+            "type": "string",
             "kind": "scalar",
             "description": "The number of documents to return, if 0 all documents are returned.",
-            "default": 0
+            "default": "0",
+            "interpolated": true
           },
           {
             "name": "max_tokens_per_doc",
@@ -42004,6 +42632,14 @@
             ]
           },
           {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
             "name": "auth",
             "type": "object",
             "kind": "scalar",
@@ -42327,6 +42963,14 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "tls_handshake_first",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Perform a TLS handshake before sending the INFO protocol message.",
+            "is_advanced": true,
+            "default": false
           },
           {
             "name": "auth",
@@ -44158,6 +44802,7 @@
             "type": "object",
             "kind": "array",
             "description": "Parquet schema.",
+            "is_optional": true,
             "children": [
               {
                 "name": "name",
@@ -44223,6 +44868,13 @@
             ]
           },
           {
+            "name": "schema_metadata",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Optionally specify a metadata field containing a schema definition to use for encoding instead of a statically defined schema. For batches of messages, the first message's schema will be applied to all subsequent messages of the batch.",
+            "default": ""
+          },
+          {
             "name": "default_compression",
             "type": "string",
             "kind": "scalar",
@@ -44252,7 +44904,8 @@
             "version": "4.11.0",
             "linter": "\nlet options = {\n  \"delta_length_byte_array\": true,\n  \"plain\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
-        ]
+        ],
+        "linter": "root = if this.schema.or([]).length() == 0 && this.schema_metadata.or(\"\") == \"\" { \"either a schema or schema_metadata must be specified\" }"
       },
       "version": "4.4.0"
     },
@@ -44353,20 +45006,30 @@
       "status": "stable",
       "plugin": true,
       "summary": "\nPerforms conversions to or from a protobuf message. This processor uses reflection, meaning conversions can be made directly from the target .proto files.\n",
-      "description": "\nThe main functionality of this processor is to map to and from JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json[https://developers.google.com/protocol-buffers/docs/proto3#json^]\n\nUsing reflection for processing protobuf messages in this way is less performant than generating and using native code. Therefore when performance is critical it is recommended that you use Redpanda Connect plugins instead for processing protobuf messages natively, you can find an example of Redpanda Connect plugins at https://github.com/benthosdev/benthos-plugin-example[https://github.com/benthosdev/benthos-plugin-example^]\n\n== Operators\n\n=== `to_json`\n\nConverts protobuf messages into a generic JSON structure. This makes it easier to manipulate the contents of the document within Benthos.\n\n=== `from_json`\n\nAttempts to create a target protobuf message from a generic JSON structure.\n",
+      "description": "\nThe main functionality of this processor is to map to and from JSON documents, you can read more about JSON mapping of protobuf messages here: [https://developers.google.com/protocol-buffers/docs/proto3#json](https://developers.google.com/protocol-buffers/docs/proto3#json)\n\nUsing reflection for processing protobuf messages in this way is less performant than generating and using native code. Therefore when performance is critical it is recommended that you use Redpanda Connect plugins instead for processing protobuf messages natively, you can find an example of Redpanda Connect plugins at [https://github.com/redpanda-data/redpanda-connect-plugin-example](https://github.com/redpanda-data/redpanda-connect-plugin-example)\n\n== Operators\n\n=== `to_json`\n\nConverts protobuf messages into a generic JSON structure. This makes it easier to manipulate the contents of the document within Redpanda Connect.\n\n=== `from_json`\n\nAttempts to create a target protobuf message from a generic JSON structure.\n",
       "categories": [
         "Parsing"
       ],
       "examples": [
         {
-          "title": "JSON to Protobuf",
+          "title": "JSON to Protobuf using Schema from Disk",
           "summary": "\nIf we have the following protobuf definition within a directory called `testing/schema`:\n\n```protobuf\nsyntax = \"proto3\";\npackage testing;\n\nimport \"google/protobuf/timestamp.proto\";\n\nmessage Person {\n  string first_name = 1;\n  string last_name = 2;\n  string full_name = 3;\n  int32 age = 4;\n  int32 id = 5; // Unique ID number for this person.\n  string email = 6;\n\n  google.protobuf.Timestamp last_updated = 7;\n}\n```\n\nAnd a stream of JSON documents of the form:\n\n```json\n{\n\t\"firstName\": \"caleb\",\n\t\"lastName\": \"quaye\",\n\t\"email\": \"caleb@myspace.com\"\n}\n```\n\nWe can convert the documents into protobuf messages with the following config:",
           "config": "\npipeline:\n  processors:\n    - protobuf:\n        operator: from_json\n        message: testing.Person\n        import_paths: [ testing/schema ]\n"
         },
         {
-          "title": "Protobuf to JSON",
+          "title": "Protobuf to JSON using Schema from Disk",
           "summary": "\nIf we have the following protobuf definition within a directory called `testing/schema`:\n\n```protobuf\nsyntax = \"proto3\";\npackage testing;\n\nimport \"google/protobuf/timestamp.proto\";\n\nmessage Person {\n  string first_name = 1;\n  string last_name = 2;\n  string full_name = 3;\n  int32 age = 4;\n  int32 id = 5; // Unique ID number for this person.\n  string email = 6;\n\n  google.protobuf.Timestamp last_updated = 7;\n}\n```\n\nAnd a stream of protobuf messages of the type `Person`, we could convert them into JSON documents of the format:\n\n```json\n{\n\t\"firstName\": \"caleb\",\n\t\"lastName\": \"quaye\",\n\t\"email\": \"caleb@myspace.com\"\n}\n```\n\nWith the following config:",
           "config": "\npipeline:\n  processors:\n    - protobuf:\n        operator: to_json\n        message: testing.Person\n        import_paths: [ testing/schema ]\n"
+        },
+        {
+          "title": "JSON to Protobuf using Buf Schema Registry",
+          "summary": "\nIf we have the following protobuf definition within a BSR module hosted at `buf.build/exampleco/mymodule`:\n\n```protobuf\nsyntax = \"proto3\";\npackage testing;\n\nimport \"google/protobuf/timestamp.proto\";\n\nmessage Person {\n  string first_name = 1;\n  string last_name = 2;\n  string full_name = 3;\n  int32 age = 4;\n  int32 id = 5; // Unique ID number for this person.\n  string email = 6;\n\n  google.protobuf.Timestamp last_updated = 7;\n}\n```\n\nAnd a stream of JSON documents of the form:\n\n```json\n{\n\t\"firstName\": \"caleb\",\n\t\"lastName\": \"quaye\",\n\t\"email\": \"caleb@myspace.com\"\n}\n```\n\nWe can convert the documents into protobuf messages with the following config:",
+          "config": "\npipeline:\n  processors:\n    - protobuf:\n        operator: from_json\n        message: testing.Person\n        bsr:\n          - module: buf.build/exampleco/mymodule\n            api_key: xxx\n"
+        },
+        {
+          "title": "Protobuf to JSON using Buf Schema Registry",
+          "summary": "\nIf we have the following protobuf definition within a BSR module hosted at `buf.build/exampleco/mymodule`:\n```protobuf\nsyntax = \"proto3\";\npackage testing;\n\nimport \"google/protobuf/timestamp.proto\";\n\nmessage Person {\n  string first_name = 1;\n  string last_name = 2;\n  string full_name = 3;\n  int32 age = 4;\n  int32 id = 5; // Unique ID number for this person.\n  string email = 6;\n\n  google.protobuf.Timestamp last_updated = 7;\n}\n```\n\nAnd a stream of protobuf messages of the type `Person`, we could convert them into JSON documents of the format:\n\n```json\n{\n\t\"firstName\": \"caleb\",\n\t\"lastName\": \"quaye\",\n\t\"email\": \"caleb@myspace.com\"\n}\n```\n\nWith the following config:",
+          "config": "\npipeline:\n  processors:\n    - protobuf:\n        operator: to_json\n        message: testing.Person\n        bsr:\n          - module: buf.build/exampleco/mymodule\n            api_key: xxxx\n"
         }
       ],
       "config": {
@@ -44378,7 +45041,7 @@
             "name": "operator",
             "type": "string",
             "kind": "scalar",
-            "description": "The <<operators, operator>> to execute",
+            "description": "The [operator](#operators) to execute",
             "options": [
               "to_json",
               "from_json"
@@ -44409,7 +45072,7 @@
             "name": "import_paths",
             "type": "string",
             "kind": "array",
-            "description": "A list of directories containing .proto files, including all definitions required for parsing the target message. If left empty the current directory is used. Each directory listed will be walked with all found .proto files imported.",
+            "description": "A list of directories containing .proto files, including all definitions required for parsing the target message. If left empty the current directory is used. Each directory listed will be walked with all found .proto files imported. Either this field or `bsr` must be populated.",
             "default": []
           },
           {
@@ -44418,8 +45081,49 @@
             "kind": "scalar",
             "description": "If `true`, the `to_json` operator deserializes enums as numerical values instead of string names.",
             "default": false
+          },
+          {
+            "name": "bsr",
+            "type": "object",
+            "kind": "array",
+            "description": "Buf Schema Registry configuration. Either this field or `import_paths` must be populated. Note that this field is an array, and multiple BSR configurations can be provided.",
+            "default": [],
+            "children": [
+              {
+                "name": "module",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Module to fetch from a Buf Schema Registry e.g. 'buf.build/exampleco/mymodule'."
+              },
+              {
+                "name": "url",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Buf Schema Registry URL, leave blank to extract from module.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "api_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Buf Schema Registry server API key, can be left blank for a public registry.",
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "version",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Version to retrieve from the Buf Schema Registry, leave blank for latest.",
+                "is_advanced": true,
+                "default": ""
+              }
+            ]
           }
-        ]
+        ],
+        "linter": "\nroot = match {\nthis.import_paths.type() == \"unknown\" && this.bsr.length() == 0 => [ \"at least one of `import_paths`and `bsr` must be set\" ],\nthis.import_paths.type() == \"array\" && this.import_paths.length() > 0 && this.bsr.length() > 0 => [ \"both `import_paths` and `bsr` can't be set simultaneously\" ],\n}"
       }
     },
     {
@@ -45377,7 +46081,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Attempts to execute a series of child processors until success.",
-      "description": "\nExecutes child processors and if a resulting message is errored then, after a specified backoff period, the same original message will be attempted again through those same processors. If the child processors result in more than one message then the retry mechanism will kick in if _any_ of the resulting messages are errored.\n\nIt is important to note that any mutations performed on the message during these child processors will be discarded for the next retry, and therefore it is safe to assume that each execution of the child processors will always be performed on the data as it was when it first reached the retry processor.\n\nBy default the retry backoff has a specified <<backoffmax_elapsed_time,`max_elapsed_time`>>, if this time period is reached during retries and an error still occurs these errored messages will proceed through to the next processor after the retry (or your outputs). Normal xref:configuration:error_handling.adoc[error handling patterns] can be used on these messages.\n\nIn order to avoid permanent loops any error associated with messages as they first enter a retry processor will be cleared.\n\n== Metadata\n\nThis processor adds the following metadata fields to each message:\n\n```text\n- retry_count - The number of retry attempts.\n- backoff_duration - The total time elapsed while performing retries.\n```\n\n[CAUTION]\n.Batching\n====\nIf you wish to wrap a batch-aware series of processors then take a look at the <<batching, batching section>>.\n====\n",
+      "description": "\nExecutes child processors and if a resulting message is errored then, after a specified backoff period, the same original message will be attempted again through those same processors. If the child processors result in more than one message then the retry mechanism will kick in if _any_ of the resulting messages are errored.\n\nIt is important to note that any mutations performed on the message during these child processors will be discarded for the next retry, and therefore it is safe to assume that each execution of the child processors will always be performed on the data as it was when it first reached the retry processor.\n\nBy default the retry backoff has a specified <<backoffmax_elapsed_time,`max_elapsed_time`>>, if this time period is reached during retries and an error still occurs these errored messages will proceed through to the next processor after the retry (or your outputs). Normal xref:configuration:error_handling.adoc[error handling patterns] can be used on these messages.\n\nIn order to avoid permanent loops any error associated with messages as they first enter a retry processor will be cleared.\n\n== Metadata\n\nThis processor adds the following metadata fields to each message:\n\n```text\n- retry_count - The number of retry attempts.\n- backoff_duration - The total time (in nanoseconds) elapsed while performing retries.\n```\n\n[CAUTION]\n.Batching\n====\nIf you wish to wrap a batch-aware series of processors then take a look at the <<batching, batching section>>.\n====\n",
       "categories": [
         "Composition"
       ],
@@ -45522,6 +46226,13 @@
                 "examples": [
                   "\nmap isDebeziumTimestampType {\n  root = this.type == \"long\" && this.\"connect.name\" == \"io.debezium.time.Timestamp\" && !this.exists(\"logicalType\")\n}\nmap debeziumTimestampToAvroTimestamp {\n  let mapped_fields = this.fields.or([]).map_each(item -> item.apply(\"debeziumTimestampToAvroTimestamp\"))\n  root = match {\n    this.type == \"record\" => this.assign({\"fields\": $mapped_fields})\n    this.type.type() == \"array\" => this.assign({\"type\": this.type.map_each(item -> item.apply(\"debeziumTimestampToAvroTimestamp\"))})\n    # Add a logical type so that it's decoded as a timestamp instead of a long.\n    this.type.type() == \"object\" && this.type.apply(\"isDebeziumTimestampType\") => this.merge({\"type\":{\"logicalType\": \"timestamp-millis\"}})\n    _ => this\n  }\n}\nroot = this.apply(\"debeziumTimestampToAvroTimestamp\")\n"
                 ]
+              },
+              {
+                "name": "store_schema_metadata",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optionally store the schema used to decode messages as a metadata field under the given name. This field can later be referenced in other components such as a `parquet_encode` processor in order to automatically infer their schema.",
+                "is_optional": true
               }
             ]
           },
@@ -52971,6 +53682,20 @@
               "skip_testing": false
             }
           ]
+        }
+      ],
+      "impure": false
+    },
+    {
+      "status": "stable",
+      "name": "infer_schema",
+      "description": "Attempt to infer the schema of a given value. The resulting schema can then be used as an input to schema conversion and enforcement methods.",
+      "params": {},
+      "categories": [
+        {
+          "Category": "Parsing",
+          "Description": "",
+          "Examples": null
         }
       ],
       "impure": false

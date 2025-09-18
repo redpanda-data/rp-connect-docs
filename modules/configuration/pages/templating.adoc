@@ -209,6 +209,10 @@ The scalar type of the field.
 
 | `string`
 | standard string type
+| `string_enum`
+| string type which can have one of a discrete list of values
+| `string_annotated_enum`
+| string type which can have one of a discrete list of values, where each value must be accompanied by a description that annotates its behaviour in the documentation
 | `int`
 | standard integer type
 | `float`
@@ -217,7 +221,7 @@ The scalar type of the field.
 | A boolean true/false
 | `bloblang`
 | A bloblang mapping
-| `object`
+| `unknown`
 | Allows for nesting arbitrary configuration inside a field
 
 |===
@@ -254,18 +258,43 @@ Whether this field is considered advanced.
 
 *Default*: `false`
 
+=== `fields[].options`
+
+A list of options for `string_enum` fields, or a map of annotated options for `string_annotated_enum` fields.
+
+Required when `fields[].type` is set to `string_enum` or `string_annotated_enum`.
+
+- For `string_enum`, provide a non-empty array of string values.
+- For `string_annotated_enum`, provide a map of `value: "description"` pairs, which are used to annotate behaviour in the docs UI.
+
+*Type*: `unknown`
+
+```yml
+# Examples
+
+fields:
+  - name: mode
+    type: string_enum
+    options: ["fast", "balanced", "safe"]
+
+  - name: delivery
+    type: string_annotated_enum
+    options:
+      at_least_once: "May duplicate messages but never loses them."
+      exactly_once: "Stronger guarantees but with a higher cost and constraints."
+```
+
+
 === `mapping`
 
 A xref:guides:bloblang/about.adoc[Bloblang] mapping that translates the fields of the template into a valid Redpanda Connect configuration for the target component type.
-
-TIP: You can also add the metadata field `@label` within a template mapping to retrieve the `label` set in the corresponding configuration.
 
 
 === `metrics_mapping`
 
 An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that allows you to rename or prevent certain metrics paths from being exported. For more information check out the xref:components:metrics/about.adoc#metric-mapping[metrics documentation]. When metric paths are created, renamed and dropped a trace log is written, enabling TRACE level logging is therefore a good way to diagnose path mappings.
 
-Invocations of this mapping are able to reference a variable `$label` in order to obtain the value of the label provided to the template configuration. This allows you to match labels with the root of the configuration.
+Invocations of this mapping are able to reference a metadata field `@label` in order to obtain the value of the label provided to the template configuration. This allows you to match labels with the root of the configuration.
 
 
 *Type*: `string`

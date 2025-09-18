@@ -39,7 +39,7 @@ Control time intervals between retry attempts.
 
 === `backoff.initial_interval`
 
-The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value.
+The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -160,6 +160,36 @@ If enabled the driver will not attempt to get host info from the system.peers ta
 *Type*: `bool`
 
 *Default*: `false`
+
+=== `host_selection_policy`
+
+Advanced host selection policy settings for Cassandra clusters. Use these options to optimize query routing in multi-datacenter (DC) and multi-rack deployments. By specifying a local DC and rack, you can ensure queries are directed to the closest nodes, reducing latency and improving fault tolerance. If not set, the default policy is round-robin across all available nodes. Host selection is always token-aware if the token can be calculated from query.
+
+ifndef::env-cloud[]
+Requires version 4.61.0 or later.
+endif::[]
+
+*Type*: `object`
+
+[source,yaml]
+----
+# Examples:
+host_selection_policy:
+  local_dc: dc-east
+  local_rack: rack1
+----
+
+=== `host_selection_policy.local_dc`
+
+The name of the local datacenter to prioritize for query routing. Enables DC-aware host selection, ensuring queries are sent to nodes within this datacenter whenever possible. Recommended for clusters spanning multiple datacenters to minimize cross-DC traffic.
+
+*Type*: `string`
+
+=== `host_selection_policy.local_rack`
+
+The name of the local rack to prioritize for query routing. Requires `local_dc` to be set. Enables rack-aware host selection, further optimizing query placement within the specified datacenter. Useful for deployments with multiple racks per datacenter to improve resilience and reduce intra-DC latency.
+
+*Type*: `string`
 
 === `logged_batch`
 

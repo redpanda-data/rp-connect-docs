@@ -36,7 +36,7 @@ Parquet schema.
 
 A list of child fields.
 
-*Type*: `unknown`
+*Type*: `array`
 
 [source,yaml]
 ----
@@ -78,5 +78,13 @@ The type of the column, only applicable for leaf columns with no child fields. S
 *Type*: `string`
 
 *Options*: `BOOLEAN`, `INT32`, `INT64`, `FLOAT`, `DOUBLE`, `BYTE_ARRAY`, `UTF8`, `TIMESTAMP`, `BSON`, `ENUM`, `JSON`, `UUID`
+
+=== `schema_metadata`
+
+Optionally specify a metadata field containing a schema definition to use for encoding instead of a statically defined schema. For batches of messages, the first message's schema will be applied to all subsequent messages of the batch.
+
+*Type*: `string`
+
+*Default*: `""`
 
 

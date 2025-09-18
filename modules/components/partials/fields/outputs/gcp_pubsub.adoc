@@ -109,7 +109,7 @@ Publish a pubsub buffer when it has this many messages
 
 === `credentials_json`
 
-Optional field to set https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google Service Account Credentials JSON^].
+Base64-encoded Google Service Account credentials in JSON format (optional). Use this field to authenticate with Google Cloud services. For more information about creating service account credentials, see https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google's service account documentation^].
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -229,5 +229,13 @@ The topic to publish to.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
+
+=== `validate_topic`
+
+Whether to validate the existence of the topic before publishing. If set to false and the topic does not exist, messages will be lost.
+
+*Type*: `bool`
+
+*Default*: `true`
 
 

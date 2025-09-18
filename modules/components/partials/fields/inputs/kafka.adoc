@@ -350,6 +350,12 @@ target_version: 2.1.0
 target_version: 3.1.0
 ----
 
+=== `timely_nacks_maximum_wait`
+
+EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs. Accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
+
+*Type*: `string`
+
 === `tls`
 
 Custom TLS settings can be used to override system defaults.

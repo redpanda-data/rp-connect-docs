@@ -110,7 +110,7 @@ The MongoDB database operation to perform.
 
 === `password`
 
-The password required to connect to the database.
+The password to use for authentication. Used together with `username` for basic authentication or with encrypted private keys for secure access.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
