@@ -1,0 +1,16 @@
+label: stream_analytics
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topics: [ "click-events" ]
+  consumer_group: "mcp-analytics"
+
+meta:
+  tags: [ analytics, streaming ]
+  mcp:
+    enabled: true
+    description: "Consume click stream data for analytics processing"
+    properties:
+      - name: time_range
+        type: string
+        description: "Time range for analytics (such as '5m', '1h')"
+        required: false

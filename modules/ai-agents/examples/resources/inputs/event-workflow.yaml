@@ -1,0 +1,16 @@
+label: event_triggered_workflow
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topics: [ "order-events" ]
+  consumer_group: "workflow-trigger"
+
+meta:
+  tags: [ workflows, events ]
+  mcp:
+    enabled: true
+    description: "Consume order events to trigger workflows"
+    properties:
+      - name: event_type
+        type: string
+        description: "Type of event to process (order_created, order_cancelled, etc.)"
+        required: false

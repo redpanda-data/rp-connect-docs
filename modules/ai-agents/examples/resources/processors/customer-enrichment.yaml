@@ -1,0 +1,40 @@
+label: customer_enrichment
+processors:
+  - label: fetch_customer_base
+    sql_select:
+      driver: "postgres"
+      dsn: "${POSTGRES_DSN}"
+      table: "customers"
+      where: "customer_id = ?"
+      args_mapping: 'root = [this.customer_id]'
+
+  - label: enrich_with_orders
+    sql_select:
+      driver: "postgres"
+      dsn: "${POSTGRES_DSN}"
+      table: "orders"
+      where: "customer_id = ? AND created_at >= NOW() - INTERVAL '30 days'"
+      args_mapping: 'root = [this.customer_id]'
+
+  - label: combine_data
+    mutation: |
+      let order_totals = this.orders.map_each(o -> o.total)
+      root = {
+        "customer": this.customers.index(0),
+        "recent_orders": this.orders,
+        "metrics": {
+          "total_orders": this.orders.length(),
+          "total_spent": $order_totals.sum(),
+          "avg_order_value": if $order_totals.length() > 0 { $order_totals.sum() / $order_totals.length() } else { 0 }
+        }
+      }
+
+meta:
+  mcp:
+    enabled: true
+    description: "Get comprehensive customer profile with recent order history and metrics"
+    properties:
+      - name: customer_id
+        type: string
+        description: "Customer ID to analyze"
+        required: true
