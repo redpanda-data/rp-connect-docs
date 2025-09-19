@@ -9,6 +9,9 @@ content:
   sources:
   - url: .
     branches: HEAD
+  - url: https://github.com/redpanda-data/docs-site
+    branches: main
+    start_paths: [home]
   - url: https://github.com/redpanda-data/documentation
     branches: [main, v/*, site-search, shared]
   - url: https://github.com/redpanda-data/redpanda-labs

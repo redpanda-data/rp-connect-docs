@@ -1,29 +1,9 @@
-= Integrate Redpanda Connect MCP Server with Claude Code
+= Redpanda Connect MCP Server Quickstart
+:description: Expose your pipelines to Claude Code as AI-consumable HTTP endpoints.
 
 This quickstart shows you how to build a Redpanda Connect pipeline that searches Bluesky posts using a customizable query. You'll expose this pipeline to Claude Code as a tool through an *MCP server*, then ask Claude to perform the search using natural language.
 
 > Find recent posts on Bluesky mentioning Redpanda.
-
-In Redpanda Connect, pipelines are declarative YAML files composed of inputs, processors, and outputs.
-In Claude Code, these pipelines are referred to as *tools*, which are discrete units of functionality that can be discovered and executed through the MCP interface.
-
-[mermaid]
-----
-flowchart LR
-  subgraph Connect [Redpanda Connect]
-    G[Generate structured + anomalous data]
-    G -->|Kafka messages| RP((Redpanda Topic: transactions))
-  end
-
-  subgraph Claude [Claude via MCP]
-    RP --> Tool[MCP Tool: detect-anomalies]
-    Tool --> ClaudeCore[Claude Code]
-  end
-
-  ClaudeCore --> U((User))
-----
-
-== Why use Redpanda Connect MCP with Claude?
 
 The MCP server makes your local tools *AI-consumable*. It exposes them with metadata that Claude can understand and use to:
 
@@ -62,7 +42,7 @@ cd redpanda-connect-mcp
 rpk connect mcp-server init
 ----
 +
-This command creates the folder structure for your MCP server, including a `resources` directory where you can define your tools.
+This command scaffolds your project with the necessary directories and template YAML files for defining tools and observability resources.
 +
 [.no-copy]
 ----
@@ -79,8 +59,6 @@ This command creates the folder structure for your MCP server, including a `reso
     └── processors
         └── example-processor.yaml
 ----
-+
-The `resources` directory is where you define your tools such as inputs, outputs, and processors. Each tool is defined in its own YAML file. By default, the `example-` files are provided as templates.
 
 == Create a tool definition
 
@@ -90,8 +68,8 @@ This tool enables Claude to search public Bluesky posts using natural language.
 
 [source,yaml]
 ----
-label: search-bluesky-posts
-try:
+label: search-bluesky-posts <1>
+try: <2>
   - mutation: |
       root.limit = root.limit.number(25)
       root.limit = [ root.limit, 100 ].min()
@@ -106,11 +84,11 @@ try:
       format: json_array
 
 meta:
-  tags: [ demo ]
+  tags: [ demo ] <3>
   mcp:
     enabled: true
-    description: Search public Bluesky posts based on a query string.
-  properties:
+    description: Search public Bluesky posts based on a query string. <4>
+  properties: <5>
     - name: query
       type: string
       required: true
@@ -122,11 +100,11 @@ meta:
 
 This example defines a tool that searches public Bluesky posts based on a query string. The tool:
 
-- Has a unique label for identification. Claude uses this label to discover and call the tool.
-- Has a unique tag (`demo`) to control exposure. You can use tags to group related tools or isolate experiments.
-- Provides a clear description for LLMs under `meta.mcp.description`. This helps Claude understand what the tool does.
-- Defines structured properties under `meta.mcp.properties` for inputs like `query` and `limit`.
-- Uses a series of processors to build the HTTP request, handle the response, and format the output.
+<1> unique label for identification. Claude uses this label to discover and call the tool.
+<2> A series of processors to build the HTTP request, handle the response, and format the output.
+<3> A unique tag (`demo`) to control exposure. You can use tags to group related tools or isolate experiments.
+<4> A clear description for LLMs helps Claude understand what the tool does.
+<5> Structured properties for inputs like `query` and `limit`.
 
 == Start the MCP server
 
@@ -158,37 +136,26 @@ Only tools with the specified `--tag` are exposed. This helps you:
 - Create sets of tools that are relevant to specific agents or workflows
 ====
 
+:tip-caption: Tip
+
 == Connect Claude Code to your MCP server
 
-To connect Claude Code to your MCP server, you need to expose a live event stream that Claude can consume. This is done using the `mcp-remote` utility, which bridges your local service to Claude's MCP interface. `mcp-remote` is a lightweight bridge that turns any streaming HTTP endpoint into a source of MCP-compatible messages.
 
-To install `mcp-remote`, run:
+To connect Claude Code to your MCP server, you need to expose a live event stream that Claude can consume. This is done using the link:https://www.npmjs.com/package/mcp-remote[`mcp-remote` utility^], which bridges your local service to Claude's MCP interface. `mcp-remote` is a lightweight bridge that turns any streaming HTTP endpoint into a source of MCP-compatible messages.
 
+. To install `mcp-remote`, run:
++
 [,bash]
 ----
 claude mcp add local -- npx mcp-remote http://localhost:4195/sse
 ----
-
++
 You should see output like this:
-
++
 [.no-copy]
 ----
 Added stdio MCP server local with command: npx mcp-remote http://localhost:4195/sse to local config
 ----
-
-. `claude mcp add local --`
-+
-This tells Claude to set up a new *local input channel*, which is a subprocess or pipe that streams messages. The `--` delimiter ensures that everything after it is treated as a shell command to execute.
-
-. `npx mcp-remote http://localhost:4195/sse`
-+
-This runs the `mcp-remote` utility, which:
-+
-- Connects to the provided SSE endpoint
-- Converts events into MCP message format
-- Writes them to stdout
-+
-Claude reads these messages from the subprocess, treating them as if they were emitted by a native MCP agent.
 
 . Verify that the local input channel is set up correctly by running:
 +
@@ -204,15 +171,8 @@ Press *Enter* until you see the tools list.
 [.no-copy,role="no-wrap"]
 ----
 Tools for local (1 tools)
-│ ❯ 1. search-bluesky-posts 
+│ ❯ 1. search-bluesky-posts
 ----
-
-In summary, the flow is:
-
-- Your MCP server exposes a Server-Sent Events (SSE) stream at `http://localhost:4195/sse`.
-- `mcp-remote` connects to that stream and reads the events.
-- `mcp-remote` converts each event into a structured MCP message.
-- Those messages are forwarded to Claude Code through the local input channel created by `claude mcp add local`.
 
 == Write a prompt that uses the tool
 
@@ -277,9 +237,7 @@ Here's an example of what the result might look like:
 
 == Next steps
 
-Tools exposed by MCP are self-describing and schema-rich. This makes them ideal for use with Claude, LangChain, AutoGPT, and other agent frameworks, without needing any adapters, OpenAPI specs, or plugins.
-
-Try adding more tools under the same `demo` tag to expand Claude Code's capabilities.
+Try adding more tools under the same `demo` tag to expand Claude Code's capabilities. See xref:ai-agents:mcp-server/developer-guide.adoc[].
 
 View the xref:components:catalog.adoc[full catalog of connectors] you can use to build more tools.
 
