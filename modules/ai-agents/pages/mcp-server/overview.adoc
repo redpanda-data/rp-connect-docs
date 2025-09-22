@@ -81,18 +81,18 @@ meta:
 
 This tool can be invoked by an AI assistant with prompts like "analyze the order history for customer ID 12345" without needing to know the underlying SQL or processing logic.
 
-
 == MCP specification support
 
-Redpanda Connect MCP server implements the open Model Context Protocol (MCP) for tool exposure. Only the tool concept from the MCP server specification is supported. Features such as MCP resources and prompts are not yet available.
+Redpanda Connect MCP server implements the open MCP protocol for tool exposure. Only the tool concept from the MCP server specification is supported. Features such as MCP resources and prompts are not yet available.
 
 For full details, see the official MCP server specification: link:https://modelcontextprotocol.io/specification/2025-06-18/server[modelcontextprotocol.io/specification/2025-06-18/server^].
 
-== Get Started
+== Get started
 
 To start using the MCP server, try the xref:ai-agents:mcp-server/quickstart.adoc[quickstart].
 
 == Suggested reading
 
-Learn more about MCP in the link:https://docs.anthropic.com/en/docs/mcp[official documentation^].
+* xref:ai-agents:mcp-server/developer-guide.adoc[]
+* Learn more about MCP in the link:https://docs.anthropic.com/en/docs/mcp[official documentation^].
 
