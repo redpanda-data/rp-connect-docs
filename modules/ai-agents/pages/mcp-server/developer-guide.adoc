@@ -30,7 +30,7 @@ Secrets:: Credentials and tokens should be stored as environment variables and r
 . <<contract, Design the tool contract>>: Annotate MCP metadata with `meta.mcp.enabled: true`, provide a concise description, and declare parameters.
 . <<pipeline-patterns, Implement the pipeline>>: Build the logic for your MCP tool using Redpanda Connect pipelines.
 . <<start-server, Lint and start the MCP server>>: Launch your server using `rpk connect mcp-server` to expose your tools.
-. <<connect-claude, Connect your AI assistants>>: Set up Claude Code or other MCP clients to use your tools.
+. <<connect, Connect your AI assistants>>: Set up Claude Code or other MCP clients to use your tools.
 
 [[initialize]]
 == Initialize a new MCP server project
@@ -277,7 +277,7 @@ For example, to expose only tools tagged with `example`, start the server with:
 rpk connect mcp-server --address localhost:4195 --tag example
 ----
 
-[[connect-client]]
+[[connect]]
 == Connect an MCP client
 
 You can connect any MCP-compatible client to your MCP server using the server's HTTP endpoint. Most clients require the server address and may support authentication or custom headers.
