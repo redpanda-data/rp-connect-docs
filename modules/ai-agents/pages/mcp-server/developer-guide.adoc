@@ -1,7 +1,7 @@
 =  Build an MCP Server in Redpanda Connect
 :description: Learn how to build and deploy MCP servers with self-managed Redpanda Connect. This guide covers concepts, patterns, and best practices.
 
-This guide provides a reference for building xref:ai-agents:mcp-server/overview.adoc[MCP servers with self-managed Redpanda Connect]. MCP servers run as part of your Redpanda Connect deployment and expose tools that AI clients can call using the Model Context Protocol.
+This guide teaches you how to build xref:ai-agents:mcp-server/overview.adoc[MCP servers with self-managed Redpanda Connect]. MCP servers run as part of your Redpanda Connect deployment and expose tools that AI clients can call using the Model Context Protocol.
 
 == Prerequisites
 
@@ -28,7 +28,7 @@ Secrets:: Credentials and tokens should be stored as environment variables and r
 
 . <<initialize, Initialize the project>>: Use the Redpanda CLI to scaffold your project.
 . <<contract, Design the tool contract>>: Annotate MCP metadata with `meta.mcp.enabled: true`, provide a concise description, and declare parameters.
-. <<pipeline-patterns, Implement the pipeline>>: Build an MCP tool using Redpanda Connect pipelines. See <<pipeline-patterns, Pipeline patterns>> for examples of what is allowed in a pipeline.
+. <<pipeline-patterns, Implement the pipeline>>: Build the logic for your MCP tool using Redpanda Connect pipelines.
 . <<start-server, Lint and start the MCP server>>: Launch your server using `rpk connect mcp-server` to expose your tools.
 . <<connect-claude, Connect your AI assistants>>: Set up Claude Code or other MCP clients to use your tools.
 
@@ -83,7 +83,7 @@ touch resources/processors/database-query.yaml
 See the next sections for details on customizing these files for your use case.
 
 [[contract]]
-== Tool contract and MCP metadata
+== Define the tool contract and MCP metadata
 
 Each MCP tool must declare its interface using `meta.mcp` metadata. This metadata allows AI clients to discover and invoke the tool correctly.
 
@@ -93,9 +93,9 @@ Define a clear, stable interface for each tool. Keep the description task-orient
 ----
 meta:
   mcp:
-    enabled: true
-    description: "Fetches a compact summary from an external API using two optional parameters."
-    properties:
+    enabled: true <1>
+    description: "Fetches a compact summary from an external API using two optional parameters." <2>
+    properties: <3>
       - name: parameter1
         type: string
         description: "Primary filter; defaults to provider standard when omitted."
@@ -106,21 +106,38 @@ meta:
         required: false
 ----
 
+<1> Set `meta.mcp.enabled: true` to expose the tool using MCP.
+<2> A concise description that explains what the tool does. This should be understandable by an AI model.
+<3> List the input parameters (properties) for the tool.
++
 Property guidance:
-
++
 * Use `string`, `number`, or `boolean` types.
-* Validate ranges and enums using Bloblang inside the pipeline.
+* Validate ranges and enums using xref:guides:bloblang/about.adoc[Bloblang] inside the pipeline.
 * Mark only mandatory fields as required.
 * Document defaults in the `description` and enforce them in the pipeline.
 
 After defining your tool contract, implement the pipeline logic to handle input validation, defaults, and the main processing steps.
 
 [[pipeline-patterns]]
-== Pipeline patterns
+== Implement the pipeline
 
-MCP tools are implemented as Redpanda Connect pipelines. This section shows you how to build different types of MCP tools using various pipeline patterns, organized by common use cases and integration scenarios.
+Use Redpanda Connect components to implement the logic of your MCP tool. Here are some best practices:
 
-TIP: For detailed configuration options for any component, see the xref:components:about.adoc[Redpanda Connect components reference].
+* **Single responsibility**: Each tool should do one thing well.
+* **Descriptive naming**: Use clear, specific labels like `fetch-user-profile` instead of generic names like `get-data`.
+* **Input validation**: Always validate and sanitize user inputs using xref:guides:bloblang/about.adoc[Bloblang].
+* **Error handling**: Provide meaningful error messages.
+* **Documentation**: Write clear descriptions that explain what the tool does and what it returns.
+
+For common patterns and examples, see xref:ai-agents:mcp-server/pipeline-patterns.adoc[].
+
+Here's a complete example that demonstrates best practices:
+
+[source,yaml]
+----
+include::ai-agents:example$resources/processors/weather-service.yaml[]
+----
 
 === YAML configuration rules
 
@@ -211,310 +228,10 @@ processors:
       - mutation: { ... }
 ----
 
-=== Data generation and simple requests
-
-Start here if you're building your first MCP tools. These patterns cover data generation, HTTP API calls, and basic database queries.
-
-==== External API calls (processor patterns)
-
-Use xref:components:processors/about.adoc[`processors`] to fetch data from external APIs, databases, or services and return formatted results. This is one of the most common patterns for MCP tools.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/processors/weather-api.yaml[]
-----
-
-See also: xref:components:processors/http.adoc[`http` processor], xref:components:processors/mutation.adoc[`mutation` processor]
-
-==== Database queries (processor patterns)
-
-Query external databases and return structured results. This pattern is essential for tools that need to access business data.
-
-NOTE: This example requires setting the `DATABASE_URL` environment variable with your PostgreSQL connection string. For example, `export DATABASE_URL="postgres://user:password@localhost:5432/dbname"`.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/processors/database-query.yaml[]
-----
-
-See also: xref:components:processors/sql_select.adoc[`sql_select` processor]
-
-=== Redpanda integration and data publishing
-
-Build tools that interact with Redpanda topics to publish data, consume events, or stream processing results back to topics for other systems to consume.
-
-NOTE: The examples in this section require setting the `REDPANDA_BROKERS` environment variable with your Redpanda broker addresses. For example, `export REDPANDA_BROKERS="localhost:19092"`.
-
-==== Publishing to Redpanda topics
-
-Create tools that write data to Redpanda topics using the `redpanda` output:
-
-[source,yaml]
-----
-include::ai-agents:example$resources/outputs/redpanda-publish.yaml[]
-----
-
-==== Consuming from Redpanda topics
-
-Build tools that read data from topics and return processed results:
-
-[source,yaml]
-----
-include::ai-agents:example$resources/inputs/redpanda-consume.yaml[]
-----
-
-==== Stream processing with Redpanda Connect
-
-Create tools that process streaming data and return aggregated results:
-
-[source,yaml]
-----
-include::ai-agents:example$resources/inputs/stream-analytics.yaml[]
-----
-
-==== Event-driven workflows
-
-Build tools that trigger workflows based on Redpanda events:
-
-[source,yaml]
-----
-include::ai-agents:example$resources/inputs/event-workflow.yaml[]
-----
-
-See also: xref:components:inputs/redpanda.adoc[`redpanda` input]
-
-=== Production workflows and observability
-
-Build enterprise-grade tools with error handling, validation, multi-step workflows, and monitoring.
-
-==== Parameter validation and type coercion
-
-Always validate and coerce input parameters to ensure your tools are robust:
-
-[source,yaml]
-----
-processors:
-  - label: validate_params
-    mutation: |
-      # Validate required parameters
-      root = if !this.exists("user_id") {
-        throw("user_id parameter is required")
-      } else { this }
-
-      # Type coercion with validation
-      meta user_id = this.user_id.string()
-      meta limit = this.limit.number().catch(10)
-      meta start_date = this.start_date.parse_timestamp("2006-01-02").catch(now() - duration("24h"))
-----
-
-==== Dynamic configuration
-
-Build tools that adapt their behavior based on input parameters:
-
-[source,yaml]
-----
-processors:
-  - label: dynamic_config
-    mutation: |
-      # Choose data source based on environment
-      meta env = this.environment | "production"
-      meta table_name = match @env {
-        "dev" => "dev_orders",
-        "staging" => "staging_orders",
-        "production" => "prod_orders",
-        _ => "dev_orders"
-      }
-
-      # Adjust query complexity based on urgency
-      meta columns = if this.detailed.bool().catch(false) {
-        ["order_id", "customer_id", "total", "items", "shipping_address"]
-      } else {
-        ["order_id", "customer_id", "total"]
-      }
-----
-
-==== Error handling and fallbacks
-
-Implement error handling to make your tools reliable:
-
-[source,yaml]
-----
-processors:
-  - label: primary_fetch
-    try:
-      - http:
-          url: "https://api.primary.com/data"
-          timeout: "10s"
-    catch:
-      - log:
-          message: "Primary API failed, trying fallback"
-      - label: fallback_fetch
-        http:
-          url: "https://api.fallback.com/data"
-          timeout: "15s"
-      - mutation: |
-          root.metadata.source = "fallback"
-          root.metadata.warning = "Primary source unavailable"
-----
-
-==== Conditional processing
-
-Build tools that branch based on input or data characteristics:
-
-[source,yaml]
-----
-processors:
-  - label: conditional_processing
-    switch:
-      - check: this.data_type == "json"
-        processors:
-          - json:
-              operator: "parse"
-          - mutation: 'root.parsed_data = this'
-      - check: this.data_type == "csv"
-        processors:
-          - csv:
-              parse: true
-          - mutation: 'root.parsed_data = this'
-      - processors:
-          - mutation: 'root.error = "Unsupported data type"'
-----
-
-[[secrets]]
-==== Secrets and credentials
-
-Securely handle multiple credentials and API keys using environment variables.
-
-Here is an example of using an API key from environment variables.
-
-. Set an environment variable with your API key:
-+
-[source,bash]
-----
-export EXTERNAL_API_KEY="your-api-key-here"
-----
-
-. Reference the environment variable in your pipeline configuration:
-+
-[source,yaml]
-----
-processors:
-  - label: call_external_api
-    http:
-      url: "https://api.example.com/data"
-      verb: GET
-      headers:
-        Authorization: "Bearer ${EXTERNAL_API_KEY}"  # <1>
-        Accept: "application/json"
-----
-+
-<1> The environment variable is injected at runtime. Never store the actual API key in your YAML. The actual secret value never appears in your configuration files or logs.
-
-==== Monitoring, debugging, and observability
-
-Use structured logging, request tracing, and performance metrics to gain insights into tool execution.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/processors/observable-tool.yaml[]
-----
-
-Observability features:
-
-* *Correlation IDs*: Use `uuid_v7()` to generate unique request identifiers for tracing
-* *Execution timing*: Track how long your tools take to execute using nanosecond precision
-* *Structured logging*: Include consistent fields like `request_id`, `duration_ms`, `tool_name`
-* *Request/response metadata*: Log input parameters and response characteristics
-* *Success tracking*: Monitor whether operations complete successfully
-
-You can test this pattern by invoking the tool with valid and invalid parameters, and observe the structured logs for tracing execution flow. For example, with a user ID of 1, you might see logs like:
-
-[source,json]
-----
-{
-  "metadata": {
-    "execution_time_ms": 0.158977,
-    "request_id": "019951ab-d07d-703f-aaae-7e1c9a5afa95",
-    "success": true,
-    "timestamp": "2025-09-16T08:37:18.589Z",
-    "tool": "observable_tool"
-  },
-  "trace": {
-    "request_id": "019951ab-d07d-703f-aaae-7e1c9a5afa95",
-    "timestamp": "2025-09-16T08:37:18.589Z",
-    "tool": "observable_tool",
-    "version": "1.0.0"
-  },
-  "user_id": "1"
-}
-----
-
-See also: xref:components:processors/log.adoc[`log` processor], xref:components:processors/try.adoc[`try` processor], xref:guides:bloblang/functions.adoc[Bloblang functions] (for timing and ID generation)
-
-==== Multi-step data enrichment
-
-Build tools that combine data from multiple sources.
-
-This workflow fetches customer data from a SQL database, enriches it with recent order history, and computes summary metrics.
-
-NOTE: This example requires setting the `POSTGRES_DSN` environment variable with your PostgreSQL connection string. For example, `export POSTGRES_DSN="postgres://user:password@localhost:5432/dbname"`.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/processors/customer-enrichment.yaml[]
-----
-
-See also: xref:components:processors/sql_select.adoc[`sql_select` processor], xref:guides:bloblang/about.adoc[Bloblang functions] (for data manipulation and aggregations)
-
-==== Workflow orchestration
-
-Coordinate complex workflows with multiple steps and conditional logic.
-
-This workflow simulates a complete order processing pipeline with mock data for inventory and processing tiers. This allows you to test the full logic without needing real external systems.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/processors/order-workflow.yaml[]
-----
-
-For the input `{"order_id": "ORD001", "product_id": "widget-001", "quantity": 5, "total": 250, "customer_tier": "vip"}`, the workflow produces:
-
-[source,json]
-----
-{
-  "assigned_rep": "vip-team@company.com",
-  "available_quantity": 100,
-  "customer_tier": "vip",
-  "estimated_fulfillment": "TBD - calculated based on processing tier",
-  "inventory_check": "passed",
-  "order_id": "ORD001",
-  "order_status": "processed",
-  "perks": [
-    "expedited_shipping",
-    "white_glove_service"
-  ],
-  "priority_score": 90,
-  "processed_at": "2025-09-16T09:05:29.138Z",
-  "processing_tier": "vip",
-  "processing_time_estimate": "1-2 hours",
-  "processing_time_hours": 2,
-  "product_id": "widget-001",
-  "product_name": "Standard Widget",
-  "quantity": 5,
-  "total": 250
-}
-----
-
-Notice how the workflow:
-
-. Preserves original input: `order_id`, `product_id`, `quantity`, `total`, and `customer_tier` pass through unchanged.
-. Adds inventory data: `available_quantity`, `product_name`, and `inventory_check` status from the mock lookup.
-. Routes by customer tier: Since `customer_tier` is `vip`, it gets VIP processing with special `perks` and priority.
-. Enriches with processing metadata: `assigned_rep`, `priority_score`, `processing_tier`, and time estimates.
-. Finalizes with timestamps: `order_status`, `processed_at`, and calculated `processing_time_hours`.
-
 [[start-server]]
 == Start the MCP server
+
+. Navigate to the directory where you <<initialize, initialized the MCP server project>>.
 
 . Lint your configuration files before starting the server:
 +
@@ -524,21 +241,15 @@ rpk connect mcp-server lint
 ----
 +
 This command checks all YAML files in your `resources` directory for errors or misconfigurations. Fix any issues reported before proceeding.
-+
-[source,bash]
-----
-# Lint all configurations
-rpk connect mcp-server lint
-----
 
 . Start the MCP server to expose all your tools over HTTP:
 +
 [source,bash]
 ----
-rpk connect mcp-server --address localhost:4195 --tag demo
+rpk connect mcp-server --address localhost:4195
 ----
 +
-This command creates an MCP server listening on `localhost:4195`, and exposes only the MCP tools with the `demo` tag in their metadata.
+This command creates an MCP server listening on `localhost:4195`.
 +
 You should see output like this:
 +
@@ -548,18 +259,20 @@ time=2025-06-27T15:20:27.976+01:00 level=INFO msg="Registering processor tool" l
 time=2025-06-27T15:20:27.978+01:00 level=INFO msg="Successfully loaded Redpanda license" expires_at=2035-06-25T15:20:27+01:00 license_org="" license_type="open source"
 ----
 
-:tip-caption: Limit exposure
+=== Expose a subset of tools
 
-[TIP]
-====
-Only tools with the specified `--tag` are exposed. This helps you:
+To expose only a subset of tools, use the `--tag` flag. This helps you:
 
-- Keep experiments isolated
-- Avoid exposing sensitive functionality accidentally
-- Create sets of tools that are relevant to specific agents or workflows
-====
+- Keep experiments isolated.
+- Avoid exposing sensitive functionality accidentally.
+- Create sets of tools that are relevant to specific agents or workflows.
 
-:tip-caption: Tip
+For example, to expose only tools tagged with `demo`, start the server with:
+
+[,bash]
+----
+rpk connect mcp-server --address localhost:4195 --tag demo
+----
 
 [[connect-claude]]
 == Connect Claude Code to your MCP server
@@ -620,23 +333,6 @@ In summary, the flow is:
 - `mcp-remote` converts each event into a structured MCP message.
 - Those messages are forwarded to Claude Code through the local input channel created by `claude mcp add local`.
 
-== Best practices
-
-* **Single responsibility**: Each tool should do one thing well.
-* **Descriptive naming**: Use clear, specific labels like `fetch-user-profile` instead of generic names like `get-data`.
-* **Input validation**: Always validate and sanitize user inputs.
-* **Error handling**: Provide meaningful error messages.
-* **Documentation**: Write clear descriptions that explain what the tool does and what it returns.
-
-== Example: Complete weather service
-
-Here's a complete example that demonstrates best practices:
-
-[source,yaml]
-----
-include::ai-agents:example$resources/processors/weather-service.yaml[]
-----
-
 == Troubleshooting
 
 This section covers common issues and debugging techniques when developing MCP tools with Redpanda Connect.
@@ -689,9 +385,10 @@ meta:
     description: "Consume events from Redpanda"
 ----
 
-== Further reading
+== Suggested reading
 
 * xref:components:about.adoc[Redpanda Connect components reference]
+* xref:ai-agents:mcp-server/pipeline-patterns.adoc[]
 * xref:guides:bloblang/about.adoc[Bloblang language guide]
 * link:https://docs.anthropic.com/en/docs/mcp[Model Context Protocol documentation^]
 * xref:ai-agents:mcp-server/quickstart.adoc[MCP Server quickstart]

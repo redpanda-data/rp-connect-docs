@@ -6,12 +6,12 @@ processors:
       meta city = this.city.string().
         re_replace_all("[^a-zA-Z\\s\\-]", "").
         trim()
-      
+
       # Check for empty input
       root = if @city == "" {
         throw("City name cannot be empty")
       } else { "" }
-    
+
   - label: fetch_weather_data
     try:
       - http:
