@@ -1,20 +1,26 @@
 label: customer_enrichment
 processors:
   - label: fetch_customer_base
-    sql_select:
-      driver: "postgres"
-      dsn: "${POSTGRES_DSN}"
-      table: "customers"
-      where: "customer_id = ?"
-      args_mapping: 'root = [this.customer_id]'
+    branch:
+      processors:
+        - sql_select:
+            driver: "postgres"
+            dsn: "${POSTGRES_DSN}"
+            table: "customers"
+            where: "customer_id = ?"
+            args_mapping: 'root = [this.customer_id]'
+      result_map: 'root.customers = this'
 
   - label: enrich_with_orders
-    sql_select:
-      driver: "postgres"
-      dsn: "${POSTGRES_DSN}"
-      table: "orders"
-      where: "customer_id = ? AND created_at >= NOW() - INTERVAL '30 days'"
-      args_mapping: 'root = [this.customer_id]'
+    branch:
+      processors:
+        - sql_select:
+            driver: "postgres"
+            dsn: "${POSTGRES_DSN}"
+            table: "orders"
+            where: "customer_id = ? AND created_at >= NOW() - INTERVAL ''30 days''"
+            args_mapping: 'root = [this.customer_id]'
+      result_map: 'root.orders = this'
 
   - label: combine_data
     mutation: |

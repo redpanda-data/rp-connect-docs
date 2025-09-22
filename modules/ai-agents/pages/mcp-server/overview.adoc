@@ -61,7 +61,7 @@ processors:
   - label: calculate_metrics
     mutation: |
       root = {
-        "customer_id": this.customer_id,
+        "customer_id": this.0.customer_id,
         "total_orders": this.length(),
         "total_spent": this.map_each(o -> o.total).sum(),
         "avg_order_value": this.map_each(o -> o.total).mean(),

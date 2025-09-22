@@ -88,14 +88,14 @@ meta:
   mcp:
     enabled: true
     description: Search public Bluesky posts based on a query string. <4>
-  properties: <5>
-    - name: query
-      type: string
-      required: true
-      description: A Lucene-style query string to search posts.
-    - name: limit
-      type: number
-      description: Number of posts to return (1-100). Defaults to 25.
+    properties: <5>
+      - name: query
+        type: string
+        required: true
+        description: A Lucene-style query string to search posts.
+      - name: limit
+        type: number
+        description: Number of posts to return (1-100). Defaults to 25.
 ----
 
 This example defines a tool that searches public Bluesky posts based on a query string. The tool:
@@ -241,6 +241,6 @@ Here's an example of what the result might look like:
 
 Try adding more tools under the same `example` tag to expand Claude Code's capabilities. See xref:ai-agents:mcp-server/developer-guide.adoc[].
 
-View the xref:components:catalog.adoc[full catalog of connectors] you can use to build more tools.
+View the xref:components:about.adoc[full catalog of connectors] you can use to build more tools.
 
 
