@@ -9,8 +9,3 @@ meta:
   mcp:
     enabled: true
     description: "Get recent events for a specific user from Redpanda"
-    properties:
-      - name: user_id
-        type: string
-        description: "User ID to filter events for"
-        required: true
