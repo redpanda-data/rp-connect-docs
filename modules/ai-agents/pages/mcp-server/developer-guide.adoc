@@ -83,7 +83,7 @@ touch resources/processors/database-query.yaml
 See the next sections for details on customizing these files for your use case.
 
 [[contract]]
-== Define the tool contract and MCP metadata
+== Design the tool contract and MCP metadata
 
 Each MCP tool must declare its interface using `meta.mcp` metadata. This metadata allows AI clients to discover and invoke the tool correctly.
 
@@ -107,7 +107,7 @@ meta:
 ----
 
 <1> Set `meta.mcp.enabled: true` to expose the tool using MCP.
-<2> A concise description that explains what the tool does. This should be understandable by an AI model.
+<2> A concise description that explains what the tool does. The description is passed as a tool option, making it available to clients and documentation. This should be understandable by an AI model.
 <3> List the input parameters (properties) for the tool.
 +
 Property guidance:
@@ -125,7 +125,7 @@ After defining your tool contract, implement the pipeline logic to handle input 
 Use Redpanda Connect components to implement the logic of your MCP tool. Here are some best practices:
 
 * **Single responsibility**: Each tool should do one thing well.
-* **Descriptive naming**: Use clear, specific labels like `fetch-user-profile` instead of generic names like `get-data`.
+* **Descriptive naming**: Use clear, specific labels like `fetch-user-profile` instead of generic names like `get-data`. The top-level label becomes the tool's name in the MCP server.
 * **Input validation**: Always validate and sanitize user inputs using xref:guides:bloblang/about.adoc[Bloblang].
 * **Error handling**: Provide meaningful error messages.
 * **Documentation**: Write clear descriptions that explain what the tool does and what it returns.
@@ -163,7 +163,7 @@ Each YAML file should contain exactly one component type. The component type is 
 .Correct example when inside resources/inputs/
 [source,yaml]
 ----
-label: my_input
+label: event-reader
 redpanda:
   seed_brokers: [ "${REDPANDA_BROKERS}" ]
   topics: [ "events" ]
@@ -178,6 +178,7 @@ meta:
 .Correct example when inside resources/processors/
 [source,yaml]
 ----
+label: fetch-example-data
 processors:
   - label: safe_operation
     try:
@@ -199,7 +200,7 @@ processors:
 .Incorrect (do not include the input wrapper)
 [source,yaml]
 ----
-label: my_input
+label: incorrect-example
 input:
   redpanda:
     seed_brokers: [ "${REDPANDA_BROKERS}" ]
@@ -209,6 +210,7 @@ input:
 .Incorrect (multiple component types in one file)
 [source,yaml]
 ----
+label: incorrect-example
 input:
   redpanda: { ... }
 processors:
@@ -220,6 +222,7 @@ output:
 .Incorrect (try/catch as single processor)
 [source,yaml]
 ----
+label: incorrect-example
 processors:
   - label: operation
     try:
@@ -267,11 +270,11 @@ To expose only a subset of tools, use the `--tag` flag. This helps you:
 - Avoid exposing sensitive functionality accidentally.
 - Create sets of tools that are relevant to specific agents or workflows.
 
-For example, to expose only tools tagged with `demo`, start the server with:
+For example, to expose only tools tagged with `example`, start the server with:
 
 [,bash]
 ----
-rpk connect mcp-server --address localhost:4195 --tag demo
+rpk connect mcp-server --address localhost:4195 --tag example
 ----
 
 [[connect-claude]]

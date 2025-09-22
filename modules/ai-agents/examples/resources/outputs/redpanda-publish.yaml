@@ -7,7 +7,7 @@ redpanda:
   partition: "${! this.customer_id.hash(algorithm:\"xxhash64\") % 8 }"
   max_in_flight: 10
 meta:
-  tags: [ publishing, orders ]
+  tags: [ publishing, orders, example ]
   mcp:
     enabled: true
     description: "Publish order events to Redpanda for downstream processing"

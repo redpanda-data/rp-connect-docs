@@ -84,7 +84,7 @@ try: <2>
       format: json_array
 
 meta:
-  tags: [ demo ] <3>
+  tags: [ example ] <3>
   mcp:
     enabled: true
     description: Search public Bluesky posts based on a query string. <4>
@@ -102,7 +102,7 @@ This example defines a tool that searches public Bluesky posts based on a query 
 
 <1> unique label for identification. Claude uses this label to discover and call the tool.
 <2> A series of processors to build the HTTP request, handle the response, and format the output.
-<3> A unique tag (`demo`) to control exposure. You can use tags to group related tools or isolate experiments.
+<3> A unique tag (`example`) to control exposure. You can use tags to group related tools or isolate experiments.
 <4> A clear description for LLMs helps Claude understand what the tool does.
 <5> Structured properties for inputs like `query` and `limit`.
 
@@ -112,7 +112,7 @@ Start the MCP server to expose the tool over HTTP:
 
 [source,bash]
 ----
-rpk connect mcp-server --address localhost:4195 --tag demo
+rpk connect mcp-server --address localhost:4195 --tag example
 ----
 
 You should see output like this:
@@ -237,7 +237,7 @@ Here's an example of what the result might look like:
 
 == Next steps
 
-Try adding more tools under the same `demo` tag to expand Claude Code's capabilities. See xref:ai-agents:mcp-server/developer-guide.adoc[].
+Try adding more tools under the same `example` tag to expand Claude Code's capabilities. See xref:ai-agents:mcp-server/developer-guide.adoc[].
 
 View the xref:components:catalog.adoc[full catalog of connectors] you can use to build more tools.
 
