@@ -277,8 +277,21 @@ For example, to expose only tools tagged with `example`, start the server with:
 rpk connect mcp-server --address localhost:4195 --tag example
 ----
 
+[[connect-client]]
+== Connect an MCP client
+
+You can connect any MCP-compatible client to your MCP server using the server's HTTP endpoint. Most clients require the server address and may support authentication or custom headers.
+
+To connect a generic MCP client:
+
+. Ensure your MCP server is running and accessible at the desired address (for example, `http://localhost:4195`).
+
+. Configure your client with the MCP server's endpoint. For example: `http://localhost:4195/sse`.
+
+Refer to your client's documentation for details on supported options and advanced configuration. For a list of example clients, see the link:https://modelcontextprotocol.io/clients[MCP documentation^].
+
 [[connect-claude]]
-== Connect Claude Code to your MCP server
+=== Connect Claude Code to your MCP server
 
 To connect Claude Code to your MCP server, you need to expose a live event stream that Claude can consume. This is done using the link:https://www.npmjs.com/package/mcp-remote[`mcp-remote` utility^], which bridges your local service to Claude's MCP interface. `mcp-remote` is a lightweight bridge that turns any streaming HTTP endpoint into a source of MCP-compatible messages.
 
