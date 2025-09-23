@@ -31,6 +31,7 @@ Secrets:: Credentials and tokens should be stored as environment variables and r
 . <<pipeline-patterns, Implement the pipeline>>: Build the logic for your MCP tool using Redpanda Connect pipelines.
 . <<start-server, Lint and start the MCP server>>: Launch your server using `rpk connect mcp-server` to expose your tools.
 . <<connect, Connect your AI assistants>>: Set up Claude Code or other MCP clients to use your tools.
+. <<publish, Publish your MCP server (optional)>>: Make your MCP server discoverable by AI clients and agents by publishing it to an MCP registry. This enables authentication and access control for your tools.
 
 [[initialize]]
 == Initialize a new MCP server project
@@ -348,6 +349,12 @@ In summary, the flow is:
 - `mcp-remote` connects to that stream and reads the events.
 - `mcp-remote` converts each event into a structured MCP message.
 - Those messages are forwarded to Claude Code through the local input channel created by `claude mcp add local`.
+
+== Publish your MCP server
+
+To make your MCP server discoverable by AI clients and agents, you can publish it to an MCP registry. This also enables you to provide authentication and access control for your tools.
+
+See the official guide for publishing and securing your server: link:https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md[MCP Registry Publishing Guide^].
 
 == Troubleshooting
 
