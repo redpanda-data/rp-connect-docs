@@ -1,0 +1,183 @@
+= tigerbeetle_cdc
+:type: input
+:status: beta
+:categories: ["Services"]
+
+component_type_dropdown::[]
+
+*Introduced in version 4.65.0.*
+
+Enables integration with link:https://docs.tigerbeetle.com/operating/cdc/[TigerBeetle's Change Data Capture] (CDC) streaming for Redpanda Connect.
+This input component connects to a TigerBeetle cluster and continuously listens for real-time changes (such as account updates, transfers, and other ledger events). Each detected change is converted into a message and ingested into Redpanda Connect for further processing.
+
+Use this input when you need to synchronize TigerBeetle's financial ledger events with downstream systems, enable event-driven architectures, or build real-time analytics pipelines. Typical use cases include auditing, monitoring, fraud detection, and maintaining up-to-date replicas of financial data in other services.
+
+[source,yaml,role="no-wrap"]
+----
+# Config fields, showing default values
+input:
+  label: ""
+  tigerbeetle_cdc:
+    cluster_id: "<your-cluster-id>"        # Required: The unique 128-bit TigerBeetle cluster ID
+    addresses:                             # Required: List of IP addresses for all TigerBeetle replicas
+      - "<replica1-ip>"
+      - "<replica2-ip>"
+      - "<replica3-ip>"
+    progress_cache: "<your-cache-name>"    # Required: Cache resource name to track progress
+    rate_limit: ""                        # Optional: Throttles request rate (defaults to no limit)
+    event_count_max: 2730                  # Optional: Max events per request (default 2730)
+    idle_interval_ms: 1000                 # Optional: Wait ms before querying again if no events (default 1000)
+    timestamp_initial: ""                  # Optional: TigerBeetle timestamp to start from (nanosecond precision)
+    auto_replay_nacks: true                # Optional: Auto-replay failed batches (default true)
+----
+
+Each message produced by this input is a JSON object representing a TigerBeetle CDC event. The structure includes details about the event type, ledger, transfer, debit and credit accounts, and associated timestamps. For example:
+
+```json
+{
+  "timestamp": "1745328372758695656",
+  "type": "single_phase",
+  "ledger": 2,
+  "transfer": {
+    "id": "9082709",
+    "amount": "3794",
+    "pending_id": "0",
+    "user_data_128": "79248595801719937611592367840129079151",
+    "user_data_64": "13615171707598273871",
+    "user_data_32": 3229992513,
+    "timeout": 0,
+    "code": 20295,
+    "flags": 0,
+    "timestamp": "1745328372758695656"
+  },
+  "debit_account": {
+    "id": "3750",
+    "debits_pending": "0",
+    "debits_posted": "8463768",
+    "credits_pending": "0",
+    "credits_posted": "8861179",
+    "user_data_128": "118966247877720884212341541320399553321",
+    "user_data_64": "526432537153007844",
+    "user_data_32": 4157247332,
+    "code": 1,
+    "flags": 0,
+    "timestamp": "1745328270103398016"
+  },
+  "credit_account": {
+    "id": "6765",
+    "debits_pending": "0",
+    "debits_posted": "8669204",
+    "credits_pending": "0",
+    "credits_posted": "8637251",
+    "user_data_128": "43670023860556310170878798978091998141",
+    "user_data_64": "12485093662256535374",
+    "user_data_32": 1924162092,
+    "code": 1,
+    "flags": 0,
+    "timestamp": "1745328270103401031"
+  }
+}
+```
+
+== Requirements
+
+Before using the TigerBeetle CDC input, ensure that your environment meets the following requirements:
+
+- TigerBeetle cluster version 0.16.57 or later is required.
+- The TigerBeetle client version must not be newer than the cluster version to ensure compatibility.
+- This component is only available in cgo-enabled builds of Redpanda Connect (not in the Redpanda CLI or Docker image).
++
+You can either xref:install:prebuilt-binary.adoc[download a prebuilt cgo-enabled binary] or xref:install:build-from-source.adoc[build Redpanda Connect from source with cgo enabled].
+- Consumers must implement idempotency when processing messages to handle potential duplicates.
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+[cols="1m,3a"]
+|===
+| Metadata Field        | Description
+
+| event_type            | One of `"single_phase"`, `"two_phase_pending"`, `"two_phase_posted"`, `"two_phase_voided"`, or `"two_phase_expired"`.
+| ledger                | The ledger code.
+| transfer_code         | The transfer code.
+| debit_account_code    | The debit account code.
+| credit_account_code   | The credit account code.
+| timestamp             | The unique event timestamp with nanosecond resolution.
+| timestamp_ms          | The event timestamp with millisecond resolution.
+|===
+
+== Guarantees
+
+This input guarantees at-least-once semantics, and makes a best effort to prevent
+duplicate messages. However, during crash recovery, it may replay unacknowledged
+messages that could have been already delivered to consumers.
+
+It is the consumer's responsibility to perform idempotency checks when processing messages.
+
+== Fields
+
+=== `cluster_id`
+
+The TigerBeetle unique 128-bit cluster ID.
+
+*Type*: `string`
+
+=== `addresses`
+
+A list of IP addresses of all the TigerBeetle replicas in the cluster. The order of addresses must correspond to the order of replicas.
+
+*Type*: `array`
+
+=== `progress_cache`
+
+A https://docs.redpanda.com/redpanda-connect/components/caches/about[cache resource] used to track progress by storing the last acknowledged timestamp.
+This allows Redpanda Connect to resume from the latest delivered event upon restart.
+
+*Type*: `string`
+
+=== `rate_limit`
+
+An optional https://docs.redpanda.com/redpanda-connect/components/rate_limits/about/[rate limit] to throttle the number of **requests** made to TigerBeetle.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `event_count_max`
+
+The maximum number of events fetched from TigerBeetle per **request**.
+Must be greater than zero.
+
+
+*Type*: `int`
+
+*Default*: `2730`
+
+=== `idle_interval_ms`
+
+The time interval in milliseconds to wait before querying again when the last request returned no events.
+Must be greater than zero.
+
+*Type*: `int`
+
+*Default*: `1000`
+
+=== `timestamp_initial`
+
+The initial timestamp to start extracting events from. If not defined, all events since the beginning will be included.
+Ignored if a more recent timestamp has already been acknowledged.
+This is a TigerBeetle timestamp with nanosecond precision.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `auto_replay_nacks`
+
+Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.
+
+*Type*: `bool`
+
+*Default*: `true`
+

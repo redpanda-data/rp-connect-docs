@@ -1,0 +1,51 @@
+= json_array
+// tag::single-source[]
+:type: scanner
+:status: stable
+:categories: []
+:description: Consumes a stream of one or more JSON elements within a top level array.
+
+component_type_dropdown::[]
+
+Consumes a stream of one or more JSON elements within a top level array. This scanner is useful for:
+
+- Processing exports from systems that generate a JSON array as the top-level JSON structure (for example, logs, bulk exports, etc).
+- Efficiently breaking up large files with many objects into individual events/messages.
+
+Suppose you have a file `events.json`:
+
+.`events.json`
+[,json]
+----
+[
+  {"event": "login", "user": "alice"},
+  {"event": "logout", "user": "bob"},
+  {"event": "purchase", "user": "carol", "amount": 42}
+]
+----
+
+The configuration to process this file is:
+
+```yaml
+input:
+  file:
+    paths: [ "./events.json" ]
+    scanner:
+      json_array: {}
+```
+
+Result: Each event in the array is processed as a separate message.
+
+== Requirements
+
+The `json_array` scanner expects the input to be a single JSON array, where each array element is a JSON object or value.
+
+== Fields
+
+The `json_array` scanner has no required fields. You declare it as `{}` in your config.
+
+```yaml
+json_array: {}
+```
+
+// end::single-source[]
