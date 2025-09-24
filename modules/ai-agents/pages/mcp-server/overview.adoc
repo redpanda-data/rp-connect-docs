@@ -2,7 +2,7 @@
 = About Redpanda Connect MCP Server
 :description: Discover the business value, use cases, and architecture for Redpanda Connect MCP servers.
 
-Redpanda Connect's MCP (Model Context Protocol) server lets you expose your data, analytics, and automation pipelines as AI-consumable tools with no custom API code. It bridges your business logic to AI agents using the open MCP standard so you can:
+Redpanda Connect's MCP (Model Context Protocol) server lets you expose your data, analytics, and automations as AI-consumable tools with no custom API code. It bridges your business logic to AI agents using the open MCP standard so you can:
 
 * Make your data and workflows accessible to AI assistants and LLMs, safely and on your terms.
 * Accelerate automation and insight by letting AI trigger real business actions.
@@ -37,14 +37,14 @@ Redpanda Connect's MCP (Model Context Protocol) server lets you expose your data
 
 == How it works
 
-. You define a tool as a YAML pipeline in Redpanda Connect, describing its inputs, outputs, and logic.
+. You define a tool as a YAML configuration in Redpanda Connect, describing its inputs, outputs, and logic.
 . The MCP server loads these tools and exposes them as HTTP endpoints, discoverable by AI agents through the MCP protocol.
 . AI clients can list, inspect, and invoke tools to trigger real business actions or analytics with validated, structured input.
 . All tool metadata is optimized for LLMs, so AI can understand what each tool does and how to use it.
 
 == Example: Customer analytics tool
 
-Here's how you might expose a customer analytics pipeline as an MCP tool:
+Here's how you might expose a customer analytics configuration as an MCP tool:
 
 [source,yaml]
 ----

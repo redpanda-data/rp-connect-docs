@@ -18,9 +18,9 @@ TIP: For a quickstart, see xref:ai-agents:mcp-server/quickstart.adoc[].
 
 MCP server:: A service that exposes tools through the Model Context Protocol. In Redpanda Connect, this is enabled using the `rpk connect mcp-server` command to start a dedicated MCP server process.
 
-Tool:: A single request/response operation exposed to MCP clients. Each tool is implemented as a Redpanda Connect pipeline and described to MCP with `meta.mcp` metadata.
+Tool:: A single request/response operation exposed to MCP clients. Each tool is implemented as a Redpanda Connect configuration and described to MCP with `meta.mcp` metadata.
 
-Pipeline:: A Redpanda Connect configuration that defines how data flows through inputs, processors, and outputs. When used as an MCP tool, pipelines typically receive JSON input and return structured results.
+Redpanda Connect configuration:: A YAML file that defines how data flows through inputs, processors, and outputs. When used as an MCP tool, Redpanda Connect configurations typically receive JSON input and return structured results.
 
 Secrets:: Credentials and tokens should be stored as environment variables and referenced as `$\{ENV_VAR}`. Never hardcode secrets in YAML files.
 
@@ -28,7 +28,7 @@ Secrets:: Credentials and tokens should be stored as environment variables and r
 
 . <<initialize, Initialize the project>>: Use the Redpanda CLI to scaffold your project.
 . <<contract, Design the tool contract>>: Annotate MCP metadata with `meta.mcp.enabled: true`, provide a concise description, and declare parameters.
-. <<pipeline-patterns, Implement the pipeline>>: Build the logic for your MCP tool using Redpanda Connect pipelines.
+. <<pipeline-patterns, Implement the configuration>>: Build the logic for your MCP tool using Redpanda Connect configurations.
 . <<start-server, Lint and start the MCP server>>: Launch your server using `rpk connect mcp-server` to expose your tools.
 . <<connect, Connect your AI assistants>>: Set up Claude Code or other MCP clients to use your tools.
 . <<publish, Publish your MCP server (optional)>>: Make your MCP server discoverable by AI clients and agents by publishing it to an MCP registry. This enables authentication and access control for your tools.
@@ -114,14 +114,14 @@ meta:
 Property guidance:
 +
 * Use `string`, `number`, or `boolean` types.
-* Validate ranges and enums using xref:guides:bloblang/about.adoc[Bloblang] inside the pipeline.
+* Validate ranges and enums using xref:guides:bloblang/about.adoc[Bloblang].
 * Mark only mandatory fields as required.
-* Document defaults in the `description` and enforce them in the pipeline.
+* Document defaults in the `description` and enforce them in the configuration.
 
-After defining your tool contract, implement the pipeline logic to handle input validation, defaults, and the main processing steps.
+After defining your tool contract, implement the configuration to handle input validation, defaults, and the main processing steps.
 
 [[pipeline-patterns]]
-== Implement the pipeline
+== Implement the configuration
 
 Use Redpanda Connect components to implement the logic of your MCP tool. Here are some best practices:
 

@@ -1,7 +1,7 @@
-= Pipeline Patterns for MCP Servers
-:description: Catalog of pipeline patterns for Redpanda Connect MCP server tools.
+= Redpanda Connect Patterns for MCP Servers
+:description: Catalog of patterns for Redpanda Connect MCP server tools.
 
-This page provides a reference catalog of pipeline patterns designed for use with Redpanda Connect MCP servers. Use these patterns as building blocks for your own MCP tools. For step-by-step instructions on building, deploying, and testing MCP servers, see xref:ai-agents:mcp-server/developer-guide.adoc[].
+This page provides a reference catalog of configuration patterns designed for use with Redpanda Connect MCP servers. Use these patterns as building blocks for your own MCP tools. For step-by-step instructions on building, deploying, and testing MCP servers, see xref:ai-agents:mcp-server/developer-guide.adoc[].
 
 Each pattern is a reusable example for a common MCP tool scenario. Patterns are grouped by use case. All YAML is ready to use in your MCP server project.
 
@@ -186,7 +186,7 @@ Here is an example of using an API key from environment variables.
 export EXTERNAL_API_KEY="your-api-key-here"
 ----
 
-. Reference the environment variable in your pipeline configuration:
+. Reference the environment variable in your configuration:
 +
 [source,yaml]
 ----
@@ -262,7 +262,7 @@ See also: xref:components:processors/sql_select.adoc[`sql_select` processor], xr
 
 Coordinate complex workflows with multiple steps and conditional logic.
 
-This workflow simulates a complete order processing pipeline with mock data for inventory and processing tiers. This allows you to test the full logic without needing real external systems.
+This workflow simulates a complete order processing configuration with mock data for inventory and processing tiers. This allows you to test the full logic without needing real external systems.
 
 [source,yaml]
 ----
