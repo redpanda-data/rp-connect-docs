@@ -27,32 +27,63 @@ You need a valid Enterprise Edition license to use the following enterprise feat
 
 You can either https://www.redpanda.com/upgrade[upgrade to an Enterprise Edition license^], or http://redpanda.com/try-enterprise[generate a trial license key^] that's valid for 30 days.
 
+
 == Apply a license key to Redpanda Connect
 
-When you have downloaded the license key, you can apply it in the following ways: 
+When you have downloaded the license key, you can apply it using either the CLI (`rpk`) or Helm on Kubernetes.
 
-=== Apply the license using a license file
-
+[tabs]
+======
+rpk (local or VM)::
++
+--
 If you have a license key file, either:
 
-- Save the license key to the following directory: `/etc/redpanda/redpanda.license`. 
+- Save the license key to `/etc/redpanda/redpanda.license`.
 - Set the environment variable `REDPANDA_LICENSE_FILEPATH` to point to the file where the license key is stored.
 
-=== Apply the license using a license string
-
-If you do not have a license key file, either:
+If you have a license string, either:
 
 - Set the environment variable `REDPANDA_LICENSE` to the value of the full license string.
-- Run the following command using the full license string.
-+
+- Run the following command using the full license string:
+
 ```bash
 rpk connect run --redpanda-license <license-string> ./<connect-configuration>.yaml
 ```
-+
-Replace the following placeholders: 
+
+Replace the following placeholders:
 
   ** `<license-string>`: The full license key string.
   ** `<connect-configuration>`: The name of your Redpanda Connect configuration file.
+--
+
+Helm (Kubernetes)::
++
+--
+To enable enterprise features, you must provide a license key as a Kubernetes Secret and reference it in your deployment configuration.
+
+. Create the Secret:
++
+[source,bash]
+----
+kubectl create secret generic redpanda-connect-license \
+  --from-literal=REDPANDA_LICENSE=<your-license-key> \
+  --namespace <namespace>
+----
+
+. Reference the license secret in your `values.yaml` or as a Helm value:
++
+[source,yaml]
+----
+envFrom:
+  - secretRef:
+      name: redpanda-connect-license
+----
+
+This configuration mounts the license key as the `REDPANDA_LICENSE` environment variable, allowing Redpanda Connect to use enterprise features.
+
+--
+======
 
 == Verify a license
 
@@ -64,3 +95,8 @@ You can view the license key’s expiration date at any time in the Redpanda Con
 INFO Running main config from specified file       @service=benthos benthos_version=4.50.0 path=connect_2.yaml
 INFO Successfully loaded Redpanda license          @service=benthos expires_at="2025-04-18T15:41:56+01:00" license_org=67XXX license_type="enterprise"
 ```
+
+== Next steps
+
+- xref:get-started:quickstarts/index.adoc[Get started with Redpanda Connect].
+- xref:components:about.adoc[Explore enterprise connectors] to enhance your data pipelines.
