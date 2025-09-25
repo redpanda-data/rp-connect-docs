@@ -60,7 +60,8 @@ jobs:
           npx doc-tools generate rpcn-connector-docs \
             --fetch-connectors \
             --overrides $DOCS_OVERRIDES \
-            --draft-missing > full_output.txt
+            --draft-missing \
+            --update-whats-new > full_output.txt
 
           {
             echo "delta_report<<EOF"
