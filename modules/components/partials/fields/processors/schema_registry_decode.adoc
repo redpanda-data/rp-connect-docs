@@ -186,7 +186,7 @@ cache_duration: 5m
 
 === `default_schema_id`
 
-If set, this schema ID will be used when a message's schema header cannot be read (ErrBadHeader). If not set, schema header errors will be returned.
+If set, this schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If not set, schema header errors are returned.
 
 *Type*: `int`
 

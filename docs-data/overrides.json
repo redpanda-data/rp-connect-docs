@@ -851,6 +851,10 @@
             "$ref": "#/definitions/seed_brokers"
           },
           {
+            "name": "regexp_topics",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`."
+          },
+          {
             "name": "tls",
             "children": [
               {
@@ -6790,6 +6794,10 @@
           {
             "name": "oauth",
             "$ref": "#/definitions/oauth"
+          },
+          {
+            "name": "default_schema_id",
+            "description": "If set, this schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If not set, schema header errors are returned."
           },
           {
             "name": "jwt",

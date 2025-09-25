@@ -131,14 +131,14 @@ A list of IP addresses of all the TigerBeetle replicas in the cluster. The order
 
 === `progress_cache`
 
-A https://docs.redpanda.com/redpanda-connect/components/caches/about[cache resource] used to track progress by storing the last acknowledged timestamp.
+A xref:components:caches/about.adoc[cache resource] used to track progress by storing the last acknowledged timestamp.
 This allows Redpanda Connect to resume from the latest delivered event upon restart.
 
 *Type*: `string`
 
 === `rate_limit`
 
-An optional https://docs.redpanda.com/redpanda-connect/components/rate_limits/about/[rate limit] to throttle the number of **requests** made to TigerBeetle.
+An optional xref:components:rate_limits/about.adoc[rate limit] to throttle the number of **requests** made to TigerBeetle.
 
 *Type*: `string`
 
@@ -165,7 +165,8 @@ Must be greater than zero.
 
 === `timestamp_initial`
 
-The initial timestamp to start extracting events from. If not defined, all events since the beginning will be included.
+The initial timestamp to start extracting events from. If not defined, all CDC events available in the TigerBeetle cluster will be included.
+
 Ignored if a more recent timestamp has already been acknowledged.
 This is a TigerBeetle timestamp with nanosecond precision.
 
@@ -175,7 +176,9 @@ This is a TigerBeetle timestamp with nanosecond precision.
 
 === `auto_replay_nacks`
 
-Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.
+Whether messages that are rejected (nacked) at the output level are automatically replayed indefinitely. If the cause of rejection persists, this can result in backpressure. If set to `false`, these messages are deleted.
+
+Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.
 
 *Type*: `bool`
 
