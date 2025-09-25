@@ -61,8 +61,7 @@ jobs:
             --fetch-connectors \
             --overrides $DOCS_OVERRIDES \
             --draft-missing \
-            --update-whats-new \
-            --include-bloblang > full_output.txt
+            --update-whats-new > full_output.txt
 
           {
             echo "delta_report<<EOF"
