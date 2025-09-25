@@ -7,7 +7,9 @@
 
 component_type_dropdown::[]
 
+ifndef::env-cloud[]
 *Introduced in version 4.65.0.*
+endif::[]
 
 Consumes a stream of one or more JSON elements within a top level array. This scanner is useful for:
 
