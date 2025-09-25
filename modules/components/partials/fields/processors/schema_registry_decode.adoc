@@ -184,6 +184,12 @@ cache_duration: 1h
 cache_duration: 5m
 ----
 
+=== `default_schema_id`
+
+If set, this schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If not set, schema header errors are returned.
+
+*Type*: `int`
+
 === `jwt`
 
 BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.

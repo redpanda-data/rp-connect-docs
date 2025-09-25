@@ -1,0 +1,73 @@
+= Install or Upgrade with the Helm Chart
+:description: Deploy or upgrade Redpanda Connect on Kubernetes using Helm.
+:page-aliases: get-started:upgrade/helm-chart-upgrade.adoc
+
+The official Redpanda Connect Helm chart lets you deploy and manage Redpanda Connect on Kubernetes.
+
+== Install with Helm
+
+To deploy Redpanda Connect on Kubernetes, use the official Helm chart:
+
+[source,bash]
+----
+helm repo add redpanda https://charts.redpanda.com
+helm repo update
+helm install redpanda-connect redpanda/connect --namespace <namespace> --create-namespace
+----
+
+Replace `<namespace>` with your desired Kubernetes namespace.
+
+TIP: See xref:get-started:quickstarts/helm-chart.adoc[Get Started with the Redpanda Connect Helm Chart] for a full walkthrough and configuration options.
+
+== Upgrade with Helm
+
+To upgrade Redpanda Connect to a newer Helm chart version:
+
+. Ensure your Helm repository is updated to fetch the latest version of the Redpanda Helm chart:
++
+[,bash]
+----
+helm repo update
+----
+
+. Upgrade your existing deployment using the https://helm.sh/docs/helm/helm_upgrade/[`helm upgrade`] command:
++
+[,bash]
+----
+helm upgrade redpanda-connect redpanda/connect --namespace <namespace> --values <your-values-file>
+----
++
+Replace `<your-values-file>` with the path to your custom configuration file.
+
+=== Roll back an upgrade
+
+If an upgrade introduces issues, you can roll back to a previous release. Helm retains previous deployments, allowing you to roll back with the https://helm.sh/docs/helm/helm_rollback/[`helm rollback`] command:
+
+[,bash]
+----
+helm rollback redpanda-connect <revision-number> --namespace <namespace>
+----
+
+To find the revision number, use the https://helm.sh/docs/helm/helm_history/[`helm history`] command:
+
+[,bash]
+----
+helm history redpanda-connect --namespace <namespace>
+----
+
+This command lists previous deployments and their revision numbers.
+
+== Uninstall
+
+To uninstall Redpanda Connect from your Kubernetes cluster:
+
+[source,bash]
+----
+helm uninstall redpanda-connect --namespace <namespace>
+----
+
+Replace `<namespace>` with the namespace where Redpanda Connect was installed.
+
+== Next steps
+
+Explore the available connectors in the xref:components:about.adoc[catalog].

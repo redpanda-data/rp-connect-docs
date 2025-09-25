@@ -1,5 +1,11 @@
 {
   "definitions": {
+    "default_schema_id": {
+      "description": "If set, this schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If not set, schema header errors are returned."
+    },
+    "regexp_topics": {
+      "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`."
+    },
     "client_certs": {
       "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS, authenticating the client to the server with these certificates.\n\nYou must set `tls.enabled: true` for the client certificates to take effect.\n\n**Certificate pairing rules**: For each certificate item, provide either:\n\n- Inline PEM data using both `cert` *and* `key` or\n- File paths using both `cert_file` *and* `key_file`.\n\nMixing inline and file-based values within the same item is not supported."
     },
@@ -849,6 +855,10 @@
           {
             "name": "seed_brokers",
             "$ref": "#/definitions/seed_brokers"
+          },
+          {
+            "name": "regexp_topics",
+            "$ref": "#/definitions/regexp_topics"
           },
           {
             "name": "tls",
@@ -6790,6 +6800,10 @@
           {
             "name": "oauth",
             "$ref": "#/definitions/oauth"
+          },
+          {
+            "name": "default_schema_id",
+            "$ref": "#/definitions/default_schema_id"
           },
           {
             "name": "jwt",

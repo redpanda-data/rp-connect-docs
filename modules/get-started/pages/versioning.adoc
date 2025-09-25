@@ -1,5 +1,6 @@
 = Redpanda Connect Versioning
 :description: Learn how Redpanda Connect implements versioning.
+:page-aliases: get-started:upgrade/versioning.adoc
 
 Redpanda Connect uses semantic versioning. Version numbers follow the format `major.minor.patch`:
 
@@ -11,9 +12,6 @@ For example, version 4.35.1 is the first patch release of bug fixes following th
 
 == Next steps
 
-To benefit from Redpanda Connect's new features and enhancements, upgrade to the latest version.
-
-* Upgrade using the xref:get-started:upgrade/rpk-upgrade.adoc[`rpk` CLI].
-* Upgrade using xref:get-started:upgrade/helm-chart-upgrade.adoc[Helm].
+To benefit from Redpanda Connect's new features and enhancements, xref:install:index.adoc[install the latest version].
 
 Learn more about the xref:ROOT:upgrade:rolling-upgrade.adoc[versioning of other Redpanda Self-Managed products].

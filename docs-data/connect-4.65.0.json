@@ -1,6 +1,6 @@
 {
-  "version": "4.62.0",
-  "date": "2025-08-18T14:41:37Z",
+  "version": "4.65.0",
+  "date": "2025-09-23T13:51:00Z",
   "config": [
     {
       "name": "http",
@@ -273,7 +273,7 @@
           "type": "bool",
           "kind": "scalar",
           "description": "Whether to include timestamps in logs.",
-          "default": false
+          "default": true
         },
         {
           "name": "level_name",
@@ -1011,7 +1011,7 @@
           "name": "metadata_max_age",
           "type": "string",
           "kind": "scalar",
-          "description": "The maximum age of metadata before it is refreshed.",
+          "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
           "is_advanced": true,
           "default": "5m"
         },
@@ -1075,7 +1075,8 @@
           "name": "rack_id",
           "type": "string",
           "kind": "scalar",
-          "is_deprecated": true
+          "is_deprecated": true,
+          "default": ""
         },
         {
           "name": "partitioner",
@@ -3134,7 +3135,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -9331,7 +9332,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -9384,7 +9385,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
             "default": false
           },
           {
@@ -10632,7 +10633,7 @@
             "kind": "scalar",
             "description": "The maximum number of messages to pull at a time.",
             "is_advanced": true,
-            "default": 524288,
+            "default": 500000,
             "linter": "root = if this < 0 { [\"prefetch count must be greater than or equal to zero\"] }"
           },
           {
@@ -12214,7 +12215,7 @@
                 "name": "regexp_topics",
                 "type": "bool",
                 "kind": "scalar",
-                "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+                "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
                 "default": false
               },
               {
@@ -14617,7 +14618,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -14670,7 +14671,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
             "default": false
           },
           {
@@ -14901,7 +14902,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
             "default": false
           },
           {
@@ -15441,7 +15442,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -15494,7 +15495,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
             "default": false
           },
           {
@@ -16124,7 +16125,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -20874,7 +20875,8 @@
             "name": "topic_arn",
             "type": "string",
             "kind": "scalar",
-            "description": "The topic to publish to."
+            "description": "The topic to publish to.",
+            "interpolated": true
           },
           {
             "name": "message_group_id",
@@ -24389,7 +24391,8 @@
             "name": "bucket",
             "type": "string",
             "kind": "scalar",
-            "description": "The bucket to upload messages to."
+            "description": "The bucket to upload messages to.",
+            "interpolated": true
           },
           {
             "name": "path",
@@ -26840,7 +26843,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -32898,7 +32901,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -33700,7 +33703,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -34481,7 +34484,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -45006,20 +45009,30 @@
       "status": "stable",
       "plugin": true,
       "summary": "\nPerforms conversions to or from a protobuf message. This processor uses reflection, meaning conversions can be made directly from the target .proto files.\n",
-      "description": "\nThe main functionality of this processor is to map to and from JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json[https://developers.google.com/protocol-buffers/docs/proto3#json^]\n\nUsing reflection for processing protobuf messages in this way is less performant than generating and using native code. Therefore when performance is critical it is recommended that you use Redpanda Connect plugins instead for processing protobuf messages natively, you can find an example of Redpanda Connect plugins at https://github.com/benthosdev/benthos-plugin-example[https://github.com/benthosdev/benthos-plugin-example^]\n\n== Operators\n\n=== `to_json`\n\nConverts protobuf messages into a generic JSON structure. This makes it easier to manipulate the contents of the document within Benthos.\n\n=== `from_json`\n\nAttempts to create a target protobuf message from a generic JSON structure.\n",
+      "description": "\nThe main functionality of this processor is to map to and from JSON documents, you can read more about JSON mapping of protobuf messages here: [https://developers.google.com/protocol-buffers/docs/proto3#json](https://developers.google.com/protocol-buffers/docs/proto3#json)\n\nUsing reflection for processing protobuf messages in this way is less performant than generating and using native code. Therefore when performance is critical it is recommended that you use Redpanda Connect plugins instead for processing protobuf messages natively, you can find an example of Redpanda Connect plugins at [https://github.com/redpanda-data/redpanda-connect-plugin-example](https://github.com/redpanda-data/redpanda-connect-plugin-example)\n\nThe processor will ignore any files that begin with a dot (\".\"g), a convention for hidden files, when loading protocol buffer definitions.\n== Operators\n\n=== `to_json`\n\nConverts protobuf messages into a generic JSON structure. This makes it easier to manipulate the contents of the document within Redpanda Connect.\n\n=== `from_json`\n\nAttempts to create a target protobuf message from a generic JSON structure.\n",
       "categories": [
         "Parsing"
       ],
       "examples": [
         {
-          "title": "JSON to Protobuf",
+          "title": "JSON to Protobuf using Schema from Disk",
           "summary": "\nIf we have the following protobuf definition within a directory called `testing/schema`:\n\n```protobuf\nsyntax = \"proto3\";\npackage testing;\n\nimport \"google/protobuf/timestamp.proto\";\n\nmessage Person {\n  string first_name = 1;\n  string last_name = 2;\n  string full_name = 3;\n  int32 age = 4;\n  int32 id = 5; // Unique ID number for this person.\n  string email = 6;\n\n  google.protobuf.Timestamp last_updated = 7;\n}\n```\n\nAnd a stream of JSON documents of the form:\n\n```json\n{\n\t\"firstName\": \"caleb\",\n\t\"lastName\": \"quaye\",\n\t\"email\": \"caleb@myspace.com\"\n}\n```\n\nWe can convert the documents into protobuf messages with the following config:",
           "config": "\npipeline:\n  processors:\n    - protobuf:\n        operator: from_json\n        message: testing.Person\n        import_paths: [ testing/schema ]\n"
         },
         {
-          "title": "Protobuf to JSON",
+          "title": "Protobuf to JSON using Schema from Disk",
           "summary": "\nIf we have the following protobuf definition within a directory called `testing/schema`:\n\n```protobuf\nsyntax = \"proto3\";\npackage testing;\n\nimport \"google/protobuf/timestamp.proto\";\n\nmessage Person {\n  string first_name = 1;\n  string last_name = 2;\n  string full_name = 3;\n  int32 age = 4;\n  int32 id = 5; // Unique ID number for this person.\n  string email = 6;\n\n  google.protobuf.Timestamp last_updated = 7;\n}\n```\n\nAnd a stream of protobuf messages of the type `Person`, we could convert them into JSON documents of the format:\n\n```json\n{\n\t\"firstName\": \"caleb\",\n\t\"lastName\": \"quaye\",\n\t\"email\": \"caleb@myspace.com\"\n}\n```\n\nWith the following config:",
           "config": "\npipeline:\n  processors:\n    - protobuf:\n        operator: to_json\n        message: testing.Person\n        import_paths: [ testing/schema ]\n"
+        },
+        {
+          "title": "JSON to Protobuf using Buf Schema Registry",
+          "summary": "\nIf we have the following protobuf definition within a BSR module hosted at `buf.build/exampleco/mymodule`:\n\n```protobuf\nsyntax = \"proto3\";\npackage testing;\n\nimport \"google/protobuf/timestamp.proto\";\n\nmessage Person {\n  string first_name = 1;\n  string last_name = 2;\n  string full_name = 3;\n  int32 age = 4;\n  int32 id = 5; // Unique ID number for this person.\n  string email = 6;\n\n  google.protobuf.Timestamp last_updated = 7;\n}\n```\n\nAnd a stream of JSON documents of the form:\n\n```json\n{\n\t\"firstName\": \"caleb\",\n\t\"lastName\": \"quaye\",\n\t\"email\": \"caleb@myspace.com\"\n}\n```\n\nWe can convert the documents into protobuf messages with the following config:",
+          "config": "\npipeline:\n  processors:\n    - protobuf:\n        operator: from_json\n        message: testing.Person\n        bsr:\n          - module: buf.build/exampleco/mymodule\n            api_key: xxx\n"
+        },
+        {
+          "title": "Protobuf to JSON using Buf Schema Registry",
+          "summary": "\nIf we have the following protobuf definition within a BSR module hosted at `buf.build/exampleco/mymodule`:\n```protobuf\nsyntax = \"proto3\";\npackage testing;\n\nimport \"google/protobuf/timestamp.proto\";\n\nmessage Person {\n  string first_name = 1;\n  string last_name = 2;\n  string full_name = 3;\n  int32 age = 4;\n  int32 id = 5; // Unique ID number for this person.\n  string email = 6;\n\n  google.protobuf.Timestamp last_updated = 7;\n}\n```\n\nAnd a stream of protobuf messages of the type `Person`, we could convert them into JSON documents of the format:\n\n```json\n{\n\t\"firstName\": \"caleb\",\n\t\"lastName\": \"quaye\",\n\t\"email\": \"caleb@myspace.com\"\n}\n```\n\nWith the following config:",
+          "config": "\npipeline:\n  processors:\n    - protobuf:\n        operator: to_json\n        message: testing.Person\n        bsr:\n          - module: buf.build/exampleco/mymodule\n            api_key: xxxx\n"
         }
       ],
       "config": {
@@ -45031,7 +45044,7 @@
             "name": "operator",
             "type": "string",
             "kind": "scalar",
-            "description": "The <<operators, operator>> to execute",
+            "description": "The [operator](#operators) to execute",
             "options": [
               "to_json",
               "from_json"
@@ -45062,7 +45075,7 @@
             "name": "import_paths",
             "type": "string",
             "kind": "array",
-            "description": "A list of directories containing .proto files, including all definitions required for parsing the target message. If left empty the current directory is used. Each directory listed will be walked with all found .proto files imported.",
+            "description": "A list of directories containing .proto files, including all definitions required for parsing the target message. If left empty the current directory is used. Each directory listed will be walked with all found .proto files imported. Either this field or `bsr` must be populated.",
             "default": []
           },
           {
@@ -45071,8 +45084,49 @@
             "kind": "scalar",
             "description": "If `true`, the `to_json` operator deserializes enums as numerical values instead of string names.",
             "default": false
+          },
+          {
+            "name": "bsr",
+            "type": "object",
+            "kind": "array",
+            "description": "Buf Schema Registry configuration. Either this field or `import_paths` must be populated. Note that this field is an array, and multiple BSR configurations can be provided.",
+            "default": [],
+            "children": [
+              {
+                "name": "module",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Module to fetch from a Buf Schema Registry e.g. 'buf.build/exampleco/mymodule'."
+              },
+              {
+                "name": "url",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Buf Schema Registry URL, leave blank to extract from module.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "api_key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Buf Schema Registry server API key, can be left blank for a public registry.",
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "version",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Version to retrieve from the Buf Schema Registry, leave blank for latest.",
+                "is_advanced": true,
+                "default": ""
+              }
+            ]
           }
-        ]
+        ],
+        "linter": "\nroot = match {\nthis.import_paths.type() == \"unknown\" && this.bsr.length() == 0 => [ \"at least one of `import_paths`and `bsr` must be set\" ],\nthis.import_paths.type() == \"array\" && this.import_paths.length() > 0 && this.bsr.length() > 0 => [ \"both `import_paths` and `bsr` can't be set simultaneously\" ],\n}"
       }
     },
     {
@@ -46238,6 +46292,13 @@
             "kind": "scalar",
             "description": "The base URL of the schema registry service.",
             "scrubber": "\nlet pass = this.parse_url().user.password.or(\"\")\nroot = if $pass != \"\" && !$pass.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n}\n"
+          },
+          {
+            "name": "default_schema_id",
+            "type": "int",
+            "kind": "scalar",
+            "description": "If set, this schema ID will be used when a message's schema header cannot be read (ErrBadHeader). If not set, schema header errors will be returned.",
+            "is_optional": true
           },
           {
             "name": "oauth",
@@ -49594,6 +49655,20 @@
             }
           }
         ]
+      }
+    },
+    {
+      "name": "json_array",
+      "type": "scanner",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Consumes a stream of one or more JSON elements within a top level array.",
+      "categories": null,
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "default": {}
       }
     },
     {
