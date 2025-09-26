@@ -1,0 +1,60 @@
+label: weather-service
+processors:
+  - label: validate_inputs
+    mutation: |
+      # Validate and sanitize city input
+      meta city = this.city.string().
+        re_replace_all("[^a-zA-Z\\s\\-]", "").
+        trim()
+
+      # Check for empty input
+      root = if @city == "" {
+        throw("City name cannot be empty")
+      } else { "" }
+
+  - label: fetch_weather_data
+    try:
+      - http:
+          url: "https://wttr.in/${! @city }?format=j1"
+          verb: GET
+          headers:
+            User-Agent: "redpanda-connect-mcp/1.0"
+          timeout: "10s"
+      - mutation: |
+          root = {
+            "city": @city,
+            "temperature_c": this.current_condition.0.temp_C.number(),
+            "temperature_f": this.current_condition.0.temp_F.number(),
+            "feels_like_c": this.current_condition.0.FeelsLikeC.number(),
+            "humidity": this.current_condition.0.humidity.number(),
+            "description": this.current_condition.0.weatherDesc.0.value,
+            "wind_speed_kmh": this.current_condition.0.windspeedKmph.number(),
+            "timestamp": now().format_timestamp("2006-01-02T15:04:05Z07:00")
+          }
+      - log:
+          message: "Weather data fetched for city: ${! @city }"
+          level: "INFO"
+
+  - label: handle_weather_errors
+    catch:
+      - mutation: |
+          root = {
+            "error": "Failed to fetch weather data",
+            "city": @city,
+            "details": error(),
+            "timestamp": now().format_timestamp("2006-01-02T15:04:05Z07:00")
+          }
+      - log:
+          message: "Weather API error for city ${! @city }: ${! error() }"
+          level: "ERROR"
+
+meta:
+  tags: [ weather, example ]
+  mcp:
+    enabled: true
+    description: "Get current weather conditions for any city worldwide"
+    properties:
+      - name: city
+        type: string
+        description: "Name of the city (such as 'San Francisco', 'London')"
+        required: true

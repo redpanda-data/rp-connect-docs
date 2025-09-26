@@ -1,0 +1,108 @@
+label: order_workflow
+processors:
+  - label: validate_order
+    mutation: |
+      # Validation logic
+      root = if this.total <= 0 {
+        throw("Invalid order total")
+      } else { this }
+
+  - label: mock_inventory_check
+    mutation: |
+      # Mock inventory data for testing
+      let inventory = {
+        "widget-001": {"quantity": 100, "name": "Standard Widget"},
+        "widget-premium": {"quantity": 25, "name": "Premium Widget"},
+        "widget-limited": {"quantity": 2, "name": "Limited Edition Widget"}
+      }
+
+      let product = $inventory.get(this.product_id)
+      root = if $product == null {
+        throw("Product not found: " + this.product_id)
+      } else if $product.quantity < this.quantity {
+        throw("Insufficient inventory. Available: " + $product.quantity.string())
+      } else {
+        this.merge({
+          "inventory_check": "passed",
+          "available_quantity": $product.quantity,
+          "product_name": $product.name
+        })
+      }
+
+  - label: route_by_priority
+    switch:
+      - check: 'this.total > 1000'
+        processors:
+          - label: mock_high_value_processing
+            mutation: |
+              # Mock premium processing
+              root = this.merge({
+                "processing_tier": "premium",
+                "processing_time_estimate": "2-4 hours",
+                "assigned_rep": "premium-team@company.com",
+                "priority_score": 95
+              })
+
+      - check: 'this.customer_tier == "vip"'
+        processors:
+          - label: mock_vip_processing
+            mutation: |
+              # Mock VIP processing
+              root = this.merge({
+                "processing_tier": "vip",
+                "processing_time_estimate": "1-2 hours",
+                "assigned_rep": "vip-team@company.com",
+                "priority_score": 90,
+                "perks": ["expedited_shipping", "white_glove_service"]
+              })
+
+      - processors:
+          - label: mock_standard_processing
+            mutation: |
+              # Mock standard processing
+              root = this.merge({
+                "processing_tier": "standard",
+                "processing_time_estimate": "24-48 hours",
+                "assigned_rep": "support@company.com",
+                "priority_score": 50
+              })
+
+  - label: finalize_order
+    mutation: |
+      # Add final processing metadata
+      # Calculate estimated fulfillment by parsing processing time
+      let max_hours = this.processing_time_estimate.split("-").index(1).split(" ").index(0).number()
+
+      root = this.merge({
+        "order_status": "processed",
+        "processed_at": now().ts_format("2006-01-02T15:04:05.000Z"),
+        "estimated_fulfillment": "TBD - calculated based on processing tier",
+        "processing_time_hours": $max_hours
+      })
+
+meta:
+  tags: [ example ]
+  mcp:
+    enabled: true
+    description: "Process orders with validation, inventory check, and tiered routing (with mocks for testing)"
+    properties:
+      - name: order_id
+        type: string
+        description: "Unique order identifier"
+        required: true
+      - name: product_id
+        type: string
+        description: "Product ID (try: widget-001, widget-premium, widget-limited)"
+        required: true
+      - name: quantity
+        type: number
+        description: "Quantity to order"
+        required: true
+      - name: total
+        type: number
+        description: "Order total in dollars"
+        required: true
+      - name: customer_tier
+        type: string
+        description: "Customer tier (optional: vip, standard)"
+        required: false

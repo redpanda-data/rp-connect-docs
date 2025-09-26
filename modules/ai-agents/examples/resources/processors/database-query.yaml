@@ -1,0 +1,41 @@
+label: user_orders
+processors:
+  - label: prepare_parameters
+    mutation: |
+      meta user_id = this.user_id.string()
+      meta limit = this.limit.number().catch(10)
+  - label: query_database
+    sql_select:
+      driver: "postgres"
+      dsn: "${DATABASE_URL}"
+      table: "orders"
+      columns: ["id", "total", "status", "created_at"]
+      where: "user_id = ? AND created_at > NOW() - INTERVAL '30 days'"
+      suffix: "ORDER BY created_at DESC LIMIT ?"
+      args_mapping: root = [@user_id, @limit]
+  - label: format_response
+    mutation: |
+      root = {
+        "user_id": @user_id,
+        "orders": this,
+        "total_count": this.length(),
+        "metadata": {
+          "source": "PostgreSQL",
+          "fetched_at": now().ts_format("2006-01-02T15:04:05.000Z")
+        }
+      }
+
+meta:
+  tags: [ database, orders, example ]
+  mcp:
+    enabled: true
+    description: "Get recent orders for a user"
+    properties:
+      - name: user_id
+        type: string
+        description: "User ID to fetch orders for"
+        required: true
+      - name: limit
+        type: number
+        description: "Maximum number of orders to return (default: 10)"
+        required: false

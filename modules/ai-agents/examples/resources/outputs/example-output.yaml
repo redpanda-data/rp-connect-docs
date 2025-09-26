@@ -1,0 +1,8 @@
+label: example-output
+file:
+  path: "/tmp/${! uuid_v4() }.txt"
+meta:
+  tags: [ example ]
+  mcp:
+    enabled: true
+    description: An example output that writes data to a temporary folder.
