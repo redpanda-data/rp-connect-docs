@@ -100,7 +100,7 @@ meta:
 
 This example defines a tool that searches public Bluesky posts based on a query string. The tool:
 
-<1> unique label for identification. Claude uses this label to discover and call the tool.
+<1> A unique label for identification. Claude uses this label to discover and call the tool.
 <2> A series of processors to build the HTTP request, handle the response, and format the output.
 <3> A unique tag (`example`) to control exposure. You can use tags to group related tools or isolate experiments.
 <4> A clear description for LLMs helps Claude understand what the tool does.
@@ -164,9 +164,9 @@ Added stdio MCP server local with command: npx mcp-remote http://localhost:4195/
 claude /mcp
 ----
 +
-You should see an entry for `local` with the command you just added.
-+
-Press *Enter* until you see the tools list.
+You should see an entry for `local`.
+
+. Press *Enter* until you see the tools list.
 +
 [.no-copy,role="no-wrap"]
 ----
@@ -174,21 +174,32 @@ Tools for local (1 tools)
 │ ❯ 1. search-bluesky-posts
 ----
 
-NOTE: You can connect any MCP client to your MCP server. For a list of example clients, see the link:https://modelcontextprotocol.io/clients[MCP documentation^].
+. Press *Esc* until you return to the main prompt.
+
 
 == Write a prompt that uses the tool
 
 To use the `search-bluesky-posts` tool in Claude, write a prompt that includes a natural language request.
 
-Run the following command to start a conversation with Claude Code:
+. Enter the following prompt to start a conversation with Claude Code:
++
+[source,bash]
+----
+Search Bluesky for the latest news about Redpanda Data
+----
++
+[TIP]
+====
+If you exited the prompt, you can re-enter it by running:
 
 [source,bash]
 ----
 claude Search Bluesky for the latest news about Redpanda Data
 ----
+====
 
-When Claude prompts you for permissions, select *Yes*:
-
+. When Claude prompts you for permissions, select *Yes*:
++
 [role="no-wrap no-copy"]
 ----
 > Search Bluesky for the latest news about Redpanda Data
@@ -237,10 +248,18 @@ Here's an example of what the result might look like:
   momentum in hiring and customer wins.
 ----
 
+== Stop or disconnect the MCP server
+
+To disconnect or stop the MCP server, press kbd::[Ctrl+C] in the terminal where the server is running. This will gracefully shut down the MCP server process and disconnect any connected clients.
+
+You can also close the terminal window or kill the process using standard OS commands (such as `kill <pid>` on Linux/macOS).
+
 == Next steps
 
 Try adding more tools under the same `example` tag to expand Claude Code's capabilities. See xref:ai-agents:mcp-server/developer-guide.adoc[].
 
 View the xref:components:about.adoc[full catalog of connectors] you can use to build more tools.
+
+NOTE: You can connect any MCP client to your MCP server. For a list of example clients, see the link:https://modelcontextprotocol.io/clients[MCP documentation^].
 
 

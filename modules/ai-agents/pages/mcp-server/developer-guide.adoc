@@ -20,6 +20,8 @@ MCP server:: A service that exposes tools through the Model Context Protocol. In
 
 Tool:: A single request/response operation exposed to MCP clients. Each tool is implemented as a Redpanda Connect configuration and described to MCP with `meta.mcp` metadata.
 
+Contract:: The formal interface a tool exposes to AI clients, including its description, input parameters and types. The contract ensures that clients know how to call the tool and what results to expect. In Redpanda Connect MCP, the contract is declared in the tool's `meta.mcp` metadata.
+
 Redpanda Connect configuration:: A YAML file that defines how data flows through inputs, processors, and outputs. When used as an MCP tool, Redpanda Connect configurations typically receive JSON input and return structured results.
 
 Secrets:: Credentials and tokens should be stored as environment variables and referenced as `$\{ENV_VAR}`. Never hardcode secrets in YAML files.
@@ -381,7 +383,7 @@ This means your YAML file contains more than one component type, or uses a wrapp
 To fix this:
 
 - Split out each component type into its own file (for example, one file for the input, one for the processors, one for the output).
-- See <<yaml-configuration-best-practices, YAML configuration best practices>> for correct examples.
+- See <<yaml-configuration-rules, YAML configuration best practices>> for correct examples.
 
 .Example of incorrect YAML
 [source,yaml]
