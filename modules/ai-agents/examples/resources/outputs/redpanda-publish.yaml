@@ -1,0 +1,26 @@
+label: publish_order_events
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topic: "order-events"
+  key: "${! this.order_id }"
+  partitioner: "manual"
+  partition: "${! this.customer_id.hash(algorithm:\"xxhash64\") % 8 }"
+  max_in_flight: 10
+meta:
+  tags: [ publishing, orders, example ]
+  mcp:
+    enabled: true
+    description: "Publish order events to Redpanda for downstream processing"
+    properties:
+      - name: order_id
+        type: string
+        description: "Unique order identifier"
+        required: true
+      - name: customer_id
+        type: string
+        description: "Customer ID for partitioning"
+        required: true
+      - name: order_data
+        type: object
+        description: "Order details (items, total, etc.)"
+        required: true

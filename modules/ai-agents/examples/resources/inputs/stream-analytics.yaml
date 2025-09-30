@@ -1,0 +1,11 @@
+label: stream_analytics
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topics: [ "click-events" ]
+  consumer_group: "mcp-analytics"
+
+meta:
+  tags: [ analytics, streaming, example ]
+  mcp:
+    enabled: true
+    description: "Consume click stream data for analytics processing"

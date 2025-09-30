@@ -1,0 +1,60 @@
+label: observable_tool
+processors:
+  - label: init_tracing
+    mutation: |
+      # Generate correlation ID for request tracing
+      meta req_id = uuid_v7()
+      meta start_time = now()
+
+      # Log request start with structured data
+      root.trace = {
+        "request_id": @req_id,
+        "timestamp": @start_time.ts_format("2006-01-02T15:04:05.000Z"),
+        "tool": "observable_tool",
+        "version": "1.0.0"
+      }
+
+  - label: log_request_start
+    log:
+      message: "MCP tool request started"
+      fields:
+        request_id: "${! @req_id }"
+        tool_name: "observable_tool"
+        input_params: "${! this.without(\"trace\") }"
+        user_agent: "${! meta(\"User-Agent\").catch(\"unknown\") }"
+      level: "INFO"
+
+  - label: finalize_response
+    mutation: |
+      # Calculate total execution time
+      meta duration = (now().ts_unix_nano() - @start_time.ts_unix_nano()) / 1000000
+
+      # Add trace information to response
+      root.metadata = {
+        "request_id": @req_id,
+        "execution_time_ms": @duration,
+        "timestamp": now().ts_format("2006-01-02T15:04:05.000Z"),
+        "tool": "observable_tool",
+        "success": !this.exists("error")
+      }
+
+  - label: log_completion
+    log:
+      message: "MCP tool request completed"
+      fields:
+        request_id: "${! @req_id }"
+        duration_ms: "${! this.metadata.execution_time_ms }"
+        success: "${! this.metadata.success }"
+        result_size: "${! content().length() }"
+      level: "INFO"
+
+meta:
+  tags: [ example ]
+  mcp:
+    enabled: true
+    description: "Example tool with comprehensive observability and error handling"
+    properties:
+      - name: user_id
+        type: string
+        description: "User ID to fetch data for"
+        required: true

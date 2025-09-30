@@ -1,0 +1,265 @@
+= Redpanda Connect MCP Server Quickstart
+:description: Expose your Redpanda Connect configurations to Claude Code as AI-consumable HTTP endpoints.
+
+This quickstart shows you how to build a Redpanda Connect configuration that searches Bluesky posts using a customizable query. You'll expose this configuration to Claude Code as a tool through an *MCP server*, then ask Claude to perform the search using natural language.
+
+> Find recent posts on Bluesky mentioning Redpanda.
+
+The MCP server makes your local tools *AI-consumable*. It exposes them with metadata that Claude can understand and use to:
+
+- Discover available tools
+- Understand required inputs and output format
+- Make intelligent, structured HTTP requests
+
+This enables natural-language automation for internal workflows, using your own business logic.
+
+== Prerequisites
+
+You'll need the following to complete this quickstart:
+
+- xref:ROOT:get-started:rpk-install.adoc[Redpanda CLI (`rpk`)]
+- At least version 4.56.0 of Redpanda Connect
++
+If you need to upgrade, see xref:get-started:upgrade/rpk-upgrade.adoc[].
+- link:https://docs.anthropic.com/en/docs/claude-code/setup[Claude Code^]
+
+== Initialize an MCP server project
+
+To get started, create a new MCP server project using the Redpanda CLI.
+
+. Create a directory for your MCP server project:
++
+[source,bash]
+----
+mkdir redpanda-connect-mcp
+cd redpanda-connect-mcp
+----
+
+. Initialize the MCP server project:
++
+[,bash]
+----
+rpk connect mcp-server init
+----
++
+This command scaffolds your project with the necessary directories and template YAML files for defining tools and observability resources.
++
+[.no-copy]
+----
+├── o11y
+│   ├── metrics.yaml
+│   └── tracer.yaml
+└── resources
+    ├── caches
+    │   └── example-cache.yaml
+    ├── inputs
+    │   └── example-input.yaml
+    ├── outputs
+    │   └── example-output.yaml
+    └── processors
+        └── example-processor.yaml
+----
+
+== Create a tool definition
+
+Save the following YAML to a file named `resources/processors/bluesky.yaml`.
+
+This tool enables Claude to search public Bluesky posts using natural language.
+
+[source,yaml]
+----
+label: search-bluesky-posts <1>
+try: <2>
+  - mutation: |
+      root.limit = root.limit.number(25)
+      root.limit = [ root.limit, 100 ].min()
+      root.limit = [ root.limit, 1 ].max()
+      meta query_string = "q=" + root.query.escape_url_query() + "&limit=%v".format(root.limit)
+      root = ""
+  - http:
+      url: "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?${! @query_string }"
+      verb: GET
+  - mapping: 'root = this.posts'
+  - unarchive:
+      format: json_array
+
+meta:
+  tags: [ example ] <3>
+  mcp:
+    enabled: true
+    description: Search public Bluesky posts based on a query string. <4>
+    properties: <5>
+      - name: query
+        type: string
+        required: true
+        description: A Lucene-style query string to search posts.
+      - name: limit
+        type: number
+        description: Number of posts to return (1-100). Defaults to 25.
+----
+
+This example defines a tool that searches public Bluesky posts based on a query string. Important parts of the configuration include:
+
+<1> A unique label for identification. Claude uses this label to discover and call the tool.
+<2> A series of processors to build the HTTP request, handle the response, and format the output.
+<3> A unique tag (`example`) to control exposure. You can use tags to group related tools or isolate experiments.
+<4> A clear description for LLMs helps Claude understand what the tool does.
+<5> Structured properties for inputs like `query` and `limit`.
+
+== Start the MCP server
+
+Start the MCP server to expose the tool over HTTP:
+
+[source,bash]
+----
+rpk connect mcp-server --address localhost:4195 --tag example
+----
+
+You should see output like this:
+
+[.no-copy]
+----
+time=2025-06-27T15:20:27.976+01:00 level=INFO msg="Registering processor tool" label=search-bluesky-posts
+time=2025-06-27T15:20:27.978+01:00 level=INFO msg="Successfully loaded Redpanda license" expires_at=2035-06-25T15:20:27+01:00 license_org="" license_type="open source"
+----
+
+This command creates an MCP server listening on `localhost:4195`, and makes your tool discoverable to AI agents.
+
+:tip-caption: Limit exposure
+
+[TIP]
+====
+Only tools with the specified `--tag` are exposed. This helps you:
+
+- Keep experiments isolated
+- Avoid exposing sensitive functionality accidentally
+- Create sets of tools that are relevant to specific agents or workflows
+====
+
+:tip-caption: Tip
+
+== Connect Claude Code to your MCP server
+
+
+To connect Claude Code to your MCP server, you need to expose a live event stream that Claude can consume. This is done using the link:https://www.npmjs.com/package/mcp-remote[`mcp-remote` utility^], which bridges your local service to Claude's MCP interface. `mcp-remote` is a lightweight bridge that turns any streaming HTTP endpoint into a source of MCP-compatible messages.
+
+. To install `mcp-remote`, run:
++
+[,bash]
+----
+claude mcp add local -- npx mcp-remote http://localhost:4195/sse
+----
++
+You should see output like this:
++
+[.no-copy]
+----
+Added stdio MCP server local with command: npx mcp-remote http://localhost:4195/sse to local config
+----
+
+. Verify that the local input channel is set up correctly by running:
++
+[source,bash]
+----
+claude /mcp
+----
++
+You should see an entry for `local`.
+
+. Press *Enter* until you see the tools list.
++
+[.no-copy,role="no-wrap"]
+----
+Tools for local (1 tools)
+│ ❯ 1. search-bluesky-posts
+----
+
+. Press *Esc* until you return to the main prompt.
+
+
+== Write a prompt that uses the tool
+
+To use the `search-bluesky-posts` tool in Claude, write a prompt that includes a natural language request.
+
+. Enter the following prompt to start a conversation with Claude Code:
++
+[source,bash]
+----
+Search Bluesky for the latest news about Redpanda Data
+----
++
+[TIP]
+====
+If you exited the prompt, you can re-enter it by running:
+
+[source,bash]
+----
+claude Search Bluesky for the latest news about Redpanda Data
+----
+====
+
+. When Claude prompts you for permissions, select *Yes*:
++
+[role="no-wrap no-copy"]
+----
+> Search Bluesky for the latest news about Redpanda Data
+
+⏺ local:search-bluesky-posts (MCP)(value: "Redpanda")
+
+╭─────────────────────────────────────────────
+│ Tool use
+│   local:search-bluesky-posts(value: "Redpanda") (MCP)
+│   Search public Bluesky posts based on a query string.
+│ Do you want to proceed?
+│ ❯ 1. Yes
+│   2. Yes, and don't ask again for local:search-bluesky-posts commands in /Users/jakecahill/Documents/my-agent  │
+│   3. No, and tell Claude what to do differently (esc)
+----
+
+Claude will:
+
+. Fill in the `query` property
+. Send an HTTP request to your local MCP server
+. Return the result in conversation
+
+If you change the YAML configuration of your tools, make sure to restart the MCP server to pick up the changes.
+
+Here's an example of what the result might look like:
+
+[role="no-wrap no-copy"]
+----
+⏺ Based on the search results from Bluesky, here are the latest posts about Redpanda Data:
+
+  Recent Company Activity:
+  - Product Development: Expanding Redpanda Connect beyond data infrastructure to support AI agent tools like
+   Slack, GitHub, and Google Drive
+  - New Snowflake Connector: Launched with 2x faster throughput than Kafka Connect for data streaming
+
+  Events & Marketing:
+  - Participated in Data+AI Summit (Booth E500)
+  - Hosting disaster recovery streamcast on June 12th
+  - Fireside chat with Entain's Chief Data Officer about replacing Confluent with Redpanda in 2 weeks
+
+  Success Stories:
+  - Gaming company Entain replaced Confluent with Redpanda in just two weeks
+  - Focus on real-time financial data streaming to Snowflake for analytics
+
+  The posts show Redpanda positioning itself as a faster, simpler alternative to Kafka/Confluent with strong
+  momentum in hiring and customer wins.
+----
+
+== Stop or disconnect the MCP server
+
+To disconnect or stop the MCP server, press kbd:[Ctrl+C] in the terminal where the server is running. This will gracefully shut down the MCP server process and disconnect any connected clients.
+
+You can also close the terminal window or kill the process using standard OS commands (such as `kill <pid>` on Linux/macOS).
+
+== Next steps
+
+Try adding more tools under the same `example` tag to expand Claude Code's capabilities. See xref:ai-agents:mcp-server/developer-guide.adoc[].
+
+View the xref:components:about.adoc[full catalog of connectors] you can use to build more tools.
+
+NOTE: You can connect any MCP client to your MCP server. For a list of example clients, see the link:https://modelcontextprotocol.io/clients[MCP documentation^].
+
+

@@ -1,0 +1,11 @@
+label: get_recent_events
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topics: [ "user-events" ]
+  consumer_group: "mcp-event-reader"
+
+meta:
+  tags: [ consuming, events, example ]
+  mcp:
+    enabled: true
+    description: "Get recent events for a specific user from Redpanda"
