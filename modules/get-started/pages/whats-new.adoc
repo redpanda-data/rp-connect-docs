@@ -6,6 +6,40 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.65.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.65.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+* Inputs:
+** xref:components:inputs/tigerbeetle_cdc.adoc[`tigerbeetle_cdc`]: Streams change data from a TigerBeetle database into Redpanda Connect.
++
+[NOTE]
+====
+The `tigerbeetle_cdc` input requires a CGO-enabled build of Redpanda Connect.
+
+For instructions, see:
+
+* xref:install:prebuilt-binary.adoc[Download a CGO-enabled binary]
+* xref:install:build-from-source.adoc[Build Redpanda Connect from source]
+====
+
+* Scanners:
+** xref:components:scanners/json_array.adoc[`json_array`]: Scans a JSON array and emits each element as a separate message.
+
+== Version 4.64.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.64.0[See the full release notes^].
+
+=== Component updates
+
+This release adds support for the following new fields and improvements:
+
+* Schema registry decode processor:
+** xref:components:processors/schema_registry_decode.adoc#default_schema_id[`default_schema_id`] field for specifying a fallback schema ID when decoding messages without an explicit schema reference.
 
 == Version 4.62.0
 

@@ -1,0 +1,118 @@
+= Build or Upgrade from Source
+:description: Build or upgrade Redpanda Connect from source.
+
+You can build Redpanda Connect in two ways:
+
+* *Standard build*: Suitable for most users. Does not require cgo. Does not include the xref:components:inputs/tigerbeetle_cdc.adoc[TigerBeetle CDC input connector].
+* *cgo-enabled build*: Required only if you need the TigerBeetle CDC input connector.
+
+== Install from source
+
+. Ensure you have Go installed on your system. You can download it from https://golang.org/dl/[the official Go website^].
+
+. Clone the Redpanda Connect repository:
++
+[source,bash]
+----
+git clone https://github.com/redpanda-data/connect.git
+cd connect
+----
+
+. Build the binary (choose one):
++
+[cols="1a,2a"]
+|===
+| Build type | Build command
+
+| Standard (no cgo, most users)
+|
+[source,bash]
+----
+go build -o redpanda-connect ./cmd/redpanda-connect
+----
+
+| cgo-enabled (TigerBeetle CDC support)
+|
+[source,bash]
+----
+CGO_ENABLED=1 go build -o redpanda-connect ./cmd/redpanda-connect
+----
+|===
+
+. Move the binary to a directory in your `PATH` (for example, `/usr/local/bin`):
++
+[source,bash]
+----
+sudo mv redpanda-connect /usr/local/bin/
+----
+. Verify the installation:
++
+[source,bash]
+----
+redpanda-connect --version
+----
+
+You should see a version.
+
+== Upgrade a source build
+
+. Navigate to your existing clone of the repository:
++
+[source,bash]
+----
+cd connect
+----
+
+. Fetch the latest tags and check out the version you want:
++
+[source,bash,subs="attributes+"]
+----
+git fetch --all
+git checkout v{latest-connect-version}
+----
+
+. Rebuild the binary (choose one):
++
+[cols="1a,2a"]
+|===
+| Build type | Build command
+
+| Standard (no cgo, most users)
+|
+[source,bash]
+----
+go build -o redpanda-connect ./cmd/redpanda-connect
+----
+
+| cgo-enabled (TigerBeetle CDC support)
+|
+[source,bash]
+----
+CGO_ENABLED=1 go build -o redpanda-connect ./cmd/redpanda-connect
+----
+|===
+
+. Replace the previous binary and verify:
++
+[source,bash]
+----
+sudo mv redpanda-connect /usr/local/bin/
+redpanda-connect --version
+----
+
+NOTE: After upgrading (or downgrading), you must restart a pipeline to use features in the Redpanda Connect version you have deployed.
+
+== Uninstall
+
+To uninstall Redpanda Connect, remove the installed binary:
+
+[source,sh]
+----
+sudo rm /usr/local/bin/redpanda-connect
+----
+
+This removes the Redpanda Connect binary from your system.
+
+== Next steps
+
+Explore the available connectors in the xref:components:about.adoc[catalog].

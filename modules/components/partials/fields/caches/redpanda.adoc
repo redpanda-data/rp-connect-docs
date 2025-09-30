@@ -28,7 +28,7 @@ The amount of time that connections can remain idle before they are closed.
 
 === `metadata_max_age`
 
-The maximum age of metadata before it is refreshed.
+The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.
 
 *Type*: `string`
 

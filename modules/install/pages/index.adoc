@@ -1,0 +1,27 @@
+= Install or Upgrade Redpanda Connect
+:description: Discover all ways to install or upgrade Redpanda Connect.
+:page-aliases: get-started:upgrade/index.adoc
+
+
+This page helps you choose how to install or upgrade Redpanda Connect. Select the method that best fits your needs:
+
+[cols="1a,2a,2a"]
+|===
+| Method | When to use | Limitations
+
+| xref:install:rpk.adoc[Redpanda CLI (recommended)]
+| The simplest way to install, upgrade, and manage Redpanda Connect. Works on all supported platforms. Automatically upgrades with a single command.
+| Doesn't include connectors that require cgo (for example, TigerBeetle).
+
+| xref:install:helm-chart.adoc[Helm chart (Kubernetes)]
+| Deploy and manage Redpanda Connect on Kubernetes clusters using Helm. Supports upgrades and rollbacks.
+| Requires a running Kubernetes cluster and Helm. Not for bare metal or VM installs.
+
+| xref:install:prebuilt-binary.adoc[Prebuilt binary (advanced users)]
+| Use when you need a *cgo-enabled binary* with extra connectors, such as TigerBeetle. Prebuilt archives are published for Linux AMD64.
+| Not available for Windows, macOS, or Docker images. You must manage upgrades manually.
+
+| xref:install:build-from-source.adoc[Build from source (power users / contributors)]
+| Gives full control. Lets you build with `CGO_ENABLED=1` to include connectors such as TigerBeetle.
+| Requires Go toolchain and build setup.
+|===

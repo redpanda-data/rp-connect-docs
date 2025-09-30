@@ -1,6 +1,6 @@
 {
-  "version": "4.63.0",
-  "date": "2025-08-27T16:45:27Z",
+  "version": "4.64.0",
+  "date": "2025-09-19T11:07:24Z",
   "config": [
     {
       "name": "http",
@@ -273,7 +273,7 @@
           "type": "bool",
           "kind": "scalar",
           "description": "Whether to include timestamps in logs.",
-          "default": false
+          "default": true
         },
         {
           "name": "level_name",
@@ -1011,7 +1011,7 @@
           "name": "metadata_max_age",
           "type": "string",
           "kind": "scalar",
-          "description": "The maximum age of metadata before it is refreshed.",
+          "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
           "is_advanced": true,
           "default": "5m"
         },
@@ -1075,7 +1075,8 @@
           "name": "rack_id",
           "type": "string",
           "kind": "scalar",
-          "is_deprecated": true
+          "is_deprecated": true,
+          "default": ""
         },
         {
           "name": "partitioner",
@@ -3134,7 +3135,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -9331,7 +9332,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -9384,7 +9385,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
             "default": false
           },
           {
@@ -12214,7 +12215,7 @@
                 "name": "regexp_topics",
                 "type": "bool",
                 "kind": "scalar",
-                "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+                "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
                 "default": false
               },
               {
@@ -14617,7 +14618,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -14670,7 +14671,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
             "default": false
           },
           {
@@ -14901,7 +14902,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
             "default": false
           },
           {
@@ -15441,7 +15442,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -15494,7 +15495,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.",
             "default": false
           },
           {
@@ -16124,7 +16125,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -20874,7 +20875,8 @@
             "name": "topic_arn",
             "type": "string",
             "kind": "scalar",
-            "description": "The topic to publish to."
+            "description": "The topic to publish to.",
+            "interpolated": true
           },
           {
             "name": "message_group_id",
@@ -24389,7 +24391,8 @@
             "name": "bucket",
             "type": "string",
             "kind": "scalar",
-            "description": "The bucket to upload messages to."
+            "description": "The bucket to upload messages to.",
+            "interpolated": true
           },
           {
             "name": "path",
@@ -26840,7 +26843,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -32898,7 +32901,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -33700,7 +33703,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -34481,7 +34484,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed.",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
             "is_advanced": true,
             "default": "5m"
           },
@@ -45006,7 +45009,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "\nPerforms conversions to or from a protobuf message. This processor uses reflection, meaning conversions can be made directly from the target .proto files.\n",
-      "description": "\nThe main functionality of this processor is to map to and from JSON documents, you can read more about JSON mapping of protobuf messages here: [https://developers.google.com/protocol-buffers/docs/proto3#json](https://developers.google.com/protocol-buffers/docs/proto3#json)\n\nUsing reflection for processing protobuf messages in this way is less performant than generating and using native code. Therefore when performance is critical it is recommended that you use Redpanda Connect plugins instead for processing protobuf messages natively, you can find an example of Redpanda Connect plugins at [https://github.com/redpanda-data/redpanda-connect-plugin-example](https://github.com/redpanda-data/redpanda-connect-plugin-example)\n\n== Operators\n\n=== `to_json`\n\nConverts protobuf messages into a generic JSON structure. This makes it easier to manipulate the contents of the document within Redpanda Connect.\n\n=== `from_json`\n\nAttempts to create a target protobuf message from a generic JSON structure.\n",
+      "description": "\nThe main functionality of this processor is to map to and from JSON documents, you can read more about JSON mapping of protobuf messages here: [https://developers.google.com/protocol-buffers/docs/proto3#json](https://developers.google.com/protocol-buffers/docs/proto3#json)\n\nUsing reflection for processing protobuf messages in this way is less performant than generating and using native code. Therefore when performance is critical it is recommended that you use Redpanda Connect plugins instead for processing protobuf messages natively, you can find an example of Redpanda Connect plugins at [https://github.com/redpanda-data/redpanda-connect-plugin-example](https://github.com/redpanda-data/redpanda-connect-plugin-example)\n\nThe processor will ignore any files that begin with a dot (\".\"g), a convention for hidden files, when loading protocol buffer definitions.\n== Operators\n\n=== `to_json`\n\nConverts protobuf messages into a generic JSON structure. This makes it easier to manipulate the contents of the document within Redpanda Connect.\n\n=== `from_json`\n\nAttempts to create a target protobuf message from a generic JSON structure.\n",
       "categories": [
         "Parsing"
       ],
@@ -46289,6 +46292,13 @@
             "kind": "scalar",
             "description": "The base URL of the schema registry service.",
             "scrubber": "\nlet pass = this.parse_url().user.password.or(\"\")\nroot = if $pass != \"\" && !$pass.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n}\n"
+          },
+          {
+            "name": "default_schema_id",
+            "type": "int",
+            "kind": "scalar",
+            "description": "If set, this schema ID will be used when a message's schema header cannot be read (ErrBadHeader). If not set, schema header errors will be returned.",
+            "is_optional": true
           },
           {
             "name": "oauth",
