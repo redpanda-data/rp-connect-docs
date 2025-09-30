@@ -98,7 +98,7 @@ meta:
         description: Number of posts to return (1-100). Defaults to 25.
 ----
 
-This example defines a tool that searches public Bluesky posts based on a query string. The tool:
+This example defines a tool that searches public Bluesky posts based on a query string. Important parts of the configuration include:
 
 <1> A unique label for identification. Claude uses this label to discover and call the tool.
 <2> A series of processors to build the HTTP request, handle the response, and format the output.
@@ -250,7 +250,7 @@ Here's an example of what the result might look like:
 
 == Stop or disconnect the MCP server
 
-To disconnect or stop the MCP server, press kbd::[Ctrl+C] in the terminal where the server is running. This will gracefully shut down the MCP server process and disconnect any connected clients.
+To disconnect or stop the MCP server, press kbd:[Ctrl+C] in the terminal where the server is running. This will gracefully shut down the MCP server process and disconnect any connected clients.
 
 You can also close the terminal window or kill the process using standard OS commands (such as `kill <pid>` on Linux/macOS).
 

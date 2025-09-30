@@ -110,7 +110,7 @@ meta:
 ----
 
 <1> Set `meta.mcp.enabled: true` to expose the tool using MCP.
-<2> A concise description that explains what the tool does. The description is passed as a tool option, making it available to clients and documentation. This should be understandable by an AI model.
+<2> Add a concise description that explains what the tool does. The description is passed as a tool option, making it available to clients and documentation. This should be understandable by an AI model.
 <3> List the input parameters (properties) for the tool.
 +
 Property guidance:
@@ -352,6 +352,7 @@ In summary, the flow is:
 - `mcp-remote` converts each event into a structured MCP message.
 - Those messages are forwarded to Claude Code through the local input channel created by `claude mcp add local`.
 
+[[publish]]
 == Publish your MCP server
 
 To make your MCP server discoverable by AI clients and agents, you can publish it to an MCP registry. This also enables you to provide authentication and access control for your tools.
