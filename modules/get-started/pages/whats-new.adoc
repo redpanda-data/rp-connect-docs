@@ -30,6 +30,11 @@ For instructions, see:
 * Scanners:
 ** xref:components:scanners/json_array.adoc[`json_array`]: Scans a JSON array and emits each element as a separate message.
 
+=== Model Context Protocol (MCP) server
+
+You can now build and run an MCP server directly in Redpanda Connect. The MCP server lets you expose your Redpanda Connect configurations as AI-consumable HTTP endpoints, making them discoverable and callable by AI clients such as Claude Code and other compatible agents.
+To get started, see xref:ai-agents:mcp-server/quickstart.adoc[].
+
 == Version 4.64.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.64.0[See the full release notes^].
