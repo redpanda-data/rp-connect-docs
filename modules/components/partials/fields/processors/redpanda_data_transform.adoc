@@ -130,6 +130,8 @@ The maximum period of time for a message to be processed
 
 An optional timestamp to set for each message. When left empty, the current timestamp is used.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 *Type*: `string`
 
 [source,yaml]

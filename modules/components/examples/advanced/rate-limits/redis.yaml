@@ -1,0 +1,21 @@
+rate-limits:
+  label: ""
+  redis:
+    url: "" # No default (required)
+    kind: simple
+    master: ""
+    tls:
+      enabled: false
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
+    count: 1000
+    interval: 1s
+    key: "" # No default (required)

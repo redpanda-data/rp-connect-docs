@@ -1,0 +1,12 @@
+processors:
+  label: ""
+  parquet_encode:
+    schema:
+      name: "" # No default (required)
+      type: "" # No default (optional)
+      repeated: false
+      optional: false
+      fields: [] # No default (optional)
+    schema_metadata: ""
+    default_compression: uncompressed
+    default_encoding: DELTA_LENGTH_BYTE_ARRAY

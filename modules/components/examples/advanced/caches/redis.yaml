@@ -1,0 +1,24 @@
+caches:
+  label: ""
+  redis:
+    url: "" # No default (required)
+    kind: simple
+    master: ""
+    tls:
+      enabled: false
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
+    prefix: "" # No default (optional)
+    default_ttl: "" # No default (optional)
+    retries:
+      initial_interval: 500ms
+      max_interval: 1s
+      max_elapsed_time: 5s

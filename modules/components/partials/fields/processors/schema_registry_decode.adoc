@@ -192,7 +192,9 @@ If set, this schema ID is used when a message's schema header cannot be read (`E
 
 === `jwt`
 
-BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
+badge::[label=Beta, size=large, tooltip={page-beta-text}]
+
+Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
 
 ifndef::env-cloud[]
 Requires version 4.7.0 or later.

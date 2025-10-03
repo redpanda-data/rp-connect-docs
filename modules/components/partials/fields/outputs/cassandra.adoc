@@ -161,6 +161,30 @@ If enabled the driver will not attempt to get host info from the system.peers ta
 
 *Default*: `false`
 
+=== `exponential_reconnection`
+
+Optional exponential reconnection policy, this replaces the default constant policy of the driver.
+
+*Type*: `object`
+
+=== `exponential_reconnection.initial_interval`
+
+The initial period to wait between retry attempts.
+
+*Type*: `string`
+
+=== `exponential_reconnection.max_interval`
+
+The maximum period to wait between retry attempts.
+
+*Type*: `string`
+
+=== `exponential_reconnection.max_retries`
+
+The maximum number of retry attempts.
+
+*Type*: `int`
+
 === `host_selection_policy`
 
 Advanced host selection policy settings for Cassandra clusters. Use these options to optimize query routing in multi-datacenter (DC) and multi-rack deployments. By specifying a local DC and rack, you can ensure queries are directed to the closest nodes, reducing latency and improving fault tolerance. If not set, the default policy is round-robin across all available nodes. Host selection is always token-aware if the token can be calculated from query.
@@ -252,6 +276,14 @@ The username to authenticate as.
 A query to execute for each message.
 
 *Type*: `string`
+
+=== `reconnect_interval`
+
+Attempts to reconnect known DOWN nodes in every ReconnectInterval.
+
+*Type*: `string`
+
+*Default*: `60s`
 
 === `timeout`
 

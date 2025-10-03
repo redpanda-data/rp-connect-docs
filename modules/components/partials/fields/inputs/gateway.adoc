@@ -28,6 +28,8 @@ Customize messages returned using xref:guides:sync_responses.adoc[synchronous re
 
 Specify headers to return with synchronous responses.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 *Type*: `string`
 
 *Default*:
@@ -84,6 +86,8 @@ include_prefixes:
 === `sync_response.status`
 
 Specify the status code to return with synchronous responses. This is a string value, which allows you to customize it based on resulting payloads and their metadata.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

@@ -96,6 +96,8 @@ processors:
 
 The bucket to upload messages to.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 *Type*: `string`
 
 === `chunk_size`
@@ -109,6 +111,8 @@ An optional chunk size which controls the maximum number of bytes of the object 
 === `collision_mode`
 
 Determines how file path collisions should be dealt with. Options are "overwrite", which replaces the existing file with the new one, "append", which appends the message bytes to the original file, "error-if-exists", which returns an error and rejects the message if the file exists, and "ignore", does not modify the original file and drops the message.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 ifndef::env-cloud[]
 Requires version 3.53.0 or later.
@@ -141,6 +145,8 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 === `credentials_json`
 
 Base64-encoded Google Service Account credentials in JSON format (optional). Use this field to authenticate with Google Cloud services. For more information about creating service account credentials, see https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google's service account documentation^].
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 

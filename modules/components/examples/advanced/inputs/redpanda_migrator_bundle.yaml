@@ -1,0 +1,7 @@
+inputs:
+  label: ""
+  redpanda_migrator_bundle:
+    redpanda_migrator: "" # No default (required)
+    schema_registry: "" # No default (required)
+    migrate_schemas_before_data: true
+    consumer_group_offsets_poll_interval: 15s

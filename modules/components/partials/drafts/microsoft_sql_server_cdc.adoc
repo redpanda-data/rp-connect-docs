@@ -1,0 +1,85 @@
+= microsoft_sql_server_cdc
+// tag::single-source[]
+:type: input
+:status: beta
+:categories: [Services]
+:description: Enables Change Data Capture by consuming from Microsoft SQL Server's change tables.
+
+component_type_dropdown::[]
+
+Enables Change Data Capture by consuming from Microsoft SQL Server's change tables.
+
+ifndef::env-cloud[]
+Introduced in version 0.0.1.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+```yaml
+input:
+  label: ""
+  microsoft_sql_server_cdc:
+    connection_string: "" # No default (required)
+    stream_snapshot: "" # No default (required)
+    snapshot_max_batch_size: 1000
+    include: [] # No default (required)
+    exclude: [] # No default (optional)
+    checkpoint_cache: "" # No default (required)
+    checkpoint_key: microsoft_sql_server_cdc
+    checkpoint_limit: 1024
+    stream_backoff_interval: 5s
+    auto_replay_nacks: true
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
+      processors: [] # No default (optional)
+```
+--
+Advanced::
++
+--
+```yaml
+input:
+  label: ""
+  microsoft_sql_server_cdc:
+    connection_string: "" # No default (required)
+    stream_snapshot: "" # No default (required)
+    snapshot_max_batch_size: 1000
+    include: [] # No default (required)
+    exclude: [] # No default (optional)
+    checkpoint_cache: "" # No default (required)
+    checkpoint_key: microsoft_sql_server_cdc
+    checkpoint_limit: 1024
+    stream_backoff_interval: 5s
+    auto_replay_nacks: true
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
+      processors: [] # No default (optional)
+```
+--
+======
+
+Streams changes from a Microsoft SQL Server database for Change Data Capture (CDC).
+Additionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+- schema (Schema of the table that the message originated from)
+- table (Name of the table that the message originated from)
+- operation (Type of operation that generated the message: "read", "delete", "insert", or "update_before" and "update_after". "read" is from messages that are read in the initial snapshot phase.)
+- lsn (the Log Sequence Number in Microsoft SQL Server)
+		
+
+include::redpanda-connect:components:partial$fields/inputs/microsoft_sql_server_cdc.adoc[]
+
+
+// end::single-source[]

@@ -1,0 +1,18 @@
+outputs:
+  label: ""
+  socket:
+    network: "" # No default (required)
+    address: "" # No default (required)
+    codec: lines
+    tls:
+      enabled: false
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
