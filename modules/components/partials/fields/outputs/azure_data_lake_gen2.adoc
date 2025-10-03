@@ -4,7 +4,7 @@
 
 === `filesystem`
 
-The name of the data lake storage file system you want to upload messages to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The name of the data lake storage file system you want to upload messages to. 
 
 *Type*: `string`
 
@@ -24,7 +24,7 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `path`
 
-The path (file name) of each message to upload to the data lake storage file system. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The path (file name) of each message to upload to the data lake storage file system. 
 
 *Type*: `string`
 

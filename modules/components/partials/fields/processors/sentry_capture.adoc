@@ -65,7 +65,7 @@ Sets the level on sentry events similar to logging levels.
 === `message`
 
 A message to set on the sentry event
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -95,7 +95,7 @@ The rate at which events are sent to the server. A value of 0 disables capturing
 === `tags`
 
 Sets key/value string tags on an event. Unlike context, these are indexed and searchable on Sentry but have length limitations.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

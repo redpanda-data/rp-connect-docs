@@ -52,7 +52,9 @@ The label of the xref:components:inputs/schema_registry.adoc[`schema_registry` i
 
 === `jwt`
 
-BETA: Configure JSON Web Token (JWT) authentication for secure data transmission from this component to your schema registry. This feature is in beta and may change in future releases.
+badge::[label=Beta, size=large, tooltip={page-beta-text}]
+
+Configure JSON Web Token (JWT) authentication for secure data transmission from this component to your schema registry. This feature is in beta and may change in future releases.
 
 *Type*: `object`
 
@@ -194,7 +196,7 @@ endif::[]
 
 The subject name.
 
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

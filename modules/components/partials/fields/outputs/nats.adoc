@@ -69,7 +69,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 === `headers`
 
 Explicit message headers to add to messages.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -162,7 +162,7 @@ include_prefixes:
 === `subject`
 
 The subject to publish to.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

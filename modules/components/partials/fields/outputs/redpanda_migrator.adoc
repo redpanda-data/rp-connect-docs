@@ -75,7 +75,7 @@ Set this to `true` when using Serverless clusters in Redpanda Cloud.
 
 === `key`
 
-An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+An optional key to populate for each message. 
 
 *Type*: `string`
 
@@ -159,7 +159,7 @@ The maximum period of time after which metadata is refreshed. This field accepts
 
 An optional explicit partition to set for each message. This field is only relevant when the `partitioner` is set to `manual`. The provided interpolation string must be a valid integer.
 
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -405,7 +405,7 @@ The maximum period of time to wait for message sends before abandoning the reque
 === `timestamp_ms`
 
 Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -570,13 +570,13 @@ Whether to skip server-side certificate verification. Set to `true` only for tes
 
 A topic to write messages to.
 
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
 === `topic_prefix`
 
-Adds the specified prefix to the name of each migrated topic. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Adds the specified prefix to the name of each migrated topic. 
 
 *Type*: `string`
 

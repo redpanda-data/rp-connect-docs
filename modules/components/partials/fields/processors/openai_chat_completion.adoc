@@ -152,7 +152,9 @@ The username of the account credentials to authenticate as. Used together with `
 
 === `schema_registry.jwt`
 
-BETA: Allows you to specify JWT authentication.
+badge::[label=Beta, size=large, tooltip={page-beta-text}]
+
+Allows you to specify JWT authentication.
 
 *Type*: `object`
 
@@ -437,7 +439,7 @@ Specify up to four stop sequences to use. When the model encounters a stop patte
 
 === `system_prompt`
 
-The system prompt to submit along with the user prompt. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The system prompt to submit along with the user prompt. 
 
 *Type*: `string`
 
@@ -530,7 +532,7 @@ Redpanda recommends adding a value for this field or `temperature`, but not both
 
 === `user`
 
-A unique identifier that represents the end-user generating the prompt. This value can help OpenAI monitor and detect https://openai.com/policies/usage-policies/[platform abuse^]. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+A unique identifier that represents the end-user generating the prompt. This value can help OpenAI monitor and detect https://openai.com/policies/usage-policies/[platform abuse^]. 
 
 *Type*: `string`
 

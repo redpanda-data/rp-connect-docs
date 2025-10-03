@@ -6,6 +6,37 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+
+== Version 4.66.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.66.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+* Outputs:
+** xref:components:outputs/cyborgdb.adoc[`cyborgdb`] (experimental): 
+This output allows you to write vectors to a CyborgDB encrypted index. CyborgDB provides
+end-to-end encrypted vector storage with automatic dimension detection and index optimization.
+
+All vector data is encrypted client-side before being sent to the server, ensuring complete
+data privacy. The encryption key never leaves your infrastructure.
+
+* Bloblang-functions:
+** xref:components:bloblang-functions/with_schema_registry_header.adoc[`with_schema_registry_header`] (beta): Prepends a 5-byte Schema Registry header to a message. The header consists of a magic byte (0x00) followed by a 4-byte big-endian schema ID.
+
+This release adds support for the following new fields:
+
+* Inputs components
+** xref:components:inputs/cassandra.adoc['cassandra']
+*** xref:components:inputs/cassandra.adoc#reconnect_interval['reconnect_interval'] - Attempts to reconnect known DOWN nodes in every ReconnectInterval.
+*** xref:components:inputs/cassandra.adoc#exponential_reconnection['exponential_reconnection'] - Optional exponential reconnection policy, this replaces the default constant policy of the driver.
+* Outputs components
+** xref:components:outputs/cassandra.adoc['cassandra']
+*** xref:components:outputs/cassandra.adoc#reconnect_interval['reconnect_interval'] - Attempts to reconnect known DOWN nodes in every ReconnectInterval.
+*** xref:components:outputs/cassandra.adoc#exponential_reconnection['exponential_reconnection'] - Optional exponential reconnection policy, this replaces the default constant policy of the driver.
+
 == Version 4.65.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.65.0[See the full release notes^].

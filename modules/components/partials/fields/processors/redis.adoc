@@ -22,7 +22,7 @@ args_mapping: root = [ meta("kafka_key"), this.count ]
 === `command`
 
 The command to execute.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 ifndef::env-cloud[]
 Requires version 4.3.0 or later.

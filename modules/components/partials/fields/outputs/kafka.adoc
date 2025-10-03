@@ -245,7 +245,7 @@ inject_tracing_map: root.meta.span = this
 
 === `key`
 
-An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+An optional key to populate for each message. 
 
 *Type*: `string`
 
@@ -292,7 +292,7 @@ Provide a list of explicit metadata key prefixes to be excluded when adding meta
 === `partition`
 
 The manually-specified partition to publish messages to, relevant only when the field `partitioner` is set to `manual`. Must be able to parse as a 32-bit integer.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -451,7 +451,7 @@ The maximum period of time to wait for message sends before abandoning the reque
 === `timestamp_ms`
 
 Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -606,7 +606,7 @@ Whether to skip server side certificate verification.
 === `topic`
 
 The topic to publish messages to.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

@@ -95,7 +95,7 @@ Positive values penalize new tokens if they have appeared in the text so far. Th
 === `prompt`
 
 The prompt you want to generate a response for. By default, the processor submits the entire payload as a string.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -192,7 +192,7 @@ Sets the stop sequences to use. When this pattern is encountered, the LLM stops 
 === `system_prompt`
 
 The system prompt to submit to the Ollama LLM.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

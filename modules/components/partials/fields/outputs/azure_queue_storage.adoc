@@ -103,7 +103,7 @@ The maximum number of parallel message batches to have in flight at any given ti
 === `queue_name`
 
 The name of the target Queue Storage queue.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -142,7 +142,7 @@ The storage account SAS token. This field is ignored if `storage_connection_stri
 === `ttl`
 
 The TTL of each individual message as a duration string. Defaults to 0, meaning no retention period is set
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

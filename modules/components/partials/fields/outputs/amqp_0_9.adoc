@@ -4,7 +4,7 @@
 
 === `app_id`
 
-Set an application ID for each message using a dynamic interpolated expression. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Set an application ID for each message using a dynamic interpolated expression. 
 
 *Type*: `string`
 
@@ -12,7 +12,7 @@ Set an application ID for each message using a dynamic interpolated expression. 
 
 === `content_encoding`
 
-The content encoding attribute of each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The content encoding attribute of each message. 
 
 *Type*: `string`
 
@@ -20,7 +20,7 @@ The content encoding attribute of each message. This field supports xref:configu
 
 === `content_type`
 
-The MIME type of each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The MIME type of each message. 
 
 *Type*: `string`
 
@@ -28,7 +28,7 @@ The MIME type of each message. This field supports xref:configuration:interpolat
 
 === `correlation_id`
 
-Set a unique correlation ID for each message using a dynamic interpolated expression to help match messages to responses. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Set a unique correlation ID for each message using a dynamic interpolated expression to help match messages to responses. 
 
 *Type*: `string`
 
@@ -36,7 +36,7 @@ Set a unique correlation ID for each message using a dynamic interpolated expres
 
 === `exchange`
 
-The AMQP exchange to publish messages to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The AMQP exchange to publish messages to. 
 
 *Type*: `string`
 
@@ -89,7 +89,7 @@ NOTE: Dots (`.`) in message keys are only enforced in routing keys and message t
 
 === `expiration`
 
-Set the TTL of each message in milliseconds. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Set the TTL of each message in milliseconds. 
 
 *Type*: `string`
 
@@ -105,7 +105,7 @@ Whether to set the immediate flag on published messages. When set to `true`, if 
 
 === `key`
 
-The binding key to set for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The binding key to set for each message. 
 
 *Type*: `string`
 
@@ -129,7 +129,7 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `message_id`
 
-Set a message ID for each message using a dynamic interpolated expression. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Set a message ID for each message using a dynamic interpolated expression. 
 
 *Type*: `string`
 
@@ -159,7 +159,7 @@ Whether to store delivered messages on disk. By default, message delivery is tra
 
 === `priority`
 
-Set the priority of each message using a dynamic interpolated expression. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Set the priority of each message using a dynamic interpolated expression. 
 
 *Type*: `string`
 
@@ -175,7 +175,7 @@ priority: ${! json("doc.priority") }
 
 === `reply_to`
 
-Set the name of the queue to which responses are sent using a dynamic interpolated expression. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Set the name of the queue to which responses are sent using a dynamic interpolated expression. 
 
 *Type*: `string`
 
@@ -341,7 +341,7 @@ Whether to skip server-side certificate verification. Set to `true` only for tes
 
 === `type`
 
-A custom message type to set for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+A custom message type to set for each message. 
 
 *Type*: `string`
 
@@ -374,7 +374,7 @@ urls:
 
 === `user_id`
 
-Set the user ID to the name of the publisher. If this property is set by a publisher, its value must match the name of the user that opened the connection. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Set the user ID to the name of the publisher. If this property is set by a publisher, its value must match the name of the user that opened the connection. 
 
 *Type*: `string`
 

@@ -179,7 +179,7 @@ The token for the credentials being used, required when using short term credent
 === `delay_seconds`
 
 An optional delay time in seconds for message. Value between 0 and 900
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -216,14 +216,14 @@ The maximum number of retries before giving up on the request. If set to zero th
 === `message_deduplication_id`
 
 An optional deduplication ID to set for messages.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
 === `message_group_id`
 
 An optional group ID to set for messages.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -249,7 +249,7 @@ The AWS region to target.
 
 === `url`
 
-The URL of the target SQS queue. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The URL of the target SQS queue. 
 
 *Type*: `string`
 

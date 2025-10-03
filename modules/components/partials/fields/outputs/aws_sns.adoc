@@ -73,7 +73,7 @@ The maximum number of messages to have in flight at a given time. Increase this 
 === `message_deduplication_id`
 
 An optional deduplication ID to set for messages.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 ifndef::env-cloud[]
 Requires version 3.60.0 or later.
@@ -84,7 +84,7 @@ endif::[]
 === `message_group_id`
 
 An optional group ID to set for messages.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 ifndef::env-cloud[]
 Requires version 3.60.0 or later.

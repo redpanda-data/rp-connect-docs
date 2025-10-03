@@ -1,0 +1,30 @@
+outputs:
+  label: ""
+  redis_streams:
+    url: "" # No default (required)
+    kind: simple
+    master: ""
+    tls:
+      enabled: false
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
+    stream: "" # No default (required)
+    body_key: body
+    max_length: 0
+    max_in_flight: 64
+    metadata:
+      exclude_prefixes: []
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
+      processors: [] # No default (optional)

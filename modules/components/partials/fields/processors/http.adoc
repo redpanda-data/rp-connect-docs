@@ -147,7 +147,7 @@ Whether to follow redirects, including all responses with HTTP status codes in t
 
 === `headers`
 
-A map of headers to add to the request. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+A map of headers to add to the request. 
 
 *Type*: `string`
 
@@ -163,7 +163,9 @@ headers:
 
 === `jwt`
 
-BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
+badge::[label=Beta, size=large, tooltip={page-beta-text}]
+
+Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
 
 *Type*: `object`
 
@@ -591,7 +593,7 @@ Whether to skip server-side certificate verification. Set to `true` only for tes
 
 === `url`
 
-The URL to connect to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The URL to connect to. 
 
 *Type*: `string`
 

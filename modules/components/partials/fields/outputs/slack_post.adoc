@@ -18,7 +18,7 @@ Your Slack bot user's OAuth token, which must have the correct permissions to po
 
 === `channel_id`
 
-The encoded ID of the target Slack channel. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The encoded ID of the target Slack channel. 
 
 *Type*: `string`
 
@@ -40,7 +40,7 @@ When set to `true`, this output accepts message content in Markdown format.
 
 === `text`
 
-The text content of the message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The text content of the message. 
 
 You can either specify message content in the `text` or `blocks` fields, but not both.
 
@@ -50,7 +50,7 @@ You can either specify message content in the `text` or `blocks` fields, but not
 
 === `thread_ts`
 
-Specify the thread timestamp (`ts` value) of another message to post a reply within the same thread. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Specify the thread timestamp (`ts` value) of another message to post a reply within the same thread. 
 
 *Type*: `string`
 

@@ -1,0 +1,14 @@
+tracers:
+  label: ""
+  open_telemetry_collector:
+    service: benthos
+    http:
+      address: "" # No default (optional)
+      secure: false
+    grpc:
+      address: "" # No default (optional)
+      secure: false
+    tags: {}
+    sampling:
+      enabled: false
+      ratio: "" # No default (optional)

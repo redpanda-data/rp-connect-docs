@@ -32,7 +32,7 @@ model: tts-1-hd
 === `response_format`
 
 The format to generate audio in. Default is `mp3`.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -58,7 +58,7 @@ The Open API endpoint that the processor sends requests to. Update the default v
 === `voice`
 
 The type of voice to use when generating the audio.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

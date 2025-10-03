@@ -101,7 +101,7 @@ The bucket to upload messages to.
 === `cache_control`
 
 The cache control to set for each object.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -120,7 +120,7 @@ The algorithm used to validate each object during its upload to the Amazon S3 bu
 === `content_disposition`
 
 The content disposition to set for each object.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -129,7 +129,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 === `content_encoding`
 
 An optional content encoding to set for each object.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -137,7 +137,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 === `content_language`
 
-The content language to set for each object. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The content language to set for each object. 
 
 *Type*: `string`
 
@@ -145,7 +145,7 @@ The content language to set for each object. This field supports xref:configurat
 
 === `content_md5`
 
-The https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html#checking-object-integrity-md5[content MD5^] to set for each object. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html#checking-object-integrity-md5[content MD5^] to set for each object. 
 
 *Type*: `string`
 
@@ -154,7 +154,7 @@ The https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integr
 === `content_type`
 
 The content type to set for each object.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -270,7 +270,7 @@ The object canned ACL value.
 
 === `path`
 
-The path of each message to upload. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The path of each message to upload. 
 
 *Type*: `string`
 
@@ -305,7 +305,7 @@ endif::[]
 === `storage_class`
 
 The storage class to set for each object.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -316,7 +316,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 === `tags`
 
 Key/value pairs to store with the object as tags.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -341,7 +341,7 @@ The maximum period to wait on an upload before abandoning it and reattempting.
 === `website_redirect_location`
 
 The website redirect location to set for each object.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

@@ -32,7 +32,7 @@ A text description of the image you want to generate. The `prompt` field accepts
 === `quality`
 
 The quality of the image to generate. Use `hd` to create images with finer details and greater consistency across the image. This parameter is only supported for `dall-e-3` models.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -54,7 +54,7 @@ The Open API endpoint that the processor sends requests to. Update the default v
 === `size`
 
 The size of the generated image. Choose from `256x256`, `512x512`, or `1024x1024` for `dall-e-2`. Choose from `1024x1024`, `1792x1024`, or `1024x1792` for `dall-e-3` models.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 
@@ -70,7 +70,7 @@ size: 1024x1792
 === `style`
 
 The style of the generated image. Choose from `vivid` or `natural`. Vivid causes the model to lean towards generating hyperreal and dramatic images. Natural causes the model to produce more natural, less hyperreal looking images. This parameter is only supported for `dall-e-3`.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

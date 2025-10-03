@@ -70,7 +70,9 @@ A username to authenticate as.
 
 === `jwt`
 
-BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
+badge::[label=Beta, size=large, tooltip={page-beta-text}]
+
+Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
 
 ifndef::env-cloud[]
 Requires version 4.7.0 or later.
@@ -190,7 +192,7 @@ refresh_period: 1h
 === `subject`
 
 The schema subject to derive schemas from.
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 
 *Type*: `string`
 

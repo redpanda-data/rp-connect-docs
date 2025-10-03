@@ -10,13 +10,13 @@ Your Slack bot user's OAuth token, which must have the correct permissions to re
 
 === `channel_id`
 
-The encoded ID of the Slack channel from which to read threads. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The encoded ID of the Slack channel from which to read threads. 
 
 *Type*: `string`
 
 === `thread_ts`
 
-The timestamp of the parent message of the thread you want to read. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The timestamp of the parent message of the thread you want to read. 
 
 *Type*: `string`
 

@@ -4,7 +4,7 @@
 
 === `action`
 
-The action to perform on each document. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The action to perform on each document. 
 
 For more information on how the `update` action works, see <<example-pipelines, Example pipelines>>.
 
@@ -146,7 +146,7 @@ id: ${!counter()}-${!timestamp_unix()}
 
 === `index`
 
-The Elasticsearch index where messages are published. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The Elasticsearch index where messages are published. 
 
 *Type*: `string`
 
@@ -160,7 +160,7 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `pipeline`
 
-Specify the ID of a pipeline to preprocess incoming documents before they are published (optional). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Specify the ID of a pipeline to preprocess incoming documents before they are published (optional). 
 
 *Type*: `string`
 
@@ -176,7 +176,7 @@ The number of times to retry an update operation when a version conflict occurs.
 
 === `routing`
 
-The routing key to use for the document. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The routing key to use for the document. 
 
 *Type*: `string`
 
