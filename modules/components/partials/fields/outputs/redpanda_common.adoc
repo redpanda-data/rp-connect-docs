@@ -94,7 +94,7 @@ processors:
 
 === `key`
 
-A key to populate for each message (optional). 
+A key to populate for each message (optional). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -154,6 +154,7 @@ include_prefixes:
 === `partition`
 
 Set a partition for each message (optional). This field is only relevant when the `partitioner` is set to `manual`.
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 You must provide an interpolation string that is a valid integer.
 
@@ -167,7 +168,7 @@ partition: ${! meta("partition") }
 
 === `timestamp_ms`
 
-Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used. 
+Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -180,7 +181,7 @@ timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 
 === `topic`
 
-A topic to write messages to. 
+A topic to write messages to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

@@ -5,7 +5,7 @@
 === `key`
 
 The key to store messages by, function interpolation should be used in order to derive a unique key for each message.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -36,7 +36,7 @@ The target cache to store messages in.
 === `ttl`
 
 The TTL of each individual item as a duration string. After this period an item will be eligible for removal during the next compaction. Not all caches support per-key TTLs, and those that do not will fall back to their generally configured TTL setting.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 ifndef::env-cloud[]
 Requires version 3.33.0 or later.

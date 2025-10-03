@@ -19,7 +19,7 @@ Whether messages should be dropped when the cache returns a general error such a
 === `key`
 
 An interpolated string yielding the key to deduplicate by for each message.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

@@ -242,7 +242,7 @@ Whether or not to transparently follow redirects, i.e. responses with 300-399 st
 
 === `headers`
 
-A map of headers to add to the request. 
+A map of headers to add to the request. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -383,6 +383,8 @@ endif::[]
 
 The body of the individual message part.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 *Type*: `string`
 
 *Default*: `""`
@@ -397,6 +399,8 @@ body: ${! this.data.part1 }
 
 The content disposition of the individual message part.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 *Type*: `string`
 
 *Default*: `""`
@@ -410,6 +414,8 @@ content_disposition: form-data; name="bin"; filename='${! @AttachmentName }
 === `multipart[].content_type`
 
 The content type of the individual message part.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -755,7 +761,7 @@ Whether to skip server-side certificate verification. Set to `true` only for tes
 
 === `url`
 
-The URL to connect to. 
+The URL to connect to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

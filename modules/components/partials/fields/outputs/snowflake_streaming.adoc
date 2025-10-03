@@ -257,7 +257,7 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `offset_token`
 
-The offset token to use for exactly-once delivery of data to a Snowflake table. 
+The offset token to use for exactly-once delivery of data to a Snowflake table. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 This output assumes that messages within a batch are in increasing order by offset token. When data is sent on a channel, the offset token of each message in the batch is compared to the latest token processed by the channel. If the offset token is lexicographically less than the latest token, it's assumed the message is a duplicate and is dropped. Messages must be delivered to the output in order, otherwise they are processed as duplicates and dropped.
 
@@ -382,7 +382,7 @@ processors:
 
 === `table`
 
-The Snowflake table you want to write data to. 
+The Snowflake table you want to write data to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

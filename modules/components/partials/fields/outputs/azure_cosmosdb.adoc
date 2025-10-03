@@ -167,7 +167,7 @@ endpoint: https://localhost:8081
 === `item_id`
 
 ID of item to replace or delete. Only used by the Replace and Delete operations
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -233,7 +233,7 @@ partition_keys_map: root = json("blobfish").depth
 === `patch_condition`
 
 Patch operation condition.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

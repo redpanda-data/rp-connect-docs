@@ -147,7 +147,7 @@ Whether to follow redirects, including all responses with HTTP status codes in t
 
 === `headers`
 
-A map of headers to add to the request. 
+A map of headers to add to the request. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -593,7 +593,7 @@ Whether to skip server-side certificate verification. Set to `true` only for tes
 
 === `url`
 
-The URL to connect to. 
+The URL to connect to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

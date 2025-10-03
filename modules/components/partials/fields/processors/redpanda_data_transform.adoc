@@ -49,7 +49,7 @@ include_prefixes:
 
 === `input_key`
 
-An optional key to populate for each message. 
+An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -129,6 +129,8 @@ The maximum period of time for a message to be processed
 === `timestamp`
 
 An optional timestamp to set for each message. When left empty, the current timestamp is used.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

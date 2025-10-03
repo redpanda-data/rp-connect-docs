@@ -69,7 +69,7 @@ A number between `-2.0` and `2.0`. Positive values penalize new tokens based on 
 
 The user prompt you want to generate a response for. By default, the processor submits the entire payload as a string.
 
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -396,7 +396,7 @@ Specify up to four sequences to stop the API from generating further tokens.
 
 The system prompt to submit along with the user prompt.
 
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

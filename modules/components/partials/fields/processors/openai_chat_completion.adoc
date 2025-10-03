@@ -98,6 +98,8 @@ Specify a number between `-2.0` and `2.0`. Positive values penalize new tokens i
 
 The user prompt for which a response is generated. By default, the processor sends the entire payload as a string unless customized using this field.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 *Type*: `string`
 
 === `response_format`
@@ -439,7 +441,7 @@ Specify up to four stop sequences to use. When the model encounters a stop patte
 
 === `system_prompt`
 
-The system prompt to submit along with the user prompt. 
+The system prompt to submit along with the user prompt. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -532,7 +534,7 @@ Redpanda recommends adding a value for this field or `temperature`, but not both
 
 === `user`
 
-A unique identifier that represents the end-user generating the prompt. This value can help OpenAI monitor and detect https://openai.com/policies/usage-policies/[platform abuse^]. 
+A unique identifier that represents the end-user generating the prompt. This value can help OpenAI monitor and detect https://openai.com/policies/usage-policies/[platform abuse^]. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

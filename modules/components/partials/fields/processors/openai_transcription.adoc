@@ -19,7 +19,7 @@ The audio file object (not file name) to transcribe, in one of the following for
 === `language`
 
 The language of the input audio. Supplying the input language in ISO-639-1 format improves accuracy and latency.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -47,7 +47,7 @@ model: whisper-1
 === `prompt`
 
 Optional text to guide the model's style or continue a previous audio segment. The prompt should match the audio language.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

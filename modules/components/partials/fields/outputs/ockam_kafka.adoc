@@ -189,7 +189,7 @@ Enables the `idempotent_write` producer option. This requires `IDEMPOTENT_WRITE`
 
 === `kafka.key`
 
-Populates a key for each message (optional). 
+Populates a key for each message (optional). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -265,7 +265,7 @@ include_prefixes:
 
 Set an explicit partition for each message (optional). To use this field, set the `partitioner` to `manual`. You must provide an interpolation string that is a valid integer. 
 
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -330,7 +330,7 @@ The maximum period of time allowed for sending messages before a request is aban
 
 Set a timestamp (in milliseconds) for each message (optional). Leave this field empty to use the current timestamp.
 
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -494,7 +494,7 @@ Whether to skip server-side certificate verification. Set to `true` only for tes
 
 === `kafka.topic`
 
-The Kafka topic to write messages to (required). 
+The Kafka topic to write messages to (required). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

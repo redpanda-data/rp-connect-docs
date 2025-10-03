@@ -155,7 +155,7 @@ Whether or not to transparently follow redirects, i.e. responses with 300-399 st
 
 === `headers`
 
-A map of headers to add to the request. 
+A map of headers to add to the request. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -397,7 +397,7 @@ The URL of the token provider.
 
 === `payload`
 
-A payload to deliver for each request (optional). 
+A payload to deliver for each request (optional). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -637,7 +637,7 @@ Whether to skip server-side certificate verification. Set to `true` only for tes
 
 === `url`
 
-The URL to connect to. 
+The URL to connect to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

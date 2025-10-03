@@ -65,7 +65,7 @@ The maximum duration that connections can remain idle before they are automatica
 
 === `is_high_watermark`
 
-Indicates whether the processed message is the high watermark, which is the offset of the last fully replicated message in the Kafka topic partition. 
+Indicates whether the processed message is the high watermark, which is the offset of the last fully replicated message in the Kafka topic partition. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -104,7 +104,7 @@ The maximum period of time after which metadata is refreshed. This field accepts
 
 === `offset_commit_timestamp`
 
-The Kafka offset commit timestamp to process. 
+The Kafka offset commit timestamp to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -112,7 +112,7 @@ The Kafka offset commit timestamp to process.
 
 === `offset_group`
 
-The name of the Kafka offset consumer group to process. 
+The name of the Kafka offset consumer group to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -120,7 +120,7 @@ The name of the Kafka offset consumer group to process.
 
 === `offset_metadata`
 
-The Kafka offset metadata value to process. 
+The Kafka offset metadata value to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -128,7 +128,7 @@ The Kafka offset metadata value to process.
 
 === `offset_partition`
 
-The Kafka offset partition ID to process. 
+The Kafka offset partition ID to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -136,7 +136,7 @@ The Kafka offset partition ID to process.
 
 === `offset_topic`
 
-The name of the Kafka offset topic to process. 
+The name of the Kafka offset topic to process. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -144,7 +144,7 @@ The name of the Kafka offset topic to process.
 
 === `offset_topic_prefix`
 
-Adds the specified prefix to the name of each migrated Kafka offset topic. 
+Adds the specified prefix to the name of each migrated Kafka offset topic. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

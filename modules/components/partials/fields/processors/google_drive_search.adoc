@@ -12,7 +12,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 === `include_label_ids`
 
-A comma delimited list of label IDs to include in the Google Drive search result. 
+A comma delimited list of label IDs to include in the Google Drive search result. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

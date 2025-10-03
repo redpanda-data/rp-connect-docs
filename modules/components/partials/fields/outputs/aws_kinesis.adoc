@@ -185,7 +185,7 @@ Allows you to specify a custom endpoint for the AWS API.
 === `hash_key`
 
 A optional hash key for partitioning messages.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -208,7 +208,7 @@ The maximum number of retries before giving up on the request. If set to zero th
 === `partition_key`
 
 A required key for partitioning messages.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

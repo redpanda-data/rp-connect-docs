@@ -81,7 +81,7 @@ bucket: my_kv_bucket
 === `key`
 
 The key for each message. Supports https://docs.nats.io/nats-concepts/subjects#wildcards[wildcards^] for the `history` and `keys` operations.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -143,7 +143,7 @@ The operation to perform on the KV bucket.
 === `revision`
 
 The revision of the key to operate on. Used for `get_revision` and `update` operations.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

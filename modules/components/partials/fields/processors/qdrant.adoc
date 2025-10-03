@@ -14,7 +14,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 === `collection_name`
 
-The name of the Qdrant collection you want to query. 
+The name of the Qdrant collection you want to query. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

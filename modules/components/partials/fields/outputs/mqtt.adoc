@@ -89,7 +89,7 @@ Set message as retained on the topic.
 === `retained_interpolated`
 
 Override the value of `retained` with an interpolable value, this allows it to be dynamically set based on message contents. The value must resolve to either `true` or `false`.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 ifndef::env-cloud[]
 Requires version 3.59.0 or later.
@@ -241,7 +241,7 @@ Whether to skip server side certificate verification.
 === `topic`
 
 The topic to publish messages to.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

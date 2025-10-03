@@ -109,7 +109,7 @@ The host for the Pinecone index.
 === `id`
 
 The ID for the index entry in Pinecone.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -138,7 +138,7 @@ metadata_mapping: root = {"summary": this.summary, "foo": this.other_field}
 === `namespace`
 
 The namespace to write to - writes to the default namespace by default.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

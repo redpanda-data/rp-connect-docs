@@ -59,7 +59,7 @@ Enable the idempotent write producer option. This requires the `IDEMPOTENT_WRITE
 
 === `key`
 
-An optional key to populate for each message. 
+An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -142,6 +142,7 @@ The maximum period of time after which metadata is refreshed. This field accepts
 === `partition`
 
 Set a partition for each message (optional). This field is only relevant when the `partitioner` is set to `manual`.
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 You must provide an interpolation string that is a valid integer.
 
@@ -364,7 +365,7 @@ The maximum period of time to wait for message sends before abandoning the reque
 
 === `timestamp_ms`
 
-Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used. 
+Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -528,7 +529,7 @@ Whether to skip server-side certificate verification. Set to `true` only for tes
 
 === `topic`
 
-A topic to write messages to. 
+A topic to write messages to. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

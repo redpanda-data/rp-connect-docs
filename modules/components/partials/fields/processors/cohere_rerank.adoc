@@ -49,13 +49,15 @@ model: rerank-v3.5
 
 === `query`
 
-The search query you want to execute. 
+The search query you want to execute. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
 === `top_n`
 
 The number of documents to return when the query is executed. If set to `0`, all documents are returned.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

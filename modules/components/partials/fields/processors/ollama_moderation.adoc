@@ -53,7 +53,7 @@ If you're using the `ollama_chat` processor, you can set the `save_prompt_metada
 
 You can also check the safety of your prompts. For more information, see the xref:components:processors/ollama_chat.adoc#examples[`ollama_chat` processor] documentation.
 
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -61,7 +61,7 @@ You can also check the safety of your prompts. For more information, see the xre
 
 The LLM's response that you want to check for safety.
 
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

@@ -5,7 +5,7 @@
 === `blob_type`
 
 Block and Append blobs are comprized of blocks, and each blob can support up to 50,000 blocks. The default value is `+"`BLOCK`"+`.`
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -16,7 +16,7 @@ Block and Append blobs are comprized of blocks, and each blob can support up to 
 === `container`
 
 The container for uploading the messages to.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -36,7 +36,7 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `path`
 
-The path of each message to upload. 
+The path of each message to upload. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -53,7 +53,7 @@ path: ${!json("doc.namespace")}/${!json("doc.id")}.json
 === `public_access_level`
 
 The container's public access level. The default value is `PRIVATE`.
-
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
