@@ -22,12 +22,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-tracer:
-  gcp_cloudtrace:
-    project: "" # No default (required)
-    sampling_ratio: 1
-    flush_interval: "" # No default (optional)
+include::components:example$common/tracers/gcp_cloudtrace.yaml[]
 ```
 
 --
@@ -36,13 +31,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-tracer:
-  gcp_cloudtrace:
-    project: "" # No default (required)
-    sampling_ratio: 1
-    tags: {}
-    flush_interval: "" # No default (optional)
+include::components:example$advanced/tracers/gcp_cloudtrace.yaml[]
 ```
 
 --

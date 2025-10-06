@@ -24,11 +24,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-parquet_encode:
-  schema: [] # No default (required)
-  default_compression: uncompressed
+include::components:example$common/processors/parquet_encode.yaml[]
 ```
 
 --
@@ -37,12 +33,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-parquet_encode:
-  schema: [] # No default (required)
-  default_compression: uncompressed
-  default_encoding: DELTA_LENGTH_BYTE_ARRAY
+include::components:example$advanced/processors/parquet_encode.yaml[]
 ```
 
 --

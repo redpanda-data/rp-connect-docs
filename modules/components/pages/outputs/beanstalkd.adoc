@@ -11,16 +11,31 @@ component_type_dropdown::[]
 
 Write messages to a Beanstalkd queue.
 
+ifndef::env-cloud[]
 Introduced in version 4.7.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
 
 ```yml
-# Config fields, showing default values
-output:
-  label: ""
-  beanstalkd:
-    address: 127.0.0.1:11300 # No default (required)
-    max_in_flight: 64
+include::components:example$common/outputs/beanstalkd.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/beanstalkd.yaml[]
+```
+
+--
+======
 
 include::redpanda-connect:components:partial$fields/outputs/beanstalkd.adoc[]
 

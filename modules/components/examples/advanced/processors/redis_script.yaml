@@ -1,0 +1,23 @@
+processors:
+  label: ""
+  redis_script:
+    url: "" # No default (required)
+    kind: simple
+    master: ""
+    tls:
+      enabled: false
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
+    script: "" # No default (required)
+    args_mapping: "" # No default (required)
+    keys_mapping: "" # No default (required)
+    retries: 3
+    retry_period: 500ms

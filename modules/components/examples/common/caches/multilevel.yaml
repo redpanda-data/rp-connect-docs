@@ -1,0 +1,11 @@
+caches:
+  label: ""
+  multilevel:
+    - label: ""
+      memory:
+        default_ttl: 5m
+        compaction_interval: 60s
+    - label: ""
+      redis:
+        url: redis://localhost:6379
+        expiration: 24h

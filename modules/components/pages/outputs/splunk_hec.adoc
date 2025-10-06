@@ -23,23 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-output:
-  label: ""
-  splunk_hec:
-    url: https://foobar.splunkcloud.com/services/collector/event # No default (required)
-    token: "" # No default (required)
-    gzip: false
-    event_host: "" # No default (optional)
-    event_source: "" # No default (optional)
-    event_sourcetype: "" # No default (optional)
-    event_index: "" # No default (optional)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/splunk_hec.yaml[]
 ```
 
 --
@@ -48,31 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-output:
-  label: ""
-  splunk_hec:
-    url: https://foobar.splunkcloud.com/services/collector/event # No default (required)
-    token: "" # No default (required)
-    gzip: false
-    event_host: "" # No default (optional)
-    event_source: "" # No default (optional)
-    event_sourcetype: "" # No default (optional)
-    event_index: "" # No default (optional)
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/splunk_hec.yaml[]
 ```
 
 --

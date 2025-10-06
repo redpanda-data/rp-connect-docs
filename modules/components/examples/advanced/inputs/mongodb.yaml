@@ -1,0 +1,16 @@
+inputs:
+  label: ""
+  mongodb:
+    url: "" # No default (required)
+    database: "" # No default (required)
+    username: ""
+    password: ""
+    app_name: benthos
+    collection: "" # No default (required)
+    operation: find
+    json_marshal_mode: canonical
+    query: "" # No default (required)
+    auto_replay_nacks: true
+    batch_size: "" # No default (optional)
+    sort: "" # No default (optional)
+    limit: "" # No default (optional)

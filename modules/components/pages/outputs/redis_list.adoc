@@ -20,18 +20,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  redis_list:
-    url: redis://:6379 # No default (required)
-    key: some_list # No default (required)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/redis_list.yaml[]
 ```
 
 --
@@ -40,29 +29,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  redis_list:
-    url: redis://:6379 # No default (required)
-    kind: simple
-    master: ""
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    key: some_list # No default (required)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
-    command: rpush
+include::components:example$advanced/outputs/redis_list.yaml[]
 ```
 
 --

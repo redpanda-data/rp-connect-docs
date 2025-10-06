@@ -5,7 +5,9 @@
 
 component_type_dropdown::[]
 
-*Introduced in version 4.65.0.*
+ifndef::env-cloud[]
+Introduced in version 4.65.0
+endif::[]
 
 Enables integration with link:https://docs.tigerbeetle.com/operating/cdc/[TigerBeetle's Change Data Capture] (CDC) streaming for Redpanda Connect.
 This input component connects to a TigerBeetle cluster and continuously listens for real-time changes (such as account updates, transfers, and other ledger events). Each detected change is converted into a message and ingested into Redpanda Connect for further processing.

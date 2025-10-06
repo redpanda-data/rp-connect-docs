@@ -11,14 +11,27 @@ component_type_dropdown::[]
 
 Writes messages to files on disk based on a chosen codec.
 
+[tabs]
+======
+Common::
++
+--
+
 ```yml
-# Config fields, showing default values
-output:
-  label: ""
-  file:
-    path: /tmp/data.txt # No default (required)
-    codec: lines
+include::components:example$common/outputs/file.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/file.yaml[]
+```
+
+--
+======
 
 Messages can be written to different files by using xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions] in the path field. However, only one file is ever open at a given time, and therefore when the path changes the previously open file is closed.
 

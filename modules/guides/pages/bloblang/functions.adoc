@@ -354,6 +354,27 @@ You can also specify the timestamp for the `uuid_v7`.
 root.id = uuid_v7(now().ts_sub_iso8601("PT1M"))
 ```
 
+=== `with_schema_registry_header`
+
+Prepends a 5-byte Schema Registry header to a message. The header consists of a magic byte (0x00) followed by a 4-byte big-endian schema ID.
+
+==== Parameters
+
+- *`schema_id`* &lt;number&gt; The schema ID to encode in the header.
+- *`payload`* &lt;string|bytes&gt; The message payload to which the header will be prepended.
+
+==== Examples
+
+```coffeescript
+# Add header with schema ID 123
+root = with_schema_registry_header(123, content())
+```
+
+```coffeescript
+# Add header with schema ID from metadata
+root = with_schema_registry_header(meta("schema_id").number(), content())
+```
+
 == Message Info
 
 === `batch_index`

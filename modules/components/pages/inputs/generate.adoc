@@ -16,17 +16,27 @@ ifndef::env-cloud[]
 Introduced in version 3.40.0.
 endif::[]
 
+[tabs]
+======
+Common::
++
+--
+
 ```yml
-# Config fields, showing default values
-input:
-  label: ""
-  generate:
-    mapping: root = "hello world" # No default (required)
-    interval: 1s
-    count: 0
-    batch_size: 1
-    auto_replay_nacks: true
+include::components:example$common/inputs/generate.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/generate.yaml[]
+```
+
+--
+======
 
 include::redpanda-connect:components:partial$examples/inputs/generate.adoc[]
 

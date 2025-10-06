@@ -19,11 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-label: ""
-lru:
-  cap: 1000
-  init_values: {}
+include::components:example$common/caches/lru.yaml[]
 ```
 
 --
@@ -32,15 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-label: ""
-lru:
-  cap: 1000
-  init_values: {}
-  algorithm: standard
-  two_queues_recent_ratio: 0.25
-  two_queues_ghost_ratio: 0.5
-  optimistic: false
+include::components:example$advanced/caches/lru.yaml[]
 ```
 
 --

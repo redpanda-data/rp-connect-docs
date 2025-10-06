@@ -20,52 +20,20 @@ endif::[]
 Common::
 +
 --
+
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  couchbase:
-    url: couchbase://localhost:11210 # No default (required)
-    username: "" # No default (optional)
-    password: "" # No default (optional)
-    bucket: "" # No default (required)
-    id: ${! json("id") } # No default (required)
-    content: "" # No default (optional)
-    operation: upsert
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/couchbase.yaml[]
 ```
+
 --
 Advanced::
 +
 --
+
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  couchbase:
-    url: couchbase://localhost:11210 # No default (required)
-    username: "" # No default (optional)
-    password: "" # No default (optional)
-    bucket: "" # No default (required)
-    collection: _default
-    transcoder: legacy
-    timeout: 15s
-    id: ${! json("id") } # No default (required)
-    content: "" # No default (optional)
-    operation: upsert
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/couchbase.yaml[]
 ```
+
 --
 ======
 

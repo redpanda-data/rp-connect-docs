@@ -20,23 +20,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-mongodb:
-  url: mongodb://localhost:27017 # No default (required)
-  database: "" # No default (required)
-  username: "" # No default (optional)
-  password: "" # No default (optional)
-  collection: "" # No default (required)
-  operation: insert-one
-  write_concern:
-    w: "" # No default (optional)
-    j: false
-    w_timeout: "" # No default (optional)
-  document_map: "" # No default (optional)
-  filter_map: "" # No default (optional)
-  hint_map: "" # No default (optional)
-  upsert: false
+include::components:example$common/processors/mongodb.yaml[]
 ```
 
 --
@@ -45,25 +29,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-mongodb:
-  url: mongodb://localhost:27017 # No default (required)
-  database: "" # No default (required)
-  username: "" # No default (optional)
-  password: "" # No default (optional)
-  app_name: benthos
-  collection: "" # No default (required)
-  operation: insert-one
-  write_concern:
-    w: "" # No default (optional)
-    j: false
-    w_timeout: "" # No default (optional)
-  document_map: "" # No default (optional)
-  filter_map: "" # No default (optional)
-  hint_map: "" # No default (optional)
-  upsert: false
-  json_marshal_mode: canonical
+include::components:example$advanced/processors/mongodb.yaml[]
 ```
 
 --

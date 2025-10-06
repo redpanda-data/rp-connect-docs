@@ -11,10 +11,7 @@ component_type_dropdown::[]
 Stores each item in a directory as a file, where an item ID is the path relative to the configured directory.
 
 ```yml
-# Config fields, showing default values
-label: ""
-file:
-  directory: "" # No default (required)
+include::components:example$common/caches/file.yaml[]
 ```
 
 This type currently offers no form of item expiry or garbage collection, and is intended to be used for development and debugging purposes only.

@@ -19,12 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  amqp_1:
-    urls: [] # No default (optional)
-    source_address: /foo # No default (required)
+include::components:example$common/inputs/amqp_1.yaml[]
 ```
 
 --
@@ -33,26 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  amqp_1:
-    urls: [] # No default (optional)
-    source_address: /foo # No default (required)
-    azure_renew_lock: false
-    read_header: false
-    credit: 64
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    sasl:
-      mechanism: none
-      user: ""
-      password: ""
+include::components:example$advanced/inputs/amqp_1.yaml[]
 ```
 
 --

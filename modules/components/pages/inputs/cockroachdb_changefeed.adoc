@@ -26,14 +26,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  cockroachdb_changefeed:
-    dsn: postgres://user:password@example.com:26257/defaultdb?sslmode=require # No default (required)
-    tables: [] # No default (required)
-    cursor_cache: "" # No default (optional)
-    auto_replay_nacks: true
+include::components:example$common/inputs/cockroachdb_changefeed.yaml[]
 ```
 
 --
@@ -42,21 +35,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  cockroachdb_changefeed:
-    dsn: postgres://user:password@example.com:26257/defaultdb?sslmode=require # No default (required)
-    tls:
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    tables: [] # No default (required)
-    cursor_cache: "" # No default (optional)
-    options: [] # No default (optional)
-    auto_replay_nacks: true
+include::components:example$advanced/inputs/cockroachdb_changefeed.yaml[]
 ```
 
 --

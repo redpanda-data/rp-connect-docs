@@ -20,19 +20,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-input:
-  label: ""
-  aws_s3:
-    bucket: ""
-    prefix: ""
-    scanner:
-      to_the_end: {}
-    sqs:
-      url: ""
-      key_path: Records.*.s3.object.key
-      bucket_path: Records.*.s3.bucket.name
-      envelope_path: ""
+include::components:example$common/inputs/aws_s3.yaml[]
 ```
 
 --
@@ -41,35 +29,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-input:
-  label: ""
-  aws_s3:
-    bucket: ""
-    prefix: ""
-    region: ""
-    endpoint: ""
-    credentials:
-      profile: ""
-      id: ""
-      secret: ""
-      token: ""
-      from_ec2_role: false
-      role: ""
-      role_external_id: ""
-    force_path_style_urls: false
-    delete_objects: false
-    scanner:
-      to_the_end: {}
-    sqs:
-      url: ""
-      endpoint: ""
-      key_path: Records.*.s3.object.key
-      bucket_path: Records.*.s3.bucket.name
-      envelope_path: ""
-      delay_period: ""
-      max_messages: 10
-      wait_time_seconds: 0
+include::components:example$advanced/inputs/aws_s3.yaml[]
 ```
 
 --

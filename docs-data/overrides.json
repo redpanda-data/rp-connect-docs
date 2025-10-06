@@ -1,7 +1,7 @@
 {
   "definitions": {
     "default_schema_id": {
-      "description": "If set, this schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If not set, schema header errors are returned."
+      "description": "This schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If this value is not set, schema header errors are returned.\n\nThis configuration does not work with protobuf schemas.\n\nTIP: You can also use the xref:guides:bloblang/functions.adoc#with_schema_registry_header[`with_schema_registry_header`] bloblang function to add a schema ID to messages."
     },
     "regexp_topics": {
       "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`."
@@ -53,6 +53,57 @@
     },
     "auto_replay_nacks": {
       "description": "Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.\n\nSet `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation."
+    },
+    "cyborgdb_host": {
+      "description": "The host URL for the CyborgDB instance. This should include the protocol (https://) and port number if required. For example: `https://api.cyborgdb.com` or `https://localhost:8080`."
+    },
+    "cyborgdb_api_key": {
+      "description": "The API key for authenticating with the CyborgDB service. This key identifies your account and provides access to your CyborgDB indexes. Keep this key secure and avoid exposing it in logs or version control."
+    },
+    "cyborgdb_index_name": {
+      "description": "The name of the CyborgDB index to write vectors to. If the index doesn't exist and `create_if_missing` is enabled, CyborgDB will create it automatically with optimized settings based on your data."
+    },
+    "cyborgdb_index_key": {
+      "description": "The base64-encoded encryption key for the CyborgDB index. This key must be exactly 32 bytes when decoded from base64. All vector data is encrypted client-side using this key before transmission, ensuring complete data privacy. Store this key securely as it cannot be recovered if lost."
+    },
+    "cyborgdb_operation": {
+      "description": "The operation to perform against the CyborgDB index. Supported operations:\n\n- `upsert`: Insert new vectors or update existing ones (requires `vector_mapping`)\n- `delete`: Remove vectors from the index (requires `id`)\n- `query`: Search for similar vectors (requires `vector_mapping`)"
+    },
+    "cyborgdb_vector_mapping": {
+      "description": "A xref:guides:bloblang/about.adoc[Bloblang mapping] that extracts the vector from the message. The result must be an array of floating-point numbers representing the vector embeddings. This field is required for `upsert` and `query` operations."
+    },
+    "cyborgdb_metadata_mapping": {
+      "description": "An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that extracts metadata to associate with the vector entry. The metadata can contain any JSON-serializable data that helps identify or categorize the vector. This data is stored encrypted alongside the vector."
+    },
+    "cyborgdb_id_mapping": {
+      "description": "A xref:guides:bloblang/about.adoc[Bloblang mapping] that determines the unique identifier for each vector entry. This ID is used to update existing vectors during upsert operations or to specify which vectors to delete. If not provided, CyborgDB will generate unique IDs automatically."
+    },
+    "mssql_cdc_connection_string": {
+      "description": "The connection string for the Microsoft SQL Server database. Use the format `sqlserver://username:password@host/instance?param1=value&param2=value`. For Windows Authentication, use `sqlserver://host/instance?trusted_connection=yes`. Include additional parameters like `TrustServerCertificate=true` for self-signed certificates or `encrypt=disable` to disable encryption."
+    },
+    "mssql_cdc_stream_snapshot": {
+      "description": "Whether to stream a snapshot of all existing data before streaming CDC changes. When enabled, the connector first queries all existing table data, then switches to streaming incremental changes from the transaction log. Set to `false` to start streaming only new changes from the current LSN position."
+    },
+    "mssql_cdc_snapshot_max_batch_size": {
+      "description": "The maximum number of rows to stream in a single batch during the initial snapshot phase. Larger batch sizes can improve throughput for initial data loads but may increase memory usage. This setting only applies when `stream_snapshot` is enabled."
+    },
+    "mssql_cdc_include_tables": {
+      "description": "Regular expressions for tables to include in CDC streaming. Specify table names using the format `schema.table` (such as `dbo.orders`, `sales.customers`). Each pattern is treated as a regular expression, allowing wildcards and pattern matching. All specified tables must have CDC enabled in SQL Server."
+    },
+    "mssql_cdc_exclude_tables": {
+      "description": "Regular expressions for tables to exclude from CDC streaming. Use this to filter out specific tables from the include patterns. Table names should follow the `schema.table` format. Exclude patterns are applied after include patterns, allowing you to include broad patterns while excluding specific tables."
+    },
+    "mssql_cdc_checkpoint_cache": {
+      "description": "A xref:components:caches/about.adoc[cache resource] to store the current Log Sequence Number (LSN) position. This enables the connector to resume from the last processed position after restarts, preventing data loss and duplicate processing. The cache stores the highest LSN that has been successfully delivered downstream."
+    },
+    "mssql_cdc_checkpoint_key": {
+      "description": "The key used to store the LSN checkpoint position in the cache. If you have multiple `microsoft_sql_server_cdc` inputs sharing the same cache resource, provide unique keys to avoid conflicts. The default key works well for single-instance deployments."
+    },
+    "mssql_cdc_checkpoint_limit": {
+      "description": "The maximum number of messages that can be processed concurrently before applying back pressure. Higher values enable better parallelization and batching but increase memory usage. Messages are processed in LSN order, and a given LSN is only acknowledged after all previous LSNs have been successfully delivered, ensuring at-least-once guarantees."
+    },
+    "mssql_cdc_stream_backoff_interval": {
+      "description": "The time interval to wait between polling attempts when no new CDC data is available. For low-traffic tables, increasing this value reduces database load and network traffic. Use Go duration format like `5s`, `30s`, or `1m`. Shorter intervals provide lower latency for new changes but increase server load."
     },
     "oauth": {
       "description": "Configure OAuth version 1.0 authentication for secure API access."
@@ -422,6 +473,16 @@
               }
             ],
             "version": "4.61.0"
+          },
+          {
+            "name": "reconnect_interval",
+            "description": "The interval at which Redpanda Connect attempts to reconnect to Cassandra nodes that are marked as DOWN. This setting helps maintain connectivity in unstable network conditions or during node maintenance. Use Go duration format such as `30s`, `1m`, or `5m`. Setting this too low may create unnecessary connection attempts, while setting it too high may delay recovery from network issues.",
+            "version": "4.66.0"
+          },
+          {
+            "name": "exponential_reconnection",
+            "description": "Configure exponential backoff for reconnection attempts to DOWN nodes. When enabled, this replaces the driver's default constant reconnection policy with an exponential backoff strategy that gradually increases the delay between reconnection attempts. This reduces connection storm scenarios during widespread outages while ensuring eventual recovery.",
+            "version": "4.66.0"
           }
         ]
       }
@@ -1050,6 +1111,79 @@
           {
             "name": "auto_replay_nacks",
             "description": "Whether to automatically replay rejected messages (negative acknowledgements) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.\n\nSet `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data is discarded immediately upon consumption and mutation."
+          }
+        ]
+      }
+    },
+    {
+      "name": "microsoft_sql_server_cdc",
+      "config": {
+        "children": [
+          {
+            "name": "connection_string",
+            "$ref": "#/definitions/mssql_cdc_connection_string"
+          },
+          {
+            "name": "stream_snapshot",
+            "$ref": "#/definitions/mssql_cdc_stream_snapshot"
+          },
+          {
+            "name": "snapshot_max_batch_size",
+            "$ref": "#/definitions/mssql_cdc_snapshot_max_batch_size"
+          },
+          {
+            "name": "include",
+            "$ref": "#/definitions/mssql_cdc_include_tables"
+          },
+          {
+            "name": "exclude",
+            "$ref": "#/definitions/mssql_cdc_exclude_tables"
+          },
+          {
+            "name": "checkpoint_cache",
+            "$ref": "#/definitions/mssql_cdc_checkpoint_cache"
+          },
+          {
+            "name": "checkpoint_key",
+            "$ref": "#/definitions/mssql_cdc_checkpoint_key"
+          },
+          {
+            "name": "checkpoint_limit",
+            "$ref": "#/definitions/mssql_cdc_checkpoint_limit"
+          },
+          {
+            "name": "stream_backoff_interval",
+            "$ref": "#/definitions/mssql_cdc_stream_backoff_interval"
+          },
+          {
+            "name": "auto_replay_nacks",
+            "$ref": "#/definitions/auto_replay_nacks"
+          },
+          {
+            "name": "batching",
+            "children": [
+              {
+                "name": "count",
+                "$ref": "#/definitions/count"
+              },
+              {
+                "name": "byte_size",
+                "$ref": "#/definitions/byte_size"
+              },
+              {
+                "name": "period",
+                "$ref": "#/definitions/period"
+              },
+              {
+                "name": "check",
+                "$ref": "#/definitions/check"
+              },
+              {
+                "name": "processors",
+                "$ref": "#/definitions/processors"
+              }
+            ],
+            "$ref": "#/definitions/batching"
           }
         ]
       }
@@ -2781,6 +2915,16 @@
               }
             ],
             "version": "4.61.0"
+          },
+          {
+            "name": "reconnect_interval",
+            "description": "The interval at which Redpanda Connect attempts to reconnect to Cassandra nodes that are marked as DOWN. This setting helps maintain connectivity in unstable network conditions or during node maintenance. Use Go duration format such as `30s`, `1m`, or `5m`. Setting this too low may create unnecessary connection attempts, while setting it too high may delay recovery from network issues.",
+            "version": "4.66.0"
+          },
+          {
+            "name": "exponential_reconnection",
+            "description": "Configure exponential backoff for reconnection attempts to DOWN nodes. When enabled, this replaces the driver's default constant reconnection policy with an exponential backoff strategy that gradually increases the delay between reconnection attempts. This reduces connection storm scenarios during widespread outages while ensuring eventual recovery.",
+            "version": "4.66.0"
           }
         ]
       }
@@ -2858,6 +3002,49 @@
               }
             ],
             "$ref": "#/definitions/batching"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cyborgdb",
+      "config": {
+        "children": [
+          {
+            "name": "host",
+            "$ref": "#/definitions/cyborgdb_host"
+          },
+          {
+            "name": "api_key",
+            "$ref": "#/definitions/cyborgdb_api_key"
+          },
+          {
+            "name": "index_name",
+            "$ref": "#/definitions/cyborgdb_index_name"
+          },
+          {
+            "name": "index_key",
+            "$ref": "#/definitions/cyborgdb_index_key"
+          },
+          {
+            "name": "create_if_missing",
+            "description": "Whether to create the index if it doesn't exist. When enabled, CyborgDB automatically detects the vector dimensions from your data and optimizes the index configuration for performance. This is useful for development and testing environments."
+          },
+          {
+            "name": "operation",
+            "$ref": "#/definitions/cyborgdb_operation"
+          },
+          {
+            "name": "id",
+            "$ref": "#/definitions/cyborgdb_id_mapping"
+          },
+          {
+            "name": "vector_mapping",
+            "$ref": "#/definitions/cyborgdb_vector_mapping"
+          },
+          {
+            "name": "metadata_mapping",
+            "$ref": "#/definitions/cyborgdb_metadata_mapping"
           }
         ]
       }

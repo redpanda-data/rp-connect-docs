@@ -28,17 +28,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  redpanda_migrator_offsets:
-    seed_brokers: [] # No default (required)
-    offset_topic: ${! @kafka_offset_topic }
-    offset_group: ${! @kafka_offset_group }
-    offset_partition: ${! @kafka_offset_partition }
-    offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
-    offset_metadata: ${! @kafka_offset_metadata }
-    is_high_watermark: ${! @kafka_is_high_watermark }
+include::components:example$common/outputs/redpanda_migrator_offsets.yaml[]
 ```
 
 --
@@ -47,38 +37,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  redpanda_migrator_offsets:
-    seed_brokers: [] # No default (required)
-    client_id: benthos
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: "" # Optional
-      root_cas_file: "" # Optional
-      client_certs: [] # Optional
-    sasl: [] # No default (optional)
-    metadata_max_age: 5m
-    request_timeout_overhead: 10s
-    conn_idle_timeout: 20s
-    offset_topic: ${! @kafka_offset_topic }
-    offset_topic_prefix: source. # No default (optional)
-    offset_group: ${! @kafka_offset_group }
-    offset_partition: ${! @kafka_offset_partition }
-    offset_commit_timestamp: ${! @kafka_offset_commit_timestamp }
-    offset_metadata: ${! @kafka_offset_metadata }
-    is_high_watermark: ${! @kafka_is_high_watermark }
-    timeout: 10s
-    max_message_bytes: 1MiB
-    broker_write_max_bytes: 100MiB
-    max_retries: 0
-    backoff:
-      initial_interval: 1s
-      max_interval: 5s
-      max_elapsed_time: 30s
+include::components:example$advanced/outputs/redpanda_migrator_offsets.yaml[]
 ```
 
 --

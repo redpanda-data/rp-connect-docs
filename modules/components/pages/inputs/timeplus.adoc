@@ -13,16 +13,7 @@ Executes a streaming or table query on https://docs.timeplus.com/[Timeplus Enter
 If you execute a streaming query, this input runs until the query terminates. For table queries, it shuts down after all rows returned by the query are exhausted.
 
 ```yml
-# Common configuration fields, showing default values
-input:
-  label: ""
-  timeplus:
-    query: select * from iot # No default (required)
-    url: tcp://localhost:8463
-    workspace: "" # No default (optional)
-    apikey: "" # No default (optional)
-    username: "" # No default (optional)
-    password: "" # No default (optional)
+include::components:example$common/inputs/timeplus.yaml[]
 ```
 
 include::redpanda-connect:components:partial$examples/inputs/timeplus.adoc[]

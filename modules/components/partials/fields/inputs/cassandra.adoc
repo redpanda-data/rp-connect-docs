@@ -59,6 +59,34 @@ If enabled the driver will not attempt to get host info from the system.peers ta
 
 *Default*: `false`
 
+=== `exponential_reconnection`
+
+Configure exponential backoff for reconnection attempts to DOWN nodes. When enabled, this replaces the driver's default constant reconnection policy with an exponential backoff strategy that gradually increases the delay between reconnection attempts. This reduces connection storm scenarios during widespread outages while ensuring eventual recovery.
+
+ifndef::env-cloud[]
+Requires version 4.66.0 or later.
+endif::[]
+
+*Type*: `object`
+
+=== `exponential_reconnection.initial_interval`
+
+The initial period to wait between retry attempts.
+
+*Type*: `string`
+
+=== `exponential_reconnection.max_interval`
+
+The maximum period to wait between retry attempts.
+
+*Type*: `string`
+
+=== `exponential_reconnection.max_retries`
+
+The maximum number of retry attempts.
+
+*Type*: `int`
+
 === `host_selection_policy`
 
 Advanced host selection policy settings for Cassandra clusters. Use these options to optimize query routing in multi-datacenter (DC) and multi-rack deployments. By specifying a local DC and rack, you can ensure queries are directed to the closest nodes, reducing latency and improving fault tolerance. If not set, the default policy is round-robin across all available nodes. Host selection is always token-aware if the token can be calculated from query.
@@ -134,6 +162,18 @@ The username to authenticate as.
 A query to execute.
 
 *Type*: `string`
+
+=== `reconnect_interval`
+
+The interval at which Redpanda Connect attempts to reconnect to Cassandra nodes that are marked as DOWN. This setting helps maintain connectivity in unstable network conditions or during node maintenance. Use Go duration format such as `30s`, `1m`, or `5m`. Setting this too low may create unnecessary connection attempts, while setting it too high may delay recovery from network issues.
+
+ifndef::env-cloud[]
+Requires version 4.66.0 or later.
+endif::[]
+
+*Type*: `string`
+
+*Default*: `60s`
 
 === `timeout`
 

@@ -23,17 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-output:
-  label: ""
-  aws_kinesis_firehose:
-    stream: "" # No default (required)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/aws_kinesis_firehose.yaml[]
 ```
 
 --
@@ -42,33 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-output:
-  label: ""
-  aws_kinesis_firehose:
-    stream: "" # No default (required)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
-    region: ""
-    endpoint: ""
-    credentials:
-      profile: ""
-      id: ""
-      secret: ""
-      token: ""
-      from_ec2_role: false
-      role: ""
-      role_external_id: ""
-    max_retries: 0
-    backoff:
-      initial_interval: 1s
-      max_interval: 5s
-      max_elapsed_time: 30s
+include::components:example$advanced/outputs/aws_kinesis_firehose.yaml[]
 ```
 
 --

@@ -12,9 +12,7 @@ component_type_dropdown::[]
 Combines multiple caches as levels, performing read-through and write-through operations across them.
 
 ```yml
-# Config fields, showing default values
-label: ""
-multilevel: [] # No default (required)
+include::components:example$common/caches/multilevel.yaml[]
 ```
 
 include::redpanda-connect:components:partial$examples/caches/multilevel.adoc[]

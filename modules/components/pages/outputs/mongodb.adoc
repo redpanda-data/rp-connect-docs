@@ -20,30 +20,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  mongodb:
-    url: mongodb://localhost:27017 # No default (required)
-    database: "" # No default (required)
-    username: "" # No default (optional)
-    password: "" # No default (optional)
-    collection: "" # No default (required)
-    operation: update-one
-    write_concern:
-      w: "" # No default (optional)
-      j: false
-      w_timeout: "" # No default (optional)
-    document_map: "" # No default (optional)
-    filter_map: "" # No default (optional)
-    hint_map: "" # No default (optional)
-    upsert: false
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
+include::components:example$common/outputs/mongodb.yaml[]
 ```
 
 --
@@ -52,32 +29,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  mongodb:
-    url: mongodb://localhost:27017 # No default (required)
-    database: "" # No default (required)
-    username: "" # No default (optional)
-    password: "" # No default (optional)
-    app_name: benthos
-    collection: "" # No default (required)
-    operation: update-one
-    write_concern:
-      w: "" # No default (optional)
-      j: false
-      w_timeout: "" # No default (optional)
-    document_map: "" # No default (optional)
-    filter_map: "" # No default (optional)
-    hint_map: "" # No default (optional)
-    upsert: false
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/mongodb.yaml[]
 ```
 
 --

@@ -23,16 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-output:
-  label: ""
-  aws_sns:
-    topic_arn: "" # No default (required)
-    message_group_id: "" # No default (optional)
-    message_deduplication_id: "" # No default (optional)
-    max_in_flight: 64
-    metadata:
-      exclude_prefixes: []
+include::components:example$common/outputs/aws_sns.yaml[]
 ```
 
 --
@@ -41,27 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-output:
-  label: ""
-  aws_sns:
-    topic_arn: "" # No default (required)
-    message_group_id: "" # No default (optional)
-    message_deduplication_id: "" # No default (optional)
-    max_in_flight: 64
-    metadata:
-      exclude_prefixes: []
-    timeout: 5s
-    region: ""
-    endpoint: ""
-    credentials:
-      profile: ""
-      id: ""
-      secret: ""
-      token: ""
-      from_ec2_role: false
-      role: ""
-      role_external_id: ""
+include::components:example$advanced/outputs/aws_sns.yaml[]
 ```
 
 --

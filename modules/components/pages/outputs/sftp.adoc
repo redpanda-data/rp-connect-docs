@@ -16,25 +16,27 @@ ifndef::env-cloud[]
 Introduced in version 3.39.0.
 endif::[]
 
+[tabs]
+======
+Common::
++
+--
+
 ```yml
-# Configuration fields, showing default values
-output:
-  label: ""
-  sftp:
-    address: "" # No default (required)
-    path: "" # No default (required)
-    codec: all-bytes
-    credentials:
-      username: "" # No default (optional)
-      password: "" # No default (optional)
-      private_key_file: "" # No default (optional)
-      private_key: "" # No default (optional)
-      private_key_pass: "" # No default (optional)
-      host_public_key: "" # No default (optional)
-      host_public_key_file: "" # No default (optional)
-    max_in_flight: 64
-    connection_timeout: 30s
+include::components:example$common/outputs/sftp.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/sftp.yaml[]
+```
+
+--
+======
 
 In order to have a different path for each object you should use function interpolations described xref:configuration:interpolation.adoc#bloblang-queries[here].
 

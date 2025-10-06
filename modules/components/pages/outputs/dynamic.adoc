@@ -12,12 +12,7 @@ component_type_dropdown::[]
 A special broker type where the outputs are identified by unique labels and can be created, changed and removed during runtime via a REST API.
 
 ```yml
-# Config fields, showing default values
-output:
-  label: ""
-  dynamic:
-    outputs: {}
-    prefix: ""
+include::components:example$common/outputs/dynamic.yaml[]
 ```
 
 The broker pattern used is always `fan_out`, meaning each message will be delivered to each dynamic output.

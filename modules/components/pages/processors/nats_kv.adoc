@@ -23,13 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-nats_kv:
-  urls: [] # No default (required)
-  bucket: my_kv_bucket # No default (required)
-  operation: "" # No default (required)
-  key: foo # No default (required)
+include::components:example$common/processors/nats_kv.yaml[]
 ```
 
 --
@@ -38,28 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-nats_kv:
-  urls: [] # No default (required)
-  bucket: my_kv_bucket # No default (required)
-  operation: "" # No default (required)
-  key: foo # No default (required)
-  revision: "42" # No default (optional)
-  timeout: 5s
-  tls:
-    enabled: false
-    skip_cert_verify: false
-    enable_renegotiation: false
-    root_cas: ""
-    root_cas_file: ""
-    client_certs: []
-  auth:
-    nkey_file: ./seed.nk # No default (optional)
-    nkey: "" # No default (optional)
-    user_credentials_file: ./user.creds # No default (optional)
-    user_jwt: "" # No default (optional)
-    user_nkey_seed: "" # No default (optional)
+include::components:example$advanced/processors/nats_kv.yaml[]
 ```
 
 --

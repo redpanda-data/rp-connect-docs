@@ -12,14 +12,27 @@ component_type_dropdown::[]
 
 Stores messages in an SQLite database and acknowledges them at the input level.
 
+[tabs]
+======
+Common::
++
+--
+
 ```yml
-# Config fields, showing default values
-buffer:
-  sqlite:
-    path: "" # No default (required)
-    pre_processors: [] # No default (optional)
-    post_processors: [] # No default (optional)
+include::components:example$common/buffers/sqlite.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/buffers/sqlite.yaml[]
+```
+
+--
+======
 
 Stored messages are then consumed as a stream from the database and deleted only once they are successfully sent at the output level. If the service is restarted Redpanda Connect will make a best attempt to finish delivering messages that are already read from the database, and when it starts again it will consume from the oldest message that has not yet been delivered.
 

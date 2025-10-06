@@ -20,15 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  nats:
-    urls: [] # No default (required)
-    subject: foo.bar.baz # No default (required)
-    queue: "" # No default (optional)
-    auto_replay_nacks: true
-    send_ack: true
+include::components:example$common/inputs/nats.yaml[]
 ```
 
 --
@@ -37,31 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  nats:
-    urls: [] # No default (required)
-    subject: foo.bar.baz # No default (required)
-    queue: "" # No default (optional)
-    auto_replay_nacks: true
-    send_ack: true
-    nak_delay: 1m # No default (optional)
-    prefetch_count: 524288
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    auth:
-      nkey_file: ./seed.nk # No default (optional)
-      nkey: "" # No default (optional)
-      user_credentials_file: ./user.creds # No default (optional)
-      user_jwt: "" # No default (optional)
-      user_nkey_seed: "" # No default (optional)
-    extract_tracing_map: root = @ # No default (optional)
+include::components:example$advanced/inputs/nats.yaml[]
 ```
 
 --

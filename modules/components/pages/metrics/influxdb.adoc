@@ -22,12 +22,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-metrics:
-  influxdb:
-    url: "" # No default (required)
-    db: "" # No default (required)
-  mapping: ""
+include::components:example$common/metrics/influxdb.yaml[]
 ```
 
 --
@@ -36,31 +31,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-metrics:
-  influxdb:
-    url: "" # No default (required)
-    db: "" # No default (required)
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    username: ""
-    password: ""
-    include:
-      runtime: ""
-      debug_gc: ""
-    interval: 1m
-    ping_interval: 20s
-    precision: s
-    timeout: 5s
-    tags: {}
-    retention_policy: "" # No default (optional)
-    write_consistency: "" # No default (optional)
-  mapping: ""
+include::components:example$advanced/metrics/influxdb.yaml[]
 ```
 
 --

@@ -23,17 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  nats_jetstream:
-    urls: [] # No default (required)
-    queue: "" # No default (optional)
-    subject: foo.bar.baz # No default (optional)
-    durable: "" # No default (optional)
-    stream: "" # No default (optional)
-    bind: false # No default (optional)
-    deliver: all
+include::components:example$common/inputs/nats_jetstream.yaml[]
 ```
 
 --
@@ -42,33 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  nats_jetstream:
-    urls: [] # No default (required)
-    queue: "" # No default (optional)
-    subject: foo.bar.baz # No default (optional)
-    durable: "" # No default (optional)
-    stream: "" # No default (optional)
-    bind: false # No default (optional)
-    deliver: all
-    ack_wait: 30s
-    max_ack_pending: 1024
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    auth:
-      nkey_file: ./seed.nk # No default (optional)
-      nkey: "" # No default (optional)
-      user_credentials_file: ./user.creds # No default (optional)
-      user_jwt: "" # No default (optional)
-      user_nkey_seed: "" # No default (optional)
-    extract_tracing_map: root = @ # No default (optional)
+include::components:example$advanced/inputs/nats_jetstream.yaml[]
 ```
 
 --

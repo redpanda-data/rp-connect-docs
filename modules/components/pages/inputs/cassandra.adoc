@@ -19,14 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  cassandra:
-    addresses: [] # No default (required)
-    timeout: 600ms
-    query: "" # No default (required)
-    auto_replay_nacks: true
+include::components:example$common/inputs/cassandra.yaml[]
 ```
 
 --
@@ -35,30 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  cassandra:
-    addresses: [] # No default (required)
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    password_authenticator:
-      enabled: false
-      username: ""
-      password: ""
-    disable_initial_host_lookup: false
-    max_retries: 3
-    backoff:
-      initial_interval: 1s
-      max_interval: 5s
-    timeout: 600ms
-    query: "" # No default (required)
-    auto_replay_nacks: true
+include::components:example$advanced/inputs/cassandra.yaml[]
 ```
 
 --

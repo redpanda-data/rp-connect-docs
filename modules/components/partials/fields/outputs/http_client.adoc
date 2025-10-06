@@ -258,7 +258,9 @@ headers:
 
 === `jwt`
 
-BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
+badge::[label=Beta, size=large, tooltip={page-beta-text}]
+
+Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services.
 
 *Type*: `object`
 
@@ -381,6 +383,8 @@ endif::[]
 
 The body of the individual message part.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 *Type*: `string`
 
 *Default*: `""`
@@ -395,6 +399,8 @@ body: ${! this.data.part1 }
 
 The content disposition of the individual message part.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 *Type*: `string`
 
 *Default*: `""`
@@ -408,6 +414,8 @@ content_disposition: form-data; name="bin"; filename='${! @AttachmentName }
 === `multipart[].content_type`
 
 The content type of the individual message part.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

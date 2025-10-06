@@ -11,13 +11,27 @@ component_type_dropdown::[]
 
 Prints messages to stdout as a continuous stream of data.
 
+[tabs]
+======
+Common::
++
+--
+
 ```yml
-# Config fields, showing default values
-output:
-  label: ""
-  stdout:
-    codec: lines
+include::components:example$common/outputs/stdout.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/stdout.yaml[]
+```
+
+--
+======
 
 include::redpanda-connect:components:partial$fields/outputs/stdout.adoc[]
 

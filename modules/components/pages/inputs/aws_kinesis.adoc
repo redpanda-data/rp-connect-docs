@@ -23,23 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-input:
-  label: ""
-  aws_kinesis:
-    streams: [] # No default (required)
-    dynamodb:
-      table: ""
-      create: false
-    checkpoint_limit: 1024
-    auto_replay_nacks: true
-    commit_period: 5s
-    start_from_oldest: true
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/inputs/aws_kinesis.yaml[]
 ```
 
 --
@@ -48,47 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-input:
-  label: ""
-  aws_kinesis:
-    streams: [] # No default (required)
-    dynamodb:
-      table: "" # No default (required)
-      create: false
-      billing_mode: PAY_PER_REQUEST
-      read_capacity_units: 0
-      write_capacity_units: 0
-      credentials:
-        profile: "" # No default (optional)
-        id: "" # No default (optional)
-        secret: "" # No default (optional)
-        token: "" # No default (optional)
-        from_ec2_role: false # No default (optional)
-        role: "" # No default (optional)
-        role_external_id: "" # No default (optional)
-    checkpoint_limit: 1024
-    auto_replay_nacks: true
-    commit_period: 5s
-    rebalance_period: 30s
-    lease_period: 30s
-    start_from_oldest: true
-    region: "" # No default (optional)
-    endpoint: "" # No default (optional)
-    credentials:
-      profile: "" # No default (optional)
-      id: "" # No default (optional)
-      secret: "" # No default (optional)
-      token: "" # No default (optional)
-      from_ec2_role: false
-      role: "" # No default (optional)
-      role_external_id: "" # No default (optional)
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
-      processors: [] # No default (optional)
+include::components:example$advanced/inputs/aws_kinesis.yaml[]
 ```
 
 --

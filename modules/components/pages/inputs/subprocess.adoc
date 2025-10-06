@@ -19,14 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  subprocess:
-    name: cat # No default (required)
-    args: []
-    codec: lines
-    restart_on_exit: false
+include::components:example$common/inputs/subprocess.yaml[]
 ```
 
 --
@@ -35,15 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  subprocess:
-    name: cat # No default (required)
-    args: []
-    codec: lines
-    restart_on_exit: false
-    max_buffer: 65536
+include::components:example$advanced/inputs/subprocess.yaml[]
 ```
 
 --

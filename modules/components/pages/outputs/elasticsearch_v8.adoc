@@ -30,20 +30,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  elasticsearch_v8:
-    urls: [] # No default (required)
-    index: "" # No default (required)
-    action: "" # No default (required)
-    id: ${!counter()}-${!timestamp_unix()} # No default (required)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # Optional
-      check: "" # Optional
+include::components:example$common/outputs/elasticsearch_v8.yaml[]
 ```
 
 --
@@ -52,35 +39,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  elasticsearch_v8:
-    urls: [] # No default (required)
-    index: "" # No default (required)
-    action: "" # No default (required)
-    id: ${!counter()}-${!timestamp_unix()} # No default (required)
-    pipeline: "" # Optional 
-    routing: "" # Optional
-    retry_on_conflict: 0
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: "" # Optional
-      root_cas_file: "" # Optional
-      client_certs: []
-    max_in_flight: 64
-    basic_auth:
-      enabled: false
-      username: ""
-      password: ""
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/elasticsearch_v8.yaml[]
 ```
 
 --

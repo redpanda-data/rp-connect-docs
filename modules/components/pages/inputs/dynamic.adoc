@@ -12,12 +12,7 @@ component_type_dropdown::[]
 A special broker type where the inputs are identified by unique labels and can be created, changed and removed during runtime via a REST HTTP interface.
 
 ```yml
-# Config fields, showing default values
-input:
-  label: ""
-  dynamic:
-    inputs: {}
-    prefix: ""
+include::components:example$common/inputs/dynamic.yaml[]
 ```
 
 include::redpanda-connect:components:partial$fields/inputs/dynamic.adoc[]

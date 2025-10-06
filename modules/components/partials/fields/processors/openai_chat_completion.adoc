@@ -98,6 +98,8 @@ Specify a number between `-2.0` and `2.0`. Positive values penalize new tokens i
 
 The user prompt for which a response is generated. By default, the processor sends the entire payload as a string unless customized using this field.
 
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
 *Type*: `string`
 
 === `response_format`
@@ -152,7 +154,9 @@ The username of the account credentials to authenticate as. Used together with `
 
 === `schema_registry.jwt`
 
-BETA: Allows you to specify JWT authentication.
+badge::[label=Beta, size=large, tooltip={page-beta-text}]
+
+Allows you to specify JWT authentication.
 
 *Type*: `object`
 

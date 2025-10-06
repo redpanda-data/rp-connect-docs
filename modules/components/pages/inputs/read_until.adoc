@@ -13,14 +13,7 @@ component_type_dropdown::[]
 Reads messages from a child input until a consumed message passes a xref:guides:bloblang/about.adoc[Bloblang query], at which point the input closes. It is also possible to configure a timeout after which the input is closed if no new messages arrive in that period.
 
 ```yml
-# Config fields, showing default values
-input:
-  label: ""
-  read_until:
-    input: null # No default (required)
-    check: this.type == "foo" # No default (optional)
-    idle_timeout: 5s # No default (optional)
-    restart_input: false
+include::components:example$common/inputs/read_until.yaml[]
 ```
 
 Messages are read continuously while the query check returns false, when the query returns true the message that triggered the check is sent out and the input is closed. Use this to define inputs where the stream should end once a certain message appears.

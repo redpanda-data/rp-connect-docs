@@ -20,16 +20,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  redis_hash:
-    url: redis://:6379 # No default (required)
-    key: ${! @.kafka_key )} # No default (required)
-    walk_metadata: false
-    walk_json_object: false
-    fields: {}
-    max_in_flight: 64
+include::components:example$common/outputs/redis_hash.yaml[]
 ```
 
 --
@@ -38,25 +29,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  redis_hash:
-    url: redis://:6379 # No default (required)
-    kind: simple
-    master: ""
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    key: ${! @.kafka_key )} # No default (required)
-    walk_metadata: false
-    walk_json_object: false
-    fields: {}
-    max_in_flight: 64
+include::components:example$advanced/outputs/redis_hash.yaml[]
 ```
 
 --

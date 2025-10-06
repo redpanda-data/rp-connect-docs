@@ -23,19 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  azure_blob_storage:
-    storage_account: ""
-    storage_access_key: ""
-    storage_connection_string: ""
-    storage_sas_token: ""
-    container: "" # No default (required)
-    prefix: ""
-    scanner:
-      to_the_end: {}
-    targets_input: null # No default (optional)
+include::components:example$common/inputs/azure_blob_storage.yaml[]
 ```
 
 --
@@ -44,20 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  azure_blob_storage:
-    storage_account: ""
-    storage_access_key: ""
-    storage_connection_string: ""
-    storage_sas_token: ""
-    container: "" # No default (required)
-    prefix: ""
-    scanner:
-      to_the_end: {}
-    delete_objects: false
-    targets_input: null # No default (optional)
+include::components:example$advanced/inputs/azure_blob_storage.yaml[]
 ```
 
 --

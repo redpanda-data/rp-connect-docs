@@ -14,9 +14,7 @@ Noop is a cache that stores nothing, all gets returns not found. Why? Sometimes 
 Introduced in version 4.27.0.
 
 ```yml
-# Config fields, showing default values
-label: ""
-noop: {}
+include::components:example$common/caches/noop.yaml[]
 ```
 
 // end::single-source[]

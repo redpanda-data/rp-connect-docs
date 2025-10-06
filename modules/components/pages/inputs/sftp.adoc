@@ -23,26 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-input:
-  label: ""
-  sftp:
-    address: "" # No default (required)
-    credentials:
-      username: "" # No default (optional)
-      password: "" # No default (optional)
-      private_key_file: "" # No default (optional)
-      private_key: "" # No default (optional)
-      private_key_pass: "" # No default (optional)
-    paths: [] # No default (required)
-    auto_replay_nacks: true
-    scanner:
-      to_the_end: {}
-    watcher:
-      enabled: false
-      minimum_age: 1s
-      poll_interval: 1s
-      cache: "" # No default (optional)
+include::components:example$common/inputs/sftp.yaml[]
 ```
 
 --
@@ -51,30 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-input:
-  label: ""
-  sftp:
-    address: "" # No default (required)
-    credentials:
-      username: "" # No default (optional)
-      password: "" # No default (optional)
-      private_key_file: "" # No default (optional)
-      private_key: "" # No default (optional)
-      private_key_pass: "" # No default (optional)
-      host_public_key: "" # No default (optional)
-      host_public_key_file: "" # No default (optional)
-    paths: [] # No default (required)
-    auto_replay_nacks: true
-    scanner:
-      to_the_end: {}
-    delete_on_finish: false
-    connection_timeout: 30s
-    watcher:
-      enabled: false
-      minimum_age: 1s
-      poll_interval: 1s
-      cache: "" # No default (optional)
+include::components:example$advanced/inputs/sftp.yaml[]
 ```
 
 --

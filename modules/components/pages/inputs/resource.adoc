@@ -13,9 +13,7 @@ component_type_dropdown::[]
 Resource is an input type that channels messages from a resource input, identified by its name.
 
 ```yml
-# Config fields, showing default values
-input:
-  resource: ""
+include::components:example$common/inputs/resource.yaml[]
 ```
 
 Resources allow you to tidy up deeply nested configs. For example, the config:

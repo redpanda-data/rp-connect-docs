@@ -13,31 +13,7 @@ Introduced in version 4.40.0 and renamed from `pg_stream` to `postgres_cdc` in v
 endif::[]
 
 ```yml
-# Configuration fields, showing default values
-input:
-  label: ""
-  postgres_cdc:
-    dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable # No default (required)
-    include_transaction_markers: true
-    stream_snapshot: false
-    snapshot_batch_size: 1000
-    schema: public # No default (required)
-    tables: [] # No default (required)
-    checkpoint_limit: 1024
-    temporary_slot: false
-    slot_name: my_test_slot # No default (required)
-    pg_standby_timeout: 10s
-    pg_wal_monitor_interval: 3s
-    max_parallel_snapshot_tables: 1
-    unchanged_toast_value: null
-    heartbeat_interval: 1h
-    auto_replay_nacks: true
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
-      processors: [] # No default (optional)
+include::components:example$common/inputs/postgres_cdc.yaml[]
 ```
 
 The `postgres_cdc` input uses logical replication to capture changes made to a PostgreSQL database in real time and streams them to Redpanda Connect. Redpanda Connect uses this replication method to allow you to choose which database tables in your source database to receive changes from. There are also <<choose-a-replication-mode,two replication modes>> to choose from, and an <<receive-toast-and-deleted-values,option to receive TOAST and deleted values>> in your data updates.

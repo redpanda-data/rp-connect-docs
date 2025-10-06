@@ -23,18 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  redpanda:
-    seed_brokers: [] # No default (required)
-    topic: "" # No default (required)
-    key: "" # No default (optional)
-    partition: ${! meta("partition") } # No default (optional)
-    metadata:
-      include_prefixes: []
-      include_patterns: []
-    max_in_flight: 256
+include::components:example$common/outputs/redpanda.yaml[]
 ```
 
 --
@@ -43,37 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  redpanda:
-    seed_brokers: [] # No default (required)
-    client_id: benthos
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    sasl: [] # No default (optional)
-    metadata_max_age: 5m
-    request_timeout_overhead: 10s
-    conn_idle_timeout: 20s
-    topic: "" # No default (required)
-    key: "" # No default (optional)
-    partition: ${! meta("partition") } # No default (optional)
-    metadata:
-      include_prefixes: []
-      include_patterns: []
-    timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
-    max_in_flight: 256
-    partitioner: "" # No default (optional)
-    idempotent_write: true
-    compression: "" # No default (optional)
-    timeout: 10s
-    max_message_bytes: 1MiB
-    broker_write_max_bytes: 100MiB
+include::components:example$advanced/outputs/redpanda.yaml[]
 ```
 
 --

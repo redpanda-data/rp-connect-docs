@@ -24,22 +24,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-ollama_chat:
-  model: llama3.1 # No default (required)
-  prompt: "" # No default (optional)
-  image: 'root = this.image.decode("base64")' # Decode base64 encoded image. No default (optional)
-  response_format: text
-  max_tokens: 0 # No default (optional)
-  temperature: 0 # No default (optional)
-  save_prompt_metadata: false
-  history: "" # No default (optional)
-  tools: [] # No default (required)
-  runner:
-    context_size: 0 # No default (optional)
-    batch_size: 0 # No default (optional)
-  server_address: http://127.0.0.1:11434 # No default (optional)
+include::components:example$common/processors/ollama_chat.yaml[]
 ```
 
 --
@@ -48,38 +33,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-ollama_chat:
-  model: llama3.1 # No default (required)
-  prompt: "" # No default (optional)
-  system_prompt: "" # No default (optional)
-  image: 'root = this.image.decode("base64")' # Decode base64 encoded image. No default (optional)
-  response_format: text
-  max_tokens: 0 # No default (optional)
-  temperature: 0 # No default (optional)
-  num_keep: 0 # No default (optional)
-  seed: 42 # No default (optional)
-  top_k: 0 # No default (optional)
-  top_p: 0 # No default (optional)
-  repeat_penalty: 0 # No default (optional)
-  presence_penalty: 0 # No default (optional)
-  frequency_penalty: 0 # No default (optional)
-  stop: [] # No default (optional)
-  save_prompt_metadata: false
-  history: "" # No default (optional)
-  max_tool_calls: 3
-  tools: [] # No default (required)
-  runner:
-    context_size: 0 # No default (optional)
-    batch_size: 0 # No default (optional)
-    gpu_layers: 0 # No default (optional)
-    threads: 0 # No default (optional)
-    use_mmap: false # No default (optional)
-    use_mlock: false # No default (optional)
-  server_address: http://127.0.0.1:11434 # No default (optional)
-  cache_directory: /opt/cache/connect/ollama # No default (optional)
-  download_url: "" # No default (optional)
+include::components:example$advanced/processors/ollama_chat.yaml[]
 ```
 
 --

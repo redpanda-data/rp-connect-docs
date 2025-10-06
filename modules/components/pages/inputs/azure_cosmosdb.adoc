@@ -23,22 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  azure_cosmosdb:
-    endpoint: https://localhost:8081 # No default (optional)
-    account_key: '!!!SECRET_SCRUBBED!!!' # No default (optional)
-    connection_string: '!!!SECRET_SCRUBBED!!!' # No default (optional)
-    database: testdb # No default (required)
-    container: testcontainer # No default (required)
-    partition_keys_map: root = "blobfish" # No default (required)
-    query: SELECT c.foo FROM testcontainer AS c WHERE c.bar = "baz" AND c.timestamp < @timestamp # No default (required)
-    args_mapping: |- # No default (optional)
-      root = [
-        { "Name": "@name", "Value": "benthos" },
-      ]
-    auto_replay_nacks: true
+include::components:example$common/inputs/azure_cosmosdb.yaml[]
 ```
 
 --
@@ -47,23 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  azure_cosmosdb:
-    endpoint: https://localhost:8081 # No default (optional)
-    account_key: '!!!SECRET_SCRUBBED!!!' # No default (optional)
-    connection_string: '!!!SECRET_SCRUBBED!!!' # No default (optional)
-    database: testdb # No default (required)
-    container: testcontainer # No default (required)
-    partition_keys_map: root = "blobfish" # No default (required)
-    query: SELECT c.foo FROM testcontainer AS c WHERE c.bar = "baz" AND c.timestamp < @timestamp # No default (required)
-    args_mapping: |- # No default (optional)
-      root = [
-        { "Name": "@name", "Value": "benthos" },
-      ]
-    batch_count: -1
-    auto_replay_nacks: true
+include::components:example$advanced/inputs/azure_cosmosdb.yaml[]
 ```
 
 --

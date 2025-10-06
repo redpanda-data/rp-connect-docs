@@ -21,18 +21,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  pulsar:
-    url: pulsar://localhost:6650 # No default (required)
-    topics: [] # No default (optional)
-    topics_pattern: "" # No default (optional)
-    subscription_name: "" # No default (required)
-    subscription_type: shared
-    subscription_initial_position: latest
-    tls:
-      root_cas_file: ""
+include::components:example$common/inputs/pulsar.yaml[]
 ```
 
 --
@@ -41,28 +30,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  pulsar:
-    url: pulsar://localhost:6650 # No default (required)
-    topics: [] # No default (optional)
-    topics_pattern: "" # No default (optional)
-    subscription_name: "" # No default (required)
-    subscription_type: shared
-    subscription_initial_position: latest
-    tls:
-      root_cas_file: ""
-    auth:
-      oauth2:
-        enabled: false
-        audience: ""
-        issuer_url: ""
-        scope: ""
-        private_key_file: ""
-      token:
-        enabled: false
-        token: ""
+include::components:example$advanced/inputs/pulsar.yaml[]
 ```
 
 --

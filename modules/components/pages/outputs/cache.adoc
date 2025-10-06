@@ -20,13 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-output:
-  label: ""
-  cache:
-    target: "" # No default (required)
-    key: ${!count("items")}-${!timestamp_unix_nano()}
-    max_in_flight: 64
+include::components:example$common/outputs/cache.yaml[]
 ```
 
 --
@@ -35,14 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-output:
-  label: ""
-  cache:
-    target: "" # No default (required)
-    key: ${!count("items")}-${!timestamp_unix_nano()}
-    ttl: 60s # No default (optional)
-    max_in_flight: 64
+include::components:example$advanced/outputs/cache.yaml[]
 ```
 
 --

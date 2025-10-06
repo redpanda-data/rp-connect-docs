@@ -20,81 +20,20 @@ Introduced in version 4.33.0.
 Common::
 +
 --
+
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  ockam_kafka:
-    kafka:
-      seed_brokers: [] # No default (optional)
-      topic: "" # No default (required)
-      key: "" # No default (optional)
-      partition: ${! meta("partition") } # No default (optional)
-      metadata:
-        include_prefixes: []
-        include_patterns: []
-      max_in_flight: 10
-      batching:
-        count: 0
-        byte_size: 0
-        period: ""
-        check: ""
-    disable_content_encryption: false
-    enrollment_ticket: "" # No default (optional)
-    identity_name: "" # No default (optional)
-    allow: self
-    route_to_kafka_outlet: self
-    allow_consumer: self
-    route_to_consumer: /ip4/127.0.0.1/tcp/6262
-    encrypted_fields: []
+include::components:example$common/outputs/ockam_kafka.yaml[]
 ```
+
 --
 Advanced::
 +
 --
+
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  ockam_kafka:
-    kafka:
-      seed_brokers: [] # No default (optional)
-      topic: "" # No default (required)
-      key: "" # No default (optional)
-      partitioner: "" # No default (optional)
-      partition: ${! meta("partition") } # No default (optional)
-      idempotent_write: true
-      metadata:
-        include_prefixes: []
-        include_patterns: []
-      max_in_flight: 10
-      timeout: 10s
-      batching:
-        count: 0
-        byte_size: 0
-        period: ""
-        check: ""
-        processors: [] # No default (optional)
-      max_message_bytes: 1MiB
-      broker_write_max_bytes: 100MiB
-      compression: "" # No default (optional)
-      tls:
-        enabled: false
-        skip_cert_verify: false
-        enable_renegotiation: false
-        root_cas: ""
-        root_cas_file: ""
-        client_certs: []
-      timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
-    disable_content_encryption: false
-    enrollment_ticket: "" # No default (optional)
-    identity_name: "" # No default (optional)
-    allow: self
-    route_to_kafka_outlet: self
-    allow_consumer: self
-    route_to_consumer: /ip4/127.0.0.1/tcp/6262
-    encrypted_fields: []
+include::components:example$advanced/outputs/ockam_kafka.yaml[]
 ```
+
 --
 ======
 

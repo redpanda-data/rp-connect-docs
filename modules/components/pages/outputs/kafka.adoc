@@ -20,25 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-output:
-  label: ""
-  kafka:
-    addresses: [] # No default (required)
-    topic: "" # No default (required)
-    target_version: 2.1.0 # No default (optional)
-    key: ""
-    partitioner: fnv1a_hash
-    compression: none
-    static_headers: {} # No default (optional)
-    metadata:
-      exclude_prefixes: []
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/kafka.yaml[]
 ```
 
 --
@@ -47,59 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-output:
-  label: ""
-  kafka:
-    addresses: [] # No default (required)
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    sasl:
-      mechanism: none
-      user: ""
-      password: ""
-      access_token: ""
-      token_cache: ""
-      token_key: ""
-    topic: "" # No default (required)
-    client_id: benthos
-    target_version: 2.1.0 # No default (optional)
-    rack_id: ""
-    key: ""
-    partitioner: fnv1a_hash
-    partition: ""
-    custom_topic_creation:
-      enabled: false
-      partitions: -1
-      replication_factor: -1
-    compression: none
-    static_headers: {} # No default (optional)
-    metadata:
-      exclude_prefixes: []
-    inject_tracing_map: meta = @.merge(this) # No default (optional)
-    max_in_flight: 64
-    idempotent_write: false
-    ack_replicas: false
-    max_msg_bytes: 1000000
-    timeout: 5s
-    retry_as_batch: false
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
-    max_retries: 0
-    backoff:
-      initial_interval: 3s
-      max_interval: 10s
-      max_elapsed_time: 30s
-    timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
+include::components:example$advanced/outputs/kafka.yaml[]
 ```
 
 --

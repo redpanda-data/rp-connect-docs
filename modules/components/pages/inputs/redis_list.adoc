@@ -20,13 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  redis_list:
-    url: redis://:6379 # No default (required)
-    key: "" # No default (required)
-    auto_replay_nacks: true
+include::components:example$common/inputs/redis_list.yaml[]
 ```
 
 --
@@ -35,25 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  redis_list:
-    url: redis://:6379 # No default (required)
-    kind: simple
-    master: ""
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    key: "" # No default (required)
-    auto_replay_nacks: true
-    max_in_flight: 0
-    timeout: 5s
-    command: blpop
+include::components:example$advanced/inputs/redis_list.yaml[]
 ```
 
 --

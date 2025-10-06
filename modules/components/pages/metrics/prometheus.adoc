@@ -19,10 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-metrics:
-  prometheus: {}
-  mapping: ""
+include::components:example$common/metrics/prometheus.yaml[]
 ```
 
 --
@@ -31,28 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-metrics:
-  prometheus:
-    use_histogram_timing: false
-    histogram_buckets: []
-    summary_quantiles_objectives:
-      - quantile: 0.5
-        error: 0.05
-      - quantile: 0.9
-        error: 0.01
-      - quantile: 0.99
-        error: 0.001
-    add_process_metrics: false
-    add_go_metrics: false
-    push_url: "" # No default (optional)
-    push_interval: "" # No default (optional)
-    push_job_name: benthos_push
-    push_basic_auth:
-      username: ""
-      password: ""
-    file_output_path: ""
-  mapping: ""
+include::components:example$advanced/metrics/prometheus.yaml[]
 ```
 
 --

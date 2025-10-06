@@ -19,12 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-label: ""
-ttlru:
-  cap: 1024
-  default_ttl: 5m0s
-  init_values: {}
+include::components:example$common/caches/ttlru.yaml[]
 ```
 
 --
@@ -33,14 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-label: ""
-ttlru:
-  cap: 1024
-  default_ttl: 5m0s
-  ttl: "" # No default (optional)
-  init_values: {}
-  optimistic: false
+include::components:example$advanced/caches/ttlru.yaml[]
 ```
 
 --
