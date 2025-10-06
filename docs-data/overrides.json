@@ -473,6 +473,16 @@
               }
             ],
             "version": "4.61.0"
+          },
+          {
+            "name": "reconnect_interval",
+            "description": "The interval at which Redpanda Connect attempts to reconnect to Cassandra nodes that are marked as DOWN. This setting helps maintain connectivity in unstable network conditions or during node maintenance. Use Go duration format such as `30s`, `1m`, or `5m`. Setting this too low may create unnecessary connection attempts, while setting it too high may delay recovery from network issues.",
+            "version": "4.66.0"
+          },
+          {
+            "name": "exponential_reconnection",
+            "description": "Configure exponential backoff for reconnection attempts to DOWN nodes. When enabled, this replaces the driver's default constant reconnection policy with an exponential backoff strategy that gradually increases the delay between reconnection attempts. This reduces connection storm scenarios during widespread outages while ensuring eventual recovery.",
+            "version": "4.66.0"
           }
         ]
       }
@@ -2905,6 +2915,16 @@
               }
             ],
             "version": "4.61.0"
+          },
+          {
+            "name": "reconnect_interval",
+            "description": "The interval at which Redpanda Connect attempts to reconnect to Cassandra nodes that are marked as DOWN. This setting helps maintain connectivity in unstable network conditions or during node maintenance. Use Go duration format such as `30s`, `1m`, or `5m`. Setting this too low may create unnecessary connection attempts, while setting it too high may delay recovery from network issues.",
+            "version": "4.66.0"
+          },
+          {
+            "name": "exponential_reconnection",
+            "description": "Configure exponential backoff for reconnection attempts to DOWN nodes. When enabled, this replaces the driver's default constant reconnection policy with an exponential backoff strategy that gradually increases the delay between reconnection attempts. This reduces connection storm scenarios during widespread outages while ensuring eventual recovery.",
+            "version": "4.66.0"
           }
         ]
       }

@@ -61,7 +61,11 @@ If enabled the driver will not attempt to get host info from the system.peers ta
 
 === `exponential_reconnection`
 
-Optional exponential reconnection policy, this replaces the default constant policy of the driver.
+Configure exponential backoff for reconnection attempts to DOWN nodes. When enabled, this replaces the driver's default constant reconnection policy with an exponential backoff strategy that gradually increases the delay between reconnection attempts. This reduces connection storm scenarios during widespread outages while ensuring eventual recovery.
+
+ifndef::env-cloud[]
+Requires version 4.66.0 or later.
+endif::[]
 
 *Type*: `object`
 
@@ -161,7 +165,11 @@ A query to execute.
 
 === `reconnect_interval`
 
-Attempts to reconnect known DOWN nodes in every ReconnectInterval.
+The interval at which Redpanda Connect attempts to reconnect to Cassandra nodes that are marked as DOWN. This setting helps maintain connectivity in unstable network conditions or during node maintenance. Use Go duration format such as `30s`, `1m`, or `5m`. Setting this too low may create unnecessary connection attempts, while setting it too high may delay recovery from network issues.
+
+ifndef::env-cloud[]
+Requires version 4.66.0 or later.
+endif::[]
 
 *Type*: `string`
 
