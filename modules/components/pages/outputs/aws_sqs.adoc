@@ -23,22 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  aws_sqs:
-    url: "" # No default (required)
-    message_group_id: "" # No default (optional)
-    message_deduplication_id: "" # No default (optional)
-    delay_seconds: "" # No default (optional)
-    max_in_flight: 64
-    metadata:
-      exclude_prefixes: []
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/aws_sqs.yaml[]
 ```
 
 --
@@ -47,39 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  aws_sqs:
-    url: "" # No default (required)
-    message_group_id: "" # No default (optional)
-    message_deduplication_id: "" # No default (optional)
-    delay_seconds: "" # No default (optional)
-    max_in_flight: 64
-    metadata:
-      exclude_prefixes: []
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
-    max_records_per_request: 10
-    region: ""
-    endpoint: ""
-    credentials:
-      profile: ""
-      id: ""
-      secret: ""
-      token: ""
-      from_ec2_role: false
-      role: ""
-      role_external_id: ""
-    max_retries: 0
-    backoff:
-      initial_interval: 1s
-      max_interval: 5s
-      max_elapsed_time: 30s
+include::components:example$advanced/outputs/aws_sqs.yaml[]
 ```
 
 --

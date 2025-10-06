@@ -19,8 +19,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-avro: {}
+include::components:example$common/scanners/avro.yaml[]
 ```
 
 --
@@ -29,9 +28,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-avro:
-  raw_json: false
+include::components:example$advanced/scanners/avro.yaml[]
 ```
 
 --

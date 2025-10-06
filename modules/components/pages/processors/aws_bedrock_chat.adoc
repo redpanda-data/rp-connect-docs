@@ -22,14 +22,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-aws_bedrock_chat:
-  model: amazon.titan-text-express-v1 # No default (required)
-  prompt: "" # No default (optional)
-  system_prompt: "" # No default (optional)
-  max_tokens: 0 # No default (optional)
-  stop: 0 # No default (optional)
+include::components:example$common/processors/aws_bedrock_chat.yaml[]
 ```
 
 --
@@ -38,26 +31,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-aws_bedrock_chat:
-  region: ""
-  endpoint: ""
-  credentials:
-    profile: ""
-    id: ""
-    secret: ""
-    token: ""
-    from_ec2_role: false
-    role: ""
-    role_external_id: ""
-  model: amazon.titan-text-express-v1 # No default (required)
-  prompt: "" # No default (optional)
-  system_prompt: "" # No default (optional)
-  max_tokens: 0 # No default (optional)
-  stop: 0 # No default (optional)
-  temperature: [] # No default (optional)
-  top_p: 0 # No default (optional)
+include::components:example$advanced/processors/aws_bedrock_chat.yaml[]
 ```
 
 --

@@ -18,13 +18,7 @@ Introduced in version 4.51.0.
 endif::[]
 
 ```yml
-# Common configuration fields, showing default values
-input: 
-  label: ""
-  slack:
-    app_token: "" # No default (required)
-    bot_token: "" # No default (required)
-    auto_replay_nacks: true
+include::components:example$common/inputs/slack.yaml[]
 ```
 
 See also: <<Examples, Examples>>

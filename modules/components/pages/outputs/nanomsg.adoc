@@ -11,17 +11,27 @@ component_type_dropdown::[]
 
 Send messages over a Nanomsg socket.
 
+[tabs]
+======
+Common::
++
+--
+
 ```yml
-# Config fields, showing default values
-output:
-  label: ""
-  nanomsg:
-    urls: [] # No default (required)
-    bind: false
-    socket_type: PUSH
-    poll_timeout: 5s
-    max_in_flight: 64
+include::components:example$common/outputs/nanomsg.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/nanomsg.yaml[]
+```
+
+--
+======
 
 Currently only PUSH and PUB sockets are supported.
 

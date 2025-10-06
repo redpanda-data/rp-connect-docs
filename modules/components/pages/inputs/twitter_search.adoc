@@ -20,17 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  twitter_search:
-    query: "" # No default (required)
-    tweet_fields: []
-    poll_period: 1m
-    backfill_period: 5m
-    cache: "" # No default (required)
-    api_key: "" # No default (required)
-    api_secret: "" # No default (required)
+include::components:example$common/inputs/twitter_search.yaml[]
 ```
 
 --
@@ -39,19 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  twitter_search:
-    query: "" # No default (required)
-    tweet_fields: []
-    poll_period: 1m
-    backfill_period: 5m
-    cache: "" # No default (required)
-    cache_key: last_tweet_id
-    rate_limit: ""
-    api_key: "" # No default (required)
-    api_secret: "" # No default (required)
+include::components:example$advanced/inputs/twitter_search.yaml[]
 ```
 
 --

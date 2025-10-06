@@ -21,58 +21,20 @@ endif::[]
 Common::
 +
 --
+
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  cypher:
-    uri: neo4j://demo.neo4jlabs.com # No default (required)
-    cypher: 'MERGE (p:Person {name: $name})' # No default (required)
-    database_name: ""
-    args_mapping: root.name = this.displayName # No default (optional)
-    basic_auth:
-      enabled: false
-      username: ""
-      password: ""
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-    max_in_flight: 64
+include::components:example$common/outputs/cypher.yaml[]
 ```
+
 --
 Advanced::
 +
 --
+
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  cypher:
-    uri: neo4j://demo.neo4jlabs.com # No default (required)
-    cypher: 'MERGE (p:Person {name: $name})' # No default (required)
-    database_name: ""
-    args_mapping: root.name = this.displayName # No default (optional)
-    basic_auth:
-      enabled: false
-      username: ""
-      password: ""
-      realm: ""
-    tls:
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
-    max_in_flight: 64
+include::components:example$advanced/outputs/cypher.yaml[]
 ```
+
 --
 ======
 

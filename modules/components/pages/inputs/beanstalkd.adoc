@@ -11,15 +11,31 @@ component_type_dropdown::[]
 
 Reads messages from a Beanstalkd queue.
 
+ifndef::env-cloud[]
 Introduced in version 4.7.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
 
 ```yml
-# Config fields, showing default values
-input:
-  label: ""
-  beanstalkd:
-    address: 127.0.0.1:11300 # No default (required)
+include::components:example$common/inputs/beanstalkd.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/beanstalkd.yaml[]
+```
+
+--
+======
 
 include::redpanda-connect:components:partial$fields/inputs/beanstalkd.adoc[]
 

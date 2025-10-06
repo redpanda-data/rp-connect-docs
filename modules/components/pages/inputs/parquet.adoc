@@ -21,12 +21,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  parquet:
-    paths: [] # No default (required)
-    auto_replay_nacks: true
+include::components:example$common/inputs/parquet.yaml[]
 ```
 
 --
@@ -35,13 +30,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  parquet:
-    paths: [] # No default (required)
-    batch_count: 1
-    auto_replay_nacks: true
+include::components:example$advanced/inputs/parquet.yaml[]
 ```
 
 --

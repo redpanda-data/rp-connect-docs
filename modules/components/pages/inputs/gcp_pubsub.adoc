@@ -20,17 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  gcp_pubsub:
-    project: "" # No default (required)
-    credentials_json: "" # No default (optional)
-    subscription: "" # No default (required)
-    endpoint: ""
-    sync: false
-    max_outstanding_messages: 1000
-    max_outstanding_bytes: 1e+09
+include::components:example$common/inputs/gcp_pubsub.yaml[]
 ```
 
 --
@@ -39,20 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  gcp_pubsub:
-    project: "" # No default (required)
-    credentials_json: "" # No default (optional)
-    subscription: "" # No default (required)
-    endpoint: ""
-    sync: false
-    max_outstanding_messages: 1000
-    max_outstanding_bytes: 1e+09
-    create_subscription:
-      enabled: false
-      topic: ""
+include::components:example$advanced/inputs/gcp_pubsub.yaml[]
 ```
 
 --

@@ -13,21 +13,7 @@ component_type_dropdown::[]
 Creates a server that receives a stream of messages over a TCP, UDP or Unix socket.
 
 ```yml
-# Config fields, showing default values
-input:
-  label: ""
-  socket_server:
-    network: "" # No default (required)
-    address: /tmp/benthos.sock # No default (required)
-    address_cache: "" # No default (optional)
-    tls:
-      cert_file: "" # No default (optional)
-      key_file: "" # No default (optional)
-      self_signed: false
-      client_auth: no
-    auto_replay_nacks: true
-    scanner:
-      lines: {}
+include::components:example$common/inputs/socket_server.yaml[]
 ```
 
 include::redpanda-connect:components:partial$fields/inputs/socket_server.adoc[]

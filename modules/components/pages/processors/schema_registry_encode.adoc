@@ -25,12 +25,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-schema_registry_encode:
-  url: "" # No default (required)
-  subject: foo # No default (required)
-  refresh_period: 10m
+include::components:example$common/processors/schema_registry_encode.yaml[]
 ```
 
 --
@@ -39,35 +34,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-schema_registry_encode:
-  url: "" # No default (required)
-  subject: foo # No default (required)
-  refresh_period: 10m
-  avro_raw_json: false
-  oauth:
-    enabled: false
-    consumer_key: ""
-    consumer_secret: ""
-    access_token: ""
-    access_token_secret: ""
-  basic_auth:
-    enabled: false
-    username: ""
-    password: ""
-  jwt:
-    enabled: false
-    private_key_file: ""
-    signing_method: ""
-    claims: {}
-    headers: {}
-  tls:
-    skip_cert_verify: false
-    enable_renegotiation: false
-    root_cas: ""
-    root_cas_file: ""
-    client_certs: []
+include::components:example$advanced/processors/schema_registry_encode.yaml[]
 ```
 
 --

@@ -23,16 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-nats_request_reply:
-  urls: [] # No default (required)
-  subject: foo.bar.baz # No default (required)
-  headers: {}
-  metadata:
-    include_prefixes: []
-    include_patterns: []
-  timeout: 3s
+include::components:example$common/processors/nats_request_reply.yaml[]
 ```
 
 --
@@ -41,30 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-nats_request_reply:
-  urls: [] # No default (required)
-  subject: foo.bar.baz # No default (required)
-  inbox_prefix: _INBOX_joe # No default (optional)
-  headers: {}
-  metadata:
-    include_prefixes: []
-    include_patterns: []
-  timeout: 3s
-  tls:
-    enabled: false
-    skip_cert_verify: false
-    enable_renegotiation: false
-    root_cas: ""
-    root_cas_file: ""
-    client_certs: []
-  auth:
-    nkey_file: ./seed.nk # No default (optional)
-    nkey: "" # No default (optional)
-    user_credentials_file: ./user.creds # No default (optional)
-    user_jwt: "" # No default (optional)
-    user_nkey_seed: "" # No default (optional)
+include::components:example$advanced/processors/nats_request_reply.yaml[]
 ```
 
 --

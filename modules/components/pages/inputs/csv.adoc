@@ -19,15 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  csv:
-    paths: [] # No default (required)
-    parse_header_row: true
-    delimiter: ','
-    lazy_quotes: false
-    auto_replay_nacks: true
+include::components:example$common/inputs/csv.yaml[]
 ```
 
 --
@@ -36,17 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  csv:
-    paths: [] # No default (required)
-    parse_header_row: true
-    delimiter: ','
-    lazy_quotes: false
-    delete_on_finish: false
-    batch_count: 1
-    auto_replay_nacks: true
+include::components:example$advanced/inputs/csv.yaml[]
 ```
 
 --

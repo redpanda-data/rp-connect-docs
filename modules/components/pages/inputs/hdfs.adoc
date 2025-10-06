@@ -12,13 +12,7 @@ component_type_dropdown::[]
 Reads files from a HDFS directory, where each discrete file will be consumed as a single message payload.
 
 ```yml
-# Config fields, showing default values
-input:
-  label: ""
-  hdfs:
-    hosts: [] # No default (required)
-    user: ""
-    directory: "" # No default (required)
+include::components:example$common/inputs/hdfs.yaml[]
 ```
 
 == Metadata

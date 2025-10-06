@@ -16,37 +16,20 @@ endif::[]
 Common::
 +
 --
+
 ```yml
-# Common configuration fields, showing default values
-input:
-  label: ""
-  spicedb_watch:
-    endpoint: grpc.authzed.com:443 # No default (required)
-    bearer_token: ""
-    cache: "" # No default (required)
+include::components:example$common/inputs/spicedb_watch.yaml[]
 ```
+
 --
 Advanced::
 +
 --
+
 ```yml
-# All configuration fields, showing default values
-input:
-  label: ""
-  spicedb_watch:
-    endpoint: grpc.authzed.com:443 # No default (required)
-    bearer_token: ""
-    max_receive_message_bytes: 4MB
-    cache: "" # No default (required)
-    cache_key: authzed.com/spicedb/watch/last_zed_token
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
+include::components:example$advanced/inputs/spicedb_watch.yaml[]
 ```
+
 --
 ======
 

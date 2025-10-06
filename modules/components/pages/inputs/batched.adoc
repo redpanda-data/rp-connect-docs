@@ -23,16 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  batched:
-    child: null # No default (required)
-    policy:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/inputs/batched.yaml[]
 ```
 
 --
@@ -41,17 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  batched:
-    child: null # No default (required)
-    policy:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/inputs/batched.yaml[]
 ```
 
 --

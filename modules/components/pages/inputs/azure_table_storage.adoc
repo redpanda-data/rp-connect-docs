@@ -23,15 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  azure_table_storage:
-    storage_account: ""
-    storage_access_key: ""
-    storage_connection_string: ""
-    storage_sas_token: ""
-    table_name: Foo # No default (required)
+include::components:example$common/inputs/azure_table_storage.yaml[]
 ```
 
 --
@@ -40,18 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  azure_table_storage:
-    storage_account: ""
-    storage_access_key: ""
-    storage_connection_string: ""
-    storage_sas_token: ""
-    table_name: Foo # No default (required)
-    filter: ""
-    select: ""
-    page_size: 1000
+include::components:example$advanced/inputs/azure_table_storage.yaml[]
 ```
 
 --

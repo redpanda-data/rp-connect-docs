@@ -20,25 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-output:
-  label: ""
-  gcp_pubsub:
-    project: "" # No default (required)
-    credentials_json: "" # No default (optional)
-    topic: "" # No default (required)
-    endpoint: ""
-    max_in_flight: 64
-    count_threshold: 100
-    delay_threshold: 10ms
-    byte_threshold: 1000000
-    metadata:
-      exclude_prefixes: []
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/gcp_pubsub.yaml[]
 ```
 
 --
@@ -47,33 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-output:
-  label: ""
-  gcp_pubsub:
-    project: "" # No default (required)
-    credentials_json: "" # No default (optional)
-    topic: "" # No default (required)
-    endpoint: ""
-    ordering_key: "" # No default (optional)
-    max_in_flight: 64
-    count_threshold: 100
-    delay_threshold: 10ms
-    byte_threshold: 1000000
-    publish_timeout: 1m0s
-    validate_topic: true
-    metadata:
-      exclude_prefixes: []
-    flow_control:
-      max_outstanding_bytes: -1
-      max_outstanding_messages: 1000
-      limit_exceeded_behavior: block
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/gcp_pubsub.yaml[]
 ```
 
 --

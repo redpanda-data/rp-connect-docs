@@ -17,13 +17,7 @@ Introduced in version 4.52.0.
 endif::[]
 
 ```yml
-# Common configuration fields, showing default values
-input:
-  label: ""
-  slack_users:
-    bot_token: "" # No default (required)
-    team_id: "" # No default (optional)
-    auto_replay_nacks: true
+include::components:example$common/inputs/slack_users.yaml[]
 ```
 
 include::redpanda-connect:components:partial$fields/inputs/slack_users.adoc[]

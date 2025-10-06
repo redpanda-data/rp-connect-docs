@@ -18,20 +18,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-output:
-  label: ""
-  cassandra:
-    addresses: [] # No default (required)
-    timeout: 600ms
-    query: "" # No default (required)
-    args_mapping: "" # No default (optional)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/cassandra.yaml[]
 ```
 
 --
@@ -40,39 +27,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-output:
-  label: ""
-  cassandra:
-    addresses: [] # No default (required)
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    password_authenticator:
-      enabled: false
-      username: ""
-      password: ""
-    disable_initial_host_lookup: false
-    max_retries: 3
-    backoff:
-      initial_interval: 1s
-      max_interval: 5s
-    timeout: 600ms
-    query: "" # No default (required)
-    args_mapping: "" # No default (optional)
-    consistency: QUORUM
-    logged_batch: true
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/cassandra.yaml[]
 ```
 
 --

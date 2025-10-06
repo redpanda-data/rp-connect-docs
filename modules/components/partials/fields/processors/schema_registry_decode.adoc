@@ -186,7 +186,11 @@ cache_duration: 5m
 
 === `default_schema_id`
 
-If set, this schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If not set, schema header errors are returned.
+This schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If this value is not set, schema header errors are returned.
+
+This configuration does not work with protobuf schemas.
+
+TIP: You can also use the xref:guides:bloblang/functions.adoc#with_schema_registry_header[`with_schema_registry_header`] bloblang function to add a schema ID to messages.
 
 *Type*: `int`
 

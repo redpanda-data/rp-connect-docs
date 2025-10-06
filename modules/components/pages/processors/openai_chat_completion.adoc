@@ -22,24 +22,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-openai_chat_completion:
-  server_address: https://api.openai.com/v1
-  api_key: "" # No default (required)
-  model: gpt-4o # No default (required)
-  prompt: "" # No default (optional)
-  system_prompt: "" # No default (optional)
-  history: "" # No default (optional)
-  image: 'root = this.image.decode("base64") # decode base64 encoded image' # No default (optional)
-  max_tokens: 0 # No default (optional)
-  temperature: 0 # No default (optional)
-  user: "" # No default (optional)
-  response_format: text
-  json_schema:
-    name: "" # No default (required)
-    schema: "" # No default (required)
-  tools: [] # No default (required)
+include::components:example$common/processors/openai_chat_completion.yaml[]
 ```
 
 --
@@ -48,57 +31,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-openai_chat_completion:
-  server_address: https://api.openai.com/v1
-  api_key: "" # No default (required)
-  model: gpt-4o # No default (required)
-  prompt: "" # No default (optional)
-  system_prompt: "" # No default (optional)
-  history: "" # No default (optional)
-  image: 'root = this.image.decode("base64") # decode base64 encoded image' # No default (optional)
-  max_tokens: 0 # No default (optional)
-  temperature: 0 # No default (optional)
-  user: "" # No default (optional)
-  response_format: text
-  json_schema:
-    name: "" # No default (required)
-    description: "" # No default (optional)
-    schema: "" # No default (required)
-  schema_registry:
-    url: "" # No default (required)
-    name_prefix: schema_registry_id_
-    subject: "" # No default (required)
-    refresh_interval: "" # No default (optional)
-    tls:
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: "" # No default (optional)
-      root_cas_file: "" # No default (optional)
-      client_certs: [] # Optional
-    oauth:
-      enabled: false
-      consumer_key: "" # No default (optional)
-      consumer_secret: "" # No default (optional)
-      access_token: "" # No default (optional)
-      access_token_secret: "" # No default (optional)
-    basic_auth:
-      enabled: false
-      username: "" # No default (optional)
-      password: "" # No default (optional)
-    jwt:
-      enabled: false
-      private_key_file: "" # No default (optional)
-      signing_method: "" # No default (optional)
-      claims: {} # Optional
-      headers: {} # Optional
-  top_p: 0 # No default (optional)
-  frequency_penalty: 0 # No default (optional)
-  presence_penalty: 0 # No default (optional)
-  seed: 0 # No default (optional)
-  stop: [] # No default (optional)
-  tools: [] # No default (required)
+include::components:example$advanced/processors/openai_chat_completion.yaml[]
 ```
 
 --

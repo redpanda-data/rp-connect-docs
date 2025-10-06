@@ -19,14 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  file:
-    paths: [] # No default (required)
-    scanner:
-      lines: {}
-    auto_replay_nacks: true
+include::components:example$common/inputs/file.yaml[]
 ```
 
 --
@@ -35,15 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  file:
-    paths: [] # No default (required)
-    scanner:
-      lines: {}
-    delete_on_finish: false
-    auto_replay_nacks: true
+include::components:example$advanced/inputs/file.yaml[]
 ```
 
 --

@@ -12,12 +12,8 @@ component_type_dropdown::[]
 Prints aggregated metrics through the logger.
 
 ```yml
-# Config fields, showing default values
-metrics:
-  logger:
-    push_interval: "" # No default (optional)
-    flush_metrics: false
-  mapping: ""
+include::components:example$common/metrics/logger.yaml[]
+
 ```
 
 Prints each metric produced by Redpanda Connect as a log event (level `info` by default) during shutdown, and optionally on an interval.

@@ -13,14 +13,7 @@ component_type_dropdown::[]
 Attempts to write messages to a child output and if the write fails for one of a list of configurable reasons the message is dropped (acked) instead of being reattempted (or nacked).
 
 ```yml
-# Config fields, showing default values
-output:
-  label: ""
-  drop_on:
-    error: false
-    error_patterns: [] # No default (optional)
-    back_pressure: 30s # No default (optional)
-    output: null # No default (required)
+include::components:example$common/outputs/drop_on.yaml[]
 ```
 
 Regular Redpanda Connect outputs will apply back pressure when downstream services aren't accessible, and Redpanda Connect retries (or nacks) all messages that fail to be delivered. However, in some circumstances, or for certain output types, we instead might want to relax these mechanisms, which is when this output becomes useful.

@@ -16,16 +16,27 @@ ifndef::env-cloud[]
 Introduced in version 3.53.0.
 endif::[]
 
+[tabs]
+======
+Common::
++
+--
+
 ```yml
-# Config fields, showing default values
-buffer:
-  system_window:
-    timestamp_mapping: root = now()
-    size: 30s # No default (required)
-    slide: ""
-    offset: ""
-    allowed_lateness: ""
+include::components:example$common/buffers/system_window.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/buffers/system_window.yaml[]
+```
+
+--
+======
 
 A window is a grouping of messages that fit within a discrete measure of time following the system clock. Messages are allocated to a window either by the processing time (the time at which they're ingested) or by the event time, and this is controlled via the <<timestamp_mapping, `timestamp_mapping` field>>.
 

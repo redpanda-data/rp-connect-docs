@@ -1,0 +1,10 @@
+outputs:
+  label: ""
+  fallback:
+    - label: ""
+      stdout:
+        codec: lines
+    - label: ""
+      file:
+        path: /tmp/fallback.txt
+        codec: lines

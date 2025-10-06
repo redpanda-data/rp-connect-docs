@@ -20,16 +20,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-ollama_moderation:
-  model: llama-guard3 # No default (required)
-  prompt: "" # No default (required)
-  response: "" # No default (required)
-  runner:
-    context_size: 0 # No default (optional)
-    batch_size: 0 # No default (optional)
-  server_address: http://127.0.0.1:11434 # No default (optional)
+include::components:example$common/processors/ollama_moderation.yaml[]
 ```
 
 --
@@ -38,22 +29,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-ollama_moderation:
-  model: llama-guard3 # No default (required)
-  prompt: "" # No default (required)
-  response: "" # No default (required)
-  runner:
-    context_size: 0 # No default (optional)
-    batch_size: 0 # No default (optional)
-    gpu_layers: 0 # No default (optional)
-    threads: 0 # No default (optional)
-    use_mmap: false # No default (optional)
-    use_mlock: false # No default (optional)
-  server_address: http://127.0.0.1:11434 # No default (optional)
-  cache_directory: /opt/cache/connect/ollama # No default (optional)
-  download_url: "" # No default (optional)
+include::components:example$advanced/processors/ollama_moderation.yaml[]
 ```
 
 --

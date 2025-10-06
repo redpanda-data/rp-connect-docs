@@ -13,15 +13,7 @@ component_type_dropdown::[]
 Connects to a tcp or unix socket and consumes a continuous stream of messages.
 
 ```yml
-# Config fields, showing default values
-input:
-  label: ""
-  socket:
-    network: "" # No default (required)
-    address: /tmp/benthos.sock # No default (required)
-    auto_replay_nacks: true
-    scanner:
-      lines: {}
+include::components:example$common/inputs/socket.yaml[]
 ```
 
 include::redpanda-connect:components:partial$fields/inputs/socket.adoc[]

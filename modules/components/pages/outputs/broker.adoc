@@ -20,17 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-output:
-  label: ""
-  broker:
-    pattern: fan_out
-    outputs: [] # No default (required)
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/broker.yaml[]
 ```
 
 --
@@ -39,19 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-output:
-  label: ""
-  broker:
-    copies: 1
-    pattern: fan_out
-    outputs: [] # No default (required)
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/broker.yaml[]
 ```
 
 --

@@ -20,17 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  http_server:
-    address: ""
-    path: /post
-    ws_path: /post/ws
-    allowed_verbs:
-      - POST
-    timeout: 5s
-    rate_limit: ""
+include::components:example$common/inputs/http_server.yaml[]
 ```
 
 --
@@ -39,31 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  http_server:
-    address: ""
-    path: /post
-    ws_path: /post/ws
-    ws_welcome_message: ""
-    ws_rate_limit_message: ""
-    allowed_verbs:
-      - POST
-    timeout: 5s
-    rate_limit: ""
-    cert_file: ""
-    key_file: ""
-    cors:
-      enabled: false
-      allowed_origins: []
-    sync_response:
-      status: "200"
-      headers:
-        Content-Type: application/octet-stream
-      metadata_headers:
-        include_prefixes: []
-        include_patterns: []
+include::components:example$advanced/inputs/http_server.yaml[]
 ```
 
 --

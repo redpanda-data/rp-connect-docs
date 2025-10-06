@@ -15,51 +15,20 @@ endif::[]
 Common::
 +
 --
+
 ```yml
-# Common configuration fields, showing default values
-label: ""
-qdrant:
-  grpc_host: localhost:6334 # No default (required)
-  api_token: ""
-  collection_name: "" # No default (required)
-  vector_mapping: root = [1.2, 0.5, 0.76] # No default (required)
-  filter: | # No default (optional)
-    root.must = [
-    	{"has_id":{"has_id":[{"num": 8}, { "uuid":"1234-5678-90ab-cdef" }]}},
-    	{"field":{"key": "city", "match": {"text": "London"}}},
-    ]
-  payload_fields: []  
-  payload_filter: include
-  limit: 10
+include::components:example$common/processors/qdrant.yaml[]
 ```
+
 --
 Advanced::
 +
 --
+
 ```yml
-# All configuration fields, showing default values
-label: ""
-qdrant:
-  grpc_host: localhost:6334 # No default (required)
-  api_token: ""
-  tls:
-    enabled: false
-    skip_cert_verify: false
-    enable_renegotiation: false
-    root_cas: ""
-    root_cas_file: ""
-    client_certs: []
-  collection_name: "" # No default (required)
-  vector_mapping: root = [1.2, 0.5, 0.76] # No default (required)
-  filter: | # No default (optional)
-    root.must = [
-    	{"has_id":{"has_id":[{"num": 8}, { "uuid":"1234-5678-90ab-cdef" }]}},
-    	{"field":{"key": "city", "match": {"text": "London"}}},
-    ]
-  payload_fields: []
-  payload_filter: include
-  limit: 10
+include::components:example$advanced/processors/qdrant.yaml[]
 ```
+
 --
 ======
 

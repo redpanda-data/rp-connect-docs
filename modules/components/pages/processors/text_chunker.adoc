@@ -18,20 +18,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-text_chunker:
-  strategy: "" # No default (required)
-  chunk_size: 512
-  chunk_overlap: 100
-  separators:
-    - "\n\n"
-    - "\n"
-    - " "
-    - ""
-  length_measure: runes
-  include_code_blocks: false
-  keep_reference_links: false
+include::components:example$common/processors/text_chunker.yaml[]
 ```
 
 --
@@ -40,24 +27,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-text_chunker:
-  strategy: "" # No default (required)
-  chunk_size: 512
-  chunk_overlap: 100
-  separators:
-    - "\n\n"
-    - "\n"
-    - " "
-    - ""
-  length_measure: runes
-  token_encoding: cl100k_base # No default (optional)
-  allowed_special: []
-  disallowed_special:
-    - all
-  include_code_blocks: false
-  keep_reference_links: false
+include::components:example$advanced/processors/text_chunker.yaml[]
 ```
 
 --

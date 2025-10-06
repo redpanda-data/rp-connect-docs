@@ -23,21 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  sql_raw:
-    driver: "" # No default (required)
-    dsn: "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60" # No default (required)
-    query: INSERT INTO mytable (column1, column2, column3) VALUES (?, ?, ?); # No default (optional)
-    args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ] # No default (optional)
-    queries: [] # No default (optional)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/sql_raw.yaml[]
 ```
 
 --
@@ -46,35 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  sql_raw:
-    driver: "" # No default (required)
-    dsn: "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60" # No default (required)
-    query: INSERT INTO mytable (column1, column2, column3) VALUES (?, ?, ?); # No default (optional)
-    unsafe_dynamic_query: false
-    args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ] # No default (optional)
-    queries: [] # No default (optional)
-    max_in_flight: 64
-    init_files: [] # No default (optional)
-    init_statement: | # No default (optional)
-      CREATE TABLE IF NOT EXISTS some_table (
-        column1 varchar(50) not null,
-        column2 integer,
-        column3 varchar(50),
-        primary key (column1)
-      ) WITHOUT ROWID;
-    conn_max_idle_time: "" # No default (optional)
-    conn_max_life_time: "" # No default (optional)
-    conn_max_idle: 2
-    conn_max_open: 0 # No default (optional)
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/sql_raw.yaml[]
 ```
 
 --

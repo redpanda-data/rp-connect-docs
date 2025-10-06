@@ -21,14 +21,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-input:
-  label: ""
-  amqp_0_9:
-    urls: [] # No default (required)
-    queue: "" # No default (required)
-    consumer_tag: "" # Optional
-    prefetch_count: 10
+include::components:example$common/inputs/amqp_0_9.yaml[]
 ```
 
 --
@@ -37,30 +30,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-input:
-  label: ""
-  amqp_0_9:
-    urls: [] # No default (required)
-    queue: "" # No default (required)
-    queue_declare:
-      enabled: false
-      durable: true
-      auto_delete: false
-      arguments: {} # No default (optional)
-    bindings_declare: [] # No default (optional)
-    consumer_tag: "" # Optional
-    auto_ack: false
-    nack_reject_patterns: []
-    prefetch_count: 10
-    prefetch_size: 0
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: "" # Optional
-      root_cas_file: "" # Optional
-      client_certs: []
+include::components:example$advanced/inputs/amqp_0_9.yaml[]
 ```
 
 --

@@ -22,11 +22,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-metrics:
-  aws_cloudwatch:
-    namespace: Benthos
-  mapping: ""
+include::components:example$common/metrics/aws_cloudwatch.yaml[]
 ```
 
 --
@@ -35,22 +31,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-metrics:
-  aws_cloudwatch:
-    namespace: Benthos
-    flush_period: 100ms
-    region: ""
-    endpoint: ""
-    credentials:
-      profile: ""
-      id: ""
-      secret: ""
-      token: ""
-      from_ec2_role: false
-      role: ""
-      role_external_id: ""
-  mapping: ""
+include::components:example$advanced/metrics/aws_cloudwatch.yaml[]
 ```
 
 --

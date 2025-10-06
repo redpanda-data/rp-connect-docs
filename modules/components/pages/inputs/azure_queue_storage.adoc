@@ -23,14 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  azure_queue_storage:
-    storage_account: ""
-    storage_access_key: ""
-    storage_connection_string: ""
-    queue_name: foo_queue # No default (required)
+include::components:example$common/inputs/azure_queue_storage.yaml[]
 ```
 
 --
@@ -39,17 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  azure_queue_storage:
-    storage_account: ""
-    storage_access_key: ""
-    storage_connection_string: ""
-    queue_name: foo_queue # No default (required)
-    dequeue_visibility_timeout: 30s
-    max_in_flight: 10
-    track_properties: false
+include::components:example$advanced/inputs/azure_queue_storage.yaml[]
 ```
 
 --

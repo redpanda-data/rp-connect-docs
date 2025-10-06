@@ -12,10 +12,7 @@ component_type_dropdown::[]
 
 
 ```yml
-# Config fields, showing default values
-output:
-  label: ""
-  inproc: ""
+include::components:example$common/outputs/inproc.yaml[]
 ```
 
 ifndef::env-cloud[]

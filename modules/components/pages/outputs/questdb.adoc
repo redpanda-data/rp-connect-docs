@@ -21,69 +21,20 @@ endif::[]
 Common::
 +
 --
+
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  questdb:
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-    address: localhost:9000 # No default (required)
-    username: "" # No default (optional)
-    password: "" # No default (optional)
-    token: "" # No default (optional)
-    table: trades # No default (required)
-    designated_timestamp_field: "" # No default (optional)
-    designated_timestamp_unit: auto
-    timestamp_string_fields: [] # No default (optional)
-    timestamp_string_format: Jan _2 15:04:05.000000Z0700
-    symbols: [] # No default (optional)
-    doubles: [] # No default (optional)
-    error_on_empty_messages: false
+include::components:example$common/outputs/questdb.yaml[]
 ```
+
 --
 Advanced::
 +
 --
+
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  questdb:
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    address: localhost:9000 # No default (required)
-    username: "" # No default (optional)
-    password: "" # No default (optional)
-    token: "" # No default (optional)
-    retry_timeout: "" # No default (optional)
-    request_timeout: "" # No default (optional)
-    request_min_throughput: 0 # No default (optional)
-    table: trades # No default (required)
-    designated_timestamp_field: "" # No default (optional)
-    designated_timestamp_unit: auto
-    timestamp_string_fields: [] # No default (optional)
-    timestamp_string_format: Jan _2 15:04:05.000000Z0700
-    symbols: [] # No default (optional)
-    doubles: [] # No default (optional)
-    error_on_empty_messages: false
+include::components:example$advanced/outputs/questdb.yaml[]
 ```
+
 --
 ======
 

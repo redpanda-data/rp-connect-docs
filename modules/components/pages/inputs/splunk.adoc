@@ -22,15 +22,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  splunk:
-    url: https://foobar.splunkcloud.com/services/search/v2/jobs/export # No default (required)
-    user: "" # No default (required)
-    password: "" # No default (required)
-    query: "" # No default (required)
-    auto_replay_nacks: true
+include::components:example$common/inputs/splunk.yaml[]
 ```
 
 --
@@ -39,22 +31,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  splunk:
-    url: https://foobar.splunkcloud.com/services/search/v2/jobs/export # No default (required)
-    user: "" # No default (required)
-    password: "" # No default (required)
-    query: "" # No default (required)
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    auto_replay_nacks: true
+include::components:example$advanced/inputs/splunk.yaml[]
 ```
 
 --

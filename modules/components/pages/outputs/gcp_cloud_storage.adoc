@@ -23,22 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  gcp_cloud_storage:
-    bucket: "" # No default (required)
-    path: ${!counter()}-${!timestamp_unix_nano()}.txt
-    content_type: application/octet-stream
-    collision_mode: overwrite
-    timeout: 3s
-    credentials_json: "" # No default (optional)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/gcp_cloud_storage.yaml[]
 ```
 
 --
@@ -47,25 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  gcp_cloud_storage:
-    bucket: "" # No default (required)
-    path: ${!counter()}-${!timestamp_unix_nano()}.txt
-    content_type: application/octet-stream
-    content_encoding: ""
-    collision_mode: overwrite
-    chunk_size: 16777216
-    timeout: 3s
-    credentials_json: "" # No default (optional)
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/gcp_cloud_storage.yaml[]
 ```
 
 --

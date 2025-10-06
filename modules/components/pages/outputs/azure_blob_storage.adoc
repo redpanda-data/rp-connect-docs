@@ -23,17 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  azure_blob_storage:
-    storage_account: ""
-    storage_access_key: ""
-    storage_connection_string: ""
-    storage_sas_token: ""
-    container: messages-${!timestamp("2006")} # No default (required)
-    path: ${!counter()}-${!timestamp_unix_nano()}.txt
-    max_in_flight: 64
+include::components:example$common/outputs/azure_blob_storage.yaml[]
 ```
 
 --
@@ -42,19 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  azure_blob_storage:
-    storage_account: ""
-    storage_access_key: ""
-    storage_connection_string: ""
-    storage_sas_token: ""
-    container: messages-${!timestamp("2006")} # No default (required)
-    path: ${!counter()}-${!timestamp_unix_nano()}.txt
-    blob_type: BLOCK
-    public_access_level: PRIVATE
-    max_in_flight: 64
+include::components:example$advanced/outputs/azure_blob_storage.yaml[]
 ```
 
 --

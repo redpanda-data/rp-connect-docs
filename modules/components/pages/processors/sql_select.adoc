@@ -23,15 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-sql_select:
-  driver: "" # No default (required)
-  dsn: "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60" # No default (required)
-  table: foo # No default (required)
-  columns: [] # No default (required)
-  where: meow = ? and woof = ? # No default (optional)
-  args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ] # No default (optional)
+include::components:example$common/processors/sql_select.yaml[]
 ```
 
 --
@@ -40,29 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-sql_select:
-  driver: "" # No default (required)
-  dsn: "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60" # No default (required)
-  table: foo # No default (required)
-  columns: [] # No default (required)
-  where: meow = ? and woof = ? # No default (optional)
-  args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ] # No default (optional)
-  prefix: "" # No default (optional)
-  suffix: "" # No default (optional)
-  init_files: [] # No default (optional)
-  init_statement: | # No default (optional)
-    CREATE TABLE IF NOT EXISTS some_table (
-      foo varchar(50) not null,
-      bar integer,
-      baz varchar(50),
-      primary key (foo)
-    ) WITHOUT ROWID;
-  conn_max_idle_time: "" # No default (optional)
-  conn_max_life_time: "" # No default (optional)
-  conn_max_idle: 2
-  conn_max_open: 0 # No default (optional)
+include::components:example$advanced/processors/sql_select.yaml[]
 ```
 
 --

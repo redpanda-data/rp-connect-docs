@@ -4,7 +4,9 @@
 
 === `auto_replay_nacks`
 
-Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.
+Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.
+
+Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation.
 
 *Type*: `bool`
 
@@ -12,8 +14,7 @@ Whether messages that are rejected (nacked) at the output level should be automa
 
 === `batching`
 
-
-Allows you to configure a xref:configuration:batching.adoc[batching policy].
+Configure a xref:configuration:batching.adoc[batching policy].
 
 *Type*: `object`
 
@@ -35,7 +36,7 @@ batching:
 
 === `batching.byte_size`
 
-An amount of bytes at which the batch should be flushed. If `0` disables size based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 *Type*: `int`
 
@@ -43,7 +44,7 @@ An amount of bytes at which the batch should be flushed. If `0` disables size ba
 
 === `batching.check`
 
-A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.
+A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch.
 
 *Type*: `string`
 
@@ -57,7 +58,7 @@ check: this.type == "end_of_transaction"
 
 === `batching.count`
 
-A number of messages at which the batch should be flushed. If `0` disables count based batching.
+The number of messages after which the batch is flushed. Set to `0` to disable count-based batching.
 
 *Type*: `int`
 
@@ -65,7 +66,7 @@ A number of messages at which the batch should be flushed. If `0` disables count
 
 === `batching.period`
 
-A period in which an incomplete batch should be flushed regardless of its size.
+The period of time after which an incomplete batch is flushed regardless of its size. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -81,7 +82,7 @@ period: 500ms
 
 === `batching.processors[]`
 
-A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
+For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
 
 *Type*: `processor`
 
@@ -102,13 +103,13 @@ processors:
 
 === `checkpoint_cache`
 
-A https://www.docs.redpanda.com/redpanda-connect/components/caches/about[cache resource^] to use for storing the current latest Log Sequence Number (LSN) that has been successfully delivered, this allows Redpanda Connect to continue from that Log Sequence Number (LSN) upon restart, rather than consume the entire state of the change table.
+A xref:components:caches/about.adoc[cache resource] to store the current Log Sequence Number (LSN) position. This enables the connector to resume from the last processed position after restarts, preventing data loss and duplicate processing. The cache stores the highest LSN that has been successfully delivered downstream.
 
 *Type*: `string`
 
 === `checkpoint_key`
 
-The key to use to store the snapshot position in `checkpoint_cache`. An alternative key can be provided if multiple CDC inputs share the same cache.
+The key used to store the LSN checkpoint position in the cache. If you have multiple `microsoft_sql_server_cdc` inputs sharing the same cache resource, provide unique keys to avoid conflicts. The default key works well for single-instance deployments.
 
 *Type*: `string`
 
@@ -116,7 +117,7 @@ The key to use to store the snapshot position in `checkpoint_cache`. An alternat
 
 === `checkpoint_limit`
 
-The maximum number of messages that can be processed at a given time. Increasing this limit enables parallel processing and batching at the output level. Any given Log Sequence Number (LSN) will not be acknowledged unless all messages under that offset are delivered in order to preserve at least once delivery guarantees.
+The maximum number of messages that can be processed concurrently before applying back pressure. Higher values enable better parallelization and batching but increase memory usage. Messages are processed in LSN order, and a given LSN is only acknowledged after all previous LSNs have been successfully delivered, ensuring at-least-once guarantees.
 
 *Type*: `int`
 
@@ -124,7 +125,7 @@ The maximum number of messages that can be processed at a given time. Increasing
 
 === `connection_string`
 
-The connection string of the Microsoft SQL Server database to connect to.
+The connection string for the Microsoft SQL Server database. Use the format `sqlserver://username:password@host/instance?param1=value&param2=value`. For Windows Authentication, use `sqlserver://host/instance?trusted_connection=yes`. Include additional parameters like `TrustServerCertificate=true` for self-signed certificates or `encrypt=disable` to disable encryption.
 
 *Type*: `string`
 
@@ -136,7 +137,7 @@ connection_string: sqlserver://username:password@host/instance?param1=value&para
 
 === `exclude[]`
 
-Regular expressions for tables to exclude.
+Regular expressions for tables to exclude from CDC streaming. Use this to filter out specific tables from the include patterns. Table names should follow the `schema.table` format. Exclude patterns are applied after include patterns, allowing you to include broad patterns while excluding specific tables.
 
 *Type*: `array`
 
@@ -150,7 +151,7 @@ exclude:
 
 === `include[]`
 
-Regular expressions for tables to include.
+Regular expressions for tables to include in CDC streaming. Specify table names using the format `schema.table` (such as `dbo.orders`, `sales.customers`). Each pattern is treated as a regular expression, allowing wildcards and pattern matching. All specified tables must have CDC enabled in SQL Server.
 
 *Type*: `array`
 
@@ -164,7 +165,7 @@ include:
 
 === `snapshot_max_batch_size`
 
-The maximum number of rows to be streamed in a single batch when taking a snapshot.
+The maximum number of rows to stream in a single batch during the initial snapshot phase. Larger batch sizes can improve throughput for initial data loads but may increase memory usage. This setting only applies when `stream_snapshot` is enabled.
 
 *Type*: `int`
 
@@ -172,7 +173,7 @@ The maximum number of rows to be streamed in a single batch when taking a snapsh
 
 === `stream_backoff_interval`
 
-The interval between attempts to check for new changes once all data is processed. For low traffic tables increasing this value can reduce network traffic to the server.
+The time interval to wait between polling attempts when no new CDC data is available. For low-traffic tables, increasing this value reduces database load and network traffic. Use Go duration format like `5s`, `30s`, or `1m`. Shorter intervals provide lower latency for new changes but increase server load.
 
 *Type*: `string`
 
@@ -187,7 +188,7 @@ stream_backoff_interval: 1m
 
 === `stream_snapshot`
 
-If set to true, the connector will query all the existing data as a part of snapshot process. Otherwise, it will start from the current Log Sequence Number position.
+Whether to stream a snapshot of all existing data before streaming CDC changes. When enabled, the connector first queries all existing table data, then switches to streaming incremental changes from the transaction log. Set to `false` to start streaming only new changes from the current LSN position.
 
 *Type*: `bool`
 

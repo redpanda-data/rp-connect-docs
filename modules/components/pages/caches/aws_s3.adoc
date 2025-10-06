@@ -22,11 +22,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-label: ""
-aws_s3:
-  bucket: "" # No default (required)
-  content_type: application/octet-stream
+include::components:example$common/caches/aws_s3.yaml[]
 ```
 
 --
@@ -35,26 +31,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-label: ""
-aws_s3:
-  bucket: "" # No default (required)
-  content_type: application/octet-stream
-  force_path_style_urls: false
-  retries:
-    initial_interval: 1s
-    max_interval: 5s
-    max_elapsed_time: 30s
-  region: ""
-  endpoint: ""
-  credentials:
-    profile: ""
-    id: ""
-    secret: ""
-    token: ""
-    from_ec2_role: false
-    role: ""
-    role_external_id: ""
+include::components:example$advanced/caches/aws_s3.yaml[]
 ```
 
 --

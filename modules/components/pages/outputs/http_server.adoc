@@ -19,16 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-output:
-  label: ""
-  http_server:
-    address: ""
-    path: /get
-    stream_path: /get/stream
-    ws_path: /get/ws
-    allowed_verbs:
-      - GET
+include::components:example$common/outputs/http_server.yaml[]
 ```
 
 --
@@ -37,22 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-output:
-  label: ""
-  http_server:
-    address: ""
-    path: /get
-    stream_path: /get/stream
-    ws_path: /get/ws
-    allowed_verbs:
-      - GET
-    timeout: 5s
-    cert_file: ""
-    key_file: ""
-    cors:
-      enabled: false
-      allowed_origins: []
+include::components:example$advanced/outputs/http_server.yaml[]
 ```
 
 --

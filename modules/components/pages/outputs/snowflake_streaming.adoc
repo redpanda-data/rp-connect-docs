@@ -20,31 +20,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  snowflake_streaming:
-    account: ORG-ACCOUNT # No default (required)
-    user: "" # No default (required)
-    role: ACCOUNTADMIN # No default (required)
-    database: MYDATABASE # No default (required)
-    schema: PUBLIC # No default (required)
-    table: MYTABLE # No default (required)
-    private_key: "" # No default (optional)
-    private_key_file: "" # No default (optional)
-    private_key_pass: "" # No default (optional)
-    mapping: "" # No default (optional)
-    init_statement: | # No default (optional)
-      CREATE TABLE IF NOT EXISTS mytable (amount NUMBER);
-    schema_evolution:
-      enabled: false # No default (required)
-      processors: [] # No default (optional)
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
-    max_in_flight: 4
+include::components:example$common/outputs/snowflake_streaming.yaml[]
 ```
 
 --
@@ -53,41 +29,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  snowflake_streaming:
-    account: ORG-ACCOUNT # No default (required)
-    url: https://org-account.privatelink.snowflakecomputing.com # No default (optional)
-    user: "" # No default (required)
-    role: ACCOUNTADMIN # No default (required)
-    database: MYDATABASE # No default (required)
-    schema: PUBLIC # No default (required)
-    table: MYTABLE # No default (required)
-    private_key: "" # No default (optional)
-    private_key_file: "" # No default (optional)
-    private_key_pass: "" # No default (optional)
-    mapping: "" # No default (optional)
-    init_statement: | # No default (optional)
-      CREATE TABLE IF NOT EXISTS mytable (amount NUMBER);
-    schema_evolution:
-      enabled: false # No default (required)
-      ignore_nulls: true
-      processors: [] # No default (optional)
-    build_options:
-      parallelism: 1
-      chunk_size: 50000
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
-      processors: [] # No default (optional)
-    max_in_flight: 4
-    channel_prefix: channel-${HOST} # No default (optional)
-    channel_name: partition-${!@kafka_partition} # No default (optional)
-    offset_token: offset-${!"%016X".format(@kafka_offset)} # No default (optional)
-    commit_timeout: 60s
+include::components:example$advanced/outputs/snowflake_streaming.yaml[]
 ```
 
 --

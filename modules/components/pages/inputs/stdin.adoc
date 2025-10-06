@@ -11,15 +11,27 @@ component_type_dropdown::[]
 
 Consumes data piped to stdin, chopping it into individual messages according to the specified scanner.
 
+[tabs]
+======
+Common::
++
+--
+
 ```yml
-# Config fields, showing default values
-input:
-  label: ""
-  stdin:
-    scanner:
-      lines: {}
-    auto_replay_nacks: true
+include::components:example$common/inputs/stdin.yaml[]
 ```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/stdin.yaml[]
+```
+
+--
+======
 
 include::redpanda-connect:components:partial$fields/inputs/stdin.adoc[]
 

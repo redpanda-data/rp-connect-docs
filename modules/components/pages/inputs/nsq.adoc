@@ -19,17 +19,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  nsq:
-    nsqd_tcp_addresses: [] # No default (required)
-    lookupd_http_addresses: [] # No default (required)
-    topic: "" # No default (required)
-    channel: "" # No default (required)
-    user_agent: "" # No default (optional)
-    max_in_flight: 100
-    max_attempts: 5
+include::components:example$common/inputs/nsq.yaml[]
 ```
 
 --
@@ -38,24 +28,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  nsq:
-    nsqd_tcp_addresses: [] # No default (required)
-    lookupd_http_addresses: [] # No default (required)
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: ""
-      root_cas_file: ""
-      client_certs: []
-    topic: "" # No default (required)
-    channel: "" # No default (required)
-    user_agent: "" # No default (optional)
-    max_in_flight: 100
-    max_attempts: 5
+include::components:example$advanced/inputs/nsq.yaml[]
 ```
 
 --

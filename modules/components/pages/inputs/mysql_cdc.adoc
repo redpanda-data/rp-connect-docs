@@ -20,23 +20,7 @@ Common::
 --
 
 ```yml
-# Configuration fields, showing default values
-input:
-  label: ""
-  mysql_cdc:
-    dsn: username:password@tcp(localhost:3306)/database # No default (required)
-    tables: [] # No default (required)
-    checkpoint_cache: "" # No default (required)
-    checkpoint_key: mysql_binlog_position
-    snapshot_max_batch_size: 1000
-    stream_snapshot: false # No default (required)
-    auto_replay_nacks: true
-    checkpoint_limit: 1024
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
+include::components:example$common/inputs/mysql_cdc.yaml[]
 ```
 
 --
@@ -45,25 +29,9 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-input:
-  label: ""
-  mysql_cdc:
-    dsn: username:password@tcp(localhost:3306)/database # No default (required)
-    tables: [] # No default (required)
-    checkpoint_cache: "" # No default (required)
-    checkpoint_key: mysql_binlog_position
-    snapshot_max_batch_size: 1000
-    stream_snapshot: false # No default (required)
-    auto_replay_nacks: true
-    checkpoint_limit: 1024
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # No default (optional) 
-      check: "" # No default (optional)
-      processors: [] # No default (optional)
+include::components:example$advanced/inputs/mysql_cdc.yaml[]
 ```
+
 --
 ======
 

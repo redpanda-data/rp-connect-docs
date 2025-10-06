@@ -23,22 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  aws_s3:
-    bucket: "" # No default (required)
-    path: ${!counter()}-${!timestamp_unix_nano()}.txt
-    tags: {}
-    content_type: application/octet-stream
-    metadata:
-      exclude_prefixes: []
-    max_in_flight: 64
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/aws_s3.yaml[]
 ```
 
 --
@@ -47,45 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  aws_s3:
-    bucket: "" # No default (required)
-    path: ${!counter()}-${!timestamp_unix_nano()}.txt
-    tags: {}
-    content_type: application/octet-stream
-    content_encoding: ""
-    cache_control: ""
-    content_disposition: ""
-    content_language: ""
-    content_md5: ""
-    website_redirect_location: ""
-    metadata:
-      exclude_prefixes: []
-    storage_class: STANDARD
-    kms_key_id: ""
-    checksum_algorithm: ""
-    server_side_encryption: ""
-    force_path_style_urls: false
-    max_in_flight: 64
-    timeout: 5s
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
-    region: ""
-    endpoint: ""
-    credentials:
-      profile: ""
-      id: ""
-      secret: ""
-      token: ""
-      from_ec2_role: false
-      role: ""
-      role_external_id: ""
+include::components:example$advanced/outputs/aws_s3.yaml[]
 ```
 
 --

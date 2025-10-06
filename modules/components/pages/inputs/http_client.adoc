@@ -15,22 +15,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-input:
-  label: ""
-  http_client:
-    url: "" # No default (required)
-    verb: GET
-    headers: {}
-    rate_limit: "" # No default (optional)
-    timeout: 5s
-    payload: "" # No default (optional)
-    stream:
-      enabled: false
-      reconnect: true
-      scanner:
-        lines: {}
-    auto_replay_nacks: true
+include::components:example$common/inputs/http_client.yaml[]
 ```
 
 --
@@ -39,69 +24,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-input:
-  label: ""
-  http_client:
-    url: "" # No default (required)
-    verb: GET
-    headers: {}
-    metadata:
-      include_prefixes: []
-      include_patterns: []
-    dump_request_log_level: "" # Optional
-    oauth:
-      enabled: false
-      consumer_key: "" # Optional
-      consumer_secret: "" # Optional
-      access_token: "" # Optional
-      access_token_secret: "" # Optional
-    oauth2:
-      enabled: false
-      client_key: "" # Optional
-      client_secret: "" # Optional
-      token_url: "" # Optional
-      scopes: []
-      endpoint_params: {}
-    basic_auth:
-      enabled: false
-      username: "" # Optional
-      password: "" # Optional
-    jwt:
-      enabled: false
-      private_key_file: "" # Optional
-      signing_method: "" # Optional
-      claims: {}
-      headers: {}
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: "" # Optional
-      root_cas_file: "" # Optional
-      client_certs: []
-    extract_headers:
-      include_prefixes: []
-      include_patterns: []
-    rate_limit: "" # No default (optional)
-    timeout: 5s
-    retry_period: 1s
-    max_retry_backoff: 300s
-    retries: 3
-    backoff_on:
-      - 429
-    drop_on: []
-    successful_on: []
-    proxy_url: "" # No default (optional)
-    disable_http2: false
-    payload: "" # No default (optional)
-    drop_empty_bodies: true
-    stream:
-      enabled: false
-      reconnect: true
-      scanner:
-        lines: {}
-    auto_replay_nacks: true
+include::components:example$advanced/inputs/http_client.yaml[]
 ```
 
 --

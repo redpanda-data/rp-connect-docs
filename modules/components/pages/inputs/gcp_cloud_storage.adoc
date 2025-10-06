@@ -23,15 +23,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-input:
-  label: ""
-  gcp_cloud_storage:
-    bucket: "" # No default (required)
-    prefix: ""
-    credentials_json: "" # No default (optional)
-    scanner:
-      to_the_end: {}
+include::components:example$common/inputs/gcp_cloud_storage.yaml[]
 ```
 
 --
@@ -40,16 +32,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-input:
-  label: ""
-  gcp_cloud_storage:
-    bucket: "" # No default (required)
-    prefix: ""
-    credentials_json: "" # No default (optional)
-    scanner:
-      to_the_end: {}
-    delete_objects: false
+include::components:example$advanced/inputs/gcp_cloud_storage.yaml[]
 ```
 
 --

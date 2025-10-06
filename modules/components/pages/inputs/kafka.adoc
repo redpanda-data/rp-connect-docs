@@ -20,16 +20,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-input:
-  label: ""
-  kafka:
-    addresses: [] # No default (required)
-    topics: [] # No default (required)
-    target_version: 2.1.0 # No default (optional)
-    consumer_group: "" # No default (optional)
-    checkpoint_limit: 1024
-    auto_replay_nacks: true
+include::components:example$common/inputs/kafka.yaml[]
 ```
 
 --
@@ -38,49 +29,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-input:
-  label:
-  kafka:
-    addresses: [] # No default (required)
-    topics: [] # No default (required)
-    target_version: 2.1.0 # No default (optional)
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: "" # No default (optional)
-      root_cas_file: "" # No default (optional)
-      client_certs: [] # No default (optional)
-    sasl:
-      mechanism: none
-      user: "" # No default (optional)
-      password: "" # No default (optional)
-      access_token: "" # No default (optional)
-      token_cache: "" # No default (optional)
-      token_key: "" # No default (optional)
-    consumer_group: "" # No default (optional)
-    client_id: benthos
-    rack_id: "" # No default (optional)
-    instance_id: "" # No default (optional) 
-    start_from_oldest: true
-    checkpoint_limit: 1024
-    auto_replay_nacks: true
-    commit_period: 1s
-    max_processing_period: 100ms
-    extract_tracing_map: root = @ # No default (optional)
-    group:
-      session_timeout: 10s
-      heartbeat_interval: 3s
-      rebalance_timeout: 60s
-    fetch_buffer_cap: 256
-    multi_header: false
-    batching:
-      count: 0
-      byte_size: 0
-      period: "" # No default (optional)
-      check: "" # No default (optional)
-      processors: [] # No default (optional)
+include::components:example$advanced/inputs/kafka.yaml[]
 ```
 
 --

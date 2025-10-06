@@ -20,12 +20,7 @@ Common::
 --
 
 ```yml
-# Common config fields, showing default values
-label: ""
-workflow:
-  meta_path: meta.workflow
-  order: []
-  branches: {}
+include::components:example$common/processors/workflow.yaml[]
 ```
 
 --
@@ -34,13 +29,7 @@ Advanced::
 --
 
 ```yml
-# All config fields, showing default values
-label: ""
-workflow:
-  meta_path: meta.workflow
-  order: []
-  branch_resources: []
-  branches: {}
+include::components:example$advanced/processors/workflow.yaml[]
 ```
 
 --

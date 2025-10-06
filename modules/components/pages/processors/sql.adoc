@@ -24,14 +24,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-label: ""
-sql:
-  driver: "" # No default (required)
-  data_source_name: "" # No default (required)
-  query: INSERT INTO footable (foo, bar, baz) VALUES (?, ?, ?); # No default (required)
-  args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ] # No default (optional)
-  result_codec: none
+include::components:example$common/processors/sql.yaml[]
 ```
 
 --
@@ -40,15 +33,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-label: ""
-sql:
-  driver: "" # No default (required)
-  data_source_name: "" # No default (required)
-  query: INSERT INTO footable (foo, bar, baz) VALUES (?, ?, ?); # No default (required)
-  unsafe_dynamic_query: false
-  args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ] # No default (optional)
-  result_codec: none
+include::components:example$advanced/processors/sql.yaml[]
 ```
 
 --

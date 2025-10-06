@@ -23,22 +23,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  redpanda_common:
-    topic: "" # No default (required)
-    key: "" # No default (optional)
-    partition: ${! meta("partition") } # No default (optional)
-    metadata:
-      include_prefixes: []
-      include_patterns: []
-    max_in_flight: 10
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
+include::components:example$common/outputs/redpanda_common.yaml[]
 ```
 
 --
@@ -47,24 +32,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  redpanda_common:
-    topic: "" # No default (required)
-    key: "" # No default (optional)
-    partition: ${! meta("partition") } # No default (optional)
-    metadata:
-      include_prefixes: []
-      include_patterns: []
-    timestamp_ms: ${! timestamp_unix_milli() } # No default (optional)
-    max_in_flight: 10
-    batching:
-      count: 0
-      byte_size: 0
-      period: ""
-      check: ""
-      processors: [] # No default (optional)
+include::components:example$advanced/outputs/redpanda_common.yaml[]
 ```
 
 --

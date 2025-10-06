@@ -20,17 +20,7 @@ Common::
 --
 
 ```yml
-# Common configuration fields, showing default values
-output:
-  label: ""
-  amqp_0_9:
-    urls: [] # No default (required)
-    exchange: "" # No default (required)
-    key: "" # Optional
-    type: "" # Optional
-    metadata:
-      exclude_prefixes: []
-    max_in_flight: 64
+include::components:example$common/outputs/amqp_0_9.yaml[]
 ```
 
 --
@@ -39,42 +29,7 @@ Advanced::
 --
 
 ```yml
-# All configuration fields, showing default values
-output:
-  label: ""
-  amqp_0_9:
-    urls: [] # No default (required)
-    exchange: "" # No default (required)
-    exchange_declare:
-      enabled: false
-      type: direct
-      durable: true
-      arguments: {} # No default (optional)
-    key: ""
-    type: ""
-    content_type: application/octet-stream
-    content_encoding: "" # Optional
-    correlation_id: "" # Optional
-    reply_to: "" # Optional
-    expiration: "" # Optional
-    message_id: "" # Optional
-    user_id: "" # Optional
-    app_id: "" # Optional
-    metadata:
-      exclude_prefixes: []
-    priority: ""
-    max_in_flight: 64
-    persistent: false
-    mandatory: false
-    immediate: false
-    timeout: "" # Optional
-    tls:
-      enabled: false
-      skip_cert_verify: false
-      enable_renegotiation: false
-      root_cas: "" # Optional
-      root_cas_file: "" # Optional
-      client_certs: []
+include::components:example$advanced/outputs/amqp_0_9.yaml[]
 ```
 
 --
