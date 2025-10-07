@@ -20,7 +20,7 @@ The `postgres_cdc` input uses logical replication to capture changes made to a P
 
 == Prerequisites
 
-- PostgreSQL version 13 or later
+- PostgreSQL version 14 or later
 ifdef::env-cloud[]
 - Network access from the cluster where your Redpanda Connect pipeline is running to the source database environment. For detailed networking information, including how to set up a VPC peering connection, see xref:networking:index.adoc[Redpanda Cloud Networking].
 endif::[]
