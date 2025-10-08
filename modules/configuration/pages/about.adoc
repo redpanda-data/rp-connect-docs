@@ -111,6 +111,95 @@ input:
 
 This is very useful for sharing configuration files across different deployment environments.
 
+== Labels
+
+Labels are unique, user-defined identifiers used throughout Redpanda Connect configurations. They serve two purposes:
+
+- **Reference:** Allow different parts of your pipeline to refer to specific components or resources.
+- **Readability:** Make your configuration more understandable for humans, especially in complex deployments.
+
+You can assign labels to most pipeline components, including resources, inputs, outputs, processors, and entire pipelines. Using clear, descriptive labels improves both maintainability and clarity.
+
+Labels are commonly applied to the following components:
+
+=== Resources
+
+Labels identify <<reuse, reusable resources>> such as processors, caches, and rate limiters, making them easy to reference elsewhere in your pipeline.
+
+[source,yaml]
+----
+processor_resources:
+  - label: my-transformer       # Processor resource label
+    mapping: 'root = content().uppercase()'
+
+cache_resources:
+  - label: user-cache           # Cache resource label
+    memory:
+      default_ttl: 300s
+
+rate_limit_resources:
+  - label: api-limiter          # Rate limiter resource label
+    local:
+      count: 100
+      interval: 1m
+----
+
+=== Pipelines (streams mode)
+
+When running in xref:guides:streams_mode/about.adoc[streams mode] with the Streams API, labels serve as pipeline names. This enables you to create and reference pipelines by their label through the API.
+
+[source,bash]
+----
+# Create a pipeline labeled "data-processor"
+curl -X POST http://localhost:4195/streams/data-processor \
+  -H "Content-Type: application/yaml" \
+  -d @pipeline-config.yaml
+
+# Reference a pipeline by its label
+curl http://localhost:4195/streams/data-processor
+----
+
+=== Component labeling for clarity
+
+You can also use labels on inputs, outputs, processors, and other components to improve the human-readability of your config and make troubleshooting easier. For example:
+
+[source,yaml]
+----
+input:
+  label: ingest_api
+  http_server: {}
+
+pipeline:
+  label: user_data_ingest
+  processors:
+    - label: sanitize_fields
+      mapping: 'root = this.trim()'
+    - resource: my-transformer
+----
+
+== Label naming requirements
+
+Labels must meet the following criteria:
+
+* *Length*: 3-128 characters
+* *Allowed characters*: Alphanumeric, hyphens, and underscores (`A-Za-z0-9-_`)
+* *Case sensitivity*: Labels are case-sensitive
+
+.Example valid labels
+----
+my-processor
+data_transformer_01
+UserAnalytics-v2
+----
+
+.Example invalid labels
+----
+ab                   // Too short (less than 3 characters)
+my.processor         // Invalid character: period
+my processor         // Invalid character: space
+----
+
+[[reuse]]
 == Reusing configuration snippets
 
 ifndef::env-cloud[]
