@@ -71,7 +71,7 @@ If you need to upgrade, see xref:install:rpk.adoc#upgrade[Upgrade Redpanda Conne
 
 In this step, you'll create a Redpanda Connect configuration that searches public link:https://bsky.app/[Bluesky^] posts using a customizable query. You'll define this configuration as a tool that Claude can discover and use.
 
-Save the following YAML to a file named `resources/processors/bluesky.yaml`:
+Save the following YAML to a file named `bluesky.yaml` and save it in the `resources/processors/` directory:
 
 [source,yaml]
 ----
