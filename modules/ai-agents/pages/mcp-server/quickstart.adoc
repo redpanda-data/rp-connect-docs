@@ -18,7 +18,7 @@ This enables natural-language automation for internal workflows, using your own 
 You'll need the following to complete this quickstart:
 
 - xref:ROOT:get-started:rpk-install.adoc[Redpanda CLI (`rpk`)]
-- At least version 4.56.0 of Redpanda Connect
+- At least version 4.66.1 of Redpanda Connect
 +
 If you need to upgrade, see xref:get-started:upgrade/rpk-upgrade.adoc[].
 - link:https://docs.anthropic.com/en/docs/claude-code/setup[Claude Code^]
@@ -60,18 +60,27 @@ This command scaffolds your project with the necessary directories and template 
         └── example-processor.yaml
 ----
 
+. Make sure your Redpanda Connect version is at least 4.66.1:
++
+[,bash]
+----
+rpk connect --version
+----
++
+If you need to upgrade, see xref:install:rpk.adoc#upgrade[Upgrade Redpanda Connect].
+
 == Create a tool definition
 
-Save the following YAML to a file named `resources/processors/bluesky.yaml`.
+In this step, you'll create a Redpanda Connect configuration that searches public link:https://bsky.app/[Bluesky^] posts using a customizable query. You'll define this configuration as a tool that Claude can discover and use.
 
-This tool enables Claude to search public Bluesky posts using natural language.
+Save the following YAML to a file named `resources/processors/bluesky.yaml`:
 
 [source,yaml]
 ----
 label: search-bluesky-posts <1>
 try: <2>
   - mutation: |
-      root.limit = root.limit.number(25)
+      root.limit = root.limit.number(10)
       root.limit = [ root.limit, 100 ].min()
       root.limit = [ root.limit, 1 ].max()
       meta query_string = "q=" + root.query.escape_url_query() + "&limit=%v".format(root.limit)
@@ -84,7 +93,7 @@ try: <2>
       format: json_array
 
 meta:
-  tags: [ example ] <3>
+  tags: [ bluesky ] <3>
   mcp:
     enabled: true
     description: Search public Bluesky posts based on a query string. <4>
@@ -95,35 +104,42 @@ meta:
         description: A Lucene-style query string to search posts.
       - name: limit
         type: number
-        description: Number of posts to return (1-100). Defaults to 25.
+        description: Number of posts to return (1-100). Defaults to 10.
 ----
 
 This example defines a tool that searches public Bluesky posts based on a query string. Important parts of the configuration include:
 
 <1> A unique label for identification. Claude uses this label to discover and call the tool.
 <2> A series of processors to build the HTTP request, handle the response, and format the output.
-<3> A unique tag (`example`) to control exposure. You can use tags to group related tools or isolate experiments.
+<3> A unique tag (`bluesky`) to control exposure. You can use tags to group related tools or isolate experiments.
 <4> A clear description for LLMs helps Claude understand what the tool does.
 <5> Structured properties for inputs like `query` and `limit`.
 
 == Start the MCP server
 
-Start the MCP server to expose the tool over HTTP:
+. Navigate to your MCP server project directory if you're not already there:
++
+[,bash]
+----
+cd redpanda-connect-mcp
+----
 
+. Start the MCP server to expose the tool over HTTP:
++
 [source,bash]
 ----
-rpk connect mcp-server --address localhost:4195 --tag example
+rpk connect mcp-server --address localhost:4195 --tag bluesky
 ----
-
++
 You should see output like this:
-
++
 [.no-copy]
 ----
 time=2025-06-27T15:20:27.976+01:00 level=INFO msg="Registering processor tool" label=search-bluesky-posts
 time=2025-06-27T15:20:27.978+01:00 level=INFO msg="Successfully loaded Redpanda license" expires_at=2035-06-25T15:20:27+01:00 license_org="" license_type="open source"
 ----
-
-This command creates an MCP server listening on `localhost:4195`, and makes your tool discoverable to AI agents.
++
+This command creates an MCP server listening on `localhost:4195`, and makes your tool discoverable to AI agents. Leave this terminal open while you interact with Claude Code.
 
 :tip-caption: Limit exposure
 
@@ -140,8 +156,9 @@ Only tools with the specified `--tag` are exposed. This helps you:
 
 == Connect Claude Code to your MCP server
 
-
 To connect Claude Code to your MCP server, you need to expose a live event stream that Claude can consume. This is done using the link:https://www.npmjs.com/package/mcp-remote[`mcp-remote` utility^], which bridges your local service to Claude's MCP interface. `mcp-remote` is a lightweight bridge that turns any streaming HTTP endpoint into a source of MCP-compatible messages.
+
+. Open a new terminal window.
 
 . To install `mcp-remote`, run:
 +
@@ -175,7 +192,6 @@ Tools for local (1 tools)
 ----
 
 . Press *Esc* until you return to the main prompt.
-
 
 == Write a prompt that uses the tool
 
@@ -253,6 +269,89 @@ Here's an example of what the result might look like:
 To disconnect or stop the MCP server, press kbd:[Ctrl+C] in the terminal where the server is running. This will gracefully shut down the MCP server process and disconnect any connected clients.
 
 You can also close the terminal window or kill the process using standard OS commands (such as `kill <pid>` on Linux/macOS).
+
+== Troubleshoot
+
+This section covers issues you might encounter when setting up and using the MCP server.
+
+=== JSON schema errors
+
+If you see API errors like the following when Claude attempts to use your tool:
+
+[source,json]
+----
+{
+  "type": "error",
+  "error": {
+    "type": "invalid_request_error",
+    "message": "tools.17.custom.input_schema: JSON schema is invalid. It must match JSON Schema draft 2020-12 (https://json-schema.org/draft/2020-12). Learn more about tool use at https://docs.claude.com/en/docs/tool-use."
+  },
+  "request_id": "req_011CTWPsqnC26DJVUhxnQnn6"
+}
+----
+
+This error indicates you're using an outdated version of Redpanda Connect with an incompatible JSON schema format.
+
+*Solution*: Upgrade to at least version 4.66.1 of Redpanda Connect.
+
+[source,bash]
+----
+rpk connect --version
+----
+
+If you need to upgrade, see xref:install:rpk.adoc#upgrade[Upgrade Redpanda Connect].
+
+=== Tool not found or not exposed
+
+If Claude Code doesn't show your tool in the tools list, or shows "No tools available":
+
+. Ensure your YAML files are in the correct directory structure. The expected structure is:
++
+- Processors: `resources/processors/`
+- Inputs: `resources/inputs/`
+- Outputs: `resources/outputs/`
+- Caches: `resources/caches/`
+
+. Verify MCP metadata:
++
+- Confirm your tool has the `meta.mcp.enabled: true` property
+- Check that the `meta.tags` array includes the tag you specified when starting the server
++
+.Example correct structure
+[source,yaml]
+----
+label: my-tool
+# ... processor configuration ...
+meta:
+  tags: [ bluesky ]  # Must match --tag argument
+  mcp:
+    enabled: true    # Required for exposure
+    description: Tool description
+----
+
+=== Connection issues
+
+If Claude Code can't connect to your MCP server:
+
+- Server not running:
++
+** Verify the MCP server is still running in your terminal.
+** Check that you see the "Registering processor tool" log messages.
+** Ensure the server is listening on the expected address (`localhost:4195` by default).
+
+- If port 4195 is already in use, specify a different port:
++
+[source,bash]
+----
+rpk connect mcp-server --address localhost:4196 --tag bluesky
+----
++
+Then update your `mcp-remote` connection:
++
+[source,bash]
+----
+claude mcp add local -- npx mcp-remote http://localhost:4196/sse
+----
 
 == Next steps
 
