@@ -276,7 +276,7 @@ This section covers issues you might encounter when setting up and using the MCP
 
 === JSON schema errors
 
-If you see API errors like the following when Claude attempts to use your tool:
+This error indicates you're using an outdated version of Redpanda Connect with an incompatible JSON schema format:
 
 [source,json]
 ----
@@ -290,7 +290,6 @@ If you see API errors like the following when Claude attempts to use your tool:
 }
 ----
 
-This error indicates you're using an outdated version of Redpanda Connect with an incompatible JSON schema format.
 
 *Solution*: Upgrade to at least version 4.66.1 of Redpanda Connect.
 
