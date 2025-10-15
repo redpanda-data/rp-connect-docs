@@ -1,0 +1,59 @@
+outputs:
+  label: ""
+  legacy_redpanda_migrator:
+    seed_brokers: [] # No default (required)
+    client_id: benthos
+    tls:
+      enabled: false
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
+    sasl:
+      mechanism: "" # No default (required)
+      username: ""
+      password: ""
+      token: ""
+      extensions: "" # No default (optional)
+      aws:
+        region: "" # No default (optional)
+        endpoint: "" # No default (optional)
+        credentials:
+          profile: "" # No default (optional)
+          id: "" # No default (optional)
+          secret: "" # No default (optional)
+          token: "" # No default (optional)
+          from_ec2_role: "" # No default (optional)
+          role: "" # No default (optional)
+          role_external_id: "" # No default (optional)
+    metadata_max_age: 5m
+    request_timeout_overhead: 10s
+    conn_idle_timeout: 20s
+    topic: "" # No default (required)
+    key: "" # No default (optional)
+    partition: "" # No default (optional)
+    metadata:
+      include_prefixes: []
+      include_patterns: []
+    timestamp_ms: "" # No default (optional)
+    topic_prefix: ""
+    max_in_flight: 256
+    input_resource: redpanda_migrator_input
+    replication_factor_override: true
+    replication_factor: 3
+    translate_schema_ids: false
+    is_serverless: false
+    schema_registry_output_resource: schema_registry_output
+    partitioner: "" # No default (optional)
+    idempotent_write: true
+    compression: "" # No default (optional)
+    allow_auto_topic_creation: true
+    timeout: 10s
+    max_message_bytes: 1MiB
+    broker_write_max_bytes: 100MiB

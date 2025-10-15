@@ -1,6 +1,6 @@
 inputs:
   label: ""
-  redpanda_migrator:
+  legacy_redpanda_migrator:
     seed_brokers: [] # No default (required)
     client_id: benthos
     tls:
@@ -53,34 +53,5 @@ inputs:
     partition_buffer_bytes: 1MB
     topic_lag_refresh_period: 5s
     max_yield_batch_bytes: 32KB
-    schema_registry:
-      url: "" # No default (required)
-      tls:
-        enabled: false
-        skip_cert_verify: false
-        enable_renegotiation: false
-        root_cas: ""
-        root_cas_file: ""
-        client_certs:
-          cert: ""
-          key: ""
-          cert_file: ""
-          key_file: ""
-          password: ""
-      oauth:
-        enabled: false
-        consumer_key: ""
-        consumer_secret: ""
-        access_token: ""
-        access_token_secret: ""
-      basic_auth:
-        enabled: false
-        username: ""
-        password: ""
-      jwt:
-        enabled: false
-        private_key_file: ""
-        signing_method: ""
-        claims: {}
-        headers: {}
     auto_replay_nacks: true
+    timely_nacks_maximum_wait: "" # No default (optional)

@@ -1,0 +1,9 @@
+inputs:
+  label: ""
+  legacy_redpanda_migrator:
+    seed_brokers: [] # No default (required)
+    topics: [] # No default (required)
+    regexp_topics: false
+    transaction_isolation_level: read_uncommitted
+    consumer_group: "" # No default (optional)
+    auto_replay_nacks: true
