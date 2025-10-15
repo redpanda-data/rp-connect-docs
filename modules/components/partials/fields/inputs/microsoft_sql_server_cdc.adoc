@@ -107,13 +107,27 @@ A xref:components:caches/about.adoc[cache resource] to store the current Log Seq
 
 *Type*: `string`
 
-=== `checkpoint_key`
+=== `checkpoint_cache_key`
 
-The key used to store the LSN checkpoint position in the cache. If you have multiple `microsoft_sql_server_cdc` inputs sharing the same cache resource, provide unique keys to avoid conflicts. The default key works well for single-instance deployments.
+The key to use to store the snapshot position in `checkpoint_cache`. An alternative key can be provided if multiple CDC inputs share the same cache.
 
 *Type*: `string`
 
 *Default*: `microsoft_sql_server_cdc`
+
+=== `checkpoint_cache_table_name`
+
+The multipart identifier for the checkpoint cache table name. If no `checkpoint_cache` field is specified, this input will automatically create a table and stored procedure under the `rpcn` schema to act as a checkpoint cache. This table stores the latest processed Log Sequence Number (LSN) that has been successfully delivered, allowing Redpanda Connect to resume from that point upon restart rather than reconsume the entire change table.
+
+*Type*: `string`
+
+*Default*: `rpcn.CdcCheckpointCache`
+
+[source,yaml]
+----
+# Examples:
+checkpoint_cache_table_name: dbo.checkpoint_cache
+----
 
 === `checkpoint_limit`
 

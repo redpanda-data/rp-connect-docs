@@ -2,22 +2,66 @@
 
 == Examples
 
-=== Transfer data
+=== Basic migration
 
-Writes messages to the configured broker and creates topics and topic ACLs if they don't exist. It also ensures that the message order is preserved.
+Migrate topics, schemas and consumer groups from source to destination.
 
 [source,yaml]
 ----
+input:
+  redpanda_migrator:
+    seed_brokers: ["source:9092"]
+    topics: ["orders", "payments"]
+    consumer_group: "migration"
+
 output:
   redpanda_migrator:
-    seed_brokers: [ "127.0.0.1:9093" ]
-    topic: ${! metadata("kafka_topic").or(throw("missing kafka_topic metadata")) }
-    key: ${! metadata("kafka_key") }
-    partitioner: manual
-    partition: ${! metadata("kafka_partition").or(throw("missing kafka_partition metadata")) }
-    timestamp_ms: ${! metadata("kafka_timestamp_ms").or(timestamp_unix_milli()) }
-    input_resource: redpanda_migrator_input
-    max_in_flight: 1
+    seed_brokers: ["destination:9092"]
+    # Write to the same topic name
+    topic: ${! metadata("kafka_topic") }
+    schema_registry:
+      url: "http://dest-registry:8081"
+      translate_ids: true
+    consumer_groups:
+      interval: 1m
+----
+
+=== Migration to Redpanda Serverless
+
+Migrate from Confluent/Kafka to Redpanda Cloud serverless cluster with authentication.
+
+[source,yaml]
+----
+input:
+  redpanda_migrator:
+    seed_brokers: ["source-kafka:9092"]
+    topics:
+      - '^[^_]'  # All topics not starting with underscore
+    regexp_topics: true
+    consumer_group: "migrator_cg"
+    schema_registry:
+      url: "http://source-registry:8081"
+
+output:
+  redpanda_migrator:
+    seed_brokers: ["serverless-cluster.redpanda.com:9092"]
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: "migrator"
+        password: "migrator"
+    schema_registry:
+      url: "https://serverless-cluster.redpanda.com:8081"
+      basic_auth:
+        enabled: true
+        username: "migrator"
+        password: "migrator"
+      translate_ids: true
+    consumer_groups:
+      exclude:
+        - "migrator_cg"  # Exclude the migration consumer group itself
+    serverless: true  # Enable serverless mode for restricted configurations
 ----
 
 

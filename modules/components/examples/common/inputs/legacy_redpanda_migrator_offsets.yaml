@@ -1,0 +1,7 @@
+inputs:
+  label: ""
+  legacy_redpanda_migrator_offsets:
+    seed_brokers: [] # No default (required)
+    topics: [] # No default (required)
+    regexp_topics: false
+    auto_replay_nacks: true
