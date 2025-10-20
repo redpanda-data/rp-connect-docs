@@ -6,7 +6,7 @@
 
 With Redpanda Migrator, you can move your workloads from any Apache Kafka system to Redpanda using a single command. It lets you migrate Kafka messages, schemas, and ACLs quickly and efficiently.
 
-Redpanda Connect's Redpanda Migrator uses the unified migrator components (available in Redpanda Connect 4.67.0+):
+Redpanda Connect's Redpanda Migrator uses the unified migrator components (available in Redpanda Connect 4.67.5+):
 
 - xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] connects to the source Kafka cluster and Schema Registry.
 - xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] handles all migration logic including topic creation, schema synchronization, and consumer group offset translation.
