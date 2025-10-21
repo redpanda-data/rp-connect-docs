@@ -144,6 +144,7 @@ rate_limit_resources:
       interval: 1m
 ----
 
+ifndef::env-cloud[]
 === Pipelines (streams mode)
 
 When running in xref:guides:streams_mode/about.adoc[streams mode] with the Streams API, labels serve as pipeline names. This enables you to create and reference pipelines by their label through the API.
@@ -158,6 +159,7 @@ curl -X POST http://localhost:4195/streams/data-processor \
 # Reference a pipeline by its label
 curl http://localhost:4195/streams/data-processor
 ----
+endif::[]
 
 === Component labeling for clarity
 
