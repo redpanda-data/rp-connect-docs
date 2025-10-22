@@ -13,7 +13,7 @@ component_type_dropdown::[]
 This component is deprecated and will be removed in the next major version release. Please consider moving onto the unified xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] and xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] components. For migration instructions, see xref:guides:migration/migrate-unified-redpanda-migrator.adoc[].
 ====
 
-Migrates offset data to a Redpanda cluster. To achieve this, pair the `legacy_redpanda_migrator_offsets` output with a matching xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input].
+Migrates offset data to a Redpanda cluster. To achieve this, pair the `legacy_redpanda_migrator_offsets` output with a matching xref:components:inputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input].
 
 Alternatively, use the `redpanda_migrator_bundle` xref:components:inputs/redpanda_migrator_bundle.adoc[input] and xref:components:outputs/redpanda_migrator_bundle.adoc[output] to complete the migration of topics, messages, and schemas to a Redpanda cluster.
 
