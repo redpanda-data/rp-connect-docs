@@ -25,7 +25,7 @@ This release adds support for the following new fields:
 * Outputs components
 ** xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`]
 *** xref:components:outputs/redpanda_migrator.adoc#schema_registry[`schema_registry`] - Configuration for schema registry integration. Enables migration of schema subjects, versions, and compatibility settings between clusters.
-*** xref:components:outputs/redpanda_migrator.adoc#consumer_groups[`consumer_groups`]
+*** xref:components:outputs/redpanda_migrator.adoc#consumer_groups[`consumer_groups`] - Whether consumer group offset migration is enabled. When disabled, no consumer group operations are performed.
 *** xref:components:outputs/redpanda_migrator.adoc#topic_replication_factor[`topic_replication_factor`] - The replication factor for created topics. If not specified, inherits the replication factor from source topics. Useful when migrating to clusters with different sizes.
 *** xref:components:outputs/redpanda_migrator.adoc#sync_topic_acls[`sync_topic_acls`] - Whether to synchronize topic ACLs from source to destination cluster. ACLs are transformed safely: ALLOW WRITE permissions are excluded, and ALLOW ALL is downgraded to ALLOW READ to prevent conflicts.
 *** xref:components:outputs/redpanda_migrator.adoc#serverless[`serverless`] - Enable serverless mode for Redpanda Cloud serverless clusters. This restricts topic configurations and schema features to those supported by Redpanda Serverless environments.
