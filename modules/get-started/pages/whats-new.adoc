@@ -6,8 +6,6 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
-
-
 == Version 4.67.5
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.67.5[See the full release notes^].
@@ -17,84 +15,38 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.67.5[See the full 
 This release adds the following new components:
 
 * Inputs:
-** xref:components:inputs/legacy_redpanda_migrator.adoc[`legacy_redpanda_migrator`] (deprecated): 
-Reads a batch of messages from a Kafka broker and waits for the output to acknowledge the writes before updating the Kafka consumer group offset.
-
-This input should be used in combination with a `legacy_redpanda_migrator` output.
-
-When a consumer group is specified this input consumes one or more topics where partitions will automatically balance across any other connected clients with the same consumer group. When a consumer group is not specified topics can either be consumed in their entirety or with explicit partitions.
-
-It provides the same delivery guarantees and ordering semantics as the `redpanda` input.
-
-== Metrics
-
-Emits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic.
-
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-```text
-- kafka_key
-- kafka_topic
-- kafka_partition
-- kafka_offset
-- kafka_lag
-- kafka_timestamp_ms
-- kafka_timestamp_unix
-- kafka_tombstone_message
-- All record headers
-```
-
-** xref:components:inputs/legacy_redpanda_migrator_offsets.adoc[`legacy_redpanda_migrator_offsets`] (deprecated): 
-This input reads consumer group updates via the `OffsetFetch` API and should be used in combination with the `legacy_redpanda_migrator_offsets` output.
-
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-```text
-- kafka_offset_topic
-- kafka_offset_group
-- kafka_offset_partition
-- kafka_offset_commit_timestamp
-- kafka_offset_metadata
-- kafka_is_high_watermark
-```
-
-* Outputs:
-** xref:components:outputs/legacy_redpanda_migrator.adoc[`legacy_redpanda_migrator`] (deprecated): 
-Writes a batch of messages to a Kafka broker and waits for acknowledgement before propagating it back to the input.
-
-This output should be used in combination with a `legacy_redpanda_migrator` input identified by the label specified in
-`input_resource` which it can query for topic and ACL configurations. Once connected, the output will attempt to
-create all topics which the input consumes from along with their ACLs.
-
-If the configured broker does not contain the current message topic, this output attempts to create it along with its
-ACLs.
-
-ACL migration adheres to the following principles:
-
-- `ALLOW WRITE` ACLs for topics are not migrated
-- `ALLOW ALL` ACLs for topics are downgraded to `ALLOW READ`
-- Only topic ACLs are migrated, group ACLs are not migrated
-
-** xref:components:outputs/legacy_redpanda_migrator_offsets.adoc[`legacy_redpanda_migrator_offsets`] (deprecated): This output should be used in combination with the `legacy_redpanda_migrator_offsets` input
+** xref:components:inputs/microsoft_sql_server_cdc.adoc['microsoft_sql_server_cdc']: Streams change data from a Microsoft SQL Server database into Redpanda Connect using Change Data Capture (CDC).
 
 This release adds support for the following new fields:
 
 * Inputs components
 ** xref:components:inputs/microsoft_sql_server_cdc.adoc['microsoft_sql_server_cdc']
-*** xref:components:inputs/microsoft_sql_server_cdc.adoc#checkpoint_cache_table_name['checkpoint_cache_table_name'] - The multipart identifier for the checkpoint cache table name. If no `checkpoint_cache` field is specified, this input will automatically create a table and stored procedure under the `rpcn` schema to act as a checkpoint cache. This table stores the latest processed Log Sequence Number (LSN) that has been successfully delivered, allowing Redpanda Connect to resume from that point upon restart rather than reconsume the entire change table.
-*** xref:components:inputs/microsoft_sql_server_cdc.adoc#checkpoint_cache_key['checkpoint_cache_key'] - The key to use to store the snapshot position in `checkpoint_cache`. An alternative key can be provided if multiple CDC inputs share the same cache.
+*** xref:components:inputs/microsoft_sql_server_cdc.adoc#checkpoint_cache_table_name['checkpoint_cache_table_name'] - The multipart identifier for the checkpoint cache table name.
+*** xref:components:inputs/microsoft_sql_server_cdc.adoc#checkpoint_cache_key['checkpoint_cache_key'] - The key to use to store the snapshot position in `checkpoint_cache`.
 ** xref:components:inputs/redpanda_migrator.adoc['redpanda_migrator']: xref:components:inputs/redpanda_migrator.adoc#schema_registry['schema_registry'] - Configuration for schema registry integration. Enables migration of schema subjects, versions, and compatibility settings between clusters.
 * Outputs components
 ** xref:components:outputs/redpanda_migrator.adoc['redpanda_migrator']
 *** xref:components:outputs/redpanda_migrator.adoc#schema_registry['schema_registry'] - Configuration for schema registry integration. Enables migration of schema subjects, versions, and compatibility settings between clusters.
 *** xref:components:outputs/redpanda_migrator.adoc#consumer_groups['consumer_groups']
 *** xref:components:outputs/redpanda_migrator.adoc#topic_replication_factor['topic_replication_factor'] - The replication factor for created topics. If not specified, inherits the replication factor from source topics. Useful when migrating to clusters with different sizes.
-*** xref:components:outputs/redpanda_migrator.adoc#sync_topic_acls['sync_topic_acls'] - Whether to synchronise topic ACLs from source to destination cluster. ACLs are transformed safely: ALLOW WRITE permissions are excluded, and ALLOW ALL is downgraded to ALLOW READ to prevent conflicts.
-*** xref:components:outputs/redpanda_migrator.adoc#serverless['serverless'] - Enable serverless mode for Redpanda Cloud serverless clusters. This restricts topic configurations and schema features to those supported by serverless environments.
+*** xref:components:outputs/redpanda_migrator.adoc#sync_topic_acls['sync_topic_acls'] - Whether to synchronize topic ACLs from source to destination cluster. ACLs are transformed safely: ALLOW WRITE permissions are excluded, and ALLOW ALL is downgraded to ALLOW READ to prevent conflicts.
+*** xref:components:outputs/redpanda_migrator.adoc#serverless['serverless'] - Enable serverless mode for Redpanda Cloud serverless clusters. This restricts topic configurations and schema features to those supported by Redpanda Serverless environments.
+
+=== Deprecations
+
+This release deprecates the individual migrator components and the bundle wrapper in favor of the unified `redpanda_migrator` architecture:
+
+**Deprecated components:**
+
+- `redpanda_migrator` input and output (renamed to `legacy_redpanda_migrator`)
+- `redpanda_migrator_offsets` input and output (renamed to `legacy_redpanda_migrator_offsets`)
+- `redpanda_migrator_bundle` input and output (now deprecated; these are part of the legacy migration architecture and internally depend on the deprecated individual components)
+
+These components have been renamed from their previous versions (without the `legacy_` prefix) to preserve backward compatibility. The new `redpanda_migrator` components introduced in this release contain breaking changes. Existing configurations using the previous `redpanda_migrator` components should use these `legacy_` prefixed versions to maintain current functionality.
+
+Users should migrate from both the bundle and individual legacy component approaches to the new unified `redpanda_migrator` input/output pair. The migration guide provides detailed instructions for migrating from all legacy migration architectures.
+
+For detailed migration instructions, see xref:guides:migration/migrate-unified-redpanda-migrator.adoc[].
 
 == Version 4.66.0
 

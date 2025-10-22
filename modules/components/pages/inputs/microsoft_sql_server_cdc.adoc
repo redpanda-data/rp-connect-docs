@@ -1,0 +1,56 @@
+= microsoft_sql_server_cdc
+// tag::single-source[]
+:type: input
+:status: beta
+:categories: [Services]
+:description: Enables Change Data Capture by consuming from Microsoft SQL Server's change tables.
+
+component_type_dropdown::[]
+
+Enables Change Data Capture by consuming from Microsoft SQL Server's change tables.
+
+ifndef::env-cloud[]
+Introduced in version 4.67.5.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+```yaml
+include::components:example$common/inputs/microsoft_sql_server_cdc.yaml[]
+
+```
+--
+Advanced::
++
+
+--
+```yaml
+include::components:example$advanced/inputs/microsoft_sql_server_cdc.yaml[]
+```
+--
+======
+
+Streams changes from a Microsoft SQL Server database for Change Data Capture (CDC).
+Additionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- schema (Schema of the table that the message originated from)
+- table (Name of the table that the message originated from)
+- operation (Type of operation that generated the message: "read", "delete", "insert", or "update_before" and "update_after". "read" is from messages that are read in the initial snapshot phase.)
+- lsn (the Log Sequence Number in Microsoft SQL Server)
+
+== Permissions
+
+To use the default Microsoft SQL Server cache, the user must have permissions to create tables and stored procedures. Refer to <<checkpoint_cache_table_name, `checkpoint_cache_table_name`>> for additional details.
+
+
+include::redpanda-connect:components:partial$fields/inputs/microsoft_sql_server_cdc.adoc[]
+
+
+// end::single-source[]

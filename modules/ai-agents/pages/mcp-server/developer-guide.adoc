@@ -65,7 +65,7 @@ This command scaffolds your project with the necessary directories and template 
 +
 The `resources` directory is where you define your tools such as inputs, outputs, and processors. Each tool is defined in its own YAML file. By default, the `example-` files are provided as templates. The `o11y` directory contains configuration for observability, including metrics and tracing.
 
-. Remove the example- files and add your own tools:
+. Remove the `example-` files and add your own tools:
 +
 [,bash]
 ----
@@ -75,13 +75,7 @@ rm resources/processors/example-processor.yaml
 rm resources/caches/example-cache.yaml
 ----
 +
-Then, you can create new YAML files for each tool you want to expose. For example:
-+
-[,bash]
-----
-touch resources/processors/weather-lookup.yaml
-touch resources/processors/database-query.yaml
-----
+Then, you can create new YAML files for each tool you want to expose. Make sure each file contains only one component type (input, output, processor, or cache). Put inputs in the `resources/inputs/` directory, outputs in `resources/outputs/`, processors in `resources/processors/`, and caches in `resources/caches/`.
 
 See the next sections for details on customizing these files for your use case.
 
@@ -161,6 +155,31 @@ Each YAML file should contain exactly one component type. The component type is 
 
 | `resources/caches/`
 | Cache component
+|===
+
+=== Property restrictions by component type
+
+Different component types have different property capabilities when exposed as MCP tools:
+
+[cols="1,2,2"]
+|===
+| Component Type | Property Support | Details
+
+| `input`
+| Only supports `count` property
+| AI clients can specify how many messages to read, but you cannot define custom properties.
+
+| `cache`
+| No custom properties
+| Properties are hardcoded to `key` and `value` for cache operations.
+
+| `output`
+| Custom properties supported
+| AI sees properties as an array for batch operations: `[{prop1, prop2}, {prop1, prop2}]`.
+
+| `processor`
+| Custom properties supported
+| You can define any properties needed for data processing operations.
 |===
 
 .Correct example when inside resources/inputs/

@@ -2,18 +2,15 @@
 :page-aliases: components:inputs/kafka_migrator.adoc
 // tag::single-source[]
 :type: input
+:status: experimental
 :categories: ["Services"]
-
-// © 2024 Redpanda Data Inc.
-
 
 component_type_dropdown::[]
 
-Use this connector in conjunction with the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] to migrate topics between Apache Kafka brokers. The `redpanda_migrator` input uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
-
+Unified Kafka consumer for migrating data between Kafka/Redpanda clusters. Use this input with the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] to safely transfer topic data, ACLs, schemas, and consumer group offsets between clusters. This component is designed for migration scenarios.
 
 ifndef::env-cloud[]
-Introduced in version 4.37.0.
+Introduced in version 4.67.5.
 endif::[]
 
 [tabs]
@@ -40,21 +37,38 @@ include::components:example$advanced/inputs/redpanda_migrator.yaml[]
 
 The `redpanda_migrator` input:
 
-* Reads a batch of messages from a Kafka broker.
+* Reads a batch of messages from a broker.
 * Waits for the `redpanda_migrator` output to acknowledge the writes before updating the Kafka consumer group offset.
 * Provides the same delivery guarantees and ordering semantics as the xref:components:inputs/redpanda.adoc[`redpanda` input].
 
 Specify a consumer group to make this input consume one or more topics and automatically balance the topic partitions across any other connected clients with the same consumer group. Otherwise, topics are consumed in their entirety or with explicit partitions.
 
-== Metrics
+This input requires a corresponding `redpanda_migrator` output in the same pipeline. Each pipeline must have both input and output components configured.
+For capabilities, guarantees, scheduling, and examples, see the output documentation.
 
-This input emits an `input_redpanda_migrator_lag` metric with `topic` and `partition` labels for each consumed topic. The metric records the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
+== Requirements
+
+* Must be paired with a `redpanda_migrator` output in the same pipeline.
+* Requires access to a source Kafka or Redpanda cluster.
+* Consumer group configuration is recommended for partition balancing.
+
+== Multiple migrator pairs
+When using multiple migrator pairs in a single pipeline, coordination is based on the `label` field. The label of the input and output must match exactly for correct pairing. If labels do not match, migration fails for that pair.
+
+== Performance tuning for high throughput
+For workloads with high message rates or large messages, adjust these fields:
+
+- `partition_buffer_bytes`: Increase to 10MB or higher (default: 1MB)
+- `max_yield_batch_bytes`: Increase to 100MB or higher (default: 10MB)
+
+Increasing these values allows the consumer to buffer more data per partition and yield larger batches, reducing overhead and improving throughput. Higher values increase memory usage—monitor system resources accordingly.
+
+== Metrics
+This input emits an `input_redpanda_migrator_lag` metric with `topic` and `partition` labels for each consumed topic. This metric records the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group. Monitor this metric to track migration progress and detect bottlenecks.
 
 == Metadata
-
 This input adds the following metadata fields to each message:
 
-```text
 - kafka_key
 - kafka_topic
 - kafka_partition
@@ -63,8 +77,19 @@ This input adds the following metadata fields to each message:
 - kafka_timestamp_ms
 - kafka_timestamp_unix
 - All record headers
-```
 
 include::redpanda-connect:components:partial$fields/inputs/redpanda_migrator.adoc[]
+
+== Troubleshooting
+
+* Ensure the input and output `label` fields match exactly.
+* Both input and output must be present in the pipeline.
+* Verify consumer group configuration for partition balancing.
+* Monitor the lag metric for stalled migration.
+
+== Suggested reading
+
+* xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output]
+* xref:guides:migration/migrate-unified-redpanda-migrator.adoc[Migrating from legacy components]
 
 // end::single-source[]

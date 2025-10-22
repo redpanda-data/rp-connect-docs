@@ -1,0 +1,51 @@
+= legacy_redpanda_migrator_offsets
+// tag::single-source[]
+:type: output
+:status: deprecated
+:categories: ["Services"]
+:page-aliases: components:outputs/redpanda_migrator_offsets.adoc
+
+component_type_dropdown::[]
+
+[WARNING]
+.Deprecated
+====
+This component is deprecated and will be removed in the next major version release. Please consider moving onto the unified xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] and xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] components. For migration instructions, see xref:guides:migration/migrate-unified-redpanda-migrator.adoc[].
+====
+
+Migrates offset data to a Redpanda cluster. To achieve this, pair the `legacy_redpanda_migrator_offsets` output with a matching xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input].
+
+Alternatively, use the `redpanda_migrator_bundle` xref:components:inputs/redpanda_migrator_bundle.adoc[input] and xref:components:outputs/redpanda_migrator_bundle.adoc[output] to complete the migration of topics, messages, and schemas to a Redpanda cluster.
+
+This output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
+
+
+ifndef::env-cloud[]
+Introduced in version 4.37.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/outputs/legacy_redpanda_migrator_offsets.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/legacy_redpanda_migrator_offsets.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/outputs/legacy_redpanda_migrator_offsets.adoc[]
+
+// end::single-source[]
