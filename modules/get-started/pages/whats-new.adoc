@@ -15,19 +15,19 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.67.5[See the full 
 This release adds the following new components:
 
 * Inputs:
-** xref:components:inputs/microsoft_sql_server_cdc.adoc['microsoft_sql_server_cdc']: Streams change data from a Microsoft SQL Server database into Redpanda Connect using Change Data Capture (CDC).
+** xref:components:inputs/microsoft_sql_server_cdc.adoc[`microsoft_sql_server_cdc`]: Streams change data from a Microsoft SQL Server database into Redpanda Connect using Change Data Capture (CDC).
 
 This release adds support for the following new fields:
 
 * Inputs components
-** xref:components:inputs/redpanda_migrator.adoc['redpanda_migrator']: xref:components:inputs/redpanda_migrator.adoc#schema_registry['schema_registry'] - Configuration for schema registry integration. Enables migration of schema subjects, versions, and compatibility settings between clusters.
+** xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`]: xref:components:inputs/redpanda_migrator.adoc#schema_registry[`schema_registry`] - Configuration for schema registry integration. Enables migration of schema subjects, versions, and compatibility settings between clusters.
 * Outputs components
-** xref:components:outputs/redpanda_migrator.adoc['redpanda_migrator']
-*** xref:components:outputs/redpanda_migrator.adoc#schema_registry['schema_registry'] - Configuration for schema registry integration. Enables migration of schema subjects, versions, and compatibility settings between clusters.
-*** xref:components:outputs/redpanda_migrator.adoc#consumer_groups['consumer_groups']
-*** xref:components:outputs/redpanda_migrator.adoc#topic_replication_factor['topic_replication_factor'] - The replication factor for created topics. If not specified, inherits the replication factor from source topics. Useful when migrating to clusters with different sizes.
-*** xref:components:outputs/redpanda_migrator.adoc#sync_topic_acls['sync_topic_acls'] - Whether to synchronize topic ACLs from source to destination cluster. ACLs are transformed safely: ALLOW WRITE permissions are excluded, and ALLOW ALL is downgraded to ALLOW READ to prevent conflicts.
-*** xref:components:outputs/redpanda_migrator.adoc#serverless['serverless'] - Enable serverless mode for Redpanda Cloud serverless clusters. This restricts topic configurations and schema features to those supported by Redpanda Serverless environments.
+** xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`]
+*** xref:components:outputs/redpanda_migrator.adoc#schema_registry[`schema_registry`] - Configuration for schema registry integration. Enables migration of schema subjects, versions, and compatibility settings between clusters.
+*** xref:components:outputs/redpanda_migrator.adoc#consumer_groups[`consumer_groups`]
+*** xref:components:outputs/redpanda_migrator.adoc#topic_replication_factor[`topic_replication_factor`] - The replication factor for created topics. If not specified, inherits the replication factor from source topics. Useful when migrating to clusters with different sizes.
+*** xref:components:outputs/redpanda_migrator.adoc#sync_topic_acls[`sync_topic_acls`] - Whether to synchronize topic ACLs from source to destination cluster. ACLs are transformed safely: ALLOW WRITE permissions are excluded, and ALLOW ALL is downgraded to ALLOW READ to prevent conflicts.
+*** xref:components:outputs/redpanda_migrator.adoc#serverless[`serverless`] - Enable serverless mode for Redpanda Cloud serverless clusters. This restricts topic configurations and schema features to those supported by Redpanda Serverless environments.
 
 === Deprecations
 
