@@ -1,6 +1,7 @@
 = Migrate to the Unified Redpanda Migrator
 :description: Learn how to migrate from legacy migrator components to the unified `redpanda_migrator` input/output pair in Redpanda Connect 4.67.5+.
 
+// tag::single-source[]
 This guide explains how to migrate from legacy migrator components (`redpanda_migrator_bundle`, `legacy_redpanda_migrator` and `legacy_redpanda_migrator_offsets`) to the unified `redpanda_migrator` input/output pair introduced in Redpanda Connect 4.67.5+.
 
 The unified migrator consolidates all migration logic into a single input/output pair, simplifying configuration and improving reliability.
@@ -228,3 +229,5 @@ After verifying that the new migrator works as expected:
 * Update internal documentation and runbooks.
 * Train your team on the new configuration model.
 * See the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] reference for advanced configuration options.
+// end::single-source[]
+
