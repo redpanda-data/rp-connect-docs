@@ -4,14 +4,16 @@
 :type: output
 :categories: ["Services"]
 
-// © 2024 Redpanda Data Inc.
-
-
 component_type_dropdown::[]
 
-Writes a batch of messages to an Apache Kafka broker and waits for acknowledgement before propagating any acknowledgements back to the input.
+A Kafka producer for migrating data between Kafka/Redpanda clusters.
 
-Use this connector in conjunction with the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] to migrate topics between Kafka brokers. The `redpanda_migrator` output uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
+The `redpanda_migrator` output coordinates migration of topics, schemas, and consumer groups from a source Kafka/Redpanda cluster to a destination cluster.
+
+[IMPORTANT]
+====
+This output **must** be paired with a xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] in the same pipeline. Each pipeline requires both input and output components.
+====
 
 ifndef::env-cloud[]
 Introduced in version 4.37.0.
@@ -39,15 +41,101 @@ include::components:example$advanced/outputs/redpanda_migrator.yaml[]
 --
 ======
 
-The default source for reading topics and access control lists (ACLs) is the <<input_resource,`input_resource`>>, which is set to `redpanda_migrator_input`. If your input uses a custom label, you must update this value.
 
-When connected, this output queries the `redpanda_migrator` input for topic and ACL configurations. If the destination broker does not contain the topic in the current message, this output attempts to create the topic along with its ACLs. If the topic already exists on the broker, only missing ACLs are migrated.
+== Multiple migrator pairs
 
-ACL migration adheres to the following principles:
+When using multiple migrator pairs in a pipeline, match the `label` field exactly between input and output components for correct coordination.
 
-- `ALLOW WRITE` ACLs for topics are not migrated
-- `ALLOW ALL` ACLs for topics are downgraded to `ALLOW READ`
-- Only topic ACLs are migrated, group ACLs are not migrated
+== Performance tuning
+
+For high-throughput workloads, adjust buffer sizes on the input component. xref:components:inputs/redpanda_migrator.adoc#performance-tuning[See input docs for tuning advice.]
+
+== Synchronization details
+
+*Topics*
+
+- Name resolution with interpolation (default: preserve source name)
+- Automatic creation with mirrored partition counts
+- Selectable replication factor (default: inherit from source)
+- Supported topic configuration keys (serverless-aware subset)
+- Optional ACL replication:
+  - Excludes `ALLOW WRITE` entries
+  - Downgrades `ALLOW ALL` to `READ`
+  - Preserves resource pattern type and host filters
+
+*Schema Registry*
+
+- One-shot or periodic syncing
+- Subject selection via include/exclude regex
+- Subject renaming with interpolation
+- Versions: `latest` or `all` (default: `all`)
+- Optional include of soft-deleted subjects
+- ID handling: translate IDs or keep fixed
+- Optional schema normalization
+- Compatibility propagation (per-subject only)
+- Schema metadata/rules not copied in Serverless mode
+
+*Consumer Groups*
+
+- Periodic syncing
+- Group selection using regex
+- Only `Empty` state groups migrated
+- Timestamp-based offset translation (approximate)
+- No rewind guarantee: offsets only move forward
+- Requires matching partition counts
+
+== How it works
+
+- Topics: Synced on demand. First write triggers creation.
+- Schema Registry: Synced at connect, then as needed.
+- Consumer Groups: Background loop, filtered by topic mappings.
+
+== Guarantees
+
+- Topics created with intended partitioning/replication.
+- Existing topics respected. Mismatches logged.
+- Consumer group offsets never rewound.
+- ACL replication excludes unsafe grants.
+
+== Limitations
+
+- Destination Schema Registry must be in `READWRITE` or `IMPORT` mode.
+- Offset translation is best-effort.
+- Consumer group migration requires identical partition counts.
+
+== Metrics
+
+The component exposes comprehensive metrics for monitoring migration operations:
+
+[cols="2,1,2,2"]
+|===
+| Metric Name | Type | Labels | Description
+
+|*Topic migration metrics*|||
+|`redpanda_migrator_topics_created_total` | counter |  | Total topics created on destination
+|`redpanda_migrator_topic_create_errors_total` | counter |  | Topic creation errors
+|`redpanda_migrator_topic_create_latency_ns` | timer |  | Topic creation latency (ns)
+
+|*Schema Registry migration metrics*|||
+|`redpanda_migrator_sr_schemas_created_total` | counter |  | Schemas created in destination registry
+|`redpanda_migrator_sr_schema_create_errors_total` | counter |  | Schema creation errors
+|`redpanda_migrator_sr_schema_create_latency_ns` | timer |  | Schema creation latency (ns)
+|`redpanda_migrator_sr_compatibility_updates_total` | counter |  | Compatibility level updates applied
+|`redpanda_migrator_sr_compatibility_update_errors_total` | counter |  | Compatibility update errors
+|`redpanda_migrator_sr_compatibility_update_latency_ns` | timer |  | Compatibility update latency (ns)
+
+|*Consumer group migration metrics*|||
+|`redpanda_migrator_cg_offsets_translated_total` | counter | group | Offsets translated per consumer group
+|`redpanda_migrator_cg_offset_translation_errors_total` | counter | group | Offset translation errors per group
+|`redpanda_migrator_cg_offset_translation_latency_ns` | timer | group | Offset translation latency per group (ns)
+|`redpanda_migrator_cg_offsets_committed_total` | counter | group | Offsets committed per consumer group
+|`redpanda_migrator_cg_offset_commit_errors_total` | counter | group | Offset commit errors per group
+|`redpanda_migrator_cg_offset_commit_latency_ns` | timer | group | Offset commit latency per group (ns)
+
+|*Consumer lag metrics*|||
+|`redpanda_lag` | gauge | topic, partition | Current consumer lag in messages for each topic partition. Shows difference between high water mark and current consumer position.
+|===
+
 
 include::redpanda-connect:components:partial$examples/outputs/redpanda_migrator.adoc[]
 

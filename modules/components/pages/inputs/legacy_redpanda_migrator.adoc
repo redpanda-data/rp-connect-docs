@@ -1,0 +1,76 @@
+= legacy_redpanda_migrator
+// tag::single-source[]
+:type: input
+:categories: ["Services"]
+:status: deprecated
+
+// © 2024 Redpanda Data Inc.
+
+
+component_type_dropdown::[]
+
+[WARNING]
+.Deprecated in 4.67.5
+====
+This component is deprecated and will be removed in the next major version release. Please consider moving onto the unified xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] and xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] components. For migration instructions, see xref:guides:migration/migrate-unified-redpanda-migrator.adoc[].
+====
+
+Use this connector in conjunction with the xref:components:outputs/legacy_redpanda_migrator.adoc[`legacy_redpanda_migrator` output] to migrate topics between Apache Kafka brokers. The `legacy_redpanda_migrator` input uses the https://github.com/twmb/franz-go[Franz Kafka client library^].
+
+
+ifndef::env-cloud[]
+Introduced in version 4.37.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/inputs/legacy_redpanda_migrator.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/legacy_redpanda_migrator.yaml[]
+```
+
+--
+======
+
+The `legacy_redpanda_migrator` input:
+
+* Reads a batch of messages from a Kafka broker.
+* Waits for the `legacy_redpanda_migrator` output to acknowledge the writes before updating the Kafka consumer group offset.
+* Provides the same delivery guarantees and ordering semantics as the xref:components:inputs/redpanda.adoc[`redpanda` input].
+
+Specify a consumer group to make this input consume one or more topics and automatically balance the topic partitions across any other connected clients with the same consumer group. Otherwise, topics are consumed in their entirety or with explicit partitions.
+
+== Metrics
+
+This input emits an `input_redpanda_migrator_lag` metric with `topic` and `partition` labels for each consumed topic. The metric records the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+```text
+- kafka_key
+- kafka_topic
+- kafka_partition
+- kafka_offset
+- kafka_lag
+- kafka_timestamp_ms
+- kafka_timestamp_unix
+- All record headers
+```
+
+include::redpanda-connect:components:partial$fields/inputs/legacy_redpanda_migrator.adoc[]
+
+// end::single-source[]

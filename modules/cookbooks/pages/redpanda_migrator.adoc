@@ -6,31 +6,17 @@
 
 With Redpanda Migrator, you can move your workloads from any Apache Kafka system to Redpanda using a single command. It lets you migrate Kafka messages, schemas, and ACLs quickly and efficiently.
 
-Redpanda Connect's Redpanda Migrator uses functionality from the following components:
+Redpanda Connect's Redpanda Migrator uses the unified migrator components (available in Redpanda Connect 4.67.5+):
 
-- xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input]
-- xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output]
-- xref:components:inputs/kafka_franz.adoc[`kafka_franz` input]
-- xref:components:inputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` input]
-- xref:components:outputs/redpanda_migrator_offsets.adoc[`redpanda_migrator_offsets` output]
-- xref:components:inputs/schema_registry.adoc[`schema_registry` input]
-- xref:components:outputs/schema_registry.adoc[`schema_registry` output]
+- xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] connects to the source Kafka cluster and Schema Registry.
+- xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] handles all migration logic including topic creation, schema synchronization, and consumer group offset translation.
 
-For convenience, these components are bundled together into the following:
-
-- xref:components:inputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input]
-- xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` output]
-
-This cookbook shows how to use the bundled components.
-
-== Limitations
-
-The Redpanda Migrator does not support migrations to or from Redpanda Cloud Serverless (multi-tenant) clusters.
+NOTE: If you're currently using the legacy `redpanda_migrator_bundle` components, see xref:guides:migration/migrate-unified-redpanda-migrator.adoc[] for migration instructions.
 
 ifndef::env-cloud[]
 == Create the Docker containers
 
-First, you'll need two clusters. To keep it simple, you can run the https://hub.docker.com/r/bitnami/kafka[Bitnami Kafka^] and https://hub.docker.com/r/bitnami/schema-registry[Schema Registry^] Docker containers for the source cluster and a https://hub.docker.com/r/redpandadata/redpanda[Redpanda Docker container^] for the destination cluster via https://docs.docker.com/compose[Docker Compose^].
+First, you need two clusters. To keep it simple, you can run the https://hub.docker.com/r/bitnami/kafka[Bitnami Kafka^] and https://hub.docker.com/r/bitnami/schema-registry[Schema Registry^] Docker containers for the source cluster and a https://hub.docker.com/r/redpandadata/redpanda[Redpanda Docker container^] for the destination cluster via https://docs.docker.com/compose[Docker Compose^].
 
 .`docker-compose.yml`
 [source,yaml]
@@ -113,7 +99,7 @@ endif::[]
 ifdef::env-cloud[]
 == Create a Kafka cluster and a Redpanda Cloud cluster
 
-First, you'll need to provision two clusters, a Kafka one called `source` and a Redpanda Cloud one called `destination`. We'll use the following sample connection details throughout the rest of this cookbook:
+First, you need to provision two clusters, a Kafka one called `source` and a Redpanda Cloud one called `destination`. This cookbook uses the following sample connection details throughout the rest of this cookbook:
 
 .Source
 ----
@@ -131,7 +117,7 @@ username:        redpanda
 password:        testpass
 ----
 
-Then you'll have to create two topics in the `source` Kafka cluster, `foo` and `bar`, and an ACL for each topic:
+Then you create two topics in the `source` Kafka cluster, `foo` and `bar`, and an ACL for each topic:
 
 [source,bash]
 ----
@@ -239,6 +225,8 @@ ifdef::env-cloud[]
 . For **Compute units**, leave the default value of **1**. Compute units are used to allocate server resources to a pipeline. One compute unit is equivalent to 0.1 CPU and 400 MB of memory.
 . For **Configuration**, paste the following configuration.
 +
+NOTE: The Brave browser does not fully support code snippets.
++
 .`generate_data.yaml`
 [source,yaml]
 ----
@@ -290,7 +278,7 @@ NOTE: The Brave browser does not fully support code snippets.
 . Click **Create**. Your pipeline details are displayed and the pipeline state changes from **Starting** to **Running**, which may take a few minutes. If you don't see this state change, refresh your page.
 endif::[]
 
-Next, add a Redpanda Connect consumer, which reads messages from the `source` cluster topics, and leave it running. This consumer uses the `foobar` consumer group, which will be reused in a later step when consuming from the `destination` cluster.
+Next, add a Redpanda Connect consumer, which reads messages from the `source` cluster topics, and leave it running. This consumer uses the `foobar` consumer group, which is reused in a later step when consuming from the `destination` cluster.
 
 ifndef::env-cloud[]
 .`read_data_source.yaml`
@@ -305,7 +293,6 @@ input:
     topics:
       - '^[^_]' # Skip topics which start with `_`
     regexp_topics: true
-    start_from_oldest: true
     consumer_group: foobar
 
   processors:
@@ -347,7 +334,6 @@ input:
     topics:
       - '^[^_]' # Skip topics which start with `_`
     regexp_topics: true
-    start_from_oldest: true
     consumer_group: foobar
     tls:
       enabled: true
@@ -377,15 +363,20 @@ NOTE: The Brave browser does not fully support code snippets.
 . Click **Create**. Your pipeline details are displayed and the pipeline state changes from **Starting** to **Running**, which may take a few minutes. If you don't see this state change, refresh your page.
 endif::[]
 
-At this point, the `source` cluster should have some data in both `foo` and `bar` topics, and the consumer should print the messages it reads from these topics to `stdout`.
+At this point, the `source` cluster has some data in both `foo` and `bar` topics, and the consumer prints the messages it reads from these topics to `stdout`.
 
 == Configure and start Redpanda Migrator
 
-The Redpanda Migrator Bundle does the following:
+The unified Redpanda Migrator does the following:
 
-- On startup, it reads all the schemas from the `source` cluster Schema Registry through the REST API and pushes them to the destination cluster Schema Registry using the same API. It needs to preserve the schema IDs, so the `destination` cluster *must not have any schemas in it*.
-- Once the schemas have been imported, Redpanda Migrator begins the migration of all the selected topics from the `source` cluster, and any associated ACLs. After it finishes creating all the topics and ACLs that don't exist in the `destination` cluster, it begins the migration of messages and performs consumer group offsets remapping.
-- If any new topics are created in the `source` cluster while Redpanda Migrator is running, they are only migrated to the `destination` cluster if messages are written to them.
+- The `redpanda_migrator` input connects to the source Kafka cluster and Schema Registry to consume messages and schema information.
+- The `redpanda_migrator` output handles all migration logic:
+  * Schema migration: reads schemas from the source Schema Registry and synchronizes them to the destination.
+  * Topic creation: automatically creates destination topics that don't exist with proper configurations.
+  * ACL migration: migrates access control lists according to the migration rules.
+  * Message streaming: processes and routes messages from source to destination topics.
+  * Consumer group offset translation: maps source consumer group offsets to equivalent destination positions.
+- If new topics are created in the source cluster while the migrator is running, they are migrated when messages are written to them.
 
 ACL migration for topics adheres to the following principles:
 
@@ -395,39 +386,42 @@ ACL migration for topics adheres to the following principles:
 
 NOTE: Changing topic configurations, such as partition count, isn't currently supported.
 
-Now, use the following Redpanda Migrator Bundle configuration. See the xref:components:inputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` input] and xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` output] docs for details.
-
-NOTE: The `max_in_flight: 1` setting is required to preserve message ordering at the partition level. See the xref:components:outputs/redpanda_migrator.adoc#max_in_flight[`redpanda_migrator` output documentation] for more details.
+Now, use the following unified Redpanda Migrator configuration. See the xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] and xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] docs for details.
 
 ifndef::env-cloud[]
-.`redpanda_migrator_bundle.yaml`
+.`redpanda_migrator.yaml`
 [source,yaml]
 ----
 input:
-  redpanda_migrator_bundle:
-    redpanda_migrator:
-      seed_brokers: [ "localhost:9092" ]
-      topics:
-        - '^[^_]' # Skip internal topics which start with `_`
-      regexp_topics: true
-      consumer_group: migrator_bundle
-      start_from_oldest: true
-      replication_factor_override: false
+  label: "migration_pipeline" # <1>
+  redpanda_migrator:
+    # Source Kafka settings
+    seed_brokers: [ "localhost:9092" ]
+    topics:
+      - '^[^_]' # Skip internal topics which start with `_`
+    regexp_topics: true
+    consumer_group: migrator
 
+    # Source Schema Registry settings
     schema_registry:
       url: http://localhost:8081
-      include_deleted: true
-      subject_filter: ""
 
 output:
-  redpanda_migrator_bundle:
-    redpanda_migrator:
-      seed_brokers: [ "localhost:9093" ]
-      max_in_flight: 1
-      replication_factor_override: false
+  label: "migration_pipeline" # <2>
+  redpanda_migrator:
+    # Destination Redpanda settings
+    seed_brokers: [ "localhost:9093" ]
 
+    # Destination Schema Registry and migration settings
     schema_registry:
       url: http://localhost:8082
+      include_deleted: true
+      translate_ids: true
+
+    # Consumer group migration settings
+    consumer_groups:
+      enabled: true
+      interval: 30s
 
 metrics:
   prometheus: {}
@@ -435,11 +429,18 @@ metrics:
     meta label = if this == "input_redpanda_migrator_lag" { "source" }
 ----
 
-Launch the Redpanda Migrator Bundle pipeline, and leave it running:
+<1> Labels are used for pairing input and output components.
+<2> Matching label pairs the input and output components.
++
+Labels are required only when using multiple input/output pairs (for example, migrating from multiple Kafka clusters to multiple Redpanda clusters). However, it's recommended to always use labels for clarity and consistency, even with single input/output configurations.
++
+TIP: Label names must be between 3 and 128 characters and can only contain alphanumeric characters, hyphens, and underscores (`A-Za-z0-9-_`).
+
+Launch the unified Redpanda Migrator pipeline, and leave it running:
 
 [source,bash]
 ----
-rpk connect run redpanda_migrator_bundle.yaml
+rpk connect run redpanda_migrator.yaml
 ----
 
 endif::[]
@@ -450,56 +451,71 @@ ifdef::env-cloud[]
 . For **Compute units**, leave the default value of **1**.
 . For **Configuration**, paste the following configuration.
 +
-.`redpanda_migrator_bundle.yaml`
+.`redpanda_migrator.yaml`
 [source,yaml]
 ----
 input:
-  redpanda_migrator_bundle:
-    redpanda_migrator:
-      seed_brokers: [ "source.cloud.kafka.com:9092" ]
-      topics:
-        - '^[^_]' # Skip internal topics which start with `_`
-      regexp_topics: true
-      consumer_group: migrator_bundle
-      start_from_oldest: true
-      sasl:
-        - mechanism: SCRAM-SHA-256
-          username: kafka
-          password: testpass
+  label: "migration_pipeline" # <1>
+  redpanda_migrator:
+    # Source Kafka settings
+    seed_brokers: [ "source.cloud.kafka.com:9092" ]
+    topics:
+      - '^[^_]' # Skip internal topics which start with `_`
+    regexp_topics: true
+    consumer_group: migrator
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: kafka
+        password: testpass
 
+    # Source Schema Registry settings
     schema_registry:
       url: "https://schema-registry-source.cloud.kafka.com:30081"
-      include_deleted: true
-      subject_filter: ""
       basic_auth:
         enabled: true
         username: kafka
         password: testpass
 
 output:
-  redpanda_migrator_bundle:
-    redpanda_migrator:
-      seed_brokers: [ "destination.cloud.redpanda.com:9092" ]
-      max_in_flight: 1
-      sasl:
-        - mechanism: SCRAM-SHA-256
-          username: redpanda
-          password: testpass
+  label: "migration_pipeline" # <2>
+  redpanda_migrator:
+    # Destination Redpanda settings
+    seed_brokers: [ "destination.cloud.redpanda.com:9092" ]
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: redpanda
+        password: testpass
 
+    # Destination Schema Registry and migration settings
     schema_registry:
       url: https://schema-registry-destination.cloud.redpanda.com:30081
+      include_deleted: true
+      translate_ids: true
       basic_auth:
         enabled: true
         username: redpanda
         password: testpass
 
-metrics:
-  prometheus: {}
-  mapping: |
-    meta label = if this == "input_redpanda_migrator_lag" { "source" }
+    # Consumer group migration settings
+    consumer_groups:
+      enabled: true
+      interval: 30s
+
+    serverless: false <3>
 ----
+
+<1> Labels are used for pairing input and output components.  
+<2> Matching label pairs the input and output components.
 +
-NOTE: The Brave browser does not fully support code snippets.
+Labels are required only when using multiple input/output pairs (for example, migrating from multiple Kafka clusters to multiple Redpanda clusters). However, it's recommended to always use labels for clarity and consistency, even with single input/output configurations.
++
+TIP: Label names must be between 3 and 128 characters and can only contain alphanumeric characters, hyphens, and underscores (`A-Za-z0-9-_`).
+
+<3> Enable this flag when migrating to Redpanda Serverless. It automatically limits configuration to features supported by Serverless clusters. If you're migrating to a BYOC cluster, you can omit this field.
 
 . Click **Create**. Your pipeline details are displayed and the pipeline state changes from **Starting** to **Running**, which may take a few minutes. If you don't see this state change, refresh your page.
 endif::[]
@@ -508,7 +524,7 @@ endif::[]
 
 You can use the Redpanda xref:ROOT:get-started:rpk/index.adoc[`rpk` CLI tool] to check which topics and ACLs have been migrated to the `destination` cluster. You can quickly xref:ROOT:get-started:rpk-install.adoc[install `rpk`] if you don't already have it.
 
-NOTE: For now, users need to be migrated manually. However, this step is not required for the current demo. Similarly, roles are specific to Redpanda and, for now, will also require manual migration if the `source` cluster is based on Redpanda.
+NOTE: For now, users require manual migration. However, this step is not required for the current demo. Similarly, roles are specific to Redpanda and, for now, also require manual migration if the `source` cluster is based on Redpanda.
 
 ifndef::env-cloud[]
 
@@ -592,7 +608,6 @@ input:
     topics:
       - '^[^_]' # Skip topics which start with `_`
     regexp_topics: true
-    start_from_oldest: true
     consumer_group: foobar
 
   processors:
@@ -636,7 +651,6 @@ input:
     topics:
       - '^[^_]' # Skip topics which start with `_`
     regexp_topics: true
-    start_from_oldest: true
     consumer_group: foobar
     sasl:
       - mechanism: SCRAM-SHA-256
@@ -666,7 +680,7 @@ endif::[]
 
 The `source` cluster consumer uses the same `foobar` consumer group. This consumer resumes reading messages from where the `source` consumer left off.
 
-Redpanda Migrator needs to perform offset remapping when migrating consumer group offsets to the `destination` cluster. While more sophisticated approaches are possible, Redpanda chose to use a simple timestamp-based approach. So, for each migrated offset, the `destination` cluster is queried to find the latest offset before the received offset timestamp. Redpanda Migrator then writes this offset as the `destination` consumer group offset for the corresponding topic and partition pair.
+Redpanda Migrator performs offset remapping when migrating consumer group offsets to the `destination` cluster. While more sophisticated approaches are possible, Redpanda chose to use a simple timestamp-based approach. So, for each migrated offset, the `destination` cluster is queried to find the latest offset before the received offset timestamp. Redpanda Migrator then writes this offset as the `destination` consumer group offset for the corresponding topic and partition pair.
 
 Although the timestamp-based approach doesn't guarantee exactly-once delivery, it minimizes the likelihood of message duplication and avoids the need for complex and error-prone offset remapping logic.
 

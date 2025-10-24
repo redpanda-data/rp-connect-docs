@@ -2,6 +2,7 @@
 :page-aliases: components:inputs/kafka_migrator_bundle.adoc
 // tag::single-source[]
 :type: input
+:status: deprecated
 :categories: ["Services"]
 
 // © 2024 Redpanda Data Inc.
@@ -9,6 +10,11 @@
 
 component_type_dropdown::[]
 
+[WARNING]
+.Deprecated in 4.67.5
+====
+This component is deprecated and will be removed in the next major version release. Please consider moving onto the unified xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] and xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] components. For migration instructions, see xref:guides:migration/migrate-unified-redpanda-migrator.adoc[].
+====
 
 The `redpanda_migrator_bundle` input reads messages and schemas from an Apache Kafka or Redpanda cluster. Use this input in conjunction with the xref:components:outputs/redpanda_migrator_bundle.adoc[`redpanda_migrator_bundle` output].
 

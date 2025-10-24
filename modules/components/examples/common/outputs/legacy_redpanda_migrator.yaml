@@ -1,0 +1,11 @@
+outputs:
+  label: ""
+  legacy_redpanda_migrator:
+    seed_brokers: [] # No default (required)
+    topic: "" # No default (required)
+    key: "" # No default (optional)
+    partition: "" # No default (optional)
+    metadata:
+      include_prefixes: []
+      include_patterns: []
+    max_in_flight: 256

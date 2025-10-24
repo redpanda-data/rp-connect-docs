@@ -6,6 +6,43 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+== Version 4.67.5
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.67.5[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+* Inputs:
+** xref:components:inputs/microsoft_sql_server_cdc.adoc[`microsoft_sql_server_cdc`]: Streams change data from a Microsoft SQL Server database into Redpanda Connect using Change Data Capture (CDC).
+
+This release adds support for the following new fields:
+
+* Inputs components
+** xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`]
+*** xref:components:inputs/redpanda_migrator.adoc#schema_registry[`schema_registry`] - Configuration for schema registry integration. Enables migration of schema subjects, versions, and compatibility settings between clusters.
+* Outputs components
+** xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`]
+*** xref:components:outputs/redpanda_migrator.adoc#schema_registry[`schema_registry`] - Configuration for schema registry integration. Enables migration of schema subjects, versions, and compatibility settings between clusters.
+*** xref:components:outputs/redpanda_migrator.adoc#consumer_groups[`consumer_groups`] - Whether consumer group offset migration is enabled. When disabled, no consumer group operations are performed.
+*** xref:components:outputs/redpanda_migrator.adoc#topic_replication_factor[`topic_replication_factor`] - The replication factor for created topics. If not specified, inherits the replication factor from source topics. Useful when migrating to clusters with different sizes.
+*** xref:components:outputs/redpanda_migrator.adoc#sync_topic_acls[`sync_topic_acls`] - Whether to synchronize topic ACLs from source to destination cluster. ACLs are transformed safely: ALLOW WRITE permissions are excluded, and ALLOW ALL is downgraded to ALLOW READ to prevent conflicts.
+*** xref:components:outputs/redpanda_migrator.adoc#serverless[`serverless`] - Enable serverless mode for Redpanda Cloud serverless clusters. This restricts topic configurations and schema features to those supported by Redpanda Serverless environments.
+
+=== Deprecations
+
+This release deprecates the individual migrator components and the bundle wrapper in favor of the unified `redpanda_migrator` architecture.
+
+**Deprecated components:**
+
+- `redpanda_migrator` input and output (renamed to `legacy_redpanda_migrator`)
+- `redpanda_migrator_offsets` input and output (renamed to `legacy_redpanda_migrator_offsets`)
+- `redpanda_migrator_bundle` input and output (now deprecated; these are part of the legacy migration architecture and internally depend on the deprecated `legacy_redpanda_migrator` and `legacy_redpanda_migrator_offsets` components)
+
+These components have been renamed from their previous versions (without the `legacy_` prefix) to preserve backward compatibility. The new `redpanda_migrator` components introduced in this release contain breaking changes. Existing configurations using the previous `redpanda_migrator` components should use these `legacy_` prefixed versions to maintain current functionality.
+
+Users should migrate from deprecated components to the new unified `redpanda_migrator` input/output pair. For detailed migration instructions, see xref:guides:migration/migrate-unified-redpanda-migrator.adoc[].
 
 == Version 4.66.0
 
