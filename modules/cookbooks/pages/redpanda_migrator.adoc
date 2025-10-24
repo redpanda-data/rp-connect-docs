@@ -505,18 +505,17 @@ output:
       enabled: true
       interval: 30s
 
-metrics:
-  prometheus: {}
-  mapping: |
-    meta label = if this == "input_redpanda_migrator_lag" { "source" }
+    serverless: false <3>
 ----
 
-<1> Labels are used for pairing input and output components.
+<1> Labels are used for pairing input and output components.  
 <2> Matching label pairs the input and output components.
 +
 Labels are required only when using multiple input/output pairs (for example, migrating from multiple Kafka clusters to multiple Redpanda clusters). However, it's recommended to always use labels for clarity and consistency, even with single input/output configurations.
 +
 TIP: Label names must be between 3 and 128 characters and can only contain alphanumeric characters, hyphens, and underscores (`A-Za-z0-9-_`).
+
+<3> Enable this flag when migrating to Redpanda Serverless. It automatically limits configuration to features supported by Serverless clusters. If you're migrating to a BYOC cluster, you can omit this field.
 
 . Click **Create**. Your pipeline details are displayed and the pipeline state changes from **Starting** to **Running**, which may take a few minutes. If you don't see this state change, refresh your page.
 endif::[]

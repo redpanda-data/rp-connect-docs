@@ -73,12 +73,12 @@ For high-throughput workloads, adjust buffer sizes on the input component. xref:
 - ID handling: translate IDs or keep fixed
 - Optional schema normalization
 - Compatibility propagation (per-subject only)
-- [Serverless] Schema metadata/rules not copied
+- Schema metadata/rules not copied in Serverless mode
 
 *Consumer Groups*
 
 - Periodic syncing
-- Group selection via regex
+- Group selection using regex
 - Only `Empty` state groups migrated
 - Timestamp-based offset translation (approximate)
 - No rewind guarantee: offsets only move forward
