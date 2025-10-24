@@ -1,0 +1,68 @@
+= jira
+// tag::single-source[]
+:type: processor
+:status: experimental
+:categories: [Services]
+:description: Queries Jira resources and returns structured data
+
+component_type_dropdown::[]
+
+Queries Jira resources and returns structured data
+
+ifndef::env-cloud[]
+Introduced in version 4.68.0.
+endif::[]
+
+[tabs]
+======
+Common::
++
+--
+```yaml
+processor:
+  label: ""
+  jira:
+    base_url: "" # No default (required)
+    username: "" # No default (required)
+    api_token: "" # No default (required)
+    max_results_per_page: 50
+    request_timeout: 30s
+    max_retries: 10
+```
+--
+Advanced::
++
+--
+```yaml
+processor:
+  label: ""
+  jira:
+    base_url: "" # No default (required)
+    username: "" # No default (required)
+    api_token: "" # No default (required)
+    max_results_per_page: 50
+    request_timeout: 30s
+    max_retries: 10
+```
+--
+======
+
+Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.
+
+Supports querying the following Jira resources:
+- Issues (JQL queries)
+- Issue transitions
+- Users
+- Roles
+- Project versions
+- Project categories
+- Project types
+- Projects
+
+The processor authenticates using basic authentication with username and API token. Input messages should contain valid Jira queries in JSON format.
+
+include::redpanda-connect:components:partial$fields/processors/jira.adoc[]
+
+include::redpanda-connect:components:partial$examples/processors/jira.adoc[]
+
+// end::single-source[]
