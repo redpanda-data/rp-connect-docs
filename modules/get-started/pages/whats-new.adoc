@@ -18,17 +18,6 @@ This release adds the following new components:
 * Processors:
 ** xref:components:processors/jira.adoc[`jira`] (experimental): Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.
 
-Supports querying the following Jira resources:
-- Issues (JQL queries)
-- Issue transitions
-- Users
-- Roles
-- Project versions
-- Project categories
-- Project types
-- Projects
-
-The processor authenticates using basic authentication with username and API token. Input messages should contain valid Jira queries in JSON format.
 
 This release adds support for the following new fields:
 
