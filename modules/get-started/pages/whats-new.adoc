@@ -24,6 +24,10 @@ This release adds support for the following new fields:
 * Inputs components
 ** xref:components:inputs/redpanda.adoc['redpanda']: xref:components:inputs/redpanda.adoc#unordered_processing['unordered_processing'] - Configures partition consumers to allow parallel and therefore unordered processing of messages of any given partition. This allows for better utilization of processing threads and asynchronous publishing at the output level. The maximum parallelization of each partition is determined by the checkpoint_limit field.
 
+=== Deprecations
+
+The `kafka`, `kafka_franz`, and `redpanda_common` inputs and outputs are now deprecated. Their functionality has been consolidated into the unified `redpanda` input and output components. Migrate existing configurations to use the new `redpanda` components for continued support and access to the latest features.
+
 == Version 4.67.5
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.67.5[See the full release notes^].

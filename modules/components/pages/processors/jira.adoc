@@ -3,11 +3,11 @@
 :type: processor
 :status: experimental
 :categories: [Services]
-:description: Queries Jira resources and returns structured data
+:description: Queries Jira resources and returns structured data.
 
 component_type_dropdown::[]
 
-Queries Jira resources and returns structured data
+Queries Jira resources and returns structured data.
 
 ifndef::env-cloud[]
 Introduced in version 4.68.0.
@@ -18,38 +18,25 @@ endif::[]
 Common::
 +
 --
-```yaml
-processor:
-  label: ""
-  jira:
-    base_url: "" # No default (required)
-    username: "" # No default (required)
-    api_token: "" # No default (required)
-    max_results_per_page: 50
-    request_timeout: 30s
-    max_retries: 10
-```
+[,yaml]
+----
+include::components:example$common/processors/jira.yaml[]
+----
 --
 Advanced::
 +
 --
-```yaml
-processor:
-  label: ""
-  jira:
-    base_url: "" # No default (required)
-    username: "" # No default (required)
-    api_token: "" # No default (required)
-    max_results_per_page: 50
-    request_timeout: 30s
-    max_retries: 10
-```
+[,yaml]
+----
+include::components:example$advanced/processors/jira.yaml[]
+----
 --
 ======
 
 Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.
 
 Supports querying the following Jira resources:
+
 - Issues (JQL queries)
 - Issue transitions
 - Users
