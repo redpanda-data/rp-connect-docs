@@ -1,70 +1,55 @@
 {
   "definitions": {
-    "default_schema_id": {
-      "description": "This schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If this value is not set, schema header errors are returned.\n\nThis configuration does not work with protobuf schemas.\n\nTIP: You can also use the xref:guides:bloblang/functions.adoc#with_schema_registry_header[`with_schema_registry_header`] bloblang function to add a schema ID to messages."
+    "access_token_secret": {
+      "description": "The secret that establishes ownership of the `oauth.access_token` in OAuth 1.0 authentication."
     },
-    "regexp_topics": {
-      "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`."
-    },
-    "client_certs": {
-      "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS, authenticating the client to the server with these certificates.\n\nYou must set `tls.enabled: true` for the client certificates to take effect.\n\n**Certificate pairing rules**: For each certificate item, provide either:\n\n- Inline PEM data using both `cert` *and* `key` or\n- File paths using both `cert_file` *and* `key_file`.\n\nMixing inline and file-based values within the same item is not supported."
-    },
-    "skip_cert_verify": {
-      "description": "Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production. Consider using `root_cas` or `root_cas_file` to specify trusted certificates instead of disabling verification entirely."
-    },
-    "tls": {
-      "description": "Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates. Key configuration options include `enabled` to enable TLS, `client_certs` for mTLS authentication, `root_cas`/`root_cas_file` for custom certificate authorities, and `skip_cert_verify` for development environments."
-    },
-    "count": {
-      "description": "The number of messages after which the batch is flushed. Set to `0` to disable count-based batching."
-    },
-    "processors": {
-      "description": "For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches."
-    },
-    "tls_handshake_first": {
-      "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This is required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation."
-    },
-    "initial_interval": {
-      "description": "The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
-    },
-    "check": {
-      "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch."
-    },
-    "urls": {
-      "description": "A list of URLs to connect to. If a list item contains commas, it will be expanded into multiple URLs."
-    },
-    "nkey": {
-      "description": "Your NKey seed or private key for NATS authentication. NKeys provide secure, cryptographic authentication without passwords."
-    },
-    "user_credentials_file": {
-      "description": "An optional file containing user credentials which consist of a user JWT and corresponding NKey seed."
-    },
-    "user_jwt": {
-      "description": "An optional plaintext user JWT to use along with the corresponding user NKey seed."
-    },
-    "byte_size": {
-      "description": "The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching."
-    },
-    "period": {
-      "description": "The period of time after which an incomplete batch is flushed regardless of its size. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
-    },
-    "user_nkey_seed": {
-      "description": "An optional plaintext user NKey seed to use along with the corresponding user JWT."
+    "consumer_secret": {
+      "description": "The secret that establishes ownership of the consumer key in OAuth 1.0 authentication."
     },
     "auto_replay_nacks": {
       "description": "Whether to automatically replay messages that are rejected (nacked) at the output level. If the cause of rejections is persistent, leaving this option enabled can result in back pressure.\n\nSet `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto replays can greatly improve memory efficiency of high throughput streams, as the original shape of the data is discarded immediately upon consumption and mutation."
     },
-    "cyborgdb_host": {
-      "description": "The host URL for the CyborgDB instance. This should include the protocol (https://) and port number if required. For example: `https://api.cyborgdb.com` or `https://localhost:8080`."
+    "batching": {
+      "description": "Configure a xref:configuration:batching.adoc[batching policy]."
+    },
+    "broker_write_max_bytes": {
+      "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka\u2019s `socket.request.max.bytes`."
+    },
+    "byte_size": {
+      "description": "The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching."
+    },
+    "check": {
+      "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch."
+    },
+    "client_certs": {
+      "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS, authenticating the client to the server with these certificates.\n\nYou must set `tls.enabled: true` for the client certificates to take effect.\n\n**Certificate pairing rules**: For each certificate item, provide either:\n\n- Inline PEM data using both `cert` *and* `key` or\n- File paths using both `cert_file` *and* `key_file`.\n\nMixing inline and file-based values within the same item is not supported."
+    },
+    "conn_idle_timeout": {
+      "description": "The maximum duration that connections can remain idle before they are automatically closed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
+    },
+    "count": {
+      "description": "The number of messages after which the batch is flushed. Set to `0` to disable count-based batching."
+    },
+    "credentials_json": {
+      "description": "Base64-encoded Google Service Account credentials in JSON format (optional). Use this field to authenticate with Google Cloud services. For more information about creating service account credentials, see https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google's service account documentation^]."
     },
     "cyborgdb_api_key": {
       "description": "The API key for authenticating with the CyborgDB service. This key identifies your account and provides access to your CyborgDB indexes. Keep this key secure and avoid exposing it in logs or version control."
     },
-    "cyborgdb_index_name": {
-      "description": "The name of the CyborgDB index to write vectors to. If the index doesn't exist and `create_if_missing` is enabled, CyborgDB will create it automatically with optimized settings based on your data."
+    "cyborgdb_host": {
+      "description": "The host URL for the CyborgDB instance. This should include the protocol (https://) and port number if required. For example: `https://api.cyborgdb.com` or `https://localhost:8080`."
+    },
+    "cyborgdb_id_mapping": {
+      "description": "A xref:guides:bloblang/about.adoc[Bloblang mapping] that determines the unique identifier for each vector entry. This ID is used to update existing vectors during upsert operations or to specify which vectors to delete. If not provided, CyborgDB will generate unique IDs automatically."
     },
     "cyborgdb_index_key": {
       "description": "The base64-encoded encryption key for the CyborgDB index. This key must be exactly 32 bytes when decoded from base64. All vector data is encrypted client-side using this key before transmission, ensuring complete data privacy. Store this key securely as it cannot be recovered if lost."
+    },
+    "cyborgdb_index_name": {
+      "description": "The name of the CyborgDB index to write vectors to. If the index doesn't exist and `create_if_missing` is enabled, CyborgDB will create it automatically with optimized settings based on your data."
+    },
+    "cyborgdb_metadata_mapping": {
+      "description": "An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that extracts metadata to associate with the vector entry. The metadata can contain any JSON-serializable data that helps identify or categorize the vector. This data is stored encrypted alongside the vector."
     },
     "cyborgdb_operation": {
       "description": "The operation to perform against the CyborgDB index. Supported operations:\n\n- `upsert`: Insert new vectors or update existing ones (requires `vector_mapping`)\n- `delete`: Remove vectors from the index (requires `id`)\n- `query`: Search for similar vectors (requires `vector_mapping`)"
@@ -72,26 +57,47 @@
     "cyborgdb_vector_mapping": {
       "description": "A xref:guides:bloblang/about.adoc[Bloblang mapping] that extracts the vector from the message. The result must be an array of floating-point numbers representing the vector embeddings. This field is required for `upsert` and `query` operations."
     },
-    "cyborgdb_metadata_mapping": {
-      "description": "An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that extracts metadata to associate with the vector entry. The metadata can contain any JSON-serializable data that helps identify or categorize the vector. This data is stored encrypted alongside the vector."
+    "default_schema_id": {
+      "description": "This schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If this value is not set, schema header errors are returned.\n\nThis configuration does not work with protobuf schemas.\n\nTIP: You can also use the xref:guides:bloblang/functions.adoc#with_schema_registry_header[`with_schema_registry_header`] bloblang function to add a schema ID to messages."
     },
-    "cyborgdb_id_mapping": {
-      "description": "A xref:guides:bloblang/about.adoc[Bloblang mapping] that determines the unique identifier for each vector entry. This ID is used to update existing vectors during upsert operations or to specify which vectors to delete. If not provided, CyborgDB will generate unique IDs automatically."
+    "dsn": {
+      "description": "The Data Source Name (DSN) connection string that identifies the target database. The DSN format varies by database type and typically includes connection details like host, port, database name, and authentication parameters."
     },
-    "mssql_cdc_connection_string": {
-      "description": "The connection string for the Microsoft SQL Server database. Use the format `sqlserver://username:password@host/instance?param1=value&param2=value`. For Windows Authentication, use `sqlserver://host/instance?trusted_connection=yes`. Include additional parameters like `TrustServerCertificate=true` for self-signed certificates or `encrypt=disable` to disable encryption."
+    "enable_renegotiation": {
+      "description": "Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: \ntls: no renegotiation`."
     },
-    "mssql_cdc_stream_snapshot": {
-      "description": "Whether to stream a snapshot of all existing data before streaming CDC changes. When enabled, the connector first queries all existing table data, then switches to streaming incremental changes from the transaction log. Set to `false` to start streaming only new changes from the current LSN position."
+    "enabled": {
+      "description": "Whether to enable OAuth version 1.0 authentication for requests to the schema registry."
     },
-    "mssql_cdc_snapshot_max_batch_size": {
-      "description": "The maximum number of rows to stream in a single batch during the initial snapshot phase. Larger batch sizes can improve throughput for initial data loads but may increase memory usage. This setting only applies when `stream_snapshot` is enabled."
+    "endpoint": {
+      "description": "A custom endpoint URL for AWS API requests. Use this to connect to AWS-compatible services or local testing environments instead of the standard AWS endpoints."
     },
-    "mssql_cdc_include_tables": {
-      "description": "Regular expressions for tables to include in CDC streaming. Specify table names using the format `schema.table` (such as `dbo.orders`, `sales.customers`). Each pattern is treated as a regular expression, allowing wildcards and pattern matching. All specified tables must have CDC enabled in SQL Server."
+    "fetch_max_partition_bytes": {
+      "description": "The maximum number of bytes that are consumed from a single partition in a fetch request. This field is equivalent to the Java setting `fetch.max.partition.bytes`.\n\nIf a single batch is larger than the `fetch_max_partition_bytes` value, the batch is still sent so that the client can make progress."
     },
-    "mssql_cdc_exclude_tables": {
-      "description": "Regular expressions for tables to exclude from CDC streaming. Use this to filter out specific tables from the include patterns. Table names should follow the `schema.table` format. Exclude patterns are applied after include patterns, allowing you to include broad patterns while excluding specific tables."
+    "fetch_max_wait": {
+      "description": "The maximum period of time a broker can wait for a fetch response to reach the required minimum number of bytes (`fetch_min_bytes`)."
+    },
+    "fetch_min_bytes": {
+      "description": "The minimum number of bytes that a broker tries to send during a fetch. This field is equivalent to the Java setting `fetch.min.bytes`."
+    },
+    "headers": {
+      "description": "Additional key-value pairs to include in the JWT header (optional). These headers provide extra metadata for JWT processing."
+    },
+    "heartbeat_interval": {
+      "description": "When you specify a `consumer_group`, `heartbeat_interval` sets how frequently a consumer group member should send heartbeats to Apache Kafka. Apache Kafka uses heartbeats to make sure that a group member's session is active. \n\nYou must set `heartbeat_interval` to less than one-third of `session_timeout`.\n\nThis field is equivalent to the Java `heartbeat.interval.ms` setting and accepts Go duration format strings such as `10s` or `2m`."
+    },
+    "initial_interval": {
+      "description": "The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
+    },
+    "instance_id": {
+      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group\u2019s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
+    },
+    "jwt": {
+      "description": "BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services."
+    },
+    "key": {
+      "description": "An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
     },
     "mssql_cdc_checkpoint_cache": {
       "description": "A xref:components:caches/about.adoc[cache resource] to store the current Log Sequence Number (LSN) position. This enables the connector to resume from the last processed position after restarts, preventing data loss and duplicate processing. The cache stores the highest LSN that has been successfully delivered downstream."
@@ -102,101 +108,53 @@
     "mssql_cdc_checkpoint_limit": {
       "description": "The maximum number of messages that can be processed concurrently before applying back pressure. Higher values enable better parallelization and batching but increase memory usage. Messages are processed in LSN order, and a given LSN is only acknowledged after all previous LSNs have been successfully delivered, ensuring at-least-once guarantees."
     },
+    "mssql_cdc_connection_string": {
+      "description": "The connection string for the Microsoft SQL Server database. Use the format `sqlserver://username:password@host/instance?param1=value&param2=value`. For Windows Authentication, use `sqlserver://host/instance?trusted_connection=yes`. Include additional parameters like `TrustServerCertificate=true` for self-signed certificates or `encrypt=disable` to disable encryption."
+    },
+    "mssql_cdc_exclude_tables": {
+      "description": "Regular expressions for tables to exclude from CDC streaming. Use this to filter out specific tables from the include patterns. Table names should follow the `schema.table` format. Exclude patterns are applied after include patterns, allowing you to include broad patterns while excluding specific tables."
+    },
+    "mssql_cdc_include_tables": {
+      "description": "Regular expressions for tables to include in CDC streaming. Specify table names using the format `schema.table` (such as `dbo.orders`, `sales.customers`). Each pattern is treated as a regular expression, allowing wildcards and pattern matching. All specified tables must have CDC enabled in SQL Server."
+    },
+    "mssql_cdc_snapshot_max_batch_size": {
+      "description": "The maximum number of rows to stream in a single batch during the initial snapshot phase. Larger batch sizes can improve throughput for initial data loads but may increase memory usage. This setting only applies when `stream_snapshot` is enabled."
+    },
     "mssql_cdc_stream_backoff_interval": {
       "description": "The time interval to wait between polling attempts when no new CDC data is available. For low-traffic tables, increasing this value reduces database load and network traffic. Use Go duration format like `5s`, `30s`, or `1m`. Shorter intervals provide lower latency for new changes but increase server load."
     },
-    "oauth": {
-      "description": "Configure OAuth version 1.0 authentication for secure API access."
-    },
-    "access_token_secret": {
-      "description": "The secret that establishes ownership of the `oauth.access_token` in OAuth 1.0 authentication."
-    },
-    "jwt": {
-      "description": "BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services."
-    },
-    "private_key_file": {
-      "description": "Path to a file containing the PEM-encoded private key using PKCS#1 or PKCS#8 format. The private key must be compatible with the algorithm specified in the `signing_method` field."
-    },
-    "signing_method": {
-      "description": "The cryptographic algorithm used to sign the JWT token. Supported algorithms include RS256, RS384, RS512, and EdDSA. This algorithm must be compatible with the private key specified in the `private_key_file` field."
-    },
-    "headers": {
-      "description": "Additional key-value pairs to include in the JWT header (optional). These headers provide extra metadata for JWT processing."
-    },
-    "conn_idle_timeout": {
-      "description": "The maximum duration that connections can remain idle before they are automatically closed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
-    },
-    "dsn": {
-      "description": "The Data Source Name (DSN) connection string that identifies the target database. The DSN format varies by database type and typically includes connection details like host, port, database name, and authentication parameters."
-    },
-    "credentials_json": {
-      "description": "Base64-encoded Google Service Account credentials in JSON format (optional). Use this field to authenticate with Google Cloud services. For more information about creating service account credentials, see https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google's service account documentation^]."
-    },
-    "consumer_secret": {
-      "description": "The secret that establishes ownership of the consumer key in OAuth 1.0 authentication."
-    },
-    "topic_lag_refresh_period": {
-      "description": "The interval between refresh cycles. During each cycle, this input queries the Redpanda Connect server to calculate the topic lag minus the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
-    },
-    "endpoint": {
-      "description": "A custom endpoint URL for AWS API requests. Use this to connect to AWS-compatible services or local testing environments instead of the standard AWS endpoints."
-    },
-    "seed_brokers": {
-      "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item."
-    },
-    "metadata_max_age": {
-      "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
-    },
-    "instance_id": {
-      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group\u2019s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
-    },
-    "rebalance_timeout": {
-      "description": "When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
-    },
-    "session_timeout": {
-      "description": "When you specify a `consumer_group`, `session_timeout` sets the maximum interval between heartbeats sent by a consumer group member to the broker. If a broker doesn't receive a heartbeat from a group member before the timeout expires, it removes the member from the consumer group and initiates a rebalance. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
-    },
-    "heartbeat_interval": {
-      "description": "When you specify a `consumer_group`, `heartbeat_interval` sets how frequently a consumer group member should send heartbeats to Apache Kafka. Apache Kafka uses heartbeats to make sure that a group member's session is active. \n\nYou must set `heartbeat_interval` to less than one-third of `session_timeout`.\n\nThis field is equivalent to the Java `heartbeat.interval.ms` setting and accepts Go duration format strings such as `10s` or `2m`."
-    },
-    "timely_nacks_maximum_wait": {
-      "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs. Accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
-    },
-    "subject_compatibility_level": {
-      "description": "The compatibility level for the subject. Can be one of `BACKWARD`, `BACKWARD_TRANSITIVE`, `FORWARD`, `FORWARD_TRANSITIVE`, `FULL`, `FULL_TRANSITIVE`, `NONE`."
-    },
-    "schema_metadata": {
-      "description": "Optionally specify a metadata field containing a schema definition to use for encoding instead of a statically defined schema. For batches of messages, the first message's schema will be applied to all subsequent messages of the batch."
-    },
-    "start_offset": {
-      "description": "Specify the offset from which this input starts or restarts consuming messages. Restarts occur when the `OffsetOutOfRange` error is seen during a fetch."
-    },
-    "fetch_max_wait": {
-      "description": "The maximum period of time a broker can wait for a fetch response to reach the required minimum number of bytes (`fetch_min_bytes`)."
-    },
-    "fetch_min_bytes": {
-      "description": "The minimum number of bytes that a broker tries to send during a fetch. This field is equivalent to the Java setting `fetch.min.bytes`."
-    },
-    "fetch_max_partition_bytes": {
-      "description": "The maximum number of bytes that are consumed from a single partition in a fetch request. This field is equivalent to the Java setting `fetch.max.partition.bytes`.\n\nIf a single batch is larger than the `fetch_max_partition_bytes` value, the batch is still sent so that the client can make progress."
-    },
-    "transaction_isolation_level": {
-      "description": "The isolation level for handling transactional messages. This setting determines how transactions are processed and affects data consistency guarantees."
-    },
-    "username": {
-      "description": "The username of the account credentials to authenticate as. Used together with `password` for basic authentication."
+    "mssql_cdc_stream_snapshot": {
+      "description": "Whether to stream a snapshot of all existing data before streaming CDC changes. When enabled, the connector first queries all existing table data, then switches to streaming incremental changes from the transaction log. Set to `false` to start streaming only new changes from the current LSN position."
     },
     "metadata": {
       "description": "Configure which metadata values are added to messages as headers. This allows you to pass additional context information along with your messages."
     },
-    "batching": {
-      "description": "Configure a xref:configuration:batching.adoc[batching policy]."
+    "metadata_max_age": {
+      "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
     },
-    "broker_write_max_bytes": {
-      "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka\u2019s `socket.request.max.bytes`."
+    "nkey": {
+      "description": "Your NKey seed or private key for NATS authentication. NKeys provide secure, cryptographic authentication without passwords."
     },
-    "enabled": {
-      "description": "Whether to enable OAuth version 1.0 authentication for requests to the schema registry."
+    "oauth": {
+      "description": "Configure OAuth version 1.0 authentication for secure API access."
+    },
+    "password": {
+      "description": "The password to use for authentication. Used together with `username` for basic authentication or with encrypted private keys for secure access."
+    },
+    "period": {
+      "description": "The period of time after which an incomplete batch is flushed regardless of its size. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
+    },
+    "private_key_file": {
+      "description": "Path to a file containing the PEM-encoded private key using PKCS#1 or PKCS#8 format. The private key must be compatible with the algorithm specified in the `signing_method` field."
+    },
+    "processors": {
+      "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, and therefore splitting the batch into smaller batches using these processors is a no-op."
+    },
+    "rebalance_timeout": {
+      "description": "When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
+    },
+    "regexp_topics": {
+      "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`."
     },
     "root_cas": {
       "description": "Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading."
@@ -204,20 +162,44 @@
     "root_cas_file": {
       "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for file-based certificate loading or `root_cas` for inline certificate data."
     },
-    "enable_renegotiation": {
-      "description": "Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: \ntls: no renegotiation`."
+    "schema_metadata": {
+      "description": "Optionally specify a metadata field containing a schema definition to use for encoding instead of a statically defined schema. For batches of messages, the first message's schema will be applied to all subsequent messages of the batch."
     },
-    "password": {
-      "description": "The password to use for authentication. Used together with `username` for basic authentication or with encrypted private keys for secure access."
+    "seed_brokers": {
+      "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item."
     },
-    "key": {
-      "description": "An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+    "session_timeout": {
+      "description": "When you specify a `consumer_group`, `session_timeout` sets the maximum interval between heartbeats sent by a consumer group member to the broker. If a broker doesn't receive a heartbeat from a group member before the timeout expires, it removes the member from the consumer group and initiates a rebalance. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
+    },
+    "signing_method": {
+      "description": "The cryptographic algorithm used to sign the JWT token. Supported algorithms include RS256, RS384, RS512, and EdDSA. This algorithm must be compatible with the private key specified in the `private_key_file` field."
+    },
+    "skip_cert_verify": {
+      "description": "Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production. Consider using `root_cas` or `root_cas_file` to specify trusted certificates instead of disabling verification entirely."
+    },
+    "start_offset": {
+      "description": "Specify the offset from which this input starts or restarts consuming messages. Restarts occur when the `OffsetOutOfRange` error is seen during a fetch."
+    },
+    "subject_compatibility_level": {
+      "description": "The compatibility level for the subject. Can be one of `BACKWARD`, `BACKWARD_TRANSITIVE`, `FORWARD`, `FORWARD_TRANSITIVE`, `FULL`, `FULL_TRANSITIVE`, `NONE`."
+    },
+    "timely_nacks_maximum_wait": {
+      "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs. Accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
+    },
+    "tls": {
+      "description": "Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates. Key configuration options include `enabled` to enable TLS, `client_certs` for mTLS authentication, `root_cas`/`root_cas_file` for custom certificate authorities, and `skip_cert_verify` for development environments."
     },
     "tls_cert": {
       "description": "The plaintext certificate to use for TLS authentication. Must be paired with the corresponding private key in the `key` field when using inline PEM data for mTLS client certificates."
     },
     "tls_cert_file": {
       "description": "The path to a file containing the certificate to use for TLS authentication. Must be paired with the corresponding private key file in the `key_file` field when using file-based configuration for mTLS client certificates."
+    },
+    "tls_enabled": {
+      "description": "Whether to enable TLS for secure connections. Set to `true` to enable TLS encryption. Required to be `true` for other TLS options (like `client_certs`, `root_cas`, etc.) to take effect."
+    },
+    "tls_handshake_first": {
+      "description": "Whether to perform the initial TLS handshake before sending the NATS INFO protocol message. This is required when connecting to some NATS servers that expect TLS to be established immediately after connection, before any protocol negotiation."
     },
     "tls_key": {
       "description": "Private key for mTLS client certificate as inline PEM data. Must correspond to the client certificate specified in the `cert` field. Use this field together with `cert` when providing certificate data inline rather than through files."
@@ -228,8 +210,26 @@
     "tls_password": {
       "description": "The password to use for the private key (specified in the `key` or `key_file` fields), if it is password-protected. The PKCS#1 and PKCS#8 formats are supported. Supports environment variable interpolation for secure password management.\n\nThe `pbeWithMD5AndDES-CBC` algorithm is obsolete and not supported for the PKCS#8 format. This algorithm does not authenticate the ciphertext, making it vulnerable to padding oracle attacks that can let an attacker recover the plaintext."
     },
-    "tls_enabled": {
-      "description": "Whether to enable TLS for secure connections. Set to `true` to enable TLS encryption. Required to be `true` for other TLS options (like `client_certs`, `root_cas`, etc.) to take effect."
+    "topic_lag_refresh_period": {
+      "description": "The interval between refresh cycles. During each cycle, this input queries the Redpanda Connect server to calculate the topic lag minus the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
+    },
+    "transaction_isolation_level": {
+      "description": "The isolation level for handling transactional messages. This setting determines how transactions are processed and affects data consistency guarantees."
+    },
+    "urls": {
+      "description": "A list of URLs to connect to. If a list item contains commas, it will be expanded into multiple URLs."
+    },
+    "user_credentials_file": {
+      "description": "An optional file containing user credentials which consist of a user JWT and corresponding NKey seed."
+    },
+    "user_jwt": {
+      "description": "An optional plaintext user JWT to use along with the corresponding user NKey seed."
+    },
+    "user_nkey_seed": {
+      "description": "An optional plaintext user NKey seed to use along with the corresponding user JWT."
+    },
+    "username": {
+      "description": "The username of the account credentials to authenticate as. Used together with `password` for basic authentication."
     }
   },
   "inputs": [
@@ -1813,6 +1813,38 @@
           {
             "name": "auto_replay_nacks",
             "$ref": "#/definitions/auto_replay_nacks"
+          },
+          {
+            "name": "unordered_processing",
+            "description": "Allows consumers to process messages of any given partition in parallel, which may result in unordered processing. This option enables asynchronous publishing at the output level. The maximum parallelization of each partition is determined by the `checkpoint_limit` field.",
+            "children": [
+              {
+                "name": "batching",
+                "description": "Allows you to configure a xref:configuration:batching.adoc[batching policy] that applies to individual topic partitions in order to batch messages together before flushing them for processing. Batching can be beneficial for performance and useful for windowed processing, and doing so preserves the ordering of topic partitions.",
+                "children": [
+                  {
+                    "name": "count",
+                    "$ref": "#/definitions/count"
+                  },
+                  {
+                    "name": "byte_size",
+                    "$ref": "#/definitions/byte_size"
+                  },
+                  {
+                    "name": "period",
+                    "$ref": "#/definitions/period"
+                  },
+                  {
+                    "name": "check",
+                    "$ref": "#/definitions/check"
+                  },
+                  {
+                    "name": "processors",
+                    "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, and therefore splitting the batch into smaller batches using these processors is a no-op."
+                  }
+                ]
+              }
+            ]
           }
         ]
       }
@@ -6251,6 +6283,37 @@
           {
             "name": "global_folders",
             "description": "A list of directories to load modules from if the requested JavaScript module is not found elsewhere."
+          }
+        ]
+      }
+    },
+        {
+      "name": "jira",
+      "config": {
+        "children": [
+          {
+            "name": "api_token",
+            "description": "The Jira API token for the specified account. You can generate an API token from your https://id.atlassian.com/manage-profile/security/api-tokens[Atlassian account settings^]."
+          },
+          {
+            "name": "base_url",
+            "description": "The base URL of the Jira instance (for example, `https://your-domain.atlassian.net`)."
+          },
+          {
+            "name": "max_results_per_page",
+            "description": "The maximum number of results to return per page when calling the Jira API. https://docs.atlassian.com/software/jira/docs/api/REST/9.17.0/#pagination[Pagination^] in the Jira API is zero-based, so the first page starts at `0`. "
+          },
+          {
+            "name": "max_retries",
+            "description": "The maximum number of retries to attempt when a 429 HTTP status code is received. Jira APIs may return a 429 status code when the rate limit is exceeded."
+          },
+          {
+            "name": "request_timeout",
+            "description": "The maximum duration to wait for a response from the Jira API before timing out."
+          },
+          {
+            "name": "username",
+            "description": "The username or email address of the Jira account."
           }
         ]
       }

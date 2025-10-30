@@ -22,7 +22,8 @@ This release adds the following new components:
 This release adds support for the following new fields:
 
 * Inputs components
-** xref:components:inputs/redpanda.adoc['redpanda']: xref:components:inputs/redpanda.adoc#unordered_processing['unordered_processing'] - Configures partition consumers to allow parallel and therefore unordered processing of messages of any given partition. This allows for better utilization of processing threads and asynchronous publishing at the output level. The maximum parallelization of each partition is determined by the checkpoint_limit field.
+** xref:components:inputs/redpanda.adoc[`redpanda`]:
+*** xref:components:inputs/redpanda.adoc#unordered_processing[`unordered_processing`] - Configures partition consumers to allow parallel and therefore unordered processing of messages of any given partition. This allows for better utilization of processing threads and asynchronous publishing at the output level. The maximum parallelization of each partition is determined by the checkpoint_limit field.
 
 === Deprecations
 
