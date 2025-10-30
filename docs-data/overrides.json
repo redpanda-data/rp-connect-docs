@@ -4492,6 +4492,13 @@
     },
     {
       "name": "redpanda",
+      "examples": [
+        {
+          "title": "Simple Common Output",
+          "summary": "Data is generated and written to a topic bar, targeting the cluster configured within the `redpanda` block at the bottom. This is useful as it allows us to configure TLS and SASL only once for potentially multiple inputs and outputs.",
+          "config": "\ninput:\n  generate:\n    interval: 1s\n    mapping: 'root.name = fake(\"name\")'\n\npipeline:\n  processors:\n    - mutation: |\n        root.id = uuid_v4()\n        root.loud_name = this.name.uppercase()\n\noutput:\n  redpanda:\n    topic: bar\n    key: ${! @id }\n\nredpanda:\n  seed_brokers: [ \"127.0.0.1:9092\" ]\n  tls:\n    enabled: true\n  sasl:\n    - mechanism: SCRAM-SHA-512\n      password: bar\n      username: foo\n"
+        }
+      ],
       "config": {
         "children": [
           {
