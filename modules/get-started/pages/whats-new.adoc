@@ -6,6 +6,29 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
+
+== Version 4.68.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.68.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+* Processors:
+** xref:components:processors/jira.adoc[`jira`] (experimental): Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.
+
+
+This release adds support for the following new fields:
+
+* Inputs components
+** xref:components:inputs/redpanda.adoc[`redpanda`]:
+*** xref:components:inputs/redpanda.adoc#unordered_processing[`unordered_processing`] - Configures partition consumers to allow parallel and therefore unordered processing of messages of any given partition. This allows for better utilization of processing threads and asynchronous publishing at the output level. The maximum parallelization of each partition is determined by the checkpoint_limit field.
+
+=== Deprecations
+
+The `kafka`, `kafka_franz`, and `redpanda_common` inputs and outputs are now deprecated. Their functionality has been consolidated into the unified `redpanda` input and output components. Migrate existing configurations to use the new `redpanda` components for continued support and access to the latest features.
+
 == Version 4.67.5
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.67.5[See the full release notes^].

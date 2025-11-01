@@ -5,6 +5,12 @@
 
 component_type_dropdown::[]
 
+[WARNING]
+.Deprecated in 4.68.0
+====
+This component is deprecated and will be removed in the next major version release. Please consider moving onto the unified xref:components:inputs/redpanda.adoc[`redpanda` input] and xref:components:outputs/redpanda.adoc[`redpanda` output] components.
+====
+
 
 Sends data to a Redpanda (Kafka) broker, using credentials from a common `redpanda` configuration block.
 
