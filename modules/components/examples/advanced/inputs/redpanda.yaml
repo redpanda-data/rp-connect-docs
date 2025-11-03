@@ -1,8 +1,8 @@
 inputs:
   label: ""
   redpanda:
-    seed_brokers: [] # No default (required)
-    client_id: benthos
+    seed_brokers: [] # No default (optional)
+    client_id: redpanda-connect
     tls:
       enabled: false
       skip_cert_verify: false
@@ -53,5 +53,14 @@ inputs:
     partition_buffer_bytes: 1MB
     topic_lag_refresh_period: 5s
     max_yield_batch_bytes: 32KB
+    unordered_processing:
+      enabled: false
+      checkpoint_limit: 1024
+      batching:
+        count: 0
+        byte_size: 0
+        period: ""
+        check: ""
+        processors: [] # No default (optional)
     auto_replay_nacks: true
     timely_nacks_maximum_wait: "" # No default (optional)

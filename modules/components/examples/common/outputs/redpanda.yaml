@@ -1,7 +1,7 @@
 outputs:
   label: ""
   redpanda:
-    seed_brokers: [] # No default (required)
+    seed_brokers: [] # No default (optional)
     topic: "" # No default (required)
     key: "" # No default (optional)
     partition: "" # No default (optional)
