@@ -28,6 +28,18 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 *Default*: `64`
 
+=== `message_properties_to`
+
+The field specifies the node that is the intended destination of the message, which may differ from the node currently receiving the transfer.
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+message_properties_to: amqp://localhost:5672/
+----
+
 === `metadata`
 
 Specify criteria for which metadata values are attached to messages as headers.
@@ -41,6 +53,14 @@ Provide a list of explicit metadata key prefixes to be excluded when adding meta
 *Type*: `array`
 
 *Default*: `[]`
+
+=== `persistent`
+
+If set to true, the message will be marked as persistent, ensuring it is stored durably and not lost if an intermediary (such as a broker) restarts. By default, messages are not durable.
+
+*Type*: `bool`
+
+*Default*: `false`
 
 === `sasl`
 
@@ -115,6 +135,20 @@ target_address: queue:/bar
 target_address: topic:/baz
 ----
 
+=== `target_capabilities[]`
+
+Lists the extension capabilities the sender desires from the target, such as support for queues, topics, durability, sharing, or temporary destinations.
+
+*Type*: `array`
+
+[source,yaml]
+----
+# Examples:
+target_capabilities: [queue]
+target_capabilities: [topic]
+target_capabilities: [queue, topic]
+----
+
 === `tls`
 
 Custom TLS settings can be used to override system defaults.
@@ -136,6 +170,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -269,14 +304,9 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-urls:
-  - "amqp://guest:guest@127.0.0.1:5672/"
-
-  - "amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/"
-
-  - "amqp://127.0.0.1:5672/"
-  - "amqp://127.0.0.2:5672/"
-
+urls: ["amqp://guest:guest@127.0.0.1:5672/"]
+urls: ["amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/"]
+urls: ["amqp://127.0.0.1:5672/", "amqp://127.0.0.2:5672/"]
 ----
 
 

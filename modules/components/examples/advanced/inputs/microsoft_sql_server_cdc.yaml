@@ -2,7 +2,8 @@ inputs:
   label: ""
   microsoft_sql_server_cdc:
     connection_string: "" # No default (required)
-    stream_snapshot: "" # No default (required)
+    stream_snapshot: false
+    max_parallel_snapshot_tables: 1
     snapshot_max_batch_size: 1000
     include: [] # No default (required)
     exclude: [] # No default (optional)

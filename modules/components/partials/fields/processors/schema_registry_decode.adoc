@@ -322,6 +322,14 @@ Whether to emit unpopulated fields. It does not emit unpopulated oneof fields or
 
 *Default*: `false`
 
+=== `protobuf.serialize_to_json`
+
+If messages should be serialized to JSON bytes. If false then the message is kept in decoded form, which means that 64 bit integers are not converted to strings and types for bytes and google.protobuf.Timestamp are preserved (as they are not serialized to JSON strings).
+
+*Type*: `bool`
+
+*Default*: `true`
+
 === `protobuf.use_enum_numbers`
 
 Emits enum values as numbers.
@@ -359,6 +367,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 

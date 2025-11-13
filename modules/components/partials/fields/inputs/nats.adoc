@@ -167,6 +167,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -308,11 +309,8 @@ A list of URLs to connect to. If a list item contains commas, it will be expande
 [source,yaml]
 ----
 # Examples:
-urls:
-  - "nats://127.0.0.1:4222"
-
-  - "nats://username:password@127.0.0.1:4222"
-
+urls: ["nats://127.0.0.1:4222"]
+urls: ["nats://username:password@127.0.0.1:4222"]
 ----
 
 

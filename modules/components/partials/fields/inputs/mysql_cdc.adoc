@@ -94,9 +94,11 @@ processors:
   - archive:
       format: concatenate
 
+processors:
   - archive:
       format: lines
 
+processors:
   - archive:
       format: json_array
 
@@ -179,10 +181,7 @@ A list of the database table names to stream changes from. Specify each table na
 [source,yaml]
 ----
 # Examples:
-tables:
-  - table1
-  - table2
-
+tables: [table1, table2]
 ----
 
 

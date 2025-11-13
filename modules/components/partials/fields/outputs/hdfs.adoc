@@ -84,9 +84,11 @@ processors:
   - archive:
       format: concatenate
 
+processors:
   - archive:
       format: lines
 
+processors:
   - archive:
       format: json_array
 
@@ -108,9 +110,7 @@ A list of target host addresses to connect to.
 [source,yaml]
 ----
 # Examples:
-hosts:
-  - "localhost:9000"
-
+hosts: localhost:9000
 ----
 
 === `max_in_flight`

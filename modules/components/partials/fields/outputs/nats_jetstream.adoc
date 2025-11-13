@@ -135,11 +135,8 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 [source,yaml]
 ----
 # Examples:
-include_patterns:
-  - .*
-
-  - _timestamp_unix$
-
+include_patterns: [.*]
+include_patterns: [_timestamp_unix$]
 ----
 
 === `metadata.include_prefixes[]`
@@ -153,14 +150,9 @@ Provide a list of explicit metadata key prefixes to match against.
 [source,yaml]
 ----
 # Examples:
-include_prefixes:
-  - foo_
-  - bar_
-
-  - kafka_
-
-  - content-
-
+include_prefixes: [foo_, bar_]
+include_prefixes: [kafka_]
+include_prefixes: [content-]
 ----
 
 === `subject`
@@ -198,6 +190,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -339,11 +332,8 @@ A list of URLs to connect to. If a list item contains commas, it will be expande
 [source,yaml]
 ----
 # Examples:
-urls:
-  - "nats://127.0.0.1:4222"
-
-  - "nats://username:password@127.0.0.1:4222"
-
+urls: ["nats://127.0.0.1:4222"]
+urls: ["nats://username:password@127.0.0.1:4222"]
 ----
 
 

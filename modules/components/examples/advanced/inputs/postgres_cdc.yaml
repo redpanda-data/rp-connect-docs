@@ -16,6 +16,17 @@ inputs:
     unchanged_toast_value:
       null
     heartbeat_interval: 1h
+    tls:
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
     auto_replay_nacks: true
     batching:
       count: 0

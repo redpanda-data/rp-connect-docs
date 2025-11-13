@@ -17,6 +17,13 @@ outputs:
     max_records_per_request: 10
     region: "" # No default (optional)
     endpoint: "" # No default (optional)
+    tcp:
+      connect_timeout: 0s
+      keep_alive:
+        idle: 15s
+        interval: 15s
+        count: 9
+      tcp_user_timeout: 0s
     credentials:
       profile: "" # No default (optional)
       id: "" # No default (optional)

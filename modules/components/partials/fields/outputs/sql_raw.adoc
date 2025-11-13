@@ -97,9 +97,11 @@ processors:
   - archive:
       format: concatenate
 
+processors:
   - archive:
       format: lines
 
+processors:
   - archive:
       format: json_array
 
@@ -173,12 +175,8 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-init_files:
-  - ./init/*.sql
-
-  - ./foo.sql
-  - ./bar.sql
-
+init_files: [./init/*.sql]
+init_files: [./foo.sql, ./bar.sql]
 ----
 
 === `init_statement`

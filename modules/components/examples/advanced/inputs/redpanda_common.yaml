@@ -1,8 +1,9 @@
 inputs:
   label: ""
   redpanda_common:
-    topics: [] # No default (required)
-    regexp_topics: false
+    topics: [] # No default (optional)
+    regexp_topics_include: [] # No default (optional)
+    regexp_topics_exclude: [] # No default (optional)
     rack_id: ""
     instance_id: ""
     rebalance_timeout: 45s

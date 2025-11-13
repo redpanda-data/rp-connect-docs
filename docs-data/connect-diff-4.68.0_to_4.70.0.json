@@ -1,0 +1,290 @@
+{
+  "comparison": {
+    "oldVersion": "4.68.0",
+    "newVersion": "4.70.0",
+    "timestamp": "2025-11-13T17:36:24.101Z"
+  },
+  "summary": {
+    "newComponents": 2,
+    "removedComponents": 0,
+    "newFields": 45,
+    "removedFields": 0,
+    "deprecatedComponents": 0,
+    "deprecatedFields": 5
+  },
+  "details": {
+    "newComponents": [
+      {
+        "name": "bytes",
+        "type": "bloblang-functions",
+        "status": "stable",
+        "version": "",
+        "description": "Create a new byte array that is zero initialized"
+      },
+      {
+        "name": "repeat",
+        "type": "bloblang-methods",
+        "status": "stable",
+        "version": "",
+        "description": ""
+      }
+    ],
+    "removedComponents": [],
+    "newFields": [
+      {
+        "component": "config:redpanda",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "caches:aws_dynamodb",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "caches:aws_s3",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "caches:redpanda",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "inputs:aws_kinesis",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "inputs:aws_s3",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "inputs:aws_sqs",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "inputs:kafka_franz",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "inputs:kafka_franz",
+        "field": "regexp_topics_include",
+        "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns."
+      },
+      {
+        "component": "inputs:kafka_franz",
+        "field": "regexp_topics_exclude",
+        "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns."
+      },
+      {
+        "component": "inputs:legacy_redpanda_migrator",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "inputs:legacy_redpanda_migrator",
+        "field": "regexp_topics_include",
+        "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns."
+      },
+      {
+        "component": "inputs:legacy_redpanda_migrator",
+        "field": "regexp_topics_exclude",
+        "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns."
+      },
+      {
+        "component": "inputs:legacy_redpanda_migrator_offsets",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "inputs:microsoft_sql_server_cdc",
+        "field": "max_parallel_snapshot_tables",
+        "description": "Specifies a number of tables that will be processed in parallel during the snapshot processing stage."
+      },
+      {
+        "component": "inputs:pg_stream",
+        "field": "tls",
+        "description": "Custom TLS settings can be used to override system defaults."
+      },
+      {
+        "component": "inputs:postgres_cdc",
+        "field": "tls",
+        "description": "Custom TLS settings can be used to override system defaults."
+      },
+      {
+        "component": "inputs:redpanda",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "inputs:redpanda",
+        "field": "regexp_topics_include",
+        "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns."
+      },
+      {
+        "component": "inputs:redpanda",
+        "field": "regexp_topics_exclude",
+        "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns."
+      },
+      {
+        "component": "inputs:redpanda_common",
+        "field": "regexp_topics_include",
+        "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns."
+      },
+      {
+        "component": "inputs:redpanda_common",
+        "field": "regexp_topics_exclude",
+        "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns."
+      },
+      {
+        "component": "inputs:redpanda_migrator",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "inputs:redpanda_migrator",
+        "field": "regexp_topics_include",
+        "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns."
+      },
+      {
+        "component": "inputs:redpanda_migrator",
+        "field": "regexp_topics_exclude",
+        "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns."
+      },
+      {
+        "component": "outputs:amqp_1",
+        "field": "persistent",
+        "description": "If set to true, the message will be marked as persistent, ensuring it is stored durably and not lost if an intermediary (such as a broker) restarts. By default, messages are not durable."
+      },
+      {
+        "component": "outputs:amqp_1",
+        "field": "target_capabilities",
+        "description": "Lists the extension capabilities the sender desires from the target, such as support for queues, topics, durability, sharing, or temporary destinations."
+      },
+      {
+        "component": "outputs:amqp_1",
+        "field": "message_properties_to",
+        "description": "The field specifies the node that is the intended destination of the message, which may differ from the node currently receiving the transfer."
+      },
+      {
+        "component": "outputs:aws_dynamodb",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:aws_kinesis",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:aws_kinesis_firehose",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:aws_s3",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:aws_sns",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:aws_sqs",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:kafka_franz",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:legacy_redpanda_migrator",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:legacy_redpanda_migrator_offsets",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:redpanda",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:redpanda_migrator",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "outputs:redpanda_migrator",
+        "field": "provenance_header",
+        "description": "Header name to add to migrated records indicating their source cluster. If empty, no provenance header is added."
+      },
+      {
+        "component": "processors:aws_bedrock_chat",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "processors:aws_bedrock_embeddings",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "processors:aws_dynamodb_partiql",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "processors:aws_lambda",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "metrics:aws_cloudwatch",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      }
+    ],
+    "removedFields": [],
+    "deprecatedComponents": [],
+    "deprecatedFields": [
+      {
+        "component": "inputs:kafka_franz",
+        "field": "regexp_topics",
+        "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.\n\nThis field is deprecated, use `regexp_topics_include` instead."
+      },
+      {
+        "component": "inputs:legacy_redpanda_migrator",
+        "field": "regexp_topics",
+        "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.\n\nThis field is deprecated, use `regexp_topics_include` instead."
+      },
+      {
+        "component": "inputs:redpanda",
+        "field": "regexp_topics",
+        "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.\n\nThis field is deprecated, use `regexp_topics_include` instead."
+      },
+      {
+        "component": "inputs:redpanda_common",
+        "field": "regexp_topics",
+        "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.\n\nThis field is deprecated, use `regexp_topics_include` instead."
+      },
+      {
+        "component": "inputs:redpanda_migrator",
+        "field": "regexp_topics",
+        "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.\n\nThis field is deprecated, use `regexp_topics_include` instead."
+      }
+    ]
+  }
+}

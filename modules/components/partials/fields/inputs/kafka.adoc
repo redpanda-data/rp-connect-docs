@@ -11,14 +11,9 @@ A list of broker addresses to connect to. If an item of the list contains commas
 [source,yaml]
 ----
 # Examples:
-addresses:
-  - "localhost:9092"
-
-  - "localhost:9041,localhost:9042"
-
-  - "localhost:9041"
-  - "localhost:9042"
-
+addresses: ["localhost:9092"]
+addresses: ["localhost:9041,localhost:9042"]
+addresses: ["localhost:9041", "localhost:9042"]
 ----
 
 === `auto_replay_nacks`
@@ -111,9 +106,11 @@ processors:
   - archive:
       format: concatenate
 
+processors:
   - archive:
       format: lines
 
+processors:
   - archive:
       format: json_array
 
@@ -377,6 +374,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -510,20 +508,11 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-topics:
-  - foo
-  - bar
-
-  - "foo,bar"
-
-  - "foo:0"
-  - "bar:1"
-  - "bar:3"
-
-  - "foo:0,bar:1,bar:3"
-
-  - "foo:0-5"
-
+topics: [foo, bar]
+topics: ["foo,bar"]
+topics: ["foo:0", "bar:1", "bar:3"]
+topics: ["foo:0,bar:1,bar:3"]
+topics: ["foo:0-5"]
 ----
 
 
