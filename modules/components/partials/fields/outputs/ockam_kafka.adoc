@@ -148,9 +148,11 @@ processors:
   - archive:
       format: concatenate
 
+processors:
   - archive:
       format: lines
 
+processors:
   - archive:
       format: json_array
 
@@ -233,11 +235,8 @@ A list of explicit metadata key regular expression (re2) patterns to match again
 [source,yaml]
 ----
 # Examples:
-include_patterns:
-  - .*
-
-  - _timestamp_unix$
-
+include_patterns: [.*]
+include_patterns: [_timestamp_unix$]
 ----
 
 === `kafka.metadata.include_prefixes[]`
@@ -251,14 +250,9 @@ A list of explicit metadata key prefixes to match against.
 [source,yaml]
 ----
 # Examples:
-include_prefixes:
-  - foo_
-  - bar_
-
-  - kafka_
-
-  - content-
-
+include_prefixes: [foo_, bar_]
+include_prefixes: [kafka_]
+include_prefixes: [content-]
 ----
 
 === `kafka.partition`
@@ -308,14 +302,9 @@ A list of broker addresses to connect to (optional). List items that contain com
 [source,yaml]
 ----
 # Examples:
-seed_brokers:
-  - "localhost:9092"
-
-  - "foo:9092"
-  - "bar:9092"
-
-  - "foo:9092,bar:9092"
-
+seed_brokers: ["localhost:9092"]
+seed_brokers: ["foo:9092", "bar:9092"]
+seed_brokers: ["foo:9092,bar:9092"]
 ----
 
 === `kafka.timeout`
@@ -371,6 +360,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 

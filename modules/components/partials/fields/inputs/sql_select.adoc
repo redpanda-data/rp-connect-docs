@@ -31,13 +31,8 @@ A list of columns to select.
 [source,yaml]
 ----
 # Examples:
-columns:
-  - "*"
-
-  - foo
-  - bar
-  - baz
-
+columns: ["*"]
+columns: [foo, bar, baz]
 ----
 
 === `conn_max_idle`
@@ -108,12 +103,8 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-init_files:
-  - ./init/*.sql
-
-  - ./foo.sql
-  - ./bar.sql
-
+init_files: [./init/*.sql]
+init_files: [./foo.sql, ./bar.sql]
 ----
 
 === `init_statement`

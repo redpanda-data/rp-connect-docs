@@ -123,13 +123,24 @@ When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets
 
 *Default*: `45s`
 
-=== `regexp_topics`
+=== `regexp_topics_exclude[]`
 
-Whether listed topics are interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions, this field must remain set to `false`.
+A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.
 
-*Type*: `bool`
+*Type*: `array`
 
-*Default*: `false`
+=== `regexp_topics_include[]`
+
+A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns.
+
+*Type*: `array`
+
+[source,yaml]
+----
+# Examples:
+regexp_topics_include: [logs_.*, metrics_.*]
+regexp_topics_include: ["events_[0-9]+"]
+----
 
 === `session_timeout`
 
@@ -191,22 +202,12 @@ It is also possible to specify an explicit offset to consume from by adding anot
 [source,yaml]
 ----
 # Examples:
-topics:
-  - foo
-  - bar
-
-  - things.*
-
-  - "foo,bar"
-
-  - "foo:0"
-  - "bar:1"
-  - "bar:3"
-
-  - "foo:0,bar:1,bar:3"
-
-  - "foo:0-5"
-
+topics: [foo, bar]
+topics: [things.*]
+topics: ["foo,bar"]
+topics: ["foo:0", "bar:1", "bar:3"]
+topics: ["foo:0,bar:1,bar:3"]
+topics: ["foo:0-5"]
 ----
 
 === `transaction_isolation_level`

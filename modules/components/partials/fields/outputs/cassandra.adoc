@@ -11,14 +11,9 @@ A list of Cassandra nodes to connect to. Multiple comma separated addresses can 
 [source,yaml]
 ----
 # Examples:
-addresses:
-  - "localhost:9042"
-
-  - "foo:9042"
-  - "bar:9042"
-
-  - "foo:9042,bar:9042"
-
+addresses: ["localhost:9042"]
+addresses: ["foo:9042", "bar:9042"]
+addresses: ["foo:9042,bar:9042"]
 ----
 
 === `args_mapping`
@@ -135,9 +130,11 @@ processors:
   - archive:
       format: concatenate
 
+processors:
   - archive:
       format: lines
 
+processors:
   - archive:
       format: json_array
 
@@ -322,6 +319,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 

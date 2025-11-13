@@ -11,14 +11,9 @@ A list of Cassandra nodes to connect to. Multiple comma separated addresses can 
 [source,yaml]
 ----
 # Examples:
-addresses:
-  - "localhost:9042"
-
-  - "foo:9042"
-  - "bar:9042"
-
-  - "foo:9042,bar:9042"
-
+addresses: ["localhost:9042"]
+addresses: ["foo:9042", "bar:9042"]
+addresses: ["foo:9042,bar:9042"]
 ----
 
 === `auto_replay_nacks`
@@ -204,6 +199,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 

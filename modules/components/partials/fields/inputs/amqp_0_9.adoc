@@ -66,9 +66,7 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-nack_reject_patterns:
-  - "^reject me please:.+$"
-
+nack_reject_patterns: ["^reject me please:.+$"]
 ----
 
 === `prefetch_count`
@@ -218,6 +216,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -353,14 +352,9 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-urls:
-  - "amqp://guest:guest@127.0.0.1:5672/"
-
-  - "amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/"
-
-  - "amqp://127.0.0.1:5672/"
-  - "amqp://127.0.0.2:5672/"
-
+urls: ["amqp://guest:guest@127.0.0.1:5672/"]
+urls: ["amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/"]
+urls: ["amqp://127.0.0.1:5672/", "amqp://127.0.0.2:5672/"]
 ----
 
 

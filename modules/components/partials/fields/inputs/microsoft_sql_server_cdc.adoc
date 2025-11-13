@@ -93,9 +93,11 @@ processors:
   - archive:
       format: concatenate
 
+processors:
   - archive:
       format: lines
 
+processors:
   - archive:
       format: json_array
 
@@ -158,9 +160,7 @@ Regular expressions for tables to exclude from CDC streaming. Use this to filter
 [source,yaml]
 ----
 # Examples:
-exclude:
-  - dbo.privatetable
-
+exclude: dbo.privatetable
 ----
 
 === `include[]`
@@ -172,10 +172,16 @@ Regular expressions for tables to include in CDC streaming. Specify table names 
 [source,yaml]
 ----
 # Examples:
-include:
-  - dbo.products
-
+include: dbo.products
 ----
+
+=== `max_parallel_snapshot_tables`
+
+Specifies a number of tables that will be processed in parallel during the snapshot processing stage.
+
+*Type*: `int`
+
+*Default*: `1`
 
 === `snapshot_max_batch_size`
 
@@ -205,5 +211,13 @@ stream_backoff_interval: 1m
 Whether to stream a snapshot of all existing data before streaming CDC changes. When enabled, the connector first queries all existing table data, then switches to streaming incremental changes from the transaction log. Set to `false` to start streaming only new changes from the current LSN position.
 
 *Type*: `bool`
+
+*Default*: `false`
+
+[source,yaml]
+----
+# Examples:
+stream_snapshot: true
+----
 
 

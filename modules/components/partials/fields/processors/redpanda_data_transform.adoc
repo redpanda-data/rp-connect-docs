@@ -19,11 +19,8 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 [source,yaml]
 ----
 # Examples:
-include_patterns:
-  - .*
-
-  - _timestamp_unix$
-
+include_patterns: [.*]
+include_patterns: [_timestamp_unix$]
 ----
 
 === `input_headers.include_prefixes[]`
@@ -37,14 +34,9 @@ Provide a list of explicit metadata key prefixes to match against.
 [source,yaml]
 ----
 # Examples:
-include_prefixes:
-  - foo_
-  - bar_
-
-  - kafka_
-
-  - content-
-
+include_prefixes: [foo_, bar_]
+include_prefixes: [kafka_]
+include_prefixes: [content-]
 ----
 
 === `input_key`
@@ -90,11 +82,8 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 [source,yaml]
 ----
 # Examples:
-include_patterns:
-  - .*
-
-  - _timestamp_unix$
-
+include_patterns: [.*]
+include_patterns: [_timestamp_unix$]
 ----
 
 === `output_metadata.include_prefixes[]`
@@ -108,14 +97,9 @@ Provide a list of explicit metadata key prefixes to match against.
 [source,yaml]
 ----
 # Examples:
-include_prefixes:
-  - foo_
-  - bar_
-
-  - kafka_
-
-  - content-
-
+include_prefixes: [foo_, bar_]
+include_prefixes: [kafka_]
+include_prefixes: [content-]
 ----
 
 === `timeout`

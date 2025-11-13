@@ -93,9 +93,11 @@ processors:
   - archive:
       format: concatenate
 
+processors:
   - archive:
       format: lines
 
+processors:
   - archive:
       format: json_array
 
@@ -208,7 +210,7 @@ The maximum period of time after which metadata is refreshed. This field accepts
 
 *Type*: `string`
 
-*Default*: `5m`
+*Default*: `1m`
 
 === `multi_header`
 
@@ -234,13 +236,24 @@ When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets
 
 *Default*: `45s`
 
-=== `regexp_topics`
+=== `regexp_topics_exclude[]`
 
-Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`.
+A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.
 
-*Type*: `bool`
+*Type*: `array`
 
-*Default*: `false`
+=== `regexp_topics_include[]`
+
+A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns.
+
+*Type*: `array`
+
+[source,yaml]
+----
+# Examples:
+regexp_topics_include: [logs_.*, metrics_.*]
+regexp_topics_include: ["events_[0-9]+"]
+----
 
 === `request_timeout_overhead`
 
@@ -338,6 +351,58 @@ The AWS region to target.
 
 *Type*: `string`
 
+=== `sasl[].aws.tcp`
+
+TCP socket configuration.
+
+*Type*: `object`
+
+=== `sasl[].aws.tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `sasl[].aws.tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `sasl[].aws.tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `sasl[].aws.tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `sasl[].aws.tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `sasl[].aws.tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
 === `sasl[].extensions`
 
 Key/value pairs to add to OAUTHBEARER authentication requests.
@@ -409,14 +474,9 @@ A list of broker addresses to connect to in order. Use commas to separate multip
 [source,yaml]
 ----
 # Examples:
-seed_brokers:
-  - "localhost:9092"
-
-  - "foo:9092"
-  - "bar:9092"
-
-  - "foo:9092,bar:9092"
-
+seed_brokers: ["localhost:9092"]
+seed_brokers: ["foo:9092", "bar:9092"]
+seed_brokers: ["foo:9092,bar:9092"]
 ----
 
 === `session_timeout`
@@ -449,6 +509,58 @@ Specify the offset from which this input starts or restarts consuming messages. 
 |Start from the latest offset. Corresponds to Kafka's `auto.offset.reset=latest` option.
 
 |===
+
+=== `tcp`
+
+TCP socket configuration.
+
+*Type*: `object`
+
+=== `tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
 
 === `timely_nacks_maximum_wait`
 
@@ -486,6 +598,7 @@ client_certs:
   - cert: foo
     key: bar
 
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -629,22 +742,12 @@ It is also possible to specify an explicit offset to consume from by adding anot
 [source,yaml]
 ----
 # Examples:
-topics:
-  - foo
-  - bar
-
-  - things.*
-
-  - "foo,bar"
-
-  - "foo:0"
-  - "bar:1"
-  - "bar:3"
-
-  - "foo:0,bar:1,bar:3"
-
-  - "foo:0-5"
-
+topics: [foo, bar]
+topics: [things.*]
+topics: ["foo,bar"]
+topics: ["foo:0", "bar:1", "bar:3"]
+topics: ["foo:0,bar:1,bar:3"]
+topics: ["foo:0-5"]
 ----
 
 === `transaction_isolation_level`
