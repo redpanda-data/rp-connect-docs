@@ -2,7 +2,7 @@
   "comparison": {
     "oldVersion": "4.68.0",
     "newVersion": "4.70.0",
-    "timestamp": "2025-11-13T17:36:24.101Z"
+    "timestamp": "2025-11-17T13:55:44.522Z"
   },
   "summary": {
     "newComponents": 2,
@@ -10,7 +10,8 @@
     "newFields": 45,
     "removedFields": 0,
     "deprecatedComponents": 0,
-    "deprecatedFields": 5
+    "deprecatedFields": 5,
+    "changedDefaults": 13
   },
   "details": {
     "newComponents": [
@@ -284,6 +285,98 @@
         "component": "inputs:redpanda_migrator",
         "field": "regexp_topics",
         "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. When topics are specified with explicit partitions this field must remain set to `false`.\n\nThis field is deprecated, use `regexp_topics_include` instead."
+      }
+    ],
+    "changedDefaults": [
+      {
+        "component": "config:redpanda",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "caches:redpanda",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "inputs:kafka_franz",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "inputs:legacy_redpanda_migrator",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "inputs:legacy_redpanda_migrator_offsets",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "inputs:microsoft_sql_server_cdc",
+        "field": "stream_snapshot",
+        "newDefault": false,
+        "description": "If set to true, the connector will query all the existing data as a part of snapshot process. Otherwise, it will start from the current Log Sequence Number position."
+      },
+      {
+        "component": "inputs:redpanda",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "inputs:redpanda_migrator",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "outputs:kafka_franz",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "outputs:legacy_redpanda_migrator",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "outputs:legacy_redpanda_migrator_offsets",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "outputs:redpanda",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
+      },
+      {
+        "component": "outputs:redpanda_migrator",
+        "field": "metadata_max_age",
+        "oldDefault": "5m",
+        "newDefault": "1m",
+        "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics."
       }
     ]
   }
