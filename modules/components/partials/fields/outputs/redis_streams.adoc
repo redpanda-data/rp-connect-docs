@@ -16,9 +16,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -67,7 +73,13 @@ A period in which an incomplete batch should be flushed regardless of its size.
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -84,9 +96,15 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
 processors:
   - archive:
       format: lines
+
+
+# ---
 
 processors:
   - archive:
@@ -188,6 +206,9 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
 client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
@@ -245,6 +266,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -319,10 +343,25 @@ The URL of the target Redis server. Database is optional and is supplied as the 
 ----
 # Examples:
 url: redis://:6379
+
+# ---
+
 url: redis://localhost:6379
+
+# ---
+
 url: redis://foousername:foopassword@redisplace:6379
+
+# ---
+
 url: redis://:foopassword@redisplace:6379
+
+# ---
+
 url: redis://localhost:6379/1
+
+# ---
+
 url: redis://localhost:6379/1,redis://localhost:6380/1
 ----
 

@@ -22,6 +22,9 @@ The upper bound for the number of bytes written to a broker connection in a sing
 ----
 # Examples:
 broker_write_max_bytes: 128MB
+
+# ---
+
 broker_write_max_bytes: 50mib
 ----
 
@@ -101,6 +104,9 @@ The maximum space in bytes than an individual message may take, messages larger 
 ----
 # Examples:
 max_message_bytes: 100MB
+
+# ---
+
 max_message_bytes: 50mib
 ----
 
@@ -123,6 +129,9 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 # Examples:
 include_patterns:
   - .*
+
+# ---
+
 include_patterns:
   - _timestamp_unix$
 ----
@@ -141,8 +150,14 @@ Provide a list of explicit metadata key prefixes to match against.
 include_prefixes:
   - foo_
   - bar_
+
+# ---
+
 include_prefixes:
   - kafka_
+
+# ---
+
 include_prefixes:
   - content-
 ----
@@ -438,9 +453,15 @@ A list of broker addresses to connect to in order to establish connections. If a
 # Examples:
 seed_brokers:
   - "localhost:9092"
+
+# ---
+
 seed_brokers:
   - "foo:9092"
   - "bar:9092"
+
+# ---
+
 seed_brokers:
   - "foo:9092,bar:9092"
 ----
@@ -517,6 +538,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 timestamp_ms: ${! timestamp_unix_milli() }
+
+# ---
+
 timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ----
 
@@ -540,6 +564,9 @@ A list of client certificates to use. For each certificate either the fields `ce
 client_certs:
   - cert: foo
     key: bar
+
+
+# ---
 
 client_certs:
   - cert_file: ./example.pem
@@ -598,6 +625,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

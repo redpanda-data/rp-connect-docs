@@ -108,6 +108,9 @@ The initial period to wait between retry attempts.
 ----
 # Examples:
 initial_interval: 50ms
+
+# ---
+
 initial_interval: 1s
 ----
 
@@ -123,6 +126,9 @@ The maximum overall period of time to spend on retry attempts before the request
 ----
 # Examples:
 max_elapsed_time: 1m
+
+# ---
+
 max_elapsed_time: 1h
 ----
 
@@ -138,6 +144,9 @@ The maximum period to wait between retry attempts
 ----
 # Examples:
 max_interval: 5s
+
+# ---
+
 max_interval: 1m
 ----
 

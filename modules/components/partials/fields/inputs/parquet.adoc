@@ -28,7 +28,13 @@ A list of file paths to read from. Each file will be read sequentially until the
 ----
 # Examples:
 paths: /tmp/foo.parquet
+
+# ---
+
 paths: /tmp/bar/*.parquet
+
+# ---
+
 paths: /tmp/data/**/*.parquet
 ----
 

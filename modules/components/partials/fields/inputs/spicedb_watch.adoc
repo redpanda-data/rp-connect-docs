@@ -56,6 +56,9 @@ The maximum message size (in bytes) this input can receive. If a message exceeds
 ----
 # Examples:
 max_receive_message_bytes: 100MB
+
+# ---
+
 max_receive_message_bytes: 50mib
 ----
 
@@ -88,6 +91,9 @@ Mixing inline and file-based values within the same item is not supported.
 client_certs:
   - cert: foo
     key: bar
+
+
+# ---
 
 client_certs:
   - cert_file: ./example.pem
@@ -146,6 +152,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

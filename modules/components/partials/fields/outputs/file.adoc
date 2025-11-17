@@ -36,7 +36,13 @@ endif::[]
 ----
 # Examples:
 codec: lines
+
+# ---
+
 codec: delim:	
+
+# ---
+
 codec: delim:foobar
 ----
 
@@ -55,7 +61,13 @@ endif::[]
 ----
 # Examples:
 path: /tmp/data.txt
+
+# ---
+
 path: /tmp/${! timestamp_unix() }.txt
+
+# ---
+
 path: /tmp/${! json("document.id") }.json
 ----
 

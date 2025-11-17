@@ -41,9 +41,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -94,7 +100,13 @@ The length of time after which an incomplete batch should be flushed regardless 
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -111,9 +123,15 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
 processors:
   - archive:
       format: lines
+
+
+# ---
 
 processors:
   - archive:

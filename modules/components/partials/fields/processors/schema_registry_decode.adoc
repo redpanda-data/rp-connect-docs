@@ -181,6 +181,9 @@ The duration after which a cached schema is considered stale and is removed from
 ----
 # Examples:
 cache_duration: 1h
+
+# ---
+
 cache_duration: 5m
 ----
 
@@ -367,6 +370,9 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
 client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
@@ -424,6 +430,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

@@ -12,6 +12,9 @@ The address to connect to.
 ----
 # Examples:
 address: /tmp/benthos.sock
+
+# ---
+
 address: 127.0.0.1:6000
 ----
 
@@ -45,7 +48,13 @@ The way in which the bytes of messages should be written out into the output dat
 ----
 # Examples:
 codec: lines
+
+# ---
+
 codec: delim:	
+
+# ---
+
 codec: delim:foobar
 ----
 
@@ -86,6 +95,9 @@ Mixing inline and file-based values within the same item is not supported.
 client_certs:
   - cert: foo
     key: bar
+
+
+# ---
 
 client_certs:
   - cert_file: ./example.pem
@@ -143,6 +155,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

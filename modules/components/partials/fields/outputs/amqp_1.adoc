@@ -131,7 +131,13 @@ The target address to write to.
 ----
 # Examples:
 target_address: /foo
+
+# ---
+
 target_address: queue:/bar
+
+# ---
+
 target_address: topic:/baz
 ----
 
@@ -146,8 +152,14 @@ Lists the extension capabilities the sender desires from the target, such as sup
 # Examples:
 target_capabilities:
   - queue
+
+# ---
+
 target_capabilities:
   - topic
+
+# ---
+
 target_capabilities:
   - queue
   - topic
@@ -173,6 +185,9 @@ A list of client certificates to use. For each certificate either the fields `ce
 client_certs:
   - cert: foo
     key: bar
+
+
+# ---
 
 client_certs:
   - cert_file: ./example.pem
@@ -231,6 +246,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -310,8 +328,14 @@ endif::[]
 # Examples:
 urls:
   - "amqp://guest:guest@127.0.0.1:5672/"
+
+# ---
+
 urls:
   - "amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/"
+
+# ---
+
 urls:
   - "amqp://127.0.0.1:5672/"
   - "amqp://127.0.0.2:5672/"

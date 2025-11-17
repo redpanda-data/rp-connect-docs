@@ -74,9 +74,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -125,7 +131,13 @@ The period of time after which an incomplete batch is flushed regardless of its 
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -142,9 +154,15 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
 processors:
   - archive:
       format: lines
+
+
+# ---
 
 processors:
   - archive:
@@ -279,6 +297,9 @@ A list of regular expression patterns for matching topics to consume from. When 
 regexp_topics_include:
   - logs_.*
   - metrics_.*
+
+# ---
+
 regexp_topics_include:
   - "events_[0-9]+"
 ----
@@ -294,9 +315,15 @@ A list of broker addresses to connect to (optional). List items that contain com
 # Examples:
 seed_brokers:
   - "localhost:9092"
+
+# ---
+
 seed_brokers:
   - "foo:9092"
   - "bar:9092"
+
+# ---
+
 seed_brokers:
   - "foo:9092,bar:9092"
 ----
@@ -362,6 +389,9 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
 client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
@@ -419,6 +449,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -510,16 +543,31 @@ Finally, add another colon after the partition to set an explicit offset to cons
 topics:
   - foo
   - bar
+
+# ---
+
 topics:
   - things.*
+
+# ---
+
 topics:
   - "foo,bar"
+
+# ---
+
 topics:
   - "foo:0"
   - "bar:1"
   - "bar:3"
+
+# ---
+
 topics:
   - "foo:0,bar:1,bar:3"
+
+# ---
+
 topics:
   - "foo:0-5"
 ----

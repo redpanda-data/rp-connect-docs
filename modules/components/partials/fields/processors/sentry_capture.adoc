@@ -12,6 +12,9 @@ A mapping that must evaluate to an object-of-objects or `deleted()`. If this map
 ----
 # Examples:
 context: root = {"order": {"product_id": "P93174", "quantity": 5}}
+
+# ---
+
 context: root = deleted()
 ----
 
@@ -41,6 +44,9 @@ A mapping that must evaluate to an object. If this mapping produces a value, the
 ----
 # Examples:
 extras: root.foo = "bar"
+
+# ---
+
 extras: root = this.without("password")
 ----
 
@@ -73,6 +79,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 message: webhook event received
+
+# ---
+
 message: failed to find product in database: ${! error() }
 ----
 

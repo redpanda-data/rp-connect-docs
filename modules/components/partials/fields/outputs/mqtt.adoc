@@ -26,6 +26,9 @@ endif::[]
 ----
 # Examples:
 connect_timeout: 1s
+
+# ---
+
 connect_timeout: 500ms
 ----
 
@@ -118,6 +121,9 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
 client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
@@ -175,6 +181,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -335,6 +344,9 @@ endif::[]
 ----
 # Examples:
 write_timeout: 1s
+
+# ---
+
 write_timeout: 500ms
 ----
 

@@ -94,6 +94,9 @@ endif::[]
 ----
 # Examples:
 inject_tracing_map: meta = @.merge(this)
+
+# ---
+
 inject_tracing_map: root.meta.span = this
 ----
 
@@ -137,6 +140,9 @@ A list of client certificates to use. For each certificate either the fields `ce
 client_certs:
   - cert: foo
     key: bar
+
+
+# ---
 
 client_certs:
   - cert_file: ./example.pem
@@ -195,6 +201,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -282,6 +291,9 @@ A list of URLs to connect to. If a list item contains commas, it will be expande
 # Examples:
 urls:
   - "nats://127.0.0.1:4222"
+
+# ---
+
 urls:
   - "nats://username:password@127.0.0.1:4222"
 ----

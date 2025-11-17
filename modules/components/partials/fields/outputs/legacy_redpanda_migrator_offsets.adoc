@@ -44,6 +44,9 @@ The upper bound for the number of bytes written to a broker connection in a sing
 ----
 # Examples:
 broker_write_max_bytes: 128MB
+
+# ---
+
 broker_write_max_bytes: 50mib
 ----
 
@@ -85,6 +88,9 @@ The maximum space in bytes than an individual message may take, messages larger 
 ----
 # Examples:
 max_message_bytes: 100MB
+
+# ---
+
 max_message_bytes: 50mib
 ----
 
@@ -385,9 +391,15 @@ A list of broker addresses to connect to in order to establish connections. If a
 # Examples:
 seed_brokers:
   - "localhost:9092"
+
+# ---
+
 seed_brokers:
   - "foo:9092"
   - "bar:9092"
+
+# ---
+
 seed_brokers:
   - "foo:9092,bar:9092"
 ----
@@ -473,6 +485,9 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
 client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
@@ -530,6 +545,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

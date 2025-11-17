@@ -151,6 +151,9 @@ Example: `regexp_topics_include: ["events_.*", "logs_.*"]` consumes from all top
 regexp_topics_include:
   - logs_.*
   - metrics_.*
+
+# ---
+
 regexp_topics_include:
   - "events_[0-9]+"
 ----
@@ -218,16 +221,31 @@ It is also possible to specify an explicit offset to consume from by adding anot
 topics:
   - foo
   - bar
+
+# ---
+
 topics:
   - things.*
+
+# ---
+
 topics:
   - "foo,bar"
+
+# ---
+
 topics:
   - "foo:0"
   - "bar:1"
   - "bar:3"
+
+# ---
+
 topics:
   - "foo:0,bar:1,bar:3"
+
+# ---
+
 topics:
   - "foo:0-5"
 ----

@@ -119,6 +119,9 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 # Examples:
 include_patterns:
   - .*
+
+# ---
+
 include_patterns:
   - _timestamp_unix$
 ----
@@ -137,8 +140,14 @@ Provide a list of explicit metadata key prefixes to match against.
 include_prefixes:
   - foo_
   - bar_
+
+# ---
+
 include_prefixes:
   - kafka_
+
+# ---
+
 include_prefixes:
   - content-
 ----
@@ -242,6 +251,9 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 # Examples:
 include_patterns:
   - .*
+
+# ---
+
 include_patterns:
   - _timestamp_unix$
 ----
@@ -260,8 +272,14 @@ Provide a list of explicit metadata key prefixes to match against.
 include_prefixes:
   - foo_
   - bar_
+
+# ---
+
 include_prefixes:
   - kafka_
+
+# ---
+
 include_prefixes:
   - content-
 ----
@@ -511,6 +529,9 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
 client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
@@ -568,6 +589,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -650,7 +674,13 @@ A verb to connect with.
 ----
 # Examples:
 verb: POST
+
+# ---
+
 verb: GET
+
+# ---
+
 verb: DELETE
 ----
 

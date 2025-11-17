@@ -12,6 +12,9 @@ An optional duration string that determines the maximum length of time to wait f
 ----
 # Examples:
 back_pressure: 30s
+
+# ---
+
 back_pressure: 1m
 ----
 
@@ -38,6 +41,9 @@ endif::[]
 # Examples:
 error_patterns:
   - "and that was really bad$"
+
+# ---
+
 error_patterns:
   - "roughly [0-9]+ issues occurred"
 ----

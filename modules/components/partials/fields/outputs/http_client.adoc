@@ -70,9 +70,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -121,7 +127,13 @@ The period of time after which an incomplete batch is flushed regardless of its 
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -138,9 +150,15 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
 processors:
   - archive:
       format: lines
+
+
+# ---
 
 processors:
   - archive:
@@ -206,6 +224,9 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 # Examples:
 include_patterns:
   - .*
+
+# ---
+
 include_patterns:
   - _timestamp_unix$
 ----
@@ -224,8 +245,14 @@ Provide a list of explicit metadata key prefixes to match against.
 include_prefixes:
   - foo_
   - bar_
+
+# ---
+
 include_prefixes:
   - kafka_
+
+# ---
+
 include_prefixes:
   - content-
 ----
@@ -339,6 +366,9 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 # Examples:
 include_patterns:
   - .*
+
+# ---
+
 include_patterns:
   - _timestamp_unix$
 ----
@@ -357,8 +387,14 @@ Provide a list of explicit metadata key prefixes to match against.
 include_prefixes:
   - foo_
   - bar_
+
+# ---
+
 include_prefixes:
   - kafka_
+
+# ---
+
 include_prefixes:
   - content-
 ----
@@ -637,6 +673,9 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
 client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
@@ -694,6 +733,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -776,7 +818,13 @@ A verb to connect with.
 ----
 # Examples:
 verb: POST
+
+# ---
+
 verb: GET
+
+# ---
+
 verb: DELETE
 ----
 

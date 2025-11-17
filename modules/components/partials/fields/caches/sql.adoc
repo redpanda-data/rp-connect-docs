@@ -92,8 +92,17 @@ The https://pkg.go.dev/github.com/microsoft/gocosmos[`gocosmos`^] driver is stil
 ----
 # Examples:
 dsn: clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60
+
+# ---
+
 dsn: foouser:foopassword@tcp(localhost:3306)/foodb
+
+# ---
+
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
+
+# ---
+
 dsn: oracle://foouser:foopass@localhost:1521/service_name
 ----
 
@@ -118,6 +127,9 @@ endif::[]
 # Examples:
 init_files:
   - ./init/*.sql
+
+# ---
+
 init_files:
   - ./foo.sql
   - ./bar.sql
@@ -175,7 +187,13 @@ An optional suffix to append to each insert query for a cache `set` operation. T
 ----
 # Examples:
 set_suffix: ON DUPLICATE KEY UPDATE bar=VALUES(bar)
+
+# ---
+
 set_suffix: ON CONFLICT (foo) DO UPDATE SET bar=excluded.bar
+
+# ---
+
 set_suffix: ON CONFLICT (foo) DO NOTHING
 ----
 

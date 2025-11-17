@@ -19,8 +19,17 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 key: my_foo_result
+
+# ---
+
 key: ${! this.document.id }
+
+# ---
+
 key: ${! meta("kafka_key") }
+
+# ---
+
 key: ${! meta("kafka_topic") }
 ----
 

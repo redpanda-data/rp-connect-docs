@@ -15,9 +15,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -66,7 +72,13 @@ A period in which an incomplete batch should be flushed regardless of its size.
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -83,9 +95,15 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
 processors:
   - archive:
       format: lines
+
+
+# ---
 
 processors:
   - archive:
@@ -139,6 +157,9 @@ An optional endpoint to override the default of `pubsub.googleapis.com:443`. Thi
 ----
 # Examples:
 endpoint: us-central1-pubsub.googleapis.com:443
+
+# ---
+
 endpoint: us-west3-pubsub.googleapis.com:443
 ----
 
@@ -221,7 +242,13 @@ The maximum length of time to wait before abandoning a publish attempt for a mes
 ----
 # Examples:
 publish_timeout: 10s
+
+# ---
+
 publish_timeout: 5m
+
+# ---
+
 publish_timeout: 60m
 ----
 

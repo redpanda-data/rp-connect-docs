@@ -21,6 +21,9 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 # Examples:
 include_patterns:
   - .*
+
+# ---
+
 include_patterns:
   - _timestamp_unix$
 ----
@@ -39,8 +42,14 @@ Provide a list of explicit metadata key prefixes to match against.
 include_prefixes:
   - foo_
   - bar_
+
+# ---
+
 include_prefixes:
   - kafka_
+
+# ---
+
 include_prefixes:
   - content-
 ----
@@ -90,6 +99,9 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 # Examples:
 include_patterns:
   - .*
+
+# ---
+
 include_patterns:
   - _timestamp_unix$
 ----
@@ -108,8 +120,14 @@ Provide a list of explicit metadata key prefixes to match against.
 include_prefixes:
   - foo_
   - bar_
+
+# ---
+
 include_prefixes:
   - kafka_
+
+# ---
+
 include_prefixes:
   - content-
 ----
@@ -134,6 +152,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 timestamp: ${! timestamp_unix() }
+
+# ---
+
 timestamp: ${! metadata("kafka_timestamp_ms") }
 ----
 

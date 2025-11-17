@@ -13,9 +13,15 @@ A list of Cassandra nodes to connect to. Multiple comma separated addresses can 
 # Examples:
 addresses:
   - "localhost:9042"
+
+# ---
+
 addresses:
   - "foo:9042"
   - "bar:9042"
+
+# ---
+
 addresses:
   - "foo:9042,bar:9042"
 ----
@@ -203,6 +209,9 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
 client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
@@ -260,6 +269,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

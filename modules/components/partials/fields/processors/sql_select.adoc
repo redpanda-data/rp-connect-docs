@@ -12,6 +12,9 @@ An optional xref:guides:bloblang/about.adoc[Bloblang mapping] which should evalu
 ----
 # Examples:
 args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
+
+# ---
+
 args_mapping: root = [ meta("user.id") ]
 ----
 
@@ -26,6 +29,9 @@ A list of columns to query.
 # Examples:
 columns:
   - "*"
+
+# ---
+
 columns:
   - foo
   - bar
@@ -76,8 +82,17 @@ The Data Source Name (DSN) connection string that identifies the target database
 ----
 # Examples:
 dsn: clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60
+
+# ---
+
 dsn: foouser:foopassword@tcp(localhost:3306)/foodb
+
+# ---
+
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
+
+# ---
+
 dsn: oracle://foouser:foopass@localhost:1521/service_name
 ----
 
@@ -102,6 +117,9 @@ endif::[]
 # Examples:
 init_files:
   - ./init/*.sql
+
+# ---
+
 init_files:
   - ./foo.sql
   - ./bar.sql
@@ -171,6 +189,9 @@ An optional where clause to add. Placeholder arguments are populated with the `a
 ----
 # Examples:
 where: meow = ? and woof = ?
+
+# ---
+
 where: user_id = ?
 ----
 

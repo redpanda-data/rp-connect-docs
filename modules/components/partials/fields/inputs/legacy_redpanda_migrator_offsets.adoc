@@ -279,9 +279,15 @@ A list of broker addresses to connect to in order to establish connections. If a
 # Examples:
 seed_brokers:
   - "localhost:9092"
+
+# ---
+
 seed_brokers:
   - "foo:9092"
   - "bar:9092"
+
+# ---
+
 seed_brokers:
   - "foo:9092,bar:9092"
 ----
@@ -359,6 +365,9 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
 client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
@@ -416,6 +425,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -493,8 +505,14 @@ A list of topics to consume from. Multiple comma separated topics can be listed 
 topics:
   - foo
   - bar
+
+# ---
+
 topics:
   - things.*
+
+# ---
+
 topics:
   - "foo,bar"
 ----

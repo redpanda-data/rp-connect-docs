@@ -16,9 +16,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -67,7 +73,13 @@ A period in which an incomplete batch should be flushed regardless of its size.
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -84,9 +96,15 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
 processors:
   - archive:
       format: lines
+
+
+# ---
 
 processors:
   - archive:
@@ -184,6 +202,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 table_name: ${! meta("kafka_topic") }
+
+# ---
+
 table_name: ${! json("table") }
 ----
 
@@ -210,7 +231,13 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 transaction_type: ${! json("operation") }
+
+# ---
+
 transaction_type: ${! meta("operation") }
+
+# ---
+
 transaction_type: INSERT
 ----
 
