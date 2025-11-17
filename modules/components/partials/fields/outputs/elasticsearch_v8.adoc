@@ -346,7 +346,8 @@ A list of URLs to connect to. This output attempts to connect to each URL in the
 [source,yaml]
 ----
 # Examples:
-urls: ["http://localhost:9200"]
+urls:
+  - "http://localhost:9200"
 ----
 
 

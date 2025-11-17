@@ -143,8 +143,11 @@ A list of regular expression patterns for matching topics to consume from. When 
 [source,yaml]
 ----
 # Examples:
-regexp_topics_include: [logs_.*, metrics_.*]
-regexp_topics_include: ["events_[0-9]+"]
+regexp_topics_include:
+  - logs_.*
+  - metrics_.*
+regexp_topics_include:
+  - "events_[0-9]+"
 ----
 
 === `request_timeout_overhead`
@@ -366,9 +369,13 @@ A list of broker addresses to connect to in order to establish connections. If a
 [source,yaml]
 ----
 # Examples:
-seed_brokers: ["localhost:9092"]
-seed_brokers: ["foo:9092", "bar:9092"]
-seed_brokers: ["foo:9092,bar:9092"]
+seed_brokers:
+  - "localhost:9092"
+seed_brokers:
+  - "foo:9092"
+  - "bar:9092"
+seed_brokers:
+  - "foo:9092,bar:9092"
 ----
 
 === `session_timeout`
@@ -624,12 +631,21 @@ Finally, it's also possible to specify an explicit offset to consume from by add
 [source,yaml]
 ----
 # Examples:
-topics: [foo, bar]
-topics: [things.*]
-topics: ["foo,bar"]
-topics: ["foo:0", "bar:1", "bar:3"]
-topics: ["foo:0,bar:1,bar:3"]
-topics: ["foo:0-5"]
+topics:
+  - foo
+  - bar
+topics:
+  - things.*
+topics:
+  - "foo,bar"
+topics:
+  - "foo:0"
+  - "bar:1"
+  - "bar:3"
+topics:
+  - "foo:0,bar:1,bar:3"
+topics:
+  - "foo:0-5"
 ----
 
 === `transaction_isolation_level`

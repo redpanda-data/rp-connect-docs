@@ -255,7 +255,9 @@ A list of database table names to include in the snapshot and logical replicatio
 [source,yaml]
 ----
 # Examples:
-tables: [my_table_1, "MyCaseSensitiveTableNeedingQuotes"]
+tables:
+  - my_table_1
+  - "MyCaseSensitiveTableNeedingQuotes"
 ----
 
 === `temporary_slot`

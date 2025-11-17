@@ -383,9 +383,13 @@ A list of broker addresses to connect to in order to establish connections. If a
 [source,yaml]
 ----
 # Examples:
-seed_brokers: ["localhost:9092"]
-seed_brokers: ["foo:9092", "bar:9092"]
-seed_brokers: ["foo:9092,bar:9092"]
+seed_brokers:
+  - "localhost:9092"
+seed_brokers:
+  - "foo:9092"
+  - "bar:9092"
+seed_brokers:
+  - "foo:9092,bar:9092"
 ----
 
 === `tcp`

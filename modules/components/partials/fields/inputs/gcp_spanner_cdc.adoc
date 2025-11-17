@@ -11,7 +11,10 @@ List of modification types to process. If not specified, all modification types 
 [source,yaml]
 ----
 # Examples:
-allowed_mod_types: [INSERT, UPDATE, DELETE]
+allowed_mod_types:
+  - INSERT
+  - UPDATE
+  - DELETE
 ----
 
 === `auto_replay_nacks`

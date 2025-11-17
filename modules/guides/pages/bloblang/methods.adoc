@@ -473,6 +473,38 @@ root.new_value = this.value.replace_all_many([
 # Out: {"new_value":"&lt;i&gt;Hello&lt;/i&gt; &lt;b&gt;World&lt;/b&gt;"}
 ```
 
+=== `repeat`
+
+Returns a string consisting of the target string repeated a specified number of times. If the count is zero or negative, an empty string is returned.
+
+==== Parameters
+
+*`count`* &lt;integer&gt; The number of times to repeat the string. Must be an integer value.
+
+==== Examples
+
+
+```coffeescript
+root.repeated = this.value.repeat(3)
+
+# In:  {"value":"hello"}
+# Out: {"repeated":"hellohellohello"}
+```
+
+```coffeescript
+root.border = "-".repeat(20)
+
+# In:  {}
+# Out: {"border":"--------------------"}
+```
+
+```coffeescript
+root.dynamic = this.char.repeat(this.count)
+
+# In:  {"char":"*","count":5}
+# Out: {"dynamic":"*****"}
+```
+
 === `reverse`
 
 Returns the target string in reverse order.

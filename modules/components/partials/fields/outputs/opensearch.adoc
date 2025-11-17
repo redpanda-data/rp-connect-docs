@@ -462,7 +462,8 @@ A list of URLs to connect to. If an item of the list contains commas it will be 
 [source,yaml]
 ----
 # Examples:
-urls: ["http://localhost:9200"]
+urls:
+  - "http://localhost:9200"
 ----
 
 

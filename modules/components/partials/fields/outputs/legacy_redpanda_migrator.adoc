@@ -121,8 +121,10 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 [source,yaml]
 ----
 # Examples:
-include_patterns: [.*]
-include_patterns: [_timestamp_unix$]
+include_patterns:
+  - .*
+include_patterns:
+  - _timestamp_unix$
 ----
 
 === `metadata.include_prefixes[]`
@@ -136,9 +138,13 @@ Provide a list of explicit metadata key prefixes to match against.
 [source,yaml]
 ----
 # Examples:
-include_prefixes: [foo_, bar_]
-include_prefixes: [kafka_]
-include_prefixes: [content-]
+include_prefixes:
+  - foo_
+  - bar_
+include_prefixes:
+  - kafka_
+include_prefixes:
+  - content-
 ----
 
 === `metadata_max_age`
@@ -430,9 +436,13 @@ A list of broker addresses to connect to in order to establish connections. If a
 [source,yaml]
 ----
 # Examples:
-seed_brokers: ["localhost:9092"]
-seed_brokers: ["foo:9092", "bar:9092"]
-seed_brokers: ["foo:9092,bar:9092"]
+seed_brokers:
+  - "localhost:9092"
+seed_brokers:
+  - "foo:9092"
+  - "bar:9092"
+seed_brokers:
+  - "foo:9092,bar:9092"
 ----
 
 === `tcp`

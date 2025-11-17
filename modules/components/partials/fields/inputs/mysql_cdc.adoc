@@ -181,7 +181,9 @@ A list of the database table names to stream changes from. Specify each table na
 [source,yaml]
 ----
 # Examples:
-tables: [table1, table2]
+tables:
+  - table1
+  - table2
 ----
 
 

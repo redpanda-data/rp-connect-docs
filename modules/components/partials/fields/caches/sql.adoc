@@ -116,8 +116,11 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-init_files: [./init/*.sql]
-init_files: [./foo.sql, ./bar.sql]
+init_files:
+  - ./init/*.sql
+init_files:
+  - ./foo.sql
+  - ./bar.sql
 ----
 
 === `init_statement`

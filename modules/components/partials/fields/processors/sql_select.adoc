@@ -24,8 +24,12 @@ A list of columns to query.
 [source,yaml]
 ----
 # Examples:
-columns: ["*"]
-columns: [foo, bar, baz]
+columns:
+  - "*"
+columns:
+  - foo
+  - bar
+  - baz
 ----
 
 === `conn_max_idle`
@@ -96,8 +100,11 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-init_files: [./init/*.sql]
-init_files: [./foo.sql, ./bar.sql]
+init_files:
+  - ./init/*.sql
+init_files:
+  - ./foo.sql
+  - ./bar.sql
 ----
 
 === `init_statement`

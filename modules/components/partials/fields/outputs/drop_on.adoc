@@ -36,8 +36,10 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-error_patterns: ["and that was really bad$"]
-error_patterns: ["roughly [0-9]+ issues occurred"]
+error_patterns:
+  - "and that was really bad$"
+error_patterns:
+  - "roughly [0-9]+ issues occurred"
 ----
 
 === `output`

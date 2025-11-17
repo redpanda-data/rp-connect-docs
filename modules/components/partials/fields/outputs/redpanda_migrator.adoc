@@ -153,6 +153,8 @@ max_message_bytes: 50mib
 
 The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
+Lower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.
+
 *Type*: `string`
 
 *Default*: `1m`
@@ -183,7 +185,11 @@ Override the default murmur2 hashing partitioner.
 
 === `provenance_header`
 
-Header name to add to migrated records indicating their source cluster. If empty, no provenance header is added.
+Header name to add to migrated records indicating their source cluster. When set, each migrated message receives a header with this name containing the source cluster's seed broker addresses, enabling downstream systems to track message origins for auditing, debugging, or multi-cluster orchestration workflows.
+
+If empty, no provenance header is added to messages. The header value format is a comma-separated list of the source cluster's `seed_brokers`.
+
+Example: Setting `provenance_header: "rp-source-cluster"` adds a header like `rp-source-cluster: "kafka-1:9092,kafka-2:9092"`.
 
 *Type*: `string`
 
@@ -806,9 +812,13 @@ A list of broker addresses to connect to. Use commas to separate multiple addres
 [source,yaml]
 ----
 # Examples:
-seed_brokers: ["localhost:9092"]
-seed_brokers: ["foo:9092", "bar:9092"]
-seed_brokers: ["foo:9092,bar:9092"]
+seed_brokers:
+  - "localhost:9092"
+seed_brokers:
+  - "foo:9092"
+  - "bar:9092"
+seed_brokers:
+  - "foo:9092,bar:9092"
 ----
 
 === `serverless`

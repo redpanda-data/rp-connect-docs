@@ -116,7 +116,10 @@ A list of columns to insert.
 [source,yaml]
 ----
 # Examples:
-columns: [foo, bar, baz]
+columns:
+  - foo
+  - bar
+  - baz
 ----
 
 === `conn_max_idle`
@@ -187,8 +190,11 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-init_files: [./init/*.sql]
-init_files: [./foo.sql, ./bar.sql]
+init_files:
+  - ./init/*.sql
+init_files:
+  - ./foo.sql
+  - ./bar.sql
 ----
 
 === `init_statement`
@@ -238,7 +244,9 @@ A list of keyword options to add before the INTO clause of the query.
 [source,yaml]
 ----
 # Examples:
-options: [DELAYED, IGNORE]
+options:
+  - DELAYED
+  - IGNORE
 ----
 
 === `prefix`

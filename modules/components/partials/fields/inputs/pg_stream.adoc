@@ -243,7 +243,9 @@ A list of table names to include in the logical replication. Each table should b
 [source,yaml]
 ----
 # Examples:
-tables: [my_table_1, "MyCaseSensitiveTableNeedingQuotes"]
+tables:
+  - my_table_1
+  - "MyCaseSensitiveTableNeedingQuotes"
 ----
 
 === `temporary_slot`

@@ -10043,7 +10043,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.",
+            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.\n\nLower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.",
             "is_advanced": true,
             "default": "1m"
           },
@@ -10067,7 +10067,7 @@
             "name": "tcp",
             "type": "object",
             "kind": "scalar",
-            "description": "TCP socket configuration.",
+            "description": "Configure TCP socket-level settings to optimize network performance and reliability. These low-level controls are useful for:\n\n- **High-latency networks**: Increase `connect_timeout` to allow more time for connection establishment\n- **Long-lived connections**: Configure `keep_alive` settings to detect and recover from stale connections\n- **Unstable networks**: Tune keep-alive probes to balance between quick failure detection and avoiding false positives\n- **Linux systems with specific requirements**: Use `tcp_user_timeout` (Linux 2.6.37+) to control data acknowledgment timeouts\n\nMost users should keep the default values. Only modify these settings if you're experiencing connection stability issues or have specific network requirements.",
             "is_advanced": true,
             "is_optional": true,
             "children": [
@@ -10157,7 +10157,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`.\n\nDEPRECATED: This field is deprecated in favor of `regexp_topics_include` and `regexp_topics_exclude`, which provide more explicit control over topic matching. To migrate, replace `regexp_topics: true` with `regexp_topics_include` containing your topic patterns, and optionally add `regexp_topics_exclude` to filter out specific topics.",
             "is_deprecated": true,
             "default": false
           },
@@ -10165,7 +10165,7 @@
             "name": "regexp_topics_include",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns.",
+            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
             "is_optional": true,
             "examples": [
               [
@@ -10181,7 +10181,7 @@
             "name": "regexp_topics_exclude",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.",
+            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
             "is_optional": true
           },
           {
@@ -17335,7 +17335,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.",
+            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.\n\nLower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.",
             "is_advanced": true,
             "default": "1m"
           },
@@ -17359,7 +17359,7 @@
             "name": "tcp",
             "type": "object",
             "kind": "scalar",
-            "description": "TCP socket configuration.",
+            "description": "Configure TCP socket-level settings to optimize network performance and reliability. These low-level controls are useful for:\n\n- **High-latency networks**: Increase `connect_timeout` to allow more time for connection establishment\n- **Long-lived connections**: Configure `keep_alive` settings to detect and recover from stale connections\n- **Unstable networks**: Tune keep-alive probes to balance between quick failure detection and avoiding false positives\n- **Linux systems with specific requirements**: Use `tcp_user_timeout` (Linux 2.6.37+) to control data acknowledgment timeouts\n\nMost users should keep the default values. Only modify these settings if you're experiencing connection stability issues or have specific network requirements.",
             "is_advanced": true,
             "is_optional": true,
             "children": [
@@ -17449,7 +17449,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics are interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions, this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`.\n\nDEPRECATED: This field is deprecated in favor of `regexp_topics_include` and `regexp_topics_exclude`, which provide more explicit control over topic matching. To migrate, replace `regexp_topics: true` with `regexp_topics_include` containing your topic patterns, and optionally add `regexp_topics_exclude` to filter out specific topics.",
             "is_deprecated": true,
             "default": false
           },
@@ -17457,7 +17457,7 @@
             "name": "regexp_topics_include",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns.",
+            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
             "is_optional": true,
             "examples": [
               [
@@ -17473,7 +17473,7 @@
             "name": "regexp_topics_exclude",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.",
+            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
             "is_optional": true
           },
           {
@@ -18451,7 +18451,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.",
+            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.\n\nLower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.",
             "is_advanced": true,
             "default": "1m"
           },
@@ -18475,7 +18475,7 @@
             "name": "tcp",
             "type": "object",
             "kind": "scalar",
-            "description": "TCP socket configuration.",
+            "description": "Configure TCP socket-level settings to optimize network performance and reliability. These low-level controls are useful for:\n\n- **High-latency networks**: Increase `connect_timeout` to allow more time for connection establishment\n- **Long-lived connections**: Configure `keep_alive` settings to detect and recover from stale connections\n- **Unstable networks**: Tune keep-alive probes to balance between quick failure detection and avoiding false positives\n- **Linux systems with specific requirements**: Use `tcp_user_timeout` (Linux 2.6.37+) to control data acknowledgment timeouts\n\nMost users should keep the default values. Only modify these settings if you're experiencing connection stability issues or have specific network requirements.",
             "is_advanced": true,
             "is_optional": true,
             "children": [
@@ -18565,7 +18565,7 @@
             "name": "regexp_topics",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether listed topics are interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions, this field must remain set to `false`.",
+            "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`.\n\nDEPRECATED: This field is deprecated in favor of `regexp_topics_include` and `regexp_topics_exclude`, which provide more explicit control over topic matching. To migrate, replace `regexp_topics: true` with `regexp_topics_include` containing your topic patterns, and optionally add `regexp_topics_exclude` to filter out specific topics.",
             "is_deprecated": true,
             "default": false
           },
@@ -18573,7 +18573,7 @@
             "name": "regexp_topics_include",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns.",
+            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
             "is_optional": true,
             "examples": [
               [
@@ -18589,7 +18589,7 @@
             "name": "regexp_topics_exclude",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.",
+            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
             "is_optional": true
           },
           {
@@ -30428,7 +30428,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.",
+            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.\n\nLower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.",
             "is_advanced": true,
             "default": "1m"
           },
@@ -38190,7 +38190,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.",
+            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.\n\nLower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.",
             "is_advanced": true,
             "default": "1m"
           },
@@ -39110,7 +39110,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.",
+            "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.\n\nLower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.",
             "is_advanced": true,
             "default": "1m"
           },
@@ -39771,7 +39771,7 @@
             "name": "provenance_header",
             "type": "string",
             "kind": "scalar",
-            "description": "Header name to add to migrated records indicating their source cluster. If empty, no provenance header is added.",
+            "description": "Header name to add to migrated records indicating their source cluster. When set, each migrated message receives a header with this name containing the source cluster's seed broker addresses, enabling downstream systems to track message origins for auditing, debugging, or multi-cluster orchestration workflows.\n\nIf empty, no provenance header is added to messages. The header value format is a comma-separated list of the source cluster's `seed_brokers`.\n\nExample: Setting `provenance_header: \"rp-source-cluster\"` adds a header like `rp-source-cluster: \"kafka-1:9092,kafka-2:9092\"`.",
             "is_advanced": true,
             "default": "redpanda-migrator-provenance"
           }

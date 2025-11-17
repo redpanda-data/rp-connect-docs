@@ -249,7 +249,8 @@ If an item in the list contains commas, it is expanded into multiple URLs.
 [source,yaml]
 ----
 # Examples:
-urls: ["tcp://localhost:1883"]
+urls:
+  - "tcp://localhost:1883"
 ----
 
 === `user`

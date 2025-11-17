@@ -144,9 +144,13 @@ Lists the extension capabilities the sender desires from the target, such as sup
 [source,yaml]
 ----
 # Examples:
-target_capabilities: [queue]
-target_capabilities: [topic]
-target_capabilities: [queue, topic]
+target_capabilities:
+  - queue
+target_capabilities:
+  - topic
+target_capabilities:
+  - queue
+  - topic
 ----
 
 === `tls`
@@ -304,9 +308,13 @@ endif::[]
 [source,yaml]
 ----
 # Examples:
-urls: ["amqp://guest:guest@127.0.0.1:5672/"]
-urls: ["amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/"]
-urls: ["amqp://127.0.0.1:5672/", "amqp://127.0.0.2:5672/"]
+urls:
+  - "amqp://guest:guest@127.0.0.1:5672/"
+urls:
+  - "amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/"
+urls:
+  - "amqp://127.0.0.1:5672/"
+  - "amqp://127.0.0.2:5672/"
 ----
 
 

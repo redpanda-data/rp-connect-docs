@@ -12,14 +12,20 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.70.0[See the full release notes^].
 
+=== Default value changes
+
+This release includes the following default value changes:
+
+* **`metadata_max_age`** (Kafka/Redpanda inputs and outputs): The default changed from `5m` to `1m` to provide more responsive topic and partition discovery. This means metadata refreshes occur more frequently by default. If you experience increased broker load or want to maintain the previous behavior, explicitly set this field to `5m`.
+
 === Component updates
 
 This release adds the following new components:
 
 * Bloblang-functions:
-** xref:components:bloblang-functions/bytes.adoc[`bytes`] (stable): Create a new byte array that is zero initialized
+** xref:guides:bloblang/functions.adoc#bytes[`bytes`] (stable): Create a new byte array that is zero initialized
 * Bloblang-methods:
-** xref:components:bloblang-methods/repeat.adoc[`repeat`] (stable)
+** xref:guides:bloblang/methods.adoc#repeat[`repeat`] (stable)
 
 This release adds support for the following new fields:
 
@@ -108,17 +114,6 @@ This release adds support for the following new fields:
 ** xref:components:metrics/aws_cloudwatch.adoc[`aws_cloudwatch`]:
 *** xref:components:metrics/aws_cloudwatch.adoc#tcp[`tcp`]: TCP socket configuration.
 
-=== Deprecations
-
-
-The following fields are now deprecated:
-
-* Inputs components
-** xref:components:inputs/kafka_franz.adoc[`kafka_franz`]: xref:components:inputs/kafka_franz.adoc#regexp_topics[`regexp_topics`]
-** xref:components:inputs/legacy_redpanda_migrator.adoc[`legacy_redpanda_migrator`]: xref:components:inputs/legacy_redpanda_migrator.adoc#regexp_topics[`regexp_topics`]
-** xref:components:inputs/redpanda.adoc[`redpanda`]: xref:components:inputs/redpanda.adoc#regexp_topics[`regexp_topics`]
-** xref:components:inputs/redpanda_common.adoc[`redpanda_common`]: xref:components:inputs/redpanda_common.adoc#regexp_topics[`regexp_topics`]
-** xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`]: xref:components:inputs/redpanda_migrator.adoc#regexp_topics[`regexp_topics`]
 
 == Version 4.68.0
 

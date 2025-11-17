@@ -63,7 +63,10 @@ A list of file paths to read from. Each file will be read sequentially until the
 [source,yaml]
 ----
 # Examples:
-paths: [/tmp/foo.csv, /tmp/bar/*.csv, /tmp/data/**/*.csv]
+paths:
+  - /tmp/foo.csv
+  - /tmp/bar/*.csv
+  - /tmp/data/**/*.csv
 ----
 
 

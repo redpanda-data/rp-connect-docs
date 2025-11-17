@@ -19,9 +19,13 @@ A list of broker addresses to connect to. If an item of the list contains commas
 [source,yaml]
 ----
 # Examples:
-addresses: ["localhost:9092"]
-addresses: ["localhost:9041,localhost:9042"]
-addresses: ["localhost:9041", "localhost:9042"]
+addresses:
+  - "localhost:9092"
+addresses:
+  - "localhost:9041,localhost:9042"
+addresses:
+  - "localhost:9041"
+  - "localhost:9042"
 ----
 
 === `backoff`

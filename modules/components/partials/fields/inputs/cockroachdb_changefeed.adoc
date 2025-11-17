@@ -39,7 +39,8 @@ NOTE: Both the CURSOR option and UPDATED will be ignored from these options when
 [source,yaml]
 ----
 # Examples:
-options: ["virtual_columns=\"omitted\""]
+options:
+  - "virtual_columns=\"omitted\""
 ----
 
 === `tables[]`
@@ -51,7 +52,9 @@ CSV of tables to be included in the changefeed
 [source,yaml]
 ----
 # Examples:
-tables: [table1, table2]
+tables:
+  - table1
+  - table2
 ----
 
 === `tls`
