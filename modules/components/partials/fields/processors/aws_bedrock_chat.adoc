@@ -110,7 +110,7 @@ The AWS region to target.
 
 === `stop[]`
 
-The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options.
+A list of stop sequences. A stop sequence is a sequence of characters that causes the model to stop generating the response.
 
 *Type*: `array`
 
@@ -181,7 +181,7 @@ Maximum time to wait for acknowledgment of transmitted data before killing the c
 
 === `temperature`
 
-A list of stop sequences. A stop sequence is a sequence of characters that causes the model to stop generating the response.
+The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options.
 
 *Type*: `float`
 

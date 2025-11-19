@@ -258,7 +258,7 @@ When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets
 
 === `regexp_topics_exclude[]`
 
-A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.
+A list of regular expression patterns for excluding topics when regex mode is enabled (using `regexp_topics_include` or the deprecated `regexp_topics` boolean). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.
 
 Each pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.
 
@@ -272,7 +272,7 @@ A list of regular expression patterns for matching topics to consume from. When 
 
 Each pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.
 
-This field enables regex mode and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.
+This field enables regex mode (replacing the deprecated `regexp_topics` boolean) and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.
 
 Example: `regexp_topics_include: ["events_.*", "logs_.*"]` consumes from all topics starting with `events_` or `logs_`.
 

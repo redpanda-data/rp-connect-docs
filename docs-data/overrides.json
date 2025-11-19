@@ -160,10 +160,10 @@
       "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`.\n\nDEPRECATED: This field is deprecated in favor of `regexp_topics_include` and `regexp_topics_exclude`, which provide more explicit control over topic matching. To migrate, replace `regexp_topics: true` with `regexp_topics_include` containing your topic patterns, and optionally add `regexp_topics_exclude` to filter out specific topics."
     },
     "regexp_topics_exclude": {
-      "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`."
+      "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (using `regexp_topics_include` or the deprecated `regexp_topics` boolean). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`."
     },
     "regexp_topics_include": {
-      "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`."
+      "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode (replacing the deprecated `regexp_topics` boolean) and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`."
     },
     "root_cas": {
       "description": "Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading."
@@ -2446,6 +2446,13 @@
     },
     {
       "name": "sql_raw",
+      "examples": [
+        {
+          "title": "Consumes an SQL table using a query as an input.",
+          "summary": "Here we perform an aggregate over a list of names in a table that are less than 3600 seconds old.",
+          "config": "\ninput:\n  sql_raw:\n    driver: postgres\n    dsn: postgres://foouser:foopass@localhost:5432/testdb?sslmode=disable\n    query: \"SELECT name, count(*) FROM person WHERE last_updated < $1 GROUP BY name;\"\n    args_mapping: |\n      root = [\n        now().ts_unix() - 3600\n      ]\n"
+        }
+      ],
       "config": {
         "children": [
           {
@@ -2476,6 +2483,23 @@
     },
     {
       "name": "timeplus",
+      "examples": [
+        {
+          "title": "From Timeplus Enterprise Cloud via HTTP",
+          "summary": "You will need to create API Key on Timeplus Enterprise Cloud Web console first and then set the `apikey` field.",
+          "config": "\ninput:\n  timeplus:\n    url: https://us-west-2.timeplus.cloud\n    workspace: my_workspace_id\n    query: select * from iot\n    apikey: <Your API Key>\n"
+        },
+        {
+          "title": "From Timeplus Enterprise (self-hosted) via HTTP",
+          "summary": "For self-hosted Timeplus Enterprise, you will need to specify the username and password as well as the URL of the App server",
+          "config": "\ninput:\n  timeplus:\n    url: http://localhost:8000\n    workspace: my_workspace_id\n    query: select * from iot\n    username: username\n    password: pw\n"
+        },
+        {
+          "title": "From Timeplus Enterprise (self-hosted) via TCP",
+          "summary": "Make sure the the schema of url is tcp",
+          "config": "\ninput:\n  timeplus:\n    url: tcp://localhost:8463\n    query: select * from iot\n    username: timeplus\n    password: timeplus\n"
+        }
+      ],
       "config": {
         "children": [
           {
@@ -5656,7 +5680,7 @@
           },
           {
             "name": "stop",
-            "description": "The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options."
+            "description": "A list of stop sequences. A stop sequence is a sequence of characters that causes the model to stop generating the response."
           },
           {
             "name": "credentials",
@@ -5690,7 +5714,7 @@
           },
           {
             "name": "temperature",
-            "description": "A list of stop sequences. A stop sequence is a sequence of characters that causes the model to stop generating the response."
+            "description": "The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options."
           },
           {
             "name": "top_p",
