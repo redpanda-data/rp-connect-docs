@@ -40,8 +40,7 @@ NOTE: Both the CURSOR option and UPDATED will be ignored from these options when
 ----
 # Examples:
 options:
-  - virtual_columns="omitted"
-
+  - "virtual_columns=\"omitted\""
 ----
 
 === `tables[]`
@@ -56,7 +55,6 @@ CSV of tables to be included in the changefeed
 tables:
   - table1
   - table2
-
 ----
 
 === `tls`
@@ -80,6 +78,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -136,6 +138,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

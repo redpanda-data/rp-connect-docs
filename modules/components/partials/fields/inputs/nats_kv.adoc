@@ -114,8 +114,17 @@ Key to watch for updates, can include wildcards.
 ----
 # Examples:
 key: foo.bar.baz
+
+# ---
+
 key: foo.*.baz
+
+# ---
+
 key: foo.bar.*
+
+# ---
+
 key: foo.>
 ----
 
@@ -154,6 +163,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -210,6 +223,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -298,8 +314,10 @@ A list of URLs to connect to. If a list item contains commas, it will be expande
 urls:
   - "nats://127.0.0.1:4222"
 
-  - "nats://username:password@127.0.0.1:4222"
+# ---
 
+urls:
+  - "nats://username:password@127.0.0.1:4222"
 ----
 
 

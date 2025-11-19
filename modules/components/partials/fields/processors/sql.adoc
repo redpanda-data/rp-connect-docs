@@ -12,6 +12,9 @@ An optional xref:guides:bloblang/about.adoc[Bloblang mapping] which should evalu
 ----
 # Examples:
 args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
+
+# ---
+
 args_mapping: root = [ meta("user.id") ]
 ----
 

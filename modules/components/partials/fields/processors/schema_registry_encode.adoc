@@ -186,6 +186,9 @@ The period after which a schema is refreshed for each subject, this is done by p
 ----
 # Examples:
 refresh_period: 60s
+
+# ---
+
 refresh_period: 1h
 ----
 
@@ -200,6 +203,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 subject: foo
+
+# ---
+
 subject: ${! meta("kafka_topic") }
 ----
 
@@ -224,6 +230,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -280,6 +290,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

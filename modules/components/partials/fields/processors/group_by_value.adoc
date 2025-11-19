@@ -13,6 +13,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 value: ${! meta("kafka_key") }
+
+# ---
+
 value: ${! json("foo.bar") }-${! meta("baz") }
 ----
 

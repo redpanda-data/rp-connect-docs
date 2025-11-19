@@ -107,9 +107,21 @@ A xref:guides:bloblang/about.adoc[Bloblang mapping] which should evaluate to a s
 ----
 # Examples:
 partition_keys_map: root = "blobfish"
+
+# ---
+
 partition_keys_map: root = 41
+
+# ---
+
 partition_keys_map: root = true
+
+# ---
+
 partition_keys_map: root = null
+
+# ---
+
 partition_keys_map: root = now().ts_format("2006-01-02")
 ----
 

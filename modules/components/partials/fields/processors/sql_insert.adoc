@@ -12,6 +12,9 @@ A xref:guides:bloblang/about.adoc[Bloblang mapping] which should evaluate to an 
 ----
 # Examples:
 args_mapping: root = [ this.cat.meow, this.doc.woofs[0] ]
+
+# ---
+
 args_mapping: root = [ meta("user.id") ]
 ----
 
@@ -28,7 +31,6 @@ columns:
   - foo
   - bar
   - baz
-
 ----
 
 === `conn_max_idle`
@@ -75,8 +77,17 @@ The Data Source Name (DSN) connection string that identifies the target database
 ----
 # Examples:
 dsn: clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60
+
+# ---
+
 dsn: foouser:foopassword@tcp(localhost:3306)/foodb
+
+# ---
+
 dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
+
+# ---
+
 dsn: oracle://foouser:foopass@localhost:1521/service_name
 ----
 
@@ -102,9 +113,11 @@ endif::[]
 init_files:
   - ./init/*.sql
 
+# ---
+
+init_files:
   - ./foo.sql
   - ./bar.sql
-
 ----
 
 === `init_statement`
@@ -149,7 +162,6 @@ A list of keyword options to add before the INTO clause of the query.
 options:
   - DELAYED
   - IGNORE
-
 ----
 
 === `prefix`

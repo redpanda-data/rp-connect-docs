@@ -22,6 +22,31 @@ root.values_two = range(0, this.max, 2)
 
 == General
 
+=== `bytes`
+
+Creates a new byte array of a specified length that is zero-initialized. This function is useful when you need to allocate a fixed-size byte buffer for binary data operations.
+
+==== Parameters
+
+*`length`* &lt;integer&gt; The number of bytes to allocate in the array. Must be a non-negative integer.
+
+==== Examples
+
+
+```coffeescript
+root.buffer = bytes(10)
+
+# In:  {}
+# Out: {"buffer":"AAAAAAAAAA=="}
+```
+
+```coffeescript
+root.data = bytes(this.size)
+
+# In:  {"size":5}
+# Out: {"data":"AAAAAA=="}
+```
+
 === `counter`
 
 [CAUTION]

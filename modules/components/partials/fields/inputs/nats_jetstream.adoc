@@ -14,6 +14,9 @@ The maximum amount of time NATS server should wait for an ack from consumer.
 ----
 # Examples:
 ack_wait: 100ms
+
+# ---
+
 ack_wait: 5m
 ----
 
@@ -133,6 +136,9 @@ endif::[]
 ----
 # Examples:
 extract_tracing_map: root = @
+
+# ---
+
 extract_tracing_map: root = this.meta.span
 ----
 
@@ -172,8 +178,17 @@ A subject to consume from. Supports wildcards for consuming multiple subjects. E
 ----
 # Examples:
 subject: foo.bar.baz
+
+# ---
+
 subject: foo.*.baz
+
+# ---
+
 subject: foo.bar.*
+
+# ---
+
 subject: foo.>
 ----
 
@@ -198,6 +213,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -254,6 +273,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -342,8 +364,10 @@ A list of URLs to connect to. If a list item contains commas, it will be expande
 urls:
   - "nats://127.0.0.1:4222"
 
-  - "nats://username:password@127.0.0.1:4222"
+# ---
 
+urls:
+  - "nats://username:password@127.0.0.1:4222"
 ----
 
 

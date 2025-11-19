@@ -137,9 +137,21 @@ A xref:guides:bloblang/about.adoc[Bloblang mapping] which should evaluate to a s
 ----
 # Examples:
 partition_keys_map: root = "blobfish"
+
+# ---
+
 partition_keys_map: root = 41
+
+# ---
+
 partition_keys_map: root = true
+
+# ---
+
 partition_keys_map: root = null
+
+# ---
+
 partition_keys_map: root = json("blobfish").depth
 ----
 
@@ -213,9 +225,21 @@ A xref:guides:bloblang/about.adoc[Bloblang mapping] which should evaluate to a v
 ----
 # Examples:
 value_map: root = "blobfish"
+
+# ---
+
 value_map: root = 41
+
+# ---
+
 value_map: root = true
+
+# ---
+
 value_map: root = json("blobfish").depth
+
+# ---
+
 value_map: root = [1, 2, 3]
 ----
 

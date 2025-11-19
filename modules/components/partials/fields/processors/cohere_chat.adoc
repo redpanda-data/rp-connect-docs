@@ -54,8 +54,17 @@ The name of the Cohere large language model (LLM) you want to use.
 ----
 # Examples:
 model: command-r-plus
+
+# ---
+
 model: command-r
+
+# ---
+
 model: command
+
+# ---
+
 model: command-light
 ----
 
@@ -261,6 +270,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -317,6 +330,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

@@ -89,9 +89,21 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 key: foo
+
+# ---
+
 key: foo.bar.baz
+
+# ---
+
 key: foo.*
+
+# ---
+
 key: foo.>
+
+# ---
+
 key: foo.${! json("meta.type") }
 ----
 
@@ -151,6 +163,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 revision: 42
+
+# ---
+
 revision: ${! @nats_kv_revision }
 ----
 
@@ -183,6 +198,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -239,6 +258,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -327,8 +349,10 @@ A list of URLs to connect to. If a list item contains commas, it will be expande
 urls:
   - "nats://127.0.0.1:4222"
 
-  - "nats://username:password@127.0.0.1:4222"
+# ---
 
+urls:
+  - "nats://username:password@127.0.0.1:4222"
 ----
 
 

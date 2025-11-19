@@ -20,6 +20,9 @@ The name of the OpenAI model to use.
 ----
 # Examples:
 model: dall-e-3
+
+# ---
+
 model: dall-e-2
 ----
 
@@ -40,6 +43,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 quality: standard
+
+# ---
+
 quality: hd
 ----
 
@@ -62,8 +68,17 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 size: 1024x1024
+
+# ---
+
 size: 512x512
+
+# ---
+
 size: 1792x1024
+
+# ---
+
 size: 1024x1792
 ----
 
@@ -78,6 +93,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 style: vivid
+
+# ---
+
 style: natural
 ----
 

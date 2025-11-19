@@ -97,9 +97,12 @@ Follow this checklist in order to ensure a safe, low-risk migration.
 |===
 | Legacy Field | New Location | Status | Notes
 | All (`*`) | `input.redpanda_migrator.*` | Moved | Direct mapping
+| `topics` (explicit list) | `input.redpanda_migrator.topics` | Unchanged | Still supported for explicit lists
+| `regexp_topics: true` | `input.redpanda_migrator.regexp_topics_include`, `regexp_topics_exclude` | Deprecated | Use include/exclude arrays for pattern-based selection
 | `topic_prefix` | `output.redpanda_migrator.topic` | Replaced | Use interpolation, for example `'prefix_${! @kafka_topic }'`
 | `replication_factor_override`, `replication_factor` | `output.redpanda_migrator.topic_replication_factor` | Replaced | Unified field
 | `input_resource` | `label` | Replaced | Label pairing replaces internal routing
+| - | `output.redpanda_migrator.provenance_header` | New | Optional header for tracking message source cluster
 |===
 
 === Schema migration fields
@@ -163,7 +166,11 @@ input:
   redpanda_migrator:
     # Source Kafka settings
     seed_brokers: [ "source-kafka:9092" ]
-    topics: [ "orders", "payments" ]
+
+    # Pattern-based topic selection (for migrating all topics except system topics)
+    # Note: You can still use explicit lists: topics: [ "orders", "payments" ]
+    regexp_topics_include: [ '.' ] # <2>
+    regexp_topics_exclude: [ '^_' ] # <3>
     consumer_group: "migration_group"
 
     # Source Schema Registry settings
@@ -171,13 +178,16 @@ input:
       url: "http://source-registry:8081"
 
 output:
-  label: "migration_pipeline" # <2>
+  label: "migration_pipeline" # <4>
   redpanda_migrator:
     # Destination Redpanda settings
     seed_brokers: [ "destination-redpanda:9092" ]
 
     # Topic mapping (replaces topic_prefix)
-    topic: 'migrated_${! @kafka_topic }' # <3>
+    topic: 'migrated_${! @kafka_topic }' # <5>
+
+    # Add source cluster tracking header
+    provenance_header: "x-source-cluster" # <6>
 
     # Destination Schema Registry and migration settings
     schema_registry:
@@ -189,15 +199,18 @@ output:
     # Consumer group migration settings
     consumer_groups:
       enabled: true
-      interval: 30s # <4>
+      interval: 30s # <7>
 ----
 
 --
 
 <1> Labels are now used for pairing input and output.
-<2> Matching label pairs the input and output components.
-<3> Use xref:configuration:interpolation.adoc[interpolation] syntax to replicate `topic_prefix` behavior.
-<4> Replaces `consumer_group_offsets_poll_interval`.
+<2> Match all topics using regex pattern.
+<3> Exclude internal/system topics starting with underscore.
+<4> Matching label pairs the input and output components.
+<5> Use xref:configuration:interpolation.adoc[interpolation] syntax to replicate `topic_prefix` behavior.
+<6> Adds a header to track which cluster messages originated from, useful for debugging and auditing.
+<7> Replaces `consumer_group_offsets_poll_interval`.
 
 == Validation
 

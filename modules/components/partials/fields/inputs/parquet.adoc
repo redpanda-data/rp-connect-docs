@@ -27,13 +27,15 @@ A list of file paths to read from. Each file will be read sequentially until the
 [source,yaml]
 ----
 # Examples:
-paths:
-  - /tmp/foo.parquet
+paths: /tmp/foo.parquet
 
-  - /tmp/bar/*.parquet
+# ---
 
-  - /tmp/data/**/*.parquet
+paths: /tmp/bar/*.parquet
 
+# ---
+
+paths: /tmp/data/**/*.parquet
 ----
 
 

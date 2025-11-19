@@ -130,7 +130,7 @@
       "description": "Configure which metadata values are added to messages as headers. This allows you to pass additional context information along with your messages."
     },
     "metadata_max_age": {
-      "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
+      "description": "The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.\n\nLower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes."
     },
     "nkey": {
       "description": "Your NKey seed or private key for NATS authentication. NKeys provide secure, cryptographic authentication without passwords."
@@ -147,6 +147,9 @@
     "private_key_file": {
       "description": "Path to a file containing the PEM-encoded private key using PKCS#1 or PKCS#8 format. The private key must be compatible with the algorithm specified in the `signing_method` field."
     },
+    "provenance_header": {
+      "description": "Header name to add to migrated records indicating their source cluster. When set, each migrated message receives a header with this name containing the source cluster's seed broker addresses, enabling downstream systems to track message origins for auditing, debugging, or multi-cluster orchestration workflows.\n\nIf empty, no provenance header is added to messages. The header value format is a comma-separated list of the source cluster's `seed_brokers`.\n\nExample: Setting `provenance_header: \"rp-source-cluster\"` adds a header like `rp-source-cluster: \"kafka-1:9092,kafka-2:9092\"`."
+    },
     "processors": {
       "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, and therefore splitting the batch into smaller batches using these processors is a no-op."
     },
@@ -154,7 +157,13 @@
       "description": "When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets a time limit for all consumer group members to complete their work and commit offsets after a rebalance has begun. The timeout excludes the time taken to detect a failed or late heartbeat, which indicates a rebalance is required. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
     },
     "regexp_topics": {
-      "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`."
+      "description": "Whether listed topics should be interpreted as regular expression patterns for matching multiple topics. When enabled, the client periodically refreshes the list of matching topics based on the `metadata_max_age` interval. If topics are specified with explicit partitions, this field must remain set to `false`.\n\nDEPRECATED: This field is deprecated in favor of `regexp_topics_include` and `regexp_topics_exclude`, which provide more explicit control over topic matching. To migrate, replace `regexp_topics: true` with `regexp_topics_include` containing your topic patterns, and optionally add `regexp_topics_exclude` to filter out specific topics."
+    },
+    "regexp_topics_exclude": {
+      "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (using `regexp_topics_include` or the deprecated `regexp_topics` boolean). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`."
+    },
+    "regexp_topics_include": {
+      "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode (replacing the deprecated `regexp_topics` boolean) and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`."
     },
     "root_cas": {
       "description": "Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading."
@@ -182,6 +191,9 @@
     },
     "subject_compatibility_level": {
       "description": "The compatibility level for the subject. Can be one of `BACKWARD`, `BACKWARD_TRANSITIVE`, `FORWARD`, `FORWARD_TRANSITIVE`, `FULL`, `FULL_TRANSITIVE`, `NONE`."
+    },
+    "tcp": {
+      "description": "Configure TCP socket-level settings to optimize network performance and reliability. These low-level controls are useful for:\n\n- **High-latency networks**: Increase `connect_timeout` to allow more time for connection establishment\n- **Long-lived connections**: Configure `keep_alive` settings to detect and recover from stale connections\n- **Unstable networks**: Tune keep-alive probes to balance between quick failure detection and avoiding false positives\n- **Linux systems with specific requirements**: Use `tcp_user_timeout` (Linux 2.6.37+) to control data acknowledgment timeouts\n\nMost users should keep the default values. Only modify these settings if you're experiencing connection stability issues or have specific network requirements."
     },
     "timely_nacks_maximum_wait": {
       "description": "EXPERIMENTAL: Specify a maximum period of time in which each message can be consumed and awaiting either acknowledgement or rejection before rejection is instead forced. This can be useful for avoiding situations where certain downstream components can result in blocked confirmation of delivery that exceeds SLAs. Accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
@@ -347,6 +359,10 @@
                     "description": "An external ID to use when assuming a role."
                   }
                 ]
+              },
+              {
+                "name": "tcp",
+                "$ref": "#/definitions/tcp"
               }
             ]
           },
@@ -383,6 +399,10 @@
                 "description": "An external ID to use when assuming a role."
               }
             ]
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -414,6 +434,10 @@
           {
             "name": "message_timeout",
             "description": "The maximum time allowed to process a received message before Redpanda Connect refreshes the https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-message-identifiers.html[receipt handle^], and the message becomes visible in the queue again. Redpanda Connect attempts to refresh the receipt handle after half of the timeout has elapsed."
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -922,6 +946,14 @@
             "$ref": "#/definitions/regexp_topics"
           },
           {
+            "name": "regexp_topics_include",
+            "$ref": "#/definitions/regexp_topics_include"
+          },
+          {
+            "name": "regexp_topics_exclude",
+            "$ref": "#/definitions/regexp_topics_exclude"
+          },
+          {
             "name": "tls",
             "children": [
               {
@@ -962,6 +994,10 @@
           {
             "name": "conn_idle_timeout",
             "$ref": "#/definitions/conn_idle_timeout"
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           },
           {
             "name": "topics",
@@ -1747,12 +1783,24 @@
             "$ref": "#/definitions/conn_idle_timeout"
           },
           {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
+          },
+          {
             "name": "topics",
             "description": "A list of topics to consume from. Use commas to separate multiple topics in a single element.\n\nWhen a `consumer_group` is specified, partitions are automatically distributed across consumers of a topic. Otherwise, all partitions are consumed.\n\nAlternatively, you can specify explicit partitions to consume by using a colon after the topic name. For example, `foo:0` would consume the partition `0` of the topic foo. This syntax supports ranges. For example, `foo:0-10` would consume partitions `0` through to `10` inclusive.\n\nIt is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_offset` determines which offset to start from."
           },
           {
             "name": "regexp_topics",
-            "description": "Whether listed topics are interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions, this field must remain set to `false`."
+            "$ref": "#/definitions/regexp_topics"
+          },
+          {
+            "name": "regexp_topics_include",
+            "$ref": "#/definitions/regexp_topics_include"
+          },
+          {
+            "name": "regexp_topics_exclude",
+            "$ref": "#/definitions/regexp_topics_exclude"
           },
           {
             "name": "rack_id",
@@ -1866,6 +1914,14 @@
             "description": "Whether listed topics are interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions, this field must remain set to `false`."
           },
           {
+            "name": "regexp_topics_include",
+            "$ref": "#/definitions/regexp_topics_include"
+          },
+          {
+            "name": "regexp_topics_exclude",
+            "$ref": "#/definitions/regexp_topics_exclude"
+          },
+          {
             "name": "rack_id",
             "description": "A rack specifies where the client is physically located, and changes fetch requests to consume from the closest replica as opposed to the leader replica."
           },
@@ -1972,7 +2028,15 @@
           },
           {
             "name": "regexp_topics",
-            "description": "Whether listed topics are interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions, this field must remain set to `false`."
+            "$ref": "#/definitions/regexp_topics"
+          },
+          {
+            "name": "regexp_topics_include",
+            "$ref": "#/definitions/regexp_topics_include"
+          },
+          {
+            "name": "regexp_topics_exclude",
+            "$ref": "#/definitions/regexp_topics_exclude"
           },
           {
             "name": "rack_id",
@@ -2033,6 +2097,10 @@
           {
             "name": "conn_idle_timeout",
             "$ref": "#/definitions/conn_idle_timeout"
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           },
           {
             "name": "partition_buffer_bytes",
@@ -2378,6 +2446,13 @@
     },
     {
       "name": "sql_raw",
+      "examples": [
+        {
+          "title": "Consumes an SQL table using a query as an input.",
+          "summary": "Here we perform an aggregate over a list of names in a table that are less than 3600 seconds old.",
+          "config": "\ninput:\n  sql_raw:\n    driver: postgres\n    dsn: postgres://foouser:foopass@localhost:5432/testdb?sslmode=disable\n    query: \"SELECT name, count(*) FROM person WHERE last_updated < $1 GROUP BY name;\"\n    args_mapping: |\n      root = [\n        now().ts_unix() - 3600\n      ]\n"
+        }
+      ],
       "config": {
         "children": [
           {
@@ -2408,6 +2483,23 @@
     },
     {
       "name": "timeplus",
+      "examples": [
+        {
+          "title": "From Timeplus Enterprise Cloud via HTTP",
+          "summary": "You will need to create API Key on Timeplus Enterprise Cloud Web console first and then set the `apikey` field.",
+          "config": "\ninput:\n  timeplus:\n    url: https://us-west-2.timeplus.cloud\n    workspace: my_workspace_id\n    query: select * from iot\n    apikey: <Your API Key>\n"
+        },
+        {
+          "title": "From Timeplus Enterprise (self-hosted) via HTTP",
+          "summary": "For self-hosted Timeplus Enterprise, you will need to specify the username and password as well as the URL of the App server",
+          "config": "\ninput:\n  timeplus:\n    url: http://localhost:8000\n    workspace: my_workspace_id\n    query: select * from iot\n    username: username\n    password: pw\n"
+        },
+        {
+          "title": "From Timeplus Enterprise (self-hosted) via TCP",
+          "summary": "Make sure the the schema of url is tcp",
+          "config": "\ninput:\n  timeplus:\n    url: tcp://localhost:8463\n    query: select * from iot\n    username: timeplus\n    password: timeplus\n"
+        }
+      ],
       "config": {
         "children": [
           {
@@ -2630,6 +2722,10 @@
                 "$ref": "#/definitions/initial_interval"
               }
             ]
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -2654,6 +2750,10 @@
                 "$ref": "#/definitions/initial_interval"
               }
             ]
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -2670,6 +2770,10 @@
                 "$ref": "#/definitions/initial_interval"
               }
             ]
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -2729,6 +2833,10 @@
           {
             "name": "server_side_encryption",
             "description": "An optional server-side encryption algorithm."
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -2744,6 +2852,10 @@
           {
             "name": "message_deduplication_id",
             "description": "An optional deduplication ID to set for messages.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -2780,6 +2892,10 @@
                 "$ref": "#/definitions/initial_interval"
               }
             ]
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -3791,6 +3907,10 @@
             "$ref": "#/definitions/conn_idle_timeout"
           },
           {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
+          },
+          {
             "name": "timestamp_ms",
             "description": "Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
           }
@@ -4642,6 +4762,10 @@
                 "$ref": "#/definitions/processors"
               }
             ]
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -4711,6 +4835,10 @@
           {
             "name": "topic_prefix",
             "description": "Adds the specified prefix to the name of each migrated topic. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "provenance_header",
+            "$ref": "#/definitions/provenance_header"
           },
           {
             "name": "timestamp_ms",
@@ -5552,7 +5680,7 @@
           },
           {
             "name": "stop",
-            "description": "The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options."
+            "description": "A list of stop sequences. A stop sequence is a sequence of characters that causes the model to stop generating the response."
           },
           {
             "name": "credentials",
@@ -5586,11 +5714,15 @@
           },
           {
             "name": "temperature",
-            "description": "A list of stop sequences. A stop sequence is a sequence of characters that causes the model to stop generating the response."
+            "description": "The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options."
           },
           {
             "name": "top_p",
             "description": "The percentage of most-likely candidates that the model considers for the next token. For example, if you choose a value of `0.8`, the model selects from the top 80% of the probability distribution of tokens that could be next in the sequence."
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -5644,6 +5776,10 @@
                 "description": "An external ID to use when assuming a role."
               }
             ]
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }
@@ -7411,6 +7547,10 @@
                 "description": "The username to use for PLAIN or SCRAM-* authentication."
               }
             ]
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
           }
         ]
       }

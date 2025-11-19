@@ -112,8 +112,10 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 include_patterns:
   - .*
 
-  - _timestamp_unix$
+# ---
 
+include_patterns:
+  - _timestamp_unix$
 ----
 
 === `extract_headers.include_prefixes[]`
@@ -131,10 +133,15 @@ include_prefixes:
   - foo_
   - bar_
 
+# ---
+
+include_prefixes:
   - kafka_
 
-  - content-
+# ---
 
+include_prefixes:
+  - content-
 ----
 
 === `follow_redirects`
@@ -237,8 +244,10 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 include_patterns:
   - .*
 
-  - _timestamp_unix$
+# ---
 
+include_patterns:
+  - _timestamp_unix$
 ----
 
 === `metadata.include_prefixes[]`
@@ -256,10 +265,15 @@ include_prefixes:
   - foo_
   - bar_
 
+# ---
+
+include_prefixes:
   - kafka_
 
-  - content-
+# ---
 
+include_prefixes:
+  - content-
 ----
 
 === `oauth`
@@ -471,6 +485,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -527,6 +545,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -609,7 +630,13 @@ A verb to connect with.
 ----
 # Examples:
 verb: POST
+
+# ---
+
 verb: GET
+
+# ---
+
 verb: DELETE
 ----
 

@@ -107,7 +107,13 @@ The source address to consume from.
 ----
 # Examples:
 source_address: /foo
+
+# ---
+
 source_address: queue:/bar
+
+# ---
+
 source_address: topic:/baz
 ----
 
@@ -132,6 +138,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -188,6 +198,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -268,11 +281,16 @@ endif::[]
 urls:
   - "amqp://guest:guest@127.0.0.1:5672/"
 
+# ---
+
+urls:
   - "amqp://127.0.0.1:5672/,amqp://127.0.0.2:5672/"
 
+# ---
+
+urls:
   - "amqp://127.0.0.1:5672/"
   - "amqp://127.0.0.2:5672/"
-
 ----
 
 

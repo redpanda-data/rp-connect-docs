@@ -7,6 +7,216 @@ This topic includes new content added from version 4.29.0 onwards.
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
 
+== Version 4.70.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.70.0[See the full release notes^].
+
+=== Bloblang updates
+
+This release adds the following new Bloblang capabilities:
+
+* Functions:
+** xref:guides:bloblang/functions.adoc#bytes[`bytes`]: Create a new byte array that is zero initialized.
+* Methods:
+** xref:guides:bloblang/methods.adoc#repeat[`repeat`]: Creates a new array by repeating the elements of the input array a specified number of times.
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="2m,3a,2a"]
+|===
+|Field |Description |Affected components
+
+|tcp
+|Configure TCP socket-level settings to optimize network performance and reliability.
+
+Most users should keep the default values. Only modify these settings if you're experiencing connection stability issues or have specific network requirements.
+|*Config:*
+
+* xref:components:redpanda/about.adoc#tcp[redpanda]
+
+
+*Caches:*
+
+* xref:components:caches/aws_dynamodb.adoc#tcp[aws_dynamodb]
+* xref:components:caches/aws_s3.adoc#tcp[aws_s3]
+* xref:components:caches/redpanda.adoc#tcp[redpanda]
+
+
+*Inputs:*
+
+* xref:components:inputs/aws_kinesis.adoc#tcp[aws_kinesis]
+* xref:components:inputs/aws_s3.adoc#tcp[aws_s3]
+* xref:components:inputs/aws_sqs.adoc#tcp[aws_sqs]
+* xref:components:inputs/kafka_franz.adoc#tcp[kafka_franz]
+* xref:components:inputs/legacy_redpanda_migrator.adoc#tcp[legacy_redpanda_migrator]
+* xref:components:inputs/legacy_redpanda_migrator_offsets.adoc#tcp[legacy_redpanda_migrator_offsets]
+* xref:components:inputs/redpanda.adoc#tcp[redpanda]
+* xref:components:inputs/redpanda_migrator.adoc#tcp[redpanda_migrator]
+
+
+*Outputs:*
+
+* xref:components:outputs/aws_dynamodb.adoc#tcp[aws_dynamodb]
+* xref:components:outputs/aws_kinesis.adoc#tcp[aws_kinesis]
+* xref:components:outputs/aws_kinesis_firehose.adoc#tcp[aws_kinesis_firehose]
+* xref:components:outputs/aws_s3.adoc#tcp[aws_s3]
+* xref:components:outputs/aws_sns.adoc#tcp[aws_sns]
+* xref:components:outputs/aws_sqs.adoc#tcp[aws_sqs]
+* xref:components:outputs/kafka_franz.adoc#tcp[kafka_franz]
+* xref:components:outputs/legacy_redpanda_migrator.adoc#tcp[legacy_redpanda_migrator]
+* xref:components:outputs/legacy_redpanda_migrator_offsets.adoc#tcp[legacy_redpanda_migrator_offsets]
+* xref:components:outputs/redpanda.adoc#tcp[redpanda]
+* xref:components:outputs/redpanda_migrator.adoc#tcp[redpanda_migrator]
+
+
+*Processors:*
+
+* xref:components:processors/aws_bedrock_chat.adoc#tcp[aws_bedrock_chat]
+* xref:components:processors/aws_bedrock_embeddings.adoc#tcp[aws_bedrock_embeddings]
+* xref:components:processors/aws_dynamodb_partiql.adoc#tcp[aws_dynamodb_partiql]
+* xref:components:processors/aws_lambda.adoc#tcp[aws_lambda]
+
+
+*Metrics:*
+
+* xref:components:metrics/aws_cloudwatch.adoc#tcp[aws_cloudwatch]
+
+
+|regexp_topics_include
+|A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.
+
+|*Inputs:*
+
+* xref:components:inputs/kafka_franz.adoc#regexp_topics_include[kafka_franz]
+* xref:components:inputs/legacy_redpanda_migrator.adoc#regexp_topics_include[legacy_redpanda_migrator]
+* xref:components:inputs/redpanda.adoc#regexp_topics_include[redpanda]
+* xref:components:inputs/redpanda_common.adoc#regexp_topics_include[redpanda_common]
+* xref:components:inputs/redpanda_migrator.adoc#regexp_topics_include[redpanda_migrator]
+
+
+|regexp_topics_exclude
+|A list of regular expression patterns for excluding topics. Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.
+
+|*Inputs:*
+
+* xref:components:inputs/kafka_franz.adoc#regexp_topics_exclude[kafka_franz]
+* xref:components:inputs/legacy_redpanda_migrator.adoc#regexp_topics_exclude[legacy_redpanda_migrator]
+* xref:components:inputs/redpanda.adoc#regexp_topics_exclude[redpanda]
+* xref:components:inputs/redpanda_common.adoc#regexp_topics_exclude[redpanda_common]
+* xref:components:inputs/redpanda_migrator.adoc#regexp_topics_exclude[redpanda_migrator]
+
+
+|max_parallel_snapshot_tables
+|The number of tables that will be processed in parallel during the snapshot processing stage.
+|*Inputs:*
+
+* xref:components:inputs/microsoft_sql_server_cdc.adoc#max_parallel_snapshot_tables[microsoft_sql_server_cdc]
+
+
+|tls
+|Custom TLS settings to override system defaults.
+|*Inputs:*
+
+* xref:components:inputs/pg_stream.adoc#tls[pg_stream]
+* xref:components:inputs/postgres_cdc.adoc#tls[postgres_cdc]
+
+
+|persistent
+|If set to `true`, the message is marked as persistent, ensuring it is stored durably and not lost if an intermediary (such as a broker) restarts. By default, messages are not durable.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#persistent[amqp_1]
+
+
+|target_capabilities
+|Lists the extension capabilities the sender desires from the target, such as support for queues, topics, durability, sharing, or temporary destinations.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#target_capabilities[amqp_1]
+
+
+|message_properties_to
+|The node that is the intended destination of the message, which may differ from the node currently receiving the transfer.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_to[amqp_1]
+
+
+|provenance_header
+|Header name to add to migrated records indicating their source cluster. When set, each migrated message receives a header with this name containing the source cluster's seed broker addresses, enabling downstream systems to track message origins for auditing, debugging, or multi-cluster orchestration workflows.
+|*Outputs:*
+
+* xref:components:outputs/redpanda_migrator.adoc#provenance_header[redpanda_migrator]
+
+
+|===
+
+
+=== Deprecations
+
+The following fields are now deprecated:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|regexp_topics
+|This boolean field is deprecated in favor of `regexp_topics_include` and `regexp_topics_exclude`, which provide more explicit control over topic pattern matching. To migrate, replace `regexp_topics: true` with `regexp_topics_include` containing your topic patterns, and optionally add `regexp_topics_exclude` to filter out specific topics. For example, if you had `topics: ["events_.*"]` with `regexp_topics: true`, change to `regexp_topics_include: ["events_.*"]`.
+|*Inputs:*
+
+* xref:components:inputs/kafka_franz.adoc#regexp_topics[kafka_franz]
+* xref:components:inputs/legacy_redpanda_migrator.adoc#regexp_topics[legacy_redpanda_migrator]
+* xref:components:inputs/redpanda.adoc#regexp_topics[redpanda]
+* xref:components:inputs/redpanda_common.adoc#regexp_topics[redpanda_common]
+* xref:components:inputs/redpanda_migrator.adoc#regexp_topics[redpanda_migrator]
+
+
+|===
+
+=== Default value changes
+
+This release includes the following default value changes:
+
+[cols="1m,1,1,3,2a"]
+|===
+|Field |Old default |New default |Description |Affected components
+
+|metadata_max_age
+|5m
+|1m
+|The default changed from `5m` to `1m` to provide more responsive topic and partition discovery. This means metadata refreshes occur more frequently by default. If you experience increased broker load or want to maintain the previous behavior, explicitly set this field to `5m`.
+|*Config:*
+
+* xref:components:config/redpanda.adoc#metadata_max_age[redpanda]
+
+
+*Caches:*
+
+* xref:components:caches/redpanda.adoc#metadata_max_age[redpanda]
+
+
+*Inputs:*
+
+* xref:components:inputs/kafka_franz.adoc#metadata_max_age[kafka_franz]
+* xref:components:inputs/legacy_redpanda_migrator.adoc#metadata_max_age[legacy_redpanda_migrator]
+* xref:components:inputs/legacy_redpanda_migrator_offsets.adoc#metadata_max_age[legacy_redpanda_migrator_offsets]
+* xref:components:inputs/redpanda.adoc#metadata_max_age[redpanda]
+* xref:components:inputs/redpanda_migrator.adoc#metadata_max_age[redpanda_migrator]
+
+
+*Outputs:*
+
+* xref:components:outputs/kafka_franz.adoc#metadata_max_age[kafka_franz]
+* xref:components:outputs/legacy_redpanda_migrator.adoc#metadata_max_age[legacy_redpanda_migrator]
+* xref:components:outputs/legacy_redpanda_migrator_offsets.adoc#metadata_max_age[legacy_redpanda_migrator_offsets]
+* xref:components:outputs/redpanda.adoc#metadata_max_age[redpanda]
+* xref:components:outputs/redpanda_migrator.adoc#metadata_max_age[redpanda_migrator]
+
+|===
+
+
 == Version 4.68.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.68.0[See the full release notes^].

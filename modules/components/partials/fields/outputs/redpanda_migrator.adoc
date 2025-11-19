@@ -22,6 +22,9 @@ The maximum number of bytes this output can write to a broker connection in a si
 ----
 # Examples:
 broker_write_max_bytes: 128MB
+
+# ---
+
 broker_write_max_bytes: 50mib
 ----
 
@@ -70,11 +73,11 @@ Regular expressions for consumer groups to exclude from offset migration. Takes 
 [source,yaml]
 ----
 # Examples:
-exclude:
-  - "[".*-test", ".*-temp", "connect-.*"]"
+exclude: [".*-test", ".*-temp", "connect-.*"]
 
-  - "["dev-.*", "local-.*"]"
+# ---
 
+exclude: ["dev-.*", "local-.*"]
 ----
 
 === `consumer_groups.fetch_timeout`
@@ -89,6 +92,9 @@ Maximum time to wait for data when fetching records for timestamp-based offset t
 ----
 # Examples:
 fetch_timeout: 1s     # Fast clusters
+
+# ---
+
 fetch_timeout: 10s    # Slower clusters
 ----
 
@@ -101,11 +107,11 @@ Regular expressions for consumer groups to include in offset migration. If empty
 [source,yaml]
 ----
 # Examples:
-include:
-  - "["prod-.*", "staging-.*"]"
+include: ["prod-.*", "staging-.*"]
 
-  - "["app-.*", "service-.*"]"
+# ---
 
+include: ["app-.*", "service-.*"]
 ----
 
 === `consumer_groups.interval`
@@ -120,7 +126,13 @@ How often to synchronise consumer group offsets. Regular syncing helps maintain 
 ----
 # Examples:
 interval: 0s     # Disabled
+
+# ---
+
 interval: 30s    # Sync every 30 seconds
+
+# ---
+
 interval: 5m     # Sync every 5 minutes
 ----
 
@@ -152,6 +164,9 @@ The maximum space in bytes that an individual message may use. Messages larger t
 ----
 # Examples:
 max_message_bytes: 100MB
+
+# ---
+
 max_message_bytes: 50mib
 ----
 
@@ -159,9 +174,11 @@ max_message_bytes: 50mib
 
 The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
+Lower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.
+
 *Type*: `string`
 
-*Default*: `5m`
+*Default*: `1m`
 
 === `partitioner`
 
@@ -186,6 +203,18 @@ Override the default murmur2 hashing partitioner.
 |Round-robin's messages through all available partitions. This algorithm has lower throughput and causes higher CPU load on brokers, but can be useful if you want to ensure an even distribution of records to partitions.
 
 |===
+
+=== `provenance_header`
+
+Header name to add to migrated records indicating their source cluster. When set, each migrated message receives a header with this name containing the source cluster's seed broker addresses, enabling downstream systems to track message origins for auditing, debugging, or multi-cluster orchestration workflows.
+
+If empty, no provenance header is added to messages. The header value format is a comma-separated list of the source cluster's `seed_brokers`.
+
+Example: Setting `provenance_header: "rp-source-cluster"` adds a header like `rp-source-cluster: "kafka-1:9092,kafka-2:9092"`.
+
+*Type*: `string`
+
+*Default*: `redpanda-migrator-provenance`
 
 === `request_timeout_overhead`
 
@@ -282,6 +311,58 @@ Allows you to specify a custom endpoint for the AWS API.
 The AWS region to target.
 
 *Type*: `string`
+
+=== `sasl[].aws.tcp`
+
+TCP socket configuration.
+
+*Type*: `object`
+
+=== `sasl[].aws.tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `sasl[].aws.tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `sasl[].aws.tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `sasl[].aws.tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `sasl[].aws.tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `sasl[].aws.tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
 
 === `sasl[].extensions`
 
@@ -393,34 +474,34 @@ Whether schema registry migration is enabled. When disabled, no schema operation
 
 === `schema_registry.exclude[]`
 
-Regular expressions for schema subjects to exclude from migration. Takes precedence over include patterns.
+Regular expressions for schema subjects to exclude from migration. Takes precedence over include patterns. Note: the migrator consumer group is always ignored.
 
 *Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
-exclude:
-  - "[".*-test", ".*-temp"]"
+exclude: [".*-test", ".*-temp"]
 
-  - "["dev-.*", "local-.*"]"
+# ---
 
+exclude: ["dev-.*", "local-.*"]
 ----
 
 === `schema_registry.include[]`
 
-Regular expressions for schema subjects to include in migration. If empty, all subjects are included (unless excluded).
+Regular expressions for schema subjects to include in migration. If empty, all subjects are included (unless excluded). Note: the migrator consumer group is always ignored.
 
 *Type*: `array`
 
 [source,yaml]
 ----
 # Examples:
-include:
-  - "["prod-.*", "staging-.*"]"
+include: ["prod-.*", "staging-.*"]
 
-  - "["user-.*", "order-.*"]"
+# ---
 
+include: ["user-.*", "order-.*"]
 ----
 
 === `schema_registry.include_deleted`
@@ -437,13 +518,19 @@ How often to synchronise schema registry subjects. Set to 0s for one-time sync a
 
 *Type*: `string`
 
-*Default*: `0s`
+*Default*: `5m`
 
 [source,yaml]
 ----
 # Examples:
 interval: 0s     # One-time sync only
+
+# ---
+
 interval: 5m     # Sync every 5 minutes
+
+# ---
+
 interval: 30m    # Sync every 30 minutes
 ----
 
@@ -572,8 +659,11 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 [source,yaml]
 ----
 # Examples:
-subject: "prod_${! metadata('schema_registry_subject') }"
-subject: "${! metadata('schema_registry_subject') | replace('dev_', 'prod_') }"
+subject: prod_${! metadata("schema_registry_subject") }
+
+# ---
+
+subject: ${! metadata("schema_registry_subject") | replace("dev_", "prod_") }
 ----
 
 === `schema_registry.tls`
@@ -597,6 +687,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -653,6 +747,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -735,6 +832,9 @@ The base URL of the schema registry service. Required for schema migration funct
 ----
 # Examples:
 url: http://localhost:8081
+
+# ---
+
 url: https://schema-registry.example.com:8081
 ----
 
@@ -760,11 +860,16 @@ A list of broker addresses to connect to. Use commas to separate multiple addres
 seed_brokers:
   - "localhost:9092"
 
+# ---
+
+seed_brokers:
   - "foo:9092"
   - "bar:9092"
 
-  - "foo:9092,bar:9092"
+# ---
 
+seed_brokers:
+  - "foo:9092,bar:9092"
 ----
 
 === `serverless`
@@ -782,6 +887,58 @@ Whether to synchronise topic ACLs from source to destination cluster. ACLs are t
 *Type*: `bool`
 
 *Default*: `false`
+
+=== `tcp`
+
+TCP socket configuration.
+
+*Type*: `object`
+
+=== `tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
 
 === `timeout`
 
@@ -821,6 +978,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -877,6 +1038,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -967,6 +1131,9 @@ The replication factor for created topics. If not specified, inherits the replic
 ----
 # Examples:
 topic_replication_factor: 3
+
+# ---
+
 topic_replication_factor: 1  # For single-node clusters
 ----
 

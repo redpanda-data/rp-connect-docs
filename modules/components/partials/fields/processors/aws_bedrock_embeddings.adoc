@@ -72,8 +72,17 @@ The ID of the LLM that you want to use to generate vector embeddings. For a full
 ----
 # Examples:
 model: amazon.titan-embed-text-v1
+
+# ---
+
 model: amazon.titan-embed-text-v2:0
+
+# ---
+
 model: cohere.embed-english-v3
+
+# ---
+
 model: cohere.embed-multilingual-v3
 ----
 
@@ -82,6 +91,65 @@ model: cohere.embed-multilingual-v3
 The region in which your AWS resources are hosted.
 
 *Type*: `string`
+
+=== `tcp`
+
+Configure TCP socket-level settings to optimize network performance and reliability. These low-level controls are useful for:
+
+- **High-latency networks**: Increase `connect_timeout` to allow more time for connection establishment
+- **Long-lived connections**: Configure `keep_alive` settings to detect and recover from stale connections
+- **Unstable networks**: Tune keep-alive probes to balance between quick failure detection and avoiding false positives
+- **Linux systems with specific requirements**: Use `tcp_user_timeout` (Linux 2.6.37+) to control data acknowledgment timeouts
+
+Most users should keep the default values. Only modify these settings if you're experiencing connection stability issues or have specific network requirements.
+
+*Type*: `object`
+
+=== `tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
 
 === `text`
 

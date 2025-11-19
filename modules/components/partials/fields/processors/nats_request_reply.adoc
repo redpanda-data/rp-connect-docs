@@ -121,8 +121,10 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 include_patterns:
   - .*
 
-  - _timestamp_unix$
+# ---
 
+include_patterns:
+  - _timestamp_unix$
 ----
 
 === `metadata.include_prefixes[]`
@@ -140,10 +142,15 @@ include_prefixes:
   - foo_
   - bar_
 
+# ---
+
+include_prefixes:
   - kafka_
 
-  - content-
+# ---
 
+include_prefixes:
+  - content-
 ----
 
 === `subject`
@@ -157,7 +164,13 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 subject: foo.bar.baz
+
+# ---
+
 subject: ${! meta("kafka_topic") }
+
+# ---
+
 subject: foo.${! json("meta.type") }
 ----
 
@@ -190,6 +203,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -246,6 +263,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -334,8 +354,10 @@ A list of URLs to connect to. If a list item contains commas, it will be expande
 urls:
   - "nats://127.0.0.1:4222"
 
-  - "nats://username:password@127.0.0.1:4222"
+# ---
 
+urls:
+  - "nats://username:password@127.0.0.1:4222"
 ----
 
 

@@ -38,9 +38,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -89,7 +95,13 @@ A period in which an incomplete batch should be flushed regardless of its size.
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -106,9 +118,17 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
+processors:
   - archive:
       format: lines
 
+
+# ---
+
+processors:
   - archive:
       format: json_array
 
@@ -224,9 +244,21 @@ A xref:guides:bloblang/about.adoc[Bloblang mapping] which should evaluate to a s
 ----
 # Examples:
 partition_keys_map: root = "blobfish"
+
+# ---
+
 partition_keys_map: root = 41
+
+# ---
+
 partition_keys_map: root = true
+
+# ---
+
 partition_keys_map: root = null
+
+# ---
+
 partition_keys_map: root = json("blobfish").depth
 ----
 
@@ -300,9 +332,21 @@ A xref:guides:bloblang/about.adoc[Bloblang mapping] which should evaluate to a v
 ----
 # Examples:
 value_map: root = "blobfish"
+
+# ---
+
 value_map: root = 41
+
+# ---
+
 value_map: root = true
+
+# ---
+
 value_map: root = json("blobfish").depth
+
+# ---
+
 value_map: root = [1, 2, 3]
 ----
 

@@ -58,9 +58,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -109,7 +115,13 @@ The period of time after which an incomplete batch is flushed regardless of its 
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -126,9 +138,17 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
+processors:
   - archive:
       format: lines
 
+
+# ---
+
+processors:
   - archive:
       format: json_array
 
@@ -204,6 +224,9 @@ The maximum duration to wait while data updates from a message batch are asynchr
 ----
 # Examples:
 commit_timeout: 10s
+
+# ---
+
 commit_timeout: 10m
 ----
 
@@ -234,6 +257,9 @@ init_statement: |-
   
   CREATE TABLE IF NOT EXISTS mytable (amount NUMBER);
   
+
+# ---
+
 init_statement: |-
   
   ALTER TABLE t1 ALTER COLUMN c1 DROP NOT NULL;
@@ -273,6 +299,9 @@ For more information about offset tokens, see https://docs.snowflake.com/en/user
 ----
 # Examples:
 offset_token: offset-${!"%016X".format(@kafka_offset)}
+
+# ---
+
 offset_token: postgres-${!@lsn}
 ----
 

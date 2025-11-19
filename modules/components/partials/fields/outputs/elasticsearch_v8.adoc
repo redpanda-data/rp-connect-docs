@@ -56,9 +56,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -107,7 +113,13 @@ The period of time after which an incomplete batch is flushed regardless of its 
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -124,9 +136,17 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
+processors:
   - archive:
       format: lines
 
+
+# ---
+
+processors:
   - archive:
       format: json_array
 
@@ -214,6 +234,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -270,6 +294,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -345,7 +372,6 @@ A list of URLs to connect to. This output attempts to connect to each URL in the
 # Examples:
 urls:
   - "http://localhost:9200"
-
 ----
 
 

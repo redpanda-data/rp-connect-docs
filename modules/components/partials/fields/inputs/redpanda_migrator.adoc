@@ -112,9 +112,11 @@ The maximum size (in bytes) for each batch yielded by this input. When routed to
 
 The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
+Lower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.
+
 *Type*: `string`
 
-*Default*: `5m`
+*Default*: `1m`
 
 === `partition_buffer_bytes`
 
@@ -142,13 +144,40 @@ When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets
 
 *Default*: `45s`
 
-=== `regexp_topics`
+=== `regexp_topics_exclude[]`
 
-Whether listed topics are interpreted as regular expression patterns for matching multiple topics. When topics are specified with explicit partitions, this field must remain set to `false`.
+A list of regular expression patterns for excluding topics when regex mode is enabled (using `regexp_topics_include` or the deprecated `regexp_topics` boolean). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.
 
-*Type*: `bool`
+Each pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.
 
-*Default*: `false`
+Example: `regexp_topics_exclude: ["^_", ".*-temp$", ".*-test.*"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.
+
+*Type*: `array`
+
+=== `regexp_topics_include[]`
+
+A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.
+
+Each pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.
+
+This field enables regex mode (replacing the deprecated `regexp_topics` boolean) and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.
+
+Example: `regexp_topics_include: ["events_.*", "logs_.*"]` consumes from all topics starting with `events_` or `logs_`.
+
+*Type*: `array`
+
+[source,yaml]
+----
+# Examples:
+regexp_topics_include:
+  - logs_.*
+  - metrics_.*
+
+# ---
+
+regexp_topics_include:
+  - "events_[0-9]+"
+----
 
 === `request_timeout_overhead`
 
@@ -245,6 +274,58 @@ Allows you to specify a custom endpoint for the AWS API.
 The AWS region to target.
 
 *Type*: `string`
+
+=== `sasl[].aws.tcp`
+
+TCP socket configuration.
+
+*Type*: `object`
+
+=== `sasl[].aws.tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `sasl[].aws.tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `sasl[].aws.tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `sasl[].aws.tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `sasl[].aws.tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `sasl[].aws.tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
 
 === `sasl[].extensions`
 
@@ -465,6 +546,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -521,6 +606,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -595,6 +683,9 @@ The base URL of the schema registry service. Required for schema migration funct
 ----
 # Examples:
 url: http://localhost:8081
+
+# ---
+
 url: https://schema-registry.example.com:8081
 ----
 
@@ -610,11 +701,16 @@ A list of broker addresses to connect to in order. Use commas to separate multip
 seed_brokers:
   - "localhost:9092"
 
+# ---
+
+seed_brokers:
   - "foo:9092"
   - "bar:9092"
 
-  - "foo:9092,bar:9092"
+# ---
 
+seed_brokers:
+  - "foo:9092,bar:9092"
 ----
 
 === `session_timeout`
@@ -648,6 +744,65 @@ Specify the offset from which this input starts or restarts consuming messages. 
 
 |===
 
+=== `tcp`
+
+Configure TCP socket-level settings to optimize network performance and reliability. These low-level controls are useful for:
+
+- **High-latency networks**: Increase `connect_timeout` to allow more time for connection establishment
+- **Long-lived connections**: Configure `keep_alive` settings to detect and recover from stale connections
+- **Unstable networks**: Tune keep-alive probes to balance between quick failure detection and avoiding false positives
+- **Linux systems with specific requirements**: Use `tcp_user_timeout` (Linux 2.6.37+) to control data acknowledgment timeouts
+
+Most users should keep the default values. Only modify these settings if you're experiencing connection stability issues or have specific network requirements.
+
+*Type*: `object`
+
+=== `tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
 === `tls`
 
 Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates. Key configuration options include `enabled` to enable TLS, `client_certs` for mTLS authentication, `root_cas`/`root_cas_file` for custom certificate authorities, and `skip_cert_verify` for development environments.
@@ -678,6 +833,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -734,6 +893,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -825,18 +987,32 @@ topics:
   - foo
   - bar
 
+# ---
+
+topics:
   - things.*
 
+# ---
+
+topics:
   - "foo,bar"
 
+# ---
+
+topics:
   - "foo:0"
   - "bar:1"
   - "bar:3"
 
+# ---
+
+topics:
   - "foo:0,bar:1,bar:3"
 
-  - "foo:0-5"
+# ---
 
+topics:
+  - "foo:0-5"
 ----
 
 === `transaction_isolation_level`

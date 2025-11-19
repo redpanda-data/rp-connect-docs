@@ -38,10 +38,25 @@ The time interval at which messages should be generated, expressed either as a d
 ----
 # Examples:
 interval: 5s
+
+# ---
+
 interval: 1m
+
+# ---
+
 interval: 1h
+
+# ---
+
 interval: @every 1s
+
+# ---
+
 interval: 0,30 */2 * * * *
+
+# ---
+
 interval: TZ=Europe/London 30 3-6,20-23 * * *
 ----
 
@@ -55,6 +70,9 @@ A xref:guides:bloblang/about.adoc[Bloblang] mapping to use for generating messag
 ----
 # Examples:
 mapping: root = "hello world"
+
+# ---
+
 mapping: root = {"test":"message","id":uuid_v4()}
 ----
 

@@ -99,6 +99,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -155,6 +159,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -229,10 +236,25 @@ The URL of the target Redis server. Database is optional and is supplied as the 
 ----
 # Examples:
 url: redis://:6379
+
+# ---
+
 url: redis://localhost:6379
+
+# ---
+
 url: redis://foousername:foopassword@redisplace:6379
+
+# ---
+
 url: redis://:foopassword@redisplace:6379
+
+# ---
+
 url: redis://localhost:6379/1
+
+# ---
+
 url: redis://localhost:6379/1,redis://localhost:6380/1
 ----
 

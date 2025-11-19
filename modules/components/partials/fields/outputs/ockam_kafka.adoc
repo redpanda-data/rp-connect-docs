@@ -80,9 +80,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -131,7 +137,13 @@ The period of time after which an incomplete batch is flushed regardless of its 
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -148,9 +160,17 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
+processors:
   - archive:
       format: lines
 
+
+# ---
+
+processors:
   - archive:
       format: json_array
 
@@ -168,6 +188,9 @@ The maximum number of bytes this output can write to a broker connection in a si
 ----
 # Examples:
 broker_write_max_bytes: 128MB
+
+# ---
+
 broker_write_max_bytes: 50mib
 ----
 
@@ -213,6 +236,9 @@ The maximum size of an individual message in bytes. Messages larger than this va
 ----
 # Examples:
 max_message_bytes: 100MB
+
+# ---
+
 max_message_bytes: 50mib
 ----
 
@@ -236,8 +262,10 @@ A list of explicit metadata key regular expression (re2) patterns to match again
 include_patterns:
   - .*
 
-  - _timestamp_unix$
+# ---
 
+include_patterns:
+  - _timestamp_unix$
 ----
 
 === `kafka.metadata.include_prefixes[]`
@@ -255,10 +283,15 @@ include_prefixes:
   - foo_
   - bar_
 
+# ---
+
+include_prefixes:
   - kafka_
 
-  - content-
+# ---
 
+include_prefixes:
+  - content-
 ----
 
 === `kafka.partition`
@@ -311,11 +344,16 @@ A list of broker addresses to connect to (optional). List items that contain com
 seed_brokers:
   - "localhost:9092"
 
+# ---
+
+seed_brokers:
   - "foo:9092"
   - "bar:9092"
 
-  - "foo:9092,bar:9092"
+# ---
 
+seed_brokers:
+  - "foo:9092,bar:9092"
 ----
 
 === `kafka.timeout`
@@ -338,6 +376,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 timestamp_ms: ${! timestamp_unix_milli() }
+
+# ---
+
 timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ----
 
@@ -371,6 +412,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -427,6 +472,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

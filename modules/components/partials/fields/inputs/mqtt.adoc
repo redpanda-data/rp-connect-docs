@@ -42,6 +42,9 @@ endif::[]
 ----
 # Examples:
 connect_timeout: 1s
+
+# ---
+
 connect_timeout: 500ms
 ----
 
@@ -107,6 +110,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -163,6 +170,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -250,7 +260,6 @@ If an item in the list contains commas, it is expanded into multiple URLs.
 # Examples:
 urls:
   - "tcp://localhost:1883"
-
 ----
 
 === `user`

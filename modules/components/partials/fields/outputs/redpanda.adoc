@@ -22,6 +22,9 @@ The maximum number of bytes this output can write to a broker connection in a si
 ----
 # Examples:
 broker_write_max_bytes: 128MB
+
+# ---
+
 broker_write_max_bytes: 50mib
 ----
 
@@ -83,6 +86,9 @@ The maximum space (in bytes) that an individual message may use. Messages larger
 ----
 # Examples:
 max_message_bytes: 100MB
+
+# ---
+
 max_message_bytes: 50mib
 ----
 
@@ -106,8 +112,10 @@ Provide a list of explicit metadata key regular expression (re2) patterns to mat
 include_patterns:
   - .*
 
-  - _timestamp_unix$
+# ---
 
+include_patterns:
+  - _timestamp_unix$
 ----
 
 === `metadata.include_prefixes[]`
@@ -125,19 +133,26 @@ include_prefixes:
   - foo_
   - bar_
 
+# ---
+
+include_prefixes:
   - kafka_
 
-  - content-
+# ---
 
+include_prefixes:
+  - content-
 ----
 
 === `metadata_max_age`
 
 The maximum period of time after which metadata is refreshed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
+Lower values provide more responsive topic and partition discovery but may increase broker load. Higher values reduce broker queries but can delay detection of topology changes.
+
 *Type*: `string`
 
-*Default*: `5m`
+*Default*: `1m`
 
 === `partition`
 
@@ -274,6 +289,58 @@ The AWS region to target.
 
 *Type*: `string`
 
+=== `sasl[].aws.tcp`
+
+TCP socket configuration.
+
+*Type*: `object`
+
+=== `sasl[].aws.tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `sasl[].aws.tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `sasl[].aws.tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `sasl[].aws.tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `sasl[].aws.tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `sasl[].aws.tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
 === `sasl[].extensions`
 
 Key/value pairs to add to OAUTHBEARER authentication requests.
@@ -348,12 +415,69 @@ A list of broker addresses to connect to in order. Use commas to separate multip
 seed_brokers:
   - "localhost:9092"
 
+# ---
+
+seed_brokers:
   - "foo:9092"
   - "bar:9092"
 
-  - "foo:9092,bar:9092"
+# ---
 
+seed_brokers:
+  - "foo:9092,bar:9092"
 ----
+
+=== `tcp`
+
+TCP socket configuration.
+
+*Type*: `object`
+
+=== `tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
 
 === `timeout`
 
@@ -373,6 +497,9 @@ Set a timestamp (in milliseconds) for each message (optional). When left empty, 
 ----
 # Examples:
 timestamp_ms: ${! timestamp_unix_milli() }
+
+# ---
+
 timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ----
 
@@ -406,6 +533,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -462,6 +593,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

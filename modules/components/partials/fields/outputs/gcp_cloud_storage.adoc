@@ -16,9 +16,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -67,7 +73,13 @@ A period in which an incomplete batch should be flushed regardless of its size.
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -84,9 +96,17 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
+processors:
   - archive:
       format: lines
 
+
+# ---
+
+processors:
   - archive:
       format: json_array
 
@@ -174,7 +194,13 @@ The path of each message to upload. This field supports xref:configuration:inter
 ----
 # Examples:
 path: ${!counter()}-${!timestamp_unix_nano()}.txt
+
+# ---
+
 path: ${!meta("kafka_key")}.json
+
+# ---
+
 path: ${!json("doc.namespace")}/${!json("doc.id")}.json
 ----
 
@@ -190,6 +216,9 @@ The maximum period to wait on an upload before abandoning it and reattempting.
 ----
 # Examples:
 timeout: 1s
+
+# ---
+
 timeout: 500ms
 ----
 

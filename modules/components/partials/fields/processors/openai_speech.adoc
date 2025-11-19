@@ -26,6 +26,9 @@ The name of the OpenAI model to use.
 ----
 # Examples:
 model: tts-1
+
+# ---
+
 model: tts-1-hd
 ----
 
@@ -40,10 +43,25 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 response_format: mp3
+
+# ---
+
 response_format: opus
+
+# ---
+
 response_format: aac
+
+# ---
+
 response_format: flac
+
+# ---
+
 response_format: wav
+
+# ---
+
 response_format: pcm
 ----
 
@@ -66,10 +84,25 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 voice: alloy
+
+# ---
+
 voice: echo
+
+# ---
+
 voice: fable
+
+# ---
+
 voice: onyx
+
+# ---
+
 voice: nova
+
+# ---
+
 voice: shimmer
 ----
 

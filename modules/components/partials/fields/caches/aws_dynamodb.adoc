@@ -112,6 +112,9 @@ The initial period to wait between retry attempts.
 ----
 # Examples:
 initial_interval: 50ms
+
+# ---
+
 initial_interval: 1s
 ----
 
@@ -127,6 +130,9 @@ The maximum overall period of time to spend on retry attempts before the request
 ----
 # Examples:
 max_elapsed_time: 1m
+
+# ---
+
 max_elapsed_time: 1h
 ----
 
@@ -142,6 +148,9 @@ The maximum period to wait between retry attempts
 ----
 # Examples:
 max_interval: 5s
+
+# ---
+
 max_interval: 1m
 ----
 
@@ -150,6 +159,58 @@ max_interval: 1m
 The table to store items in.
 
 *Type*: `string`
+
+=== `tcp`
+
+TCP socket configuration.
+
+*Type*: `object`
+
+=== `tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
 
 === `ttl_key`
 

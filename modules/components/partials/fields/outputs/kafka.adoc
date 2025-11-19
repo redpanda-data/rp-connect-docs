@@ -22,11 +22,16 @@ A list of broker addresses to connect to. If an item of the list contains commas
 addresses:
   - "localhost:9092"
 
+# ---
+
+addresses:
   - "localhost:9041,localhost:9042"
 
+# ---
+
+addresses:
   - "localhost:9041"
   - "localhost:9042"
-
 ----
 
 === `backoff`
@@ -47,6 +52,9 @@ The initial period to wait between retry attempts. The retry interval increases 
 ----
 # Examples:
 initial_interval: 50ms
+
+# ---
+
 initial_interval: 1s
 ----
 
@@ -62,6 +70,9 @@ The maximum overall period of time to spend on retry attempts before the request
 ----
 # Examples:
 max_elapsed_time: 1m
+
+# ---
+
 max_elapsed_time: 1h
 ----
 
@@ -77,6 +88,9 @@ The maximum period to wait between retry attempts
 ----
 # Examples:
 max_interval: 5s
+
+# ---
+
 max_interval: 1m
 ----
 
@@ -94,9 +108,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -145,7 +165,13 @@ A period in which an incomplete batch should be flushed regardless of its size.
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -162,9 +188,17 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
+processors:
   - archive:
       format: lines
 
+
+# ---
+
+processors:
   - archive:
       format: json_array
 
@@ -240,6 +274,9 @@ endif::[]
 ----
 # Examples:
 inject_tracing_map: meta = @.merge(this)
+
+# ---
+
 inject_tracing_map: root.meta.span = this
 ----
 
@@ -437,6 +474,9 @@ The version of the Kafka protocol to use. This limits the capabilities used by t
 ----
 # Examples:
 target_version: 2.1.0
+
+# ---
+
 target_version: 3.1.0
 ----
 
@@ -459,6 +499,9 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 timestamp_ms: ${! timestamp_unix_milli() }
+
+# ---
+
 timestamp_ms: ${! metadata("kafka_timestamp_ms") }
 ----
 
@@ -483,6 +526,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -539,6 +586,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 

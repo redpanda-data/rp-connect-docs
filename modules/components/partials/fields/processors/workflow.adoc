@@ -44,6 +44,9 @@ request_map: |-
   	"id": this.doc.id,
   	"content": this.doc.body.text
   }
+
+# ---
+
 request_map: |-
   root = if this.type == "foo" {
   	this.foo.request
@@ -66,17 +69,29 @@ A xref:guides:bloblang/about.adoc[Bloblang mapping] that describes how the resul
 result_map: |-
   meta foo_code = metadata("code")
   root.foo_result = this
+
+# ---
+
 result_map: |-
   meta = metadata()
   root.bar.body = this.body
   root.bar.id = this.user.id
+
+# ---
+
 result_map: root.raw_result = content().string()
+
+# ---
+
 result_map: |-
   root.enrichments.foo = if metadata("request_failed") != null {
     throw(metadata("request_failed"))
   } else {
     this
   }
+
+# ---
+
 result_map: |-
   # Retain only the updated metadata fields which were present in the origin message
   meta = metadata().filter(v -> @.get(v.key) != null)
@@ -105,6 +120,9 @@ order:
   - - foo
     - bar
   - - baz
+
+# ---
+
 order:
   - - foo
   - - bar

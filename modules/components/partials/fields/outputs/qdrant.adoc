@@ -26,9 +26,15 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
+
+# ---
+
 batching:
   count: 10
   period: 1s
+
+# ---
+
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -77,7 +83,13 @@ A period in which an incomplete batch should be flushed regardless of its size.
 ----
 # Examples:
 period: 1s
+
+# ---
+
 period: 1m
+
+# ---
+
 period: 500ms
 ----
 
@@ -94,9 +106,17 @@ processors:
   - archive:
       format: concatenate
 
+
+# ---
+
+processors:
   - archive:
       format: lines
 
+
+# ---
+
+processors:
   - archive:
       format: json_array
 
@@ -119,6 +139,9 @@ The gRPC host of the Qdrant server.
 ----
 # Examples:
 grpc_host: localhost:6334
+
+# ---
+
 grpc_host: xyz-example.eu-central.aws.cloud.qdrant.io:6334
 ----
 
@@ -132,6 +155,9 @@ The ID of the point to insert. Can be a UUID string or positive integer.
 ----
 # Examples:
 id: root = "dc88c126-679f-49f5-ab85-04b77e8c2791"
+
+# ---
+
 id: root = 832
 ----
 
@@ -155,6 +181,9 @@ An optional mapping of message to payload associated with the point.
 ----
 # Examples:
 payload_mapping: root = {"field": this.value, "field_2": 987}
+
+# ---
+
 payload_mapping: root = metadata()
 ----
 
@@ -179,6 +208,10 @@ client_certs:
   - cert: foo
     key: bar
 
+
+# ---
+
+client_certs:
   - cert_file: ./example.pem
     key_file: ./example.key
 
@@ -235,6 +268,9 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 ----
 # Examples:
 password: foo
+
+# ---
+
 password: ${KEY_PASSWORD}
 ----
 
@@ -309,11 +345,29 @@ The mapping to extract the vector from the document.
 ----
 # Examples:
 vector_mapping: root = {"dense_vector": [0.352,0.532,0.754],"sparse_vector": {"indices": [23,325,532],"values": [0.352,0.532,0.532]}, "multi_vector": [[0.352,0.532],[0.352,0.532]]}
+
+# ---
+
 vector_mapping: root = [1.2, 0.5, 0.76]
+
+# ---
+
 vector_mapping: root = this.vector
+
+# ---
+
 vector_mapping: root = [[0.352,0.532,0.532,0.234],[0.352,0.532,0.532,0.234]]
+
+# ---
+
 vector_mapping: root = {"some_sparse": {"indices":[23,325,532],"values":[0.352,0.532,0.532]}}
+
+# ---
+
 vector_mapping: root = {"some_multi": [[0.352,0.532,0.532,0.234],[0.352,0.532,0.532,0.234]]}
+
+# ---
+
 vector_mapping: root = {"some_dense": [0.352,0.532,0.532,0.234]}
 ----
 
