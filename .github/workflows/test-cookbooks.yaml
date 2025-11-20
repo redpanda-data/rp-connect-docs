@@ -19,14 +19,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Redpanda Connect
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install tools
         run: |
-          # Download and install latest rpk/connect
-          curl -LO https://github.com/redpanda-data/redpanda/releases/latest/download/rpk-linux-amd64.zip
-          unzip rpk-linux-amd64.zip
-          sudo mv rpk /usr/local/bin/
-          chmod +x /usr/local/bin/rpk
-          rpk version
+          npx doc-tools install-test-dependencies
+          rpk connect install
 
       # Handles linting + inline tests
       - name: Run automated test script
@@ -47,12 +46,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Redpanda Connect
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install tools
         run: |
-          curl -LO https://github.com/redpanda-data/redpanda/releases/latest/download/rpk-linux-amd64.zip
-          unzip rpk-linux-amd64.zip
-          sudo mv rpk /usr/local/bin/
-          rpk version
+          npx doc-tools install-test-dependencies
+          rpk connect install
 
       - name: Test ${{ matrix.category }} examples
         run: |
