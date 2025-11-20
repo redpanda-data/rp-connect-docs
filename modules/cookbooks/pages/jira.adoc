@@ -1,0 +1,315 @@
+= Work with Jira Issues
+// tag::single-source[]
+:description: Learn how to use the Jira processor as both an input and output in Redpanda Connect.
+
+The Jira processor enables querying Jira issues using JQL (Jira Query Language) and returning structured data. Unlike traditional connectors, Jira is implemented as a *processor only*, which can be used as both an input (with `generate`) and an output (with `drop`).
+
+== Prerequisites
+
+=== Redpanda CLI
+
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:get-started:quickstarts/rpk.adoc[] for installation instructions.
+
+=== Enterprise license
+
+The Jira processor requires a Redpanda Enterprise Edition license. See xref:get-started:licensing.adoc[] for instructions on generating a trial license and setting the `REDPANDA_LICENSE` environment variable.
+
+=== Jira environment variables
+
+The examples in this cookbook use environment variables for Jira credentials and configuration. This allows you to keep sensitive credentials secure and separate from your pipeline configuration files.
+
+. link:https://id.atlassian.com/manage-profile/security/api-tokens[Generate a Jira API token^].
+
+. Set up your environment variables:
++
+[,bash]
+----
+JIRA_BASE_URL=https://<domain>.atlassian.net <1>
+JIRA_USERNAME=<email-address> <2>
+JIRA_API_TOKEN=<api-token> <3>
+JIRA_PROJECT=<project-key> <4>
+----
++
+<1> Your Jira instance URL. You can find this in your browser when logged into Jira.
+<2> Your Jira account email address.
+<3> The API token generated from your Atlassian account.
+<4> The key of the Jira project you want to query (such as `DOC` or `K8S`).
+
+You can export these variables in your shell or place them in a `.env` file for use with ` rpk connect run --env-file <env-file>`.
+
+== Use Jira as an input
+
+To use Jira as an input, combine the `generate` input with the Jira processor. This pattern triggers Jira queries at regular intervals or on-demand.
+
+=== Query Jira periodically
+
+This example queries Jira every 30 seconds for recent issues:
+
+[source,yaml]
+----
+include::cookbooks:example$jira/input-periodic.yaml[tag=config]
+----
+
+=== One-time query
+
+For a single query, use `count` instead of `interval`:
+
+[source,yaml]
+----
+include::cookbooks:example$jira/input-once.yaml[tag=config]
+----
+
+=== Advanced query with custom fields
+
+[source,yaml]
+----
+include::cookbooks:example$jira/input-custom-fields.yaml[tag=config]
+----
+
+== Use Jira as an output
+
+To use Jira as an output, place the Jira processor before a `drop` output. This executes queries without forwarding results downstream.
+
+=== Query and drop results
+
+[source,yaml]
+----
+include::cookbooks:example$jira/output-drop.yaml[tag=config]
+----
+
+=== Trigger queries from Kafka
+
+[source,yaml]
+----
+include::cookbooks:example$jira/output-kafka-trigger.yaml[tag=config]
+----
+
+== Input message format
+
+The Jira processor expects input messages containing valid Jira queries in JSON format:
+
+[,json]
+----
+{
+  "jql": "project = MYPROJECT AND status = Open",
+  "maxResults": 50,
+  "fields": ["key", "summary", "status", "assignee"]
+}
+----
+
+=== Required fields
+
+- `jql`: The JQL (Jira Query Language) query string
+
+=== Optional fields
+
+- `maxResults`: Maximum number of results to return (default: 50)
+- `fields`: Array of field names to include in the response
+
+== Configuration options
+
+For a complete list of configuration options, see xref:components:processors/jira.adoc[Jira Processor Reference].
+
+== JQL query language
+
+The Jira processor supports querying Jira issues using JQL (Jira Query Language). JQL is a flexible, text-based query language similar to SQL that allows you to search for issues matching specific criteria.
+
+=== Common JQL patterns
+
+Here are common JQL patterns for filtering issues:
+
+==== Recent issues by project
+
+[,jql]
+----
+project = <YOUR_PROJECT> AND created >= -7d ORDER BY created DESC
+----
+
+==== Issues assigned to current user
+
+[,jql]
+----
+assignee = currentUser() AND status != Done
+----
+
+==== Issues by status
+
+[,jql]
+----
+project = <YOUR_PROJECT> AND status IN (Open, 'In Progress', 'To Do')
+----
+
+==== Issues by priority
+
+[,jql]
+----
+project = <YOUR_PROJECT> AND priority = High ORDER BY created DESC
+----
+
+==== Issues updated recently
+
+[,jql]
+----
+project = <YOUR_PROJECT> AND updated >= -1d ORDER BY updated DESC
+----
+
+== Run the examples
+
+Each example in this cookbook can be saved as a YAML file and run individually. The examples use environment variables for credentials and configuration, so you don't need to modify the YAML files.
+
+. Set up your environment:
++
+[,bash]
+----
+# Set Jira credentials
+export JIRA_BASE_URL=https://your-domain.atlassian.net
+export JIRA_USERNAME=your-email@example.com
+export JIRA_API_TOKEN=your-api-token
+export JIRA_PROJECT=YOUR_PROJECT
+----
+
+. Save any example to a YAML file (for example, `jira-query.yaml`).
+
+. Run the example:
++
+[,bash]
+----
+rpk connect run jira-query.yaml
+----
+
+== Output message format
+
+The Jira processor returns *individual issue messages*, rather than a response object with an `issues` array.
+
+Each message output by the Jira processor represents a single issue:
+
+[,json]
+----
+{
+  "id": "12345",
+  "key": "DOC-123",
+  "fields": {
+    "summary": "Example issue",
+    "status": {
+      "name": "In Progress"
+    },
+    "assignee": {
+      "displayName": "John Doe"
+    },
+    "created": "2025-01-15T10:30:00.000-0800",
+    "updated": "2025-01-16T14:20:00.000-0800"
+  }
+}
+----
+
+== Process output messages
+
+When processing messages from the Jira processor, keep in mind:
+
+- *Do not* use `unarchive` to split an `issues` array
+- *Do not* reference `this.issues` or `this.total` in your mappings
+- *Do* access fields directly such as `this.key`, `this.fields.summary`.
+
+=== Handle null fields
+
+Some Jira fields can be null and require conditional handling:
+
+[source,yaml]
+----
+include::cookbooks:example$jira/null-field-handling.yaml[tag=config]
+----
+
+== Pagination handling
+
+The Jira processor automatically handles pagination internally using the `max_results_per_page` setting. The processor:
+
+1. Makes the initial request with `startAt=0`.
+2. Checks if more results are available.
+3. Automatically fetches subsequent pages until all results are retrieved.
+4. Outputs each issue as an individual message.
+
+You don't need to handle pagination manually. The processor streams all matching issues as separate messages.
+
+== Error handling
+
+The Jira processor includes built-in retry logic for rate limiting (HTTP 429) and configurable timeouts. See xref:components:processors/jira.adoc[Jira Processor Reference] for detailed configuration options.
+
+== Create and update Jira issues
+
+The Jira processor is *read-only* and only supports querying. To create or update Jira issues, you must use the `http` processor with the Jira REST API.
+
+=== Create a Jira issue
+
+Use the HTTP processor to POST to the Jira REST API `/issue` endpoint. This example creates a Task issue with a title and description:
+
+[source,yaml]
+----
+include::cookbooks:example$jira/http-alternative.yaml[]
+----
+
+
+* *Atlassian Document Format (ADF)*: The `description` field uses ADF, Jira's rich text format. For simple text, wrap it in a paragraph structure as shown.
+* *Issue type*: Common types are `Task`, `Bug`, `Story`, `Epic`. The type must exist in your Jira project.
+* *Required fields*: At minimum, you need `project`, `summary`, and `issuetype`. Other fields may be required based on your Jira configuration.
+* *Response*: The API returns the created issue's `key`, `id`, and `self` (URL).
+
+== Troubleshoot
+
+=== License errors
+
+If you receive license-related errors:
+
+. Verify the license is exported:
++
+[,bash]
+----
+echo $REDPANDA_LICENSE
+----
+
+. Regenerate if needed:
++
+[,bash]
+----
+rpk generate license --name "<first-name>" \
+  --last-name "<last-name>" \
+  --email "<email>" \
+  --company "<company>"
+export REDPANDA_LICENSE=$(cat ./redpanda.license)
+----
+
+. Check license expiration:
++
+The trial license expires after 30 days. Check the output from `rpk generate license` for the expiration date.
+
+=== Authentication errors
+
+If you receive 401 Unauthorized errors:
+
+1. Verify your API token is correct
+2. Ensure you're using your email address as the username
+3. Check that your Jira instance URL is correct (include `https://`)
+
+=== Rate limiting
+
+If you hit Jira rate limits (HTTP 429):
+
+1. Increase `max_retries` in the Jira processor config
+2. Reduce query frequency by increasing `interval`
+3. Use more specific JQL queries to reduce result sizes
+
+=== Query performance
+
+For large result sets:
+
+1. Use more specific JQL queries
+2. Limit fields with the `fields` parameter
+3. Reduce `max_results_per_page` if memory is constrained
+
+== See also
+
+- xref:components:processors/jira.adoc[Jira Processor Reference]
+- https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/[Jira REST API Documentation^]
+- https://www.atlassian.com/software/jira/guides/jql[JQL Query Guide^]
+- xref:configuration:interpolation.adoc[Bloblang Interpolation]
+
+// end::single-source[]

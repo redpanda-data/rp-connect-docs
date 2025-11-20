@@ -1,0 +1,68 @@
+# tag::config[]
+input:
+  stdin:
+    codec: lines
+
+pipeline:
+  processors:
+    # Prepare Jira query from incoming message
+    - mapping: |
+        root.jql = this.jql.or("project = ${JIRA_PROJECT} AND status = Open")
+        root.maxResults = this.maxResults.or(100)
+        root.fields = this.fields.or(["key", "summary", "status"])
+
+    # Execute Jira query
+    - jira:
+        base_url: "${JIRA_BASE_URL}"
+        username: "${JIRA_USERNAME}"
+        api_token: "${JIRA_API_TOKEN}"
+        max_retries: 3
+        request_timeout: 30s
+
+    # Log each issue before dropping
+    - log:
+        message: "Processing Jira issue: ${! this.key } - ${! this.fields.summary }"
+        level: INFO
+
+output:
+  drop: {}
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Use provided JQL query
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          jql: "project = CUSTOM AND priority = High"
+          maxResults: 50
+          fields: ["key", "priority"]
+    output_batches:
+      - - json_equals:
+            jql: "project = CUSTOM AND priority = High"
+            maxResults: 50
+            fields: ["key", "priority"]
+
+  - name: Use default values when fields missing
+    target_processors: '/pipeline/processors/0'
+    environment:
+      JIRA_PROJECT: "DEFAULT"
+    input_batch:
+      - json_content: {}
+    output_batches:
+      - - json_contains:
+            maxResults: 100
+            fields: ["key", "summary", "status"]
+
+  - name: Handle null values with defaults
+    target_processors: '/pipeline/processors/0'
+    environment:
+      JIRA_PROJECT: "MYPROJECT"
+    input_batch:
+      - json_content:
+          jql: null
+          maxResults: null
+    output_batches:
+      - - json_contains:
+            maxResults: 100
+# end::tests[]

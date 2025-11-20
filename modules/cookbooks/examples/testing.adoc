@@ -1,0 +1,219 @@
+= Test Cookbook Examples
+:description: Automated testing strategies for Redpanda Connect cookbook examples.
+
+This document describes the automated testing strategies for Redpanda Connect cookbook examples.
+
+All cookbook examples are automatically tested to ensure:
+
+. YAML syntax and structure are correct
+. Bloblang mappings work as expected
+. Environment variables are handled gracefully
+
+== Testing approaches
+
+=== Configuration linting
+
+To validate configurations is using `rpk connect lint`:
+
+[,bash]
+----
+# Lint a single configuration
+rpk connect lint jira/input-periodic.yaml
+
+# Lint all Jira examples
+rpk connect lint jira/*.yaml
+
+# Lint with environment variable checking
+rpk connect lint --skip-env-var-check jira/*.yaml
+
+# Check for deprecated fields
+rpk connect lint --deprecated jira/*.yaml
+----
+
+This checks for common issues such as:
+
+* YAML syntax errors
+* Unknown component types
+* Invalid field names
+* Type mismatches
+* Missing required fields
+
+=== Unit testing with inline tests
+
+Unit tests validate Bloblang mappings and transformations without requiring external services. Tests are embedded directly in the example files using AsciiDoc tags:
+
+[,bash]
+----
+# Run a single test file
+rpk connect test jira/input-periodic.yaml
+
+# Run all tests in a directory
+rpk connect test jira/*.yaml
+
+# Run with resource files
+rpk connect test --resources common-resources.yaml jira/*.yaml
+----
+
+Tests are included in example files, separated by AsciiDoc tags:
+
+[,yaml]
+----
+# tag::config[]
+input:
+  generate:
+    mapping: 'root = ""'
+    count: 1
+
+pipeline:
+  processors:
+    - mapping: |
+        root.field = this.value.or("default")
+
+output:
+  drop: {}
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Test with value present
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          value: "test"
+    output_batches:
+      - - json_equals:
+            field: "test"
+
+  - name: Test with missing value
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content: {}
+    output_batches:
+      - - json_equals:
+            field: "default"
+# end::tests[]
+----
+
+The `tag::config[]` region is included in documentation, while `tag::tests[]` is excluded.
+
+=== Test assertions
+
+[cols="1,3"]
+|===
+|Assertion |Description
+
+|`json_equals`
+|Exact JSON match
+
+|`json_contains`
+|Subset match - actual output contains specified fields
+
+|`content_equals`
+|String content match
+
+|`metadata_equals`
+|Metadata field match
+
+|`bloblang`
+|Custom Bloblang assertion
+|===
+
+=== GitHub Actions CI/CD
+
+Automated tests run on every push and pull request using GitHub Actions.
+
+See `test-cookbooks.yaml` for the complete workflow.
+
+== Best practices
+
+. Test transformations, not external services
++
+[,yaml]
+----
+# Good - Mock Jira response
+tests:
+  - name: Transform Jira issue
+    target_processors: '/pipeline/processors/1'
+    input_batch:
+      - json_content:
+          key: "DOC-123"
+          fields: {...}
+----
+
+. Use meaningful test names
++
+[,yaml]
+----
+# Good
+- name: Transform Jira issue with null assignee
+
+# Bad
+- name: Test 1
+----
+
+. Test environment variable interpolation
++
+[,yaml]
+----
+tests:
+  - name: Interpolate project name
+    environment:
+      JIRA_PROJECT: "TESTPROJECT"
+    input_batch:
+      - content: '{}'
+    output_batches:
+      - - json_contains:
+            jql: 'project = TESTPROJECT'
+----
+
+== Mock HTTP and external services
+
+When testing configurations that call external APIs (like Jira's REST API), use mocks to replace the HTTP processor:
+
+[,yaml]
+----
+pipeline:
+  processors:
+    - label: jira_api_call  # Add label for mocking
+      http:
+        url: "${JIRA_BASE_URL}/rest/api/3/search?jql=${! this.jql }"
+        verb: GET
+
+    - mapping: |
+        # Transform API response
+        root = this.issues.map_each(issue -> {...})
+
+tests:
+  - name: Mock Jira API response
+    target_processors: '/pipeline/processors'
+    mocks:
+      jira_api_call:  # Mock by label
+        mapping: |
+          # Return fake Jira response
+          root.issues = [
+            {
+              "key": "DOC-123",
+              "fields": {
+                "summary": "Example",
+                "status": { "name": "Done" }
+              }
+            }
+          ]
+    input_batch:
+      - json_content:
+          jql: "project = TEST"
+    output_batches:
+      - - json_contains:
+            - key: "DOC-123"
+----
+
+Benefits:
+
+* No need to run actual Jira instance
+* Fast, isolated tests
+* Control exact response format
+* Test error scenarios easily
+
+== See also
+
+* https://docs.redpanda.com/redpanda-connect/configuration/unit_testing[Unit Testing Guide^]

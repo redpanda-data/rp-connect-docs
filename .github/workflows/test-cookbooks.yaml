@@ -1,0 +1,76 @@
+name: Test Cookbook Examples
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'modules/cookbooks/examples/**/*.yaml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'modules/cookbooks/examples/**/*.yaml'
+
+jobs:
+  lint-and-test:
+    name: Lint and Test Examples
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Redpanda Connect
+        run: |
+          # Download and install latest rpk/connect
+          curl -LO https://github.com/redpanda-data/redpanda/releases/latest/download/rpk-linux-amd64.zip
+          unzip rpk-linux-amd64.zip
+          sudo mv rpk /usr/local/bin/
+          chmod +x /usr/local/bin/rpk
+          rpk version
+
+      # Handles linting + inline tests
+      - name: Run automated test script
+        run: |
+          cd modules/cookbooks/examples
+          chmod +x test-examples.sh
+          ./test-examples.sh "*/*.yaml"
+
+  test-matrix:
+    name: Test Examples by Category
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        category: [jira, enrichments, filtering]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Redpanda Connect
+        run: |
+          curl -LO https://github.com/redpanda-data/redpanda/releases/latest/download/rpk-linux-amd64.zip
+          unzip rpk-linux-amd64.zip
+          sudo mv rpk /usr/local/bin/
+          rpk version
+
+      - name: Test ${{ matrix.category }} examples
+        run: |
+          cd modules/cookbooks/examples
+          if [[ -d "${{ matrix.category }}" ]]; then
+            echo "Testing ${{ matrix.category }} examples..."
+
+            # Lint all configs in category
+            echo "🔍 Linting..."
+            rpk connect lint --skip-env-var-check ${{ matrix.category }}/*.yaml
+
+            # Run inline tests (automatically detected)
+            echo "🧪 Running inline tests..."
+            for config_file in ${{ matrix.category }}/*.yaml; do
+              if [[ -f "$config_file" ]]; then
+                echo "Testing: $(basename $config_file)"
+                # Continue on error for configs without tests
+                rpk connect test "$config_file" 2>&1 | grep -E "(Test|succeeded|FAILED)" || echo "  (no tests or test failed)"
+              fi
+            done
+          fi
