@@ -1,6 +1,7 @@
 = Work with Jira Issues
 // tag::single-source[]
 :description: Learn how to use the Jira processor as both an input and output in Redpanda Connect.
+:page-categories: Streaming, Integration
 
 The Jira processor enables querying Jira issues using JQL (Jira Query Language) and returning structured data. Unlike traditional connectors, Jira is implemented as a *processor only*, which can be used as both an input (with `generate`) and an output (with `drop`).
 
