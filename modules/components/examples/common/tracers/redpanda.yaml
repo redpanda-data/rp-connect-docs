@@ -1,0 +1,9 @@
+tracers:
+  label: ""
+  redpanda:
+    seed_brokers: [] # No default (required)
+    topic: otel-traces
+    service: redpanda-connect
+    sampling:
+      enabled: false
+      ratio: "" # No default (optional)

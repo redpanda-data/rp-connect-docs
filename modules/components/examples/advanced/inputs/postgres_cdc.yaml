@@ -27,6 +27,10 @@ inputs:
         cert_file: ""
         key_file: ""
         password: ""
+    aws:
+      enabled: false
+      region: "" # No default (optional)
+      endpoint: "" # No default (required)
     auto_replay_nacks: true
     batching:
       count: 0

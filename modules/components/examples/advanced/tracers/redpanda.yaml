@@ -1,6 +1,6 @@
-outputs:
+tracers:
   label: ""
-  redpanda_migrator:
+  redpanda:
     seed_brokers: [] # No default (required)
     client_id: redpanda-connect
     tls:
@@ -56,57 +56,10 @@ outputs:
     timeout: 10s
     max_message_bytes: 1MiB
     broker_write_max_bytes: 100MiB
-    schema_registry:
-      url: "" # No default (required)
-      tls:
-        enabled: false
-        skip_cert_verify: false
-        enable_renegotiation: false
-        root_cas: ""
-        root_cas_file: ""
-        client_certs:
-          cert: ""
-          key: ""
-          cert_file: ""
-          key_file: ""
-          password: ""
-      oauth:
-        enabled: false
-        consumer_key: ""
-        consumer_secret: ""
-        access_token: ""
-        access_token_secret: ""
-      basic_auth:
-        enabled: false
-        username: ""
-        password: ""
-      jwt:
-        enabled: false
-        private_key_file: ""
-        signing_method: ""
-        claims: {}
-        headers: {}
-      enabled: true
-      interval: 5m
-      include: [] # No default (optional)
-      exclude: [] # No default (optional)
-      subject: "" # No default (optional)
-      versions: all
-      include_deleted: false
-      translate_ids: false
-      normalize: false
-      strict: false
-    consumer_groups:
-      enabled: true
-      interval: 1m
-      fetch_timeout: 10s
-      include: [] # No default (optional)
-      exclude: [] # No default (optional)
-      only_empty: false
-    topic: ${! @kafka_topic }
-    topic_replication_factor: "" # No default (optional)
-    sync_topic_acls: false
-    serverless: false
-    provenance_header: redpanda-migrator-provenance
-    offset_header: redpanda-migrator-offset
-    max_in_flight: 10
+    topic: otel-traces
+    format: json
+    service: redpanda-connect
+    tags: {}
+    sampling:
+      enabled: false
+      ratio: "" # No default (optional)

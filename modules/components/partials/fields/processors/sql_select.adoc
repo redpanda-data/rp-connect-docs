@@ -70,7 +70,7 @@ A database <<drivers, driver>> to use.
 
 *Type*: `string`
 
-*Options*: `mysql`, `postgres`, `clickhouse`, `mssql`, `sqlite`, `oracle`, `snowflake`, `trino`, `gocosmos`, `spanner`
+*Options*: `mysql`, `postgres`, `clickhouse`, `mssql`, `sqlite`, `oracle`, `snowflake`, `trino`, `gocosmos`, `spanner`, `databricks`
 
 === `dsn`
 
@@ -94,6 +94,10 @@ dsn: postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable
 # ---
 
 dsn: oracle://foouser:foopass@localhost:1521/service_name
+
+# ---
+
+dsn: token:dapi1234567890ab@dbc-a1b2345c-d6e7.cloud.databricks.com:443/sql/1.0/warehouses/abc123def456
 ----
 
 === `init_files[]`
