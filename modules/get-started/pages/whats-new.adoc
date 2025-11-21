@@ -189,7 +189,7 @@ This release includes the following default value changes:
 |The default changed from `5m` to `1m` to provide more responsive topic and partition discovery. This means metadata refreshes occur more frequently by default. If you experience increased broker load or want to maintain the previous behavior, explicitly set this field to `5m`.
 |*Config:*
 
-* xref:components:config/redpanda.adoc#metadata_max_age[redpanda]
+* xref:components:redpanda/about.adoc#metadata_max_age[redpanda]
 
 
 *Caches:*

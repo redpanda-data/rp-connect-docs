@@ -1,0 +1,76 @@
+# tag::config[]
+input:
+  generate:
+    mapping: |
+      root.jql = "project = ${JIRA_PROJECT} AND created >= -1d ORDER BY created DESC"
+      root.maxResults = 50
+      root.fields = ["key", "summary", "status", "assignee", "created"]
+    interval: 30s
+
+pipeline:
+  processors:
+    - jira:
+        base_url: "${JIRA_BASE_URL}"
+        username: "${JIRA_USERNAME}"
+        api_token: "${JIRA_API_TOKEN}"
+        max_results_per_page: 50
+        request_timeout: 30s
+        max_retries: 10
+
+    # Transform each issue
+    - mapping: |
+        root.issue_key = this.key
+        root.summary = this.fields.summary
+        root.status = this.fields.status.name
+        root.assignee = if this.fields.assignee != null {
+          this.fields.assignee.displayName
+        } else { "Unassigned" }
+        root.created = this.fields.created
+
+output:
+  stdout:
+    codec: lines
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Transform complete Jira issue
+    target_processors: '/pipeline/processors/1'
+    input_batch:
+      - json_content:
+          key: "DOC-123"
+          fields:
+            summary: "Fix documentation typo"
+            status:
+              name: "In Progress"
+            assignee:
+              displayName: "John Doe"
+            created: "2025-01-15T10:30:00.000-0800"
+    output_batches:
+      - - json_equals:
+            issue_key: "DOC-123"
+            summary: "Fix documentation typo"
+            status: "In Progress"
+            assignee: "John Doe"
+            created: "2025-01-15T10:30:00.000-0800"
+
+  - name: Transform issue with null assignee
+    target_processors: '/pipeline/processors/1'
+    input_batch:
+      - json_content:
+          key: "DOC-456"
+          fields:
+            summary: "Update API reference"
+            status:
+              name: "To Do"
+            assignee: null
+            created: "2025-01-16T14:20:00.000-0800"
+    output_batches:
+      - - json_equals:
+            issue_key: "DOC-456"
+            summary: "Update API reference"
+            status: "To Do"
+            assignee: "Unassigned"
+            created: "2025-01-16T14:20:00.000-0800"
+
+# end::tests[]

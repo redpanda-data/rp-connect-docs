@@ -1,0 +1,19 @@
+# tag::config[]
+input:
+  generate:
+    mapping: |
+      root.jql = "project = ${JIRA_PROJECT} ORDER BY created DESC"
+      root.maxResults = 100
+      root.fields = ["key", "summary", "status"]
+    count: 1  # Run only once
+
+pipeline:
+  processors:
+    - jira:
+        base_url: "${JIRA_BASE_URL}"
+        username: "${JIRA_USERNAME}"
+        api_token: "${JIRA_API_TOKEN}"
+
+output:
+  stdout: {}
+# end::config[]
