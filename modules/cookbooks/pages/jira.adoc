@@ -294,17 +294,17 @@ If you receive 401 Unauthorized errors:
 
 If you hit Jira rate limits (HTTP 429):
 
-1. Increase `max_retries` in the Jira processor config
-2. Reduce query frequency by increasing `interval`
-3. Use more specific JQL queries to reduce result sizes
+-  Increase `max_retries` in the Jira processor config
+- Reduce query frequency by increasing `interval`
+- Use more specific JQL queries to reduce result sizes
 
 === Query performance
 
 For large result sets:
 
-1. Use more specific JQL queries
-2. Limit fields with the `fields` parameter
-3. Reduce `max_results_per_page` if memory is constrained
+- Use more specific JQL queries
+- Limit fields with the `fields` parameter
+- Reduce `max_results_per_page` if memory is constrained
 
 == See also
 
