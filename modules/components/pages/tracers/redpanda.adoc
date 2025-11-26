@@ -9,7 +9,6 @@ component_type_dropdown::[]
 
 Send tracing events to a Redpanda Message Broker.
 
-
 [tabs]
 ======
 Common::
@@ -100,7 +99,17 @@ tracer:
 --
 ======
 
-TODO: Missing description. Add a description in the overrides file or source data.
+The Redpanda tracer exports distributed tracing data to a Redpanda topic, enabling you to monitor and debug your Redpanda Connect pipelines. Traces are exported in OpenTelemetry format as JSON, allowing integration with observability platforms like Jaeger, Grafana Tempo, or custom trace consumers.
+
+This tracer automatically captures trace spans as messages flow through your pipeline, recording timing information, component metadata, and error details. Use this to:
+
+- **Track message flow** through complex pipelines with multiple processors.
+- **Identify performance bottlenecks** by analyzing span durations.
+- **Debug failures** by examining trace context and error details.
+- **Monitor pipeline health** across distributed Redpanda Connect instances.
+- **Correlate activity** across multiple services using trace IDs.
+
+The tracer writes to a dedicated Redpanda topic that can be consumed by trace analysis tools. Configure sampling to control trace volume in high-throughput environments.
 
 include::redpanda-connect:components:partial$fields/tracers/redpanda.adoc[]
 

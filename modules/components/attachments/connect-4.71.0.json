@@ -15279,7 +15279,7 @@
             "name": "aws",
             "type": "object",
             "kind": "scalar",
-            "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.",
+            "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.\n\nThis is useful for connecting to Amazon RDS or Aurora PostgreSQL instances with IAM database authentication enabled. The generated tokens are valid for 15 minutes and are automatically refreshed.\n\nFor more information about AWS credentials configuration, see the xref:guides:cloud/aws.adoc[credentials for AWS] guide.",
             "is_advanced": true,
             "is_optional": true,
             "children": [
@@ -15694,7 +15694,7 @@
             "name": "aws",
             "type": "object",
             "kind": "scalar",
-            "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.",
+            "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.\n\nThis is useful for connecting to Amazon RDS or Aurora PostgreSQL instances with IAM database authentication enabled. The generated tokens are valid for 15 minutes and are automatically refreshed.\n\nFor more information about AWS credentials configuration, see the xref:guides:cloud/aws.adoc[credentials for AWS] guide.",
             "is_advanced": true,
             "is_optional": true,
             "children": [
@@ -39852,7 +39852,7 @@
             "name": "offset_header",
             "type": "string",
             "kind": "scalar",
-            "description": "Header name to add to migrated records containing the source offset for exact consumer group migration. If empty, no offset header is added and exact offset translation is disabled. When disabled, consumer groups are still migrated but precision for empty groups may not be ideal if there are multiple records with the same timestamp, as timestamps have millisecond resolution. When consumer group migration is disabled, this header is not added.",
+            "description": "The name of a message header to add to migrated records. This header contains the source offset, enabling exact consumer group offset translation during migration.\n\nWhen left empty (default), no offset header is added and consumer groups are migrated using timestamp-based positioning. This approach works well for most cases, but may be imprecise for consumer groups with no committed offsets when multiple records share the same timestamp (timestamps have millisecond resolution).\n\nSet this field to enable precise offset translation, especially when migrating consumer groups that are caught up or have minimal lag.\n\nNote: This header is only added when consumer group migration is enabled.",
             "is_advanced": true,
             "default": "redpanda-migrator-offset"
           },
@@ -39860,7 +39860,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of batches to send in parallel at any given time.",
+            "description": "The maximum number of batches to send in parallel at any given time. Increase this value to improve throughput during migration.\n\nFor optimal performance, set this to match the total number of partitions being migrated. Setting it higher than the partition count provides no additional benefit, as each partition can only have one in-flight batch at a time.\n\nExample: If migrating 100 partitions, set `max_in_flight: 100` for maximum throughput.",
             "default": 10,
             "examples": [
               "64  # For a cluster with 64 partitions",
@@ -55221,7 +55221,7 @@
             "name": "seed_brokers",
             "type": "string",
             "kind": "array",
-            "description": "A list of broker addresses to connect to in order to establish connections. If an item of the list contains commas it will be expanded into multiple addresses.",
+            "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item.",
             "examples": [
               [
                 "localhost:9092"
@@ -55239,7 +55239,7 @@
             "name": "client_id",
             "type": "string",
             "kind": "scalar",
-            "description": "An identifier for the client connection.",
+            "description": "An identifier for the client connection. This appears in broker logs and metrics to help identify which Redpanda Connect instance is sending traces.",
             "is_advanced": true,
             "default": "redpanda-connect"
           },
@@ -55247,14 +55247,14 @@
             "name": "tls",
             "type": "object",
             "kind": "scalar",
-            "description": "Custom TLS settings can be used to override system defaults.",
+            "description": "Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates. Key configuration options include `enabled` to enable TLS, `client_certs` for mTLS authentication, `root_cas`/`root_cas_file` for custom certificate authorities, and `skip_cert_verify` for development environments.",
             "is_advanced": true,
             "children": [
               {
                 "name": "enabled",
                 "type": "bool",
                 "kind": "scalar",
-                "description": "Whether custom TLS settings are enabled.",
+                "description": "Whether to use TLS for the connection to the Redpanda cluster.",
                 "is_advanced": true,
                 "default": false
               },
@@ -55262,7 +55262,7 @@
                 "name": "skip_cert_verify",
                 "type": "bool",
                 "kind": "scalar",
-                "description": "Whether to skip server side certificate verification.",
+                "description": "Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production. Consider using `root_cas` or `root_cas_file` to specify trusted certificates instead of disabling verification entirely.",
                 "is_advanced": true,
                 "default": false
               },
@@ -55270,7 +55270,7 @@
                 "name": "enable_renegotiation",
                 "type": "bool",
                 "kind": "scalar",
-                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "description": "Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: \ntls: no renegotiation`.",
                 "is_advanced": true,
                 "default": false,
                 "version": "3.45.0"
@@ -55279,7 +55279,7 @@
                 "name": "root_cas",
                 "type": "string",
                 "kind": "scalar",
-                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "description": "Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading.",
                 "is_advanced": true,
                 "is_secret": true,
                 "default": "",
@@ -55292,7 +55292,7 @@
                 "name": "root_cas_file",
                 "type": "string",
                 "kind": "scalar",
-                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "description": "Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for file-based certificate loading or `root_cas` for inline certificate data.",
                 "is_advanced": true,
                 "default": "",
                 "examples": [
@@ -55303,7 +55303,7 @@
                 "name": "client_certs",
                 "type": "object",
                 "kind": "array",
-                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "description": "A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS, authenticating the client to the server with these certificates.\n\nYou must set `tls.enabled: true` for the client certificates to take effect.\n\n**Certificate pairing rules**: For each certificate item, provide either:\n\n- Inline PEM data using both `cert` *and* `key` or\n- File paths using both `cert_file` *and* `key_file`.\n\nMixing inline and file-based values within the same item is not supported.",
                 "is_advanced": true,
                 "default": [],
                 "examples": [
@@ -55377,7 +55377,7 @@
             "name": "sasl",
             "type": "object",
             "kind": "array",
-            "description": "Specify one or more methods of SASL authentication. SASL is tried in order; if the broker supports the first mechanism, all connections will use that mechanism. If the first mechanism fails, the client will pick the first supported mechanism. If the broker does not support any client mechanisms, connections will fail.",
+            "description": "Specify one or more methods or mechanisms of SASL authentication, which are attempted in order. If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.",
             "is_advanced": true,
             "is_optional": true,
             "examples": [
@@ -55619,7 +55619,7 @@
             "name": "metadata_max_age",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
+            "description": "The maximum age of cached cluster metadata before it is refreshed. Reducing this value can help detect cluster changes faster but increases metadata requests.",
             "is_advanced": true,
             "default": "1m"
           },
@@ -55627,7 +55627,7 @@
             "name": "request_timeout_overhead",
             "type": "string",
             "kind": "scalar",
-            "description": "The request time overhead. Uses the given time as overhead while deadlining requests. Roughly equivalent to request.timeout.ms, but grants additional time to requests that have timeout fields.",
+            "description": "Additional time to apply as overhead when calculating request deadlines. This buffer helps prevent premature timeouts.",
             "is_advanced": true,
             "default": "10s"
           },
@@ -55635,7 +55635,7 @@
             "name": "conn_idle_timeout",
             "type": "string",
             "kind": "scalar",
-            "description": "The rough amount of time to allow connections to idle before they are closed.",
+            "description": "The maximum duration that connections can remain idle before they are automatically closed. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.",
             "is_advanced": true,
             "default": "20s"
           },
@@ -55643,7 +55643,7 @@
             "name": "tcp",
             "type": "object",
             "kind": "scalar",
-            "description": "TCP socket configuration.",
+            "description": "Configure TCP socket-level settings to optimize network performance and reliability. These low-level controls are useful for:\n\n- **High-latency networks**: Increase `connect_timeout` to allow more time for connection establishment\n- **Long-lived connections**: Configure `keep_alive` settings to detect and recover from stale connections\n- **Unstable networks**: Tune keep-alive probes to balance between quick failure detection and avoiding false positives\n- **Linux systems with specific requirements**: Use `tcp_user_timeout` (Linux 2.6.37+) to control data acknowledgment timeouts\n\nMost users should keep the default values. Only modify these settings if you're experiencing connection stability issues or have specific network requirements.",
             "is_advanced": true,
             "is_optional": true,
             "children": [
@@ -55703,7 +55703,7 @@
             "name": "partitioner",
             "type": "string",
             "kind": "scalar",
-            "description": "Override the default murmur2 hashing partitioner.",
+            "description": "Override the default partitioner for trace messages. By default, traces are distributed across partitions for load balancing.",
             "is_advanced": true,
             "is_optional": true,
             "annotated_options": [
@@ -55730,7 +55730,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable idempotent writes to prevent duplicate trace messages in case of retries. Recommended for production environments.",
             "is_advanced": true,
             "default": true
           },
@@ -55738,7 +55738,7 @@
             "name": "compression",
             "type": "string",
             "kind": "scalar",
-            "description": "Optionally set an explicit compression type. The default preference is to use snappy when the broker supports it, and fall back to none if not.",
+            "description": "Compression codec to use for trace messages. Options include `gzip`, `snappy`, `lz4`, `zstd`, or none. Compression can reduce network bandwidth and storage costs.",
             "is_advanced": true,
             "is_optional": true,
             "options": [
@@ -55754,7 +55754,7 @@
             "name": "allow_auto_topic_creation",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "description": "Whether to automatically create the trace topic if it doesn't exist. If false, the topic must be created manually before starting the tracer.",
             "is_advanced": true,
             "default": true
           },
@@ -55762,7 +55762,7 @@
             "name": "timeout",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum period of time to wait for message sends before abandoning the request and retrying",
+            "description": "The maximum time to wait for trace messages to be acknowledged by the broker before considering the write failed.",
             "is_advanced": true,
             "default": "10s"
           },
@@ -55770,7 +55770,7 @@
             "name": "max_message_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum size of a produced record batch in bytes. A `MESSAGE_TOO_LARGE` error is returned if a batch exceeds this limit. This field maps to the `max.message.bytes` Kafka property. Ensure the Redpanda broker's `kafka_batch_max_bytes` property is at least as large as this value, see https://docs.redpanda.com/current/reference/properties/cluster-properties/#kafka_batch_max_bytes.",
+            "description": "The maximum size of individual trace messages. Traces exceeding this size will be truncated or dropped.",
             "is_advanced": true,
             "default": "1MiB",
             "examples": [
@@ -55782,7 +55782,7 @@
             "name": "broker_write_max_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The upper bound for the number of bytes written to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.",
+            "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.",
             "is_advanced": true,
             "default": "100MiB",
             "examples": [
@@ -55794,14 +55794,14 @@
             "name": "topic",
             "type": "string",
             "kind": "scalar",
-            "description": "The name of the topic to emit spans to",
+            "description": "The Redpanda topic where trace data is written. This topic should be dedicated to traces and configured with appropriate retention policies. Default: `otel-traces`",
             "default": "otel-traces"
           },
           {
             "name": "format",
             "type": "string",
             "kind": "scalar",
-            "description": "The serialization format for individual spans in the topic.",
+            "description": "The format for trace data. Currently only `json` is supported, which exports OpenTelemetry spans as JSON messages.",
             "is_advanced": true,
             "default": "json",
             "annotated_options": [
@@ -55820,14 +55820,14 @@
             "name": "service",
             "type": "string",
             "kind": "scalar",
-            "description": "The name of the service in traces.",
+            "description": "The service name to identify this Redpanda Connect instance in traces. This appears in trace visualizations and helps correlate traces across distributed systems. Use descriptive names like `order-processor` or `analytics-pipeline`.",
             "default": "redpanda-connect"
           },
           {
             "name": "tags",
             "type": "string",
             "kind": "map",
-            "description": "A map of tags to add to all tracing spans.",
+            "description": "Custom key-value tags to attach to all traces from this instance. Use tags to add metadata like environment (`production`, `staging`), region, version, or instance identifiers. Tags appear as resource attributes in OpenTelemetry traces.",
             "is_advanced": true,
             "default": {}
           },
@@ -55835,20 +55835,20 @@
             "name": "sampling",
             "type": "object",
             "kind": "scalar",
-            "description": "Settings for trace sampling. Sampling is recommended for high-volume production workloads.",
+            "description": "Configure trace sampling to control the volume of trace data. Sampling is essential for high-throughput pipelines to prevent trace data from overwhelming your observability infrastructure.",
             "children": [
               {
                 "name": "enabled",
                 "type": "bool",
                 "kind": "scalar",
-                "description": "Whether to enable sampling.",
+                "description": "Whether to enable trace sampling. When disabled, all traces are exported. When enabled, traces are sampled according to the configured ratio.",
                 "default": false
               },
               {
                 "name": "ratio",
                 "type": "float",
                 "kind": "scalar",
-                "description": "Sets the ratio of traces to sample.",
+                "description": "The sampling ratio as a decimal between 0 and 1. For example, `0.1` samples 10% of traces, `0.01` samples 1%. Lower ratios reduce trace volume and overhead. For high-throughput production systems, start with 0.01-0.1 and adjust based on your needs.",
                 "is_optional": true,
                 "examples": [
                   0.05,
@@ -55859,7 +55859,25 @@
             ]
           }
         ]
-      }
+      },
+      "description": "\nThe Redpanda tracer exports distributed tracing data to a Redpanda topic, enabling you to monitor and debug your Redpanda Connect pipelines. Traces are exported in OpenTelemetry format as JSON, allowing integration with observability platforms like Jaeger, Grafana Tempo, or custom trace consumers.\n\nThis tracer automatically captures trace spans as messages flow through your pipeline, recording timing information, component metadata, and error details. Use this to:\n\n- **Track message flow** through complex pipelines with multiple processors\n- **Identify performance bottlenecks** by analyzing span durations\n- **Debug failures** by examining trace context and error details\n- **Monitor pipeline health** across distributed Redpanda Connect instances\n- **Correlate activity** across multiple services using trace IDs\n\nThe tracer writes to a dedicated Redpanda topic (default: `otel-traces`) that can be consumed by trace analysis tools. Configure sampling to control trace volume in high-throughput environments.\n\nIMPORTANT: This component is experimental and may change in future releases.\n",
+      "examples": [
+        {
+          "title": "Basic Tracing Setup",
+          "summary": "Enable tracing for a pipeline, sending all trace data to a local Redpanda cluster.",
+          "config": "\ninput:\n  redpanda:\n    addresses: [ \"localhost:9092\" ]\n    topics: [ \"orders\" ]\n\npipeline:\n  processors:\n    - mapping: |\n        root = this\n        root.processed_at = now()\n\noutput:\n  redpanda:\n    addresses: [ \"localhost:9092\" ]\n    topic: \"processed_orders\"\n\ntracer:\n  redpanda:\n    seed_brokers: [ \"localhost:9092\" ]\n    topic: otel-traces\n    service: order-processor\n"
+        },
+        {
+          "title": "Production Tracing with Sampling",
+          "summary": "Configure tracing for a production environment with sampling to reduce trace volume and secure authentication.",
+          "config": "\ninput:\n  redpanda:\n    addresses: [ \"redpanda-prod:9092\" ]\n    topics: [ \"events\" ]\n\npipeline:\n  processors:\n    - branch:\n        request_map: 'root = this'\n        processors:\n          - mapping: 'root.enriched = true'\n\noutput:\n  redpanda:\n    addresses: [ \"redpanda-prod:9092\" ]\n    topic: \"processed_events\"\n\ntracer:\n  redpanda:\n    seed_brokers: [ \"redpanda-prod:9092\" ]\n    topic: otel-traces\n    service: event-processor-prod\n    sampling:\n      enabled: true\n      ratio: \"0.1\"  # Sample 10% of traces\n    tls:\n      enabled: true\n    sasl:\n      mechanism: SCRAM-SHA-512\n      username: tracer-user\n      password: ${TRACER_PASSWORD}\n"
+        },
+        {
+          "title": "Multi-Instance Tracing",
+          "summary": "Configure tracing for multiple Redpanda Connect instances with unique service names for correlation.",
+          "config": "\n# Instance 1: Ingestion service\ntracer:\n  redpanda:\n    seed_brokers: [ \"redpanda:9092\" ]\n    topic: otel-traces\n    service: ingestion-service\n    tags:\n      environment: production\n      region: us-west-2\n      instance: ingestion-01\n\n# Instance 2: Processing service\ntracer:\n  redpanda:\n    seed_brokers: [ \"redpanda:9092\" ]\n    topic: otel-traces\n    service: processing-service\n    tags:\n      environment: production\n      region: us-west-2\n      instance: processing-01\n"
+        }
+      ]
     }
   ],
   "scanners": [

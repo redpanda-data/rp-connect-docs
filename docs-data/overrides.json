@@ -1641,12 +1641,27 @@
       }
     },
     {
+      "name": "pg_stream",
+      "config": {
+        "children": [
+          {
+            "name": "aws",
+            "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.\n\nThis is useful for connecting to Amazon RDS or Aurora PostgreSQL instances with IAM database authentication enabled. The generated tokens are valid for 15 minutes and are automatically refreshed.\n\nFor more information about AWS credentials configuration, see the xref:guides:cloud/aws.adoc[credentials for AWS] guide."
+          }
+        ]
+      }
+    },
+    {
       "name": "postgres_cdc",
       "config": {
         "children": [
           {
             "name": "dsn",
             "description": "The data source name (DSN) of the PostgreSQL database from which you want to stream updates. Use the format `postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]`. For example, if you wanted to disable SSL in a secure environment, you would add `sslmode=disable` to the connection string."
+          },
+          {
+            "name": "aws",
+            "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.\n\nThis is useful for connecting to Amazon RDS or Aurora PostgreSQL instances with IAM database authentication enabled. The generated tokens are valid for 15 minutes and are automatically refreshed.\n\nFor more information about AWS credentials configuration, see the xref:guides:cloud/aws.adoc[credentials for AWS] guide."
           },
           {
             "name": "include_transaction_markers",
@@ -4846,7 +4861,11 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of batches to send in parallel at any given time."
+            "description": "The maximum number of batches to send in parallel at any given time. Increase this value to improve throughput during migration.\n\nFor optimal performance, set this to match the total number of partitions being migrated. Setting it higher than the partition count provides no additional benefit, as each partition can only have one in-flight batch at a time.\n\nExample: If migrating 100 partitions, set `max_in_flight: 100` for maximum throughput."
+          },
+          {
+            "name": "offset_header",
+            "description": "The name of a message header to add to migrated records. This header contains the source offset, enabling exact consumer group offset translation during migration.\n\nWhen left empty (default), no offset header is added and consumer groups are migrated using timestamp-based positioning. This approach works well for most cases, but may be imprecise for consumer groups with no committed offsets when multiple records share the same timestamp (timestamps have millisecond resolution).\n\nSet this field to enable precise offset translation, especially when migrating consumer groups that are caught up or have minimal lag.\n\nNote: This header is only added when consumer group migration is enabled."
           },
           {
             "name": "input_resource",
@@ -7563,6 +7582,150 @@
             "name": "tls_handshake_first",
             "version": "4.60.0",
             "$ref": "#/definitions/tls_handshake_first"
+          }
+        ]
+      }
+    }
+  ],
+  "tracers": [
+    {
+      "name": "redpanda",
+      "summary": "Send tracing events to a Redpanda topic in OpenTelemetry format for distributed tracing and observability.",
+      "description": "\nThe Redpanda tracer exports distributed tracing data to a Redpanda topic, enabling you to monitor and debug your Redpanda Connect pipelines. Traces are exported in OpenTelemetry format as JSON, allowing integration with observability platforms like Jaeger, Grafana Tempo, or custom trace consumers.\n\nThis tracer automatically captures trace spans as messages flow through your pipeline, recording timing information, component metadata, and error details. Use this to:\n\n- **Track message flow** through complex pipelines with multiple processors\n- **Identify performance bottlenecks** by analyzing span durations\n- **Debug failures** by examining trace context and error details\n- **Monitor pipeline health** across distributed Redpanda Connect instances\n- **Correlate activity** across multiple services using trace IDs\n\nThe tracer writes to a dedicated Redpanda topic (default: `otel-traces`) that can be consumed by trace analysis tools. Configure sampling to control trace volume in high-throughput environments.",
+      "examples": [
+        {
+          "title": "Basic tracing setup",
+          "summary": "Enable tracing for a pipeline, sending all trace data to a local Redpanda cluster.",
+          "config": "\ninput:\n  redpanda:\n    addresses: [ \"localhost:9092\" ]\n    topics: [ \"orders\" ]\n\npipeline:\n  processors:\n    - mapping: |\n        root = this\n        root.processed_at = now()\n\noutput:\n  redpanda:\n    addresses: [ \"localhost:9092\" ]\n    topic: \"processed_orders\"\n\ntracer:\n  redpanda:\n    seed_brokers: [ \"localhost:9092\" ]\n    topic: otel-traces\n    service: order-processor\n"
+        },
+        {
+          "title": "Production tracing with sampling",
+          "summary": "Configure tracing for a production environment with sampling to reduce trace volume and secure authentication.",
+          "config": "\ninput:\n  redpanda:\n    addresses: [ \"redpanda-prod:9092\" ]\n    topics: [ \"events\" ]\n\npipeline:\n  processors:\n    - branch:\n        request_map: 'root = this'\n        processors:\n          - mapping: 'root.enriched = true'\n\noutput:\n  redpanda:\n    addresses: [ \"redpanda-prod:9092\" ]\n    topic: \"processed_events\"\n\ntracer:\n  redpanda:\n    seed_brokers: [ \"redpanda-prod:9092\" ]\n    topic: otel-traces\n    service: event-processor-prod\n    sampling:\n      enabled: true\n      ratio: \"0.1\"  # Sample 10% of traces\n    tls:\n      enabled: true\n    sasl:\n      mechanism: SCRAM-SHA-512\n      username: tracer-user\n      password: ${TRACER_PASSWORD}\n"
+        },
+        {
+          "title": "Multi-instance tracing",
+          "summary": "Configure tracing for multiple Redpanda Connect instances with unique service names for correlation.",
+          "config": "\n# Instance 1: Ingestion service\ntracer:\n  redpanda:\n    seed_brokers: [ \"redpanda:9092\" ]\n    topic: otel-traces\n    service: ingestion-service\n    tags:\n      environment: production\n      region: us-west-2\n      instance: ingestion-01\n\n# Instance 2: Processing service\ntracer:\n  redpanda:\n    seed_brokers: [ \"redpanda:9092\" ]\n    topic: otel-traces\n    service: processing-service\n    tags:\n      environment: production\n      region: us-west-2\n      instance: processing-01\n"
+        }
+      ],
+      "config": {
+        "children": [
+          {
+            "name": "seed_brokers",
+            "$ref": "#/definitions/seed_brokers"
+          },
+          {
+            "name": "client_id",
+            "description": "An identifier for the client connection. This appears in broker logs and metrics to help identify which Redpanda Connect instance is sending traces."
+          },
+          {
+            "name": "tls",
+            "$ref": "#/definitions/tls",
+            "children": [
+              {
+                "name": "enabled",
+                "description": "Whether to use TLS for the connection to the Redpanda cluster."
+              },
+              {
+                "name": "skip_cert_verify",
+                "$ref": "#/definitions/skip_cert_verify"
+              },
+              {
+                "name": "enable_renegotiation",
+                "$ref": "#/definitions/enable_renegotiation"
+              },
+              {
+                "name": "root_cas",
+                "$ref": "#/definitions/root_cas"
+              },
+              {
+                "name": "root_cas_file",
+                "$ref": "#/definitions/root_cas_file"
+              },
+              {
+                "name": "client_certs",
+                "$ref": "#/definitions/client_certs"
+              }
+            ]
+          },
+          {
+            "name": "sasl",
+            "description": "Specify one or more methods or mechanisms of SASL authentication, which are attempted in order. If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail."
+          },
+          {
+            "name": "metadata_max_age",
+            "description": "The maximum age of cached cluster metadata before it is refreshed. Reducing this value can help detect cluster changes faster but increases metadata requests."
+          },
+          {
+            "name": "request_timeout_overhead",
+            "description": "Additional time to apply as overhead when calculating request deadlines. This buffer helps prevent premature timeouts."
+          },
+          {
+            "name": "conn_idle_timeout",
+            "$ref": "#/definitions/conn_idle_timeout"
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
+          },
+          {
+            "name": "partitioner",
+            "description": "Override the default partitioner for trace messages. By default, traces are distributed across partitions for load balancing."
+          },
+          {
+            "name": "idempotent_write",
+            "description": "Enable idempotent writes to prevent duplicate trace messages in case of retries. Recommended for production environments."
+          },
+          {
+            "name": "compression",
+            "description": "Compression codec to use for trace messages. Options include `gzip`, `snappy`, `lz4`, `zstd`, or none. Compression can reduce network bandwidth and storage costs."
+          },
+          {
+            "name": "allow_auto_topic_creation",
+            "description": "Whether to automatically create the trace topic if it doesn't exist. If false, the topic must be created manually before starting the tracer."
+          },
+          {
+            "name": "timeout",
+            "description": "The maximum time to wait for trace messages to be acknowledged by the broker before considering the write failed."
+          },
+          {
+            "name": "max_message_bytes",
+            "description": "The maximum size of individual trace messages. Traces exceeding this size will be truncated or dropped."
+          },
+          {
+            "name": "broker_write_max_bytes",
+            "$ref": "#/definitions/broker_write_max_bytes"
+          },
+          {
+            "name": "topic",
+            "description": "The Redpanda topic where trace data is written. This topic should be dedicated to traces and configured with appropriate retention policies. Default: `otel-traces`"
+          },
+          {
+            "name": "format",
+            "description": "The format for trace data. Currently only `json` is supported, which exports OpenTelemetry spans as JSON messages."
+          },
+          {
+            "name": "service",
+            "description": "The service name to identify this Redpanda Connect instance in traces. This appears in trace visualizations and helps correlate traces across distributed systems. Use descriptive names like `order-processor` or `analytics-pipeline`."
+          },
+          {
+            "name": "tags",
+            "description": "Custom key-value tags to attach to all traces from this instance. Use tags to add metadata like environment (`production`, `staging`), region, version, or instance identifiers. Tags appear as resource attributes in OpenTelemetry traces."
+          },
+          {
+            "name": "sampling",
+            "description": "Configure trace sampling to control the volume of trace data. Sampling is essential for high-throughput pipelines to prevent trace data from overwhelming your observability infrastructure.",
+            "children": [
+              {
+                "name": "enabled",
+                "description": "Whether to enable trace sampling. When disabled, all traces are exported. When enabled, traces are sampled according to the configured ratio."
+              },
+              {
+                "name": "ratio",
+                "description": "The sampling ratio as a decimal between 0 and 1. For example, `0.1` samples 10% of traces, `0.01` samples 1%. Lower ratios reduce trace volume and overhead. For high-throughput production systems, start with 0.01-0.1 and adjust based on your needs."
+              }
+            ]
           }
         ]
       }

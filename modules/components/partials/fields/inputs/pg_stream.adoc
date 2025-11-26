@@ -14,6 +14,10 @@ Whether messages that are rejected (nacked) at the output level should be automa
 
 AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.
 
+This is useful for connecting to Amazon RDS or Aurora PostgreSQL instances with IAM database authentication enabled. The generated tokens are valid for 15 minutes and are automatically refreshed.
+
+For more information about AWS credentials configuration, see the xref:guides:cloud/aws.adoc[credentials for AWS] guide.
+
 *Type*: `object`
 
 === `aws.enabled`
