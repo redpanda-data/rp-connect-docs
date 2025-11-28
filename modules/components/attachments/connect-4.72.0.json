@@ -1,6 +1,6 @@
 {
-  "version": "4.70.0",
-  "date": "2025-11-13T13:00:10Z",
+  "version": "4.72.0",
+  "date": "2025-11-28T13:07:57Z",
   "config": [
     {
       "name": "http",
@@ -862,6 +862,10 @@
                   "Plain text authentication."
                 ],
                 [
+                  "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                  "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                ],
+                [
                   "SCRAM-SHA-256",
                   "SCRAM based authentication as specified in RFC5802."
                 ],
@@ -874,7 +878,7 @@
                   "Disable sasl authentication"
                 ]
               ],
-              "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+              "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
             },
             {
               "name": "username",
@@ -1269,7 +1273,7 @@
           "name": "max_message_bytes",
           "type": "string",
           "kind": "scalar",
-          "description": "The maximum space in bytes than an individual message may take, messages larger than this value will be rejected. This field corresponds to Kafka's `max.message.bytes`.",
+          "description": "The maximum size of a produced record batch in bytes. A `MESSAGE_TOO_LARGE` error is returned if a batch exceeds this limit. This field maps to the `max.message.bytes` Kafka property. Ensure the Redpanda broker's `kafka_batch_max_bytes` property is at least as large as this value, see https://docs.redpanda.com/current/reference/properties/cluster-properties/#kafka_batch_max_bytes.",
           "is_advanced": true,
           "default": "1MiB",
           "examples": [
@@ -3227,6 +3231,10 @@
                     "PLAIN mechanism for plaintext password authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM authentication as specified in RFC5802."
                   ],
@@ -3239,7 +3247,7 @@
                     "Disable SASL authentication."
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -3643,20 +3651,22 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "dsn",
             "type": "string",
             "kind": "scalar",
-            "description": "A Data Source Name to identify the target database.\n\n==== Drivers\n\n:driver-support: mysql=certified, postgres=certified, clickhouse=community, mssql=community, sqlite=certified, oracle=certified, snowflake=community, trino=community, gocosmos=community, spanner=community\n\nThe following is a list of supported drivers, their placeholder style, and their respective DSN formats:\n\n|===\n| Driver | Data Source Name Format\n\n| `clickhouse` \n| https://github.com/ClickHouse/clickhouse-go#dsn[`clickhouse://[username[:password\\]@\\][netloc\\][:port\\]/dbname[?param1=value1&...&paramN=valueN\\]`^] \n\n| `mysql` \n| `[username[:password]@][protocol[(address)]]/dbname[?param1=value1&...&paramN=valueN]` \n\n| `postgres` \n| `postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]` \n\n| `mssql` \n| `sqlserver://[user[:password]@][netloc][:port][?database=dbname&param1=value1&...]` \n\n| `sqlite` \n| `file:/path/to/filename.db[?param&=value1&...]` \n\n| `oracle` \n| `oracle://[username[:password]@][netloc][:port]/service_name?server=server2&server=server3` \n\n| `snowflake` \n| `username[:password]@account_identifier/dbname/schemaname[?param1=value&...&paramN=valueN]` \n\n| `trino` \n| https://github.com/trinodb/trino-go-client#dsn-data-source-name[`http[s\\]://user[:pass\\]@host[:port\\][?parameters\\]`^] \n\n| `gocosmos` \n| https://pkg.go.dev/github.com/microsoft/gocosmos#readme-example-usage[`AccountEndpoint=<cosmosdb-endpoint>;AccountKey=<cosmosdb-account-key>[;TimeoutMs=<timeout-in-ms>\\][;Version=<cosmosdb-api-version>\\][;DefaultDb/Db=<db-name>\\][;AutoId=<true/false>\\][;InsecureSkipVerify=<true/false>\\]`^] \n\n| `spanner` \n| projects/[PROJECT]/instances/[INSTANCE]/databases/[DATABASE] \n|===\n\nPlease note that the `postgres` driver enforces SSL by default, you can override this with the parameter `sslmode=disable` if required.\n\nThe `snowflake` driver supports multiple DSN formats. Please consult https://pkg.go.dev/github.com/snowflakedb/gosnowflake#hdr-Connection_String[the docs^] for more details. For https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication[key pair authentication^], the DSN has the following format: `<snowflake_user>@<snowflake_account>/<db_name>/<schema_name>?warehouse=<warehouse>&role=<role>&authenticator=snowflake_jwt&privateKey=<base64_url_encoded_private_key>`, where the value for the `privateKey` parameter can be constructed from an unencrypted RSA private key file `rsa_key.p8` using `openssl enc -d -base64 -in rsa_key.p8 | basenc --base64url -w0` (you can use `gbasenc` insted of `basenc` on OSX if you install `coreutils` via Homebrew). If you have a password-encrypted private key, you can decrypt it using `openssl pkcs8 -in rsa_key_encrypted.p8 -out rsa_key.p8`. Also, make sure fields such as the username are URL-encoded.\n\nThe https://pkg.go.dev/github.com/microsoft/gocosmos[`gocosmos`^] driver is still experimental, but it has support for https://learn.microsoft.com/en-us/azure/cosmos-db/hierarchical-partition-keys[hierarchical partition keys^] as well as https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-query-container#cross-partition-query[cross-partition queries^]. Please refer to the https://github.com/microsoft/gocosmos/blob/main/SQL.md[SQL notes^] for details.",
+            "description": "A Data Source Name to identify the target database.\n\n==== Drivers\n\n:driver-support: mysql=certified, postgres=certified, clickhouse=community, mssql=community, sqlite=certified, oracle=certified, snowflake=community, trino=community, gocosmos=community, spanner=community\n\nThe following is a list of supported drivers, their placeholder style, and their respective DSN formats:\n\n|===\n| Driver | Data Source Name Format\n\n| `clickhouse` \n| https://github.com/ClickHouse/clickhouse-go#dsn[`clickhouse://[username[:password\\]@\\][netloc\\][:port\\]/dbname[?param1=value1&...&paramN=valueN\\]`^] \n\n| `mysql` \n| `[username[:password]@][protocol[(address)]]/dbname[?param1=value1&...&paramN=valueN]` \n\n| `postgres` \n| `postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]` \n\n| `mssql` \n| `sqlserver://[user[:password]@][netloc][:port][?database=dbname&param1=value1&...]` \n\n| `sqlite` \n| `file:/path/to/filename.db[?param&=value1&...]` \n\n| `oracle` \n| `oracle://[username[:password]@][netloc][:port]/service_name?server=server2&server=server3` \n\n| `snowflake` \n| `username[:password]@account_identifier/dbname/schemaname[?param1=value&...&paramN=valueN]` \n\n| `trino` \n| https://github.com/trinodb/trino-go-client#dsn-data-source-name[`http[s\\]://user[:pass\\]@host[:port\\][?parameters\\]`^] \n\n| `gocosmos` \n| https://pkg.go.dev/github.com/microsoft/gocosmos#readme-example-usage[`AccountEndpoint=<cosmosdb-endpoint>;AccountKey=<cosmosdb-account-key>[;TimeoutMs=<timeout-in-ms>\\][;Version=<cosmosdb-api-version>\\][;DefaultDb/Db=<db-name>\\][;AutoId=<true/false>\\][;InsecureSkipVerify=<true/false>\\]`^] \n\n| `spanner` \n| projects/[PROJECT]/instances/[INSTANCE]/databases/[DATABASE] \n\n| `databricks` \n| `token:<access-token>@<server-hostname>:<port>/<http-path>` \n|===\n\nPlease note that the `postgres` driver enforces SSL by default, you can override this with the parameter `sslmode=disable` if required.\n\nThe `snowflake` driver supports multiple DSN formats. Please consult https://pkg.go.dev/github.com/snowflakedb/gosnowflake#hdr-Connection_String[the docs^] for more details. For https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication[key pair authentication^], the DSN has the following format: `<snowflake_user>@<snowflake_account>/<db_name>/<schema_name>?warehouse=<warehouse>&role=<role>&authenticator=snowflake_jwt&privateKey=<base64_url_encoded_private_key>`, where the value for the `privateKey` parameter can be constructed from an unencrypted RSA private key file `rsa_key.p8` using `openssl enc -d -base64 -in rsa_key.p8 | basenc --base64url -w0` (you can use `gbasenc` insted of `basenc` on OSX if you install `coreutils` via Homebrew). If you have a password-encrypted private key, you can decrypt it using `openssl pkcs8 -in rsa_key_encrypted.p8 -out rsa_key.p8`. Also, make sure fields such as the username are URL-encoded.\n\nThe https://pkg.go.dev/github.com/microsoft/gocosmos[`gocosmos`^] driver is still experimental, but it has support for https://learn.microsoft.com/en-us/azure/cosmos-db/hierarchical-partition-keys[hierarchical partition keys^] as well as https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-query-container#cross-partition-query[cross-partition queries^]. Please refer to the https://github.com/microsoft/gocosmos/blob/main/SQL.md[SQL notes^] for details.",
             "examples": [
               "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60",
               "foouser:foopassword@tcp(localhost:3306)/foodb",
               "postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable",
-              "oracle://foouser:foopass@localhost:1521/service_name"
+              "oracle://foouser:foopass@localhost:1521/service_name",
+              "token:dapi1234567890ab@dbc-a1b2345c-d6e7.cloud.databricks.com:443/sql/1.0/warehouses/abc123def456"
             ]
           },
           {
@@ -7174,15 +7184,12 @@
             "name": "sync_response",
             "type": "object",
             "kind": "scalar",
-            "description": "Customize messages returned using xref:guides:sync_responses.adoc[synchronous responses].",
-            "is_advanced": true,
             "children": [
               {
                 "name": "status",
                 "type": "string",
                 "kind": "scalar",
                 "description": "Specify the status code to return with synchronous responses. This is a string value, which allows you to customize it based on resulting payloads and their metadata.",
-                "is_advanced": true,
                 "default": "200",
                 "interpolated": true,
                 "examples": [
@@ -7195,7 +7202,6 @@
                 "type": "string",
                 "kind": "map",
                 "description": "Specify headers to return with synchronous responses.",
-                "is_advanced": true,
                 "default": {
                   "Content-Type": "application/octet-stream"
                 },
@@ -7206,14 +7212,12 @@
                 "type": "object",
                 "kind": "scalar",
                 "description": "Specify criteria for which metadata values are added to the response as headers.",
-                "is_advanced": true,
                 "children": [
                   {
                     "name": "include_prefixes",
                     "type": "string",
                     "kind": "array",
                     "description": "Provide a list of explicit metadata key prefixes to match against.",
-                    "is_advanced": true,
                     "default": [],
                     "examples": [
                       [
@@ -7233,7 +7237,6 @@
                     "type": "string",
                     "kind": "array",
                     "description": "Provide a list of explicit metadata key regular expression (re2) patterns to match against.",
-                    "is_advanced": true,
                     "default": [],
                     "examples": [
                       [
@@ -7245,6 +7248,33 @@
                     ]
                   }
                 ]
+              }
+            ],
+            "description": "Customize messages returned using xref:guides:sync_responses.adoc[synchronous responses]."
+          },
+          {
+            "name": "tcp",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Customize messages returned via xref:guides:sync_responses.adoc[synchronous responses].",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "reuse_addr",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Enable SO_REUSEADDR, allowing binding to ports in TIME_WAIT state. Useful for graceful restarts and config reloads where the server needs to rebind to the same port immediately after shutdown.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "reuse_port",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Enable SO_REUSEPORT, allowing multiple sockets to bind to the same port for load balancing across multiple processes/threads.",
+                "is_advanced": true,
+                "default": false
               }
             ]
           }
@@ -9834,6 +9864,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -9846,7 +9880,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -10165,7 +10199,7 @@
             "name": "regexp_topics_include",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
+            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode (replacing the deprecated `regexp_topics` boolean) and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
             "is_optional": true,
             "examples": [
               [
@@ -10181,7 +10215,7 @@
             "name": "regexp_topics_exclude",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
+            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (using `regexp_topics_include` or the deprecated `regexp_topics` boolean). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
             "is_optional": true
           },
           {
@@ -10670,6 +10704,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -10682,7 +10720,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -11177,7 +11215,7 @@
             "name": "max_yield_batch_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum size (in bytes) for each batch yielded by this input. When routed to a redpanda output without modification this would roughly translate to the batch.bytes config field of a traditional producer.",
+            "description": "The maximum size (in bytes) for each batch yielded by this input. This value must be less than or equal to the `partition_buffer_bytes`. If using Redpanda output, this value should not be greater than the `max_message_bytes` option value (1MB by default), and for high-throughput scenarios they should be equal.",
             "is_advanced": true,
             "default": "32KB"
           },
@@ -11454,6 +11492,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -11466,7 +11508,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -12740,6 +12782,14 @@
             "default": 1000
           },
           {
+            "name": "max_reconnect_attempts",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of attempts the MySQL driver will try to re-establish a broken connection before Connect attempts reconnection. A zero or negative number means infinite retry attempts.",
+            "is_advanced": true,
+            "default": 10
+          },
+          {
             "name": "stream_snapshot",
             "type": "bool",
             "kind": "scalar",
@@ -12758,6 +12808,231 @@
             "kind": "scalar",
             "description": "The maximum number of messages that this input can process at a given time. Increasing this limit enables parallel processing, and batching at the output level. To preserve at-least-once guarantees, any given binlog position is not acknowledged until all messages under that offset are delivered.",
             "default": 1024
+          },
+          {
+            "name": "tls",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Using this field overrides the SSL/TLS settings in the environment and DSN.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "skip_cert_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to skip server side certificate verification.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "enable_renegotiation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "is_advanced": true,
+                "default": false,
+                "version": "3.45.0"
+              },
+              {
+                "name": "root_cas",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "examples": [
+                  "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                ],
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "root_cas_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "default": "",
+                "examples": [
+                  "./root_cas.pem"
+                ]
+              },
+              {
+                "name": "client_certs",
+                "type": "object",
+                "kind": "array",
+                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "is_advanced": true,
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "cert": "foo",
+                      "key": "bar"
+                    }
+                  ],
+                  [
+                    {
+                      "cert_file": "./example.pem",
+                      "key_file": "./example.key"
+                    }
+                  ]
+                ],
+                "children": [
+                  {
+                    "name": "cert",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate key to use.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "cert_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate key to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "foo",
+                      "${KEY_PASSWORD}"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "aws",
+            "type": "object",
+            "kind": "scalar",
+            "description": "AWS IAM authentication configuration for MySQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Enable AWS IAM authentication for MySQL. When enabled, an IAM authentication token is generated and used as the password. When using IAM authentication ensure `max_reconnect_attempts` is set to a low value to ensure it can refresh credentials.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "region",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The AWS region where the MySQL instance is located. If no region is specified then the environment default will be used.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "endpoint",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The MySQL endpoint hostname (e.g., mydb.abc123.us-east-1.rds.amazonaws.com).",
+                "is_advanced": true
+              },
+              {
+                "name": "id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The ID of credentials to use.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "secret",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The secret for the credentials being used.",
+                "is_advanced": true,
+                "is_optional": true,
+                "is_secret": true,
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "token",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The token for the credentials being used, required when using short term credentials.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "role",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optional AWS IAM role ARN to assume for authentication. Alternatively, use `roles` array for role chaining instead.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "role_external_id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optional external ID for the role assumption. Only used with the `role` field. Alternatively, use `roles` array for role chaining instead.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "roles",
+                "type": "object",
+                "kind": "array",
+                "description": "Optional array of AWS IAM roles to assume for authentication. Roles can be assumed in sequence, enabling chaining for purposes such as cross-account access. Each role can optionally specify an external ID.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "role",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "AWS IAM role ARN to assume.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "role_external_id",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Optional external ID for the role assumption.",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "default": ""
+                  }
+                ]
+              }
+            ]
           },
           {
             "name": "batching",
@@ -15274,6 +15549,108 @@
             ]
           },
           {
+            "name": "aws",
+            "type": "object",
+            "kind": "scalar",
+            "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Enable AWS IAM authentication for PostgreSQL. When enabled, an IAM authentication token is generated and used as the password.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "region",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The AWS region where the PostgreSQL instance is located. If no region is specified then the environment default will be used.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "endpoint",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The PostgreSQL endpoint hostname (e.g., mydb.abc123.us-east-1.rds.amazonaws.com).",
+                "is_advanced": true
+              },
+              {
+                "name": "id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The ID of credentials to use.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "secret",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The secret for the credentials being used.",
+                "is_advanced": true,
+                "is_optional": true,
+                "is_secret": true,
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "token",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The token for the credentials being used, required when using short term credentials.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "role",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optional AWS IAM role ARN to assume for authentication. Alternatively, use `roles` array for role chaining instead.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "role_external_id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optional external ID for the role assumption. Only used with the `role` field. Alternatively, use `roles` array for role chaining instead.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "roles",
+                "type": "object",
+                "kind": "array",
+                "description": "Optional array of AWS IAM roles to assume for authentication. Roles can be assumed in sequence, enabling chaining for purposes such as cross-account access. Each role can optionally specify an external ID.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "role",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "AWS IAM role ARN to assume.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "role_external_id",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Optional external ID for the role assumption.",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "default": ""
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "auto_replay_nacks",
             "type": "bool",
             "kind": "scalar",
@@ -15650,6 +16027,108 @@
                       "${KEY_PASSWORD}"
                     ],
                     "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "aws",
+            "type": "object",
+            "kind": "scalar",
+            "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Enable AWS IAM authentication for PostgreSQL. When enabled, an IAM authentication token is generated and used as the password.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "region",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The AWS region where the PostgreSQL instance is located. If no region is specified then the environment default will be used.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "endpoint",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The PostgreSQL endpoint hostname (e.g., mydb.abc123.us-east-1.rds.amazonaws.com).",
+                "is_advanced": true
+              },
+              {
+                "name": "id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The ID of credentials to use.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "secret",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The secret for the credentials being used.",
+                "is_advanced": true,
+                "is_optional": true,
+                "is_secret": true,
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "token",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The token for the credentials being used, required when using short term credentials.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "role",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optional AWS IAM role ARN to assume for authentication. Alternatively, use `roles` array for role chaining instead.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "role_external_id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Optional external ID for the role assumption. Only used with the `role` field. Alternatively, use `roles` array for role chaining instead.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "roles",
+                "type": "object",
+                "kind": "array",
+                "description": "Optional array of AWS IAM roles to assume for authentication. Roles can be assumed in sequence, enabling chaining for purposes such as cross-account access. Each role can optionally specify an external ID.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "role",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "AWS IAM role ARN to assume.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "role_external_id",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Optional external ID for the role assumption.",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "default": ""
                   }
                 ]
               }
@@ -17126,6 +17605,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -17138,7 +17621,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -17457,7 +17940,7 @@
             "name": "regexp_topics_include",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
+            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode (replacing the deprecated `regexp_topics` boolean) and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
             "is_optional": true,
             "examples": [
               [
@@ -17473,7 +17956,7 @@
             "name": "regexp_topics_exclude",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
+            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (using `regexp_topics_include` or the deprecated `regexp_topics` boolean). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
             "is_optional": true
           },
           {
@@ -17633,7 +18116,7 @@
             "name": "max_yield_batch_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum size (in bytes) for each batch yielded by this input. When routed to a redpanda output without modification this would roughly translate to the batch.bytes config field of a traditional producer.",
+            "description": "The maximum size (in bytes) for each batch yielded by this input. This value must be less than or equal to the `partition_buffer_bytes`. If using Redpanda output, this value should not be greater than the `max_message_bytes` option value (1MB by default), and for high-throughput scenarios they should be equal.",
             "is_advanced": true,
             "default": "32KB"
           },
@@ -17835,7 +18318,7 @@
             "name": "regexp_topics_include",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
+            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode (replacing the deprecated `regexp_topics` boolean) and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
             "is_optional": true,
             "examples": [
               [
@@ -17851,7 +18334,7 @@
             "name": "regexp_topics_exclude",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
+            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (using `regexp_topics_include` or the deprecated `regexp_topics` boolean). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
             "is_optional": true
           },
           {
@@ -18011,7 +18494,7 @@
             "name": "max_yield_batch_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum size (in bytes) for each batch yielded by this input. When routed to a redpanda output without modification this would roughly translate to the batch.bytes config field of a traditional producer.",
+            "description": "The maximum size (in bytes) for each batch yielded by this input. This value must be less than or equal to the `partition_buffer_bytes`. If using Redpanda output, this value should not be greater than the `max_message_bytes` option value (1MB by default), and for high-throughput scenarios they should be equal.",
             "is_advanced": true,
             "default": "32KB"
           },
@@ -18040,7 +18523,7 @@
       "status": "experimental",
       "plugin": true,
       "summary": "Kafka consumer for migration pipelines. All migration logic is handled by the redpanda_migrator output.",
-      "description": "\nThe `redpanda_migrator` input simply consumes records from the source cluster and forwards them downstream. \nIt does not perform topic/schema/group synchronisation. \nAll migration features and coordination live in the paired `redpanda_migrator` output.\n\n**IMPORTANT:** This input requires a corresponding `redpanda_migrator` output in the same pipeline. \nEach pipeline must have both input and output components configured.\nFor capabilities, guarantees, scheduling, and examples, see the output documentation.\n\n**Multiple migrator pairs:** When using multiple migrator pairs in a single pipeline, \nthe mapping between input and output components is done based on the label field. \nThe label of the input and output must match exactly for proper coordination.\n\n**Performance tuning for high throughput:** For workloads with high message rates or large messages, \nadjust the following fields to increase buffer sizes and batch processing:\n- `partition_buffer_bytes`: Increase to 10MB or higher (default: 1MB)\n- `max_yield_batch_bytes`: Increase to 100MB or higher (default: 10MB)\n\nThese settings allow the consumer to buffer more data per partition and yield larger batches, \nreducing overhead and improving throughput at the cost of higher memory usage.",
+      "description": "\nThe `redpanda_migrator` input simply consumes records from the source cluster and forwards them downstream. \nIt does not perform topic/schema/group synchronisation. \nAll migration features and coordination live in the paired `redpanda_migrator` output.\n\n**IMPORTANT:** This input requires a corresponding `redpanda_migrator` output in the same pipeline. \nEach pipeline must have both input and output components configured.\nFor capabilities, guarantees, scheduling, and examples, see the output documentation.\n\n**Performance tuning for high throughput:** For workloads with high message rates or large messages, \nadjust the following fields to increase buffer sizes and batch processing:\n\n- `partition_buffer_bytes: 2MB`\n- `max_yield_batch_bytes: 1MB`\n\nThese settings allow the consumer to buffer more data per partition and yield larger batches, \nreducing overhead and improving throughput at the cost of higher memory usage.",
       "categories": [
         "Services"
       ],
@@ -18242,6 +18725,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -18254,7 +18741,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -18573,7 +19060,7 @@
             "name": "regexp_topics_include",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
+            "description": "A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so `logs_.*` matches `my-logs_events` and `logs_errors`. Use `^logs_.*$` to match only topics starting with `logs_`.\n\nThis field enables regex mode (replacing the deprecated `regexp_topics` boolean) and cannot be used together with explicit `topics` lists. Use `regexp_topics_exclude` to filter out specific patterns from the matched topics.\n\nExample: `regexp_topics_include: [\"events_.*\", \"logs_.*\"]` consumes from all topics starting with `events_` or `logs_`.",
             "is_optional": true,
             "examples": [
               [
@@ -18589,7 +19076,7 @@
             "name": "regexp_topics_exclude",
             "type": "string",
             "kind": "array",
-            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
+            "description": "A list of regular expression patterns for excluding topics when regex mode is enabled (using `regexp_topics_include` or the deprecated `regexp_topics` boolean). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.\n\nEach pattern is a full regular expression evaluated against the complete topic name. Patterns are not anchored by default, so use `^` and `$` for exact matching. Exclude patterns are applied after include patterns, providing fine-grained control over topic selection.\n\nExample: `regexp_topics_exclude: [\"^_\", \".*-temp$\", \".*-test.*\"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.",
             "is_optional": true
           },
           {
@@ -18749,7 +19236,7 @@
             "name": "max_yield_batch_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum size (in bytes) for each batch yielded by this input. When routed to a redpanda output without modification this would roughly translate to the batch.bytes config field of a traditional producer.",
+            "description": "The maximum size (in bytes) for each batch yielded by this input. This value must be less than or equal to the `partition_buffer_bytes`. If using Redpanda output, this value should not be greater than the `max_message_bytes` option value (1MB by default), and for high-throughput scenarios they should be equal.",
             "is_advanced": true,
             "default": "32KB"
           },
@@ -18769,6 +19256,14 @@
                   "http://localhost:8081",
                   "https://schema-registry.example.com:8081"
                 ]
+              },
+              {
+                "name": "timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "HTTP client timeout for schema registry requests.",
+                "is_optional": true,
+                "default": "5s"
               },
               {
                 "name": "tls",
@@ -20200,9 +20695,10 @@
               "unix",
               "tcp",
               "udp",
-              "tls"
+              "tls",
+              "unixgram"
             ],
-            "linter": "\nlet options = {\n  \"unix\": true,\n  \"tcp\": true,\n  \"udp\": true,\n  \"tls\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"unix\": true,\n  \"tcp\": true,\n  \"udp\": true,\n  \"tls\": true,\n  \"unixgram\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "address",
@@ -20785,7 +21281,7 @@
       "examples": [
         {
           "title": "Consumes an SQL table using a query as an input.",
-          "summary": "\nHere we preform an aggregate over a list of names in a table that are less than 3600 seconds old.",
+          "summary": "Here we perform an aggregate over a list of names in a table that are less than 3600 seconds old.",
           "config": "\ninput:\n  sql_raw:\n    driver: postgres\n    dsn: postgres://foouser:foopass@localhost:5432/testdb?sslmode=disable\n    query: \"SELECT name, count(*) FROM person WHERE last_updated < $1 GROUP BY name;\"\n    args_mapping: |\n      root = [\n        now().ts_unix() - 3600\n      ]\n"
         }
       ],
@@ -20809,9 +21305,10 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "dsn",
@@ -20822,7 +21319,8 @@
               "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60",
               "foouser:foopassword@tcp(localhost:3306)/foodb",
               "postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable",
-              "oracle://foouser:foopass@localhost:1521/service_name"
+              "oracle://foouser:foopass@localhost:1521/service_name",
+              "token:dapi1234567890ab@dbc-a1b2345c-d6e7.cloud.databricks.com:443/sql/1.0/warehouses/abc123def456"
             ]
           },
           {
@@ -20957,9 +21455,10 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "dsn",
@@ -20970,7 +21469,8 @@
               "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60",
               "foouser:foopassword@tcp(localhost:3306)/foodb",
               "postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable",
-              "oracle://foouser:foopass@localhost:1521/service_name"
+              "oracle://foouser:foopass@localhost:1521/service_name",
+              "token:dapi1234567890ab@dbc-a1b2345c-d6e7.cloud.databricks.com:443/sql/1.0/warehouses/abc123def456"
             ]
           },
           {
@@ -21308,17 +21808,17 @@
         {
           "title": "From Timeplus Enterprise Cloud via HTTP",
           "summary": "You will need to create API Key on Timeplus Enterprise Cloud Web console first and then set the `apikey` field.",
-          "config": "\ninput:\n  timeplus:\n    url: https://us-west-2.timeplus.cloud\n    workspace: my_workspace_id\n    query: select * from iot\n    apikey: <Your API Key>"
+          "config": "\ninput:\n  timeplus:\n    url: https://us-west-2.timeplus.cloud\n    workspace: my_workspace_id\n    query: select * from iot\n    apikey: <Your API Key>\n"
         },
         {
           "title": "From Timeplus Enterprise (self-hosted) via HTTP",
-          "summary": "For self-housted Timeplus Enterprise, you will need to specify the username and password as well as the URL of the App server",
-          "config": "\ninput:\n  timeplus:\n    url: http://localhost:8000\n    workspace: my_workspace_id\n    query: select * from iot\n    username: username\n    password: pw"
+          "summary": "For self-hosted Timeplus Enterprise, you will need to specify the username and password as well as the URL of the App server",
+          "config": "\ninput:\n  timeplus:\n    url: http://localhost:8000\n    workspace: my_workspace_id\n    query: select * from iot\n    username: username\n    password: pw\n"
         },
         {
           "title": "From Timeplus Enterprise (self-hosted) via TCP",
           "summary": "Make sure the the schema of url is tcp",
-          "config": "\ninput:\n  timeplus:\n    url: tcp://localhost:8463\n    query: select * from iot\n    username: timeplus\n    password: timeplus"
+          "config": "\ninput:\n  timeplus:\n    url: tcp://localhost:8463\n    query: select * from iot\n    username: timeplus\n    password: timeplus\n"
         }
       ],
       "config": {
@@ -30219,6 +30719,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -30231,7 +30735,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -31013,6 +31517,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -31025,7 +31533,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -31637,7 +32145,7 @@
             "name": "max_message_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum space in bytes than an individual message may take, messages larger than this value will be rejected. This field corresponds to Kafka's `max.message.bytes`.",
+            "description": "The maximum size of a produced record batch in bytes. A `MESSAGE_TOO_LARGE` error is returned if a batch exceeds this limit. This field maps to the `max.message.bytes` Kafka property. Ensure the Redpanda broker's `kafka_batch_max_bytes` property is at least as large as this value, see https://docs.redpanda.com/current/reference/properties/cluster-properties/#kafka_batch_max_bytes.",
             "is_advanced": true,
             "default": "1MiB",
             "examples": [
@@ -31870,6 +32378,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -31882,7 +32394,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -32245,7 +32757,7 @@
             "name": "max_message_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum space in bytes than an individual message may take, messages larger than this value will be rejected. This field corresponds to Kafka's `max.message.bytes`.",
+            "description": "The maximum size of a produced record batch in bytes. A `MESSAGE_TOO_LARGE` error is returned if a batch exceeds this limit. This field maps to the `max.message.bytes` Kafka property. Ensure the Redpanda broker's `kafka_batch_max_bytes` property is at least as large as this value, see https://docs.redpanda.com/current/reference/properties/cluster-properties/#kafka_batch_max_bytes.",
             "is_advanced": true,
             "default": "1MiB",
             "examples": [
@@ -37981,6 +38493,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -37993,7 +38509,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -38687,7 +39203,7 @@
       "status": "experimental",
       "plugin": true,
       "summary": "A specialised Kafka producer for comprehensive data migration between Apache Kafka and Redpanda clusters.",
-      "description": "\nThe `redpanda_migrator` output performs all migration work. \nIt coordinates topics, schema registry, and consumer groups to migrate data from a source Kafka/Redpanda cluster to a destination cluster.\n\n**IMPORTANT:** This output requires a corresponding `redpanda_migrator` input in the same pipeline. \nEach pipeline must have both input and output components configured.\n\n**Multiple migrator pairs:** When using multiple migrator pairs in a single pipeline, \nthe mapping between input and output components is done based on the label field. \nThe label of the input and output must match exactly for proper coordination.\n\n**Performance tuning for high throughput:** For workloads with high message rates or large messages, \nadjust buffer sizes on the paired input component to improve throughput. See the input documentation for details.\n\nWhat gets synchronised:\n\n- Topics\n  - Name resolution with interpolation (default: preserve source name)\n  - Automatic creation with mirrored partition counts\n  - Selectable replication factor (default: inherit from source)\n  - Copy of supported topic configuration keys (serverless-aware subset)\n  - Optional ACL replication with safe transforms:\n    - Excludes `ALLOW WRITE` entries\n    - Downgrades `ALLOW ALL` to `READ`\n    - Preserves resource pattern type and host filters\n\n- Schema Registry\n  - One-shot or periodic syncing\n  - Subject selection via include/exclude regex\n  - Subject renaming with interpolation\n  - Versions: `latest` or `all` (default: `all`)\n  - Optional include of soft-deleted subjects\n  - ID handling: translate IDs (create-or-reuse) or keep fixed IDs and versions\n  - Optional schema normalisation on create\n  - Optional per-subject compatibility propagation when explicitly set on source (global mode is not forced)\n  - Serverless note: schema metadata and rule sets are not copied in serverless mode\n\n- Consumer Groups\n  - Periodic syncing\n  - Group selection via include/exclude regex\n  - Only groups in `Empty` state are migrated (active groups are skipped)\n  - Timestamp-based offset translation (approximate) per partition using previous-record timestamp and `ListOffsetsAfterMilli`\n  - No rewind guarantee: destination offsets are never moved backwards\n  - Commit performed in parallel with per-group metrics\n  - Requires matching partition counts between source and destination topics\n\nHow it runs:\n\n- Topics: synced on demand. The first write triggers discovery and creation; subsequent writes create on first encounter per topic.\n- Schema Registry: one sync at connect, then triggered when topic record has unknown schema; optional background loop controlled by `schema_registry.interval`.\n- Consumer Groups: background loop controlled by `consumer_groups.interval` and filtered by the current topic mappings.\n\nGuarantees:\n\n- Topics are created with the intended partitioning and configured replication factor. Existing topics are respected; partition mismatches are logged and consumer group migration for mismatched topics is skipped.\n- Consumer group offsets are never rewound. Only translated forward positions are committed.\n- ACL replication excludes `ALLOW WRITE` operations and downgrades `ALLOW ALL` to `READ` to avoid unsafe grants.\n\nLimitations and requirements:\n\n- Destination Schema Registry must be in `READWRITE` or `IMPORT` mode.\n- Offset translation is best-effort: if the previous-offset timestamp cannot be read, or no destination offset exists after the timestamp, that partition is skipped.\n- Consumer group migration requires identical partition counts for source and destination topics.\n\nMetrics:\n\nThe component exposes comprehensive metrics for monitoring migration operations:\n\nTopic Migration Metrics:\n- `redpanda_migrator_topics_created_total` (counter): Total number of topics successfully created on the destination cluster\n- `redpanda_migrator_topic_create_errors_total` (counter): Total number of errors encountered when creating topics\n- `redpanda_migrator_topic_create_latency_ns` (timer): Latency in nanoseconds for topic creation operations\n\nSchema Registry Migration Metrics:\n- `redpanda_migrator_sr_schemas_created_total` (counter): Total number of schemas successfully created in the destination schema registry\n- `redpanda_migrator_sr_schema_create_errors_total` (counter): Total number of errors encountered when creating schemas\n- `redpanda_migrator_sr_schema_create_latency_ns` (timer): Latency in nanoseconds for schema creation operations\n- `redpanda_migrator_sr_compatibility_updates_total` (counter): Total number of compatibility level updates applied to subjects\n- `redpanda_migrator_sr_compatibility_update_errors_total` (counter): Total number of errors encountered when updating compatibility levels\n- `redpanda_migrator_sr_compatibility_update_latency_ns` (timer): Latency in nanoseconds for compatibility level update operations\n\nConsumer Group Migration Metrics (with group label):\n- `redpanda_migrator_cg_offsets_translated_total` (counter): Total number of offsets successfully translated per consumer group\n- `redpanda_migrator_cg_offset_translation_errors_total` (counter): Total number of errors encountered when translating offsets per consumer group\n- `redpanda_migrator_cg_offset_translation_latency_ns` (timer): Latency in nanoseconds for offset translation operations per consumer group\n- `redpanda_migrator_cg_offsets_committed_total` (counter): Total number of offsets successfully committed per consumer group\n- `redpanda_migrator_cg_offset_commit_errors_total` (counter): Total number of errors encountered when committing offsets per consumer group\n- `redpanda_migrator_cg_offset_commit_latency_ns` (timer): Latency in nanoseconds for offset commit operations per consumer group\n\nConsumer Lag Metrics (with topic and partition labels):\n- `redpanda_lag` (gauge): Current consumer lag in messages for each topic partition being consumed by the migrator input. This metric shows the difference between the high water mark and the current consumer position, providing visibility into how far behind the consumer is on each partition. The metric includes labels for topic name and partition number to enable per-partition monitoring.\n\nThis component must be paired with the `redpanda_migrator` input in the same pipeline.",
+      "description": "\nThe `redpanda_migrator` output performs all migration work. \nIt coordinates topics, schema registry, and consumer groups to migrate data from a source Kafka/Redpanda cluster to a destination cluster.\n\n**IMPORTANT:** This output requires a corresponding `redpanda_migrator` input in the same pipeline. \nEach pipeline must have both input and output components configured.\n\n**Multiple migrator pairs:** When using multiple migrator pairs in a single pipeline, \nthe mapping between input and output components is done based on the label field. \nThe label of the input and output must match exactly for proper coordination.\n\n**Performance tuning for high throughput:** For workloads with high message rates or large messages, \nadjust the following settings to optimize throughput:\n\nOn the paired input component:\n- `partition_buffer_bytes: 2MB` - increases per-partition buffer size\n- `max_yield_batch_bytes: 1MB` - allows larger batches to be yielded\n\nOn this output component:\n- `max_in_flight` - set to the total number of partitions being copied in parallel (up to all partitions in the cluster)\n\nWhat gets synchronised:\n\n- Topics\n  - Name resolution with interpolation (default: preserve source name)\n  - Automatic creation with mirrored partition counts\n  - Selectable replication factor (default: inherit from source)\n  - Copy of supported topic configuration keys (serverless-aware subset)\n  - Optional ACL replication with safe transforms:\n    - Excludes `ALLOW WRITE` entries\n    - Downgrades `ALLOW ALL` to `READ`\n    - Preserves resource pattern type and host filters\n\n- Schema Registry\n  - One-shot or periodic syncing\n  - Subject selection via include/exclude regex\n  - Subject renaming with interpolation\n  - Versions: `latest` or `all` (default: `all`)\n  - Optional include of soft-deleted subjects\n  - ID handling: translate IDs (create-or-reuse) or keep fixed IDs and versions\n  - Optional schema normalisation on create\n  - Optional per-subject compatibility propagation when explicitly set on source (global mode is not forced)\n  - Serverless note: schema metadata and rule sets are not copied in serverless mode\n\n- Consumer Groups\n  - Periodic syncing\n  - Group selection via include/exclude regex\n  - Only groups in `Empty` state are migrated (active groups are skipped)\n  - Timestamp-based offset translation (approximate) per partition using previous-record timestamp and `ListOffsetsAfterMilli`\n  - No rewind guarantee: destination offsets are never moved backwards\n  - Commit performed in parallel with per-group metrics\n  - Requires matching partition counts between source and destination topics\n\nHow it runs:\n\n- Topics: synced on demand. The first write triggers discovery and creation; subsequent writes create on first encounter per topic.\n- Schema Registry: one sync at connect, then triggered when topic record has unknown schema; optional background loop controlled by `schema_registry.interval`.\n- Consumer Groups: background loop controlled by `consumer_groups.interval` and filtered by the current topic mappings.\n\nGuarantees:\n\n- Topics are created with the intended partitioning and configured replication factor. Existing topics are respected; partition mismatches are logged and consumer group migration for mismatched topics is skipped.\n- Consumer group offsets are never rewound. Only translated forward positions are committed.\n- ACL replication excludes `ALLOW WRITE` operations and downgrades `ALLOW ALL` to `READ` to avoid unsafe grants.\n\nLimitations and requirements:\n\n- Destination Schema Registry must be in `READWRITE` or `IMPORT` mode.\n- Offset translation is best-effort: if the previous-offset timestamp cannot be read, or no destination offset exists after the timestamp, that partition is skipped.\n- Consumer group migration requires identical partition counts for source and destination topics.\n\nMetrics:\n\nThe component exposes comprehensive metrics for monitoring migration operations:\n\nTopic Migration Metrics:\n- `redpanda_migrator_topics_created_total` (counter): Total number of topics successfully created on the destination cluster\n- `redpanda_migrator_topic_create_errors_total` (counter): Total number of errors encountered when creating topics\n- `redpanda_migrator_topic_create_latency_ns` (timer): Latency in nanoseconds for topic creation operations\n\nSchema Registry Migration Metrics:\n- `redpanda_migrator_sr_schemas_created_total` (counter): Total number of schemas successfully created in the destination schema registry\n- `redpanda_migrator_sr_schema_create_errors_total` (counter): Total number of errors encountered when creating schemas\n- `redpanda_migrator_sr_schema_create_latency_ns` (timer): Latency in nanoseconds for schema creation operations\n- `redpanda_migrator_sr_compatibility_updates_total` (counter): Total number of compatibility level updates applied to subjects\n- `redpanda_migrator_sr_compatibility_update_errors_total` (counter): Total number of errors encountered when updating compatibility levels\n- `redpanda_migrator_sr_compatibility_update_latency_ns` (timer): Latency in nanoseconds for compatibility level update operations\n\nConsumer Group Migration Metrics (with group label):\n- `redpanda_migrator_cg_offsets_translated_total` (counter): Total number of offsets successfully translated per consumer group\n- `redpanda_migrator_cg_offset_translation_errors_total` (counter): Total number of errors encountered when translating offsets per consumer group\n- `redpanda_migrator_cg_offset_translation_latency_ns` (timer): Latency in nanoseconds for offset translation operations per consumer group\n- `redpanda_migrator_cg_offsets_committed_total` (counter): Total number of offsets successfully committed per consumer group\n- `redpanda_migrator_cg_offset_commit_errors_total` (counter): Total number of errors encountered when committing offsets per consumer group\n- `redpanda_migrator_cg_offset_commit_latency_ns` (timer): Latency in nanoseconds for offset commit operations per consumer group\n\nConsumer Lag Metrics (with topic and partition labels):\n- `redpanda_lag` (gauge): Current consumer lag in messages for each topic partition being consumed by the migrator input. This metric shows the difference between the high water mark and the current consumer position, providing visibility into how far behind the consumer is on each partition. The metric includes labels for topic name and partition number to enable per-partition monitoring.\n\nThis component must be paired with the `redpanda_migrator` input in the same pipeline.",
       "categories": [
         "Services"
       ],
@@ -38901,6 +39417,10 @@
                     "Plain text authentication."
                   ],
                   [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
                     "SCRAM-SHA-256",
                     "SCRAM based authentication as specified in RFC5802."
                   ],
@@ -38913,7 +39433,7 @@
                     "Disable sasl authentication"
                   ]
                 ],
-                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
               },
               {
                 "name": "username",
@@ -39297,6 +39817,14 @@
                   "http://localhost:8081",
                   "https://schema-registry.example.com:8081"
                 ]
+              },
+              {
+                "name": "timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "HTTP client timeout for schema registry requests.",
+                "is_optional": true,
+                "default": "5s"
               },
               {
                 "name": "tls",
@@ -39774,6 +40302,25 @@
             "description": "Header name to add to migrated records indicating their source cluster. When set, each migrated message receives a header with this name containing the source cluster's seed broker addresses, enabling downstream systems to track message origins for auditing, debugging, or multi-cluster orchestration workflows.\n\nIf empty, no provenance header is added to messages. The header value format is a comma-separated list of the source cluster's `seed_brokers`.\n\nExample: Setting `provenance_header: \"rp-source-cluster\"` adds a header like `rp-source-cluster: \"kafka-1:9092,kafka-2:9092\"`.",
             "is_advanced": true,
             "default": "redpanda-migrator-provenance"
+          },
+          {
+            "name": "offset_header",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Header name to add to migrated records containing the source offset for exact consumer group migration. If empty, no offset header is added and exact offset translation is disabled. When disabled, consumer groups are still migrated but precision for empty groups may not be ideal if there are multiple records with the same timestamp, as timestamps have millisecond resolution. When consumer group migration is disabled, this header is not added.",
+            "is_advanced": true,
+            "default": "redpanda-migrator-offset"
+          },
+          {
+            "name": "max_in_flight",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of batches to send in parallel at any given time.",
+            "default": 10,
+            "examples": [
+              "64  # For a cluster with 64 partitions",
+              "128 # For multiple topics with combined 128 partitions"
+            ]
           }
         ],
         "linter": "\nroot = [\n  if this.key.or(\"\") != \"\" {\n    \"key field is not supported by migrator, setting it could break consumer group migration\"\n  },\n  if this.partitioner.or(\"\") != \"\" {\n    \"partitioner field is not supported by migrator, setting it could break consumer group migration\"\n  },\n  if this.partition.or(\"\") != \"\" {\n    \"partition field is not supported by migrator, setting it could break consumer group migration\"\n  },\n  if this.timestamp.or(\"\") != \"\" {\n    \"timestamp field is not supported by migrator, setting it could break consumer group migration\"\n  },\n  if this.timestamp_ms.or(\"\") != \"\" {\n    \"timestamp_ms field is not supported by migrator, setting it could break consumer group migration\"\n  }\n]\n"
@@ -41913,9 +42460,10 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "data_source_name",
@@ -42083,9 +42631,10 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "dsn",
@@ -42096,7 +42645,8 @@
               "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60",
               "foouser:foopassword@tcp(localhost:3306)/foodb",
               "postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable",
-              "oracle://foouser:foopass@localhost:1521/service_name"
+              "oracle://foouser:foopass@localhost:1521/service_name",
+              "token:dapi1234567890ab@dbc-a1b2345c-d6e7.cloud.databricks.com:443/sql/1.0/warehouses/abc123def456"
             ]
           },
           {
@@ -42372,9 +42922,10 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "dsn",
@@ -42385,7 +42936,8 @@
               "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60",
               "foouser:foopassword@tcp(localhost:3306)/foodb",
               "postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable",
-              "oracle://foouser:foopass@localhost:1521/service_name"
+              "oracle://foouser:foopass@localhost:1521/service_name",
+              "token:dapi1234567890ab@dbc-a1b2345c-d6e7.cloud.databricks.com:443/sql/1.0/warehouses/abc123def456"
             ]
           },
           {
@@ -43503,7 +44055,7 @@
             "name": "temperature",
             "type": "float",
             "kind": "scalar",
-            "description": "A list of stop sequences. A stop sequence is a sequence of characters that causes the model to stop generating the response.",
+            "description": "The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options.",
             "is_optional": true,
             "linter": "root = if this < 0 || this > 1 { [\"field must be between 0.0-1.0\"] }"
           },
@@ -43511,7 +44063,7 @@
             "name": "stop",
             "type": "string",
             "kind": "array",
-            "description": "The likelihood of the model selecting higher-probability options while generating a response. A lower value makes the model more likely to choose higher-probability options. A higher value makes the model more likely to choose lower-probability options.",
+            "description": "A list of stop sequences. A stop sequence is a sequence of characters that causes the model to stop generating the response.",
             "is_advanced": true,
             "is_optional": true
           },
@@ -52662,9 +53214,10 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "data_source_name",
@@ -52749,9 +53302,10 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "dsn",
@@ -52762,7 +53316,8 @@
               "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60",
               "foouser:foopassword@tcp(localhost:3306)/foodb",
               "postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable",
-              "oracle://foouser:foopass@localhost:1521/service_name"
+              "oracle://foouser:foopass@localhost:1521/service_name",
+              "token:dapi1234567890ab@dbc-a1b2345c-d6e7.cloud.databricks.com:443/sql/1.0/warehouses/abc123def456"
             ]
           },
           {
@@ -52945,9 +53500,10 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "dsn",
@@ -52958,7 +53514,8 @@
               "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60",
               "foouser:foopassword@tcp(localhost:3306)/foodb",
               "postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable",
-              "oracle://foouser:foopass@localhost:1521/service_name"
+              "oracle://foouser:foopass@localhost:1521/service_name",
+              "token:dapi1234567890ab@dbc-a1b2345c-d6e7.cloud.databricks.com:443/sql/1.0/warehouses/abc123def456"
             ]
           },
           {
@@ -53138,9 +53695,10 @@
               "snowflake",
               "trino",
               "gocosmos",
-              "spanner"
+              "spanner",
+              "databricks"
             ],
-            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"mysql\": true,\n  \"postgres\": true,\n  \"clickhouse\": true,\n  \"mssql\": true,\n  \"sqlite\": true,\n  \"oracle\": true,\n  \"snowflake\": true,\n  \"trino\": true,\n  \"gocosmos\": true,\n  \"spanner\": true,\n  \"databricks\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "dsn",
@@ -53151,7 +53709,8 @@
               "clickhouse://username:password@host1:9000,host2:9000/database?dial_timeout=200ms&max_execution_time=60",
               "foouser:foopassword@tcp(localhost:3306)/foodb",
               "postgres://foouser:foopass@localhost:5432/foodb?sslmode=disable",
-              "oracle://foouser:foopass@localhost:1521/service_name"
+              "oracle://foouser:foopass@localhost:1521/service_name",
+              "token:dapi1234567890ab@dbc-a1b2345c-d6e7.cloud.databricks.com:443/sql/1.0/warehouses/abc123def456"
             ]
           },
           {
@@ -55097,6 +55656,666 @@
               }
             ],
             "version": "4.25.0"
+          }
+        ]
+      }
+    },
+    {
+      "name": "redpanda",
+      "type": "tracer",
+      "status": "experimental",
+      "plugin": true,
+      "summary": "Send tracing events to a Redpanda Message Broker.",
+      "categories": null,
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "seed_brokers",
+            "type": "string",
+            "kind": "array",
+            "description": "A list of broker addresses to connect to in order to establish connections. If an item of the list contains commas it will be expanded into multiple addresses.",
+            "examples": [
+              [
+                "localhost:9092"
+              ],
+              [
+                "foo:9092",
+                "bar:9092"
+              ],
+              [
+                "foo:9092,bar:9092"
+              ]
+            ]
+          },
+          {
+            "name": "client_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An identifier for the client connection.",
+            "is_advanced": true,
+            "default": "redpanda-connect"
+          },
+          {
+            "name": "tls",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Custom TLS settings can be used to override system defaults.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether custom TLS settings are enabled.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "skip_cert_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to skip server side certificate verification.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "enable_renegotiation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "is_advanced": true,
+                "default": false,
+                "version": "3.45.0"
+              },
+              {
+                "name": "root_cas",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "examples": [
+                  "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                ],
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "root_cas_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "default": "",
+                "examples": [
+                  "./root_cas.pem"
+                ]
+              },
+              {
+                "name": "client_certs",
+                "type": "object",
+                "kind": "array",
+                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "is_advanced": true,
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "cert": "foo",
+                      "key": "bar"
+                    }
+                  ],
+                  [
+                    {
+                      "cert_file": "./example.pem",
+                      "key_file": "./example.key"
+                    }
+                  ]
+                ],
+                "children": [
+                  {
+                    "name": "cert",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate key to use.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "cert_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate key to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "foo",
+                      "${KEY_PASSWORD}"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "sasl",
+            "type": "object",
+            "kind": "array",
+            "description": "Specify one or more methods of SASL authentication. SASL is tried in order; if the broker supports the first mechanism, all connections will use that mechanism. If the first mechanism fails, the client will pick the first supported mechanism. If the broker does not support any client mechanisms, connections will fail.",
+            "is_advanced": true,
+            "is_optional": true,
+            "examples": [
+              [
+                {
+                  "mechanism": "SCRAM-SHA-512",
+                  "password": "bar",
+                  "username": "foo"
+                }
+              ]
+            ],
+            "children": [
+              {
+                "name": "mechanism",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The SASL mechanism to use.",
+                "is_advanced": true,
+                "annotated_options": [
+                  [
+                    "AWS_MSK_IAM",
+                    "AWS IAM based authentication as specified by the 'aws-msk-iam-auth' java library."
+                  ],
+                  [
+                    "OAUTHBEARER",
+                    "OAuth Bearer based authentication."
+                  ],
+                  [
+                    "PLAIN",
+                    "Plain text authentication."
+                  ],
+                  [
+                    "REDPANDA_CLOUD_SERVICE_ACCOUNT",
+                    "Redpanda Cloud Service Account authentication when running in Redpanda Cloud."
+                  ],
+                  [
+                    "SCRAM-SHA-256",
+                    "SCRAM based authentication as specified in RFC5802."
+                  ],
+                  [
+                    "SCRAM-SHA-512",
+                    "SCRAM based authentication as specified in RFC5802."
+                  ],
+                  [
+                    "none",
+                    "Disable sasl authentication"
+                  ]
+                ],
+                "linter": "\nlet options = {\n  \"aws_msk_iam\": true,\n  \"oauthbearer\": true,\n  \"plain\": true,\n  \"redpanda_cloud_service_account\": true,\n  \"scram-sha-256\": true,\n  \"scram-sha-512\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+              },
+              {
+                "name": "username",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A username to provide for PLAIN or SCRAM-* authentication.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "password",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A password to provide for PLAIN or SCRAM-* authentication.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "token",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The token to use for a single session's OAUTHBEARER authentication.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "extensions",
+                "type": "string",
+                "kind": "map",
+                "description": "Key/value pairs to add to OAUTHBEARER authentication requests.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "aws",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Contains AWS specific fields for when the `mechanism` is set to `AWS_MSK_IAM`.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "region",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The AWS region to target.",
+                    "is_advanced": true,
+                    "is_optional": true
+                  },
+                  {
+                    "name": "endpoint",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Allows you to specify a custom endpoint for the AWS API.",
+                    "is_advanced": true,
+                    "is_optional": true
+                  },
+                  {
+                    "name": "tcp",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "TCP socket configuration.",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "connect_timeout",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "Maximum amount of time a dial will wait for a connect to complete. Zero disables.",
+                        "is_advanced": true,
+                        "default": "0s"
+                      },
+                      {
+                        "name": "keep_alive",
+                        "type": "object",
+                        "kind": "scalar",
+                        "description": "TCP keep-alive probe configuration.",
+                        "is_advanced": true,
+                        "is_optional": true,
+                        "children": [
+                          {
+                            "name": "idle",
+                            "type": "string",
+                            "kind": "scalar",
+                            "description": "Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.",
+                            "is_advanced": true,
+                            "default": "15s"
+                          },
+                          {
+                            "name": "interval",
+                            "type": "string",
+                            "kind": "scalar",
+                            "description": "Duration between keep-alive probes. Zero defaults to 15s.",
+                            "is_advanced": true,
+                            "default": "15s"
+                          },
+                          {
+                            "name": "count",
+                            "type": "int",
+                            "kind": "scalar",
+                            "description": "Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.",
+                            "is_advanced": true,
+                            "default": 9
+                          }
+                        ]
+                      },
+                      {
+                        "name": "tcp_user_timeout",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.",
+                        "is_advanced": true,
+                        "default": "0s"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "credentials",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "Optional manual configuration of AWS credentials to use. More information can be found in xref:guides:cloud/aws.adoc[].",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "profile",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A profile from `~/.aws/credentials` to use.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "id",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The ID of credentials to use.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "secret",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The secret for the credentials being used.",
+                        "is_advanced": true,
+                        "is_optional": true,
+                        "is_secret": true,
+                        "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                      },
+                      {
+                        "name": "token",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The token for the credentials being used, required when using short term credentials.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "from_ec2_role",
+                        "type": "bool",
+                        "kind": "scalar",
+                        "description": "Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].",
+                        "is_advanced": true,
+                        "is_optional": true,
+                        "version": "4.2.0"
+                      },
+                      {
+                        "name": "role",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A role ARN to assume.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "role_external_id",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "An external ID to provide when assuming a role.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "metadata_max_age",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.",
+            "is_advanced": true,
+            "default": "1m"
+          },
+          {
+            "name": "request_timeout_overhead",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The request time overhead. Uses the given time as overhead while deadlining requests. Roughly equivalent to request.timeout.ms, but grants additional time to requests that have timeout fields.",
+            "is_advanced": true,
+            "default": "10s"
+          },
+          {
+            "name": "conn_idle_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The rough amount of time to allow connections to idle before they are closed.",
+            "is_advanced": true,
+            "default": "20s"
+          },
+          {
+            "name": "tcp",
+            "type": "object",
+            "kind": "scalar",
+            "description": "TCP socket configuration.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "connect_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum amount of time a dial will wait for a connect to complete. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              },
+              {
+                "name": "keep_alive",
+                "type": "object",
+                "kind": "scalar",
+                "description": "TCP keep-alive probe configuration.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "idle",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "interval",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration between keep-alive probes. Zero defaults to 15s.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "count",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.",
+                    "is_advanced": true,
+                    "default": 9
+                  }
+                ]
+              },
+              {
+                "name": "tcp_user_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              }
+            ]
+          },
+          {
+            "name": "partitioner",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Override the default murmur2 hashing partitioner.",
+            "is_advanced": true,
+            "is_optional": true,
+            "annotated_options": [
+              [
+                "least_backup",
+                "Chooses the least backed up partition (the partition with the fewest amount of buffered records). Partitions are selected per batch."
+              ],
+              [
+                "manual",
+                "Manually select a partition for each message, requires the field `partition` to be specified."
+              ],
+              [
+                "murmur2_hash",
+                "Kafka's default hash algorithm that uses a 32-bit murmur2 hash of the key to compute which partition the record will be on."
+              ],
+              [
+                "round_robin",
+                "Round-robin's messages through all available partitions. This algorithm has lower throughput and causes higher CPU load on brokers, but can be useful if you want to ensure an even distribution of records to partitions."
+              ]
+            ],
+            "linter": "\nlet options = {\n  \"least_backup\": true,\n  \"manual\": true,\n  \"murmur2_hash\": true,\n  \"round_robin\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "idempotent_write",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
+            "name": "compression",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Optionally set an explicit compression type. The default preference is to use snappy when the broker supports it, and fall back to none if not.",
+            "is_advanced": true,
+            "is_optional": true,
+            "options": [
+              "lz4",
+              "snappy",
+              "gzip",
+              "none",
+              "zstd"
+            ],
+            "linter": "\nlet options = {\n  \"lz4\": true,\n  \"snappy\": true,\n  \"gzip\": true,\n  \"none\": true,\n  \"zstd\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "allow_auto_topic_creation",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Enables topics to be auto created if they do not exist when fetching their metadata.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
+            "name": "timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The maximum period of time to wait for message sends before abandoning the request and retrying",
+            "is_advanced": true,
+            "default": "10s"
+          },
+          {
+            "name": "max_message_bytes",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The maximum size of a produced record batch in bytes. A `MESSAGE_TOO_LARGE` error is returned if a batch exceeds this limit. This field maps to the `max.message.bytes` Kafka property. Ensure the Redpanda broker's `kafka_batch_max_bytes` property is at least as large as this value, see https://docs.redpanda.com/current/reference/properties/cluster-properties/#kafka_batch_max_bytes.",
+            "is_advanced": true,
+            "default": "1MiB",
+            "examples": [
+              "100MB",
+              "50mib"
+            ]
+          },
+          {
+            "name": "broker_write_max_bytes",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The upper bound for the number of bytes written to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.",
+            "is_advanced": true,
+            "default": "100MiB",
+            "examples": [
+              "128MB",
+              "50mib"
+            ]
+          },
+          {
+            "name": "topic",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The name of the topic to emit spans to",
+            "default": "otel-traces"
+          },
+          {
+            "name": "format",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The serialization format for individual spans in the topic.",
+            "is_advanced": true,
+            "default": "json",
+            "annotated_options": [
+              [
+                "json",
+                "Emit in OTLP JSON Format"
+              ],
+              [
+                "protobuf",
+                "Emit in OTLP Protobuf Format"
+              ]
+            ],
+            "linter": "\nlet options = {\n  \"json\": true,\n  \"protobuf\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "service",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The name of the service in traces.",
+            "default": "redpanda-connect"
+          },
+          {
+            "name": "tags",
+            "type": "string",
+            "kind": "map",
+            "description": "A map of tags to add to all tracing spans.",
+            "is_advanced": true,
+            "default": {}
+          },
+          {
+            "name": "sampling",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Settings for trace sampling. Sampling is recommended for high-volume production workloads.",
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to enable sampling.",
+                "default": false
+              },
+              {
+                "name": "ratio",
+                "type": "float",
+                "kind": "scalar",
+                "description": "Sets the ratio of traces to sample.",
+                "is_optional": true,
+                "examples": [
+                  0.05,
+                  0.85,
+                  0.5
+                ]
+              }
+            ]
           }
         ]
       }

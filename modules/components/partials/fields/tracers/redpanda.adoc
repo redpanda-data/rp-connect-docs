@@ -2,35 +2,13 @@
 
 == Fields
 
-=== `backoff`
+=== `allow_auto_topic_creation`
 
-Control time intervals between retry attempts.
+Enables topics to be auto created if they do not exist when fetching their metadata.
 
-*Type*: `object`
+*Type*: `bool`
 
-=== `backoff.initial_interval`
-
-The initial period to wait between retry attempts.
-
-*Type*: `string`
-
-*Default*: `1s`
-
-=== `backoff.max_elapsed_time`
-
-The maximum period to wait before retry attempts are abandoned. If zero then no limit is used.
-
-*Type*: `string`
-
-*Default*: `30s`
-
-=== `backoff.max_interval`
-
-The maximum period to wait between retry attempts.
-
-*Type*: `string`
-
-*Default*: `5s`
+*Default*: `true`
 
 === `broker_write_max_bytes`
 
@@ -58,6 +36,14 @@ An identifier for the client connection.
 
 *Default*: `redpanda-connect`
 
+=== `compression`
+
+Optionally set an explicit compression type. The default preference is to use snappy when the broker supports it, and fall back to none if not.
+
+*Type*: `string`
+
+*Options*: `lz4`, `snappy`, `gzip`, `none`, `zstd`
+
 === `conn_idle_timeout`
 
 The rough amount of time to allow connections to idle before they are closed.
@@ -66,15 +52,33 @@ The rough amount of time to allow connections to idle before they are closed.
 
 *Default*: `20s`
 
-=== `is_high_watermark`
+=== `format`
 
-Indicates if the update represents the high watermark of the Kafka topic partition.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The serialization format for individual spans in the topic.
 
 *Type*: `string`
 
-*Default*: `${! @kafka_is_high_watermark }`
+*Default*: `json`
+
+[cols="1m,2a"]
+|===
+|Option |Summary
+
+|json
+|Emit in OTLP JSON Format
+
+|protobuf
+|Emit in OTLP Protobuf Format
+
+|===
+
+=== `idempotent_write`
+
+Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.
+
+*Type*: `bool`
+
+*Default*: `true`
 
 === `max_message_bytes`
 
@@ -94,14 +98,6 @@ max_message_bytes: 100MB
 max_message_bytes: 50mib
 ----
 
-=== `max_retries`
-
-The maximum number of retries before giving up on the request. If set to zero there is no discrete limit.
-
-*Type*: `int`
-
-*Default*: `0`
-
 === `metadata_max_age`
 
 The maximum age of metadata before it is refreshed. This interval also controls how frequently regex topic patterns are re-evaluated to discover new matching topics.
@@ -110,65 +106,29 @@ The maximum age of metadata before it is refreshed. This interval also controls 
 
 *Default*: `1m`
 
-=== `offset_commit_timestamp`
+=== `partitioner`
 
-Kafka offset commit timestamp.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Override the default murmur2 hashing partitioner.
 
 *Type*: `string`
 
-*Default*: `${! @kafka_offset_commit_timestamp }`
+[cols="1m,2a"]
+|===
+|Option |Summary
 
-=== `offset_group`
+|least_backup
+|Chooses the least backed up partition (the partition with the fewest amount of buffered records). Partitions are selected per batch.
 
-Kafka offset group.
+|manual
+|Manually select a partition for each message, requires the field `partition` to be specified.
 
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+|murmur2_hash
+|Kafka's default hash algorithm that uses a 32-bit murmur2 hash of the key to compute which partition the record will be on.
 
-*Type*: `string`
+|round_robin
+|Round-robin's messages through all available partitions. This algorithm has lower throughput and causes higher CPU load on brokers, but can be useful if you want to ensure an even distribution of records to partitions.
 
-*Default*: `${! @kafka_offset_group }`
-
-=== `offset_metadata`
-
-Kafka offset metadata value.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `${! @kafka_offset_metadata }`
-
-=== `offset_partition`
-
-Kafka offset partition.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `${! @kafka_offset_partition }`
-
-=== `offset_topic`
-
-Kafka offset topic.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `${! @kafka_offset_topic }`
-
-=== `offset_topic_prefix`
-
-Kafka offset topic prefix.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `""`
+|===
 
 === `request_timeout_overhead`
 
@@ -177,6 +137,40 @@ The request time overhead. Uses the given time as overhead while deadlining requ
 *Type*: `string`
 
 *Default*: `10s`
+
+=== `sampling`
+
+Settings for trace sampling. Sampling is recommended for high-volume production workloads.
+
+*Type*: `object`
+
+=== `sampling.enabled`
+
+Whether to enable sampling.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `sampling.ratio`
+
+Sets the ratio of traces to sample.
+
+*Type*: `float`
+
+[source,yaml]
+----
+# Examples:
+ratio: 0.05
+
+# ---
+
+ratio: 0.85
+
+# ---
+
+ratio: 0.5
+----
 
 === `sasl[]`
 
@@ -407,6 +401,22 @@ seed_brokers:
   - "foo:9092,bar:9092"
 ----
 
+=== `service`
+
+The name of the service in traces.
+
+*Type*: `string`
+
+*Default*: `redpanda-connect`
+
+=== `tags`
+
+A map of tags to add to all tracing spans.
+
+*Type*: `string`
+
+*Default*: `{}`
+
 === `tcp`
 
 TCP socket configuration.
@@ -614,5 +624,13 @@ Whether to skip server side certificate verification.
 *Type*: `bool`
 
 *Default*: `false`
+
+=== `topic`
+
+The name of the topic to emit spans to
+
+*Type*: `string`
+
+*Default*: `otel-traces`
 
 

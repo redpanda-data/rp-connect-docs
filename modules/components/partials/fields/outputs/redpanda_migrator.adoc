@@ -152,6 +152,24 @@ Enable the idempotent write producer option. This requires the `IDEMPOTENT_WRITE
 
 *Default*: `true`
 
+=== `max_in_flight`
+
+The maximum number of batches to send in parallel at any given time.
+
+*Type*: `int`
+
+*Default*: `10`
+
+[source,yaml]
+----
+# Examples:
+max_in_flight: 64  # For a cluster with 64 partitions
+
+# ---
+
+max_in_flight: 128 # For multiple topics with combined 128 partitions
+----
+
 === `max_message_bytes`
 
 The maximum space in bytes that an individual message may use. Messages larger than this value are rejected. This field corresponds to Kafka's `max.message.bytes`.
@@ -179,6 +197,14 @@ Lower values provide more responsive topic and partition discovery but may incre
 *Type*: `string`
 
 *Default*: `1m`
+
+=== `offset_header`
+
+Header name to add to migrated records containing the source offset for exact consumer group migration. If empty, no offset header is added and exact offset translation is disabled. When disabled, consumer groups are still migrated but precision for empty groups may not be ideal if there are multiple records with the same timestamp, as timestamps have millisecond resolution. When consumer group migration is disabled, this header is not added.
+
+*Type*: `string`
+
+*Default*: `redpanda-migrator-offset`
 
 === `partitioner`
 
@@ -388,6 +414,9 @@ The SASL mechanism to use.
 
 |PLAIN
 |Plain text authentication.
+
+|REDPANDA_CLOUD_SERVICE_ACCOUNT
+|Redpanda Cloud Service Account authentication when running in Redpanda Cloud.
 
 |SCRAM-SHA-256
 |SCRAM based authentication as specified in RFC5802.
@@ -665,6 +694,14 @@ subject: prod_${! metadata("schema_registry_subject") }
 
 subject: ${! metadata("schema_registry_subject") | replace("dev_", "prod_") }
 ----
+
+=== `schema_registry.timeout`
+
+HTTP client timeout for schema registry requests.
+
+*Type*: `string`
+
+*Default*: `5s`
 
 === `schema_registry.tls`
 
