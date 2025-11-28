@@ -1,0 +1,74 @@
+{
+  "comparison": {
+    "oldVersion": "4.70.0",
+    "newVersion": "4.72.0",
+    "timestamp": "2025-11-28T13:15:30.947Z"
+  },
+  "summary": {
+    "newComponents": 1,
+    "removedComponents": 0,
+    "newFields": 8,
+    "removedFields": 0,
+    "deprecatedComponents": 0,
+    "deprecatedFields": 0,
+    "changedDefaults": 0
+  },
+  "details": {
+    "newComponents": [
+      {
+        "name": "redpanda",
+        "type": "tracers",
+        "status": "experimental",
+        "version": "",
+        "description": ""
+      }
+    ],
+    "removedComponents": [],
+    "newFields": [
+      {
+        "component": "inputs:gateway",
+        "field": "tcp",
+        "description": "Customize messages returned via xref:guides:sync_responses.adoc[synchronous responses]."
+      },
+      {
+        "component": "inputs:mysql_cdc",
+        "field": "max_reconnect_attempts",
+        "description": "The maximum number of attempts the MySQL driver will try to re-establish a broken connection before Connect attempts reconnection. A zero or negative number means infinite retry attempts."
+      },
+      {
+        "component": "inputs:mysql_cdc",
+        "field": "tls",
+        "description": "Using this field overrides the SSL/TLS settings in the environment and DSN."
+      },
+      {
+        "component": "inputs:mysql_cdc",
+        "field": "aws",
+        "description": "AWS IAM authentication configuration for MySQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password."
+      },
+      {
+        "component": "inputs:pg_stream",
+        "field": "aws",
+        "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password."
+      },
+      {
+        "component": "inputs:postgres_cdc",
+        "field": "aws",
+        "description": "AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password."
+      },
+      {
+        "component": "outputs:redpanda_migrator",
+        "field": "offset_header",
+        "description": "Header name to add to migrated records containing the source offset for exact consumer group migration. If empty, no offset header is added and exact offset translation is disabled. When disabled, consumer groups are still migrated but precision for empty groups may not be ideal if there are multiple records with the same timestamp, as timestamps have millisecond resolution. When consumer group migration is disabled, this header is not added."
+      },
+      {
+        "component": "outputs:redpanda_migrator",
+        "field": "max_in_flight",
+        "description": "Maximum number of batches to have in flight at any given time. For optimal throughput, set this to the total number of partitions being copied in parallel (up to all partitions in the cluster). Setting it higher than the number of consumed partitions is ineffective."
+      }
+    ],
+    "removedFields": [],
+    "deprecatedComponents": [],
+    "deprecatedFields": [],
+    "changedDefaults": []
+  }
+}

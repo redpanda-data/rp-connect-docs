@@ -7,9 +7,33 @@ inputs:
     checkpoint_cache: "" # No default (required)
     checkpoint_key: mysql_binlog_position
     snapshot_max_batch_size: 1000
+    max_reconnect_attempts: 10
     stream_snapshot: "" # No default (required)
     auto_replay_nacks: true
     checkpoint_limit: 1024
+    tls:
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
+    aws:
+      enabled: false
+      region: "" # No default (optional)
+      endpoint: "" # No default (required)
+      id: "" # No default (optional)
+      secret: "" # No default (optional)
+      token: "" # No default (optional)
+      role: "" # No default (optional)
+      role_external_id: "" # No default (optional)
+      roles:
+        role: ""
+        role_external_id: ""
     batching:
       count: 0
       byte_size: 0

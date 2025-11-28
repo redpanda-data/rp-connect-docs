@@ -70,6 +70,7 @@ inputs:
     max_yield_batch_bytes: 32KB
     schema_registry:
       url: "" # No default (required)
+      timeout: 5s
       tls:
         enabled: false
         skip_cert_verify: false

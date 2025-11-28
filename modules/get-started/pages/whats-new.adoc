@@ -7,6 +7,82 @@ This topic includes new content added from version 4.29.0 onwards.
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
 
+
+== Version 4.72.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.72.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1,1,3"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:tracers/redpanda.adoc[redpanda]
+|Tracers
+|experimental
+|-
+
+|===
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|tcp
+|adoc[synchronous responses].
+|*Inputs:*
+
+* xref:components:inputs/gateway.adoc#tcp[gateway]
+
+
+|max_reconnect_attempts
+|The maximum number of attempts the MySQL driver will try to re-establish a broken connection before Connect attempts reconnection. A zero or negative number means infinite retry attempts.
+|*Inputs:*
+
+* xref:components:inputs/mysql_cdc.adoc#max_reconnect_attempts[mysql_cdc]
+
+
+|tls
+|Using this field overrides the SSL/TLS settings in the environment and DSN.
+|*Inputs:*
+
+* xref:components:inputs/mysql_cdc.adoc#tls[mysql_cdc]
+
+
+|aws
+|AWS IAM authentication configuration for MySQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.
+|*Inputs:*
+
+* xref:components:inputs/mysql_cdc.adoc#aws[mysql_cdc]
+* xref:components:inputs/pg_stream.adoc#aws[pg_stream]
+* xref:components:inputs/postgres_cdc.adoc#aws[postgres_cdc]
+
+
+|offset_header
+|Header name to add to migrated records containing the source offset for exact consumer group migration. If empty, no offset header is added and exact offset translation is disabled.
+|*Outputs:*
+
+* xref:components:outputs/redpanda_migrator.adoc#offset_header[redpanda_migrator]
+
+
+|max_in_flight
+|Maximum number of batches to have in flight at any given time. For optimal throughput, set this to the total number of partitions being copied in parallel (up to all partitions in the cluster).
+|*Outputs:*
+
+* xref:components:outputs/redpanda_migrator.adoc#max_in_flight[redpanda_migrator]
+
+
+|===
+
+
 == Version 4.70.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.70.0[See the full release notes^].

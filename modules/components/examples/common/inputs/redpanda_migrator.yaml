@@ -9,6 +9,7 @@ inputs:
     consumer_group: "" # No default (optional)
     schema_registry:
       url: "" # No default (required)
+      timeout: 5s
       tls:
         enabled: false
         skip_cert_verify: false
