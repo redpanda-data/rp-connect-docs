@@ -77,7 +77,19 @@ jobs:
 
           rm -f full_output.txt delta_report.md
 
+      - name: Check if branch already exists
+        id: check_branch
+        run: |
+          if git ls-remote --heads origin auto-docs/update-rpcn-connector-docs | grep -q auto-docs; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Branch auto-docs/update-rpcn-connector-docs already exists. Skipping PR creation to preserve manual changes."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Branch does not exist. Will create new PR."
+          fi
+
       - name: Create Pull Request
+        if: steps.check_branch.outputs.exists == 'false'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ env.ACTIONS_BOT_TOKEN }}

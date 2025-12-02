@@ -154,7 +154,11 @@ Enable the idempotent write producer option. This requires the `IDEMPOTENT_WRITE
 
 === `max_in_flight`
 
-The maximum number of batches to send in parallel at any given time.
+The maximum number of batches to send in parallel at any given time. Increase this value to improve throughput during migration.
+
+For optimal performance, set this to match the total number of partitions being migrated. Setting it higher than the partition count provides no additional benefit, as each partition can only have one in-flight batch at a time.
+
+Example: If migrating 100 partitions, set `max_in_flight: 100` for maximum throughput.
 
 *Type*: `int`
 
@@ -200,7 +204,13 @@ Lower values provide more responsive topic and partition discovery but may incre
 
 === `offset_header`
 
-Header name to add to migrated records containing the source offset for exact consumer group migration. If empty, no offset header is added and exact offset translation is disabled. When disabled, consumer groups are still migrated but precision for empty groups may not be ideal if there are multiple records with the same timestamp, as timestamps have millisecond resolution. When consumer group migration is disabled, this header is not added.
+The name of a message header to add to migrated records. This header contains the source offset, enabling exact consumer group offset translation during migration.
+
+When left empty (default), no offset header is added and consumer groups are migrated using timestamp-based positioning. This approach works well for most cases, but may be imprecise for consumer groups with no committed offsets when multiple records share the same timestamp (timestamps have millisecond resolution).
+
+Set this field to enable precise offset translation, especially when migrating consumer groups that are caught up or have minimal lag.
+
+Note: This header is only added when consumer group migration is enabled.
 
 *Type*: `string`
 

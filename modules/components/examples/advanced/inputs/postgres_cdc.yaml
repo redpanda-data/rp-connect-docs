@@ -31,14 +31,6 @@ inputs:
       enabled: false
       region: "" # No default (optional)
       endpoint: "" # No default (required)
-      id: "" # No default (optional)
-      secret: "" # No default (optional)
-      token: "" # No default (optional)
-      role: "" # No default (optional)
-      role_external_id: "" # No default (optional)
-      roles:
-        role: ""
-        role_external_id: ""
     auto_replay_nacks: true
     batching:
       count: 0

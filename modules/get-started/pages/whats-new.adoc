@@ -8,9 +8,9 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
-== Version 4.72.0
+== Version 4.71.0
 
-link:https://github.com/redpanda-data/connect/releases/tag/v4.72.0[See the full release notes^].
+link:https://github.com/redpanda-data/connect/releases/tag/v4.71.0[See the full release notes^].
 
 === Component updates
 
@@ -36,32 +36,10 @@ This release adds support for the following new fields:
 |===
 |Field |Description |Affected components
 
-|tcp
-|adoc[synchronous responses].
-|*Inputs:*
-
-* xref:components:inputs/gateway.adoc#tcp[gateway]
-
-
-|max_reconnect_attempts
-|The maximum number of attempts the MySQL driver will try to re-establish a broken connection before Connect attempts reconnection. A zero or negative number means infinite retry attempts.
-|*Inputs:*
-
-* xref:components:inputs/mysql_cdc.adoc#max_reconnect_attempts[mysql_cdc]
-
-
-|tls
-|Using this field overrides the SSL/TLS settings in the environment and DSN.
-|*Inputs:*
-
-* xref:components:inputs/mysql_cdc.adoc#tls[mysql_cdc]
-
-
 |aws
-|AWS IAM authentication configuration for MySQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.
+|AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.
 |*Inputs:*
 
-* xref:components:inputs/mysql_cdc.adoc#aws[mysql_cdc]
 * xref:components:inputs/pg_stream.adoc#aws[pg_stream]
 * xref:components:inputs/postgres_cdc.adoc#aws[postgres_cdc]
 

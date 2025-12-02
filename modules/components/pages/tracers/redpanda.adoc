@@ -1,0 +1,117 @@
+= redpanda
+// tag::single-source[]
+:type: tracer
+:status: experimental
+:categories: []
+:description: Send tracing events to a Redpanda Message Broker.
+
+component_type_dropdown::[]
+
+Send tracing events to a Redpanda Message Broker.
+
+[tabs]
+======
+Common::
++
+--
+```yaml
+tracer:
+  label: ""
+  redpanda:
+    seed_brokers: [] # No default (required)
+    topic: otel-traces
+    service: redpanda-connect
+    sampling:
+      enabled: false
+      ratio: "" # No default (optional)
+```
+--
+Advanced::
++
+--
+```yaml
+tracer:
+  label: ""
+  redpanda:
+    seed_brokers: [] # No default (required)
+    client_id: redpanda-connect
+    tls:
+      enabled: false
+      skip_cert_verify: false
+      enable_renegotiation: false
+      root_cas: ""
+      root_cas_file: ""
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
+    sasl:
+      mechanism: "" # No default (required)
+      username: ""
+      password: ""
+      token: ""
+      extensions: "" # No default (optional)
+      aws:
+        region: "" # No default (optional)
+        endpoint: "" # No default (optional)
+        tcp:
+          connect_timeout: 0s
+          keep_alive:
+            idle: 15s
+            interval: 15s
+            count: 9
+          tcp_user_timeout: 0s
+        credentials:
+          profile: "" # No default (optional)
+          id: "" # No default (optional)
+          secret: "" # No default (optional)
+          token: "" # No default (optional)
+          from_ec2_role: "" # No default (optional)
+          role: "" # No default (optional)
+          role_external_id: "" # No default (optional)
+    metadata_max_age: 1m
+    request_timeout_overhead: 10s
+    conn_idle_timeout: 20s
+    tcp:
+      connect_timeout: 0s
+      keep_alive:
+        idle: 15s
+        interval: 15s
+        count: 9
+      tcp_user_timeout: 0s
+    partitioner: "" # No default (optional)
+    idempotent_write: true
+    compression: "" # No default (optional)
+    allow_auto_topic_creation: true
+    timeout: 10s
+    max_message_bytes: 1MiB
+    broker_write_max_bytes: 100MiB
+    topic: otel-traces
+    format: json
+    service: redpanda-connect
+    tags: {}
+    sampling:
+      enabled: false
+      ratio: "" # No default (optional)
+```
+--
+======
+
+The Redpanda tracer exports distributed tracing data to a Redpanda topic, enabling you to monitor and debug your Redpanda Connect pipelines. Traces are exported in OpenTelemetry format as JSON, allowing integration with observability platforms like Jaeger, Grafana Tempo, or custom trace consumers.
+
+This tracer automatically captures trace spans as messages flow through your pipeline, recording timing information, component metadata, and error details. Use this to:
+
+- **Track message flow** through complex pipelines with multiple processors.
+- **Identify performance bottlenecks** by analyzing span durations.
+- **Debug failures** by examining trace context and error details.
+- **Monitor pipeline health** across distributed Redpanda Connect instances.
+- **Correlate activity** across multiple services using trace IDs.
+
+The tracer writes to a dedicated Redpanda topic that can be consumed by trace analysis tools. Configure sampling to control trace volume in high-throughput environments.
+
+include::redpanda-connect:components:partial$fields/tracers/redpanda.adoc[]
+
+
+// end::single-source[]
