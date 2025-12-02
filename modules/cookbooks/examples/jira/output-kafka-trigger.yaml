@@ -1,0 +1,30 @@
+# tag::config[]
+input:
+  kafka:
+    addresses: ["localhost:9092"]
+    topics: ["jira-query-requests"]
+    consumer_group: jira-query-consumer
+
+pipeline:
+  processors:
+    # Parse incoming query request
+    - mapping: |
+        root.jql = this.query
+        root.maxResults = 50
+
+    # Execute query
+    - jira:
+        base_url: "${JIRA_BASE_URL}"
+        username: "${JIRA_USERNAME}"
+        api_token: "${JIRA_API_TOKEN}"
+
+    # Process each individual issue
+    - mapping: |
+        root.query_id = uuid_v4()
+        root.timestamp = now()
+        root.issue_key = this.key
+        root.issue_summary = this.fields.summary
+
+output:
+  drop: {}
+# end::config[]

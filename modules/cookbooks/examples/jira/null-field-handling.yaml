@@ -1,0 +1,103 @@
+# tag::config[]
+pipeline:
+  processors:
+    - mapping: |
+        # Assignee can be null
+        root.assignee = if this.fields.assignee != null {
+          this.fields.assignee.displayName
+        } else { "Unassigned" }
+
+        # Reporter can be null
+        root.reporter = if this.fields.reporter != null {
+          this.fields.reporter.displayName
+        } else { "Unknown" }
+
+        # Resolution date is null for open issues
+        root.resolved_at = this.fields.resolutiondate
+
+        # Calculate lead time only for resolved issues
+        root.lead_time_days = if this.fields.resolutiondate != null {
+          (this.fields.resolutiondate.ts_parse("2006-01-02T15:04:05.999-0700").ts_unix() -
+           this.fields.created.ts_parse("2006-01-02T15:04:05.999-0700").ts_unix()) / 86400
+        } else { null }
+# end::config[]
+
+# tag::tests[]
+input:
+  generate:
+    mapping: 'root = ""'
+    count: 1
+
+output:
+  drop: {}
+
+tests:
+  - name: Handle null assignee
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          fields:
+            assignee: null
+            reporter:
+              displayName: Jane Smith
+            resolutiondate: null
+            created: "2025-01-15T10:00:00.000-0800"
+    output_batches:
+      - - json_equals:
+            assignee: Unassigned
+            reporter: Jane Smith
+            resolved_at: null
+            lead_time_days: null
+
+  - name: Handle both fields present
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          fields:
+            assignee:
+              displayName: John Doe
+            reporter:
+              displayName: Jane Smith
+            resolutiondate: null
+            created: "2025-01-15T10:00:00.000-0800"
+    output_batches:
+      - - json_equals:
+            assignee: John Doe
+            reporter: Jane Smith
+            resolved_at: null
+            lead_time_days: null
+
+  - name: Handle null reporter
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          fields:
+            assignee:
+              displayName: John Doe
+            reporter: null
+            resolutiondate: null
+            created: "2025-01-15T10:00:00.000-0800"
+    output_batches:
+      - - json_equals:
+            assignee: John Doe
+            reporter: Unknown
+            resolved_at: null
+            lead_time_days: null
+
+  - name: Calculate lead time for resolved issue
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          fields:
+            assignee:
+              displayName: John Doe
+            reporter:
+              displayName: Jane Smith
+            resolutiondate: "2025-01-20T10:00:00.000-0800"
+            created: "2025-01-15T10:00:00.000-0800"
+    output_batches:
+      - - json_contains:
+            assignee: John Doe
+            reporter: Jane Smith
+            lead_time_days: 5
+# end::tests[]

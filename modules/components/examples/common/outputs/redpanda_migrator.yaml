@@ -4,6 +4,7 @@ outputs:
     seed_brokers: [] # No default (required)
     schema_registry:
       url: "" # No default (required)
+      timeout: 5s
       tls:
         enabled: false
         skip_cert_verify: false

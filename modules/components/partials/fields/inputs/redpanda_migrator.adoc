@@ -352,6 +352,9 @@ The SASL mechanism to use.
 |PLAIN
 |Plain text authentication.
 
+|REDPANDA_CLOUD_SERVICE_ACCOUNT
+|Redpanda Cloud Service Account authentication when running in Redpanda Cloud.
+
 |SCRAM-SHA-256
 |SCRAM based authentication as specified in RFC5802.
 
@@ -524,6 +527,14 @@ Whether to use OAuth version 1 in requests.
 *Type*: `bool`
 
 *Default*: `false`
+
+=== `schema_registry.timeout`
+
+HTTP client timeout for schema registry requests.
+
+*Type*: `string`
+
+*Default*: `5s`
 
 === `schema_registry.tls`
 

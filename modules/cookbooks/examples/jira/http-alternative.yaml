@@ -1,0 +1,111 @@
+# Create Jira Issue with HTTP Processor
+#
+# The Jira processor is read-only and cannot create or update issues.
+# Use the HTTP processor to create Jira issues using the REST API.
+
+input:
+  generate:
+    mapping: |
+      root = {
+        "title": "Example issue from Redpanda Connect",
+        "description": "This issue was created using the HTTP processor",
+        "issue_type": "Task"
+      }
+    count: 1
+
+pipeline:
+  processors:
+    - mapping: |
+        root = {
+          "fields": {
+            "project": {
+              "key": "${JIRA_PROJECT}"
+            },
+            "summary": this.title,
+            "description": {
+              "type": "doc",
+              "version": 1,
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": this.description
+                    }
+                  ]
+                }
+              ]
+            },
+            "issuetype": {
+              "name": this.issue_type
+            }
+          }
+        }
+
+    - label: create_issue
+      http:
+        url: "${JIRA_BASE_URL}/rest/api/3/issue"
+        verb: POST
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+        basic_auth:
+          enabled: true
+          username: "${JIRA_USERNAME}"
+          password: "${JIRA_API_TOKEN}"
+
+    - mapping: |
+        root.issue_key = this.key
+        root.issue_id = this.id
+        root.self_link = this.self
+
+output:
+  stdout:
+    codec: lines
+
+tests:
+  - name: Transform data for creating issue
+    target_processors: '/pipeline/processors/0'
+    environment:
+      JIRA_PROJECT: "TEST"
+    input_batch:
+      - json_content:
+          title: "Test issue"
+          description: "Test description"
+          issue_type: "Bug"
+    output_batches:
+      - - json_equals:
+            fields:
+              project:
+                key: "TEST"
+              summary: "Test issue"
+              description:
+                type: "doc"
+                version: 1
+                content:
+                  - type: "paragraph"
+                    content:
+                      - type: "text"
+                        text: "Test description"
+              issuetype:
+                name: "Bug"
+
+  - name: Mock create issue API response
+    target_processors: '/pipeline/processors'
+    mocks:
+      create_issue:
+        mapping: |
+          root.id = "10001"
+          root.key = "DOC-789"
+          root.self = "https://your-domain.atlassian.net/rest/api/3/issue/10001"
+    input_batch:
+      - json_content:
+          title: "Test issue"
+          description: "Test description"
+          issue_type: "Task"
+    output_batches:
+      - - json_equals:
+            issue_key: "DOC-789"
+            issue_id: "10001"
+            self_link: "https://your-domain.atlassian.net/rest/api/3/issue/10001"
