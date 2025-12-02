@@ -12,7 +12,7 @@ Whether to automatically create the trace topic if it doesn't exist. If false, t
 
 === `broker_write_max_bytes`
 
-The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.
+The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.
 
 *Type*: `string`
 
@@ -336,6 +336,9 @@ The SASL mechanism to use.
 
 |PLAIN
 |Plain text authentication.
+
+|REDPANDA_CLOUD_SERVICE_ACCOUNT
+|Redpanda Cloud Service Account authentication when running in Redpanda Cloud.
 
 |SCRAM-SHA-256
 |SCRAM based authentication as specified in RFC5802.
