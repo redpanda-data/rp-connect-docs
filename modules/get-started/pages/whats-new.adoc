@@ -13,24 +13,6 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.72.0[See the full release notes^].
 
-=== New field support
-
-This release adds support for the following new fields:
-
-[cols="1m,3,2a"]
-|===
-|Field |Description |Affected components
-
-|aws
-|AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.
-|*Inputs:*
-
-* xref:components:inputs/pg_stream.adoc#aws[pg_stream]
-* xref:components:inputs/postgres_cdc.adoc#aws[postgres_cdc]
-
-
-|===
-
 
 == Version 4.71.0
 
@@ -47,7 +29,7 @@ This release adds the following new components:
 |xref:components:tracers/redpanda.adoc[redpanda]
 |Tracers
 |experimental
-|Send distributed tracing events to a Redpanda topic in OpenTelemetry format.
+|-
 
 |===
 
@@ -59,6 +41,14 @@ This release adds support for the following new fields:
 [cols="1m,3,2a"]
 |===
 |Field |Description |Affected components
+
+|aws
+|AWS IAM authentication configuration for PostgreSQL instances. When enabled, IAM credentials are used to generate temporary authentication tokens instead of a static password.
+|*Inputs:*
+
+* xref:components:inputs/pg_stream.adoc#aws[pg_stream]
+* xref:components:inputs/postgres_cdc.adoc#aws[postgres_cdc]
+
 
 |offset_header
 |Header name to add to migrated records containing the source offset for exact consumer group migration. If empty, no offset header is added and exact offset translation is disabled.
