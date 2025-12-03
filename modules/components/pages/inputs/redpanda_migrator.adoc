@@ -56,12 +56,22 @@ For capabilities, guarantees, scheduling, and examples, see the output documenta
 When using multiple migrator pairs in a single pipeline, coordination is based on the `label` field. The label of the input and output must match exactly for correct pairing. If labels do not match, migration fails for that pair.
 
 == Performance tuning for high throughput
-For workloads with high message rates or large messages, adjust these fields:
 
-- `partition_buffer_bytes`: Increase to 10MB or higher (default: 1MB)
-- `max_yield_batch_bytes`: Increase to 100MB or higher (default: 10MB)
+For workloads with high message rates or large messages, adjust the following settings to optimize throughput:
 
-Increasing these values allows the consumer to buffer more data per partition and yield larger batches, reducing overhead and improving throughput. Higher values increase memory usage—monitor system resources accordingly.
+On this input component:
+
+- `partition_buffer_bytes`: Set to 2MB to increase per-partition buffer size
+- `max_yield_batch_bytes`: Set to 1MB to allow larger batches to be yielded
+
+On the paired `redpanda_migrator` output component:
+
+- `max_in_flight`: Set to the total number of partitions being copied in parallel (up to all partitions in the cluster)
+
+[NOTE]
+====
+Setting `max_yield_batch_bytes` over 1MB is counter-productive unless you change the broker settings to allow bigger messages or batches. The `partition_buffer_bytes` setting allows for partition readahead.
+====
 
 == Metrics
 This input emits an `input_redpanda_migrator_lag` metric with `topic` and `partition` labels for each consumed topic. This metric records the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group. Monitor this metric to track migration progress and detect bottlenecks.
