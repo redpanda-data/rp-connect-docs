@@ -7,9 +7,45 @@ Each pattern is a reusable example for a common MCP tool scenario. Patterns are 
 
 For a high-level overview of MCP servers, see xref:ai-agents:mcp-server/overview.adoc[].
 
+== Pattern selection guide
+
+Choose the right pattern for your use case:
+
+* **Generate test data or synthetic events**: <<data-generators>>
+* **Call external REST APIs**: <<external-api-calls>>
+* **Query databases**: <<database-queries>>
+* **Read from Redpanda topics**: <<consuming-from-redpanda-topics>>
+* **Transform or validate data**: <<data-transformation>>
+* **Publish to Redpanda topics**: <<publishing-to-redpanda-topics>>
+* **Process streaming data**: <<stream-processing-with-redpanda-connect>>
+* **Build event-driven workflows**: <<event-driven-workflows>>
+* **Integrate with AI/LLM services**: <<ai-llm-integration>>
+* **Cache frequently accessed data**: <<caching-systems>>
+
+== Data generators
+
+Use xref:components:inputs/about.adoc[`inputs`] to create tools that read data from internal or external systems or generate sample data for testing and development.
+
+**When to use:** Development and testing environments where you need synthetic data, load testing scenarios, or demonstrating data flows without real data sources.
+
+**Example use cases:** Mock user events, test order data, synthetic sensor readings, demo data for presentations.
+
+This example generates a realistic user event message:
+
+[source,yaml]
+----
+include::ai-agents:example$generate_input.yaml[]
+----
+
+See also: xref:components:inputs/generate.adoc[`generate` input component]
+
 == External API calls
 
 Use xref:components:processors/about.adoc[`processors`] to fetch data from external APIs, databases, or services and return formatted results. This is one of the most common patterns for MCP tools.
+
+**When to use:** Integrating with third-party services, fetching real-time data, calling internal microservices, or enriching event data with external information.
+
+**Example use cases:** Fetch user profile from CRM, get product pricing from inventory API, validate addresses with geocoding service, retrieve weather data.
 
 [source,yaml]
 ----
@@ -21,6 +57,10 @@ See also: xref:components:processors/http.adoc[`http` processor], xref:component
 == Database queries
 
 Query external databases and return structured results. This pattern is essential for tools that need to access business data.
+
+**When to use:** Retrieving customer records, querying analytics data, looking up configuration values, or joining streaming data with dimensional data from data warehouses.
+
+**Example use cases:** Fetch customer details from PostgreSQL, query sales data from BigQuery, retrieve product catalog from MongoDB, look up reference data.
 
 NOTE: This example requires setting the `DATABASE_URL` environment variable with your PostgreSQL connection string. For example, `export DATABASE_URL="postgres://user:password@localhost:5432/dbname"`.
 
@@ -39,7 +79,11 @@ NOTE: The examples in this section require setting the `REDPANDA_BROKERS` enviro
 
 === Publishing to Redpanda topics
 
-Create tools that write data to Redpanda topics using the `redpanda` output:
+Create tools that write data to Redpanda topics using the `redpanda` output.
+
+**When to use:** Publishing events to Redpanda for consumption by other services, creating event sourcing patterns, building audit trails, or triggering downstream workflows.
+
+**Example use cases:** Publish order confirmations, emit audit events, trigger notifications, create event-driven workflows.
 
 [source,yaml]
 ----
@@ -48,16 +92,49 @@ include::ai-agents:example$resources/outputs/redpanda-publish.yaml[]
 
 === Consuming from Redpanda topics
 
-Build tools that read data from topics and return processed results:
+Build tools that read data from topics and return processed results.
+
+**When to use:** Processing events from Redpanda topics, building event-driven AI agents, consuming audit logs, or subscribing to data change streams.
+
+**Example use cases:** Monitor order events, process user activity streams, consume IoT sensor data, react to system notifications.
 
 [source,yaml]
 ----
 include::ai-agents:example$resources/inputs/redpanda-consume.yaml[]
 ----
 
+== Data transformation
+
+Transform, validate, and enrich data as it flows through your MCP tools. Use Bloblang mapping language for powerful data manipulation.
+
+**When to use:** Converting data formats, validating schemas, filtering events, enriching messages with computed fields, or normalizing data structures.
+
+**Example use cases:** Parse JSON payloads, validate required fields, add timestamps, convert units, mask sensitive data, aggregate nested objects.
+
+[source,yaml]
+----
+mapping: |
+  # Parse and validate incoming data
+  root.user_id = this.user_id.or(throw("user_id is required"))
+  root.timestamp = now().ts_format("2006-01-02T15:04:05Z07:00")
+
+  # Transform and enrich
+  root.email_domain = this.email.split("@").index(1)
+  root.is_premium = this.subscription_tier == "premium"
+
+  # Filter sensitive data
+  root.profile = this.profile.without("ssn", "credit_card")
+----
+
+See also: xref:components:processors/mapping.adoc[`mapping` processor], xref:guides:bloblang/about.adoc[Bloblang guide]
+
 == Stream processing with Redpanda Connect
 
-Create tools that process streaming data and return aggregated results:
+Create tools that process streaming data and return aggregated results.
+
+**When to use:** Real-time analytics, windowed aggregations, computing metrics over time, or building streaming dashboards.
+
+**Example use cases:** Calculate rolling averages, count events per time window, detect anomalies in streams, aggregate metrics.
 
 [source,yaml]
 ----
@@ -66,7 +143,11 @@ include::ai-agents:example$resources/inputs/stream-analytics.yaml[]
 
 == Event-driven workflows
 
-Build tools that trigger workflows based on Redpanda events:
+Build tools that trigger workflows based on Redpanda events.
+
+**When to use:** Orchestrating multi-step processes, responding to business events, implementing saga patterns, or coordinating microservices.
+
+**Example use cases:** Order fulfillment workflows, approval processes, notification cascades, data pipeline orchestration.
 
 [source,yaml]
 ----
@@ -75,235 +156,75 @@ include::ai-agents:example$resources/inputs/event-workflow.yaml[]
 
 See also: xref:components:inputs/redpanda.adoc[`redpanda` input]
 
-== Production workflows and observability
+== AI/LLM integration
 
-Build enterprise-grade tools with error handling, validation, multi-step workflows, and monitoring.
+Integrate AI and LLM services into your MCP tools for intelligent data processing, embeddings generation, and natural language understanding.
 
-=== Parameter validation and type coercion
+**When to use:** Generating embeddings for semantic search, calling LLM APIs for text generation, building RAG (Retrieval Augmented Generation) pipelines, or analyzing sentiment.
 
-Always validate and coerce input parameters to ensure your tools are robust:
+**Example use cases:** Generate embeddings for documents, classify customer feedback, summarize long text, extract entities, answer questions with context.
 
-[source,yaml]
-----
-processors:
-  - label: validate_params
-    mutation: |
-      # Validate required parameters
-      root = if !this.exists("user_id") {
-        throw("user_id parameter is required")
-      } else { this }
-
-      # Type coercion with validation
-      meta user_id = this.user_id.string()
-      meta limit = this.limit.number().catch(10)
-      meta start_date = this.start_date.parse_timestamp("2006-01-02").catch(now() - duration("24h"))
-----
-
-=== Dynamic configuration
-
-Build tools that adapt their behavior based on input parameters:
+=== OpenAI integration
 
 [source,yaml]
 ----
-processors:
-  - label: dynamic_config
-    mutation: |
-      # Choose data source based on environment
-      meta env = this.environment | "production"
-      meta table_name = match @env {
-        "dev" => "dev_orders",
-        "staging" => "staging_orders",
-        "production" => "prod_orders",
-        _ => "dev_orders"
-      }
+openai_chat_completion:
+  api_key: "${OPENAI_API_KEY}"
+  model: "gpt-4"
+  prompt: |
+    Analyze this customer feedback and provide:
+    1. Sentiment (positive/negative/neutral)
+    2. Key themes
+    3. Actionable insights
 
-      # Adjust query complexity based on urgency
-      meta columns = if this.detailed.bool().catch(false) {
-        ["order_id", "customer_id", "total", "items", "shipping_address"]
-      } else {
-        ["order_id", "customer_id", "total"]
-      }
+    Feedback: ${! json("feedback_text") }
+  max_tokens: 500
 ----
 
-=== Error handling and fallbacks
+See also: xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion`], xref:components:processors/openai_embeddings.adoc[`openai_embeddings`]
 
-Implement error handling to make your tools reliable:
+=== Embeddings generation
 
 [source,yaml]
 ----
-processors:
-  - label: primary_fetch
-    try:
-      - http:
-          url: "https://api.primary.com/data"
-          timeout: "10s"
-    catch:
-      - log:
-          message: "Primary API failed, trying fallback"
-      - label: fallback_fetch
-        http:
-          url: "https://api.fallback.com/data"
-          timeout: "15s"
-      - mutation: |
-          root.metadata.source = "fallback"
-          root.metadata.warning = "Primary source unavailable"
+openai_embeddings:
+  api_key: "${OPENAI_API_KEY}"
+  model: "text-embedding-3-small"
+  text: ${! json("content") }
 ----
 
-=== Conditional processing
+See also: xref:components:processors/cohere_embeddings.adoc[`cohere_embeddings`], xref:components:processors/gcp_vertex_ai_embeddings.adoc[`gcp_vertex_ai_embeddings`]
 
-Build tools that branch based on input or data characteristics:
+== Caching systems
+
+Use caching to store frequently accessed data, reduce latency, and minimize external API calls. You can implement caching using either Redpanda topics or in-memory stores.
+
+**When to use:** Reducing repeated API calls, storing lookup tables, caching database query results, or maintaining session state across tool invocations.
+
+**Example use cases:** Cache user profiles, store API rate limit counters, maintain configuration values, cache product catalogs.
+
+**In-memory cache** for low-latency access to small datasets:
 
 [source,yaml]
 ----
-processors:
-  - label: conditional_processing
-    switch:
-      - check: this.data_type == "json"
-        processors:
-          - json:
-              operator: "parse"
-          - mutation: 'root.parsed_data = this'
-      - check: this.data_type == "csv"
-        processors:
-          - csv:
-              parse: true
-          - mutation: 'root.parsed_data = this'
-      - processors:
-          - mutation: 'root.error = "Unsupported data type"'
+memory:
+  default_ttl: 300s
+  compaction_interval: 60s
 ----
 
-[[secrets]]
-=== Secrets and credentials
+See also: xref:components:caches/memory.adoc[`memory` cache], Redpanda-backed cache using xref:components:outputs/redpanda.adoc[`redpanda` output]
 
-Securely handle multiple credentials and API keys using environment variables.
+// Production workflows section - single-sourced from partials
+// Part 1: Parameter validation, dynamic config, error handling, conditional processing
+include::ai-agents:partial$mcp/production-workflows-before-secrets.adoc[]
 
-Here is an example of using an API key from environment variables.
+// Secrets section - deployment-specific for Connect (uses environment variables)
+include::ai-agents:partial$mcp/secrets-connect.adoc[]
 
-. Set an environment variable with your API key:
-+
-[source,bash]
-----
-export EXTERNAL_API_KEY="your-api-key-here"
-----
+// Part 2: Monitoring, multi-step enrichment, workflow orchestration
+include::ai-agents:partial$mcp/production-workflows-after-secrets.adoc[]
 
-. Reference the environment variable in your configuration:
-+
-[source,yaml]
-----
-processors:
-  - label: call_external_api
-    http:
-      url: "https://api.example.com/data"
-      verb: GET
-      headers:
-        Authorization: "Bearer ${EXTERNAL_API_KEY}"  # <1>
-        Accept: "application/json"
-----
-+
-<1> The environment variable is injected at runtime. Never store the actual API key in your YAML. The actual secret value never appears in your configuration files or logs.
-
-=== Monitoring, debugging, and observability
-
-Use structured logging, request tracing, and performance metrics to gain insights into tool execution.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/processors/observable-tool.yaml[]
-----
-
-Observability features:
-
-* *Correlation IDs*: Use `uuid_v7()` to generate unique request identifiers for tracing
-* *Execution timing*: Track how long your tools take to execute using nanosecond precision
-* *Structured logging*: Include consistent fields like `request_id`, `duration_ms`, `tool_name`
-* *Request/response metadata*: Log input parameters and response characteristics
-* *Success tracking*: Monitor whether operations complete successfully
-
-You can test this pattern by invoking the tool with valid and invalid parameters, and observe the structured logs for tracing execution flow. For example, with a user ID of 1, you might see logs like:
-
-[source,json]
-----
-{
-  "metadata": {
-    "execution_time_ms": 0.158977,
-    "request_id": "019951ab-d07d-703f-aaae-7e1c9a5afa95",
-    "success": true,
-    "timestamp": "2025-09-16T08:37:18.589Z",
-    "tool": "observable_tool"
-  },
-  "trace": {
-    "request_id": "019951ab-d07d-703f-aaae-7e1c9a5afa95",
-    "timestamp": "2025-09-16T08:37:18.589Z",
-    "tool": "observable_tool",
-    "version": "1.0.0"
-  },
-  "user_id": "1"
-}
-----
-
-See also: xref:components:processors/log.adoc[`log` processor], xref:components:processors/try.adoc[`try` processor], xref:guides:bloblang/functions.adoc[Bloblang functions] (for timing and ID generation)
-
-=== Multi-step data enrichment
-
-Build tools that combine data from multiple sources.
-
-This workflow fetches customer data from a SQL database, enriches it with recent order history, and computes summary metrics.
-
-NOTE: This example requires setting the `POSTGRES_DSN` environment variable with your PostgreSQL connection string. For example, `export POSTGRES_DSN="postgres://user:password@localhost:5432/dbname"`.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/processors/customer-enrichment.yaml[]
-----
-
-See also: xref:components:processors/sql_select.adoc[`sql_select` processor], xref:guides:bloblang/about.adoc[Bloblang functions] (for data manipulation and aggregations)
-
-=== Workflow orchestration
-
-Coordinate complex workflows with multiple steps and conditional logic.
-
-This workflow simulates a complete order processing configuration with mock data for inventory and processing tiers. This allows you to test the full logic without needing real external systems.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/processors/order-workflow.yaml[]
-----
-
-For the input `{"order_id": "ORD001", "product_id": "widget-001", "quantity": 5, "total": 250, "customer_tier": "vip"}`, the workflow produces:
-
-[source,json]
-----
-{
-  "assigned_rep": "vip-team@company.com",
-  "available_quantity": 100,
-  "customer_tier": "vip",
-  "estimated_fulfillment": "TBD - calculated based on processing tier",
-  "inventory_check": "passed",
-  "order_id": "ORD001",
-  "order_status": "processed",
-  "perks": [
-    "expedited_shipping",
-    "white_glove_service"
-  ],
-  "priority_score": 90,
-  "processed_at": "2025-09-16T09:05:29.138Z",
-  "processing_tier": "vip",
-  "processing_time_estimate": "1-2 hours",
-  "processing_time_hours": 2,
-  "product_id": "widget-001",
-  "product_name": "Standard Widget",
-  "quantity": 5,
-  "total": 250
-}
-----
-
-Notice how the workflow:
-
-. Preserves original input: `order_id`, `product_id`, `quantity`, `total`, and `customer_tier` pass through unchanged.
-. Adds inventory data: `available_quantity`, `product_name`, and `inventory_check` status from the mock lookup.
-. Routes by customer tier: Since `customer_tier` is `vip`, it gets VIP processing with special `perks` and priority.
-. Enriches with processing metadata: `assigned_rep`, `priority_score`, `processing_tier`, and time estimates.
-. Finalizes with timestamps: `order_status`, `processed_at`, and calculated `processing_time_hours`.
+NOTE: The multi-step enrichment example requires setting the `POSTGRES_DSN` environment variable with your PostgreSQL connection string. For example, `export POSTGRES_DSN="postgres://user:password@localhost:5432/dbname"`.
 
 == Suggested reading
 
