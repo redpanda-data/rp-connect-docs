@@ -1,17 +1,36 @@
 = Redpanda Connect MCP Server Quickstart
-:description: Expose your Redpanda Connect configurations to Claude Code as AI-consumable HTTP endpoints.
+:description: Learn how to expose your Redpanda Connect configurations as AI-consumable tools using the Model Context Protocol (MCP).
 
-This quickstart shows you how to build a Redpanda Connect configuration that searches Bluesky posts using a customizable query. You'll expose this configuration to Claude Code as a tool through an *MCP server*, then ask Claude to perform the search using natural language.
+This quickstart teaches you how to build a local MCP server that exposes Redpanda Connect configurations as tools that AI assistants can use. You'll create a tool that searches Bluesky posts, then ask Claude Code to perform the search using natural language:
 
 > Find recent posts on Bluesky mentioning Redpanda.
 
-The MCP server makes your local tools *AI-consumable*. It exposes them with metadata that Claude can understand and use to:
+== What you'll learn
 
-- Discover available tools
-- Understand required inputs and output format
-- Make intelligent, structured HTTP requests
+By completing this quickstart, you'll understand:
 
-This enables natural-language automation for internal workflows, using your own business logic.
+* How MCP enables AI assistants to discover and use your tools.
+* How to structure Redpanda Connect configurations as MCP tools.
+* How to run a local MCP server and connect it to Claude Code.
+* How AI agents orchestrate your tools through natural language.
+
+== How MCP works
+
+The Model Context Protocol (MCP) makes your tools *AI-consumable* by exposing them with structured metadata:
+
+* **MCP Server**: A local HTTP service that hosts your Redpanda Connect configurations as discoverable tools.
+* **Tools**: Individual Redpanda Connect configurations (processors, inputs, outputs, caches) exposed through the server.
+* **Metadata**: Structured descriptions of what each tool does, what inputs it needs, and what outputs it returns.
+* **Client**: An AI assistant (like Claude Code) that discovers your tools and calls them based on user requests.
+
+When you ask Claude to "search Bluesky for Redpanda news," Claude:
+
+. Discovers your `search-bluesky-posts` tool through the MCP server
+. Understands it needs a `query` parameter
+. Calls your tool with the appropriate query
+. Returns the results in natural language
+
+This enables natural-language automation for internal workflows using your own business logic.
 
 == Prerequisites
 
@@ -153,7 +172,17 @@ Only tools with the specified `--tag` are exposed. This helps you:
 
 == Connect Claude Code to your MCP server
 
-To connect Claude Code to your MCP server, you need to expose a live event stream that Claude can consume. This is done using the link:https://www.npmjs.com/package/mcp-remote[`mcp-remote` utility^], which bridges your local service to Claude's MCP interface. `mcp-remote` is a lightweight bridge that turns any streaming HTTP endpoint into a source of MCP-compatible messages.
+Now that your MCP server is running and exposing tools, you can connect Claude Code so it can discover and use them.
+
+Claude Code communicates with MCP servers using the standard input/output (stdio) transport protocol. Because your Redpanda Connect MCP server exposes tools over HTTP with Server-Sent Events (SSE), you need a bridge to convert between these protocols. The link:https://www.npmjs.com/package/mcp-remote[`mcp-remote` utility^] provides this bridge.
+
+When you connect Claude Code:
+
+- `mcp-remote` subscribes to your server's SSE endpoint (`http://localhost:4195/sse`).
+- It translates HTTP/SSE messages into stdio format that Claude understands.
+- Claude automatically discovers your tools and their metadata.
+- You can ask Claude in natural language to use your tools.
+- Claude calls the appropriate tool based on your request.
 
 . Open a new terminal window.
 
@@ -190,9 +219,9 @@ Tools for local (1 tools)
 
 . Press *Esc* until you return to the main prompt.
 
-== Write a prompt that uses the tool
+== Use the tool with Claude
 
-To use the `search-bluesky-posts` tool in Claude, write a prompt that includes a natural language request.
+Now you can see MCP in action. When you ask Claude to search Bluesky, watch what happens behind the scenes.
 
 . Enter the following prompt to start a conversation with Claude Code:
 +
@@ -228,14 +257,18 @@ claude Search Bluesky for the latest news about Redpanda Data
 │   2. Yes, and don't ask again for local:search-bluesky-posts commands in /Users/jakecahill/Documents/my-agent  │
 │   3. No, and tell Claude what to do differently (esc)
 ----
-
-Claude will:
-
-. Fill in the `query` property
-. Send an HTTP request to your local MCP server
-. Return the result in conversation
-
-If you change the YAML configuration of your tools, make sure to restart the MCP server to pick up the changes.
++
+This is what happens:
++
+--
+* Claude analyzes your natural language request.
+* Claude identifies the `search-bluesky-posts` tool as the right one to use.
+* Claude extracts "Redpanda Data" as the query parameter.
+* Claude calls your local MCP server via `mcp-remote`.
+* Your Redpanda Connect configuration executes the Bluesky API request.
+* Results flow back through the MCP server to Claude.
+* Claude synthesizes the results into a conversational response.
+--
 
 Here's an example of what the result might look like:
 
@@ -261,11 +294,22 @@ Here's an example of what the result might look like:
   momentum in hiring and customer wins.
 ----
 
+[NOTE]
+====
+If you change the YAML configuration of your tools, restart the MCP server to pick up the changes.
+====
+
 == Stop or disconnect the MCP server
 
 To disconnect or stop the MCP server, press kbd:[Ctrl+C] in the terminal where the server is running. This will gracefully shut down the MCP server process and disconnect any connected clients.
 
 You can also close the terminal window or kill the process using standard OS commands (such as `kill <pid>` on Linux/macOS).
+
+== Summary
+
+You extended Claude's capabilities with a custom tool built from Redpanda Connect components. Claude can now search Bluesky through natural language commands—no manual API calls or scripting required.
+
+This same pattern works for any workflow you can build with Redpanda Connect: consuming from Kafka topics, transforming data, calling APIs, querying databases, or orchestrating complex data pipelines. Each configuration becomes an AI-consumable tool.
 
 == Troubleshoot
 
@@ -351,10 +395,16 @@ claude mcp add local -- npx mcp-remote http://localhost:4196/sse
 
 == Next steps
 
-Try adding more tools under the same `example` tag to expand Claude Code's capabilities. See xref:ai-agents:mcp-server/developer-guide.adoc[].
+Now that you understand how MCP works with Redpanda Connect, you can create custom tools for your specific workflows:
 
-View the xref:components:about.adoc[full catalog of connectors] you can use to build more tools.
+* **Data pipeline orchestration**: Build tools that consume from Kafka topics, transform data, and write to destinations—let AI orchestrate complex pipelines
+* **API integrations**: Create tools that call internal APIs, third-party services, or webhooks—AI handles the request formatting and error handling
+* **Database operations**: Add tools for querying, inserting, or updating data—natural language becomes your query interface
+* **Monitoring and observability**: Expose tools that check system health, query metrics, or analyze logs—ask AI to investigate issues
+* **Multi-step workflows**: Combine multiple tools with different tags—AI chains them together based on your requirements
 
-NOTE: You can connect any MCP client to your MCP server. For a list of example clients, see the link:https://modelcontextprotocol.io/clients[MCP documentation^].
+See xref:ai-agents:mcp-server/developer-guide.adoc[] to learn advanced patterns for building MCP tools.
+
+View the xref:components:about.adoc[full catalog of Redpanda Connect components] you can use to build tools.
 
 
