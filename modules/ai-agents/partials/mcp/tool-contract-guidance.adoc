@@ -1,0 +1,39 @@
+// Single-sourced partial for MCP tool contract design guidance
+// Used in both Connect and Cloud developer guides
+//
+// Include from Connect: include::ai-agents:partial$mcp/tool-contract-guidance.adoc[]
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/tool-contract-guidance.adoc[]
+
+Each MCP tool must declare its interface using `meta.mcp` metadata. This metadata allows AI clients to discover and invoke the tool correctly.
+
+Define a clear, stable interface for each tool. Keep the description task-oriented and keep parameters to a minimum.
+
+[source,yaml]
+----
+meta:
+  mcp:
+    enabled: true <1>
+    description: "Fetches a compact summary from an external API using two optional parameters." <2>
+    properties: <3>
+      - name: parameter1
+        type: string
+        description: "Primary filter; defaults to provider standard when omitted."
+        required: false
+      - name: parameter2
+        type: number
+        description: "Limit of results (1-100)."
+        required: false
+----
+
+<1> Set `meta.mcp.enabled: true` to expose the tool using MCP.
+<2> Add a concise description that explains what the tool does. The description is passed as a tool option, making it available to clients and documentation. This should be understandable by an AI model.
+<3> List the input parameters (properties) for the tool.
+
+Property guidance:
+
+* Use `string`, `number`, or `boolean` types.
+* Validate ranges and enums using xref:guides:bloblang/about.adoc[Bloblang].
+* Mark only mandatory fields as required.
+* Document defaults in the `description` and enforce them in the configuration.
+
+After defining your tool contract, implement the configuration to handle input validation, defaults, and the main processing steps.

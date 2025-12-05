@@ -1,0 +1,76 @@
+// Single-sourced partial for MCP configuration examples
+// Shows correct and incorrect ways to structure MCP tool configurations
+//
+// Include from Connect: include::ai-agents:partial$mcp/config-examples.adoc[]
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/config-examples.adoc[]
+
+=== Configuration examples
+
+.Correct example
+[source,yaml]
+----
+label: event-reader
+redpanda:
+ifdef::env-cloud[]
+  seed_brokers: [ "${secrets.REDPANDA_BROKERS}" ]
+endif::[]
+ifndef::env-cloud[]
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+endif::[]
+  topics: [ "events" ]
+  consumer_group: "mcp-reader"
+
+meta:
+  mcp:
+    enabled: true
+    description: "Consume events from Redpanda"
+----
+
+.Correct example
+[source,yaml]
+----
+label: fetch-example-data
+processors:
+  - label: safe_operation
+    try:
+      - http:
+          url: "https://api.example.com/data"
+          timeout: "10s"
+      - mutation: |
+          root = this.merge({"processed": true})
+
+  - label: handle_errors
+    catch:
+      - mutation: |
+          root = {
+            "error": "Operation failed",
+            "details": error()
+          }
+----
+
+.Incorrect (do not include the input wrapper)
+[source,yaml]
+----
+label: incorrect-example
+input:
+  redpanda:
+ifdef::env-cloud[]
+    seed_brokers: [ "${secrets.REDPANDA_BROKERS}" ]
+endif::[]
+ifndef::env-cloud[]
+    seed_brokers: [ "${REDPANDA_BROKERS}" ]
+endif::[]
+    topics: [ "events" ]
+----
+
+.Incorrect (multiple component types in one file)
+[source,yaml]
+----
+label: incorrect-example
+input:
+  redpanda: { ... }
+processors:
+  - mutation: { ... }
+output:
+  redpanda: { ... }
+----
