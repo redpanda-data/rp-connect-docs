@@ -21,6 +21,7 @@ TOTAL=0
 PASSED=0
 FAILED=0
 SKIPPED=0
+MCP_FAILS=0
 
 echo "🧪 Redpanda Connect MCP Examples Test Suite"
 echo "============================================"
@@ -124,7 +125,9 @@ for file in $PATTERN; do
         if lint_config "$file" "$component_type"; then
             # Validate MCP metadata (if applicable)
             if [[ "$component_type" != "o11y" ]]; then
-                validate_mcp_metadata "$file" "$component_type" || true
+                if ! validate_mcp_metadata "$file" "$component_type"; then
+                    MCP_FAILS=$((MCP_FAILS + 1))
+                fi
             fi
         fi
     fi
@@ -138,12 +141,16 @@ echo "============================================"
 echo "Total configs tested: $TOTAL"
 echo -e "Passed: ${GREEN}$PASSED${NC}"
 echo -e "Failed: ${RED}$FAILED${NC}"
+if [[ $MCP_FAILS -gt 0 ]]; then
+    echo -e "MCP validation failures: ${RED}$MCP_FAILS${NC}"
+fi
 if [[ $SKIPPED -gt 0 ]]; then
     echo -e "Skipped: ${YELLOW}$SKIPPED${NC}"
 fi
 echo ""
 
-if [[ $FAILED -gt 0 ]]; then
+TOTAL_FAILURES=$((FAILED + MCP_FAILS))
+if [[ $TOTAL_FAILURES -gt 0 ]]; then
     echo -e "${RED}❌ Some tests failed${NC}"
     exit 1
 else
