@@ -77,8 +77,10 @@ validate_mcp_metadata() {
     fi
 
     # Check for required MCP fields
-    local has_enabled=$(grep -c "enabled: true" "$file" || echo 0)
-    local has_description=$(grep -c "description:" "$file" || echo 0)
+    local has_enabled
+    local has_description
+    has_enabled=$(grep -c "enabled: true" "$file" || echo 0)
+    has_description=$(grep -c "description:" "$file" || echo 0)
 
     if [[ $has_enabled -eq 0 ]]; then
         echo -e "${YELLOW}WARNING${NC} (mcp.enabled not set to true)"
