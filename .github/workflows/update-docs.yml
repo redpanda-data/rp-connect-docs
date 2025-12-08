@@ -51,13 +51,13 @@ jobs:
 
       - name: Install tools
         run: |
-          npx doc-tools install-test-dependencies
+          npx --no-install doc-tools install-test-dependencies
           rpk connect install
 
       - name: Generate RPCN Connector docs
         id: generate
         run: |
-          npx doc-tools generate rpcn-connector-docs \
+          npx --no-install doc-tools generate rpcn-connector-docs \
             --fetch-connectors \
             --overrides $DOCS_OVERRIDES \
             --draft-missing \
