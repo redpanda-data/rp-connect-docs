@@ -18,7 +18,7 @@ content:
     branches: main
     start_paths: [docs,'*/docs']
   - url: https://github.com/redpanda-data/cloud-docs
-    branches: main
+    branches: DOC-1844
 ui:
   bundle:
     url: https://github.com/redpanda-data/docs-ui/releases/latest/download/ui-bundle.zip
@@ -32,6 +32,7 @@ asciidoc:
   - '@redpanda-data/docs-extensions-and-macros/macros/config-ref'
   - '@redpanda-data/docs-extensions-and-macros/macros/helm-ref'
   - '@redpanda-data/docs-extensions-and-macros/asciidoc-extensions/add-line-numbers-highlights'
+  - '@redpanda-data/docs-extensions-and-macros/macros/badge'
 antora:
   extensions:
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/generate-rp-connect-categories'

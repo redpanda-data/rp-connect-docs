@@ -8,44 +8,8 @@ Redpanda Connect's MCP (Model Context Protocol) server lets you expose your data
 * Accelerate automation and insight by letting AI trigger real business actions.
 * Control exposure so that only the tools you tag are visible to AI.
 
-== Use cases
-
-[cols="1,3a"]
-|===
-|Category |Example prompts
-
-|Operational monitoring
-|
-- "Check partition lag for customer-events topic."
-
-- "Show me the top 10 producers by message volume today."
-
-- "Get schema registry health status."
-
-|Data enrichment and analysis
-|
-- "Fetch user profile data and recent orders for customer ID 12345."
-
-- "Get real-time stock prices for symbols in my portfolio topic."
-
-- "Analyze sentiment of latest product reviews."
-
-|Team productivity
-|
-- "Deploy my microservice to the staging environment."
-
-- "Generate load test data for the payments service."
-
-- "Create a summary dashboard of this week's incident reports."
-
-|Business intelligence
-|
-- "What are the trending products in the last 24 hours?"
-
-- "Show revenue impact of the latest feature deployment."
-
-- "Get customer satisfaction scores from support tickets."
-|===
+// Use cases table - single-sourced from partial
+include::ai-agents:partial$mcp/use-cases-table.adoc[]
 
 == How it works
 
@@ -54,50 +18,11 @@ Redpanda Connect's MCP (Model Context Protocol) server lets you expose your data
 . AI clients can list, inspect, and invoke tools to trigger real business actions or analytics with validated, structured input.
 . All tool metadata is optimized for LLMs, so AI can understand what each tool does and how to use it.
 
-== Example: Customer analytics tool
+// Customer analytics example - single-sourced from partial
+include::ai-agents:partial$mcp/customer-analytics-example.adoc[]
 
-Here's how you might expose a customer analytics configuration as an MCP tool:
-
-[source,yaml]
-----
-label: analyze_customer_orders
-processors:
-  - label: fetch_customer_data
-    sql_select:
-      driver: "postgres"
-      dsn: "${secrets.POSTGRES_DSN}"
-      table: "orders"
-      where: "customer_id = ? AND created_at >= NOW() - INTERVAL '30 days'"
-      args_mapping: 'root = [this.customer_id]'
-
-  - label: calculate_metrics
-    mutation: |
-      root = {
-        "customer_id": this.0.customer_id,
-        "total_orders": this.length(),
-        "total_spent": this.map_each(o -> o.total).sum(),
-        "avg_order_value": this.map_each(o -> o.total).mean(),
-        "last_order_date": this.map_each(o -> o.created_at).max()
-      }
-
-meta:
-  mcp:
-    enabled: true
-    description: "Analyze a customer's order history and spending patterns over the last 30 days"
-    properties:
-      - name: customer_id
-        type: string
-        description: "Customer ID to analyze"
-        required: true
-----
-
-This tool can be invoked by an AI assistant with prompts like "analyze the order history for customer ID 12345" without needing to know the underlying SQL or processing logic.
-
-== MCP specification support
-
-Redpanda Connect MCP server implements the open MCP protocol for tool exposure. Only the tool concept from the MCP server specification is supported. Features such as MCP resources and prompts are not yet available.
-
-For full details, see the link:https://modelcontextprotocol.io/specification/2025-06-18/server[official MCP server specification^].
+// MCP specification support - single-sourced from partial
+include::ai-agents:partial$mcp/specification-support.adoc[]
 
 == Get started
 

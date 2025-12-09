@@ -1,0 +1,9 @@
+generate:
+  interval: 1s
+  count: 0
+  mapping: |
+    root.id = uuid_v4()
+    root.timestamp = now()
+    root.user_id = random_int(min: 1000, max: 9999)
+    root.event_type = ["login", "purchase", "logout"].index(random_int(max: 2))
+    root.amount = if this.event_type == "purchase" { random_int(min: 10, max: 500) }
