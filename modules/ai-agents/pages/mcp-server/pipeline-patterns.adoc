@@ -90,6 +90,21 @@ Create tools that write data to Redpanda topics using the `redpanda` output.
 include::ai-agents:example$resources/outputs/redpanda-publish.yaml[]
 ----
 
+==== Outputs with processors
+
+Output tools can include processors to transform data before publishing. This pattern is useful when you need to process data and save the result to a destination in a single tool.
+
+**When to use:** Processing user input with an LLM and saving the response, transforming data before publishing to a topic, enriching events before writing to external systems.
+
+**Example use cases:** Send a prompt to an LLM, then save the answer to a topic in Redpanda.
+
+[source,yaml]
+----
+include::ai-agents:example$resources/outputs/redpanda-output-with-processors.yaml[]
+----
+
+You can use an output component type with processors, but you cannot use a processor component type with outputs. The `processors` field is available in all output components.
+
 === Consuming from Redpanda topics
 
 Build tools that read data from topics and return processed results.
