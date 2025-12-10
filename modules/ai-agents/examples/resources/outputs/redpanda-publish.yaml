@@ -21,6 +21,6 @@ meta:
         description: "Customer ID for partitioning"
         required: true
       - name: order_data
-        type: object
-        description: "Order details (items, total, etc.)"
+        type: string
+        description: "Order details as JSON string (items, total, etc.)"
         required: true
