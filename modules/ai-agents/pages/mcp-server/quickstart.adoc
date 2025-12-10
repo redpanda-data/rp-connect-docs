@@ -1,7 +1,7 @@
 = Redpanda Connect MCP Server Quickstart
 :description: Learn how to expose your Redpanda Connect configurations as AI-consumable tools using the Model Context Protocol (MCP).
 
-This quickstart teaches you how to build a local MCP server that exposes Redpanda Connect configurations as tools that AI assistants can use. You'll create a tool that searches Bluesky posts, then ask Claude Code to perform the search using natural language:
+This quickstart builds a local MCP server that exposes Redpanda Connect configurations as tools that AI assistants can use. It creates a tool that searches Bluesky posts, then asks Claude Code to perform the search using natural language:
 
 > Find recent posts on Bluesky mentioning Redpanda.
 
@@ -16,12 +16,12 @@ By completing this quickstart, you'll understand:
 
 == How MCP works
 
-The Model Context Protocol (MCP) makes your tools *AI-consumable* by exposing them with structured metadata:
+The Model Context Protocol (MCP) makes your tools AI-consumable by exposing them with structured metadata:
 
-* **MCP Server**: A local HTTP service that hosts your Redpanda Connect configurations as discoverable tools.
-* **Tools**: Individual Redpanda Connect configurations (processors, inputs, outputs, caches) exposed through the server.
-* **Metadata**: Structured descriptions of what each tool does, what inputs it needs, and what outputs it returns.
-* **Client**: An AI assistant (like Claude Code) that discovers your tools and calls them based on user requests.
+* **MCP Server**: A local HTTP service that hosts your Redpanda Connect configurations as discoverable tools
+* **Tools**: Individual Redpanda Connect configurations (processors, inputs, outputs, caches) exposed through the server
+* **Metadata**: Structured descriptions of what each tool does, what inputs it needs, and what outputs it returns
+* **Client**: An AI assistant (like Claude Code) that discovers your tools and calls them based on user requests
 
 When you ask Claude to "search Bluesky for Redpanda news," Claude:
 
