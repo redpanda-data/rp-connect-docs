@@ -184,6 +184,8 @@ When you connect Claude Code:
 - You can ask Claude in natural language to use your tools.
 - Claude calls the appropriate tool based on your request.
 
+To set up this connection:
+
 . Open a new terminal window.
 
 . To install `mcp-remote`, run:
@@ -307,7 +309,7 @@ You can also close the terminal window or kill the process using standard OS com
 
 == Summary
 
-You extended Claude's capabilities with a custom tool built from Redpanda Connect components. Claude can now search Bluesky through natural language commands—no manual API calls or scripting required.
+You extended Claude's capabilities with a custom tool built from Redpanda Connect components. Claude can now search Bluesky through natural language commands without manual API calls or scripting.
 
 This same pattern works for any workflow you can build with Redpanda Connect: consuming from Kafka topics, transforming data, calling APIs, querying databases, or orchestrating complex data pipelines. Each configuration becomes an AI-consumable tool.
 
@@ -397,14 +399,12 @@ claude mcp add local -- npx mcp-remote http://localhost:4196/sse
 
 Now that you understand how MCP works with Redpanda Connect, you can create custom tools for your specific workflows:
 
-* **Data pipeline orchestration**: Build tools that consume from Kafka topics, transform data, and write to destinations—let AI orchestrate complex pipelines
-* **API integrations**: Create tools that call internal APIs, third-party services, or webhooks—AI handles the request formatting and error handling
-* **Database operations**: Add tools for querying, inserting, or updating data—natural language becomes your query interface
-* **Monitoring and observability**: Expose tools that check system health, query metrics, or analyze logs—ask AI to investigate issues
-* **Multi-step workflows**: Combine multiple tools with different tags—AI chains them together based on your requirements
-
-See xref:ai-agents:mcp-server/developer-guide.adoc[] to learn advanced patterns for building MCP tools.
-
-View the xref:components:about.adoc[full catalog of Redpanda Connect components] you can use to build tools.
+* **Data pipeline orchestration**: Build tools that consume from Kafka topics, transform data, and write to destinations.
+* **API integrations**: Create tools that call internal APIs, third-party services, or webhooks.
+* **Database operations**: Add tools for querying, inserting, or updating data using natural language.
+* **Monitoring and observability**: Expose tools that check system health, query metrics, or analyze logs.
+* **Multi-step workflows**: Combine multiple tools with different tags to handle complex operations.
+* **Advanced patterns**: See xref:ai-agents:mcp-server/developer-guide.adoc[] to learn advanced patterns for building MCP tools.
+* **Component reference**: View the xref:components:about.adoc[full catalog of Redpanda Connect components] you can use to build tools.
 
 

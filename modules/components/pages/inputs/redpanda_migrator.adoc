@@ -61,7 +61,7 @@ For workloads with high message rates or large messages, adjust these fields:
 - `partition_buffer_bytes`: Increase to 10MB or higher (default: 1MB)
 - `max_yield_batch_bytes`: Increase to 100MB or higher (default: 10MB)
 
-Increasing these values allows the consumer to buffer more data per partition and yield larger batches, reducing overhead and improving throughput. Higher values increase memory usage—monitor system resources accordingly.
+Increasing these values allows the consumer to buffer more data per partition and yield larger batches, reducing overhead and improving throughput. Higher values increase memory usage, so monitor system resources accordingly.
 
 == Metrics
 This input emits an `input_redpanda_migrator_lag` metric with `topic` and `partition` labels for each consumed topic. This metric records the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group. Monitor this metric to track migration progress and detect bottlenecks.
