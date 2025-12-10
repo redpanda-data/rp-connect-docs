@@ -77,7 +77,7 @@ Build tools that interact with Redpanda topics to publish data, consume events, 
 
 NOTE: The examples in this section require setting the `REDPANDA_BROKERS` environment variable with your Redpanda broker addresses. For example, `export REDPANDA_BROKERS="localhost:19092"`.
 
-=== Publishing to Redpanda topics
+=== Publish to Redpanda topics
 
 Create tools that write data to Redpanda topics using the `redpanda` output.
 
@@ -105,7 +105,7 @@ include::ai-agents:example$resources/outputs/redpanda-output-with-processors.yam
 
 You can use an output component type with processors, but you cannot use a processor component type with outputs. The `processors` field is available in all output components.
 
-=== Consuming from Redpanda topics
+=== Consume from Redpanda topics
 
 Build tools that read data from topics and return processed results.
 
