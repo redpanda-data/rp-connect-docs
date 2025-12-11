@@ -25,15 +25,13 @@ echo ""
 
 # Run MCP server lint on the directory
 echo "Running rpk connect mcp-server lint..."
-LINT_OUTPUT=$(rpk connect mcp-server lint --skip-env-var-check --verbose 2>&1)
-if [ -n "$LINT_OUTPUT" ]; then
+LINT_OUTPUT=$(rpk connect mcp-server lint --skip-env-var-check --verbose 2>&1) || {
     echo -e "${RED}❌ Linting failed${NC}"
     echo ""
     echo "$LINT_OUTPUT"
     exit 1
-else
-    echo -e "${GREEN}✅ Linting passed${NC}"
-fi
+}
+echo -e "${GREEN}✅ Linting passed${NC}"
 echo ""
 
 # Function to validate MCP metadata
