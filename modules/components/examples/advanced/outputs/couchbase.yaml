@@ -11,6 +11,7 @@ outputs:
     timeout: 15s
     id: "" # No default (required)
     content: "" # No default (optional)
+    ttl: "" # No default (optional)
     operation: upsert
     max_in_flight: 64
     batching:

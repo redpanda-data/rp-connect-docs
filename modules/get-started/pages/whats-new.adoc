@@ -9,6 +9,49 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.73.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.73.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|tcp
+|TCP listener socket configuration.
+|*Inputs:*
+
+* xref:components:inputs/socket_server.adoc#tcp[socket_server]
+
+
+|ttl
+|An optional TTL to set for items.
+|*Outputs:*
+
+* xref:components:outputs/couchbase.adoc#ttl[couchbase]
+
+
+*Processors:*
+
+* xref:components:processors/couchbase.adoc#ttl[couchbase]
+
+
+|schema_registry
+|Schema registry information to publish schemas for tracing data along with the data.
+|*Tracers:*
+
+* xref:components:tracers/redpanda.adoc#schema_registry[redpanda]
+
+
+|===
+
+
 == Version 4.72.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.72.0[See the full release notes^].

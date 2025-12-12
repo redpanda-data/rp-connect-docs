@@ -1,0 +1,46 @@
+{
+  "comparison": {
+    "oldVersion": "4.72.0",
+    "newVersion": "4.73.0",
+    "timestamp": "2025-12-12T15:21:06.671Z"
+  },
+  "summary": {
+    "newComponents": 0,
+    "removedComponents": 0,
+    "newFields": 4,
+    "removedFields": 0,
+    "deprecatedComponents": 0,
+    "deprecatedFields": 0,
+    "changedDefaults": 0
+  },
+  "details": {
+    "newComponents": [],
+    "removedComponents": [],
+    "newFields": [
+      {
+        "component": "inputs:socket_server",
+        "field": "tcp",
+        "description": "TCP listener socket configuration."
+      },
+      {
+        "component": "outputs:couchbase",
+        "field": "ttl",
+        "description": "An optional TTL to set for items."
+      },
+      {
+        "component": "processors:couchbase",
+        "field": "ttl",
+        "description": "An optional TTL to set for items."
+      },
+      {
+        "component": "tracers:redpanda",
+        "field": "schema_registry",
+        "description": "Schema registry information to publish schemas for tracing data along with the data."
+      }
+    ],
+    "removedFields": [],
+    "deprecatedComponents": [],
+    "deprecatedFields": [],
+    "changedDefaults": []
+  }
+}
