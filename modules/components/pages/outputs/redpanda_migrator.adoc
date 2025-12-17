@@ -48,7 +48,16 @@ When using multiple migrator pairs in a pipeline, match the `label` field exactl
 
 == Performance tuning
 
-For high-throughput workloads, adjust buffer sizes on the input component. xref:components:inputs/redpanda_migrator.adoc#performance-tuning[See input docs for tuning advice.]
+For high-throughput workloads, adjust the following settings:
+
+On this output component:
+
+- `max_in_flight`: Set to the total number of partitions being copied in parallel (up to all partitions in the cluster)
+
+On the paired xref:components:inputs/redpanda_migrator.adoc#performance-tuning[`redpanda_migrator` input component]:
+
+- `partition_buffer_bytes`: Set to 2MB to increase per-partition buffer size
+- `max_yield_batch_bytes`: Set to 1MB to allow larger batches to be yielded
 
 == Synchronization details
 
