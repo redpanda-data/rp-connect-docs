@@ -1,0 +1,13 @@
+// Single-sourced partial for Cloud-specific YAML configuration rules
+// This version describes component types without directory structure (managed in Cloud UI)
+//
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/yaml-config-rules-cloud.adoc[]
+
+=== YAML configuration rules
+
+Each YAML configuration (tool) should contain exactly one component type. The component type is inferred from the type you choose in the dropdown when creating or editing the MCP server. Valid component types are:
+
+* xref:develop:connect/components/inputs/about.adoc[`input`] (for data sources)
+* xref:develop:connect/components/outputs/about.adoc[`output`] (for data sinks)
+* xref:develop:connect/components/processors/about.adoc[`processor`] (for data transformations and data access)
+* xref:develop:connect/components/caches/about.adoc[`cache`] (for caching intermediate results)

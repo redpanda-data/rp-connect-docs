@@ -1,0 +1,13 @@
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topic: "llm-responses"
+
+processors:
+  - openai_chat_completion:
+      api_key: "${OPENAI_API_KEY}"
+      model: "gpt-4"
+      prompt: ${! json("question") }
+  - mapping: |
+      root.question = this.question
+      root.answer = this.content
+      root.timestamp = now().ts_format("2006-01-02T15:04:05Z07:00")

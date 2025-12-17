@@ -1,0 +1,77 @@
+name: Test MCP Examples
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'modules/ai-agents/examples/**/*.yaml'
+      - 'modules/ai-agents/examples/test-mcp-examples.sh'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'modules/ai-agents/examples/**/*.yaml'
+      - 'modules/ai-agents/examples/test-mcp-examples.sh'
+
+jobs:
+  lint-and-test:
+    name: Lint and Test All Examples
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Install tools
+        run: |
+          npx doc-tools install-test-dependencies
+          rpk connect install
+
+      - name: Make test script executable
+        run: chmod +x modules/ai-agents/examples/test-mcp-examples.sh
+
+      # Test all examples
+      - name: Run automated test script
+        run: |
+          cd modules/ai-agents/examples
+          ./test-mcp-examples.sh
+
+  test-matrix:
+    name: Test Examples by Component Type
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: [processors, inputs, outputs, caches, o11y]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Install tools
+        run: |
+          npx doc-tools install-test-dependencies
+          rpk connect install
+
+      - name: Make test script executable
+        run: chmod +x modules/ai-agents/examples/test-mcp-examples.sh
+
+      - name: Test ${{ matrix.component }} examples
+        run: |
+          cd modules/ai-agents/examples
+          ./test-mcp-examples.sh ${{ matrix.component }}

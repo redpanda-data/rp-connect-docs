@@ -9,8 +9,3 @@ meta:
   mcp:
     enabled: true
     description: "Consume order events to trigger workflows"
-    properties:
-      - name: event_type
-        type: string
-        description: "Type of event to process (order_created, order_cancelled, etc.)"
-        required: false
