@@ -3,6 +3,70 @@
 
 This guide teaches you how to build xref:ai-agents:mcp-server/overview.adoc[MCP servers with self-managed Redpanda Connect]. MCP servers run as part of your Redpanda Connect deployment and expose tools that AI clients can call using the Model Context Protocol.
 
+:tip-caption: New to MCP?
+
+TIP:  Start with the xref:ai-agents:mcp-server/quickstart.adoc[quickstart guide] for a 5-minute introduction.
+
+:tip-caption: Tip
+
+[[quick-start]]
+== Quick reference
+
+Run the following commands to create and start a basic MCP server with Redpanda Connect:
+
+[source,bash]
+----
+# 1. Create a new MCP server project
+rpk connect mcp-server init
+
+# 2. Remove example files
+rm resources/**/example-*.yaml
+
+# 3. Create your first tool (see examples on this page)
+# Edit resources/processors/my-tool.yaml
+
+# 4. Lint your configuration
+rpk connect mcp-server lint
+
+# 5. Start the server
+rpk connect mcp-server --address localhost:4195
+
+# 6. Connect Claude Code (in another terminal)
+claude mcp add local -- npx mcp-remote http://localhost:4195/sse
+----
+
+[[examples]]
+=== Common tool examples
+
+==== External API call
+
+Create `resources/processors/weather-api.yaml`:
+
+[source,yaml]
+----
+include::ai-agents:example$resources/processors/weather-api.yaml[]
+----
+
+==== Database query
+
+Create `resources/processors/database-query.yaml`:
+
+[source,yaml]
+----
+include::ai-agents:example$resources/processors/database-query.yaml[]
+----
+
+==== Redpanda consumer
+
+Create `resources/inputs/redpanda-consume.yaml`:
+
+[source,yaml]
+----
+include::ai-agents:example$resources/inputs/redpanda-consume.yaml[]
+----
+
+TIP: For more patterns including workflows, error handling, and observability, see xref:ai-agents:mcp-server/pipeline-patterns.adoc[].
+
 == Prerequisites
 
 * The xref:get-started:quickstarts/rpk.adoc[Redpanda CLI (`rpk`)]
@@ -16,103 +80,314 @@ TIP: For a quickstart, see xref:ai-agents:mcp-server/quickstart.adoc[].
 
 == Concepts and architecture
 
-MCP server:: A service that exposes tools through the Model Context Protocol. In Redpanda Connect, this is enabled using the `rpk connect mcp-server` command to start a dedicated MCP server process.
+[cols="1,3"]
+|===
+| Concept | Description
 
-Tool:: A single request/response operation exposed to MCP clients. Each tool is implemented as a Redpanda Connect configuration and described to MCP with `meta.mcp` metadata.
+| MCP Server
+| A service that exposes tools through the Model Context Protocol. Start a server with `rpk connect mcp-server`.
 
-Contract:: The formal interface a tool exposes to AI clients, including its description, input parameters and types. The contract ensures that clients know how to call the tool and what results to expect. In Redpanda Connect MCP, the contract is declared in the tool's `meta.mcp` metadata.
+| Tool
+| A single request/response operation. Implemented as a YAML configuration with `meta.mcp` metadata.
 
-Redpanda Connect configuration:: A YAML file that defines how data flows through inputs, processors, and outputs. When used as an MCP tool, Redpanda Connect configurations typically receive JSON input and return structured results.
+| Contract
+| The formal interface (description, parameters, types) declared in `meta.mcp`. AI clients use this to understand how to call your tool.
 
-Secrets:: Credentials and tokens should be stored as environment variables and referenced as `$\{ENV_VAR}`. Never hardcode secrets in YAML files.
+| Configuration
+| A YAML file defining data flow through inputs, processors, and outputs. Receives JSON input, returns structured results.
+
+| Secrets
+| Store as environment variables (`${ENV_VAR}`). Never hardcode credentials in YAML.
+|===
 
 == Development workflow
 
-. <<initialize, Initialize the project>>: Use the Redpanda CLI to scaffold your project.
-. <<contract, Design the tool contract>>: Annotate MCP metadata with `meta.mcp.enabled: true`, provide a concise description, and declare parameters.
-. <<pipeline-patterns, Implement the configuration>>: Build the logic for your MCP tool using Redpanda Connect configurations.
-. <<start-server, Lint and start the MCP server>>: Launch your server using `rpk connect mcp-server` to expose your tools.
-. <<connect, Connect your AI assistants>>: Set up Claude Code or other MCP clients to use your tools.
-. <<publish, Publish your MCP server (optional)>>: Make your MCP server discoverable by AI clients and agents by publishing it to an MCP registry. This enables authentication and access control for your tools.
+[.text-center]
+****
+*Initialize* → *Design Contract* → *Implement* → *Test* → *Connect Client* → *Publish (Optional)*
+****
+
+[cols="1,3,2"]
+|===
+| Step | What to do | Section
+
+| 1
+| Initialize project with `rpk connect mcp-server init`
+| <<initialize>>
+
+| 2
+| Design tool contract with `meta.mcp` metadata
+| <<contract>>
+
+| 3
+| Implement logic using Redpanda Connect components
+| <<create-tool>>
+
+| 4
+| Lint and start server
+| <<start-server>>
+
+| 5
+| Connect AI client (Claude Code, etc.)
+| <<connect>>
+
+| 6
+| Publish to MCP registry (optional)
+| <<publish>>
+|===
 
 [[initialize]]
-== Initialize a new MCP server project
+== Initialize project
 
-. Initialize a new MCP server project using the Redpanda CLI. This sets up the recommended folder structure and example configuration files.
-+
+Initialize a new MCP server project:
+
 [source,bash]
 ----
 rpk connect mcp-server init
 ----
-+
-This command scaffolds your project with the necessary directories and template YAML files for defining tools and observability resources.
-+
+
+This creates the following structure:
+
 [.no-copy]
 ----
-├── o11y
+├── o11y/                    # Observability configs
 │   ├── metrics.yaml
 │   └── tracer.yaml
-└── resources
-    ├── caches
-    │   └── example-cache.yaml
-    ├── inputs
-    │   └── example-input.yaml
-    ├── outputs
-    │   └── example-output.yaml
-    └── processors
-        └── example-processor.yaml
+└── resources/               # Tool definitions
+    ├── caches/
+    ├── inputs/
+    ├── outputs/
+    └── processors/
 ----
-+
-The `resources` directory is where you define your tools such as inputs, outputs, and processors. Each tool is defined in its own YAML file. By default, the `example-` files are provided as templates. The `o11y` directory contains configuration for observability, including metrics and tracing.
 
-. Remove the `example-` files and add your own tools:
-+
-[,bash]
-----
-rm resources/inputs/example-input.yaml
-rm resources/outputs/example-output.yaml
-rm resources/processors/example-processor.yaml
-rm resources/caches/example-cache.yaml
-----
-+
-Then, you can create new YAML files for each tool you want to expose. Make sure each file contains only one component type (input, output, processor, or cache). Put inputs in the `resources/inputs/` directory, outputs in `resources/outputs/`, processors in `resources/processors/`, and caches in `resources/caches/`.
+Each YAML file contains one tool. File location determines component type: `resources/inputs/` for input tools, `resources/outputs/` for output tools, `resources/processors/` for processor tools, and `resources/caches/` for cache tools.
 
-See the next sections for details on customizing these files for your use case.
+Remove example files before creating your own:
+
+[source,bash]
+----
+rm resources/**/example-*.yaml
+----
 
 [[contract]]
-== Design the tool contract and MCP metadata
+== Design tool contract
 
+<<<<<<< Updated upstream
 // Tool contract guidance - single-sourced from partial
 include::ai-agents:partial$mcp/tool-contract-guidance.adoc[]
+=======
+Every MCP tool needs a contract that AI clients use to understand how to call it.
 
-[[pipeline-patterns]]
-== Implement the configuration
+[source,yaml]
+----
+meta:
+  mcp:
+    enabled: true # <1>
+    description: "Fetch user profile data by ID" # <2>
+    properties: # <3>
+      - name: user_id
+        type: string
+        description: "The unique user identifier"
+        required: true
+      - name: include_orders
+        type: boolean
+        description: "Include order history (default: false)"
+        required: false
+----
+<1> Enable MCP exposure for this tool.
+<2> Clear, action-oriented description for AI clients.
+<3> Define input parameters with types and descriptions.
 
-Use Redpanda Connect components to implement the logic of your MCP tool. Here are some best practices:
+Contract design guidelines:
 
-* **Single responsibility**: Each tool should do one thing well.
-* **Descriptive naming**: Use clear, specific labels like `fetch-user-profile` instead of generic names like `get-data`. The top-level label becomes the tool's name in the MCP server.
-* **Input validation**: Always validate and sanitize user inputs using xref:guides:bloblang/about.adoc[Bloblang].
-* **Error handling**: Provide meaningful error messages.
-* **Documentation**: Write clear descriptions that explain what the tool does and what it returns.
+* Keep descriptions task-oriented and concise
+* Use only `string`, `number`, or `boolean` types
+* Mark only mandatory fields as `required: true`
+* Document default values in descriptions
+* Don't expose implementation details
+* Don't use complex nested types
+>>>>>>> Stashed changes
 
-For common patterns and examples, see xref:ai-agents:mcp-server/pipeline-patterns.adoc[].
+[[create-tool]]
+== Create your tool
 
-Here's a complete example that demonstrates best practices:
+=== Best practices
+
+[cols="1,3"]
+|===
+| Principle | Description
+
+| Single responsibility
+| Each tool does one thing well.
+
+| Descriptive naming
+| Use `fetch-user-profile`, not `get-data`. The label becomes the tool name.
+
+| Input validation
+| Always validate user inputs using xref:guides:bloblang/about.adoc[Bloblang].
+
+| Error handling
+| Use `try`/`catch` blocks with meaningful error messages.
+
+| Environment secrets
+| Reference credentials as `${ENV_VAR}`, never hardcode.
+|===
+
+=== Complete example
+
+Here's a production-ready tool showing all best practices:
 
 [source,yaml]
 ----
 include::ai-agents:example$resources/processors/weather-service.yaml[]
 ----
 
+<<<<<<< Updated upstream
 // YAML configuration rules - single-sourced from partial
 include::ai-agents:partial$mcp/yaml-config-rules-connect.adoc[]
+=======
+For more patterns, see xref:ai-agents:mcp-server/pipeline-patterns.adoc[].
+
+=== YAML configuration rules
+>>>>>>> Stashed changes
 
 // Property restrictions table - single-sourced from partial
 include::ai-agents:partial$mcp/property-restrictions-table.adoc[]
 
+<<<<<<< Updated upstream
 // Configuration examples - single-sourced from partial
 include::ai-agents:partial$mcp/config-examples.adoc[]
+=======
+[cols="1,1", options="header"]
+|===
+| Directory | Component type
+
+| `resources/inputs/`
+| Input component
+
+| `resources/outputs/`
+| Output component
+
+| `resources/processors/`
+| Processor component
+
+| `resources/caches/`
+| Cache component
+|===
+
+Common mistakes to avoid:
+
+- Wrapping components in `input:` or `output:` blocks
+- Multiple top-level component types in one file (like having separate `input:`, `processors:`, and `output:` sections)
+- Using `try`/`catch` as a single processor (must be separate)
+- Hardcoding secrets instead of using `${ENV_VAR}`
+- Generic tool names like `get-data` or `processor1`.
+
+NOTE: Outputs and inputs can include processors as part of their configuration. For example, an output can have a `processors:` section to transform data before publishing. See xref:ai-agents:mcp-server/pipeline-patterns.adoc#outputs-with-processors[outputs with processors] for examples.
+
+=== Property restrictions by component type
+
+Different component types have different property capabilities when exposed as MCP tools:
+
+[cols="1,2,2"]
+|===
+| Component type | Property support | Details
+
+| `input`
+| Only supports `count` property
+| AI clients can specify how many messages to read, but you cannot define custom properties.
+
+| `cache`
+| No custom properties
+| Properties are hardcoded to `key` and `value` for cache operations.
+
+| `output`
+| Custom properties supported
+| AI sees properties as an array for batch operations: `[{prop1, prop2}, {prop1, prop2}]`.
+
+| `processor`
+| Custom properties supported
+| You can define any properties needed for data processing operations.
+|===
+
+.Correct example when inside resources/inputs/
+[source,yaml]
+----
+label: event-reader
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topics: [ "events" ]
+  consumer_group: "mcp-reader"
+
+meta:
+  mcp:
+    enabled: true
+    description: "Consume events from Redpanda"
+----
+
+.Correct example when inside resources/processors/
+[source,yaml]
+----
+label: fetch-example-data
+processors:
+  - label: safe_operation
+    try:
+      - http:
+          url: "https://api.example.com/data"
+          timeout: "10s"
+      - mutation: |
+          root = this.merge({"processed": true})
+
+  - label: handle_errors
+    catch:
+      - mutation: |
+          root = {
+            "error": "Operation failed",
+            "details": error()
+          }
+----
+
+.Correct example of output with processors when inside resources/outputs/
+[source,yaml]
+----
+label: publish-with-transform
+processors:  # <1>
+  - mutation: |
+      root = this
+      root.published_at = now()
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topic: "processed-events"
+meta:
+  mcp:
+    enabled: true
+    description: "Publish data to Redpanda with timestamp"
+----
+<1> Processors within an output are allowed and transform data before publishing.
+
+.Incorrect (do not include the input wrapper)
+[source,yaml]
+----
+label: incorrect-example
+input:
+  redpanda:
+    seed_brokers: [ "${REDPANDA_BROKERS}" ]
+    topics: [ "events" ]
+----
+
+.Incorrect (multiple top-level component types in one file)
+[source,yaml]
+----
+label: incorrect-example
+input:  # <1>
+  redpanda: { ... }
+processors:  # <1>
+  - mutation: { ... }
+output:  # <1>
+  redpanda: { ... }
+----
+<1> This file has three top-level component types. Each must be in its own file.
+>>>>>>> Stashed changes
 
 .Incorrect (try/catch as single processor)
 [source,yaml]
@@ -124,6 +399,56 @@ processors:
       - http: { ... }
     catch:
       - mutation: { ... }
+----
+
+[[troubleshooting]]
+== Troubleshoot
+
+This section covers common issues and debugging techniques when developing MCP tools with Redpanda Connect.
+
+=== Tool not appearing in MCP client
+
+Check that `meta.mcp.enabled: true` is set. Verify the MCP server is running on the expected port. Ensure the tool has the correct tag specified in the server startup command.
+
+=== Unable to infer component type
+
+If you see errors like:
+
+[source]
+----
+resources/inputs/redpanda-consume.yaml(1,1) unable to infer component type: [input processors cache_resources meta]
+resources/outputs/redpanda-publish.yaml(1,1) unable to infer component type: [processors output meta]
+----
+
+This means your YAML file contains more than one top-level component type, or uses a wrapper (such as `input:` or `output:`) that is not allowed. Each YAML file must contain only a single top-level component type, and should not be wrapped in an `input:` or `output:` block.
+
+Note that outputs and inputs can include `processors:` sections as part of their configuration. The error occurs when you have multiple top-level types like having both `input:` and `output:` in the same file.
+
+To fix this, split out each top-level component type into its own file (for example, one file for the input, one for standalone processors, one for the output). See <<yaml-configuration-rules, YAML configuration rules>> for correct examples.
+
+.Example of incorrect YAML
+[source,yaml]
+----
+input:
+  redpanda: { ... }
+processors:
+  - mutation: { ... }
+output:
+  redpanda: { ... }
+----
+
+.Example of correct YAML (for an input)
+[source,yaml]
+----
+label: my_input
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topics: [ "events" ]
+  consumer_group: "mcp-reader"
+meta:
+  mcp:
+    enabled: true
+    description: "Consume events from Redpanda"
 ----
 
 [[start-server]]
@@ -159,11 +484,7 @@ time=2025-06-27T15:20:27.978+01:00 level=INFO msg="Successfully loaded Redpanda 
 
 === Expose a subset of tools
 
-To expose only a subset of tools, use the `--tag` flag. This helps you:
-
-- Keep experiments isolated.
-- Avoid exposing sensitive functionality accidentally.
-- Create sets of tools that are relevant to specific agents or workflows.
+To expose only a subset of tools, use the `--tag` flag. This helps you keep experiments isolated, avoid exposing sensitive functionality accidentally, and create sets of tools that are relevant to specific agents or workflows.
 
 For example, to expose only tools tagged with `example`, start the server with:
 
@@ -188,120 +509,37 @@ Refer to your client's documentation for details on supported options and advanc
 [[connect-claude]]
 === Connect Claude Code to your MCP server
 
-To connect Claude Code to your MCP server, you need to expose a live event stream that Claude can consume. This is done using the link:https://www.npmjs.com/package/mcp-remote[`mcp-remote` utility^], which bridges your local service to Claude's MCP interface. `mcp-remote` is a lightweight bridge that turns any streaming HTTP endpoint into a source of MCP-compatible messages.
+To connect Claude Code to your MCP server, you need to expose a live event stream that Claude can consume. This is done using the link:https://www.npmjs.com/package/mcp-remote[mcp-remote utility^], which bridges your local service to Claude's MCP interface.
 
-. To install `mcp-remote`, run:
-+
-[,bash]
+[source,bash]
 ----
 claude mcp add local -- npx mcp-remote http://localhost:4195/sse
 ----
-+
+
 You should see output like this:
-+
+
 [.no-copy]
 ----
 Added stdio MCP server local with command: npx mcp-remote http://localhost:4195/sse to local config
 ----
-+
-- `claude mcp add local --`
-+
-This tells Claude to set up a new *local input channel*, which is a subprocess or pipe that streams messages. The `--` delimiter ensures that everything after it is treated as a shell command to execute.
-+
-- `npx mcp-remote http://localhost:4195/sse`
-+
-This runs the `mcp-remote` utility, which:
-+
---
-** Connects to the provided SSE endpoint
-** Converts events into MCP message format
-** Writes them to stdout
---
-+
-Claude reads these messages from the subprocess, treating them as if they were emitted by a native MCP agent.
 
-. Verify that the local input channel is set up correctly by running:
-+
+Verify the connection:
+
 [source,bash]
 ----
 claude /mcp
 ----
-+
-You should see an entry for `local` with the command you just added.
-+
-Press *Enter* until you see the tools list.
-+
-[.no-copy,role="no-wrap"]
-----
-Tools for local (1 tools)
-│ ❯ 1. search-bluesky-posts
-----
 
-In summary, the flow is:
+Press *Enter* until you see your tools listed.
 
-- Your MCP server exposes a Server-Sent Events (SSE) stream at `http://localhost:4195/sse`.
-- `mcp-remote` connects to that stream and reads the events.
-- `mcp-remote` converts each event into a structured MCP message.
-- Those messages are forwarded to Claude Code through the local input channel created by `claude mcp add local`.
+NOTE: How it works: `mcp-remote` connects to the SSE endpoint at `http://localhost:4195/sse`, converts events into MCP message format, and pipes them to Claude Code via stdout. Claude reads these messages from the subprocess, treating them as if they were emitted by a native MCP agent.
 
 [[publish]]
-== Publish your MCP server
+== Publish your MCP server (optional)
 
 To make your MCP server discoverable by AI clients and agents, you can publish it to an MCP registry. This also enables you to provide authentication and access control for your tools.
 
 See the official guide for publishing and securing your server: link:https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md[MCP Registry Publishing Guide^].
-
-== Troubleshooting
-
-This section covers common issues and debugging techniques when developing MCP tools with Redpanda Connect.
-
-=== Tool not appearing in MCP client
-
-- Check that `meta.mcp.enabled: true` is set.
-- Verify the MCP server is running on the expected port.
-- Ensure the tool has the correct tag specified in the server startup command.
-
-=== Unable to infer component type
-
-If you see errors like:
-
-[source]
-----
-resources/inputs/redpanda-consume.yaml(1,1) unable to infer component type: [input processors cache_resources meta]
-resources/outputs/redpanda-publish.yaml(1,1) unable to infer component type: [processors output meta]
-----
-
-This means your YAML file contains more than one component type, or uses a wrapper (such as `input:` or `output:`) that is not allowed. Each YAML file must contain only a single component type, and should not be wrapped in an `input:` or `output:` block.
-
-To fix this:
-
-- Split out each component type into its own file (for example, one file for the input, one for the processors, one for the output).
-- See <<yaml-configuration-rules, YAML configuration best practices>> for correct examples.
-
-.Example of incorrect YAML
-[source,yaml]
-----
-input:
-  redpanda: { ... }
-processors:
-  - mutation: { ... }
-output:
-  redpanda: { ... }
-----
-
-.Example of correct YAML (for an input)
-[source,yaml]
-----
-label: my_input
-redpanda:
-  seed_brokers: [ "${REDPANDA_BROKERS}" ]
-  topics: [ "events" ]
-  consumer_group: "mcp-reader"
-meta:
-  mcp:
-    enabled: true
-    description: "Consume events from Redpanda"
-----
 
 == Suggested reading
 

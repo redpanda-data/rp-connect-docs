@@ -1,0 +1,28 @@
+label: publish_with_enrichment
+processors:
+  - mutation: |
+      # Add timestamp and metadata before publishing
+      root = this
+      root.published_at = now()
+      root.source = "mcp-server"
+      root.event_id = uuid_v4()
+  - mutation: |
+      # Validate required fields
+      root = if !this.exists("data") {
+        throw("data field is required")
+      } else { this }
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topic: "enriched-events"
+  key: "${! this.event_id }"
+  max_in_flight: 10
+meta:
+  tags: [ publishing, enrichment, example ]
+  mcp:
+    enabled: true
+    description: "Publish data to Redpanda with automatic enrichment and validation"
+    properties:
+      - name: data
+        type: object
+        description: "Event data to publish"
+        required: true
