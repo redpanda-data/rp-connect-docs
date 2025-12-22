@@ -1,6 +1,6 @@
 {
-  "version": "4.73.0",
-  "date": "2025-12-12T14:31:36Z",
+  "version": "4.76.0",
+  "date": "2025-12-18T13:54:02Z",
   "config": [
     {
       "name": "http",
@@ -17404,7 +17404,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "A Kafka input using the https://github.com/twmb/franz-go[Franz Kafka client library^].",
-      "description": "\nWhen a consumer group is specified this input consumes one or more topics where partitions will automatically balance across any other connected clients with the same consumer group. When a consumer group is not specified topics can either be consumed in their entirety or with explicit partitions.\n\n== Delivery Guarantees\n\nWhen using consumer groups the offsets of \"delivered\" records will be committed automatically and continuously, and in the event of restarts these committed offsets will be used in order to resume from where the input left off. Redpanda Connect guarantees at least once delivery by ensuring that records are only considerd to be delivered when all configured outputs that the record is routed to have confirmed delivery.\n\n== Ordering\n\nIn order to preserve ordering of topic partitions, records consumed from each partition are processed and delivered in the order that they are received, and only one batch of records of a given partition will ever be processed at a time. This means that parallel processing can only occur when multiple topic partitions are being consumed, but ensures that data is processed in a sequential order as determined from the source partition.\n\nHowever, one way in which the order of records can be mixed is when delivery errors occur and error handling mechanisms kick in. Redpanda Connect always leans towards at least once delivery unless instructed otherwise, and this includes reattempting delivery of data when the ordering of that data can no longer be guaranteed.\n\nFor example, a batch of records may have been sent to an output broker and only a subset of records were delivered, in this case Redpanda Connect by default will reattempt to deliver the records that failed, even though these failed records may have come before records that were previously delivered successfully.\n\nIn order to avoid this scenario you must specify in your configuration an alternative way to handle delivery errors in the form of a xref:components:outputs/fallback.adoc[`fallback`] output. It is good practice to also disable the field `auto_retry_nacks` by setting it to `false` when you've added an explicit fallback output as this will improve the throughput of your pipeline. For example, the following config avoids ordering issues by specifying a fallback output into a DLQ topic, which is also retried indefinitely as a way to apply back pressure during connectivity issues:\n\n```yaml\noutput:\n  fallback:\n    - redpanda:\n        seed_brokers: [ localhost:9092 ]\n        topic: foo\n    - retry:\n        output:\n          redpanda:\n            seed_brokers: [ localhost:9092 ]\n            topic: foo_dlq\n```\n\n== Batching\n\nRecords are processed and delivered from each partition in batches as received from brokers. These batch sizes are therefore dynamically sized in order to optimise throughput, but can be tuned with the config fields `fetch_max_partition_bytes` and `fetch_max_bytes`. Batches can be further broken down using the xref:components:processors/split.adoc[`split`] processor.\n\n== Metrics\n\nEmits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- kafka_key\n- kafka_topic\n- kafka_partition\n- kafka_offset\n- kafka_lag\n- kafka_timestamp_ms\n- kafka_timestamp_unix\n- kafka_tombstone_message\n- All record headers\n```\n",
+      "description": "\nWhen a consumer group is specified this input consumes one or more topics where partitions will automatically balance across any other connected clients with the same consumer group. When a consumer group is not specified topics can either be consumed in their entirety or with explicit partitions.\n\n== Delivery Guarantees\n\nWhen using consumer groups the offsets of \"delivered\" records will be committed automatically and continuously, and in the event of restarts these committed offsets will be used in order to resume from where the input left off. Redpanda Connect guarantees at least once delivery by ensuring that records are only considerd to be delivered when all configured outputs that the record is routed to have confirmed delivery.\n\n== Ordering\n\nIn order to preserve ordering of topic partitions, records consumed from each partition are processed and delivered in the order that they are received, and only one batch of records of a given partition will ever be processed at a time. This means that parallel processing can only occur when multiple topic partitions are being consumed, but ensures that data is processed in a sequential order as determined from the source partition.\n\nHowever, one way in which the order of records can be mixed is when delivery errors occur and error handling mechanisms kick in. Redpanda Connect always leans towards at least once delivery unless instructed otherwise, and this includes reattempting delivery of data when the ordering of that data can no longer be guaranteed.\n\nFor example, a batch of records may have been sent to an output broker and only a subset of records were delivered, in this case Redpanda Connect by default will reattempt to deliver the records that failed, even though these failed records may have come before records that were previously delivered successfully.\n\nIn order to avoid this scenario you must specify in your configuration an alternative way to handle delivery errors in the form of a xref:components:outputs/fallback.adoc[`fallback`] output. It is good practice to also disable the field `auto_retry_nacks` by setting it to `false` when you've added an explicit fallback output as this will improve the throughput of your pipeline. For example, the following config avoids ordering issues by specifying a fallback output into a DLQ topic, which is also retried indefinitely as a way to apply back pressure during connectivity issues:\n\n```yaml\noutput:\n  fallback:\n    - redpanda:\n        seed_brokers: [ localhost:9092 ]\n        topic: foo\n    - retry:\n        output:\n          redpanda:\n            seed_brokers: [ localhost:9092 ]\n            topic: foo_dlq\n```\n\n== Batching\n\nRecords are processed and delivered from each partition in batches as received from brokers. These batch sizes are therefore dynamically sized in order to optimise throughput, but can be tuned with the config field `max_yield_batch_bytes`, or `unordered_processing.batching` when unordered processing is enabled. Batches can be further broken down using the xref:components:processors/split.adoc[`split`] processor.\n\n== Metrics\n\nEmits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- kafka_key\n- kafka_topic\n- kafka_partition\n- kafka_offset\n- kafka_lag\n- kafka_timestamp_ms\n- kafka_timestamp_unix\n- kafka_tombstone_message\n- All record headers\n```\n",
       "categories": [
         "Services"
       ],
@@ -31332,7 +31332,7 @@
             "name": "broker_write_max_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.",
+            "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.",
             "is_advanced": true,
             "default": "100MiB",
             "examples": [
@@ -35282,7 +35282,7 @@
                 "name": "broker_write_max_bytes",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.",
+                "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.",
                 "is_advanced": true,
                 "default": "100MiB",
                 "examples": [
@@ -38926,6 +38926,98 @@
             "default": 256
           },
           {
+            "name": "batching",
+            "type": "object",
+            "kind": "",
+            "description": "Optional explicit batching policy for the output. Note that when batches are formed at the input level they can be expanded by this policy, but not contracted. When consuming data from a Redpanda input it is recommended to tune batches from the input config via the `max_yield_batch_bytes` field, or the `unordered_processing.batching` field if appropriate.",
+            "examples": [
+              {
+                "byte_size": 5000,
+                "count": 0,
+                "period": "1s"
+              },
+              {
+                "count": 10,
+                "period": "1s"
+              },
+              {
+                "check": "this.contains(\"END BATCH\")",
+                "count": 0,
+                "period": "1m"
+              }
+            ],
+            "children": [
+              {
+                "name": "count",
+                "type": "int",
+                "kind": "scalar",
+                "description": "A number of messages at which the batch should be flushed. If `0` disables count based batching.",
+                "default": 0
+              },
+              {
+                "name": "byte_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "An amount of bytes at which the batch should be flushed. If `0` disables size based batching.",
+                "default": 0
+              },
+              {
+                "name": "period",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A period in which an incomplete batch should be flushed regardless of its size.",
+                "default": "",
+                "examples": [
+                  "1s",
+                  "1m",
+                  "500ms"
+                ]
+              },
+              {
+                "name": "check",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.",
+                "default": "",
+                "bloblang": true,
+                "examples": [
+                  "this.type == \"end_of_transaction\""
+                ]
+              },
+              {
+                "name": "processors",
+                "type": "processor",
+                "kind": "array",
+                "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  [
+                    {
+                      "archive": {
+                        "format": "concatenate"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "lines"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "json_array"
+                      }
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
             "name": "partitioner",
             "type": "string",
             "kind": "scalar",
@@ -39008,7 +39100,7 @@
             "name": "broker_write_max_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.",
+            "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.",
             "is_advanced": true,
             "default": "100MiB",
             "examples": [
@@ -39829,7 +39921,7 @@
             "name": "broker_write_max_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.",
+            "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.",
             "is_advanced": true,
             "default": "100MiB",
             "examples": [
@@ -55439,6 +55531,20 @@
               "influxdb"
             ],
             "linter": "\nlet options = {\n  \"none\": true,\n  \"datadog\": true,\n  \"influxdb\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "tags",
+            "type": "string",
+            "kind": "map",
+            "description": "Global tags added to each metric.",
+            "is_advanced": true,
+            "default": {},
+            "examples": [
+              {
+                "hostname": "localhost",
+                "zone": "danger"
+              }
+            ]
           }
         ]
       }
@@ -56285,7 +56391,7 @@
             "name": "broker_write_max_bytes",
             "type": "string",
             "kind": "scalar",
-            "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka’s `socket.request.max.bytes`.",
+            "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`.",
             "is_advanced": true,
             "default": "100MiB",
             "examples": [
@@ -56459,6 +56565,82 @@
                         "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
                       }
                     ]
+                  }
+                ]
+              },
+              {
+                "name": "oauth2",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Allows you to specify open authentication via OAuth version 2 using the client credentials token flow.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to use OAuth version 2 in requests.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "client_key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A value used to identify the client to the token provider.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "client_secret",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A secret used to establish ownership of the client key.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "token_url",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The URL of the token provider.",
+                    "is_advanced": true,
+                    "default": "",
+                    "scrubber": "\nlet pass = this.parse_url().user.password.or(\"\")\nroot = if $pass != \"\" && !$pass.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n}\n"
+                  },
+                  {
+                    "name": "scopes",
+                    "type": "string",
+                    "kind": "array",
+                    "description": "A list of optional requested permissions.",
+                    "is_advanced": true,
+                    "default": [],
+                    "version": "3.45.0"
+                  },
+                  {
+                    "name": "endpoint_params",
+                    "type": "unknown",
+                    "kind": "map",
+                    "description": "A list of optional endpoint parameters, values should be arrays of strings.",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "default": {},
+                    "examples": [
+                      {
+                        "bar": [
+                          "woof"
+                        ],
+                        "foo": [
+                          "meow",
+                          "quack"
+                        ]
+                      }
+                    ],
+                    "version": "4.21.0",
+                    "linter": "\nroot = if this.type() == \"object\" {\n  this.values().map_each(ele -> if ele.type() != \"array\" {\n    \"field must be an object containing arrays of strings, got %s (%v)\".format(ele.format_json(no_indent: true), ele.type())\n  } else {\n    ele.map_each(str -> if str.type() != \"string\" {\n      \"field values must be strings, got %s (%v)\".format(str.format_json(no_indent: true), str.type())\n    } else { deleted() })\n  }).\n    flatten()\n}\n"
                   }
                 ]
               },

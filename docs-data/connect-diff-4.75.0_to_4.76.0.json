@@ -1,0 +1,2824 @@
+{
+  "comparison": {
+    "oldVersion": "4.75.0",
+    "newVersion": "4.76.0",
+    "timestamp": "2025-12-22T08:17:41.511Z"
+  },
+  "summary": {
+    "newComponents": 0,
+    "removedComponents": 0,
+    "newFields": 0,
+    "removedFields": 0,
+    "deprecatedComponents": 0,
+    "deprecatedFields": 0,
+    "changedDefaults": 0
+  },
+  "details": {
+    "newComponents": [
+      {
+        "name": "tigerbeetle_cdc",
+        "type": "input",
+        "status": "beta",
+        "version": "",
+        "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer’s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater.",
+        "summary": "Enables TigerBeetle CDC streaming for Redpanda Connect."
+      },
+      {
+        "name": "zmq4",
+        "type": "input",
+        "status": "stable",
+        "version": "",
+        "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component.",
+        "summary": "Consumes messages from a ZeroMQ socket."
+      },
+      {
+        "name": "zmq4",
+        "type": "output",
+        "status": "stable",
+        "version": "",
+        "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component.",
+        "summary": "Writes messages to a ZeroMQ socket."
+      },
+      {
+        "name": "ffi",
+        "type": "processor",
+        "status": "experimental",
+        "version": "",
+        "description": "A processor that allows for dlopen'ing (or platform equivalent) and invoking functions dynamically at runtime. The result from this processor is an array, where the first element is the return type if not void, and then each `out` parameter in parameter order.",
+        "summary": "Invoke a function within a shared library as a processing step."
+      }
+    ],
+    "removedComponents": [],
+    "newFields": [],
+    "removedFields": [],
+    "deprecatedComponents": [],
+    "deprecatedFields": [],
+    "changedDefaults": []
+  },
+  "binaryAnalysis": {
+    "versions": {
+      "oss": "4.76.0",
+      "cloud": "4.76.0",
+      "cgo": "4.76.0"
+    },
+    "current": {
+      "cloudSupported": 471,
+      "selfHostedOnly": 74,
+      "cgoOnly": 4
+    },
+    "changes": {},
+    "details": {
+      "cloudSupported": [
+        {
+          "type": "config",
+          "name": "http",
+          "status": "object"
+        },
+        {
+          "type": "config",
+          "name": "input",
+          "status": "input"
+        },
+        {
+          "type": "config",
+          "name": "buffer",
+          "status": "buffer"
+        },
+        {
+          "type": "config",
+          "name": "pipeline",
+          "status": "object"
+        },
+        {
+          "type": "config",
+          "name": "output",
+          "status": "output"
+        },
+        {
+          "type": "config",
+          "name": "input_resources",
+          "status": "input"
+        },
+        {
+          "type": "config",
+          "name": "processor_resources",
+          "status": "processor"
+        },
+        {
+          "type": "config",
+          "name": "output_resources",
+          "status": "output"
+        },
+        {
+          "type": "config",
+          "name": "cache_resources",
+          "status": "cache"
+        },
+        {
+          "type": "config",
+          "name": "rate_limit_resources",
+          "status": "rate_limit"
+        },
+        {
+          "type": "config",
+          "name": "logger",
+          "status": "object"
+        },
+        {
+          "type": "config",
+          "name": "metrics",
+          "status": "metrics"
+        },
+        {
+          "type": "config",
+          "name": "tracer",
+          "status": "tracer"
+        },
+        {
+          "type": "config",
+          "name": "shutdown_delay",
+          "status": "string"
+        },
+        {
+          "type": "config",
+          "name": "shutdown_timeout",
+          "status": "string"
+        },
+        {
+          "type": "config",
+          "name": "tests",
+          "status": "object"
+        },
+        {
+          "type": "config",
+          "name": "redpanda",
+          "status": "object"
+        },
+        {
+          "type": "buffers",
+          "name": "memory",
+          "status": "stable"
+        },
+        {
+          "type": "buffers",
+          "name": "none",
+          "status": "stable"
+        },
+        {
+          "type": "buffers",
+          "name": "system_window",
+          "status": "beta"
+        },
+        {
+          "type": "caches",
+          "name": "aws_dynamodb",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "aws_s3",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "gcp_cloud_storage",
+          "status": "beta"
+        },
+        {
+          "type": "caches",
+          "name": "lru",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "memcached",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "memory",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "mongodb",
+          "status": "experimental"
+        },
+        {
+          "type": "caches",
+          "name": "multilevel",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "nats_kv",
+          "status": "experimental"
+        },
+        {
+          "type": "caches",
+          "name": "noop",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "redis",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "redpanda",
+          "status": "beta"
+        },
+        {
+          "type": "caches",
+          "name": "ristretto",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "sql",
+          "status": "experimental"
+        },
+        {
+          "type": "caches",
+          "name": "ttlru",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "amqp_0_9",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "aws_kinesis",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "aws_s3",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "aws_sqs",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "azure_blob_storage",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "azure_cosmosdb",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "azure_queue_storage",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "azure_table_storage",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "batched",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "broker",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "gateway",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "gcp_bigquery_select",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "gcp_cloud_storage",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "gcp_pubsub",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "gcp_spanner_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "generate",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "git",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "http_client",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "http_server",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "inproc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "kafka",
+          "status": "deprecated"
+        },
+        {
+          "type": "inputs",
+          "name": "kafka_franz",
+          "status": "deprecated"
+        },
+        {
+          "type": "inputs",
+          "name": "legacy_redpanda_migrator",
+          "status": "deprecated"
+        },
+        {
+          "type": "inputs",
+          "name": "legacy_redpanda_migrator_offsets",
+          "status": "deprecated"
+        },
+        {
+          "type": "inputs",
+          "name": "microsoft_sql_server_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "mongodb",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "mongodb_cdc",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "mqtt",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "mysql_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "nats",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "nats_jetstream",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "nats_kv",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "pg_stream",
+          "status": "deprecated"
+        },
+        {
+          "type": "inputs",
+          "name": "postgres_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "read_until",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "redis_list",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "redis_pubsub",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "redis_scan",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "redis_streams",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "redpanda",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "redpanda_common",
+          "status": "deprecated"
+        },
+        {
+          "type": "inputs",
+          "name": "redpanda_migrator",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "redpanda_migrator_bundle",
+          "status": "deprecated"
+        },
+        {
+          "type": "inputs",
+          "name": "resource",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "schema_registry",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "sequence",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "sftp",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "slack",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "slack_users",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "spicedb_watch",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "splunk",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "sql_raw",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "sql_select",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "timeplus",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "amqp_0_9",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "aws_dynamodb",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "aws_kinesis",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "aws_kinesis_firehose",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "aws_s3",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "aws_sns",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "aws_sqs",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "azure_blob_storage",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "azure_cosmosdb",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "azure_data_lake_gen2",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "azure_queue_storage",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "azure_table_storage",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "broker",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "cache",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "cyborgdb",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "drop",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "drop_on",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "elasticsearch_v8",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "fallback",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "gcp_bigquery",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "gcp_cloud_storage",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "gcp_pubsub",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "http_client",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "inproc",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "kafka",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "kafka_franz",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "legacy_redpanda_migrator",
+          "status": "deprecated"
+        },
+        {
+          "type": "outputs",
+          "name": "legacy_redpanda_migrator_offsets",
+          "status": "deprecated"
+        },
+        {
+          "type": "outputs",
+          "name": "mongodb",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "mqtt",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "nats",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "nats_jetstream",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "nats_kv",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "opensearch",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "pinecone",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "qdrant",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "questdb",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "redis_hash",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "redis_list",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "redis_pubsub",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "redis_streams",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "redpanda",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "redpanda_common",
+          "status": "deprecated"
+        },
+        {
+          "type": "outputs",
+          "name": "redpanda_migrator",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "redpanda_migrator_bundle",
+          "status": "deprecated"
+        },
+        {
+          "type": "outputs",
+          "name": "reject",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "reject_errored",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "resource",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "retry",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "schema_registry",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "sftp",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "slack_post",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "slack_reaction",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "snowflake_put",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "snowflake_streaming",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "splunk_hec",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "sql_insert",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "sql_raw",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "switch",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "sync_response",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "archive",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "avro",
+          "status": "beta"
+        },
+        {
+          "type": "processors",
+          "name": "aws_bedrock_chat",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "aws_bedrock_embeddings",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "aws_dynamodb_partiql",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "aws_lambda",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "azure_cosmosdb",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "benchmark",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "bloblang",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "bounds_check",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "branch",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "cache",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "cached",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "catch",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "cohere_chat",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "cohere_embeddings",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "cohere_rerank",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "compress",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "decompress",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "dedupe",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "for_each",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "gcp_bigquery_select",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "gcp_vertex_ai_chat",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "gcp_vertex_ai_embeddings",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "google_drive_download",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "google_drive_list_labels",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "google_drive_search",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "group_by",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "group_by_value",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "http",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "insert_part",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "jira",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "jmespath",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "jq",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "json_schema",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "log",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "mapping",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "metric",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "mongodb",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "mutation",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "nats_kv",
+          "status": "beta"
+        },
+        {
+          "type": "processors",
+          "name": "nats_request_reply",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "noop",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "openai_chat_completion",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "openai_embeddings",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "openai_image_generation",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "openai_speech",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "openai_transcription",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "openai_translation",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "parallel",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "parquet_decode",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "parquet_encode",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "parse_log",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "processors",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "qdrant",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "rate_limit",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "redis",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "redis_script",
+          "status": "beta"
+        },
+        {
+          "type": "processors",
+          "name": "resource",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "retry",
+          "status": "beta"
+        },
+        {
+          "type": "processors",
+          "name": "schema_registry_decode",
+          "status": "beta"
+        },
+        {
+          "type": "processors",
+          "name": "schema_registry_encode",
+          "status": "beta"
+        },
+        {
+          "type": "processors",
+          "name": "select_parts",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "slack_thread",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "sleep",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "split",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "sql_insert",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "sql_raw",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "sql_select",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "switch",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "sync_response",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "text_chunker",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "try",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "unarchive",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "while",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "workflow",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "xml",
+          "status": "beta"
+        },
+        {
+          "type": "rate-limits",
+          "name": "local",
+          "status": "stable"
+        },
+        {
+          "type": "rate-limits",
+          "name": "redis",
+          "status": "experimental"
+        },
+        {
+          "type": "metrics",
+          "name": "none",
+          "status": "stable"
+        },
+        {
+          "type": "metrics",
+          "name": "prometheus",
+          "status": "stable"
+        },
+        {
+          "type": "tracers",
+          "name": "gcp_cloudtrace",
+          "status": "experimental"
+        },
+        {
+          "type": "tracers",
+          "name": "none",
+          "status": "stable"
+        },
+        {
+          "type": "tracers",
+          "name": "redpanda",
+          "status": "experimental"
+        },
+        {
+          "type": "scanners",
+          "name": "avro",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "chunker",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "csv",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "decompress",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "json_array",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "json_documents",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "lines",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "re_match",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "skip_bom",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "switch",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "tar",
+          "status": "stable"
+        },
+        {
+          "type": "scanners",
+          "name": "to_the_end",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "batch_index",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "batch_size",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "bytes",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "content",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "counter",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "deleted",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "error",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "error_source_label",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "error_source_name",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "error_source_path",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "errored",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "fake",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "json",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "ksuid",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "meta",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "metadata",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "nanoid",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "nothing",
+          "status": "hidden"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "now",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "pi",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "random_int",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "range",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "root_meta",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "snowflake_id",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "throw",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "timestamp_unix",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "timestamp_unix_micro",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "timestamp_unix_milli",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "timestamp_unix_nano",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "tracing_id",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "tracing_span",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "ulid",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "uuid_v4",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "uuid_v7",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "var",
+          "status": "hidden"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "with_schema_registry_header",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "abs",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "all",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "any",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "append",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "apply",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "array",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "assign",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "bitwise_and",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "bitwise_or",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "bitwise_xor",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "bloblang",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "bool",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "bytes",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "capitalize",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "catch",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ceil",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "collapse",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "compare_argon2",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "compare_bcrypt",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "compress",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "concat",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "contains",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "cos",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "decode",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "decompress",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "decrypt_aes",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "diff",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "encode",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "encrypt_aes",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "enumerated",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "escape_html",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "escape_url_query",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "exists",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "explode",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "filepath_join",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "filepath_split",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "filter",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "find",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "find_all",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "find_all_by",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "find_by",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "flatten",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "float32",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "float64",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "floor",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "fold",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_json",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_msgpack",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_timestamp",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_timestamp_strftime",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_timestamp_unix",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_timestamp_unix_micro",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_timestamp_unix_milli",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_timestamp_unix_nano",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_xml",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "format_yaml",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "from",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "from_all",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "geoip_anonymous_ip",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "geoip_asn",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "geoip_city",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "geoip_connection_type",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "geoip_country",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "geoip_domain",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "geoip_enterprise",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "geoip_isp",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "get",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "has_prefix",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "has_suffix",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "hash",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "index",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "index_of",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "infer_schema",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "int16",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "int32",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "int64",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "int8",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "join",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "json_path",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "json_schema",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "key_values",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "keys",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "length",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "log",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "log10",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "lowercase",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "map",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "map_each",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "map_each_key",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "max",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "merge",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "min",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "not",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "not_empty",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "not_null",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "number",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "or",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_csv",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_duration",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_duration_iso8601",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_form_url_encoded",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_json",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_jwt_es256",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_jwt_es384",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_jwt_es512",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_jwt_hs256",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_jwt_hs384",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_jwt_hs512",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_jwt_rs256",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_jwt_rs384",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_jwt_rs512",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_msgpack",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_parquet",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_timestamp",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_timestamp_strptime",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_url",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_xml",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_yaml",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "patch",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "pow",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "quote",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "re_find_all",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "re_find_all_object",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "re_find_all_submatch",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "re_find_object",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "re_match",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "re_replace",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "re_replace_all",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "repeat",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "replace",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "replace_all",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "replace_all_many",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "replace_many",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "reverse",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "round",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sign_jwt_es256",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sign_jwt_es384",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sign_jwt_es512",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sign_jwt_hs256",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sign_jwt_hs384",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sign_jwt_hs512",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sign_jwt_rs256",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sign_jwt_rs384",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sign_jwt_rs512",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sin",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "slice",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "slug",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sort",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sort_by",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "split",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "squash",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "string",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "strip_html",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "sum",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "tan",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "timestamp",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "trim",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "trim_prefix",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "trim_suffix",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_add_iso8601",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_format",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_parse",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_round",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_strftime",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_strptime",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_sub",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_sub_iso8601",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_tz",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_unix",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_unix_micro",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_unix_milli",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "ts_unix_nano",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "type",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "uint16",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "uint32",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "uint64",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "uint8",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "unescape_html",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "unescape_url_query",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "unicode_segments",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "unique",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "unquote",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "uppercase",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "uuid_v5",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "values",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "vector",
+          "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "with",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "without",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "zip",
+          "status": "stable"
+        }
+      ],
+      "selfHostedOnly": [
+        {
+          "type": "buffers",
+          "name": "sqlite",
+          "status": "stable"
+        },
+        {
+          "type": "caches",
+          "name": "couchbase",
+          "status": "experimental"
+        },
+        {
+          "type": "caches",
+          "name": "file",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "amqp_1",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "beanstalkd",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "cassandra",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "cockroachdb_changefeed",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "csv",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "discord",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "dynamic",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "file",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "hdfs",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "nanomsg",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "nats_stream",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "nsq",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "ockam_kafka",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "parquet",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "pulsar",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "socket",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "socket_server",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "stdin",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "subprocess",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "twitter_search",
+          "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "websocket",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "amqp_1",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "beanstalkd",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "cassandra",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "couchbase",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "cypher",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "discord",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "dynamic",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "file",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "hdfs",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "http_server",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "nanomsg",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "nats_stream",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "nsq",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "ockam_kafka",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "pulsar",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "pusher",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "socket",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "sql",
+          "status": "deprecated"
+        },
+        {
+          "type": "outputs",
+          "name": "stdout",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "subprocess",
+          "status": "beta"
+        },
+        {
+          "type": "outputs",
+          "name": "websocket",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "awk",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "command",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "couchbase",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "crash",
+          "status": "beta"
+        },
+        {
+          "type": "processors",
+          "name": "grok",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "javascript",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "msgpack",
+          "status": "beta"
+        },
+        {
+          "type": "processors",
+          "name": "ollama_chat",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "ollama_embeddings",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "ollama_moderation",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "parquet",
+          "status": "deprecated"
+        },
+        {
+          "type": "processors",
+          "name": "protobuf",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "redpanda_data_transform",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "sentry_capture",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
+          "name": "sql",
+          "status": "deprecated"
+        },
+        {
+          "type": "processors",
+          "name": "subprocess",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "wasm",
+          "status": "experimental"
+        },
+        {
+          "type": "metrics",
+          "name": "aws_cloudwatch",
+          "status": "stable"
+        },
+        {
+          "type": "metrics",
+          "name": "influxdb",
+          "status": "beta"
+        },
+        {
+          "type": "metrics",
+          "name": "json_api",
+          "status": "stable"
+        },
+        {
+          "type": "metrics",
+          "name": "logger",
+          "status": "beta"
+        },
+        {
+          "type": "metrics",
+          "name": "statsd",
+          "status": "stable"
+        },
+        {
+          "type": "tracers",
+          "name": "jaeger",
+          "status": "stable"
+        },
+        {
+          "type": "tracers",
+          "name": "open_telemetry_collector",
+          "status": "experimental"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "count",
+          "status": "deprecated"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "env",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "file",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "file_rel",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-functions",
+          "name": "hostname",
+          "status": "stable"
+        }
+      ],
+      "cgoOnly": [
+        {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "ffi",
+          "status": "experimental"
+        }
+      ]
+    }
+  }
+}

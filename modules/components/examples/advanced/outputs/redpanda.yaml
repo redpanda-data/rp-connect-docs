@@ -57,6 +57,12 @@ outputs:
       include_patterns: []
     timestamp_ms: "" # No default (optional)
     max_in_flight: 256
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
+      processors: [] # No default (optional)
     partitioner: "" # No default (optional)
     idempotent_write: true
     compression: "" # No default (optional)

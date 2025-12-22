@@ -13,7 +13,7 @@
       "description": "Configure a xref:configuration:batching.adoc[batching policy]."
     },
     "broker_write_max_bytes": {
-      "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka\u2019s `socket.request.max.bytes`."
+      "description": "The maximum number of bytes this output can write to a broker connection in a single write. This field corresponds to Kafka's `socket.request.max.bytes`."
     },
     "byte_size": {
       "description": "The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching."
@@ -91,7 +91,7 @@
       "description": "The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
     },
     "instance_id": {
-      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group\u2019s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
+      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
     },
     "jwt": {
       "description": "BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services."
@@ -2572,6 +2572,10 @@
           }
         ]
       }
+    },
+    {
+      "name": "zmq4",
+      "summary": "Consumes messages from a ZeroMQ socket."
     }
   ],
   "outputs": [
@@ -5675,6 +5679,10 @@
           }
         ]
       }
+    },
+    {
+      "name": "zmq4",
+      "summary": "Writes messages to a ZeroMQ socket."
     }
   ],
   "processors": [
@@ -6449,7 +6457,7 @@
         ]
       }
     },
-        {
+    {
       "name": "jira",
       "config": {
         "children": [
@@ -7426,6 +7434,11 @@
           }
         ]
       }
+    },
+    {
+      "name": "ffi",
+      "summary": "Invoke functions from shared libraries using Foreign Function Interface (FFI).",
+      "description": "The `ffi` processor allows you to dynamically load shared libraries (.so, .dylib, or .dll files) and invoke their functions as a processing step. This enables integration with external C/C++ libraries without requiring custom Go code or rebuilding Redpanda Connect.\n\nThe processor uses `dlopen` (or platform equivalent) to load the specified library at runtime, looks up the function by name, and invokes it with arguments provided through Bloblang mapping. Function signatures are defined using the `signature` field, specifying parameter and return types.\n\nResults are returned as an array, where the first element is the return value (if not void), followed by any output parameters in their declaration order."
     }
   ],
   "caches": [

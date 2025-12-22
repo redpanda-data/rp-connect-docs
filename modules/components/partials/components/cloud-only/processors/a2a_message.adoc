@@ -1,0 +1,50 @@
+= a2a_message
+// tag::single-source[]
+:type: processor
+:status: beta
+:categories: [AI]
+:description: Sends messages to an A2A (Agent-to-Agent) protocol agent and returns the response.
+
+component_type_dropdown::[]
+
+Sends messages to an A2A (Agent-to-Agent) protocol agent and returns the response.
+
+ifndef::env-cloud[]
+Introduced in version 4.40.0.
+endif::[]
+
+
+This processor enables Redpanda Connect pipelines to communicate with A2A protocol agents. Currently only JSON-RPC transport is supported.
+
+The processor sends a message to the agent and polls for task completion. The agent's response
+is returned as the processor output.
+
+For more information about the A2A protocol, see https://a2a-protocol.org/latest/specification
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/processors/a2a_message.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/processors/a2a_message.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/processors/a2a_message.adoc[]
+
+
+
+// end::single-source[]
