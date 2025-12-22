@@ -60,9 +60,6 @@
     "default_schema_id": {
       "description": "This schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If this value is not set, schema header errors are returned.\n\nThis configuration does not work with protobuf schemas.\n\nTIP: You can also use the xref:guides:bloblang/functions.adoc#with_schema_registry_header[`with_schema_registry_header`] bloblang function to add a schema ID to messages."
     },
-    "dsn": {
-      "description": "The Data Source Name (DSN) connection string that identifies the target database. The DSN format varies by database type and typically includes connection details like host, port, database name, and authentication parameters."
-    },
     "enable_renegotiation": {
       "description": "Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: \ntls: no renegotiation`."
     },
@@ -2471,8 +2468,7 @@
       "config": {
         "children": [
           {
-            "name": "dsn",
-            "$ref": "#/definitions/dsn"
+            "name": "dsn"
           },
           {
             "name": "query",
@@ -2490,8 +2486,7 @@
       "config": {
         "children": [
           {
-            "name": "dsn",
-            "$ref": "#/definitions/dsn"
+            "name": "dsn"
           }
         ]
       }
@@ -5553,8 +5548,7 @@
       "config": {
         "children": [
           {
-            "name": "dsn",
-            "$ref": "#/definitions/dsn"
+            "name": "dsn"
           }
         ]
       }
@@ -5564,8 +5558,7 @@
       "config": {
         "children": [
           {
-            "name": "dsn",
-            "$ref": "#/definitions/dsn"
+            "name": "dsn"
           },
           {
             "name": "query",
@@ -7344,8 +7337,7 @@
       "config": {
         "children": [
           {
-            "name": "dsn",
-            "$ref": "#/definitions/dsn"
+            "name": "dsn"
           }
         ]
       }
@@ -7355,8 +7347,7 @@
       "config": {
         "children": [
           {
-            "name": "dsn",
-            "$ref": "#/definitions/dsn"
+            "name": "dsn"
           },
           {
             "name": "query",
@@ -7382,8 +7373,7 @@
       "config": {
         "children": [
           {
-            "name": "dsn",
-            "$ref": "#/definitions/dsn"
+            "name": "dsn"
           }
         ]
       }
