@@ -26,7 +26,7 @@ meta:
     description: "Consume events from Redpanda"
 ----
 
-.Correct example
+.Correct example (processor component)
 [source,yaml]
 ----
 label: fetch-example-data
@@ -48,6 +48,29 @@ processors:
           }
 ----
 
+.Correct example (output with processors)
+[source,yaml]
+----
+label: publish-with-transform
+processors:  # <1>
+  - mutation: |
+      root = this
+      root.published_at = now()
+redpanda:
+ifdef::env-cloud[]
+  seed_brokers: [ "${secrets.REDPANDA_BROKERS}" ]
+endif::[]
+ifndef::env-cloud[]
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+endif::[]
+  topic: "processed-events"
+meta:
+  mcp:
+    enabled: true
+    description: "Publish data to Redpanda with timestamp"
+----
+<1> Processors within an output are allowed and transform data before publishing.
+
 .Incorrect (do not include the input wrapper)
 [source,yaml]
 ----
@@ -63,14 +86,15 @@ endif::[]
     topics: [ "events" ]
 ----
 
-.Incorrect (multiple component types in one file)
+.Incorrect (multiple top-level component types in one file)
 [source,yaml]
 ----
 label: incorrect-example
-input:
+input:  # <1>
   redpanda: { ... }
-processors:
+processors:  # <1>
   - mutation: { ... }
-output:
+output:  # <1>
   redpanda: { ... }
 ----
+<1> This file has three top-level component types. Each must be in its own file.

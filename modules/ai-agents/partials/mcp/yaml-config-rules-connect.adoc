@@ -23,3 +23,13 @@ Each YAML file should contain exactly one component type. The component type is 
 | `resources/caches/`
 | Cache component
 |===
+
+Common mistakes to avoid:
+
+- Wrapping components in `input:` or `output:` blocks
+- Multiple top-level component types in one file (like having separate `input:`, `processors:`, and `output:` sections)
+- Using `try`/`catch` as a single processor (must be separate)
+- Hardcoding secrets instead of using `$\{ENV_VAR}`
+- Generic tool names like `get-data` or `processor1`
+
+NOTE: Outputs and inputs can include processors as part of their configuration. For example, an output can have a `processors:` section to transform data before publishing. See xref:ai-agents:mcp-server/pipeline-patterns.adoc#outputs-with-processors[outputs with processors] for examples.

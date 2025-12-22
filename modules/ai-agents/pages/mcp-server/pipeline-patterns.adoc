@@ -90,31 +90,8 @@ Create tools that write data to Redpanda topics using the `redpanda` output.
 include::ai-agents:example$resources/outputs/redpanda-publish.yaml[]
 ----
 
-<<<<<<< Updated upstream
-==== Outputs with processors
-=======
 [[outputs-with-processors]]
 === Outputs with processors
-
-Outputs can include processors to transform, enrich, or validate data before publishing. This pattern is useful for adding timestamps, generating IDs, or ensuring data quality.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/outputs/redpanda-publish-with-processors.yaml[]
-----
-
-In this example:
-
-* Processors add metadata (`published_at`, `source`, `event_id`) before publishing
-* Validation ensures required fields exist
-* The output publishes enriched data to Redpanda
-
-This pattern keeps data transformation logic with the output, making tools more maintainable.
-
-See also: xref:components:outputs/redpanda.adoc[`redpanda` output], xref:components:processors/mutation.adoc[`mutation` processor]
-
-=== Consuming from Redpanda topics
->>>>>>> Stashed changes
 
 Output tools can include processors to transform data before publishing. This pattern is useful when you need to process data and save the result to a destination in a single tool.
 
