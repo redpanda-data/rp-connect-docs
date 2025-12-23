@@ -3,6 +3,73 @@
 
 This guide teaches you how to build xref:ai-agents:mcp-server/overview.adoc[MCP servers with self-managed Redpanda Connect]. MCP servers run as part of your Redpanda Connect deployment and expose tools that AI clients can call using the Model Context Protocol.
 
+:tip-caption: New to MCP?
+
+TIP:  Start with the xref:ai-agents:mcp-server/quickstart.adoc[quickstart guide] for a 5-minute introduction.
+
+:tip-caption: Tip
+
+[[quick-start]]
+== Quick reference
+
+Run the following commands to create and start a basic MCP server with Redpanda Connect:
+
+[source,bash]
+----
+# 1. Create a new MCP server project
+rpk connect mcp-server init
+
+# 2. Remove example files
+rm resources/**/example-*.yaml
+
+# 3. Create your first tool (see examples on this page)
+# Edit resources/processors/my-tool.yaml
+
+# 4. Lint your configuration
+rpk connect mcp-server lint
+
+# 5. Start the server
+rpk connect mcp-server --address localhost:4195
+
+# 6. Connect Claude Code (in another terminal)
+claude mcp add local -- npx mcp-remote http://localhost:4195/sse
+----
+
+[[examples]]
+=== Example tool
+
+This example shows a complete MCP tool that fetches current weather data from a public API. The tool demonstrates input validation, error handling, and structured responses.
+
+[source,yaml]
+----
+include::ai-agents:example$resources/processors/weather-service.yaml[]
+----
+
+<1> Input validation using xref:components:processors/mutation.adoc[`mutation`] to sanitize the city name and ensure it's not empty.
+<2> A xref:components:processors/try.adoc[`try`] block to handle the API request and transform the response.
+<3> xref:components:processors/http.adoc[`http`] processor fetches weather data from the wttr.in API with a 10-second timeout.
+<4> Transform the API response into a structured JSON format with relevant weather fields.
+<5> A xref:components:processors/catch.adoc[`catch`] block returns meaningful error messages when the API fails.
+<6> The tool contract with `meta.mcp` defines how AI clients discover and invoke this tool.
+
+When an AI assistant calls this tool with `{"city": "San Francisco"}`, it returns:
+
+[source,json]
+----
+{
+  "city": "San Francisco",
+  "temperature_c": 15,
+  "temperature_f": 59,
+  "feels_like_c": 14,
+  "humidity": 72,
+  "description": "Partly cloudy",
+  "wind_speed_kmh": 19,
+  "timestamp": "2025-01-15T10:30:00Z"
+}
+----
+
+For more patterns and examples, see xref:ai-agents:mcp-server/pipeline-patterns.adoc[].
+
 == Prerequisites
 
 * The xref:get-started:quickstarts/rpk.adoc[Redpanda CLI (`rpk`)]
@@ -90,11 +157,11 @@ include::ai-agents:partial$mcp/tool-contract-guidance.adoc[]
 
 Use Redpanda Connect components to implement the logic of your MCP tool. Here are some best practices:
 
-* **Single responsibility**: Each tool should do one thing well.
-* **Descriptive naming**: Use clear, specific labels like `fetch-user-profile` instead of generic names like `get-data`. The top-level label becomes the tool's name in the MCP server.
-* **Input validation**: Always validate and sanitize user inputs using xref:guides:bloblang/about.adoc[Bloblang].
-* **Error handling**: Provide meaningful error messages.
-* **Documentation**: Write clear descriptions that explain what the tool does and what it returns.
+* Single responsibility: Each tool should do one thing well.
+* Descriptive naming: Use clear, specific labels like `fetch-user-profile` instead of generic names like `get-data`. The top-level label becomes the tool's name in the MCP server.
+* Input validation: Always validate and sanitize user inputs using xref:guides:bloblang/about.adoc[Bloblang].
+* Error handling: Provide meaningful error messages.
+* Documentation: Write clear descriptions that explain what the tool does and what it returns.
 
 For common patterns and examples, see xref:ai-agents:mcp-server/pipeline-patterns.adoc[].
 
