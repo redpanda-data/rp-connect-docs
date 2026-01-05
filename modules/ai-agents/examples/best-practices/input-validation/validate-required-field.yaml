@@ -1,0 +1,34 @@
+# Test: Basic input validation from input-validation.adoc
+# Expected: Empty city returns error, valid city returns data
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"city": "London"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"city": "  "}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {}'
+
+pipeline:
+  processors:
+    # tag::validate-input[]
+    - label: validate_input
+      mutation: |
+        let city = this.city.or("").trim()
+        root = if $city == "" {
+          {"error": "City name is required"}
+        } else {
+          {"city": $city}
+        }
+    # end::validate-input[]
+
+output:
+  stdout: {}

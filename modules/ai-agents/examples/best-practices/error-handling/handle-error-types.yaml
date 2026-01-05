@@ -1,0 +1,69 @@
+# Test: Handling specific error types from error-handling.adoc
+# Expected: Different error responses based on error content
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"error_type": "timeout"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"error_type": "not_found"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"error_type": "auth"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"error_type": "unknown"}'
+
+pipeline:
+  processors:
+    - label: simulate_errors
+      try:
+        - mutation: |
+            root = match this.error_type {
+              "timeout" => throw("Request timeout after 30s")
+              "not_found" => throw("404 resource not found")
+              "auth" => throw("401 unauthorized")
+              _ => throw("Something unexpected happened")
+            }
+
+    # tag::handle-error-types[]
+    - label: handle_errors
+      catch:
+        - mutation: |
+            let err = error()
+            root = if $err.contains("timeout") {
+              {
+                "error": "Request timed out",
+                "suggestion": "The external service is slow. Try again later.",
+                "retryable": true
+              }
+            } else if $err.contains("404") || $err.contains("not found") {
+              {
+                "error": "Resource not found",
+                "suggestion": "Check that the ID or name is correct.",
+                "retryable": false
+              }
+            } else if $err.contains("401") || $err.contains("403") {
+              {
+                "error": "Authentication failed",
+                "suggestion": "Check your API credentials.",
+                "retryable": false
+              }
+            } else {
+              {
+                "error": "Unexpected error",
+                "details": $err,
+                "retryable": true
+              }
+            }
+    # end::handle-error-types[]
+
+output:
+  stdout: {}

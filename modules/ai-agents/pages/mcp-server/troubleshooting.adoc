@@ -1,0 +1,38 @@
+= Troubleshoot MCP Servers
+:description: Diagnose and fix common issues when building and running MCP servers with Redpanda Connect.
+:page-topic-type: how-to
+:personas: ai_agent_developer, streaming_platform_developer, platform_engineer_sre
+// Reader journey: "Something went wrong"
+// Learning objectives - what readers can do with this page:
+:learning-objective-1: Fix common lint and YAML configuration errors
+:learning-objective-2: Resolve runtime issues when tools don't appear or return unexpected results
+:learning-objective-3: Diagnose and fix client connection problems
+
+This page helps you diagnose and fix common issues when building and running MCP servers.
+
+Use this page to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+TIP: For debugging techniques and prescriptive patterns, see xref:ai-agents:mcp-server/best-practices.adoc#debugging[Best practices: Debugging techniques].
+
+== Lint errors
+
+include::ai-agents:partial$mcp/troubleshooting-lint.adoc[]
+
+== Runtime issues
+
+include::ai-agents:partial$mcp/troubleshooting-runtime.adoc[]
+
+== Connection issues
+
+include::ai-agents:partial$mcp/troubleshooting-connection.adoc[]
+
+== Next steps
+
+If you're still experiencing issues:
+
+* Check the xref:ai-agents:mcp-server/reference.adoc[configuration reference] for YAML rules and property restrictions
+* Review xref:ai-agents:mcp-server/best-practices.adoc[best practices] for input validation and error handling patterns

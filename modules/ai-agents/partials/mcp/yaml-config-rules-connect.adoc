@@ -3,9 +3,15 @@
 //
 // Include from Connect: include::ai-agents:partial$mcp/yaml-config-rules-connect.adoc[]
 
-=== YAML configuration rules
+Each YAML file in your MCP server project must contain exactly one component type. This is a hard requirement, not a style preference.
 
-Each YAML file should contain exactly one component type. The component type is inferred from the directory structure:
+This rule exists for three reasons:
+
+. The MCP server scans the `resources/` directories and registers each file as a separate tool. If a file contained multiple component types, the server couldn't determine which component is the tool.
+. One file equals one tool equals one responsibility. This keeps tools focused and testable.
+. The MCP server infers the component type from the directory structure.
+
+The following table shows which directory corresponds to each component type:
 
 [cols="1,1", options="header"]
 |===
@@ -24,12 +30,99 @@ Each YAML file should contain exactly one component type. The component type is 
 | Cache component
 |===
 
-Common mistakes to avoid:
+In practice, this means you cannot have inputs, outputs and processors in the same file. If you need a tool that reads from one place, processes data, and writes to another, define separate tools and let the AI client orchestrate them.
 
-- Wrapping components in `input:` or `output:` blocks
-- Multiple top-level component types in one file (like having separate `input:`, `processors:`, and `output:` sections)
-- Using `try`/`catch` as a single processor (must be separate)
-- Hardcoding secrets instead of using `$\{ENV_VAR}`
-- Generic tool names like `get-data` or `processor1`
+There is one exception to this rule: output components can include a `processors:` section. This is not multiple component types. It's an output component with inline processing. See xref:ai-agents:mcp-server/tool-patterns.adoc#outputs-with-processors[outputs with processors] for examples.
 
-NOTE: Outputs and inputs can include processors as part of their configuration. For example, an output can have a `processors:` section to transform data before publishing. See xref:ai-agents:mcp-server/pipeline-patterns.adoc#outputs-with-processors[outputs with processors] for examples.
+=== Correct structure
+
+Define the component directly at the top level with a `label` and `meta.mcp` block:
+
+.Redpanda input component
+[,yaml]
+----
+label: event-reader
+redpanda:
+ifdef::env-cloud[]
+  seed_brokers: [ "${secrets.REDPANDA_BROKERS}" ]
+endif::[]
+ifndef::env-cloud[]
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+endif::[]
+  topics: [ "events" ]
+  consumer_group: "mcp-reader"
+
+meta:
+  mcp:
+    enabled: true
+    description: "Consume events from Redpanda"
+----
+
+.Processor component
+[source,yaml]
+----
+include::example$best-practices/config-examples/correct-processor.yaml[tags=correct-processor]
+----
+
+.Output with inline processors
+[,yaml]
+----
+label: publish-with-transform
+processors:  # <1>
+  - mutation: |
+      root = this
+      root.published_at = now()
+redpanda:
+ifdef::env-cloud[]
+  seed_brokers: [ "${secrets.REDPANDA_BROKERS}" ]
+endif::[]
+ifndef::env-cloud[]
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+endif::[]
+  topic: "processed-events"
+meta:
+  mcp:
+    enabled: true
+    description: "Publish data to Redpanda with timestamp"
+----
+<1> Processors within an output transform data before publishing.
+
+=== Common mistakes
+
+Do not wrap components in `input:` or `output:` blocks:
+
+.Incorrect
+[source,yaml]
+----
+label: incorrect-example
+input:
+  redpanda:
+ifdef::env-cloud[]
+    seed_brokers: [ "${secrets.REDPANDA_BROKERS}" ]
+endif::[]
+ifndef::env-cloud[]
+    seed_brokers: [ "${REDPANDA_BROKERS}" ]
+endif::[]
+    topics: [ "events" ]
+----
+
+Do not define multiple top-level component types in one file:
+
+.Incorrect
+[source,yaml]
+----
+label: incorrect-example
+input:  # <1>
+  redpanda: { ... }
+processors:  # <1>
+  - mutation: { ... }
+output:  # <1>
+  redpanda: { ... }
+----
+<1> This file has three top-level component types. Each must be in its own file.
+
+Other mistakes to avoid:
+
+* Using `try`/`catch` as a single processor (must be separate)
+* Hardcoding secrets instead of using `$\{ENV_VAR}`
+* Generic tool names like `get-data` or `processor1`

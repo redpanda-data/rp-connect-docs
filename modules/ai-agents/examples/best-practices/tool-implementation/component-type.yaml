@@ -1,0 +1,43 @@
+# Test: Correct component type structure for MCP tools
+# Validates: Single component type without wrappers
+
+# tag::correct-component[]
+label: read-events
+
+redpanda:
+  topics: [ "events" ]
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  consumer_group: "mcp-reader"
+
+meta:
+  mcp:
+    enabled: true
+    description: "Read events from Redpanda topic"
+    properties:
+      - name: count
+        type: number
+        description: "Number of messages to read"
+        required: false
+# end::correct-component[]
+
+# tag::wrong-pipeline[]
+# WRONG: This is a pipeline, not an MCP tool (DO NOT USE)
+# label: my-tool
+# input:
+#   redpanda:
+#     topics: [ "events" ]
+# processors:
+#   - mutation: |
+#       root.processed = true
+# output:
+#   redpanda:
+#     topic: "processed-events"
+# end::wrong-pipeline[]
+
+# tag::wrong-wrapper[]
+# WRONG: Unnecessary wrapper (DO NOT USE)
+# label: my-input
+# input:
+#   redpanda:
+#     topics: [ "events" ]
+# end::wrong-wrapper[]

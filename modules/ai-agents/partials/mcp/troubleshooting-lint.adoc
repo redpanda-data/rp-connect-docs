@@ -1,0 +1,93 @@
+// Single-sourced partial for lint error troubleshooting
+// Used in Connect troubleshooting.adoc and Cloud troubleshooting.adoc
+//
+// Include from Connect: include::ai-agents:partial$mcp/troubleshooting-lint.adoc[]
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/troubleshooting-lint.adoc[]
+
+ifdef::env-cloud[]
+Always lint your configuration before deploying. The Cloud Console provides a *Lint* button that validates your YAML.
+endif::[]
+ifndef::env-cloud[]
+Always lint your configuration before starting the server:
+
+[source,bash]
+----
+rpk connect mcp-server lint
+----
+endif::[]
+
+=== Common lint errors
+
+- `unable to infer component type`: Your file contains multiple component types or uses wrapper blocks. Each YAML file must contain only a single component type and should not be wrapped in an `input:` or `output:` block. See <<fix-unable-to-infer>>.
+
+- `unknown field`: A configuration field is misspelled. Check the field name against the component documentation.
+
+- `missing required field`: A required field is missing from your configuration. Add the missing field.
+
+[[fix-unable-to-infer]]
+=== Unable to infer component type
+
+If you see errors like the following, your YAML file contains more than one component type or uses a wrapper:
+
+[source]
+----
+resources/inputs/redpanda-consume.yaml(1,1) unable to infer component type: [input processors cache_resources meta]
+resources/outputs/redpanda-publish.yaml(1,1) unable to infer component type: [processors output meta]
+----
+
+To fix this, split out each component type into its own file.
+
+.Incorrect: Multiple component types
+[source,yaml]
+----
+label: incorrect-example
+input:
+  redpanda: { ... }
+processors:
+  - mutation: { ... }
+output:
+  redpanda: { ... }
+----
+
+.Correct: Single component type
+[source,yaml]
+----
+label: event-reader
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topics: [ "events" ]
+  consumer_group: "mcp-reader"
+meta:
+  mcp:
+    enabled: true
+    description: "Consume events from Redpanda"
+----
+
+=== JSON schema errors
+
+JSON schema errors indicate that you're using an outdated version of Redpanda Connect with an incompatible JSON schema format:
+
+[source,json]
+----
+{
+  "type": "error",
+  "error": {
+    "type": "invalid_request_error",
+    "message": "tools.17.custom.input_schema: JSON schema is invalid..."
+  }
+}
+----
+
+ifdef::env-cloud[]
+Contact Redpanda support if you see this error in Redpanda Cloud.
+endif::[]
+ifndef::env-cloud[]
+Upgrade to at least version 4.66.1 of Redpanda Connect:
+
+[source,bash]
+----
+rpk connect --version
+----
+
+If you need to upgrade, see xref:install:rpk.adoc#upgrade[Upgrade Redpanda Connect].
+endif::[]

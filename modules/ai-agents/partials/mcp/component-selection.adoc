@@ -1,0 +1,206 @@
+// Single-sourced partial for MCP component selection guide
+// Used in both Connect and Cloud developer guides
+//
+// Include from Connect: include::ai-agents:partial$mcp/component-selection.adoc[]
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/component-selection.adoc[]
+
+Every MCP tool is implemented as a single component. Choosing the right component type is a critical design decision that affects what your tool can do and how it behaves.
+
+=== Decision framework
+
+To choose the right component type, ask what the tool's primary purpose is.
+
+Use the following table to match your tool's intent to a component type:
+
+[cols="2,1", options="header"]
+|===
+| Question | Component Type
+
+| Does the tool compute or transform data and return results?
+| <<processor-tools, Processor>>
+
+| Does the tool call external APIs and return the response?
+| <<processor-tools, Processor>>
+
+| Does the tool write data to an external system (database, topic, API)?
+| <<output-tools, Output>>
+
+| Does the tool read data from an external source and return it?
+| <<input-tools, Input>>
+|===
+
+The core principle is to choose the component type that matches the tool's primary intent.
+
+[[processor-tools]]
+=== Processor tools
+
+ifdef::env-cloud[]
+Processor tools transform, validate, compute, or fetch data and return results to the AI client. This is the most common tool type. See the xref:develop:connect/components/processors/about.adoc[processors reference] for available processors.
+endif::[]
+ifndef::env-cloud[]
+Processor tools transform, validate, compute, or fetch data and return results to the AI client. This is the most common tool type. See the xref:components:processors/about.adoc[processors reference] for available processors.
+endif::[]
+
+==== When to choose a processor tool
+
+Choose a processor tool when the tool's purpose is to compute or transform data, call an external API and return the response, or validate inputs and return errors or results. Processor tools should not have side effects, or side effects should be incidental rather than the primary purpose.
+
+==== Use case: Fetch and transform external data
+
+Consider a scenario where an AI assistant needs current weather data to answer a user's question about whether to bring an umbrella.
+
+The following prompts should trigger this type of tool:
+
+* "What's the weather in Berlin?"
+* "Is it raining in Tokyo right now?"
+* "Get me the current temperature for Seattle."
+
+A processor is the right choice because the tool fetches data from an API, transforms it into a useful format, and returns it. There are no side effects because we're not writing data anywhere.
+
+==== Use case: Validate and normalize data
+
+Consider a scenario where an AI assistant needs to validate user-submitted data and return structured feedback about any issues.
+
+The following prompts should trigger this type of tool:
+
+* "Validate this customer record before saving."
+* "Check if this order has all required fields."
+* "Normalize this JSON and tell me what's missing."
+
+A processor is the right choice because the tool examines data, applies validation rules, and returns results. No data is written anywhere.
+
+[[output-tools]]
+=== Output tools
+
+ifdef::env-cloud[]
+Output tools write data to external systems. Use them when the primary purpose is to create a side effect such as persisting data, publishing an event, or triggering an action. See the xref:develop:connect/components/outputs/about.adoc[outputs reference] for available outputs.
+endif::[]
+ifndef::env-cloud[]
+Output tools write data to external systems. Use them when the primary purpose is to create a side effect such as persisting data, publishing an event, or triggering an action. See the xref:components:outputs/about.adoc[outputs reference] for available outputs.
+endif::[]
+
+==== When to choose an output tool
+
+Choose an output tool when the tool's purpose is to write data to Redpanda, a database, or an external API. The side effect (writing) should be the primary intent, not incidental. You can use `processors:` within the output to transform data before writing. Output tools are appropriate when you want the AI to trigger real-world actions.
+
+==== Understanding tool response vs. side effect
+
+Output tools have two outcomes: the side effect (data is written to the destination) and the tool response (the AI client receives confirmation that the write succeeded).
+
+The AI client does not receive the written data back. It receives status information. If you need to return the written data, consider using a processor tool instead.
+
+==== Use case: Publish events to Redpanda
+
+Consider a scenario where an AI assistant needs to publish order events to Redpanda for downstream processing.
+
+The following prompts should trigger this type of tool:
+
+* "Publish this order to Redpanda."
+* "Send the order event to the orders topic."
+* "Record this new order for processing."
+
+An output is the right choice because the purpose is to write data to Redpanda. The AI needs to create a persistent record, not just compute something.
+
+==== Use case: Transform and publish
+
+Output components can include a `processors:` section that transforms data before writing to the destination. This is a single output component, not a combination of component types.
+
+Consider a scenario where an AI assistant asks an LLM to summarize a document, then stores both the original and summary in Redpanda.
+
+The following prompts should trigger this type of tool:
+
+* "Summarize this document and save it."
+* "Process this feedback with GPT and store the analysis."
+* "Analyze this text and publish the results."
+
+An output with processors is the right choice because the primary intent is to store data. The processors provide pre-processing before writing.
+
+The execution flow for this pattern is as follows:
+
+. AI client calls the tool with input data.
+. The `processors` section transforms the data.
+. The output component writes the transformed data to the destination.
+. The tool returns a response to the AI client.
+
+Note that the `processors:` field is part of the output component's configuration, not a separate top-level section.
+
+ifdef::env-cloud[]
+For implementation examples, see xref:ai-agents:mcp/remote/tool-patterns.adoc#outputs-with-processors[outputs with processors] in the tool patterns guide.
+endif::[]
+ifndef::env-cloud[]
+For implementation examples, see xref:ai-agents:mcp-server/tool-patterns.adoc#outputs-with-processors[outputs with processors] in the tool patterns guide.
+endif::[]
+
+[[input-tools]]
+=== Input tools
+
+ifdef::env-cloud[]
+Input tools read data from external sources and return it to the AI client. They're useful when you need to query or fetch existing data. See the xref:develop:connect/components/inputs/about.adoc[inputs reference] for available inputs.
+endif::[]
+ifndef::env-cloud[]
+Input tools read data from external sources and return it to the AI client. They're useful when you need to query or fetch existing data. See the xref:components:inputs/about.adoc[inputs reference] for available inputs.
+endif::[]
+
+==== When to choose an input tool
+
+Choose an input tool when the tool's purpose is to read and return data from an external source, consume messages from a Redpanda topic, or build a query-style tool that retrieves existing data.
+
+==== Event-driven vs. query-style tools
+
+Input tools can work in two modes. Query-style reads a bounded set of data and returns immediately. Use this mode for "get me the latest N events" patterns. Subscription-style is generally not appropriate for MCP tools because it would never complete. Avoid unbounded reads.
+
+==== Latency and scope considerations
+
+Keep these factors in mind when building input tools:
+
+* Input tools may have variable latency depending on the data source.
+* Scope your reads appropriately. Don't try to read entire topics.
+* Consider consumer group behavior: with a consumer group, each invocation advances through the stream; without one, each invocation may read the same data.
+
+==== Use case: Query recent events
+
+Consider a scenario where an AI assistant needs to retrieve recent user activity events to understand user behavior.
+
+The following prompts should trigger this type of tool:
+
+* "Show me recent user events."
+* "Get the last 10 login events."
+* "What events happened in the user-events topic recently?"
+
+An input is the right choice because the tool reads from an existing data source (topic) and returns what it finds.
+
+=== Component selection summary
+
+The following table summarizes when to use each component type:
+
+[cols="1,2,2,1", options="header"]
+|===
+| Component | Primary Intent | Example Tools | Returns
+
+| Processor
+| Compute, transform, validate, fetch
+| Weather lookup, data validation, API calls
+| Computed result
+
+| Output
+| Write data with side effects
+| Publish events, store records, trigger webhooks
+| Write confirmation
+
+| Output + processors
+| Transform then write
+| Summarize and store, enrich and publish
+| Write confirmation
+
+| Input
+| Read and return data
+| Query recent events, search logs
+| Retrieved data
+|===
+
+ifdef::env-cloud[]
+For implementation examples and common patterns, see xref:ai-agents:mcp/remote/tool-patterns.adoc[].
+endif::[]
+ifndef::env-cloud[]
+For implementation examples and common patterns, see xref:ai-agents:mcp-server/tool-patterns.adoc[].
+endif::[]

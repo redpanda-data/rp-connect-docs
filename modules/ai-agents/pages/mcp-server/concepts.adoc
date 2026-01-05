@@ -1,0 +1,93 @@
+= MCP Tools Concepts
+:description: Understand how MCP tools work, how they differ from pipelines, and how to choose the right component type.
+:page-topic-type: concepts
+:personas: ai_agent_developer, streaming_platform_developer, absolute_beginner
+// Reader journey: "I want to understand how it works"
+// Learning objectives - what readers should know after reading this page:
+:learning-objective-1: Explain what an MCP tool is and how it differs from a pipeline
+:learning-objective-2: Describe the request/response execution model
+:learning-objective-3: Map component types (processor, output, input, cache) to their MCP tool purposes
+:learning-objective-4: Choose the correct component type for a given use case
+:learning-objective-5: Identify component support levels and licensing requirements
+
+This page explains the mental model for MCP tools: what they are, how they execute, and how to choose the right component type for your use case.
+
+After reading this page, you will be able to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+* [ ] {learning-objective-4}
+* [ ] {learning-objective-5}
+
+== Key terms
+
+MCP server:: A process that exposes tools to MCP clients. You write each tool's logic using Redpanda Connect configuration and annotate them with MCP metadata so clients can discover and invoke them.
+
+Redpanda Connect:: A framework for building event-driven data pipelines. Tools inside your MCP server are implemented as Redpanda Connect configurations.
+
+Tool:: A single request/response operation exposed to MCP clients. Each tool has logic (what it does) and metadata (how AI understands it).
+
+[[mental-model]]
+== Understand MCP tools
+
+// MCP tools concept - single-sourced from partial
+include::ai-agents:partial$mcp/mcp-tools-concept.adoc[]
+
+// Component mapping - single-sourced from partial
+include::ai-agents:partial$mcp/component-mapping.adoc[]
+
+// Execution model - single-sourced from partial
+include::ai-agents:partial$mcp/execution-model.adoc[]
+
+[[component-selection]]
+== Choose the right component type
+
+// Component selection guide - single-sourced from partial
+include::ai-agents:partial$mcp/component-selection.adoc[]
+
+[[support-and-licensing]]
+== Component support levels and licensing
+
+Redpanda Connect components have different support levels and licensing requirements. Understanding these helps you make informed decisions when building MCP tools.
+
+=== Support levels
+
+Components fall into two support categories:
+
+Certified components:: Officially supported by Redpanda. These components receive regular updates, bug fixes, and are tested for production use. Use certified components when reliability and support are priorities.
+
+Community components:: Contributed by the community. These may have varying levels of maintenance and testing. Review the component documentation and consider your risk tolerance before using in production.
+
+=== Enterprise licensing
+
+Some components require a Redpanda Enterprise license. These include certain cloud-provider integrations, advanced security features, and some enterprise data source connectors.
+
+If you use an Enterprise-licensed component without a valid license, the MCP server will not start, and you'll see an error indicating the missing license.
+
+To determine a component's support level and licensing requirements:
+
+. Check the xref:components:about.adoc[component reference documentation].
+. Look for "Support Level" and "License" badges on each component page.
+. Review the component's feature matrix for any restrictions.
+
+=== License status
+
+When the MCP server starts, it logs the license status:
+
+[source]
+----
+level=INFO msg="Successfully loaded Redpanda license" license_type="enterprise" expires_at=...
+----
+
+If you see `license_type="open source"`, Enterprise-licensed components are not available.
+
+== Next steps
+
+Continue your learning journey with these resources:
+
+* xref:ai-agents:mcp-server/quickstart.adoc[]: Build your first MCP tool
+* xref:ai-agents:mcp-server/best-practices.adoc[]: Learn best practices for tool development
+* xref:ai-agents:mcp-server/tool-patterns.adoc[]: Explore tool patterns
+* xref:ai-agents:mcp-server/reference.adoc[]: Look up configuration rules and restrictions
+* xref:ai-agents:mcp-server/troubleshooting.adoc[]: Diagnose and fix common issues

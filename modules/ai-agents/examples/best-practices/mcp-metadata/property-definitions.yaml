@@ -1,0 +1,59 @@
+# Test: Property definition patterns
+# Validates: Properties have proper types, descriptions, and required flags
+
+label: get-weather-detailed
+
+processors:
+  - mutation: |
+      let units = this.units | "celsius"
+      let limit = this.limit | 10
+      let include_forecast = this.include_forecast | false
+      root = {
+        "city": this.city,
+        "temperature": if $units == "fahrenheit" { 72 } else { 22 },
+        "units": $units,
+        "forecast": if $include_forecast { [{"day": 1, "temp": 23}] } else { null }
+      }
+
+meta:
+  mcp:
+    enabled: true
+    description: "Get detailed weather with optional forecast"
+    # tag::property-descriptions[]
+    properties:
+      - name: city
+        type: string
+        description: "City name (e.g., 'London', 'New York', 'Tokyo')"
+        required: true
+
+      - name: units
+        type: string
+        description: "Temperature units: 'celsius' or 'fahrenheit'. Defaults to 'celsius'."
+        required: false
+
+      - name: limit
+        type: number
+        description: "Maximum results to return (1-100). Defaults to 10."
+        required: false
+
+      - name: include_forecast
+        type: boolean
+        description: "If true, include 5-day forecast. Defaults to false."
+        required: false
+    # end::property-descriptions[]
+
+# tag::required-vs-optional[]
+# Required vs Optional guidance:
+# properties:
+#   # Required: Tool needs a city to look up weather
+#   - name: city
+#     type: string
+#     description: "City name to get weather for"
+#     required: true
+#
+#   # Optional: Has a sensible default
+#   - name: units
+#     type: string
+#     description: "Temperature units. Defaults to 'celsius'."
+#     required: false
+# end::required-vs-optional[]

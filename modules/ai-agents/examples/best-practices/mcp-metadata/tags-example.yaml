@@ -1,0 +1,25 @@
+# Test: Using tags for tool organization
+# Validates: Tags array in meta section
+
+label: get-external-weather
+
+processors:
+  - mutation: |
+      root = {
+        "source": "external-api",
+        "temperature": 22,
+        "conditions": "sunny"
+      }
+
+# tag::tags-example[]
+meta:
+  tags: [ weather, api, external, production ]
+  mcp:
+    enabled: true
+    description: "Get weather from external API"
+    properties:
+      - name: city
+        type: string
+        description: "City name"
+        required: true
+# end::tags-example[]

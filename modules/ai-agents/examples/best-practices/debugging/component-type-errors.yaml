@@ -1,0 +1,31 @@
+# Test: Component type configuration patterns
+# Validates: Single component type vs incorrect multi-component
+
+# tag::incorrect-multiple[]
+# WRONG: Multiple top-level component types (DO NOT USE)
+# input:
+#   redpanda: { ... }
+# processors:
+#   - mutation: { ... }
+# output:
+#   redpanda: { ... }
+# end::incorrect-multiple[]
+
+# tag::correct-single[]
+label: my-input
+
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topics: [ "events" ]
+  consumer_group: "mcp-reader"
+
+meta:
+  mcp:
+    enabled: true
+    description: "Consume events from Redpanda"
+    properties:
+      - name: count
+        type: number
+        description: "Number of messages to read"
+        required: false
+# end::correct-single[]

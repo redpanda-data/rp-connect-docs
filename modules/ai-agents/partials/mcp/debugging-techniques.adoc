@@ -1,0 +1,61 @@
+// Single-sourced partial for debugging techniques
+// Used in Connect troubleshooting.adoc and Cloud troubleshooting.adoc
+//
+// Include from Connect: include::ai-agents:partial$mcp/debugging-techniques.adoc[]
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/debugging-techniques.adoc[]
+
+=== Add temporary logging
+
+ifdef::env-cloud[]
+Insert xref:develop:connect/components/processors/log.adoc[`log` processors] to debug data flow:
+endif::[]
+ifndef::env-cloud[]
+Insert xref:components:processors/log.adoc[`log` processors] to debug data flow:
+endif::[]
+
+[source,yaml]
+----
+processors:
+  - log:
+      message: "Input received: ${! json() }"
+      level: DEBUG
+  - # ... your processing logic ...
+  - log:
+      message: "Output produced: ${! json() }"
+      level: DEBUG
+----
+
+ifdef::env-cloud[]
+The `${! json() }` syntax uses xref:develop:connect/guides/bloblang/functions.adoc#json[Bloblang interpolation] to insert the current message content.
+endif::[]
+ifndef::env-cloud[]
+The `${! json() }` syntax uses xref:guides:bloblang/functions.adoc#json[Bloblang interpolation] to insert the current message content.
+endif::[]
+
+Remove debug processors before deploying to production.
+
+=== Test incrementally
+
+Build confidence by testing at each stage:
+
+ifdef::env-cloud[]
+. Lint your configuration using the *Lint* button in the Cloud Console.
+. Test tool logic using the *MCP Inspector*.
+. Connect to your AI client using `rpk cloud mcp proxy`.
+. Test end-to-end with realistic prompts.
+endif::[]
+ifndef::env-cloud[]
+. Validate tool configuration using `rpk connect mcp-server lint`.
+. Start the MCP server locally using `rpk connect mcp-server`.
+. Connect to Claude Code and verify the tool appears.
+. Test end-to-end with realistic prompts.
+endif::[]
+
+=== Isolate the problem
+
+When debugging complex tools:
+
+. Test each processor individually by commenting out others.
+. Use static test data instead of live API calls.
+. Check if the issue is in input validation, processing logic, or output formatting.
+. Compare working tools with broken ones to identify differences.

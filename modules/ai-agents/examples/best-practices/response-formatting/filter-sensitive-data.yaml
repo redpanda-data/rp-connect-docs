@@ -1,0 +1,33 @@
+# Test: Filtering sensitive data from response-formatting.adoc
+# Expected: Sensitive fields removed, other fields preserved
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {
+        "user_id": 123,
+        "name": "John Doe",
+        "email": "john@example.com",
+        "password": "secret123",
+        "ssn": "123-45-6789",
+        "credit_card": "4111111111111111",
+        "api_key": "sk-abc123"
+      }
+
+pipeline:
+  processors:
+    # tag::filter-sensitive[]
+    - label: remove_sensitive_data
+      mapping: |
+        root = this.without(
+          "password",
+          "ssn",
+          "credit_card",
+          "api_key"
+        )
+    # end::filter-sensitive[]
+
+output:
+  stdout: {}

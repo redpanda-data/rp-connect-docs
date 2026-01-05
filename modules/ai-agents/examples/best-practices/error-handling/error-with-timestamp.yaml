@@ -1,0 +1,30 @@
+# Test: Error response with timestamp from error-handling.adoc
+# Expected: Error captured with success=false and formatted timestamp
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"action": "trigger_error"}
+
+pipeline:
+  processors:
+    - label: simulate_error
+      try:
+        - mutation: |
+            root = throw("Database connection failed")
+
+    # tag::error-with-timestamp[]
+    - label: handle_errors
+      catch:
+        - mutation: |
+            root = {
+              "success": false,
+              "error_message": error(),
+              "timestamp": now().format_timestamp("2006-01-02T15:04:05Z07:00")
+            }
+    # end::error-with-timestamp[]
+
+output:
+  stdout: {}

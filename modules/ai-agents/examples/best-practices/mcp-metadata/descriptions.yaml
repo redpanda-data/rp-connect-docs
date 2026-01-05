@@ -1,0 +1,34 @@
+# Test: Tool description best practices
+# Validates: Good descriptions explain what tool does and returns
+
+label: get-city-weather
+
+processors:
+  - mutation: |
+      root = {
+        "temperature_celsius": 22,
+        "temperature_fahrenheit": 72,
+        "humidity_percent": 65,
+        "description": "Partly cloudy"
+      }
+
+meta:
+  mcp:
+    enabled: true
+    # tag::good-vs-bad[]
+    # Good: Describes what is returned
+    description: "Get current weather for a city. Returns temperature in Celsius and Fahrenheit, humidity percentage, and weather description."
+
+    # Bad: No information about return value
+    # description: "Weather tool"
+    # end::good-vs-bad[]
+    properties:
+      - name: city
+        type: string
+        description: "City name"
+        required: true
+
+# tag::with-limitations[]
+# Example description with limitations:
+# description: "Search product catalog by name or category. Returns up to 10 results. Requires at least one search term."
+# end::with-limitations[]

@@ -1,0 +1,34 @@
+# Test: Correct processor component configuration
+# Validates: Processor with try/catch error handling
+
+# tag::correct-processor[]
+label: fetch-example-data
+
+processors:
+  - label: safe_operation
+    try:
+      - http:
+          url: "https://httpbin.org/json"
+          verb: GET
+          timeout: "10s"
+      - mutation: |
+          root = this.merge({"processed": true})
+
+  - label: handle_errors
+    catch:
+      - mutation: |
+          root = {
+            "error": "Operation failed",
+            "details": error()
+          }
+
+meta:
+  mcp:
+    enabled: true
+    description: "Fetch data from external API with error handling"
+    properties:
+      - name: endpoint
+        type: string
+        description: "API endpoint to fetch"
+        required: false
+# end::correct-processor[]

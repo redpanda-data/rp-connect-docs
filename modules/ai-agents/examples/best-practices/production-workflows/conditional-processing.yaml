@@ -1,0 +1,38 @@
+# Test: Conditional processing with switch
+# Validates: Branch processing based on data type
+
+label: parse-data-by-type
+
+# tag::conditional-processing[]
+processors:
+  - label: conditional_processing
+    switch:
+      - check: this.data_type == "json"
+        processors:
+          - mutation: |
+              root.parsed_data = this.content
+              root.format = "json"
+      - check: this.data_type == "csv"
+        processors:
+          - mutation: |
+              root.parsed_data = this.content
+              root.format = "csv"
+      - processors:
+          - mutation: |
+              root.error = "Unsupported data type"
+              root.supported_types = ["json", "csv"]
+# end::conditional-processing[]
+
+meta:
+  mcp:
+    enabled: true
+    description: "Parse data based on specified type"
+    properties:
+      - name: data_type
+        type: string
+        description: "Data format: json or csv"
+        required: true
+      - name: content
+        type: string
+        description: "Content to parse"
+        required: true

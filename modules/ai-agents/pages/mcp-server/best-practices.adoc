@@ -1,0 +1,98 @@
+= MCP Tool Best Practices
+:page-aliases: ai-agents:mcp-server/developer-guide.adoc
+:description: Learn best practices for writing robust MCP tools with Redpanda Connect.
+:page-topic-type: best-practices
+:personas: ai_agent_developer, streaming_platform_developer, data_engineer_pipeline_architect
+// Reader journey: "I want to do this well"
+// Learning objectives - what readers should be able to do after reading this page:
+:learning-objective-1: Evaluate when to add input validation to MCP tools
+:learning-objective-2: Choose error handling strategies for different failure modes
+:learning-objective-3: Distinguish effective response formats from problematic ones
+:learning-objective-4: Identify characteristics of effective MCP descriptions
+:learning-objective-5: Apply debugging techniques to identify issues
+
+This page teaches you how to write well-structured MCP tools. It goes beyond the xref:ai-agents:mcp-server/quickstart.adoc[quickstart] to explain the patterns and practices that make tools reliable and maintainable.
+
+After reading this page, you will be able to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+* [ ] {learning-objective-4}
+* [ ] {learning-objective-5}
+
+TIP: Complete the xref:ai-agents:mcp-server/quickstart.adoc[quickstart] first if you haven't set up an MCP server yet.
+
+== Anatomy of a well-structured tool
+
+A robust MCP tool has four sections: input validation, core logic with error handling, response formatting, and MCP metadata. Here's a complete example:
+
+[source,yaml]
+----
+include::ai-agents:example$resources/processors/weather-service.yaml[]
+----
+<1> <<input-validation,Input validation>>: Sanitize and validate inputs before processing
+<2> <<error-handling,Error handling>>: Wrap operations that can fail in `try` blocks
+<3> HTTP call with explicit timeout
+<4> <<response-formatting,Response formatting>>: Structure output for AI clients
+<5> <<error-handling,Catch block>>: Return useful errors instead of failing silently
+<6> <<mcp-metadata,MCP metadata>>: Declare tool name, description, and parameters
+
+[[input-validation]]
+== Input validation
+
+include::ai-agents:partial$mcp/input-validation.adoc[]
+
+[[error-handling]]
+== Error handling with try/catch
+
+include::ai-agents:partial$mcp/error-handling.adoc[]
+
+[[response-formatting]]
+== Response formatting
+
+include::ai-agents:partial$mcp/response-formatting.adoc[]
+
+[[mcp-metadata]]
+== MCP metadata design
+
+include::ai-agents:partial$mcp/mcp-metadata-design.adoc[]
+
+[[tool-implementation]]
+== Tool design guidelines
+
+include::ai-agents:partial$mcp/tool-implementation-practices.adoc[]
+
+[[debugging]]
+== Debugging techniques
+
+include::ai-agents:partial$mcp/debugging-techniques.adoc[]
+
+TIP: For solutions to specific errors, see xref:ai-agents:mcp-server/troubleshooting.adoc[].
+
+[[tags]]
+== Tags
+
+Use tags to organize tools and control which ones are included when starting the server. Define tags in the `meta.mcp` block and filter with `rpk connect mcp-server start --tags`.
+
+=== Tag strategies
+
+- Environment separation: Tag tools as `dev`, `staging`, or `production` to run different tool sets per environment.
++
+[,bash]
+----
+rpk connect mcp-server start --tags production
+----
+
+- Feature grouping: Group related tools (for example, `analytics`, `notifications`, `user-management`) to expose coherent functionality.
+
+- Access control: Expose different tool subsets to different AI clients by running multiple server instances with different tag filters.
+
+== Next steps
+
+Continue your learning journey with these resources:
+
+* xref:ai-agents:mcp-server/concepts.adoc[]: Learn about the execution model and component types
+* xref:ai-agents:mcp-server/tool-patterns.adoc[]: Find reusable patterns for common scenarios
+* xref:ai-agents:mcp-server/reference.adoc[]: Look up YAML rules and property restrictions
+* xref:ai-agents:mcp-server/troubleshooting.adoc[]: Diagnose and fix common issues

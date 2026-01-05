@@ -1,0 +1,136 @@
+// Single-sourced partial for input validation best practices
+// Used in Connect best-practices.adoc and Cloud best-practices.adoc
+//
+// Include from Connect: include::ai-agents:partial$mcp/input-validation.adoc[]
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/input-validation.adoc[]
+
+Always validate inputs before processing. This prevents errors and provides clear feedback to the AI client. The following example shows a basic validation pattern:
+
+[source,yaml]
+----
+include::example$best-practices/input-validation/validate-required-field.yaml[tags=validate-input,indent=0]
+----
+
+This validation does three things: First, `.or("")` provides an empty string default if the `city` field is missing, which prevents null errors. Then, `.trim()` removes whitespace so `"  "` doesn't pass as a valid city. Then, the `if` expression returns either an error object or the validated data. The AI client receives clear feedback either way.
+
+=== Essential validation methods
+
+ifdef::env-cloud[]
+Use these xref:develop:connect/guides/bloblang/methods.adoc[Bloblang methods] for input validation:
+endif::[]
+ifndef::env-cloud[]
+Use these xref:guides:bloblang/methods.adoc[Bloblang methods] for input validation:
+endif::[]
+
+[cols="1,2,2"]
+|===
+| Method | Purpose | Example
+
+| `.or(default)`
+| Provide fallback for missing fields
+| `this.city.or("unknown")`
+
+| `.trim()`
+| Remove leading/trailing whitespace
+| `this.name.trim()`
+
+| `.exists("field")`
+| Check if a field is present
+| `this.exists("email")`
+
+| `.type()`
+| Get the type of a value
+| `this.count.type() == "number"`
+
+| `.length()`
+| Check string or array length
+| `this.items.length() > 0`
+
+| `.re_match(pattern)`
+| Validate against regex
+| `this.email.re_match("^[^@]+@[^@]+$")`
+
+| `.number()`
+| Convert and validate as number
+| `this.quantity.number()`
+|===
+
+=== Sanitizing string inputs
+
+Remove potentially dangerous characters from user inputs. This is especially important when inputs will be used in URLs, database queries, or shell commands:
+
+[source,yaml]
+----
+include::example$best-practices/input-validation/sanitize-string-input.yaml[tags=sanitize-input,indent=0]
+----
+
+The regex `[^a-zA-Z\\s\\-]` matches any character that is not a letter, space, or hyphen, and `re_replace_all` removes all matches. An input like `"New York!@#$"` becomes `"New York"`. The `meta` keyword stores the result in message metadata (using `@sanitized_city`), keeping it separate from the message body until validation passes.
+
+ifdef::env-cloud[]
+See xref:develop:connect/guides/bloblang/methods.adoc#re_replace_all[`re_replace_all`] for regex replacement syntax.
+endif::[]
+ifndef::env-cloud[]
+See xref:guides:bloblang/methods.adoc#re_replace_all[`re_replace_all`] for regex replacement syntax.
+endif::[]
+
+=== Validate numeric ranges
+
+Check that numeric inputs fall within acceptable bounds:
+
+[source,yaml]
+----
+include::example$best-practices/input-validation/validate-numeric-range.yaml[tags=validate-quantity,indent=0]
+----
+
+This example chains `.or(0)` with `.number()` to handle both missing values and type conversion. The chained `if`/`else if` checks both lower and upper bounds. Including the received value in error responses helps AI clients understand what went wrong and correct their input.
+
+=== Validate multiple fields
+
+For forms or complex inputs, collect all errors before returning. This gives AI clients a complete list of problems to fix rather than failing on the first error:
+
+[source,yaml]
+----
+include::example$best-practices/input-validation/validate-multiple-fields.yaml[tags=validate-order,indent=0]
+----
+
+The pattern uses variable reassignment (`let errors = ...`) to accumulate errors into an array. Each check appends to the array if validation fails, or returns the unchanged array if it passes. At the end, if any errors were collected, the response includes all of them. Notice that the email validation only runs if the field exists. This allows optional fields that, when provided, must be valid.
+
+=== Validate enum values
+
+Restrict inputs to a set of allowed values. This prevents invalid states and provides helpful feedback when the input doesn't match:
+
+[source,yaml]
+----
+include::example$best-practices/input-validation/validate-enum-values.yaml[tags=validate-status,indent=0]
+----
+
+The `lowercase()` call normalizes the input so `"PENDING"`, `"Pending"`, and `"pending"` all match. When validation fails, the error response includes the list of allowed values. This helps AI clients self-correct without needing to look up valid options.
+
+ifdef::env-cloud[]
+See xref:develop:connect/guides/bloblang/methods.adoc#contains[`contains`] and xref:develop:connect/guides/bloblang/methods.adoc#lowercase[`lowercase`] for more details.
+endif::[]
+ifndef::env-cloud[]
+See xref:guides:bloblang/methods.adoc#contains[`contains`] and xref:guides:bloblang/methods.adoc#lowercase[`lowercase`] for more details.
+endif::[]
+
+=== Use throw for validation failures
+
+ifdef::env-cloud[]
+Use xref:develop:connect/guides/bloblang/functions.adoc#throw[`throw()`] to stop processing with an error message. This is useful when validation failure should stop the entire tool execution:
+endif::[]
+ifndef::env-cloud[]
+Use xref:guides:bloblang/functions.adoc#throw[`throw()`] to stop processing with an error message. This is useful when validation failure should stop the entire tool execution:
+endif::[]
+
+[source,yaml]
+----
+- label: require_auth
+  mutation: |
+    root = if !this.exists("api_key") || this.api_key == "" {
+      throw("API key is required for this operation")
+    } else {
+      this
+    }
+----
+
+Unlike returning an error object, `throw()` immediately stops the processor chain and triggers any `catch` block that follows. Use `throw()` for critical validation failures where continuing would be pointless or dangerous. The `else` branch returns `this` unchanged, passing all input fields to the next processor.

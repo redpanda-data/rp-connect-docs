@@ -1,0 +1,40 @@
+# Test: Common error handling mistakes (documentation only)
+# Shows incorrect patterns to avoid
+
+label: correct-error-handling
+
+processors:
+  - label: proper_try
+    try:
+      - mutation: |
+          root = this
+          root.processed = true
+
+  - label: proper_catch
+    catch:
+      - mutation: |
+          root = {
+            "error": "Processing failed",
+            "details": error()
+          }
+
+meta:
+  mcp:
+    enabled: true
+    description: "Example of correct error handling pattern"
+
+# tag::wrong-single-processor[]
+# WRONG: try/catch cannot be a single processor (DO NOT USE)
+# - label: operation
+#   try:
+#     - http: { url: "..." }
+#   catch:
+#     - mapping: 'root = {"error": error()}'
+# end::wrong-single-processor[]
+
+# tag::wrong-no-handling[]
+# WRONG: No error handling - tool fails silently (DO NOT USE)
+# - label: fetch_data
+#   http:
+#     url: "https://api.example.com/data"
+# end::wrong-no-handling[]

@@ -1,0 +1,44 @@
+# Test: Conditional field inclusion from response-formatting.adoc
+# Expected: Optional fields only included when conditions met
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"id": 1, "name": "User A", "email": "a@example.com", "is_premium": true, "premium_expiry": "2025-12-31"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"id": 2, "name": "User B", "email": "", "is_premium": false}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"id": 3, "name": "User C", "is_premium": false}'
+
+pipeline:
+  processors:
+    # tag::conditional-fields[]
+    - label: format_with_optional_fields
+      mapping: |
+        root = {
+          "id": this.id,
+          "name": this.name
+        }
+        # Only include email if present and non-empty
+        root.email = if this.exists("email") && this.email != "" {
+          this.email
+        } else {
+          deleted()
+        }
+        # Include premium_until only for premium users
+        root.premium_until = if this.is_premium.bool() {
+          this.premium_expiry
+        } else {
+          deleted()
+        }
+    # end::conditional-fields[]
+
+output:
+  stdout: {}

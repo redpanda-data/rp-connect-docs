@@ -1,0 +1,30 @@
+# Test: Basic error handling from error-handling.adoc
+# Expected: Error caught and formatted with details
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"trigger": "error"}
+
+pipeline:
+  processors:
+    # tag::basic-try-catch[]
+    - label: fetch_data
+      try:
+        - mutation: |
+            root = throw("Simulated API error: connection refused")
+
+    - label: handle_errors
+      catch:
+        - mapping: |
+            root = {
+              "error": "Failed to fetch data",
+              "details": error(),
+              "suggestion": "Check if the API is available"
+            }
+    # end::basic-try-catch[]
+
+output:
+  stdout: {}

@@ -1,0 +1,34 @@
+// Single-sourced partial for MCP execution model
+// Used in both Connect and Cloud developer guides
+//
+// Include from Connect: include::ai-agents:partial$mcp/execution-model.adoc[]
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/execution-model.adoc[]
+
+[[execution-model]]
+=== The MCP execution model
+
+When an AI client calls an MCP tool, the MCP server handles the request in a specific sequence.
+
+The execution follows these steps:
+
+. The AI client sends a JSON request to the MCP server with the tool name and parameters.
+. The MCP server finds the corresponding component configuration.
+. The MCP server executes the component with the input data.
+. The component runs to completion and returns a result.
+. The MCP server sends the result back to the AI client.
+. The component instance is torn down.
+
+This execution model has several important characteristics:
+
+ifdef::env-cloud[]
+Stateless execution:: Each tool invocation is independent. Tools do not maintain state between calls. If you need state, use an external store such as a xref:develop:connect/components/caches/about.adoc[cache], database, or Redpanda topic.
+endif::[]
+ifndef::env-cloud[]
+Stateless execution:: Each tool invocation is independent. Tools do not maintain state between calls. If you need state, use an external store such as a xref:components:caches/about.adoc[cache], database, or Redpanda topic.
+endif::[]
+
+Synchronous by default:: Tools run synchronously from the AI client's perspective. The client waits for the response before continuing.
+
+Timeout boundaries:: Tools should complete quickly. Long-running operations should be avoided or handled asynchronously. Set explicit timeouts on external calls.
+
+No continuous processing:: Unlike a traditional Redpanda Connect pipeline, MCP tools do not poll for messages or maintain connections between invocations. They start, execute, and stop.

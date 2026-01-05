@@ -1,0 +1,32 @@
+# Test: Logging errors for debugging from error-handling.adoc
+# Expected: Error logged and formatted response returned
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"user_id": 12345}
+
+pipeline:
+  processors:
+    - label: simulate_failure
+      try:
+        - mutation: |
+            root = throw("Connection refused to database")
+
+    # tag::log-errors[]
+    - label: handle_errors
+      catch:
+        - log:
+            message: "Tool error: ${! error() }"
+            level: ERROR
+        - mutation: |
+            root = {
+              "error": "Operation failed",
+              "details": error()
+            }
+    # end::log-errors[]
+
+output:
+  stdout: {}
