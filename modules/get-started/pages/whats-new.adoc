@@ -7,6 +7,116 @@ This topic includes new content added from version 4.29.0 onwards.
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
 
+== Version 4.76.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.76.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+
+|xref:components:processors/ffi.adoc[ffi]
+|Processor
+|experimental
+|Invoke a function within a shared library as a processing step.
+
+
+NOTE: Requires a cgo-enabled binary. See the xref:install:index.adoc[installation guides] for details.
+
+|===
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|tags
+|Global tags added to each metric.
+|*Metrics:*
+
+* xref:components:metrics/statsd.adoc#tags[statsd]
+
+
+|===
+
+
+== Version 4.75.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.75.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|batching
+|Optional explicit batching policy for the output. Note that when batches are formed at the input level they can be expanded by this policy, but not contracted.
+|*Outputs:*
+
+* xref:components:outputs/redpanda.adoc#batching[redpanda]
+
+
+|===
+
+
+== Version 4.74.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.74.0[See the full release notes^].
+
+
+== Version 4.73.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.73.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|tcp
+|TCP listener socket configuration.
+|*Inputs:*
+
+* xref:components:inputs/socket_server.adoc#tcp[socket_server]
+
+
+|ttl
+|An optional TTL to set for items.
+|*Outputs:*
+
+* xref:components:outputs/couchbase.adoc#ttl[couchbase]
+
+
+*Processors:*
+
+* xref:components:processors/couchbase.adoc#ttl[couchbase]
+
+
+|schema_registry
+|Schema registry information to publish schemas for tracing data along with the data.
+|*Tracers:*
+
+* xref:components:tracers/redpanda.adoc#schema_registry[redpanda]
+
+
+|===
 
 
 == Version 4.72.0

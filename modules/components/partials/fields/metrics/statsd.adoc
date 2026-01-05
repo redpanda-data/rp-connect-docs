@@ -26,4 +26,20 @@ Metrics tagging is supported in a variety of formats.
 
 *Options*: `none`, `datadog`, `influxdb`
 
+=== `tags`
+
+Global tags added to each metric.
+
+*Type*: `string`
+
+*Default*: `{}`
+
+[source,yaml]
+----
+# Examples:
+tags:
+  hostname: localhost
+  zone: danger
+----
+
 

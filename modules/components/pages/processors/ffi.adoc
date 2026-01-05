@@ -1,0 +1,53 @@
+= ffi
+// tag::single-source[]
+:type: processor
+:status: experimental
+:categories: []
+:description: Invoke a function within a shared library as a processing step.
+
+component_type_dropdown::[]
+
+Invoke a function within a shared library as a processing step.
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/processors/ffi.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/processors/ffi.yaml[]
+```
+
+--
+======
+
+The `ffi` processor allows you to dynamically load shared libraries (.so, .dylib, or .dll files) and invoke their functions as a processing step. This enables integration with external C/C++ libraries without requiring custom Go code or rebuilding Redpanda Connect.
+
+The processor uses `dlopen` (or platform equivalent) to load the specified library at runtime, looks up the function by name, and invokes it with arguments provided through Bloblang mapping. Function signatures are defined using the `signature` field, specifying parameter and return types.
+
+Results are returned as an array, where the first element is the return value (if not void), followed by any output parameters in their declaration order.
+
+== Requirements
+
+Ensure that your environment meets the following requirements:
+
+- This component is only available in cgo-enabled builds of Redpanda Connect (not in the Redpanda CLI or Docker image).
++
+You can either xref:install:prebuilt-binary.adoc[download a prebuilt cgo-enabled binary] or xref:install:build-from-source.adoc[build Redpanda Connect from source with cgo enabled].
+
+include::redpanda-connect:components:partial$fields/processors/ffi.adoc[]
+
+include::redpanda-connect:components:partial$examples/processors/ffi.adoc[]
+
+
+// end::single-source[]
