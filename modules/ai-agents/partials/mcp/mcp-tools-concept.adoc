@@ -4,18 +4,9 @@
 // Include from Connect: include::ai-agents:partial$mcp/mcp-tools-concept.adoc[]
 // Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/mcp-tools-concept.adoc[]
 
-Before building MCP tools, establish a clear mental model of how they work. This section explains what MCP tools are, how they differ from pipelines, and how Redpanda Connect components map to tools.
+=== MCP tools compared to pipelines
 
-=== What are MCP tools
-
-An MCP tool is a single Redpanda Connect component that executes on demand when called by an AI client. The execution follows a request/response pattern similar to calling a function.
-
-Each tool invocation follows this sequence:
-
-. A tool receives JSON input from the AI client.
-. The tool executes its logic once.
-. The tool returns a structured response.
-. The AI client uses the response to continue its task.
+An MCP tool is a single Redpanda Connect component that executes on demand when called by an AI client. Unlike a traditional Redpanda Connect pipeline, MCP tools follow a request/response pattern similar to calling a function.
 
 The tool starts, runs, and completes for each invocation. There is no persistent state between calls.
 

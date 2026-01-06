@@ -9,16 +9,16 @@ processors:
     switch:
       - check: this.data_type == "json"
         processors:
-          - mutation: |
-              root.parsed_data = this.content
+          - mapping: |
+              root.parsed_data = this.content.parse_json()
               root.format = "json"
       - check: this.data_type == "csv"
         processors:
-          - mutation: |
-              root.parsed_data = this.content
+          - mapping: |
+              root.parsed_data = this.content.parse_csv()
               root.format = "csv"
       - processors:
-          - mutation: |
+          - mapping: |
               root.error = "Unsupported data type"
               root.supported_types = ["json", "csv"]
 # end::conditional-processing[]

@@ -1,7 +1,7 @@
 = MCP Tools Concepts
 :description: Understand how MCP tools work, how they differ from pipelines, and how to choose the right component type.
 :page-topic-type: concepts
-:personas: ai_agent_developer, streaming_platform_developer, absolute_beginner
+:personas: ai_agent_developer, streaming_platform_developer
 // Reader journey: "I want to understand how it works"
 // Learning objectives - what readers should know after reading this page:
 :learning-objective-1: Explain what an MCP tool is and how it differs from a pipeline
@@ -22,11 +22,8 @@ After reading this page, you will be able to:
 
 == Key terms
 
-MCP server:: A process that exposes tools to MCP clients. You write each tool's logic using Redpanda Connect configuration and annotate them with MCP metadata so clients can discover and invoke them.
-
-Redpanda Connect:: A framework for building event-driven data pipelines. Tools inside your MCP server are implemented as Redpanda Connect configurations.
-
-Tool:: A single request/response operation exposed to MCP clients. Each tool has logic (what it does) and metadata (how AI understands it).
+// Key terms - single-sourced from partial
+include::ai-agents:partial$mcp/key-terms.adoc[]
 
 [[mental-model]]
 == Understand MCP tools

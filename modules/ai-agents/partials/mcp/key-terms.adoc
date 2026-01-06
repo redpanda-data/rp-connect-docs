@@ -1,0 +1,24 @@
+// Single-sourced partial for MCP key terms
+// Used in both Connect and Cloud concepts pages
+//
+// Include from Connect: include::ai-agents:partial$mcp/key-terms.adoc[]
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/key-terms.adoc[]
+
+ifdef::env-cloud[]
+MCP server:: An MCP server that you build and host in your Redpanda Cloud cluster using Redpanda Connect. It exposes custom tools that AI assistants can call to access your data and workflows.
+endif::[]
+ifndef::env-cloud[]
+MCP server:: A process that exposes tools to MCP clients. You write each tool's logic using Redpanda Connect configuration and annotate them with MCP metadata so clients can discover and invoke them.
+endif::[]
+
+Redpanda Connect:: A framework for building data streaming applications using connectors, processors, outputs, and caches. MCP tools are defined using Redpanda Connect components.
+
+Tool:: A function that an AI assistant can call to perform a specific task, such as fetching data from an API, querying a database, or processing streaming data. Each tool is defined using Redpanda Connect components and annotated with MCP metadata.
+
+ifdef::env-cloud[]
+Secrets:: Credentials and tokens that you want to use in your tools. These values must be stored in the Secrets Store and referenced as `${secrets.NAME}`. Use uppercase snakecase for secret names (such as `DATAPLANE_TOKEN`).
+endif::[]
+ifndef::env-cloud[]
+Secrets:: Credentials and tokens that you want to use in your tools. Reference secrets using environment variable interpolation (`${API_TOKEN}`). Use uppercase snakecase for environment variable names.
+endif::[]
+
