@@ -1,8 +1,8 @@
 {
   "comparison": {
-    "oldVersion": "4.75.0",
-    "newVersion": "4.76.0",
-    "timestamp": "2025-12-22T09:19:49.350Z"
+    "oldVersion": "4.76.0",
+    "newVersion": "4.76.1",
+    "timestamp": "2026-01-05T17:20:31.826Z"
   },
   "summary": {
     "newComponents": 0,
@@ -14,40 +14,7 @@
     "changedDefaults": 0
   },
   "details": {
-    "newComponents": [
-      {
-        "name": "tigerbeetle_cdc",
-        "type": "input",
-        "status": "beta",
-        "version": "",
-        "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer’s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater.",
-        "summary": "Enables TigerBeetle CDC streaming for Redpanda Connect."
-      },
-      {
-        "name": "zmq4",
-        "type": "input",
-        "status": "stable",
-        "version": "",
-        "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component.",
-        "summary": "Consumes messages from a ZeroMQ socket."
-      },
-      {
-        "name": "zmq4",
-        "type": "output",
-        "status": "stable",
-        "version": "",
-        "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component.",
-        "summary": "Writes messages to a ZeroMQ socket."
-      },
-      {
-        "name": "ffi",
-        "type": "processor",
-        "status": "experimental",
-        "version": "",
-        "description": "A processor that allows for dlopen'ing (or platform equivalent) and invoking functions dynamically at runtime. The result from this processor is an array, where the first element is the return type if not void, and then each `out` parameter in parameter order.",
-        "summary": "Invoke a function within a shared library as a processing step."
-      }
-    ],
+    "newComponents": [],
     "removedComponents": [],
     "newFields": [],
     "removedFields": [],
@@ -57,16 +24,25 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.76.0",
-      "cloud": "4.76.0",
-      "cgo": "4.76.0"
+      "oss": "4.76.1",
+      "cloud": "4.76.1",
+      "cgo": "4.76.1"
     },
     "current": {
       "cloudSupported": 471,
       "selfHostedOnly": 74,
       "cgoOnly": 4
     },
-    "changes": {},
+    "changes": {
+      "cloud": {
+        "added": [],
+        "removed": []
+      },
+      "cgo": {
+        "newCgoOnly": [],
+        "removedCgoOnly": []
+      }
+    },
     "details": {
       "cloudSupported": [
         {
