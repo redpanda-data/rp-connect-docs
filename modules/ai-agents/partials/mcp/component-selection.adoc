@@ -43,7 +43,7 @@ endif::[]
 
 ==== When to choose a processor tool
 
-Choose a processor tool when the tool's purpose is to compute or transform data, call an external API and return the response, or validate inputs and return errors or results. Processor tools should not have side effects, or side effects should be incidental rather than the primary purpose.
+Choose a processor tool when the tool's purpose is to compute or transform data, call an external API and return the response, or validate inputs and return errors or results.
 
 ==== Use case: Fetch and transform external data
 
@@ -55,7 +55,7 @@ The following prompts should trigger this type of tool:
 * "Is it raining in Tokyo right now?"
 * "Get me the current temperature for Seattle."
 
-A processor is the right choice because the tool fetches data from an API, transforms it into a useful format, and returns it. There are no side effects because we're not writing data anywhere.
+A processor is the right choice because the tool fetches data from an API, transforms it into a useful format, and returns it.
 
 ==== Use case: Validate and normalize data
 
@@ -122,8 +122,6 @@ The execution flow for this pattern is as follows:
 . The output component writes the transformed data to the destination.
 . The tool returns a response to the AI client.
 
-Note that the `processors:` field is part of the output component's configuration, not a separate top-level section.
-
 ifdef::env-cloud[]
 For implementation examples, see xref:ai-agents:mcp/remote/tool-patterns.adoc#outputs-with-processors[outputs with processors] in the tool patterns guide.
 endif::[]
@@ -145,9 +143,9 @@ endif::[]
 
 Choose an input tool when the tool's purpose is to read and return data from an external source, consume messages from a Redpanda topic, or build a query-style tool that retrieves existing data.
 
-==== Event-driven vs. query-style tools
+==== Bounded vs. unbounded reads
 
-Input tools can work in two modes. Query-style reads a bounded set of data and returns immediately. Use this mode for "get me the latest N events" patterns. Subscription-style is generally not appropriate for MCP tools because it would never complete. Avoid unbounded reads.
+Input tools must return a finite result. Use bounded reads that fetch a specific number of messages or read until a condition is met. For example, "get me the latest N events" or "read messages from the last hour". Unbounded reads that poll continuously are not appropriate for MCP tools because the tool would never return a response to the AI client.
 
 ==== Latency and scope considerations
 
@@ -155,7 +153,7 @@ Keep these factors in mind when building input tools:
 
 * Input tools may have variable latency depending on the data source.
 * Scope your reads appropriately. Don't try to read entire topics.
-* Consider consumer group behavior: with a consumer group, each invocation advances through the stream; without one, each invocation may read the same data.
+* Consider consumer group behavior: with a consumer group, each invocation advances through the stream. Without one, each invocation may read the same data.
 
 ==== Use case: Query recent events
 

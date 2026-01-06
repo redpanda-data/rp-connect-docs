@@ -60,7 +60,7 @@ Set environment variables before starting the MCP server:
 [,bash]
 ----
 export API_TOKEN="your-secret-token"
-rpk connect mcp-server start
+rpk connect mcp-server --address localhost:4195
 ----
 
 Use uppercase snake_case for environment variable names (for example, `API_TOKEN`, `DATABASE_URL`).
@@ -83,7 +83,7 @@ Filter tools when starting the server:
 
 [,bash]
 ----
-rpk connect mcp-server start --tags weather
+rpk connect mcp-server --tag weather
 ----
 
 Only tools with matching tags are included. Tools without matching tags are excluded.

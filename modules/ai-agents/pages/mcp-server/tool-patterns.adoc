@@ -110,8 +110,6 @@ Example use cases:: Send a prompt to an LLM, then save the answer to a topic in 
 include::ai-agents:example$resources/outputs/redpanda-output-with-processors.yaml[]
 ----
 
-You can use an output component type with processors, but you cannot use a processor component type with outputs. The `processors` field is available in all output components.
-
 [[consuming-from-redpanda-topics]]
 === Consume from Redpanda topics
 

@@ -34,7 +34,7 @@ endif::[]
 
 Remove debug processors before deploying to production.
 
-=== Test incrementally
+=== Test your tools
 
 Build confidence by testing at each stage:
 
@@ -43,10 +43,61 @@ ifdef::env-cloud[]
 . Test tool logic using the *MCP Inspector*.
 . Connect to your AI client using `rpk cloud mcp proxy`.
 . Test end-to-end with realistic prompts.
+
 endif::[]
 ifndef::env-cloud[]
-. Validate tool configuration using `rpk connect mcp-server lint`.
-. Start the MCP server locally using `rpk connect mcp-server`.
+. Validate your configuration:
++
+[,bash]
+----
+rpk connect mcp-server lint <project-directory>
+----
+
+. Start the MCP server with an HTTP address for testing:
++
+[,bash]
+----
+rpk connect mcp-server --address localhost:8080 <project-directory>
+----
++
+Replace `<project-directory>` with the path to your MCP tool project.
+
+. Test tool calls using curl. The MCP server uses Server-Sent Events (SSE), so you must maintain an SSE connection while sending requests:
++
+.Test script for MCP tools
+[,bash]
+----
+#!/bin/bash
+# Start SSE connection and capture session ID
+exec 3< <(curl -s -N http://localhost:8080/sse)
+read -r line <&3  # event: endpoint
+read -r line <&3  # data: /sse?sessionid=XXX
+SESSION_ID=$(echo "$line" | sed 's/.*sessionid=//')
+echo "Session ID: $SESSION_ID"
+
+# Initialize the session
+curl -s -X POST "http://localhost:8080/message?sessionid=$SESSION_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}'
+
+sleep 1
+
+# Call your tool (replace <tool-name> and <tool-arguments>)
+curl -s -X POST "http://localhost:8080/message?sessionid=$SESSION_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"<tool-name>","arguments":{<tool-arguments>}}}'
+
+# Read SSE responses
+sleep 2
+while read -r -t 1 line <&3; do
+  echo "$line"
+done
+
+exec 3<&-
+----
++
+Replace `<tool-name>` with your tool's label and `<tool-arguments>` with the JSON arguments defined in your tool's `meta.mcp.properties`. The SSE stream returns JSON-RPC responses. Check the `result` field for successful responses or `error` field for failures.
+
 . Connect to Claude Code and verify the tool appears.
 . Test end-to-end with realistic prompts.
 endif::[]

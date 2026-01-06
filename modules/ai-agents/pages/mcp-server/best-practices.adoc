@@ -73,7 +73,7 @@ TIP: For solutions to specific errors, see xref:ai-agents:mcp-server/troubleshoo
 [[tags]]
 == Tags
 
-Use tags to organize tools and control which ones are included when starting the server. Define tags in the `meta.mcp` block and filter with `rpk connect mcp-server start --tags`.
+Use tags to organize tools and control which ones are included when starting the server. Define tags in the `meta.mcp` block and filter with `rpk connect mcp-server --tag`.
 
 === Tag strategies
 
@@ -81,7 +81,7 @@ Use tags to organize tools and control which ones are included when starting the
 +
 [,bash]
 ----
-rpk connect mcp-server start --tags production
+rpk connect mcp-server --address localhost:4195 --tag production
 ----
 
 - Feature grouping: Group related tools (for example, `analytics`, `notifications`, `user-management`) to expose coherent functionality.
