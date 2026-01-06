@@ -24,7 +24,7 @@ Without MCP, connecting AI to your business systems requires custom API code, au
 
 == What Redpanda Connect adds
 
-Redpanda Connect's MCP server lets you expose data pipelines and automations as AI-consumable tools with no custom API code. You write tools as simple YAML configurations, and the MCP server makes them available to AI assistants.
+Redpanda Connect's MCP server lets you expose data pipelines and automations as AI-consumable tools with no custom API code. You write tools as YAML configurations, and the MCP server makes them available to AI assistants.
 
 This means AI assistants can:
 
@@ -32,26 +32,7 @@ This means AI assistants can:
 * Publish messages, update records, trigger workflows, or call external services
 * Only access the specific tools you configure and enable
 
-The result? AI that works with your real business data and systems, not just static information.
-
-== Who is this for?
-
-[cols="1,2"]
-|===
-| You want to | MCP servers can help you
-
-| Add AI capabilities to existing systems
-| Expose your APIs, databases, and data streams to AI assistants without rewriting them
-
-| Build AI agents that access real-time data
-| Create tools that query live data and trigger business workflows
-
-| Prototype AI features quickly
-| Define tools in YAML and iterate without deploying new code
-
-| Give AI controlled access to business logic
-| Expose specific operations while keeping other systems private
-|===
+If you already use Redpanda Connect for data integration and processing, adding an MCP server gives AI assistants controlled access to your existing systems without extra development effort.
 
 // Use cases table - single-sourced from partial
 include::ai-agents:partial$mcp/use-cases-table.adoc[]
@@ -62,7 +43,7 @@ The MCP server sits between AI clients and your data:
 
 . A user asks their AI assistant something like "What's the weather in London?"
 . The server finds the matching tool and runs your Redpanda Connect configuration
-. Your configuration fetches data, transforms it, and returns a structured response
+. Your configuration fetches data, transforms it, and returns a response
 . The AI assistant gets the data and can use it to answer the user
 
 === What a tool looks like
