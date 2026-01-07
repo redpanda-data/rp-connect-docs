@@ -1,0 +1,35 @@
+# Test: Stop processing on critical failures
+# Source: best-practices.adoc - Input validation section
+# Expected: Missing api_key throws error, valid api_key passes through
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"api_key": "sk-12345", "data": "test"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"data": "test"}'
+
+pipeline:
+  processors:
+    - try:
+        # tag::throw-on-critical[]
+        - mutation: |
+            root = if !this.exists("api_key") || this.api_key == "" {
+              throw("API key is required for this operation")
+            } else {
+              this
+            }
+        # end::throw-on-critical[]
+
+    - catch:
+        - mutation: |
+            root.error = true
+            root.message = error()
+
+output:
+  stdout: {}

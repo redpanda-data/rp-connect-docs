@@ -10,23 +10,6 @@ Each tool should do one thing well. If you find yourself adding multiple unrelat
 
 Tools that do too much or have vague purposes cause problems because AI clients rely on descriptions to choose tools. Vague descriptions lead to wrong tool selection. Tools that do too much are harder to test and debug. Broad tools often have implicit assumptions that aren't documented.
 
-.Good: Single responsibility
-[source,yaml]
-----
-include::example$best-practices/tool-implementation/single-responsibility.yaml[tags=good-user-profile]
-----
-
-[source,yaml]
-----
-include::example$best-practices/tool-implementation/single-responsibility.yaml[tags=good-user-settings]
-----
-
-.Bad: Multiple responsibilities
-[source,yaml]
-----
-include::example$best-practices/tool-implementation/single-responsibility.yaml[tags=bad-manage-user]
-----
-
 Write descriptions that clearly state what the tool does, what input it needs, and what it returns. If a tool is doing multiple things, split it into focused tools.
 
 === Use environment variables for secrets
@@ -83,6 +66,7 @@ Also avoid adding wrapper blocks like `input:` or `output:` when defining compon
 include::example$best-practices/tool-implementation/component-type.yaml[tags=wrong-wrapper]
 ----
 
+.Correct structure
 [source,yaml]
 ----
 include::example$best-practices/tool-implementation/component-type.yaml[tags=correct-component]

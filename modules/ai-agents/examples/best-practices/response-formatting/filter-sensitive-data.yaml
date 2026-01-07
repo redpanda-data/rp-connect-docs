@@ -1,4 +1,5 @@
-# Test: Filtering sensitive data from response-formatting.adoc
+# Test: Filter sensitive data
+# Source: best-practices.adoc - Response formatting section
 # Expected: Sensitive fields removed, other fields preserved
 
 input:
@@ -12,21 +13,15 @@ input:
         "email": "john@example.com",
         "password": "secret123",
         "ssn": "123-45-6789",
-        "credit_card": "4111111111111111",
-        "api_key": "sk-abc123"
+        "api_key": "sk-abc123",
+        "internal_notes": "VIP customer"
       }
 
 pipeline:
   processors:
     # tag::filter-sensitive[]
-    - label: remove_sensitive_data
-      mapping: |
-        root = this.without(
-          "password",
-          "ssn",
-          "credit_card",
-          "api_key"
-        )
+    - mutation: |
+        root = this.without("password", "ssn", "api_key", "internal_notes")
     # end::filter-sensitive[]
 
 output:

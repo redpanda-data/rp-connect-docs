@@ -24,7 +24,7 @@ meta:
     description: "Example of correct error handling pattern"
 
 # tag::wrong-single-processor[]
-# WRONG: try/catch cannot be a single processor (DO NOT USE)
+# Wrong: try/catch cannot be a single processor
 # - label: operation
 #   try:
 #     - http: { url: "..." }
@@ -33,7 +33,7 @@ meta:
 # end::wrong-single-processor[]
 
 # tag::wrong-no-handling[]
-# WRONG: No error handling - tool fails silently (DO NOT USE)
+# Wrong: No error handling - tool fails silently
 # - label: fetch_data
 #   http:
 #     url: "https://api.example.com/data"

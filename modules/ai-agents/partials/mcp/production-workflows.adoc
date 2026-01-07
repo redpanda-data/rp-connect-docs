@@ -1,10 +1,56 @@
-// Shared content for production workflows - part 2 (after secrets section)
+// Consolidated partial for production workflows
 // Used by both self-managed Redpanda Connect and Remote MCP servers in Cloud
-// Source: rp-connect-docs/modules/ai-agents/pages/mcp-server/tool-patterns.adoc
 //
-// Include syntax:
-// - From rp-connect-docs: include::ai-agents:partial$mcp/production-workflows-after-secrets.adoc[]
-// - From cloud-docs: include::redpanda-connect:ai-agents:partial$mcp/production-workflows-after-secrets.adoc[]
+// Include from Connect: include::ai-agents:partial$mcp/production-workflows.adoc[]
+// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/production-workflows.adoc[]
+
+== Production workflows and observability
+
+Build enterprise-grade tools with error handling, validation, multi-step workflows, and monitoring.
+
+=== Parameter validation and type coercion
+
+Always validate and coerce input parameters to ensure your tools are robust:
+
+[source,yaml]
+----
+include::example$best-practices/production-workflows/param-validation.yaml[tags=param-validation]
+----
+
+=== Dynamic configuration
+
+Build tools that adapt their behavior based on input parameters:
+
+[source,yaml]
+----
+include::example$best-practices/production-workflows/dynamic-config.yaml[tags=dynamic-config]
+----
+
+=== Error handling and fallbacks
+
+Implement error handling to make your tools reliable:
+
+[source,yaml]
+----
+include::example$best-practices/production-workflows/error-fallbacks.yaml[tags=error-fallbacks]
+----
+
+=== Conditional processing
+
+Build tools that branch based on input or data characteristics:
+
+[source,yaml]
+----
+include::example$best-practices/production-workflows/conditional-processing.yaml[tags=conditional-processing]
+----
+
+// Secrets section - deployment-specific
+ifdef::env-cloud[]
+include::ai-agents:partial$mcp/secrets-cloud.adoc[]
+endif::[]
+ifndef::env-cloud[]
+include::ai-agents:partial$mcp/secrets-connect.adoc[]
+endif::[]
 
 === Monitoring, debugging, and observability
 
@@ -106,3 +152,4 @@ Notice how the workflow:
 . Routes by customer tier: Since `customer_tier` is `vip`, it gets VIP processing with special `perks` and priority.
 . Enriches with processing metadata: `assigned_rep`, `priority_score`, `processing_tier`, and time estimates.
 . Finalizes with timestamps: `order_status`, `processed_at`, and calculated `processing_time_hours`.
+

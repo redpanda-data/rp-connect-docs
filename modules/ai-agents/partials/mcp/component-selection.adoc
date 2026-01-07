@@ -27,6 +27,9 @@ Use the following table to match your tool's intent to a component type:
 
 | Does the tool read data from an external source and return it?
 | <<input-tools, Input>>
+
+| Does the tool store and retrieve temporary data for other tools?
+| <<cache-tools, Cache>>
 |===
 
 The core principle is to choose the component type that matches the tool's primary intent.
@@ -167,6 +170,44 @@ The following prompts should trigger this type of tool:
 
 An input is the right choice because the tool reads from an existing data source (topic) and returns what it finds.
 
+[[cache-tools]]
+=== Cache tools
+
+ifdef::env-cloud[]
+Cache tools store and retrieve temporary data that other tools can access. They're useful for sharing state between tool calls or storing frequently accessed data. See the xref:develop:connect/components/caches/about.adoc[caches reference] for available caches.
+endif::[]
+ifndef::env-cloud[]
+Cache tools store and retrieve temporary data that other tools can access. They're useful for sharing state between tool calls or storing frequently accessed data. See the xref:components:caches/about.adoc[caches reference] for available caches.
+endif::[]
+
+==== When to choose a cache tool
+
+Choose a cache tool when the tool's purpose is to store temporary data that expires after a set time, share state between multiple tool calls in a conversation, or reduce repeated calls to slow external APIs by caching results.
+
+==== Use case: Session state management
+
+Consider a scenario where an AI assistant needs to remember user preferences across multiple tool calls within a conversation.
+
+The following prompts should trigger this type of tool:
+
+* "Remember that I prefer metric units."
+* "Store my timezone as America/New_York."
+* "Save this search filter for later."
+
+A cache is the right choice because the data is temporary, session-scoped, and needs to be accessible by other tools during the conversation.
+
+==== Use case: API response caching
+
+Consider a scenario where an AI assistant frequently looks up the same reference data (like exchange rates or product catalogs) and you want to avoid repeated API calls.
+
+The following prompts should trigger cache usage:
+
+* "Get the current exchange rate" (cached for 5 minutes)
+* "Look up product details" (cached for 1 hour)
+* "Check inventory levels" (cached briefly to reduce load)
+
+A cache is the right choice because you want to store API responses temporarily and serve them on subsequent requests without hitting the external API again.
+
 === Component selection summary
 
 The following table summarizes when to use each component type:
@@ -194,6 +235,11 @@ The following table summarizes when to use each component type:
 | Read and return data
 | Query recent events, search logs
 | Retrieved data
+
+| Cache
+| Store and retrieve temporary data
+| Session state, API response caching
+| Cached value or confirmation
 |===
 
 ifdef::env-cloud[]

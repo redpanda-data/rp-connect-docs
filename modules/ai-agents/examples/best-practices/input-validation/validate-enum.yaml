@@ -1,0 +1,35 @@
+# Test: Validate enum values
+# Source: best-practices.adoc - Input validation section
+# Expected: Invalid status returns error with allowed values, valid normalizes to lowercase
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"status": "ACTIVE", "id": "123"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"status": "invalid", "id": "456"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"status": "Completed", "id": "789"}'
+
+pipeline:
+  processors:
+    # tag::validate-enum[]
+    - mutation: |
+        let status = this.status.lowercase()
+        let allowed = ["pending", "active", "completed", "cancelled"]
+        root = if !$allowed.contains($status) {
+          {"error": true, "message": "invalid status", "allowed_values": $allowed, "received": $status}
+        } else {
+          this.without("status").assign({"status": $status})
+        }
+    # end::validate-enum[]
+
+output:
+  stdout: {}

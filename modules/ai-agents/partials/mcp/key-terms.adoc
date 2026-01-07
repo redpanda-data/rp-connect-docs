@@ -19,6 +19,6 @@ ifdef::env-cloud[]
 Secrets:: Credentials and tokens that you want to use in your tools. These values must be stored in the Secrets Store and referenced as `${secrets.NAME}`. Use uppercase snakecase for secret names (such as `DATAPLANE_TOKEN`).
 endif::[]
 ifndef::env-cloud[]
-Secrets:: Credentials and tokens that you want to use in your tools. Reference secrets using environment variable interpolation (`${API_TOKEN}`). Use uppercase snakecase for environment variable names.
+Secrets:: Credentials and tokens that you want to use in your tools. Reference secrets using environment variable interpolation (`$\{API_TOKEN}`). Use uppercase snakecase for environment variable names.
 endif::[]
 

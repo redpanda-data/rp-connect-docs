@@ -3,6 +3,90 @@
 
 This document describes the automated testing strategies for Redpanda Connect MCP server examples and best practices documentation.
 
+== Directory structure
+
+[cols="1,2,1"]
+|===
+|Directory |Purpose |Test approach
+
+|`resources/inputs/`
+|MCP input tools (streaming sources)
+|`rpk connect mcp-server lint`
+
+|`resources/outputs/`
+|MCP output tools (data sinks)
+|`rpk connect mcp-server lint`
+
+|`resources/processors/`
+|MCP processor tools (transformations, API calls)
+|`rpk connect mcp-server lint`
+
+|`best-practices/mcp-metadata/`
+|MCP metadata examples (descriptions, properties)
+|`rpk connect mcp-server lint`
+
+|`best-practices/production-workflows/`
+|Production workflow patterns
+|`rpk connect mcp-server lint`
+
+|`best-practices/tool-implementation/`
+|Tool design patterns
+|`rpk connect mcp-server lint`
+
+|`best-practices/input-validation/`
+|Full pipelines demonstrating input validation
+|`rpk connect run`
+
+|`best-practices/response-formatting/`
+|Full pipelines demonstrating response formatting
+|`rpk connect run`
+
+|`best-practices/error-handling/`
+|Full pipelines demonstrating error handling
+|`rpk connect run`
+
+|`best-practices/debugging/`
+|Debug and troubleshooting patterns
+|`rpk connect mcp-server lint`
+
+|`best-practices/error-handling-snippets/`
+|Error handling snippets
+|`rpk connect mcp-server lint`
+
+|`best-practices/config-examples/`
+|Configuration examples
+|`rpk connect mcp-server lint`
+
+|`o11y/`
+|Observability config fragments
+|YAML validation
+|===
+
+== Running all tests
+
+Run the comprehensive test suite:
+
+[,bash]
+----
+cd modules/ai-agents/examples
+./test-all.sh
+----
+
+This tests:
+
+. **MCP Tools (25 files)**: Using `rpk connect mcp-server lint` on tool directories
+. **Full Pipelines (28 files)**: Using `rpk connect lint` and `rpk connect run`
+. **Config Snippets (7 files)**: Using `rpk connect mcp-server lint` or YAML validation
+
+=== Selective testing
+
+[,bash]
+----
+./test-all.sh --mcp-only    # Only MCP tool definitions
+./test-all.sh --pipelines   # Only full pipelines
+./test-all.sh --snippets    # Only config snippets
+----
+
 == MCP tool examples
 
 All MCP tool examples are automatically tested to ensure:
@@ -45,12 +129,10 @@ The test script validates MCP-specific metadata for all tool examples:
 [,bash]
 ----
 # Run all tests (includes linting + MCP validation)
-./test-mcp-examples.sh
+./test-all.sh
 
-# Test specific component types
-./test-mcp-examples.sh processors
-./test-mcp-examples.sh inputs
-./test-mcp-examples.sh outputs
+# Test only MCP tools
+./test-all.sh --mcp-only
 ----
 
 MCP metadata validation checks:
@@ -129,22 +211,21 @@ tests: [ ... ]  # Can use inline tests
 
 == Test script usage
 
-The `test-mcp-examples.sh` script provides automated validation:
+The `test-all.sh` script provides automated validation:
 
 [,bash]
 ----
-# Test all examples
-./test-mcp-examples.sh
+# Test everything (MCP tools, pipelines, snippets)
+./test-all.sh
 
-# Test specific component types
-./test-mcp-examples.sh processors
-./test-mcp-examples.sh inputs
-./test-mcp-examples.sh outputs
-./test-mcp-examples.sh caches
-./test-mcp-examples.sh o11y
+# Test only MCP tool definitions
+./test-all.sh --mcp-only
 
-# Test specific files
-./test-mcp-examples.sh resources/processors/weather-*.yaml
+# Test only full pipelines
+./test-all.sh --pipelines
+
+# Test only config snippets
+./test-all.sh --snippets
 ----
 
 The script provides color-coded output:
@@ -230,16 +311,11 @@ The `best-practices/` directory contains executable examples that demonstrate pa
 
 [,bash]
 ----
-# Navigate to best-practices directory
-cd modules/ai-agents/examples/best-practices
+# Navigate to examples directory
+cd modules/ai-agents/examples
 
-# Test all examples
-./test-best-practices.sh
-
-# Test specific category
-./test-best-practices.sh input-validation
-./test-best-practices.sh response-formatting
-./test-best-practices.sh error-handling
+# Test all pipelines (including best-practices)
+./test-all.sh --pipelines
 ----
 
 The test script:
@@ -319,13 +395,12 @@ The `sequence` input runs multiple test cases through the same pipeline, allowin
 
 === CI/CD for best practices
 
-Best practices tests run automatically via GitHub Actions when:
+Best practices tests run automatically via GitHub Actions as part of the unified MCP examples workflow when:
 
-* Files in `best-practices/` are modified
-* The test script is updated
-* Best practices partials in `partials/mcp/` are changed
+* Any YAML file in `modules/ai-agents/examples/` is modified
+* The test-all.sh script is updated
 
-See `.github/workflows/test-best-practices.yaml` for the workflow configuration.
+See `.github/workflows/test-mcp-examples.yaml` for the workflow configuration.
 
 == Writing good examples
 
@@ -451,7 +526,7 @@ rpk connect lint --skip-env-var-check resources/processors/my-tool.yaml
 [,bash]
 ----
 cd modules/ai-agents/examples
-./test-mcp-examples.sh processors
+./test-all.sh --mcp-only
 ----
 
 . Test manually (recommended):

@@ -42,18 +42,17 @@ meta:
         required: false
     # end::property-descriptions[]
 
-# tag::required-vs-optional[]
-# Required vs Optional guidance:
-# properties:
-#   # Required: Tool needs a city to look up weather
-#   - name: city
-#     type: string
-#     description: "City name to get weather for"
-#     required: true
-#
-#   # Optional: Has a sensible default
-#   - name: units
-#     type: string
-#     description: "Temperature units. Defaults to 'celsius'."
-#     required: false
-# end::required-vs-optional[]
+# tag::required-property[]
+    properties:
+      - name: city
+        type: string
+        description: "City name to get weather for"
+        required: true
+# end::required-property[]
+
+# tag::optional-property[]
+      - name: units
+        type: string
+        description: "Temperature units. Defaults to 'celsius'."
+        required: false
+# end::optional-property[]

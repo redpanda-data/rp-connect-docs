@@ -1,5 +1,6 @@
-# Test: Conditional field inclusion from response-formatting.adoc
-# Expected: Optional fields only included when conditions met
+# Test: Include fields conditionally
+# Source: best-practices.adoc - Response formatting section
+# Expected: Omits empty/missing fields using deleted()
 
 input:
   sequence:
@@ -7,37 +8,20 @@ input:
       - generate:
           count: 1
           interval: ""
-          mapping: 'root = {"id": 1, "name": "User A", "email": "a@example.com", "is_premium": true, "premium_expiry": "2025-12-31"}'
+          mapping: 'root = {"id": "123", "name": "Alice", "email": "alice@example.com", "phone": "+1234567890"}'
       - generate:
           count: 1
           interval: ""
-          mapping: 'root = {"id": 2, "name": "User B", "email": "", "is_premium": false}'
-      - generate:
-          count: 1
-          interval: ""
-          mapping: 'root = {"id": 3, "name": "User C", "is_premium": false}'
+          mapping: 'root = {"id": "456", "name": "Bob", "email": ""}'
 
 pipeline:
   processors:
     # tag::conditional-fields[]
-    - label: format_with_optional_fields
-      mapping: |
-        root = {
-          "id": this.id,
-          "name": this.name
-        }
-        # Only include email if present and non-empty
-        root.email = if this.exists("email") && this.email != "" {
-          this.email
-        } else {
-          deleted()
-        }
-        # Include premium_until only for premium users
-        root.premium_until = if this.is_premium.bool() {
-          this.premium_expiry
-        } else {
-          deleted()
-        }
+    - mutation: |
+        root.id = this.id
+        root.name = this.name
+        root.email = if this.exists("email") && this.email != "" { this.email } else { deleted() }
+        root.phone = if this.exists("phone") { this.phone } else { deleted() }
     # end::conditional-fields[]
 
 output:

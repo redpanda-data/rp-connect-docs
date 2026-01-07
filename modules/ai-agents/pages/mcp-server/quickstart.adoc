@@ -1,7 +1,7 @@
 = Redpanda Connect MCP Server Quickstart
-:description: Learn how to expose your Redpanda Connect configurations as AI-consumable tools using the Model Context Protocol (MCP).
+:description: Expose Redpanda Connect components as AI-consumable tools using the Model Context Protocol (MCP).
 :page-topic-type: tutorial
-:personas: ai_agent_developer, streaming_platform_developer, ai_product_builder
+:personas: ai_agent_developer, streaming_platform_developer
 // Reader journey: "I want to try it now"
 // Learning objectives - what readers will achieve by completing this quickstart:
 :learning-objective-1: Initialize an MCP server project using the Redpanda CLI
@@ -9,7 +9,7 @@
 :learning-objective-3: Run the server and connect it to Claude Code
 :learning-objective-4: Use natural language to invoke your tool
 
-This quickstart builds a local MCP server that exposes Redpanda Connect configurations as tools that AI assistants can use. It creates a tool that searches Bluesky posts, then asks Claude Code to perform the search using natural language:
+This quickstart builds a local MCP server that exposes Redpanda Connect components as tools that AI assistants can use. It creates a tool that searches Bluesky posts, then asks Claude Code to perform the search using natural language:
 
 > Find recent posts on Bluesky mentioning Redpanda.
 
@@ -77,7 +77,7 @@ If you need to upgrade, see xref:install:rpk.adoc#upgrade[Upgrade Redpanda Conne
 
 == Create a tool definition
 
-In this step, you'll create a Redpanda Connect configuration that searches public link:https://bsky.app/[Bluesky^] posts using a customizable query. You'll define this configuration as a tool that Claude can discover and use.
+In this step, you'll create an MCP tool that searches public link:https://bsky.app/[Bluesky^] posts using a customizable query. You'll define this configuration as a tool that Claude can discover and use.
 
 Save the following YAML to a file named `bluesky.yaml` and save it in the `resources/processors/` directory:
 
@@ -118,7 +118,7 @@ This example defines a tool that searches public Bluesky posts based on a query 
 <1> A unique label for identification. Claude uses this label to discover and call the tool.
 <2> A series of xref:ai-agents:mcp-server/concepts.adoc#component-selection[processors] to build the HTTP request, handle the response, and format the output.
 <3> A unique tag (`bluesky`) to control exposure. You can use tags to group related tools or isolate experiments.
-<4> A clear description for LLMs helps Claude understand what the tool does. See xref:ai-agents:mcp-server/reference.adoc#contract[MCP metadata reference].
+<4> A clear description for LLMs helps Claude understand what the tool does. See xref:ai-agents:mcp-server/create-tool.adoc#anatomy[Anatomy of an MCP tool].
 <5> Structured properties for inputs like `query` and `limit`.
 
 == Start the MCP server
@@ -317,10 +317,10 @@ For detailed solutions, see xref:ai-agents:mcp-server/troubleshooting.adoc[].
 
 You've built a working MCP tool and connected it to Claude Code. Here's where to go next:
 
-* xref:ai-agents:mcp-server/best-practices.adoc[]: Learn input validation, error handling, and response formatting
-* xref:ai-agents:mcp-server/tool-patterns.adoc[]: Find reusable examples for database queries, Redpanda integration, and AI/LLM calls
-* xref:ai-agents:mcp-server/concepts.adoc[]: Learn how MCP tools differ from pipelines and when to use each component type
-* xref:ai-agents:mcp-server/reference.adoc[]: Look up YAML rules, property restrictions, and MCP metadata options
-* xref:ai-agents:mcp-server/troubleshooting.adoc[]: Diagnose and fix common issues
+* xref:ai-agents:mcp-server/concepts.adoc[]: Understand how MCP tools differ from pipelines
+* xref:ai-agents:mcp-server/create-tool.adoc[]: Build production-quality tools with validation
+* xref:ai-agents:mcp-server/best-practices.adoc[]: Apply naming and design guidelines
+* xref:ai-agents:mcp-server/tool-patterns.adoc[]: Find reusable patterns
+* xref:ai-agents:mcp-server/troubleshooting.adoc[]: Diagnose common issues
 
 

@@ -15,19 +15,15 @@ include::example$best-practices/mcp-metadata/basic-mcp-block.yaml[tags=basic-mcp
 
 The tool name comes from the top-level `label` field. AI clients see this name when selecting tools, so make it descriptive and consistent.
 
-Use kebab-case (words separated by hyphens) for tool names. Avoid underscores, camelCase, or spaces.
-
 .Good tool names
-[source,yaml]
-----
-include::example$best-practices/mcp-metadata/tool-naming.yaml[tags=good-names]
-----
+* `get-weather-forecast` - Clear action and subject
+* `publish-order-event` - Specific action with target
+* `search-customer-orders` - Indicates filtering capability
 
 .Bad tool names
-[source,yaml]
-----
-include::example$best-practices/mcp-metadata/tool-naming.yaml[tags=bad-names]
-----
+* `processor1` - Generic and meaningless
+* `get-data` - Too vague (what data?)
+* `myTool` - No indication of purpose
 
 === Write effective descriptions
 
@@ -48,9 +44,16 @@ Begin descriptions with a verb that matches what the tool does:
 
 ==== Include what the tool returns
 
+.Good: Describes what is returned
 [source,yaml]
 ----
-include::example$best-practices/mcp-metadata/descriptions.yaml[tags=good-vs-bad,indent=0]
+include::example$best-practices/mcp-metadata/descriptions.yaml[tags=good-description,indent=0]
+----
+
+.Bad: No information about return value
+[source,yaml]
+----
+description: "Weather tool"
 ----
 
 ==== Mention limitations and requirements
@@ -59,7 +62,7 @@ If your tool has constraints, include them in the description:
 
 [source,yaml]
 ----
-include::example$best-practices/mcp-metadata/descriptions.yaml[tags=with-limitations]
+include::example$best-practices/mcp-metadata/descriptions.yaml[tags=with-limitations,indent=0]
 ----
 
 === Define input properties
@@ -79,11 +82,18 @@ include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=prop
 
 ==== Mark required properties
 
-Mark a property as `required: true` only if the tool cannot function without it:
+Mark a property as `required: true` only if the tool cannot function without it.
 
+.Required: Tool needs this value to function
 [source,yaml]
 ----
-include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=required-vs-optional]
+include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=required-property,indent=0]
+----
+
+.Optional: Has a sensible default
+[source,yaml]
+----
+include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=optional-property,indent=0]
 ----
 
 === Use tags for organization

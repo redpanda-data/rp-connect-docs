@@ -1,30 +1,28 @@
-# Test: Basic error handling from error-handling.adoc
-# Expected: Error caught and formatted with details
+# Test: Wrap operations in try/catch
+# Source: best-practices.adoc - Error handling section
+# Expected: Error caught and formatted with message
+# Note: Uses simulated error since we can't rely on external APIs in tests
 
 input:
   generate:
     count: 1
     interval: ""
     mapping: |
-      root = {"trigger": "error"}
+      root = {"request": "data"}
 
 pipeline:
+  # tag::basic-try-catch[]
   processors:
-    # tag::basic-try-catch[]
-    - label: fetch_data
-      try:
-        - mutation: |
-            root = throw("Simulated API error: connection refused")
+    - try:
+        - http:
+            url: "https://api.example.com/data"
+            verb: GET
 
-    - label: handle_errors
-      catch:
-        - mapping: |
-            root = {
-              "error": "Failed to fetch data",
-              "details": error(),
-              "suggestion": "Check if the API is available"
-            }
-    # end::basic-try-catch[]
+    - catch:
+        - mutation: |
+            root.error = true
+            root.message = "Request failed: " + error()
+  # end::basic-try-catch[]
 
 output:
   stdout: {}
