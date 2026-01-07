@@ -60,16 +60,7 @@ If you use an Enterprise-licensed component without a valid license, the MCP ser
 
 The xref:components:about.adoc[component reference documentation] displays support level and license badges on each component page.
 
-=== License status
-
-When the MCP server starts, it logs the license status:
-
-[source]
-----
-level=INFO msg="Successfully loaded Redpanda license" license_type="enterprise" expires_at=...
-----
-
-If you see `license_type="open source"`, Enterprise-licensed components are not available.
+See xref:get-started:licensing.adoc[Redpanda licensing] for more information about licenses.
 
 == Next steps
 
