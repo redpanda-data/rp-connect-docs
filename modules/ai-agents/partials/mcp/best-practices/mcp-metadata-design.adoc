@@ -28,82 +28,59 @@ include::example$best-practices/mcp-metadata/basic-mcp-block.yaml[tags=basic-mcp
 
 The tool name comes from the top-level `label` field. AI clients see this name when selecting tools, so make it descriptive and consistent.
 
-.Good tool names
-* `get-weather-forecast` - Clear action and subject
-* `publish-order-event` - Specific action with target
-* `search-customer-orders` - Indicates filtering capability
+The name should reflect the tool's primary action and target resource. Focus on clarity over brevity.
 
-.Bad tool names
-* `processor1` - Generic and meaningless
-* `get-data` - Too vague (what data?)
-* `myTool` - No indication of purpose
+.Tool naming examples
+[cols="1,2"]
+|===
+|Good |Bad
+
+|`get-weather-forecast`
+|`processor1`
+
+|`publish-order-event`
+|`get-data`
+
+|`search-customer-orders`
+|`myTool`
+|===
 
 === Write effective descriptions
 
-Tool descriptions help AI clients decide when to use your tool. Answer two questions: *What does this tool do?* and *What does it return?*
+Tool descriptions help AI clients decide when to use your tool. Start with an action verb and explain what the tool returns.
 
-==== Start with an action verb
-
-Begin descriptions with a verb that matches what the tool does:
-
-* `Get` or `Fetch` for retrieving data without modification
-* `Search` or `Find` for looking up data with filters or queries
-* `Create` or `Add` for making new records or resources
-* `Update` or `Modify` for changing existing data
-* `Delete` or `Remove` for removing resources
-* `Validate` or `Check` for verifying data without side effects
-* `Publish` or `Send` for writing to topics or external systems
-* `Calculate` or `Compute` for performing calculations on input
-
-==== Include what the tool returns
-
-.Good: Describes what is returned
 [source,yaml]
 ----
 include::example$best-practices/mcp-metadata/descriptions.yaml[tags=good-description,indent=0]
 ----
 
-.Bad: No information about return value
-[source,yaml]
-----
-description: "Weather tool"
-----
-
-==== Mention limitations and requirements
-
-If your tool has constraints, include them in the description:
+Include any limitations or requirements in the description:
 
 [source,yaml]
 ----
 include::example$best-practices/mcp-metadata/descriptions.yaml[tags=with-limitations,indent=0]
 ----
 
-=== Define input properties
+=== Define input properties clearly
 
-Properties define the input parameters for your tool. Each property needs a name, type, description, and required status.
+Each property needs a name, type, description, and required status. Use `string`, `number`, or `boolean` types.
 
-Use `string`, `number`, or `boolean` types for property values.
-
-==== Write helpful property descriptions
-
-Include example values in property descriptions to help AI clients provide correct input:
+Include example values in descriptions:
 
 [source,yaml]
 ----
 include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=property-descriptions,indent=0]
 ----
 
-==== Mark required properties
+Mark properties as required only if the tool cannot function without them:
 
-Mark a property as `required: true` only if the tool cannot function without it.
-
-.Required: Tool needs this value to function
 [source,yaml]
 ----
 include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=required-property,indent=0]
 ----
 
-.Optional: Has a sensible default
+Optional properties should have sensible defaults:
+
 [source,yaml]
 ----
 include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=optional-property,indent=0]

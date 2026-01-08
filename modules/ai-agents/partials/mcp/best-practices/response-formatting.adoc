@@ -65,7 +65,7 @@ endif::[]
 | `this.ratio.float64()` becomes `0.75`
 |===
 
-=== Formatting timestamps
+=== Format timestamps
 
 ifdef::env-cloud[]
 Use xref:develop:connect/guides/bloblang/functions.adoc#now[`now()`] with xref:develop:connect/guides/bloblang/methods.adoc#format_timestamp[`format_timestamp()`] for consistent time formatting:
@@ -100,7 +100,7 @@ The format string uses Go's reference time layout. Common patterns:
 | `Fri, 15 Mar 2024`
 |===
 
-=== Extracting nested fields
+=== Extract nested fields
 
 API responses often have deeply nested structures. Extract only the fields your AI client needs and flatten them into a simple object:
 
@@ -118,7 +118,7 @@ ifndef::env-cloud[]
 See xref:guides:bloblang/about.adoc#dot-notation[dot notation] for navigating nested structures.
 endif::[]
 
-=== Handling arrays
+=== Handle arrays
 
 When your data contains arrays, you can transform each element, extract specific items, or compute aggregates:
 
@@ -141,7 +141,7 @@ ifndef::env-cloud[]
 See xref:guides:bloblang/methods.adoc#map_each[`map_each()`] and xref:guides:bloblang/methods.adoc#index[`index()`] for array operations.
 endif::[]
 
-=== Conditional field inclusion
+=== Include fields conditionally
 
 Sometimes you want to include fields only when they have meaningful values. This avoids returning `null` or empty fields that clutter the response:
 
@@ -159,7 +159,7 @@ ifndef::env-cloud[]
 The xref:guides:bloblang/functions.adoc#deleted[`deleted()`] function removes the field from the output entirely.
 endif::[]
 
-=== Filtering sensitive data
+=== Filter sensitive data
 
 When your data source contains sensitive fields, strip them before returning responses to the AI client:
 
@@ -177,7 +177,7 @@ ifndef::env-cloud[]
 See xref:guides:bloblang/methods.adoc#without[`without()`] for field removal.
 endif::[]
 
-=== Consistent success/error structure
+=== Wrap responses in a success envelope
 
 When AI clients call multiple tools, they need a predictable way to check if the call succeeded. Wrapping responses in a consistent envelope structure makes this easy:
 
