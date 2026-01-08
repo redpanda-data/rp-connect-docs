@@ -25,20 +25,6 @@ Tools that do too much or have vague purposes cause problems because AI clients 
 
 Write descriptions that clearly state what the tool does, what input it needs, and what it returns. If a tool is doing multiple things, split it into focused tools.
 
-=== Use environment variables for secrets
-
-ifdef::env-cloud[]
-All credentials and sensitive values must be stored in the Redpanda Cloud xref:develop:connect/configuration/secret-management.adoc[Secrets Store]. Reference secrets as `${secrets.NAME}` in your YAML configuration.
-endif::[]
-ifndef::env-cloud[]
-Never hardcode API keys or credentials. Secrets in code can be accidentally committed to version control, anyone with access to the files can see the credentials, and rotating secrets requires changing code.
-endif::[]
-
-[source,yaml]
-----
-include::example$best-practices/tool-implementation/secrets-handling.yaml[tags=correct-vs-wrong,indent=0]
-----
-
 === Design for quick completion
 
 MCP tools should complete quickly. AI clients wait for responses, and long-running tools cause poor user experiences.
@@ -57,21 +43,3 @@ endif::[]
 * Consider pagination for large datasets.
 * Return partial results if full processing takes too long.
 * If processing is slow, consider async patterns.
-
-=== Check component support levels
-
-Before using a component in production, check its support level and license requirements:
-
-* Community components may lack support and stability guarantees.
-* Enterprise components require a valid license.
-
-ifdef::env-cloud[]
-See the xref:develop:connect/components/about.adoc[components catalog] for support levels and licensing information.
-endif::[]
-ifndef::env-cloud[]
-See the xref:components:about.adoc[components catalog] for support levels and licensing information.
-endif::[]
-
-Prefer certified components for production tools. Test with your license to verify components work. Document any licensing assumptions in your tool descriptions.
-
-See xref:get-started:licensing.adoc[Redpanda licensing] for more information about licenses.

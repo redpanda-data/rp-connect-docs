@@ -86,23 +86,6 @@ Optional properties should have sensible defaults:
 include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=optional-property,indent=0]
 ----
 
-=== Use tags for organization
-
-Tags help you categorize and filter tools. Use consistent tag names across your tools:
-
-[source,yaml]
-----
-include::example$best-practices/mcp-metadata/tags-example.yaml[tags=tags-example]
-----
-
-Common tag categories include:
-
-* Domain: `weather`, `orders`, `users`, `inventory`
-* Integration type: `api`, `database`, `cache`, `messaging`
-* Data source: `external`, `internal`, `redpanda`
-* Environment: `production`, `staging`, `development`
-* Team: `platform`, `data-engineering`, `analytics`
-
 === Complete example
 
 This example combines all the best practices:

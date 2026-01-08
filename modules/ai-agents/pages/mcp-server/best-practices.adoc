@@ -7,7 +7,7 @@
 // Learning objectives - what readers should be able to do after reading this page:
 :learning-objective-1: Write tool names and descriptions that help AI clients select the right tool
 :learning-objective-2: Define input properties with appropriate types and constraints
-:learning-objective-3: Organize tools using tags and manage secrets securely
+:learning-objective-3: Design focused tools that complete quickly
 
 This page covers how to design MCP tool interfaces so AI clients can discover, understand, and invoke your tools correctly.
 
@@ -17,30 +17,21 @@ After reading this page, you will be able to:
 * [ ] {learning-objective-2}
 * [ ] {learning-objective-3}
 
-For implementation patterns like input validation, error handling, and response formatting, see xref:ai-agents:mcp-server/tool-patterns.adoc#robust-implementation[Robust implementation patterns].
+[[tool-discovery]]
+== Tool discovery
 
-[[mcp-metadata]]
-== MCP metadata design
+AI clients use tool names and descriptions to decide which tool to call. Good metadata helps AI select the right tool and provide correct inputs.
 
 include::ai-agents:partial$mcp/best-practices/mcp-metadata-design.adoc[]
 
-[[tool-implementation]]
-== Tool design guidelines
+[[tool-execution]]
+== Tool execution
 
 include::ai-agents:partial$mcp/best-practices/tool-implementation-practices.adoc[]
 
-[[tags]]
-== Tag strategies
-
-include::ai-agents:partial$mcp/best-practices/tags.adoc[]
-
-[[secrets]]
-== Secrets management
-
-include::ai-agents:partial$mcp/best-practices/secrets-management.adoc[]
-
 == Next steps
 
+* xref:ai-agents:mcp-server/create-tool.adoc#secrets[Use secrets] - Store credentials securely
+* xref:ai-agents:mcp-server/create-tool.adoc#tool-filtering[Use tags] - Organize and filter tools
 * xref:ai-agents:mcp-server/tool-patterns.adoc[]: Find reusable patterns including validation, error handling, and response formatting
 * xref:ai-agents:mcp-server/troubleshooting.adoc[]: Diagnose common issues
-* xref:ai-agents:mcp-server/concepts.adoc[]: Review the execution model

@@ -16,35 +16,21 @@ After reading this page, you will be able to:
 * [ ] {learning-objective-2}
 * [ ] {learning-objective-3}
 
-Each pattern is a reusable example for a common MCP tool scenario. Patterns are grouped by use case. All YAML is ready to use in your MCP server project.
-
 TIP: For step-by-step instructions, see xref:ai-agents:mcp-server/quickstart.adoc[]. For best practices, see xref:ai-agents:mcp-server/best-practices.adoc[]. For conceptual background, see xref:ai-agents:mcp-server/concepts.adoc[].
 
-== Pattern selection guide
 
-Choose the right pattern for your use case:
 
-* <<data-generators,Generate test data or synthetic events>>
-* <<external-api-calls,Call external REST APIs>>
-* <<database-queries,Query databases>>
-* <<consuming-from-redpanda-topics,Read from Redpanda topics>>
-* <<data-transformation,Transform or validate data>>
-* <<publishing-to-redpanda-topics,Publish to Redpanda topics>>
-* <<stream-processing-with-redpanda-connect,Process streaming data>>
-* <<event-driven-workflows,Build event-driven workflows>>
-* <<aillm-integration,Integrate with AI/LLM services>>
-* <<caching-systems,Cache frequently accessed data>>
-* <<robust-implementation,Input validation, error handling, and response formatting>>
+[[read-data]]
+== Read data
 
-== Data generators
+Use xref:components:inputs/about.adoc[inputs] to create tools that read from data sources or generate sample data.
 
-Use xref:components:inputs/about.adoc[`inputs`] to create tools that read data from internal or external systems or generate sample data for testing and development.
+[[data-generators]]
+=== Generate test data
 
 *When to use:* Development and testing environments where you need synthetic data, load testing scenarios, or demonstrating data flows without real data sources.
 
 *Example use cases:* Mock user events, test order data, synthetic sensor readings, demo data for presentations.
-
-This example generates a realistic user event message:
 
 [source,yaml]
 ----
@@ -53,9 +39,39 @@ include::ai-agents:example$resources/inputs/generate-input.yaml[]
 
 See also: xref:components:inputs/generate.adoc[`generate` input component]
 
-== External API calls
+[[consume-from-redpanda]]
+=== Consume from Redpanda topics
 
-Use xref:components:processors/about.adoc[`processors`] to fetch data from external APIs, databases, or services and return formatted results. This is one of the most common patterns for MCP tools.
+*When to use:* Processing events from Redpanda topics, building event-driven AI agents, consuming audit logs, or subscribing to data change streams.
+
+*Example use cases:* Monitor order events, process user activity streams, consume IoT sensor data, react to system notifications.
+
+NOTE: This example requires setting the `REDPANDA_BROKERS` environment variable with your Redpanda broker addresses.
+
+[source,yaml]
+----
+include::ai-agents:example$resources/inputs/redpanda-consume.yaml[]
+----
+
+[[stream-processing]]
+=== Process streaming data
+
+*When to use:* Real-time analytics, windowed aggregations, computing metrics over time, or building streaming dashboards.
+
+*Example use cases:* Calculate rolling averages, count events per time window, detect anomalies in streams, aggregate metrics.
+
+[source,yaml]
+----
+include::ai-agents:example$resources/inputs/stream-analytics.yaml[]
+----
+
+[[call-external-services]]
+== Call external services
+
+Use xref:components:processors/about.adoc[processors] to fetch data from external APIs, databases, or AI services.
+
+[[external-api-calls]]
+=== Call REST APIs
 
 *When to use:* Integrating with third-party services, fetching real-time data, calling internal microservices, or enriching event data with external information.
 
@@ -68,15 +84,14 @@ include::ai-agents:example$resources/processors/weather-api.yaml[]
 
 See also: xref:components:processors/http.adoc[`http` processor], xref:components:processors/mutation.adoc[`mutation` processor]
 
-== Database queries
-
-Query external databases and return structured results. This pattern is essential for tools that need to access business data.
+[[database-queries]]
+=== Query databases
 
 *When to use:* Retrieving customer records, querying analytics data, looking up configuration values, or joining streaming data with dimensional data from data warehouses.
 
 *Example use cases:* Fetch customer details from PostgreSQL, query sales data from BigQuery, retrieve product catalog from MongoDB, look up reference data.
 
-NOTE: This example requires setting the `DATABASE_URL` environment variable with your PostgreSQL connection string. For example, `export DATABASE_URL="postgres://user:password@localhost:5432/dbname"`.
+NOTE: This example requires setting the `DATABASE_URL` environment variable with your PostgreSQL connection string.
 
 [source,yaml]
 ----
@@ -85,57 +100,97 @@ include::ai-agents:example$resources/processors/database-query.yaml[]
 
 See also: xref:components:processors/sql_select.adoc[`sql_select` processor]
 
-== Redpanda integration and data publishing
+[[ai-llm-integration]]
+=== Integrate with AI/LLM services
 
-Build tools that interact with Redpanda topics to publish data, consume events, or stream processing results back to topics for other systems to consume.
+*When to use:* Generating embeddings for semantic search, calling LLM APIs for text generation, building RAG pipelines, or analyzing sentiment.
 
-NOTE: The examples in this section require setting the `REDPANDA_BROKERS` environment variable with your Redpanda broker addresses. For example, `export REDPANDA_BROKERS="localhost:19092"`.
+*Example use cases:* Generate embeddings for documents, classify customer feedback, summarize long text, extract entities, answer questions with context.
 
-[[publishing-to-redpanda-topics]]
+==== OpenAI chat completion
+
+[source,yaml]
+----
+openai_chat_completion:
+  api_key: "${OPENAI_API_KEY}"
+  model: "gpt-4"
+  prompt: |
+    Analyze this customer feedback and provide:
+    1. Sentiment (positive/negative/neutral)
+    2. Key themes
+    3. Actionable insights
+
+    Feedback: ${! json("feedback_text") }
+  max_tokens: 500
+----
+
+See also: xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion`], xref:components:processors/openai_embeddings.adoc[`openai_embeddings`]
+
+==== Generate embeddings
+
+[source,yaml]
+----
+openai_embeddings:
+  api_key: "${OPENAI_API_KEY}"
+  model: "text-embedding-3-small"
+  text: ${! json("content") }
+----
+
+See also: xref:components:processors/cohere_embeddings.adoc[`cohere_embeddings`], xref:components:processors/gcp_vertex_ai_embeddings.adoc[`gcp_vertex_ai_embeddings`]
+
+[[write-data]]
+== Write data
+
+Use xref:components:outputs/about.adoc[outputs] to write data to Redpanda topics or cache stores.
+
+[[publish-to-redpanda]]
 === Publish to Redpanda topics
-
-Create tools that write data to Redpanda topics using the `redpanda` output.
 
 *When to use:* Publishing events to Redpanda for consumption by other services, creating event sourcing patterns, building audit trails, or triggering downstream workflows.
 
 *Example use cases:* Publish order confirmations, emit audit events, trigger notifications, create event-driven workflows.
+
+NOTE: This example requires setting the `REDPANDA_BROKERS` environment variable.
 
 [source,yaml]
 ----
 include::ai-agents:example$resources/outputs/redpanda-publish.yaml[]
 ----
 
-[[outputs-with-processors]]
 ==== Outputs with processors
 
 Output tools can include processors to transform data before publishing. This pattern is useful when you need to process data and save the result to a destination in a single tool.
 
 *When to use:* Processing user input with an LLM and saving the response, transforming data before publishing to a topic, enriching events before writing to external systems.
 
-*Example use cases:* Send a prompt to an LLM, then save the answer to a topic in Redpanda.
-
 [source,yaml]
 ----
 include::ai-agents:example$resources/outputs/redpanda-output-with-processors.yaml[]
 ----
 
-[[consuming-from-redpanda-topics]]
-=== Consume from Redpanda topics
+[[caching]]
+=== Cache data
 
-Build tools that read data from topics and return processed results.
+*When to use:* Reducing repeated API calls, storing lookup tables, caching database query results, or maintaining session state across tool invocations.
 
-*When to use:* Processing events from Redpanda topics, building event-driven AI agents, consuming audit logs, or subscribing to data change streams.
-
-*Example use cases:* Monitor order events, process user activity streams, consume IoT sensor data, react to system notifications.
+*Example use cases:* Cache user profiles, store API rate limit counters, maintain configuration values, cache product catalogs.
 
 [source,yaml]
 ----
-include::ai-agents:example$resources/inputs/redpanda-consume.yaml[]
+memory:
+  default_ttl: 300s
+  compaction_interval: 60s
 ----
 
-== Data transformation
+See also: xref:components:caches/memory.adoc[`memory` cache], xref:components:outputs/redpanda.adoc[`redpanda` output]
 
-Transform, validate, and enrich data as it flows through your MCP tools. Use Bloblang mapping language for powerful data manipulation.
+[[transform-data]]
+== Transform data
+
+Use Bloblang and processors to transform, validate, and route data.
+
+[[data-transformation]]
+=== Transform and validate
 
 *When to use:* Converting data formats, validating schemas, filtering events, enriching messages with computed fields, or normalizing data structures.
 
@@ -158,22 +213,8 @@ mapping: |
 
 See also: xref:components:processors/mapping.adoc[`mapping` processor], xref:guides:bloblang/about.adoc[Bloblang guide]
 
-== Stream processing with Redpanda Connect
-
-Create tools that process streaming data and return aggregated results.
-
-*When to use:* Real-time analytics, windowed aggregations, computing metrics over time, or building streaming dashboards.
-
-*Example use cases:* Calculate rolling averages, count events per time window, detect anomalies in streams, aggregate metrics.
-
-[source,yaml]
-----
-include::ai-agents:example$resources/inputs/stream-analytics.yaml[]
-----
-
-== Event-driven workflows
-
-Build tools that trigger workflows based on Redpanda events.
+[[event-driven-workflows]]
+=== Build event-driven workflows
 
 *When to use:* Orchestrating multi-step processes, responding to business events, implementing saga patterns, or coordinating microservices.
 
@@ -186,86 +227,27 @@ include::ai-agents:example$resources/inputs/event-workflow.yaml[]
 
 See also: xref:components:inputs/redpanda.adoc[`redpanda` input]
 
-== AI/LLM integration
+[[production-readiness]]
+== Production readiness
 
-Integrate AI and LLM services into your MCP tools for intelligent data processing, embeddings generation, and natural language understanding.
+Build production-ready tools with proper input validation, error handling, and response formatting.
 
-*When to use:* Generating embeddings for semantic search, calling LLM APIs for text generation, building RAG (Retrieval Augmented Generation) pipelines, or analyzing sentiment.
-
-*Example use cases:* Generate embeddings for documents, classify customer feedback, summarize long text, extract entities, answer questions with context.
-
-=== OpenAI integration
-
-Use the `openai_chat_completion` processor to call OpenAI models:
-
-[source,yaml]
-----
-openai_chat_completion:
-  api_key: "${OPENAI_API_KEY}"
-  model: "gpt-4"
-  prompt: |
-    Analyze this customer feedback and provide:
-    1. Sentiment (positive/negative/neutral)
-    2. Key themes
-    3. Actionable insights
-
-    Feedback: ${! json("feedback_text") }
-  max_tokens: 500
-----
-
-See also: xref:components:processors/openai_chat_completion.adoc[`openai_chat_completion`], xref:components:processors/openai_embeddings.adoc[`openai_embeddings`]
-
-=== Embeddings generation
-
-Generate vector embeddings for semantic search and RAG pipelines:
-
-[source,yaml]
-----
-openai_embeddings:
-  api_key: "${OPENAI_API_KEY}"
-  model: "text-embedding-3-small"
-  text: ${! json("content") }
-----
-
-See also: xref:components:processors/cohere_embeddings.adoc[`cohere_embeddings`], xref:components:processors/gcp_vertex_ai_embeddings.adoc[`gcp_vertex_ai_embeddings`]
-
-== Caching systems
-
-Use caching to store frequently accessed data, reduce latency, and minimize external API calls. You can implement caching using either Redpanda topics or in-memory stores.
-
-*When to use:* Reducing repeated API calls, storing lookup tables, caching database query results, or maintaining session state across tool invocations.
-
-*Example use cases:* Cache user profiles, store API rate limit counters, maintain configuration values, cache product catalogs.
-
-Use an in-memory cache for low-latency access to small datasets:
-
-[source,yaml]
-----
-memory:
-  default_ttl: 300s
-  compaction_interval: 60s
-----
-
-See also: xref:components:caches/memory.adoc[`memory` cache], Redpanda-backed cache using xref:components:outputs/redpanda.adoc[`redpanda` output]
-
-[[robust-implementation]]
-== Robust implementation patterns
-
-Build production-ready tools with proper input validation, error handling, and response formatting. These patterns help your tools handle edge cases gracefully and return consistent responses to AI clients.
-
-=== Input validation
+[[input-validation]]
+=== Validate input
 
 AI clients may send unexpected or malformed input. Validate early to return helpful error messages instead of cryptic failures from downstream components.
 
 include::ai-agents:partial$mcp/best-practices/input-validation.adoc[leveloffset=+1]
 
-=== Error handling
+[[error-handling]]
+=== Handle errors
 
 External services fail. Databases go down. APIs return unexpected responses. Wrap risky operations in error handling so your tool returns useful error messages instead of crashing.
 
 include::ai-agents:partial$mcp/best-practices/error-handling.adoc[leveloffset=+1]
 
-=== Response formatting
+[[response-formatting]]
+=== Format responses
 
 AI clients work best with clean, predictable response structures. Transform raw component output into consistent formats.
 
@@ -274,7 +256,7 @@ include::ai-agents:partial$mcp/best-practices/response-formatting.adoc[leveloffs
 // Production workflows section - single-sourced from partial
 include::ai-agents:partial$mcp/tool-patterns/production-workflows.adoc[]
 
-NOTE: The multi-step enrichment example requires setting the `POSTGRES_DSN` environment variable with your PostgreSQL connection string. For example, `export POSTGRES_DSN="postgres://user:password@localhost:5432/dbname"`.
+NOTE: The multi-step enrichment example requires setting the `POSTGRES_DSN` environment variable with your PostgreSQL connection string.
 
 == Next steps
 
