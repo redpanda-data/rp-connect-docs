@@ -1,8 +1,21 @@
-// Single-sourced partial for lint error troubleshooting
-// Used in Connect troubleshooting.adoc and Cloud troubleshooting.adoc
+// =============================================================================
+// PARTIAL: troubleshooting-lint.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/troubleshooting-lint.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/troubleshooting-lint.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/troubleshooting.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/troubleshooting.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/troubleshooting/troubleshooting-lint.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/troubleshooting/troubleshooting-lint.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches lint instructions and upgrade guidance for Cloud context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 ifdef::env-cloud[]
 Always lint your configuration before deploying. The Cloud Console provides a *Lint* button that validates your YAML.

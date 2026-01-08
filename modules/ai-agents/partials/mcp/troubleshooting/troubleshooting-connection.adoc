@@ -1,8 +1,21 @@
-// Single-sourced partial for connection troubleshooting
-// Used in Connect troubleshooting.adoc and Cloud troubleshooting.adoc
+// =============================================================================
+// PARTIAL: troubleshooting-connection.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/troubleshooting-connection.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/troubleshooting-connection.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/troubleshooting.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/troubleshooting.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/troubleshooting/troubleshooting-connection.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/troubleshooting/troubleshooting-connection.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches troubleshooting steps for Cloud vs self-managed
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 === MCP client can't connect to server
 

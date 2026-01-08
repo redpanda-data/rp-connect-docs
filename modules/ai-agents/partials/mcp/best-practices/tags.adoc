@@ -1,0 +1,73 @@
+// =============================================================================
+// PARTIAL: tags.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/best-practices.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/best-practices.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/best-practices/tags.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/best-practices/tags.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches tag examples for Cloud vs self-managed context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+ifdef::env-cloud[]
+Tags help you organize, filter, and manage MCP servers across your organization.
+
+=== Common tag patterns
+
+[cols="1,2,2"]
+|===
+| Strategy | Description | Examples
+
+| Ownership
+| Track which team owns the server.
+| `owner=platform-team`, `team=data-engineering`
+
+| Environment
+| Identify the deployment stage.
+| `env=production`, `env=staging`, `env=dev`
+
+| Cost allocation
+| Allocate costs to departments or projects.
+| `cost-center=marketing`, `project=analytics`
+
+| Purpose
+| Describe the use case or data domain.
+| `purpose=customer-data`, `use-case=alerts`
+|===
+
+=== Tag best practices
+
+* Use consistent naming conventions across your organization (lowercase with hyphens or underscores).
+* Document your tagging strategy so all team members apply tags consistently.
+* Use tags for filtering in the Cloud Console and API.
+* Review tags periodically to keep them accurate as servers evolve.
+endif::[]
+
+ifndef::env-cloud[]
+Use tags to organize tools and control which ones are included when starting the server. Define tags in the `meta.mcp` block and filter with `rpk connect mcp-server --tag`.
+
+=== Environment separation
+
+Tag tools as `dev`, `staging`, or `production` to run different tool sets per environment:
+
+[,bash]
+----
+rpk connect mcp-server --address localhost:4195 --tag production
+----
+
+=== Feature grouping
+
+Group related tools (for example, `analytics`, `notifications`, `user-management`) to expose coherent functionality to AI clients.
+
+=== Access control
+
+Expose different tool subsets to different AI clients by running multiple server instances with different tag filters.
+endif::[]

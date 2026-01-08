@@ -1,0 +1,22 @@
+// =============================================================================
+// PARTIAL: what-is-mcp.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/overview.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/overview.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/overview/what-is-mcp.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/overview/what-is-mcp.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+MCP (Model Context Protocol) is an open standard that lets AI assistants use tools. Think of it like a universal adapter: instead of building custom integrations for every AI system, you define your tools once using MCP, and any MCP-compatible AI client can discover and use them.
+
+Without MCP, connecting AI to your business systems requires custom API code, authentication handling, and response formatting for each AI platform. With MCP, you describe what a tool does and what inputs it needs, and the protocol handles the rest.

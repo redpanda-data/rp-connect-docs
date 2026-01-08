@@ -1,8 +1,21 @@
-// Single-sourced partial for response formatting best practices
-// Used in Connect best-practices.adoc and Cloud best-practices.adoc
+// =============================================================================
+// PARTIAL: response-formatting.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/response-formatting.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/response-formatting.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/tool-patterns.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/tool-patterns.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/best-practices/response-formatting.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/best-practices/response-formatting.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches xref targets for Cloud context
+//
+// DEPENDENCIES:
+//   - example$best-practices/response-formatting/*.yaml
+// =============================================================================
 
 Structure responses consistently so AI clients can interpret them reliably. The following example takes a raw weather API response and transforms it into a clean, predictable format:
 

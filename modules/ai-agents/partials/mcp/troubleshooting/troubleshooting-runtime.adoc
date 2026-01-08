@@ -1,8 +1,21 @@
-// Single-sourced partial for runtime troubleshooting
-// Used in Connect troubleshooting.adoc and Cloud troubleshooting.adoc
+// =============================================================================
+// PARTIAL: troubleshooting-runtime.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/troubleshooting-runtime.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/troubleshooting-runtime.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/troubleshooting.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/troubleshooting.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/troubleshooting/troubleshooting-runtime.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/troubleshooting/troubleshooting-runtime.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches runtime troubleshooting steps for Cloud context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 === Tool not appearing in MCP client
 

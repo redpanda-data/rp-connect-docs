@@ -1,8 +1,21 @@
-// Single-sourced partial for debugging techniques
-// Used in Connect troubleshooting.adoc and Cloud troubleshooting.adoc
+// =============================================================================
+// PARTIAL: debugging-techniques.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/debugging-techniques.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/debugging-techniques.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/troubleshooting.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/troubleshooting.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/troubleshooting/debugging-techniques.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/troubleshooting/debugging-techniques.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches xref targets and testing instructions for Cloud context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 === Add temporary logging
 

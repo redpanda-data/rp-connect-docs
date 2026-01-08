@@ -1,8 +1,21 @@
-// Single-sourced partial for MCP component type mapping table
-// Used in both Connect and Cloud concepts guide
+// =============================================================================
+// PARTIAL: component-mapping.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/component-mapping.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/component-mapping.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/concepts.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/concepts.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/concepts/component-mapping.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/concepts/component-mapping.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches xref targets for Cloud context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 == How components map to MCP tools
 

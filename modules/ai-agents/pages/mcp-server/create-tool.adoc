@@ -57,10 +57,7 @@ touch resources/processors/<tool-name>.yaml
 
 The file name can be anything, but use descriptive names that reflect the tool's purpose.
 
-[[yaml-structure]]
-=== Directory structure rules
-
-Each YAML file must contain exactly one component. The directory determines the component type:
+Each YAML file must contain exactly one component. The directory in your project determines the component type:
 
 [cols="1,2", options="header"]
 |===
@@ -142,7 +139,7 @@ meta:
 
 === Input, output, and cache tools
 
-xref:components:inputs/about.adoc[Inputs] read data from sources, xref:components:outputs/about.adoc[outputs] write data to destinations, and xref:components:caches/about.adoc[caches] store and retrieve data. Define these components directly at the top level:
+xref:components:inputs/about.adoc[Inputs] read data from sources, xref:components:outputs/about.adoc[outputs] write data to destinations, and xref:components:caches/about.adoc[caches] store and retrieve data. Define these components directly at the top level. Do not wrap components in `input:`, `output:`, or `cache:` blocks. This syntax is for pipelines, not MCP tools.
 
 .Input tool
 [source,yaml]
@@ -235,8 +232,6 @@ ifndef::env-cloud[]
 See xref:ai-agents:mcp-server/tool-patterns.adoc#outputs-with-processors[outputs with processors] for more examples.
 endif::[]
 
-Do not wrap components in `input:`, `output:`, or `cache:` blocks. This syntax is for pipelines, not MCP tools.
-
 [[mcp-metadata]]
 === MCP metadata fields
 
@@ -291,7 +286,7 @@ Each entry in the `properties` array defines an input parameter:
 [[property-restrictions]]
 ==== Property restrictions by component type
 
-include::ai-agents:partial$mcp/property-restrictions-table.adoc[]
+include::ai-agents:partial$mcp/create-tool/property-restrictions-table.adoc[]
 
 [[parameter-mapping]]
 == Map parameters to component fields
@@ -403,37 +398,6 @@ For production deployments, load secrets from a secrets manager or inject them f
 
 See xref:ai-agents:mcp-server/best-practices.adoc[] for naming conventions and security guidelines.
 
-[[tool-filtering]]
-== Control which tools are exposed
-
-By default, `rpk connect mcp-server` exposes all tools in your project that have `meta.mcp.enabled: true`. Use tags to selectively expose subsets of tools.
-
-Add tags to your tool's metadata:
-
-[source,yaml]
-----
-meta:
-  mcp:
-    enabled: true
-    description: "Query production database"
-    tags:
-      - production
-      - database
-----
-
-Start the server with the `--tag` flag to expose only tools matching specific tags. The flag supports regular expressions:
-
-[source,bash]
-----
-# Expose only tools tagged "production"
-rpk connect mcp-server --tag production
-
-# Expose tools with tags starting with "db-"
-rpk connect mcp-server --tag "db-.*"
-----
-
-See xref:ai-agents:mcp-server/best-practices.adoc#tags[Tag strategies] for guidance on organizing tools by environment, feature, or access level.
-
 == Test the tool
 
 . Lint your configuration:
@@ -483,7 +447,7 @@ done
 exec 3<&-
 ----
 
-. Connect to an AI client and verify the tool appears:
+. Connect to an AI client and verify the tool appears. For example, with Claude Code:
 +
 [source,bash]
 ----
@@ -492,6 +456,37 @@ claude /mcp
 ----
 
 . Test end-to-end with realistic prompts to verify the AI client uses your tool correctly.
+
+[[tool-filtering]]
+== Control which tools are exposed
+
+By default, `rpk connect mcp-server` exposes all tools in your project that have `meta.mcp.enabled: true`. Use tags to selectively expose subsets of tools.
+
+Add tags to your tool's metadata:
+
+[source,yaml]
+----
+meta:
+  mcp:
+    enabled: true
+    description: "Query production database"
+    tags:
+      - production
+      - database
+----
+
+Start the server with the `--tag` flag to expose only tools matching specific tags. The flag supports regular expressions:
+
+[source,bash]
+----
+# Expose only tools tagged "production"
+rpk connect mcp-server --tag production
+
+# Expose tools with tags starting with "db-"
+rpk connect mcp-server --tag "db-.*"
+----
+
+See xref:ai-agents:mcp-server/best-practices.adoc#tags[Tag strategies] for guidance on organizing tools by environment, feature, or access level.
 
 == Complete example
 

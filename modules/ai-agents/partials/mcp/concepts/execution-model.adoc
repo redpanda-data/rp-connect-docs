@@ -1,8 +1,21 @@
-// Single-sourced partial for MCP execution model
-// Used in both Connect and Cloud developer guides
+// =============================================================================
+// PARTIAL: execution-model.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/execution-model.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/execution-model.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/concepts.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/concepts.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/concepts/execution-model.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/concepts/execution-model.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches xref targets for Cloud context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 [[execution-model]]
 == The MCP execution model

@@ -1,0 +1,24 @@
+// =============================================================================
+// PARTIAL: specification-support.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/overview.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/overview.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/overview/specification-support.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/overview/specification-support.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+== MCP specification support
+
+MCP servers implement the open MCP protocol for tool exposure. Only the tool concept from the MCP server specification is supported. Features such as MCP resources and prompts are not yet available.
+
+For full details, see the link:https://modelcontextprotocol.io/specification/2025-06-18/server[official MCP server specification^].

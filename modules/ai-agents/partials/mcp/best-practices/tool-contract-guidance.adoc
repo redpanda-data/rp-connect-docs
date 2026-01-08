@@ -1,8 +1,20 @@
-// Single-sourced partial for MCP tool contract design guidance
-// Used in both Connect and Cloud developer guides
+// =============================================================================
+// PARTIAL: tool-contract-guidance.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/tool-contract-guidance.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/tool-contract-guidance.adoc[]
+// INCLUDED BY:
+//   (currently unused - available for future use)
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/best-practices/tool-contract-guidance.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/best-practices/tool-contract-guidance.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 Each MCP tool must declare its interface using `meta.mcp` metadata. This metadata allows AI clients to discover and invoke the tool correctly.
 

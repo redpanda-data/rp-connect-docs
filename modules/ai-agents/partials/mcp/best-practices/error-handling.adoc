@@ -1,8 +1,21 @@
-// Single-sourced partial for error handling best practices
-// Used in Connect best-practices.adoc and Cloud best-practices.adoc
+// =============================================================================
+// PARTIAL: error-handling.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/error-handling.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/error-handling.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/tool-patterns.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/tool-patterns.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/best-practices/error-handling.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/best-practices/error-handling.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches xref targets for Cloud context
+//
+// DEPENDENCIES:
+//   - example$best-practices/error-handling/*.yaml
+// =============================================================================
 
 Wrap operations that can fail in `try`/`catch` blocks. This ensures the tool returns useful errors instead of failing silently.
 

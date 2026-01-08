@@ -1,4 +1,4 @@
-= About Redpanda Connect MCP Server
+= Introduction to Redpanda Connect MCP Server
 :description: Discover the business value, use cases, and architecture for Redpanda Connect MCP servers.
 :page-topic-type: overview
 :personas: ai_agent_developer, evaluator
@@ -18,9 +18,8 @@ After reading this page, you will be able to:
 
 == What is MCP?
 
-MCP (Model Context Protocol) is an open standard that lets AI assistants use tools. Think of it like a universal adapter: instead of building custom integrations for every AI system, you define your tools once using MCP, and any MCP-compatible AI client can discover and use them.
-
-Without MCP, connecting AI to your business systems requires custom API code, authentication handling, and response formatting for each AI platform. With MCP, you describe what a tool does and what inputs it needs, and the protocol handles the rest.
+// What is MCP - single-sourced from partial
+include::ai-agents:partial$mcp/overview/what-is-mcp.adoc[]
 
 == What is Redpanda Connect MCP server?
 
@@ -35,7 +34,7 @@ This means AI assistants can:
 If you already use Redpanda Connect for data integration and processing, adding an MCP server gives AI assistants controlled access to your existing systems without extra development effort.
 
 // Use cases table - single-sourced from partial
-include::ai-agents:partial$mcp/use-cases-table.adoc[]
+include::ai-agents:partial$mcp/overview/use-cases-table.adoc[]
 
 == How it works
 
@@ -74,11 +73,7 @@ meta:
 When an AI client asks about weather, it calls this tool with the city name. The tool fetches data from the weather API and returns it.
 
 // MCP specification support - single-sourced from partial
-include::ai-agents:partial$mcp/specification-support.adoc[]
-
-== Get started
-
-To start using the MCP server, try the xref:ai-agents:mcp-server/quickstart.adoc[quickstart].
+include::ai-agents:partial$mcp/overview/specification-support.adoc[]
 
 == Next steps
 

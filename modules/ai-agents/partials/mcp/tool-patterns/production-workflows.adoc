@@ -1,8 +1,24 @@
-// Consolidated partial for production workflows
-// Used by both self-managed Redpanda Connect and Remote MCP servers in Cloud
+// =============================================================================
+// PARTIAL: production-workflows.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/production-workflows.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/production-workflows.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/tool-patterns.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/tool-patterns.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/tool-patterns/production-workflows.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/tool-patterns/production-workflows.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches secrets partial and xref targets for Cloud context
+//
+// DEPENDENCIES:
+//   - partials/mcp/tool-patterns/secrets-cloud.adoc (included via ifdef)
+//   - partials/mcp/tool-patterns/secrets-connect.adoc (included via ifndef)
+//   - example$best-practices/production-workflows/*.yaml
+//   - example$resources/processors/*.yaml
+// =============================================================================
 
 == Production workflows and observability
 
@@ -46,10 +62,10 @@ include::example$best-practices/production-workflows/conditional-processing.yaml
 
 // Secrets section - deployment-specific
 ifdef::env-cloud[]
-include::ai-agents:partial$mcp/secrets-cloud.adoc[]
+include::ai-agents:partial$mcp/tool-patterns/secrets-cloud.adoc[]
 endif::[]
 ifndef::env-cloud[]
-include::ai-agents:partial$mcp/secrets-connect.adoc[]
+include::ai-agents:partial$mcp/tool-patterns/secrets-connect.adoc[]
 endif::[]
 
 === Monitoring, debugging, and observability

@@ -1,262 +1,46 @@
-= MCP Tool Best Practices
+= MCP Tool Design
 :page-aliases: ai-agents:mcp-server/developer-guide.adoc
-:description: Design guidelines, validation patterns, error handling, and response formatting for MCP tools.
+:description: Design effective MCP tool interfaces with clear names, descriptions, and input properties.
 :page-topic-type: best-practices
-:personas: ai_agent_developer, streaming_developer, data_engineer
-// Reader journey: "I want to design my tools well"
+:personas: ai_agent_developer
+// Reader journey: "I want AI clients to discover and use my tools effectively"
 // Learning objectives - what readers should be able to do after reading this page:
-:learning-objective-1: Identify characteristics of effective MCP tool names and descriptions
-:learning-objective-2: Evaluate when to split functionality into separate tools
-:learning-objective-3: Choose appropriate tag strategies for tool organization
-:learning-objective-4: Apply input validation patterns to handle malformed data
-:learning-objective-5: Format tool responses for AI client consumption
-:learning-objective-6: Implement error handling with try/catch blocks
+:learning-objective-1: Write tool names and descriptions that help AI clients select the right tool
+:learning-objective-2: Define input properties with appropriate types and constraints
+:learning-objective-3: Organize tools using tags and manage secrets securely
 
-This page covers design principles, organizational strategies, and implementation patterns for MCP tools.
+This page covers how to design MCP tool interfaces so AI clients can discover, understand, and invoke your tools correctly.
 
 After reading this page, you will be able to:
 
 * [ ] {learning-objective-1}
 * [ ] {learning-objective-2}
 * [ ] {learning-objective-3}
-* [ ] {learning-objective-4}
-* [ ] {learning-objective-5}
-* [ ] {learning-objective-6}
+
+For implementation patterns like input validation, error handling, and response formatting, see xref:ai-agents:mcp-server/tool-patterns.adoc#robust-implementation[Robust implementation patterns].
 
 [[mcp-metadata]]
 == MCP metadata design
 
-include::ai-agents:partial$mcp/mcp-metadata-design.adoc[]
+include::ai-agents:partial$mcp/best-practices/mcp-metadata-design.adoc[]
 
 [[tool-implementation]]
 == Tool design guidelines
 
-include::ai-agents:partial$mcp/tool-implementation-practices.adoc[]
+include::ai-agents:partial$mcp/best-practices/tool-implementation-practices.adoc[]
 
 [[tags]]
 == Tag strategies
 
-Use tags to organize tools and control which ones are included when starting the server. Define tags in the `meta.mcp` block and filter with `rpk connect mcp-server --tag`.
+include::ai-agents:partial$mcp/best-practices/tags.adoc[]
 
-=== Environment separation
+[[secrets]]
+== Secrets management
 
-Tag tools as `dev`, `staging`, or `production` to run different tool sets per environment:
-
-[,bash]
-----
-rpk connect mcp-server --address localhost:4195 --tag production
-----
-
-=== Feature grouping
-
-Group related tools (for example, `analytics`, `notifications`, `user-management`) to expose coherent functionality to AI clients.
-
-=== Access control
-
-Expose different tool subsets to different AI clients by running multiple server instances with different tag filters.
-
-[[input-validation]]
-== Input validation
-
-AI clients may send unexpected or malformed input. Validate early to return helpful error messages instead of cryptic failures from downstream components.
-
-Use the xref:components:processors/mutation.adoc[`mutation` processor] with conditional logic to check inputs before processing.
-
-=== Check required fields
-
-Verify that required parameters exist and aren't empty. Return a structured error object so the AI client can understand what went wrong:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/input-validation/check-required-fields.yaml[tags=check-required-fields,indent=0]
-----
-
-The xref:guides:bloblang/methods.adoc#or[`.or("")`] method provides a default if the field is missing, and xref:guides:bloblang/methods.adoc#trim[`.trim()`] removes whitespace before checking.
-
-=== Sanitize string inputs
-
-Remove potentially dangerous characters from user input before using it in queries or URLs. Use xref:guides:bloblang/methods.adoc#re_replace_all[`re_replace_all`] with a regex pattern:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/input-validation/sanitize-strings.yaml[tags=sanitize-strings,indent=0]
-----
-
-This stores the sanitized value in xref:configuration:metadata.adoc[message metadata] for use in subsequent processors.
-
-=== Validate numeric ranges
-
-Check that numeric inputs fall within acceptable bounds. Use xref:guides:bloblang/about.adoc#let-statement[`let` statements] to store intermediate values and avoid repeating expressions:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/input-validation/validate-numeric-ranges.yaml[tags=validate-numeric-ranges,indent=0,role="no-placeholders]
-----
-
-The xref:guides:bloblang/methods.adoc#number[`.number()`] method converts the value to a numeric type for comparison.
-
-=== Validate enum values
-
-Restrict inputs to a set of allowed values. Use xref:guides:bloblang/methods.adoc#contains[`.contains()`] to check membership in an array:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/input-validation/validate-enum.yaml[tags=validate-enum,indent=0]
-----
-
-The xref:guides:bloblang/methods.adoc#without[`.without()`] and xref:guides:bloblang/methods.adoc#assign[`.assign()`] methods update the message with the normalized (lowercased) value.
-
-=== Stop processing on critical failures
-
-For validation errors that should halt execution entirely, use xref:guides:bloblang/functions.adoc#throw[`throw()`] to raise an error that the `catch` block can handle:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/input-validation/throw-on-critical.yaml[tags=throw-on-critical,indent=0]
-----
-
-Unlike returning an error object, `throw()` stops the processor chain immediately. Use this for critical failures where continuing would be unsafe.
-
-[[response-formatting]]
-== Response formatting
-
-AI clients work best with clean, predictable response structures. Use the xref:components:processors/mutation.adoc[`mutation` processor] to transform raw component output into a consistent format.
-
-=== Structure output fields
-
-Group related fields into a logical structure. This makes responses easier for AI clients to parse and describe to users:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/response-formatting/structure-output.yaml[tags=structure-output,indent=0]
-----
-
-The xref:guides:bloblang/functions.adoc#now[`now()`] function adds a timestamp showing when the data was retrieved.
-
-=== Extract nested fields
-
-Flatten deeply nested API responses into a simpler structure. Use dot notation to navigate nested objects:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/response-formatting/extract-nested.yaml[tags=extract-nested,indent=0]
-----
-
-The xref:guides:bloblang/methods.adoc#string[`.string()`] and xref:guides:bloblang/methods.adoc#bool[`.bool()`] methods ensure consistent types in the output.
-
-=== Transform arrays
-
-Process arrays to extract or reshape items. Use xref:guides:bloblang/methods.adoc#map_each[`map_each`] to transform each element:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/response-formatting/transform-arrays.yaml[tags=transform-arrays,indent=0]
-----
-
-The xref:guides:bloblang/methods.adoc#length[`.length()`] method returns the array size. The arrow function (`item -> { ... }`) creates a new object for each array element.
-
-=== Include fields conditionally
-
-Omit empty or missing fields from the response rather than returning nulls. Use xref:guides:bloblang/functions.adoc#deleted[`deleted()`] to exclude fields:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/response-formatting/conditional-fields.yaml[tags=conditional-fields,indent=0]
-----
-
-The xref:guides:bloblang/methods.adoc#exists[`.exists()`] method checks whether a field is present before accessing it.
-
-=== Filter sensitive data
-
-Remove fields that shouldn't be exposed to AI clients. Use xref:guides:bloblang/methods.adoc#without[`.without()`] to exclude specific fields:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/response-formatting/filter-sensitive-data.yaml[tags=filter-sensitive,indent=0]
-----
-
-This copies all fields except the listed ones. Always filter sensitive data before returning responses.
-
-=== Wrap in success/error structure
-
-Provide a consistent envelope structure that AI clients can rely on. This makes it easier to handle both success and error cases:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/response-formatting/success-error-envelope.yaml[tags=success-envelope,indent=0]
-----
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/response-formatting/success-error-envelope.yaml[tags=error-envelope,indent=0]
-----
-
-The xref:guides:bloblang/functions.adoc#error[`error()`] function retrieves the error message when used inside a `catch` block.
-
-[[error-handling]]
-== Error handling
-
-External services fail. Databases go down. APIs return unexpected responses. Wrap risky operations in error handling so your tool returns useful error messages instead of crashing.
-
-Use the xref:components:processors/try.adoc[`try`] and xref:components:processors/catch.adoc[`catch`] processors to handle errors gracefully.
-
-=== Wrap operations in try/catch
-
-Place operations that might fail inside a `try` block. If any processor in the block fails, execution jumps to the `catch` block:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/error-handling/basic-try-catch.yaml[tags=basic-try-catch,indent=0]
-----
-
-The xref:guides:bloblang/functions.adoc#error[`error()`] function returns the error message from the failed operation.
-
-=== Include context in error responses
-
-Help AI clients (and users debugging issues) understand what went wrong by including the original input and a timestamp:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/error-handling/error-with-context.yaml[tags=error-with-context,indent=0]
-----
-
-Inside `catch`, the original message (`this`) is still accessible, so you can include the input that caused the failure.
-
-=== Set timeouts on external calls
-
-Prevent tools from hanging indefinitely by setting timeouts on HTTP requests and other external calls. Configure retries for transient failures:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/error-handling/http-timeout.yaml[tags=http-timeout,indent=0]
-----
-
-The xref:components:processors/http.adoc[`http` processor] supports `timeout`, `retries`, and `retry_period` fields. See the component reference for all available options.
-
-=== Handle specific error types
-
-Parse error messages to categorize failures and suggest whether the AI client should retry:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/error-handling/handle-error-types.yaml[tags=handle-error-types,indent=0]
-----
-
-The xref:guides:bloblang/methods.adoc#contains[`.contains()`] method checks if the error message includes specific text. This pattern helps AI clients decide whether to retry or report the error.
-
-=== Log errors for debugging
-
-Write errors to the server log for later analysis. Use the xref:components:processors/log.adoc[`log` processor] before returning the error response:
-
-[source,yaml]
-----
-include::ai-agents:example$best-practices/error-handling/log-errors.yaml[tags=log-errors,indent=0]
-----
-
-The `fields_mapping` adds structured fields to the log entry, making it easier to search and filter logs. See xref:components:processors/log.adoc[`log` processor] for all logging options.
+include::ai-agents:partial$mcp/best-practices/secrets-management.adoc[]
 
 == Next steps
 
-* xref:ai-agents:mcp-server/tool-patterns.adoc[]: Find reusable patterns
+* xref:ai-agents:mcp-server/tool-patterns.adoc[]: Find reusable patterns including validation, error handling, and response formatting
 * xref:ai-agents:mcp-server/troubleshooting.adoc[]: Diagnose common issues
 * xref:ai-agents:mcp-server/concepts.adoc[]: Review the execution model

@@ -1,8 +1,21 @@
-// Single-sourced partial for MCP metadata design best practices
-// Used in Connect best-practices.adoc and Cloud best-practices.adoc
+// =============================================================================
+// PARTIAL: mcp-metadata-design.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/mcp-metadata-design.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/mcp-metadata-design.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/best-practices.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/best-practices.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/best-practices/mcp-metadata-design.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/best-practices/mcp-metadata-design.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 The `meta.mcp` block determines how AI clients discover and use your tool. Good metadata helps AI clients select the right tool and provide correct inputs.
 

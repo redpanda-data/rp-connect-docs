@@ -1,8 +1,21 @@
-// Single-sourced partial for MCP component selection guide
-// Used in both Connect and Cloud developer guides
+// =============================================================================
+// PARTIAL: component-selection.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/component-selection.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/component-selection.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/concepts.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/concepts.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/concepts/component-selection.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/concepts/component-selection.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches xref targets for Cloud context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 Every MCP tool is implemented as a single component. Choosing the right component type is a critical design decision that affects what your tool can do and how it behaves.
 

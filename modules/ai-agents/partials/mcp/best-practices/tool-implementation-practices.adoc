@@ -1,14 +1,27 @@
-// Single-sourced partial for tool implementation best practices
-// Used in Connect best-practices.adoc and Cloud best-practices.adoc
+// =============================================================================
+// PARTIAL: tool-implementation-practices.adoc
+// =============================================================================
 //
-// Include from Connect: include::ai-agents:partial$mcp/tool-implementation-practices.adoc[]
-// Include from Cloud: include::redpanda-connect:ai-agents:partial$mcp/tool-implementation-practices.adoc[]
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/best-practices.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/best-practices.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/best-practices/tool-implementation-practices.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/best-practices/tool-implementation-practices.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
 
 === Keep tools focused
 
 Each tool should do one thing well. If you find yourself adding multiple unrelated operations, split them into separate tools.
 
-Tools that do too much or have vague purposes cause problems because AI clients rely on descriptions to choose tools. Vague descriptions lead to wrong tool selection. Tools that do too much are harder to test and debug. Broad tools often have implicit assumptions that aren't documented.
+Tools that do too much or have vague purposes cause problems because AI clients rely on descriptions to choose tools. Vague descriptions lead to wrong tool selection. Also, tools that do too much are harder to test and debug.
 
 Write descriptions that clearly state what the tool does, what input it needs, and what it returns. If a tool is doing multiple things, split it into focused tools.
 
@@ -45,46 +58,20 @@ endif::[]
 * Return partial results if full processing takes too long.
 * If processing is slow, consider async patterns.
 
-[[one-file-one-component-type]]
-=== One file per component type
-
-Each YAML file must contain exactly one component type. Do not build MCP tools as if they were continuous pipelines with inputs, processors, and outputs in a single file.
-
-[source,yaml]
-----
-include::example$best-practices/tool-implementation/component-type.yaml[tags=wrong-pipeline]
-----
-
-Including separate top-level sections for different component types causes the MCP server to fail because it cannot determine which component is the tool. The lint command will fail with `unable to infer component type`.
-
-If your logic requires multiple components, split them into separate files and let the AI client orchestrate them, or use an output tool with processors.
-
-Also avoid adding wrapper blocks like `input:` or `output:` when defining component files:
-
-[source,yaml]
-----
-include::example$best-practices/tool-implementation/component-type.yaml[tags=wrong-wrapper]
-----
-
-.Correct structure
-[source,yaml]
-----
-include::example$best-practices/tool-implementation/component-type.yaml[tags=correct-component]
-----
-
 === Check component support levels
 
 Before using a component in production, check its support level and license requirements:
 
 * Community components may lack support and stability guarantees.
 * Enterprise components require a valid license.
-* Production incidents caused by unsupported components are harder to resolve.
 
 ifdef::env-cloud[]
-See xref:develop:connect/components/about.adoc[Components overview] for support levels and licensing information.
+See the xref:develop:connect/components/about.adoc[components catalog] for support levels and licensing information.
 endif::[]
 ifndef::env-cloud[]
-See xref:components:about.adoc[Components overview] for support levels and licensing information.
+See the xref:components:about.adoc[components catalog] for support levels and licensing information.
 endif::[]
 
 Prefer certified components for production tools. Test with your license to verify components work. Document any licensing assumptions in your tool descriptions.
+
+See xref:get-started:licensing.adoc[Redpanda licensing] for more information about licenses.

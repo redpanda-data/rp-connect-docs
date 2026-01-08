@@ -5,10 +5,16 @@
 :personas: ai_agent_developer, data_engineer
 // Reader journey: "I need an example for X"
 :learning-objective-1: Find reusable patterns for common MCP tool scenarios
+:learning-objective-2: Apply validation and error handling patterns for production robustness
+:learning-objective-3: Format responses consistently for AI client consumption
 
 This cookbook provides reusable patterns for building MCP tools with Redpanda Connect. Use these patterns as building blocks for your own tools.
 
-Use this cookbook to find reusable patterns for common MCP tool scenarios.
+After reading this page, you will be able to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
 
 Each pattern is a reusable example for a common MCP tool scenario. Patterns are grouped by use case. All YAML is ready to use in your MCP server project.
 
@@ -28,6 +34,7 @@ Choose the right pattern for your use case:
 * <<event-driven-workflows,Build event-driven workflows>>
 * <<aillm-integration,Integrate with AI/LLM services>>
 * <<caching-systems,Cache frequently accessed data>>
+* <<robust-implementation,Input validation, error handling, and response formatting>>
 
 == Data generators
 
@@ -241,8 +248,31 @@ memory:
 
 See also: xref:components:caches/memory.adoc[`memory` cache], Redpanda-backed cache using xref:components:outputs/redpanda.adoc[`redpanda` output]
 
+[[robust-implementation]]
+== Robust implementation patterns
+
+Build production-ready tools with proper input validation, error handling, and response formatting. These patterns help your tools handle edge cases gracefully and return consistent responses to AI clients.
+
+=== Input validation
+
+AI clients may send unexpected or malformed input. Validate early to return helpful error messages instead of cryptic failures from downstream components.
+
+include::ai-agents:partial$mcp/best-practices/input-validation.adoc[leveloffset=+1]
+
+=== Error handling
+
+External services fail. Databases go down. APIs return unexpected responses. Wrap risky operations in error handling so your tool returns useful error messages instead of crashing.
+
+include::ai-agents:partial$mcp/best-practices/error-handling.adoc[leveloffset=+1]
+
+=== Response formatting
+
+AI clients work best with clean, predictable response structures. Transform raw component output into consistent formats.
+
+include::ai-agents:partial$mcp/best-practices/response-formatting.adoc[leveloffset=+1]
+
 // Production workflows section - single-sourced from partial
-include::ai-agents:partial$mcp/production-workflows.adoc[]
+include::ai-agents:partial$mcp/tool-patterns/production-workflows.adoc[]
 
 NOTE: The multi-step enrichment example requires setting the `POSTGRES_DSN` environment variable with your PostgreSQL connection string. For example, `export POSTGRES_DSN="postgres://user:password@localhost:5432/dbname"`.
 
