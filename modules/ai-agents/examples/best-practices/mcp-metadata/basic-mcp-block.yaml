@@ -1,18 +1,9 @@
 # Test: Basic MCP metadata block structure
 # Validates: MCP server can parse basic tool metadata
 
+# tag::basic-mcp-block[]
 label: get-weather
 
-processors:
-  - mutation: |
-      root = {
-        "temperature": 22,
-        "humidity": 65,
-        "conditions": "partly cloudy",
-        "city": this.city
-      }
-
-# tag::basic-mcp-block[]
 meta:
   tags: [ weather, api, example ]
   mcp:
@@ -24,3 +15,12 @@ meta:
         description: "City name (e.g., 'London', 'Tokyo', 'New York')"
         required: true
 # end::basic-mcp-block[]
+
+processors:
+  - mutation: |
+      root = {
+        "temperature": 22,
+        "humidity": 65,
+        "conditions": "partly cloudy",
+        "city": this.city
+      }

@@ -42,4 +42,10 @@ endif::[]
 * Avoid unbounded reads. Read N messages, not all messages.
 * Consider pagination for large datasets.
 * Return partial results if full processing takes too long.
-* If processing is slow, consider async patterns.
+
+ifdef::env-cloud[]
+For patterns that handle timeout failures gracefully, see xref:ai-agents:mcp/remote/tool-patterns.adoc#error-handling[error handling patterns].
+endif::[]
+ifndef::env-cloud[]
+For patterns that handle timeout failures gracefully, see xref:ai-agents:mcp-server/tool-patterns.adoc#error-handling[error handling patterns].
+endif::[]

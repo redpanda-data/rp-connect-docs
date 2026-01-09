@@ -17,7 +17,9 @@
 //   None
 // =============================================================================
 
-The `meta.mcp` block determines how AI clients discover and use your tool. Good metadata helps AI clients select the right tool and provide correct inputs.
+AI clients use tool names and descriptions to decide which tool to call. Good metadata helps AI select the right tool and provide correct inputs.
+
+The `label` field defines the tool name. The `meta.mcp` block defines the description and input properties.
 
 [source,yaml]
 ----
@@ -26,7 +28,7 @@ include::example$best-practices/mcp-metadata/basic-mcp-block.yaml[tags=basic-mcp
 
 === Choose a clear tool name
 
-The tool name comes from the top-level `label` field. AI clients see this name when selecting tools, so make it descriptive and consistent.
+AI clients see the `label` value when selecting tools, so make it descriptive and consistent.
 
 The name should reflect the tool's primary action and target resource. Focus on clarity over brevity.
 
@@ -85,6 +87,13 @@ Optional properties should have sensible defaults:
 ----
 include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=optional-property,indent=0]
 ----
+
+ifdef::env-cloud[]
+For patterns that apply defaults and validate values at runtime, see xref:ai-agents:mcp/remote/tool-patterns.adoc#input-validation[input validation patterns].
+endif::[]
+ifndef::env-cloud[]
+For patterns that apply defaults and validate values at runtime, see xref:ai-agents:mcp-server/tool-patterns.adoc#input-validation[input validation patterns].
+endif::[]
 
 === Complete example
 
