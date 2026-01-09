@@ -9,7 +9,7 @@
 :learning-objective-3: Use environment variables for secrets and configuration
 :learning-objective-4: Test tools locally before connecting AI clients
 
-This guide walks you through creating an MCP tool using any Redpanda Connect component.
+After xref:ai-agents:mcp-server/quickstart.adoc[deploying your first MCP server], create custom tools that AI clients can discover and invoke. This guide walks you through the process using any Redpanda Connect component.
 
 After reading this page, you will be able to:
 
@@ -66,7 +66,7 @@ Each YAML file must contain exactly one component. The directory in your project
 | Directory | Component type
 
 | `resources/processors/`
-| Processor (most common)
+| Processor
 
 | `resources/inputs/`
 | Input

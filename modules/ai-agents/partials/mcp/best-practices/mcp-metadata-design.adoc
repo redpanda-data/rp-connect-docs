@@ -26,6 +26,13 @@ The `label` field defines the tool name. The `meta.mcp` block defines the descri
 include::example$best-practices/mcp-metadata/basic-mcp-block.yaml[tags=basic-mcp-block]
 ----
 
+ifdef::env-cloud[]
+For the complete field reference, see xref:ai-agents:mcp/remote/create-tool.adoc#mcp-metadata[MCP metadata fields].
+endif::[]
+ifndef::env-cloud[]
+For the complete field reference, see xref:ai-agents:mcp-server/create-tool.adoc#mcp-metadata[MCP metadata fields].
+endif::[]
+
 === Choose a clear tool name
 
 AI clients see the `label` value when selecting tools, so make it descriptive and consistent.

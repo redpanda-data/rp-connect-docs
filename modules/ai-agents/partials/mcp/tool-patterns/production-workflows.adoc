@@ -20,18 +20,9 @@
 //   - example$resources/processors/*.yaml
 // =============================================================================
 
-== Production workflows and observability
+== Advanced workflows
 
-Build enterprise-grade tools with error handling, validation, multi-step workflows, and monitoring.
-
-=== Parameter validation and type coercion
-
-Always validate and coerce input parameters to ensure your tools are robust:
-
-[source,yaml]
-----
-include::example$best-practices/production-workflows/param-validation.yaml[tags=param-validation]
-----
+Build multi-step workflows with dynamic configuration, conditional logic, and observability.
 
 === Dynamic configuration
 
@@ -40,15 +31,6 @@ Build tools that adapt their behavior based on input parameters:
 [source,yaml]
 ----
 include::example$best-practices/production-workflows/dynamic-config.yaml[tags=dynamic-config]
-----
-
-=== Error handling and fallbacks
-
-Implement error handling to make your tools reliable:
-
-[source,yaml]
-----
-include::example$best-practices/production-workflows/error-fallbacks.yaml[tags=error-fallbacks]
 ----
 
 === Conditional processing
