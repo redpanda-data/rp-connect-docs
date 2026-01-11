@@ -1,0 +1,31 @@
+# Test: Structure output fields
+# Source: best-practices.adoc - Response formatting section
+# Expected: Groups fields into customer object with timestamp
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {
+        "id": "cust_123",
+        "name": "Alice Smith",
+        "email": "alice@example.com",
+        "plan": "premium"
+      }
+
+pipeline:
+  processors:
+    # tag::structure-output[]
+    - mutation: |
+        root.customer = {
+          "id": this.id,
+          "name": this.name,
+          "email": this.email,
+          "plan": this.plan
+        }
+        root.retrieved_at = now()
+    # end::structure-output[]
+
+output:
+  stdout: {}

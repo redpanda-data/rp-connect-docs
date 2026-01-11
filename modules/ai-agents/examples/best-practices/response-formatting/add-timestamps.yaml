@@ -1,0 +1,23 @@
+# Test: Timestamp formatting from response-formatting.adoc
+# Expected: Original data preserved, three timestamp fields added
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"user": "test", "action": "login"}
+
+pipeline:
+  processors:
+    # tag::add-timestamps[]
+    - label: add_timestamps
+      mutation: |
+        root = this
+        root.timestamp = now().format_timestamp("2006-01-02T15:04:05Z07:00")
+        root.date = now().format_timestamp("2006-01-02")
+        root.time = now().format_timestamp("15:04:05")
+    # end::add-timestamps[]
+
+output:
+  stdout: {}

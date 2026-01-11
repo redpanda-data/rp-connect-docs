@@ -1,0 +1,41 @@
+// =============================================================================
+// PARTIAL: property-restrictions-table.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/create-tool.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/create-tool.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/create-tool/property-restrictions-table.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/create-tool/property-restrictions-table.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+Different component types have different property capabilities when exposed as MCP tools:
+
+[cols="1,2,2"]
+|===
+| Component Type | Property Support | Details
+
+| `input`
+| Only supports the `count` property
+| AI clients can specify how many messages to read, but you cannot define custom properties.
+
+| `cache`
+| No custom properties
+| Properties are hardcoded to `key` and `value` for cache operations.
+
+| `output`
+| Custom properties supported
+| AI sees properties as an array for batch operations: `[{prop1, prop2}, {prop1, prop2}]`.
+
+| `processor`
+| Custom properties supported
+| You can define any properties needed for data processing operations.
+|===

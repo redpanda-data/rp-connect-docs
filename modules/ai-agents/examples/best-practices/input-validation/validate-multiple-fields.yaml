@@ -1,0 +1,47 @@
+# Test: Multiple field validation from input-validation.adoc
+# Expected: All required fields validated, errors collected
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"order_id": "123", "items": [{"id": 1}], "email": "test@example.com"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"items": [{"id": 1}]}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"order_id": "123", "items": [], "email": "invalid-email"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {}'
+
+pipeline:
+  processors:
+    # tag::validate-order[]
+    - label: validate_order
+      mutation: |
+        let errors = []
+        let errors = if !this.exists("order_id") || this.order_id == "" {
+          $errors.append("order_id is required")
+        } else { $errors }
+        let errors = if !this.exists("items") || this.items.length() == 0 {
+          $errors.append("at least one item is required")
+        } else { $errors }
+        let errors = if this.exists("email") && !this.email.contains("@") {
+          $errors.append("invalid email format")
+        } else { $errors }
+        root = if $errors.length() > 0 {
+          {"valid": false, "errors": $errors}
+        } else {
+          {"valid": true, "order_id": this.order_id}
+        }
+    # end::validate-order[]
+
+output:
+  stdout: {}

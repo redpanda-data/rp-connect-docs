@@ -1,0 +1,78 @@
+name: Regenerate Docs on Override Changes
+
+on:
+  push:
+    paths:
+      - 'docs-data/overrides.json'
+    branches-ignore:
+      - main
+
+jobs:
+  regenerate-docs:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      NODE_VERSION: '24'
+      DOCS_OVERRIDES: docs-data/overrides.json
+
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,sdlc/prod/github/actions_bot_token
+          parse-json-secrets: true
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install tools
+        run: |
+          npx --no-install doc-tools install-test-dependencies
+          rpk connect install
+
+      - name: Regenerate docs with updated overrides
+        run: |
+          npx --no-install doc-tools generate rpcn-connector-docs \
+            --fetch-connectors \
+            --overrides $DOCS_OVERRIDES \
+            --draft-missing \
+            --update-whats-new
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes after regeneration"
+          else
+            git add -A
+            git commit -m "docs: Regenerate with updated overrides"
+
+            # Use --force-with-lease to avoid overwriting concurrent changes
+            if ! git push --force-with-lease; then
+              echo "Push failed, fetching and rebasing..."
+              git fetch origin ${{ github.ref_name }}
+              git rebase origin/${{ github.ref_name }}
+              git push --force-with-lease
+            fi
+          fi

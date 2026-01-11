@@ -1,0 +1,45 @@
+// =============================================================================
+// PARTIAL: use-cases-table.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/overview.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/overview.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/overview/use-cases-table.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/overview/use-cases-table.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+== Use cases
+
+[cols="1s,3a"]
+|===
+|Category |Example prompts
+
+|Operational monitoring
+|* Check partition lag for customer-events topic
+* Show me the top 10 producers by message volume today
+* Get schema registry health status
+
+|Data enrichment and analysis
+|* Fetch user profile data and recent orders for customer ID 12345
+* Get real-time stock prices for symbols in my portfolio topic
+* Analyze sentiment of latest product reviews
+
+|Team productivity
+|* Deploy my microservice to the staging environment
+* Generate load test data for the payments service
+* Create a summary dashboard of this week's incident reports
+
+|Business intelligence
+|* What are the trending products in the last 24 hours?
+* Show revenue impact of the latest feature deployment
+* Get customer satisfaction scores from support tickets
+|===

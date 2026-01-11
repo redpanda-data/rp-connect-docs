@@ -1,0 +1,27 @@
+# Test: Success envelope structure from response-formatting.adoc
+# Expected: Data wrapped in success envelope with timestamp
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"id": 123, "name": "Test User"}
+
+pipeline:
+  processors:
+    # tag::success-envelope[]
+    - label: format_success
+      mapping: |
+        root = {
+          "success": true,
+          "data": {
+            "user_id": this.id,
+            "name": this.name
+          },
+          "timestamp": now().format_timestamp("2006-01-02T15:04:05Z07:00")
+        }
+    # end::success-envelope[]
+
+output:
+  stdout: {}

@@ -1,0 +1,30 @@
+# Test: Include context in error responses
+# Source: best-practices.adoc - Error handling section
+# Expected: Error includes original input and timestamp
+# Note: Uses simulated error since we can't rely on database in tests
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"customer_id": "cust_12345"}
+
+pipeline:
+  processors:
+    - try:
+        # Simulate database failure for testing
+        - mutation: |
+            root = throw("connection refused")
+
+    # tag::error-with-context[]
+    - catch:
+        - mutation: |
+            root.error = true
+            root.message = "Failed to look up customer: " + error()
+            root.input = {"customer_id": this.customer_id}
+            root.timestamp = now().ts_format("2006-01-02T15:04:05Z07:00")
+    # end::error-with-context[]
+
+output:
+  stdout: {}

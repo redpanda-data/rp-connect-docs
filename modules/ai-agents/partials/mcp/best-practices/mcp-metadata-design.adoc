@@ -1,0 +1,89 @@
+// =============================================================================
+// PARTIAL: mcp-metadata-design.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/best-practices.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/best-practices.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/best-practices/mcp-metadata-design.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/best-practices/mcp-metadata-design.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+AI clients use tool names and descriptions to decide which tool to call. Good metadata helps AI select the right tool and provide correct inputs.
+
+The `label` field defines the tool name. The `meta.mcp` block defines the description and input properties.
+
+[source,yaml]
+----
+include::example$best-practices/mcp-metadata/basic-mcp-block.yaml[tags=basic-mcp-block]
+----
+
+ifdef::env-cloud[]
+For the complete field reference, see xref:ai-agents:mcp/remote/create-tool.adoc#mcp-metadata[MCP metadata fields].
+endif::[]
+ifndef::env-cloud[]
+For the complete field reference, see xref:ai-agents:mcp-server/create-tool.adoc#mcp-metadata[MCP metadata fields].
+endif::[]
+
+=== Choose a clear tool name
+
+AI clients see the `label` value when selecting tools, so make it descriptive and consistent.
+
+The name should reflect the tool's primary action and target resource. Focus on clarity over brevity. For example, use `get-weather-forecast` instead of just `get-data`.
+
+=== Write effective descriptions
+
+Tool descriptions help AI clients decide when to use your tool. Start with an action verb and explain what the tool returns.
+
+[source,yaml]
+----
+include::example$best-practices/mcp-metadata/descriptions.yaml[tags=good-description,indent=0]
+----
+
+Include any limitations or requirements in the description:
+
+[source,yaml]
+----
+include::example$best-practices/mcp-metadata/descriptions.yaml[tags=with-limitations,indent=0]
+----
+
+=== Define input properties clearly
+
+Each property needs a name, type, description, and required status. Use `string`, `number`, or `boolean` types.
+
+Include example values in descriptions:
+
+[source,yaml]
+----
+include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=property-descriptions,indent=0]
+----
+
+Mark properties as required only if the tool cannot function without them:
+
+[source,yaml]
+----
+include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=required-property,indent=0]
+----
+
+Optional properties should have sensible defaults:
+
+[source,yaml]
+----
+include::example$best-practices/mcp-metadata/property-definitions.yaml[tags=optional-property,indent=0]
+----
+
+ifdef::env-cloud[]
+For patterns that apply defaults and validate values at runtime, see xref:ai-agents:mcp/remote/tool-patterns.adoc#input-validation[input validation patterns].
+endif::[]
+ifndef::env-cloud[]
+For patterns that apply defaults and validate values at runtime, see xref:ai-agents:mcp-server/tool-patterns.adoc#input-validation[input validation patterns].
+endif::[]
+

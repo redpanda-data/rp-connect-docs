@@ -1,0 +1,44 @@
+// =============================================================================
+// PARTIAL: mcp-metadata-fields-table.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/create-tool.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/create-tool.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/create-tool/mcp-metadata-fields-table.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/create-tool/mcp-metadata-fields-table.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Adjusts tags field description for Cloud context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+[cols="1,1,3", options="header"]
+|===
+| Field | Required | Description
+
+| `enabled`
+| Yes
+| Set to `true` to expose this component as an MCP tool. Set to `false` to disable without deleting the configuration.
+
+| `description`
+| Yes
+| Explains what the tool does and what it returns. AI clients use this to decide when to call the tool.
+
+| `properties`
+| No
+| Array of input parameters the tool accepts. See <<property-fields>> for the fields in each property.
+
+| `tags`
+| No
+ifdef::env-cloud[]
+| Array of strings for categorizing tools.
+endif::[]
+ifndef::env-cloud[]
+| Array of strings for categorizing tools. Use with `--tag` flag to filter which tools are exposed.
+endif::[]
+|===

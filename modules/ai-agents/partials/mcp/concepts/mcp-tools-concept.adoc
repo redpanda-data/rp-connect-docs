@@ -1,0 +1,28 @@
+// =============================================================================
+// PARTIAL: mcp-tools-concept.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/concepts.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/concepts.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/concepts/mcp-tools-concept.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/concepts/mcp-tools-concept.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+== MCP tools compared to pipelines
+
+An glossterm:MCP tool[] is a single glossterm:Redpanda Connect[] component that executes on demand when called by an AI client. Unlike a traditional Redpanda Connect pipeline, MCP tools follow a request/response pattern similar to calling a function.
+
+The tool starts, runs, and completes for each invocation. There is no persistent state between calls.
+
+MCP tools are not pipelines.
+
+In Redpanda Connect, a pipeline typically means a continuous data flow where data streams from an input, through processors, to an output. The pipeline runs indefinitely, processing many messages over time.

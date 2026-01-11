@@ -1,0 +1,31 @@
+# Test: Basic response formatting from response-formatting.adoc
+# Expected: Nested weather data flattened with timestamp
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {
+        "location": {"name": "London"},
+        "current": {
+          "temp_c": "15.5",
+          "condition": {"text": "Partly cloudy"}
+        }
+      }
+
+pipeline:
+  processors:
+    # tag::format-response[]
+    - label: format_response
+      mapping: |
+        root = {
+          "city": this.location.name,
+          "temperature_c": this.current.temp_c.number(),
+          "description": this.current.condition.text,
+          "timestamp": now().ts_format("2006-01-02T15:04:05Z")
+        }
+    # end::format-response[]
+
+output:
+  stdout: {}

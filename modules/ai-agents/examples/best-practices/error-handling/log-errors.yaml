@@ -1,0 +1,33 @@
+# Test: Log errors for debugging
+# Source: best-practices.adoc - Error handling section
+# Expected: Error logged with structured fields and formatted response returned
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"user_id": 12345, "action": "fetch_profile"}
+
+pipeline:
+  processors:
+    - try:
+        - mutation: |
+            root = throw("Connection refused to database")
+
+    # tag::log-errors[]
+    - catch:
+        - log:
+            message: "Tool failed: ${! error() }"
+            level: ERROR
+            fields_mapping: |
+              root.input = this
+              root.error = error()
+
+        - mutation: |
+            root.error = true
+            root.message = error()
+    # end::log-errors[]
+
+output:
+  stdout: {}

@@ -1,0 +1,81 @@
+// =============================================================================
+// PARTIAL: troubleshooting-runtime.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/troubleshooting.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/troubleshooting.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/troubleshooting/troubleshooting-runtime.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/troubleshooting/troubleshooting-runtime.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches runtime troubleshooting steps for Cloud context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+=== Tool not appearing in MCP client
+
+If your tool doesn't appear in the MCP client's tool list:
+
+. Verify that `meta.mcp.enabled: true` is set in your YAML configuration.
+
+. Check the tool has the correct tag:
++
+--
+ifdef::env-cloud[]
+* Verify the MCP server status shows *Running* in the Cloud Console.
+* Check the *Logs* tab for any startup errors.
+endif::[]
+ifndef::env-cloud[]
+* Ensure the tool's `meta.tags` array includes the tag you specified when starting the server.
+* Example: If you started with `--tag bluesky`, your tool needs `tags: [ bluesky ]`.
+endif::[]
+--
+
+. Verify correct directory structure:
++
+--
+ifndef::env-cloud[]
+* Processors: `resources/processors/`
+* Inputs: `resources/inputs/`
+* Outputs: `resources/outputs/`
+* Caches: `resources/caches/`
+endif::[]
+--
+
+.Example correct structure
+[source,yaml]
+----
+label: my-tool
+# ... component configuration ...
+meta:
+  tags: [ my-tag ]  # Must match --tag argument
+  mcp:
+    enabled: true   # Required for exposure
+    description: Tool description
+----
+
+=== Tool returns unexpected results
+
+If your tool runs but returns unexpected data:
+
+. Check input validation. Add logging to see what inputs the tool receives:
++
+[source,yaml]
+----
+- log:
+    message: "Received input: ${! json() }"
+    level: DEBUG
+----
+
+. Verify data transformations. Log intermediate results between processors.
+
+. Check external API responses. The API may return different data than expected.
+
+ifdef::env-cloud[]
+. Review the *Logs* tab in the Cloud Console for error messages.
+endif::[]

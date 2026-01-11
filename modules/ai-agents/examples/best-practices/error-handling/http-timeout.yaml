@@ -1,0 +1,31 @@
+# Test: Set timeouts on external calls
+# Source: best-practices.adoc - Error handling section
+# Expected: HTTP processor with timeout and retry configuration
+# Note: This is a config example, not a runnable test
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"endpoint": "/data"}
+
+pipeline:
+  processors:
+    - try:
+        # tag::http-timeout[]
+        - http:
+            url: "https://api.example.com/data"
+            verb: GET
+            timeout: 10s
+            retries: 2
+            retry_period: 1s
+        # end::http-timeout[]
+
+    - catch:
+        - mutation: |
+            root.error = true
+            root.message = error()
+
+output:
+  stdout: {}

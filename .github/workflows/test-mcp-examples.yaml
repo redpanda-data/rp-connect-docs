@@ -5,16 +5,16 @@ on:
     branches: [main]
     paths:
       - 'modules/ai-agents/examples/**/*.yaml'
-      - 'modules/ai-agents/examples/test-mcp-examples.sh'
+      - 'modules/ai-agents/examples/test-all.sh'
   pull_request:
     branches: [main]
     paths:
       - 'modules/ai-agents/examples/**/*.yaml'
-      - 'modules/ai-agents/examples/test-mcp-examples.sh'
+      - 'modules/ai-agents/examples/test-all.sh'
 
 jobs:
-  lint-and-test:
-    name: Lint and Test All Examples
+  test-all:
+    name: Test All Examples
     runs-on: ubuntu-latest
 
     steps:
@@ -35,21 +35,16 @@ jobs:
           rpk connect install
 
       - name: Make test script executable
-        run: chmod +x modules/ai-agents/examples/test-mcp-examples.sh
+        run: chmod +x modules/ai-agents/examples/test-all.sh
 
-      # Test all examples
-      - name: Run automated test script
+      - name: Run comprehensive test suite
         run: |
           cd modules/ai-agents/examples
-          ./test-mcp-examples.sh
+          ./test-all.sh
 
-  test-matrix:
-    name: Test Examples by Component Type
+  test-mcp-tools:
+    name: Test MCP Tools
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        component: [processors, inputs, outputs, caches, o11y]
-      fail-fast: false
 
     steps:
       - name: Checkout code
@@ -58,10 +53,29 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install yq
+      - name: Install tools
         run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
+          npx doc-tools install-test-dependencies
+          rpk connect install
+
+      - name: Make test script executable
+        run: chmod +x modules/ai-agents/examples/test-all.sh
+
+      - name: Test MCP tool definitions
+        run: |
+          cd modules/ai-agents/examples
+          ./test-all.sh --mcp-only
+
+  test-pipelines:
+    name: Test Pipelines
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Install tools
         run: |
@@ -69,9 +83,33 @@ jobs:
           rpk connect install
 
       - name: Make test script executable
-        run: chmod +x modules/ai-agents/examples/test-mcp-examples.sh
+        run: chmod +x modules/ai-agents/examples/test-all.sh
 
-      - name: Test ${{ matrix.component }} examples
+      - name: Test pipeline examples
         run: |
           cd modules/ai-agents/examples
-          ./test-mcp-examples.sh ${{ matrix.component }}
+          ./test-all.sh --pipelines
+
+  test-snippets:
+    name: Test Snippets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install tools
+        run: |
+          npx doc-tools install-test-dependencies
+          rpk connect install
+
+      - name: Make test script executable
+        run: chmod +x modules/ai-agents/examples/test-all.sh
+
+      - name: Test config snippets
+        run: |
+          cd modules/ai-agents/examples
+          ./test-all.sh --snippets

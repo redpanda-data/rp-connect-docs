@@ -1,0 +1,33 @@
+# Test: Check required fields
+# Source: best-practices.adoc - Input validation section
+# Expected: Empty/missing city returns error object, valid city passes through
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"city": "London"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"city": "  "}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {}'
+
+pipeline:
+  processors:
+    # tag::check-required-fields[]
+    - mutation: |
+        root = if this.city.or("").trim() == "" {
+          {"error": true, "message": "city is required"}
+        } else {
+          this
+        }
+    # end::check-required-fields[]
+
+output:
+  stdout: {}

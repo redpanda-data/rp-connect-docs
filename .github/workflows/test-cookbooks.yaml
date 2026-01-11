@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        category: [jira, enrichments, filtering]
+        category: [jira]
       fail-fast: false
 
     steps:

@@ -1,0 +1,155 @@
+# Redpanda Connect Documentation Personas
+#
+# These personas represent the target audience for Redpanda Connect documentation.
+# Use these when assigning :personas: attributes to documentation pages.
+
+schema_version: "1.0"
+repository: rp-connect-docs
+
+personas:
+  - id: ai_agent_developer
+    name: AI Agent Developer
+    description: Builds AI agents and integrations using MCP tools and LLM frameworks
+    experience_level: intermediate
+    goals:
+      - Create MCP tools that AI assistants can discover and use effectively
+      - Integrate Redpanda Connect with AI/LLM applications
+      - Build reliable tool interfaces for agent workflows
+      - Debug agent-tool interactions
+    pain_points:
+      - Complex MCP configuration syntax
+      - Unclear error messages from tools
+      - Difficulty testing tools locally before deployment
+      - Limited examples for AI-specific use cases
+    content_preferences:
+      - Working code examples with AI context
+      - Clear MCP metadata guidance
+      - Testing and debugging workflows
+      - Integration patterns with popular LLM frameworks
+    typical_content_types:
+      - tutorial
+      - how-to
+      - cookbook
+      - best-practices
+
+  - id: data_engineer
+    name: Data Engineer
+    description: Designs and builds data pipelines using Redpanda Connect
+    experience_level: intermediate
+    goals:
+      - Build robust, maintainable data pipelines
+      - Transform and route data between systems
+      - Handle errors gracefully
+      - Monitor pipeline health
+    pain_points:
+      - Complex Bloblang syntax for transformations
+      - Debugging pipeline failures
+      - Performance tuning
+      - Managing secrets and configuration
+    content_preferences:
+      - Complete pipeline examples
+      - Transformation recipes
+      - Error handling patterns
+      - Performance optimization tips
+    typical_content_types:
+      - how-to
+      - cookbook
+      - reference
+      - troubleshooting
+
+  - id: streaming_developer
+    name: Streaming Platform Developer
+    description: Works with Kafka/Redpanda streaming systems, extending with Connect
+    experience_level: advanced
+    goals:
+      - Integrate Connect with existing Kafka/Redpanda infrastructure
+      - Build event-driven architectures
+      - Ensure exactly-once semantics where needed
+      - Scale pipelines for production workloads
+    pain_points:
+      - Consumer group configuration complexity
+      - Offset management
+      - Schema evolution challenges
+      - Performance at scale
+    content_preferences:
+      - Kafka/Redpanda integration patterns
+      - Production deployment guidance
+      - Scaling and performance docs
+      - Advanced configuration options
+    typical_content_types:
+      - concepts
+      - how-to
+      - reference
+      - best-practices
+
+  - id: platform_operator
+    name: Platform Operator
+    description: Deploys and maintains Redpanda Connect in production
+    experience_level: intermediate
+    goals:
+      - Deploy Connect reliably
+      - Monitor and alert on pipeline health
+      - Troubleshoot production issues quickly
+      - Manage configuration across environments
+    pain_points:
+      - Unclear operational requirements
+      - Missing metrics documentation
+      - Incomplete troubleshooting guides
+      - Configuration management complexity
+    content_preferences:
+      - Deployment guides
+      - Monitoring and metrics reference
+      - Troubleshooting decision trees
+      - Operational runbooks
+    typical_content_types:
+      - how-to
+      - troubleshooting
+      - reference
+
+  - id: evaluator
+    name: Technical Evaluator
+    description: Assessing Redpanda Connect for their organization
+    experience_level: beginner
+    goals:
+      - Understand Connect capabilities quickly
+      - Evaluate fit for specific use cases
+      - Estimate implementation effort
+      - Compare with alternatives
+    pain_points:
+      - Hard to find high-level overview
+      - Too much detail too soon
+      - Unclear licensing and support
+      - Missing architecture diagrams
+    content_preferences:
+      - High-level overviews
+      - Use case examples
+      - Quick start guides
+      - Comparison with alternatives
+    typical_content_types:
+      - overview
+      - concepts
+      - tutorial
+
+  - id: connector_developer
+    name: Connector Developer
+    description: Extends Connect with custom components or integrations
+    experience_level: advanced
+    goals:
+      - Build custom processors or connectors
+      - Understand Connect internals
+      - Contribute to the ecosystem
+      - Debug component issues
+    pain_points:
+      - Limited extension documentation
+      - Complex plugin architecture
+      - Testing custom components
+      - Performance optimization
+    content_preferences:
+      - API reference documentation
+      - Plugin development guides
+      - Architecture deep dives
+      - Contributing guidelines
+    typical_content_types:
+      - concepts
+      - reference
+      - how-to

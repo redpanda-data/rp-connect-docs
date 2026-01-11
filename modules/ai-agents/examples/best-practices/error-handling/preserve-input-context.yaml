@@ -1,0 +1,33 @@
+# Test: Preserving input context in errors from error-handling.adoc
+# Expected: Original input preserved in error response via metadata
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"user_id": "usr_abc123", "action": "fetch_profile"}
+
+pipeline:
+  processors:
+    # tag::preserve-input-context[]
+    - label: validate_and_fetch
+      try:
+        - mutation: |
+            meta original_input = this
+        - mutation: |
+            root = throw("User not found in database")
+
+    - label: handle_errors
+      catch:
+        - mutation: |
+            root = {
+              "error": "Failed to fetch user",
+              "details": error(),
+              "input_received": @original_input,
+              "suggestion": "Verify the user_id exists"
+            }
+    # end::preserve-input-context[]
+
+output:
+  stdout: {}

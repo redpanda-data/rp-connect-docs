@@ -1,0 +1,55 @@
+# Test: Complete MCP tool example with all metadata patterns
+# Validates: Full tool with description, multiple properties, and tags
+
+# tag::complete-example[]
+label: search-customer-orders
+
+processors:
+  - mutation: |
+      let customer_id = this.customer_id | ""
+      let status = this.status | ""
+      let limit = (this.limit | 10).number()
+      root = {
+        "orders": [
+          {
+            "order_id": "ord_001",
+            "customer_id": $customer_id,
+            "status": if $status != "" { $status } else { "delivered" },
+            "total": 125.99
+          }
+        ],
+        "count": 1,
+        "filters_applied": {
+          "customer_id": $customer_id,
+          "status": $status,
+          "limit": $limit
+        }
+      }
+
+meta:
+  tags: [ orders, database, production ]
+  mcp:
+    enabled: true
+    description: "Search customer orders by customer ID, date range, or status. Returns order summaries with totals. Maximum 50 results per query."
+    properties:
+      - name: customer_id
+        type: string
+        description: "Customer ID (e.g., 'cust_12345'). Required if no other filters provided."
+        required: false
+      - name: status
+        type: string
+        description: "Order status filter: 'pending', 'shipped', 'delivered', or 'cancelled'."
+        required: false
+      - name: start_date
+        type: string
+        description: "Start date for date range filter (ISO 8601, e.g., '2024-01-01')."
+        required: false
+      - name: end_date
+        type: string
+        description: "End date for date range filter (ISO 8601, e.g., '2024-12-31')."
+        required: false
+      - name: limit
+        type: number
+        description: "Maximum results to return (1-50). Defaults to 10."
+        required: false
+# end::complete-example[]

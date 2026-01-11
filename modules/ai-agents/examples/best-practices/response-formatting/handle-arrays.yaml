@@ -1,0 +1,35 @@
+# Test: Array handling from response-formatting.adoc
+# Expected: Array processed with length, map_each, index
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {
+        "items": [
+          {"id": 1, "name": "Apple", "price": "1.50"},
+          {"id": 2, "name": "Banana", "price": "0.75"},
+          {"id": 3, "name": "Orange", "price": "2.00"}
+        ]
+      }
+
+pipeline:
+  processors:
+    # tag::handle-arrays[]
+    - label: format_items
+      mapping: |
+        root = {
+          "total_items": this.items.length(),
+          "items": this.items.map_each(item -> {
+            "id": item.id.string(),
+            "name": item.name,
+            "price": item.price.number()
+          }),
+          "first_item": this.items.index(0).name,
+          "item_names": this.items.map_each(i -> i.name)
+        }
+    # end::handle-arrays[]
+
+output:
+  stdout: {}

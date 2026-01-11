@@ -1,0 +1,31 @@
+# Test: Sanitize string inputs
+# Source: best-practices.adoc - Input validation section
+# Expected: Stores sanitized value in metadata
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"city": "New-York"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"city": "Paris!@#123"}'
+
+pipeline:
+  processors:
+    # tag::sanitize-strings[]
+    - mutation: |
+        # Remove any character that isn't a letter, space, or hyphen
+        meta sanitized_city = this.city.re_replace_all("[^a-zA-Z\\s\\-]", "")
+        root = this
+    # end::sanitize-strings[]
+
+    # For testing: show what was stored in metadata
+    - mutation: |
+        root.sanitized = @sanitized_city
+
+output:
+  stdout: {}

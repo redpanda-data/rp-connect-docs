@@ -1,0 +1,42 @@
+// =============================================================================
+// PARTIAL: property-fields-table.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/create-tool.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/create-tool.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/create-tool/property-fields-table.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/create-tool/property-fields-table.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+[[property-fields]]
+Each entry in the `properties` array defines an input parameter:
+
+[cols="1,1,3", options="header"]
+|===
+| Field | Required | Description
+
+| `name`
+| Yes
+| Parameter name.
+
+| `type`
+| Yes
+| Data type. Must be one of: `string`, `number`, or `boolean`.
+
+| `description`
+| Yes
+| Explains what the parameter is for. Include example values and any constraints.
+
+| `required`
+| Yes
+| Set to `true` if the tool cannot function without this parameter.
+|===

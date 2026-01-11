@@ -1,6 +1,6 @@
 label: weather-service
 processors:
-  - label: validate_inputs
+  - label: validate_inputs # <1>
     mutation: |
       # Validate and sanitize city input
       meta city = this.city.string().
@@ -12,15 +12,15 @@ processors:
         throw("City name cannot be empty")
       } else { "" }
 
-  - label: fetch_weather_data
+  - label: fetch_weather_data # <2>
     try:
-      - http:
+      - http: # <3>
           url: "https://wttr.in/${! @city }?format=j1"
           verb: GET
           headers:
             User-Agent: "redpanda-connect-mcp/1.0"
           timeout: "10s"
-      - mutation: |
+      - mutation: | # <4>
           root = {
             "city": @city,
             "temperature_c": this.current_condition.0.temp_C.number(),
@@ -35,7 +35,7 @@ processors:
           message: "Weather data fetched for city: ${! @city }"
           level: "INFO"
 
-  - label: handle_weather_errors
+  - label: handle_weather_errors # <5>
     catch:
       - mutation: |
           root = {
@@ -48,7 +48,7 @@ processors:
           message: "Weather API error for city ${! @city }: ${! error() }"
           level: "ERROR"
 
-meta:
+meta: # <6>
   tags: [ weather, example ]
   mcp:
     enabled: true

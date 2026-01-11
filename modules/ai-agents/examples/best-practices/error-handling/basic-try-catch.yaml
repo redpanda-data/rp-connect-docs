@@ -1,0 +1,28 @@
+# Test: Wrap operations in try/catch
+# Source: best-practices.adoc - Error handling section
+# Expected: Error caught and formatted with message
+# Note: Uses simulated error since we can't rely on external APIs in tests
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {"request": "data"}
+
+pipeline:
+  # tag::basic-try-catch[]
+  processors:
+    - try:
+        - http:
+            url: "https://api.example.com/data"
+            verb: GET
+
+    - catch:
+        - mutation: |
+            root.error = true
+            root.message = "Request failed: " + error()
+  # end::basic-try-catch[]
+
+output:
+  stdout: {}

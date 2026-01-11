@@ -1,0 +1,39 @@
+# Test: Error handling with fallback sources
+# Validates: Try/catch with fallback API pattern
+
+label: fetch-with-fallback
+
+# tag::error-fallbacks[]
+processors:
+  - label: primary_fetch
+    try:
+      - http:
+          url: "https://httpbin.org/json"
+          verb: GET
+          timeout: "10s"
+    catch:
+      - log:
+          message: "Primary API failed, trying fallback"
+          level: WARN
+      - label: fallback_fetch
+        http:
+          url: "https://httpbin.org/get"
+          verb: GET
+          timeout: "15s"
+      - mutation: |
+          root.metadata.source = "fallback"
+          root.metadata.warning = "Primary source unavailable"
+# end::error-fallbacks[]
+
+  - mutation: |
+      root.fetch_completed = true
+
+meta:
+  mcp:
+    enabled: true
+    description: "Fetch data with automatic fallback on failure"
+    properties:
+      - name: query
+        type: string
+        description: "Query parameter"
+        required: false

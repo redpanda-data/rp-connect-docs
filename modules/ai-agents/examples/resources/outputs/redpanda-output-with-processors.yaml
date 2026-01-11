@@ -1,13 +1,27 @@
-redpanda:
-  seed_brokers: [ "${REDPANDA_BROKERS}" ]
-  topic: "llm-responses"
-
+label: summarize_and_store
 processors:
-  - openai_chat_completion:
+  - label: generate_summary
+    openai_chat_completion:
       api_key: "${OPENAI_API_KEY}"
       model: "gpt-4"
-      prompt: ${! json("question") }
-  - mapping: |
-      root.question = this.question
-      root.answer = this.content
-      root.timestamp = now().ts_format("2006-01-02T15:04:05Z07:00")
+      prompt: "Summarize this document in 2-3 sentences: ${! json(\"content\") }"
+  - label: prepare_record
+    mutation: |
+      root = {
+        "original": this.content,
+        "summary": this.choices.0.message.content,
+        "processed_at": now().ts_format("2006-01-02T15:04:05Z")
+      }
+redpanda:
+  seed_brokers: [ "${REDPANDA_BROKERS}" ]
+  topic: "summaries"
+meta:
+  tags: [ publishing, llm, example ]
+  mcp:
+    enabled: true
+    description: "Summarize a document using an LLM and store the result in Redpanda"
+    properties:
+      - name: content
+        type: string
+        description: "Document content to summarize"
+        required: true
