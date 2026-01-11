@@ -27,6 +27,15 @@ include::ai-agents:partial$mcp/best-practices/mcp-metadata-design.adoc[]
 
 include::ai-agents:partial$mcp/best-practices/tool-implementation-practices.adoc[]
 
+== Complete example
+
+This example combines all the best practices:
+
+[source,yaml]
+----
+include::example$best-practices/mcp-metadata/search-customer-orders.yaml[tags=complete-example]
+----
+
 == Next steps
 
 * xref:ai-agents:mcp-server/create-tool.adoc#secrets[Use secrets] - Store credentials securely

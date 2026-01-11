@@ -6,8 +6,7 @@
 // Learning objectives - what readers will achieve by completing this quickstart:
 :learning-objective-1: Initialize an MCP server project using the Redpanda CLI
 :learning-objective-2: Create a tool with MCP metadata
-:learning-objective-3: Run the server and connect it to Claude Code
-:learning-objective-4: Use natural language to invoke your tool
+:learning-objective-3: Connect the server to Claude Code and invoke the tool
 
 This quickstart builds a local MCP server that exposes Redpanda Connect components as tools that AI assistants can use. It creates a tool that searches Bluesky posts, then asks Claude Code to perform the search using natural language:
 
@@ -18,7 +17,6 @@ By completing this quickstart, you will be able to:
 * [ ] {learning-objective-1}
 * [ ] {learning-objective-2}
 * [ ] {learning-objective-3}
-* [ ] {learning-objective-4}
 
 TIP: For background on how MCP tools work and when to use each component type, see xref:ai-agents:mcp-server/concepts.adoc[].
 

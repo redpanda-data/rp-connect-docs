@@ -37,22 +37,7 @@ endif::[]
 
 AI clients see the `label` value when selecting tools, so make it descriptive and consistent.
 
-The name should reflect the tool's primary action and target resource. Focus on clarity over brevity.
-
-.Tool naming examples
-[cols="1,2"]
-|===
-|Good |Bad
-
-|`get-weather-forecast`
-|`processor1`
-
-|`publish-order-event`
-|`get-data`
-
-|`search-customer-orders`
-|`myTool`
-|===
+The name should reflect the tool's primary action and target resource. Focus on clarity over brevity. For example, use `get-weather-forecast` instead of just `get-data`.
 
 === Write effective descriptions
 
@@ -102,11 +87,3 @@ ifndef::env-cloud[]
 For patterns that apply defaults and validate values at runtime, see xref:ai-agents:mcp-server/tool-patterns.adoc#input-validation[input validation patterns].
 endif::[]
 
-=== Complete example
-
-This example combines all the best practices:
-
-[source,yaml]
-----
-include::example$best-practices/mcp-metadata/search-customer-orders.yaml[tags=complete-example]
-----

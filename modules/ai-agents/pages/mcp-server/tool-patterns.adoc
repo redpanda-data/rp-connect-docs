@@ -98,6 +98,48 @@ include::ai-agents:example$resources/processors/database-query.yaml[]
 
 See also: xref:components:processors/sql_select.adoc[`sql_select` processor]
 
+[[jira-queries]]
+=== Query Jira issues
+
+*When to use:* Fetching tickets by status, checking assignments, finding recent issues, or building AI agents that interact with project management data.
+
+*Example use cases:* Get open bugs for a sprint, find issues assigned to a user, list recently updated tickets, search by custom fields.
+
+NOTE: The `jira` processor requires an Enterprise license. See xref:get-started:licensing.adoc[].
+
+[source,yaml]
+----
+label: search-jira
+
+processors:
+  - generate:
+      count: 1
+      mapping: |
+        root.jql = this.jql
+        root.maxResults = this.max_results.or(50)
+        root.fields = ["key", "summary", "status", "assignee", "priority"]
+  - jira:
+      base_url: "${JIRA_BASE_URL}"
+      username: "${JIRA_USERNAME}"
+      api_token: "${JIRA_API_TOKEN}"
+
+meta:
+  mcp:
+    enabled: true
+    description: "Search Jira issues using JQL. Returns matching issues with key, summary, status, assignee, and priority."
+    properties:
+      - name: jql
+        type: string
+        description: "JQL query (e.g., 'project = DOC AND status = Open')"
+        required: true
+      - name: max_results
+        type: number
+        description: "Maximum issues to return (default: 50)"
+        required: false
+----
+
+See xref:cookbooks:jira.adoc[] for more patterns including pagination, custom fields, and creating issues via the HTTP processor.
+
 [[ai-llm-integration]]
 === Integrate with AI/LLM services
 
@@ -235,21 +277,21 @@ Build production-ready tools with proper input validation, error handling, and r
 
 AI clients may send unexpected or malformed input. Validate early to return helpful error messages instead of cryptic failures from downstream components.
 
-include::ai-agents:partial$mcp/best-practices/input-validation.adoc[leveloffset=+1]
+include::ai-agents:partial$mcp/tool-patterns/input-validation.adoc[leveloffset=+1]
 
 [[error-handling]]
 === Handle errors
 
 External services fail. Databases go down. APIs return unexpected responses. Wrap risky operations in error handling so your tool returns useful error messages instead of crashing.
 
-include::ai-agents:partial$mcp/best-practices/error-handling.adoc[leveloffset=+1]
+include::ai-agents:partial$mcp/tool-patterns/error-handling.adoc[leveloffset=+1]
 
 [[response-formatting]]
 === Format responses
 
 AI clients work best with clean, predictable response structures. Transform raw component output into consistent formats.
 
-include::ai-agents:partial$mcp/best-practices/response-formatting.adoc[leveloffset=+1]
+include::ai-agents:partial$mcp/tool-patterns/response-formatting.adoc[leveloffset=+1]
 
 // Production workflows section - single-sourced from partial
 include::ai-agents:partial$mcp/tool-patterns/production-workflows.adoc[]

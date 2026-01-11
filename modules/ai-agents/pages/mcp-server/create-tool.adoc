@@ -6,8 +6,7 @@
 // Learning objectives - what readers can do after reading this page:
 :learning-objective-1: Create a tool file with the correct structure and MCP metadata
 :learning-objective-2: Map MCP parameters to component configuration fields using Bloblang
-:learning-objective-3: Use environment variables for secrets and configuration
-:learning-objective-4: Test tools locally before connecting AI clients
+:learning-objective-3: Test tools locally before connecting AI clients
 
 After xref:ai-agents:mcp-server/quickstart.adoc[deploying your first MCP server], create custom tools that AI clients can discover and invoke. This guide walks you through the process using any Redpanda Connect component.
 
@@ -16,7 +15,6 @@ After reading this page, you will be able to:
 * [ ] {learning-objective-1}
 * [ ] {learning-objective-2}
 * [ ] {learning-objective-3}
-* [ ] {learning-objective-4}
 
 == Prerequisites
 
@@ -239,51 +237,15 @@ endif::[]
 
 The `meta.mcp` block defines how AI clients discover and interact with your tool. These fields control tool visibility, naming, and input parameters.
 
-[cols="1,1,2", options="header"]
-|===
-| Field | Required | Description
+include::ai-agents:partial$mcp/create-tool/mcp-metadata-fields-table.adoc[]
 
-| `enabled`
-| Yes
-| Set to `true` to expose this component as an MCP tool. Set to `false` to disable without deleting the file.
+==== Label naming rules
 
-| `description`
-| Yes
-| Explains what the tool does and what it returns. AI clients use this to decide when to call the tool.
-
-| `properties`
-| No
-| Array of input parameters the tool accepts. Each property has `name`, `type`, `description`, and `required` fields.
-
-| `tags`
-| No
-| Array of strings for categorizing tools. Use with `--tag` flag to filter which tools are exposed.
-|===
+include::ai-agents:partial$mcp/create-tool/label-naming-rules.adoc[]
 
 ==== Property fields
 
-Each entry in the `properties` array defines an input parameter:
-
-[cols="1,1,2", options="header"]
-|===
-| Field | Required | Description
-
-| `name`
-| Yes
-| Parameter name. Use snake_case or camelCase consistently.
-
-| `type`
-| Yes
-| Data type: `string`, `number`, or `boolean`.
-
-| `description`
-| Yes
-| Explains what the parameter is for. Include example values.
-
-| `required`
-| Yes
-| Set to `true` if the tool cannot function without this parameter.
-|===
+include::ai-agents:partial$mcp/create-tool/property-fields-table.adoc[]
 
 [[property-restrictions]]
 ==== Property restrictions by component type
