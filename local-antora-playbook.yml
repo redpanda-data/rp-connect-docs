@@ -5,6 +5,9 @@ site:
   robots: disallow
 urls:
   html_extension_style: indexify
+runtime:
+  log:
+    failure_level: error
 content:
   sources:
   - url: .
