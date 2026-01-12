@@ -118,7 +118,11 @@ meta: # <3>
 
 The following sections show how to structure tools for each component type.
 
-=== Processor tools
+=== Label naming rules
+
+include::ai-agents:partial$mcp/create-tool/label-naming-rules.adoc[]
+
+=== Component types
 
 xref:components:processors/about.adoc[Processors] transform, filter, or enrich data. Use a `processors:` array with one or more processors:
 
@@ -136,8 +140,6 @@ meta:
     enabled: true
     description: "Enrich order with customer data"
 ----
-
-=== Input, output, and cache tools
 
 xref:components:inputs/about.adoc[Inputs] read data from sources, xref:components:outputs/about.adoc[outputs] write data to destinations, and xref:components:caches/about.adoc[caches] store and retrieve data. Define these components directly at the top level. Do not wrap components in `input:`, `output:`, or `cache:` blocks. This syntax is for pipelines, not MCP tools.
 
@@ -197,10 +199,9 @@ meta:
     description: "In-memory cache for session data"
 ----
 
-=== Output with inline processors
-
 Outputs can include a `processors:` section to transform data before publishing:
 
+.Output with processors
 [source,yaml]
 ----
 label: publish-with-timestamp
@@ -238,10 +239,6 @@ endif::[]
 The `meta.mcp` block defines how AI clients discover and interact with your tool. These fields control tool visibility, naming, and input parameters.
 
 include::ai-agents:partial$mcp/create-tool/mcp-metadata-fields-table.adoc[]
-
-==== Label naming rules
-
-include::ai-agents:partial$mcp/create-tool/label-naming-rules.adoc[]
 
 ==== Property fields
 
