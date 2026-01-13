@@ -1,0 +1,28 @@
+// =============================================================================
+// PARTIAL: mcp-vs-pipelines.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/overview.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/overview.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/overview/mcp-vs-pipelines.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/overview/mcp-vs-pipelines.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+== MCP tools are not pipelines
+
+If you already use Redpanda Connect, you might wonder how MCP tools differ from pipelines.
+
+A pipeline is a continuous data flow: data streams from an input, through processors, to an output. The pipeline runs indefinitely, processing many messages over time.
+
+An MCP tool is different. It's a single component that executes on demand when called by an AI client. The tool starts, runs, and completes for each invocation. There is no persistent state between calls. Think of it like calling a function rather than running a service.
+
+This request/response pattern is what makes MCP tools useful for AI agents: the agent asks a question, the tool runs, and it returns an answer.

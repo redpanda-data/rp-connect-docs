@@ -1,35 +1,89 @@
-
-= About Redpanda Connect MCP Server
+= MCP Server Overview
 :description: Discover the business value, use cases, and architecture for Redpanda Connect MCP servers.
+:page-topic-type: overview
+:personas: ai_agent_developer, evaluator
+// Reader journey: "I'm evaluating this"
+// Learning objectives - what readers should understand after reading this page:
+:learning-objective-1: Explain what an MCP server is and how tools differ from pipelines
+:learning-objective-2: Identify use cases where MCP servers provide business value
+:learning-objective-3: Describe how MCP tools expose Redpanda Connect components to AI
 
-Redpanda Connect's MCP (Model Context Protocol) server lets you expose your data, analytics, and automations as AI-consumable tools with no custom API code. It bridges your business logic to AI agents using the open MCP standard so you can:
+This page introduces MCP servers and helps you decide if they're right for your use case.
 
-* Make your data and workflows accessible to AI assistants and LLMs, safely and on your terms.
-* Accelerate automation and insight by letting AI trigger real business actions.
-* Control exposure so that only the tools you tag are visible to AI.
+After reading this page, you will be able to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+== What is MCP?
+
+// What is MCP - single-sourced from partial
+include::ai-agents:partial$mcp/overview/what-is-mcp.adoc[]
+
+== What is Redpanda Connect MCP server?
+
+Redpanda Connect's MCP server lets you expose data pipelines and automations as AI-consumable tools (MCP tools) with no custom API code. You write tools as YAML configurations, and the MCP server makes them available to AI agents.
+
+This means AI agents can:
+
+* Pull information from databases, APIs, message queues, or Redpanda topics
+* Publish messages, update records, trigger workflows, or call external services
+* Only access the specific tools you configure and enable
+
+If you already use Redpanda Connect for data integration and processing, adding an MCP server gives AI agents controlled access to your existing systems without extra development effort.
+
+// MCP tools vs pipelines - single-sourced from partial
+include::ai-agents:partial$mcp/overview/mcp-vs-pipelines.adoc[]
 
 // Use cases table - single-sourced from partial
-include::ai-agents:partial$mcp/use-cases-table.adoc[]
+include::ai-agents:partial$mcp/overview/use-cases-table.adoc[]
 
 == How it works
 
-. You define a tool as a YAML configuration in Redpanda Connect, describing its inputs, outputs, and logic.
-. The MCP server loads these tools and exposes them as HTTP endpoints, discoverable by AI agents through the MCP protocol.
-. AI clients can list, inspect, and invoke tools to trigger real business actions or analytics with validated, structured input.
-. All tool metadata is optimized for LLMs, so AI can understand what each tool does and how to use it.
+When you start an MCP server, it runs locally on your system and acts as a bridge between AI clients and your data:
 
-// Customer analytics example - single-sourced from partial
-include::ai-agents:partial$mcp/customer-analytics-example.adoc[]
+. A user asks their AI agent something like "What's the weather in London?"
+. The AI client connects to the local MCP server and finds the matching tool
+. The server runs your MCP tools
+. Your tools fetch data, transform it, and return a response
+. The AI agent gets the data and can use it to answer the user
+
+=== What an MCP tool looks like
+
+An MCP tool in Redpanda Connect is a YAML file with two parts: the logic (what the tool does) and the metadata (how AI understands it).
+
+Here's a minimal example that returns weather data:
+
+[source,yaml]
+----
+http:
+  url: "https://wttr.in/${! this.city }?format=j1"
+  verb: GET
+
+meta:
+  mcp:
+    enabled: true
+    name: get_weather
+    description: "Get current weather for a city"
+    properties:
+      - name: city
+        type: string
+        description: "City name"
+        required: true
+----
+
+When an AI client asks about weather, it calls this tool with the city name. The tool fetches data from the weather API and returns it.
 
 // MCP specification support - single-sourced from partial
-include::ai-agents:partial$mcp/specification-support.adoc[]
+include::ai-agents:partial$mcp/overview/specification-support.adoc[]
 
-== Get started
+== Next steps
 
-To start using the MCP server, try the xref:ai-agents:mcp-server/quickstart.adoc[quickstart].
+Continue your learning journey with these resources:
 
-== Suggested reading
-
-* xref:ai-agents:mcp-server/developer-guide.adoc[]
-* Learn more about MCP in the link:https://docs.anthropic.com/en/docs/mcp[official documentation^].
+* xref:ai-agents:mcp-server/quickstart.adoc[]: Start your first MCP server
+* xref:ai-agents:mcp-server/concepts.adoc[]: Learn about execution and component types
+* xref:ai-agents:mcp-server/create-tool.adoc[]: Create custom tools
+* link:https://modelcontextprotocol.io/[Model Context Protocol documentation^]
 

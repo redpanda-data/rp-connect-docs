@@ -1,0 +1,61 @@
+= MCP Tool Execution and Components
+:description: Understand the MCP execution model and choose the right component type for your tools.
+:page-topic-type: concepts
+:personas: ai_agent_developer, streaming_developer
+// Reader journey: "I want to understand how it works"
+// Learning objectives - what readers should know after reading this page:
+:learning-objective-1: Describe the request/response execution model
+:learning-objective-2: Explain how Redpanda Connect components map to MCP tools
+:learning-objective-3: Choose the right component type (processor, input, output, cache) for a use case
+
+This page explains how MCP tools execute and how to choose the right component type for your use case.
+
+After reading this page, you will be able to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+// Execution model - single-sourced from partial
+include::ai-agents:partial$mcp/concepts/execution-model.adoc[]
+
+// Component mapping - single-sourced from partial
+include::ai-agents:partial$mcp/concepts/component-mapping.adoc[]
+
+[[component-selection]]
+== Choose the right component type
+
+// Component selection guide - single-sourced from partial
+include::ai-agents:partial$mcp/concepts/component-selection.adoc[]
+
+[[support-and-licensing]]
+== Component support levels and licensing
+
+Redpanda Connect components have different support levels and licensing requirements. Understanding these helps you make informed decisions when building MCP tools.
+
+=== Support levels
+
+Components fall into two support categories:
+
+Certified components:: Officially supported by Redpanda. These components receive regular updates, bug fixes, and are tested for production use. Use certified components when reliability and support are priorities.
+
+Community components:: Contributed by the community. These may have varying levels of maintenance and testing. Review the component documentation and consider your risk tolerance before using in production.
+
+=== Enterprise licensing
+
+Some components require a Redpanda Enterprise license. These include certain cloud-provider integrations, advanced security features, and some enterprise data source connectors.
+
+If you use an Enterprise-licensed component without a valid license, the MCP server will not start, and you'll see an error indicating the missing license.
+
+The xref:components:about.adoc[component reference documentation] displays support level and license badges on each component page.
+
+For more information about licenses, see xref:get-started:licensing.adoc[].
+
+== Next steps
+
+Continue your learning journey with these resources:
+
+* xref:ai-agents:mcp-server/create-tool.adoc[]: Create custom tools step by step
+* xref:ai-agents:mcp-server/best-practices.adoc[]: Apply naming and design guidelines
+* xref:ai-agents:mcp-server/tool-patterns.adoc[]: Find reusable patterns
+* xref:ai-agents:mcp-server/troubleshooting.adoc[]: Diagnose common issues

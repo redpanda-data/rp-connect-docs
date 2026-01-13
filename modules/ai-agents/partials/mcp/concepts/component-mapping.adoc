@@ -1,0 +1,63 @@
+// =============================================================================
+// PARTIAL: component-mapping.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/concepts.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/concepts.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/concepts/component-mapping.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/concepts/component-mapping.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches xref targets for Cloud context
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+== How components map to MCP tools
+
+Each MCP tool is implemented as a single Redpanda Connect component. The component type determines what the tool can do.
+
+The following table shows which component types are available and their purposes:
+
+[cols="1,2", options="header"]
+|===
+| Component Type | Purpose as an MCP Tool
+
+ifdef::env-cloud[]
+| <<processor-tools, Processor>>
+endif::[]
+ifndef::env-cloud[]
+| <<processor-tools, Processor>>
+endif::[]
+| Transforms, validates, or computes data. Calls external APIs. Returns results to the AI client.
+
+ifdef::env-cloud[]
+| <<output-tools, Output>>
+endif::[]
+ifndef::env-cloud[]
+| <<output-tools, Output>>
+endif::[]
+| Writes data to external systems (Redpanda topics, databases, APIs). Can include processors for transformation before writing.
+
+ifdef::env-cloud[]
+| <<input-tools, Input>>
+endif::[]
+ifndef::env-cloud[]
+| <<input-tools, Input>>
+endif::[]
+| Reads data from external systems. Returns the read data to the AI client.
+
+ifdef::env-cloud[]
+| <<cache-tools, Cache>>
+endif::[]
+ifndef::env-cloud[]
+| <<cache-tools, Cache>>
+endif::[]
+| Stores and retrieves data for use by other tools.
+|===
+
+Most MCP tools are processors. Use outputs when you need to write data. Use inputs when you need to read from external data sources.

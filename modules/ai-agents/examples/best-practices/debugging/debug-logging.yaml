@@ -1,0 +1,32 @@
+# Test: Debug logging pattern for troubleshooting
+# Validates: Log processors for debugging data flow
+
+label: debug-data-flow
+
+# tag::debug-logging[]
+processors:
+  - label: debug_input
+    log:
+      message: "Input received: ${! json() }"
+      level: DEBUG
+
+  - label: actual_processing
+    mutation: |
+      root = this
+      root.processed = true
+
+  - label: debug_output
+    log:
+      message: "Output: ${! json() }"
+      level: DEBUG
+# end::debug-logging[]
+
+meta:
+  mcp:
+    enabled: true
+    description: "Process data with debug logging"
+    properties:
+      - name: data
+        type: string
+        description: "Data to process"
+        required: false

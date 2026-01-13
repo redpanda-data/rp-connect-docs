@@ -1,0 +1,38 @@
+# Test: Single responsibility principle for MCP tools
+# Validates: Each tool should do one thing well
+
+# tag::good-user-profile[]
+label: get-user-profile
+# end::good-user-profile[]
+
+processors:
+  - mutation: |
+      root = {
+        "user_id": this.user_id,
+        "name": "John Doe",
+        "email": "john@example.com",
+        "created_at": "2024-01-15"
+      }
+
+meta:
+  mcp:
+    enabled: true
+    description: "Fetch user profile data by user ID"
+    properties:
+      - name: user_id
+        type: string
+        description: "User ID to fetch profile for"
+        required: true
+
+# tag::good-user-settings[]
+# Another good example (separate file):
+# label: update-user-settings
+# Updates user settings only - single responsibility
+# end::good-user-settings[]
+
+# tag::bad-manage-user[]
+# Bad example (DO NOT USE):
+# label: manage-user
+# Fetches profile AND updates settings AND deletes user
+# Too broad - split into focused tools
+# end::bad-manage-user[]

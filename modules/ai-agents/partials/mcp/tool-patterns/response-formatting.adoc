@@ -1,0 +1,189 @@
+// =============================================================================
+// PARTIAL: response-formatting.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/tool-patterns.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/tool-patterns.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/tool-patterns/response-formatting.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/tool-patterns/response-formatting.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches xref targets for Cloud context
+//
+// DEPENDENCIES:
+//   - example$best-practices/response-formatting/*.yaml
+// =============================================================================
+
+Structure responses consistently so AI clients can interpret them reliably. The following example takes a raw weather API response and transforms it into a clean, predictable format:
+
+[source,yaml]
+----
+include::example$best-practices/response-formatting/format-basic-response.yaml[tags=format-response,indent=0]
+----
+
+This mapping does four things:
+
+* Extracts the city name from a nested `location.name` field
+* Converts `temp_c` to a number type (APIs sometimes return numbers as strings)
+* Pulls out the weather description text
+* Adds a timestamp so the AI client knows when the data was fetched
+
+The result is a flat JSON object with predictable field names and types, rather than the raw API response which might have deeply nested structures or inconsistent formatting.
+
+=== Type coercion methods
+
+ifdef::env-cloud[]
+Use xref:develop:connect/guides/bloblang/methods.adoc[type coercion methods] to ensure fields have the correct data types:
+endif::[]
+ifndef::env-cloud[]
+Use xref:guides:bloblang/methods.adoc[type coercion methods] to ensure fields have the correct data types:
+endif::[]
+
+[cols="1,2,2"]
+|===
+| Method | Purpose | Example
+
+| `.string()`
+| Convert to string
+| `this.id.string()` becomes `"123"`
+
+| `.number()`
+| Convert to number
+| `this.price.number()` becomes `19.99`
+| `.bool()`
+| Convert to boolean
+| `this.active.bool()` becomes `true`
+
+| `.int64()`
+| Convert to 64-bit integer
+| `this.count.int64()` becomes `42`
+| `.float64()`
+| Convert to 64-bit float
+| `this.ratio.float64()` becomes `0.75`
+|===
+
+=== Format timestamps
+
+ifdef::env-cloud[]
+Use xref:develop:connect/guides/bloblang/functions.adoc#now[`now()`] with xref:develop:connect/guides/bloblang/methods.adoc#format_timestamp[`format_timestamp()`] for consistent time formatting:
+endif::[]
+ifndef::env-cloud[]
+Use xref:guides:bloblang/functions.adoc#now[`now()`] with xref:guides:bloblang/methods.adoc#format_timestamp[`format_timestamp()`] for consistent time formatting:
+endif::[]
+
+[source,yaml]
+----
+include::example$best-practices/response-formatting/add-timestamps.yaml[tags=add-timestamps,indent=0]
+----
+
+This example preserves all existing fields (`root = this`) and adds three timestamp fields. The `now()` function returns the current time, and `format_timestamp()` converts it to a string. Each field uses a different format: full ISO 8601 timestamp, date only, and time only.
+
+The format string uses Go's reference time layout. Common patterns:
+
+[cols="1,2"]
+|===
+| Format | Output example
+
+| `"2006-01-02T15:04:05Z07:00"`
+| `2024-03-15T14:30:00-07:00` (ISO 8601)
+
+| `"2006-01-02"`
+| `2024-03-15`
+
+| `"15:04:05"`
+| `14:30:00`
+
+| `"Mon, 02 Jan 2006"`
+| `Fri, 15 Mar 2024`
+|===
+
+=== Extract nested fields
+
+API responses often have deeply nested structures. Extract only the fields your AI client needs and flatten them into a simple object:
+
+[source,yaml]
+----
+include::example$best-practices/response-formatting/extract-nested-fields.yaml[tags=extract-nested,indent=0]
+----
+
+This mapping navigates a nested structure like `{"data": {"user": {"id": 123, "profile": {"display_name": "..."}}}}` and creates a flat response. The dot notation (`this.data.user.id`) drills down through nested objects. Type coercion (`.string()`, `.bool()`) ensures consistent output types.
+
+ifdef::env-cloud[]
+For navigating nested structures, see xref:develop:connect/guides/bloblang/about.adoc#dot-notation[dot notation].
+endif::[]
+ifndef::env-cloud[]
+For navigating nested structures, see xref:guides:bloblang/about.adoc#dot-notation[dot notation].
+endif::[]
+
+=== Handle arrays
+
+When your data contains arrays, you can transform each element, extract specific items, or compute aggregates:
+
+[source,yaml]
+----
+include::example$best-practices/response-formatting/handle-arrays.yaml[tags=handle-arrays,indent=0]
+----
+
+This example demonstrates four array operations:
+
+* `length()` returns the array size for the `total_items` count
+* `map_each()` transforms each item into a new object with only the fields you need
+* `index(0)` accesses the first element (zero-indexed) to get the first item's name
+* A second `map_each()` extracts just the names into a simple string array
+
+ifdef::env-cloud[]
+For array operations, see xref:develop:connect/guides/bloblang/methods.adoc#map_each[`map_each()`] and xref:develop:connect/guides/bloblang/methods.adoc#index[`index()`].
+endif::[]
+ifndef::env-cloud[]
+For array operations, see xref:guides:bloblang/methods.adoc#map_each[`map_each()`] and xref:guides:bloblang/methods.adoc#index[`index()`].
+endif::[]
+
+=== Include fields conditionally
+
+Sometimes you want to include fields only when they have meaningful values. This avoids returning `null` or empty fields that clutter the response:
+
+[source,yaml]
+----
+include::example$best-practices/response-formatting/conditional-fields.yaml[tags=conditional-fields,indent=0]
+----
+
+This mapping starts with required fields (`id`, `name`), then conditionally adds optional fields. The `exists()` check prevents errors when accessing missing fields. When the condition is false, `deleted()` removes the field entirely from the output. The AI client won't see `"email": null`. The field simply won't exist.
+
+ifdef::env-cloud[]
+The xref:develop:connect/guides/bloblang/functions.adoc#deleted[`deleted()`] function removes the field from the output entirely.
+endif::[]
+ifndef::env-cloud[]
+The xref:guides:bloblang/functions.adoc#deleted[`deleted()`] function removes the field from the output entirely.
+endif::[]
+
+=== Filter sensitive data
+
+When your data source contains sensitive fields, strip them before returning responses to the AI client:
+
+[source,yaml]
+----
+include::example$best-practices/response-formatting/filter-sensitive-data.yaml[tags=filter-sensitive,indent=0]
+----
+
+The `without()` method creates a copy of the object with the specified fields removed. This is safer than manually selecting fields because new fields added to the source data are included automatically, so you only need to maintain the exclusion list. Use this when returning database records or API responses that might contain credentials or personal information.
+
+ifdef::env-cloud[]
+For field removal, see xref:develop:connect/guides/bloblang/methods.adoc#without[`without()`].
+endif::[]
+ifndef::env-cloud[]
+For field removal, see xref:guides:bloblang/methods.adoc#without[`without()`].
+endif::[]
+
+=== Wrap responses in a success envelope
+
+When AI clients call multiple tools, they need a predictable way to check if the call succeeded. Wrapping responses in a consistent envelope structure makes this easy:
+
+[source,yaml]
+----
+include::example$best-practices/response-formatting/success-envelope.yaml[tags=success-envelope,indent=0]
+----
+
+Both success and error responses share the same top-level structure: a `success` boolean, a payload field (`data` or `error`), and a `timestamp`. The AI client can check `success` first, then access the appropriate field. The error response uses the `catch` processor to handle failures and the `error()` function to capture the error message.

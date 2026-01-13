@@ -1,0 +1,40 @@
+# Test: Numeric range validation from input-validation.adoc
+# Expected: Quantity validated against min/max range
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"quantity": 0}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"quantity": 50}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"quantity": 1001}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {}'
+
+pipeline:
+  processors:
+    # tag::validate-quantity[]
+    - label: validate_quantity
+      mutation: |
+        let qty = this.quantity.or(0).number()
+        root = if $qty < 1 {
+          {"error": "Quantity must be at least 1", "received": $qty}
+        } else if $qty > 1000 {
+          {"error": "Quantity cannot exceed 1000", "received": $qty}
+        } else {
+          {"quantity": $qty, "valid": true}
+        }
+    # end::validate-quantity[]
+
+output:
+  stdout: {}
