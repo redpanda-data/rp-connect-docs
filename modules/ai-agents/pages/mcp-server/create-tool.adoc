@@ -84,8 +84,8 @@ For example, a file in `resources/processors/` defines a processor component. Do
 An MCP tool wraps a xref:components:about.adoc[Redpanda Connect component] and exposes it to AI clients. Each tool file has three parts:
 
 * **Label**: The tool name AI clients see
-* **Component configuration**: A Redpanda Connect component (processor, input, output, or cache) that does the work
-* **MCP metadata**: Describes the tool's purpose and parameters for AI clients
+* **Component configuration**: A Redpanda Connect component (processor, input, output, or cache)
+* **MCP metadata**: The tool's purpose and input parameters
 
 Here's an example using the xref:components:processors/sql_select.adoc[`sql_select` processor]:
 
@@ -112,9 +112,9 @@ meta: # <3>
         required: true
 ----
 
-<1> **Label**: Becomes the tool name.
-<2> **Component**: The `sql_select` processor configured to query a database.
-<3> **MCP metadata**: Tells AI clients what this tool does and what parameters it accepts.
+<1> The label becomes the tool name that AI clients see and invoke.
+<2> The `sql_select` processor queries a PostgreSQL database.
+<3> The MCP metadata tells AI clients what this tool does and what parameters it accepts.
 
 The following sections show how to structure tools for each component type.
 
@@ -227,10 +227,10 @@ meta:
 ----
 
 ifdef::env-cloud[]
-See xref:ai-agents:mcp/remote/tool-patterns.adoc#outputs-with-processors[outputs with processors] for more examples.
+For more examples, see xref:ai-agents:mcp/remote/tool-patterns.adoc#outputs-with-processors[outputs with processors].
 endif::[]
 ifndef::env-cloud[]
-See xref:ai-agents:mcp-server/tool-patterns.adoc#outputs-with-processors[outputs with processors] for more examples.
+For more examples, see xref:ai-agents:mcp-server/tool-patterns.adoc#outputs-with-processors[outputs with processors].
 endif::[]
 
 [[mcp-metadata]]
@@ -357,7 +357,7 @@ rpk connect mcp-server --address localhost:4195
 
 For production deployments, load secrets from a secrets manager or inject them from your deployment system rather than exporting them in a shell.
 
-See xref:ai-agents:mcp-server/best-practices.adoc[] for naming conventions and security guidelines.
+For naming conventions and security guidelines, see xref:ai-agents:mcp-server/best-practices.adoc[].
 
 == Test the tool
 
@@ -449,7 +449,7 @@ rpk connect mcp-server --tag production
 rpk connect mcp-server --tag "db-.*"
 ----
 
-See xref:ai-agents:mcp-server/best-practices.adoc#tags[Tag strategies] for guidance on organizing tools by environment, feature, or access level.
+For guidance on organizing tools by environment, feature, or access level, see xref:ai-agents:mcp-server/best-practices.adoc#tags[Tag strategies].
 
 == Complete example
 

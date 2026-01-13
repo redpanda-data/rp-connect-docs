@@ -34,10 +34,10 @@ Tools that wait indefinitely, poll continuously, or never return cause problems 
 Follow these guidelines:
 
 ifdef::env-cloud[]
-* Set explicit timeouts on all external calls. See xref:develop:connect/components/processors/http.adoc[`http` processor] for timeout options.
+* Set explicit timeouts on all external calls. For timeout options, see xref:develop:connect/components/processors/http.adoc[`http` processor].
 endif::[]
 ifndef::env-cloud[]
-* Set explicit timeouts on all external calls. See xref:components:processors/http.adoc[`http` processor] for timeout options.
+* Set explicit timeouts on all external calls. For timeout options, see xref:components:processors/http.adoc[`http` processor].
 endif::[]
 * Avoid unbounded reads. Read N messages, not all messages.
 * Consider pagination for large datasets.

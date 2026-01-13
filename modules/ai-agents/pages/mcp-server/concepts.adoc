@@ -1,24 +1,20 @@
-= About MCP Tools
-:description: Describe how MCP tools work, how they differ from pipelines, and choose the right component type.
+= MCP Tool Execution and Components
+:description: Understand the MCP execution model and choose the right component type for your tools.
 :page-topic-type: concepts
 :personas: ai_agent_developer, streaming_developer
 // Reader journey: "I want to understand how it works"
 // Learning objectives - what readers should know after reading this page:
-:learning-objective-1: Explain what an MCP tool is and how it differs from a pipeline
-:learning-objective-2: Describe the request/response execution model
+:learning-objective-1: Describe the request/response execution model
+:learning-objective-2: Explain how Redpanda Connect components map to MCP tools
 :learning-objective-3: Choose the right component type (processor, input, output, cache) for a use case
 
-This page explains the mental model for MCP tools: what they are, how they execute, and how to choose the right component type for your use case.
+This page explains how MCP tools execute and how to choose the right component type for your use case.
 
 After reading this page, you will be able to:
 
 * [ ] {learning-objective-1}
 * [ ] {learning-objective-2}
 * [ ] {learning-objective-3}
-
-[[mental-model]]
-// MCP tools concept - single-sourced from partial
-include::ai-agents:partial$mcp/concepts/mcp-tools-concept.adoc[]
 
 // Component mapping - single-sourced from partial
 include::ai-agents:partial$mcp/concepts/component-mapping.adoc[]
@@ -53,7 +49,7 @@ If you use an Enterprise-licensed component without a valid license, the MCP ser
 
 The xref:components:about.adoc[component reference documentation] displays support level and license badges on each component page.
 
-See xref:get-started:licensing.adoc[Redpanda licensing] for more information about licenses.
+For more information about licenses, see xref:get-started:licensing.adoc[].
 
 == Next steps
 

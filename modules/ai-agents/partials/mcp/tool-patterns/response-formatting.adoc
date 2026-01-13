@@ -112,10 +112,10 @@ include::example$best-practices/response-formatting/extract-nested-fields.yaml[t
 This mapping navigates a nested structure like `{"data": {"user": {"id": 123, "profile": {"display_name": "..."}}}}` and creates a flat response. The dot notation (`this.data.user.id`) drills down through nested objects. Type coercion (`.string()`, `.bool()`) ensures consistent output types.
 
 ifdef::env-cloud[]
-See xref:develop:connect/guides/bloblang/about.adoc#dot-notation[dot notation] for navigating nested structures.
+For navigating nested structures, see xref:develop:connect/guides/bloblang/about.adoc#dot-notation[dot notation].
 endif::[]
 ifndef::env-cloud[]
-See xref:guides:bloblang/about.adoc#dot-notation[dot notation] for navigating nested structures.
+For navigating nested structures, see xref:guides:bloblang/about.adoc#dot-notation[dot notation].
 endif::[]
 
 === Handle arrays
@@ -135,10 +135,10 @@ This example demonstrates four array operations:
 * A second `map_each()` extracts just the names into a simple string array
 
 ifdef::env-cloud[]
-See xref:develop:connect/guides/bloblang/methods.adoc#map_each[`map_each()`] and xref:develop:connect/guides/bloblang/methods.adoc#index[`index()`] for array operations.
+For array operations, see xref:develop:connect/guides/bloblang/methods.adoc#map_each[`map_each()`] and xref:develop:connect/guides/bloblang/methods.adoc#index[`index()`].
 endif::[]
 ifndef::env-cloud[]
-See xref:guides:bloblang/methods.adoc#map_each[`map_each()`] and xref:guides:bloblang/methods.adoc#index[`index()`] for array operations.
+For array operations, see xref:guides:bloblang/methods.adoc#map_each[`map_each()`] and xref:guides:bloblang/methods.adoc#index[`index()`].
 endif::[]
 
 === Include fields conditionally
@@ -171,10 +171,10 @@ include::example$best-practices/response-formatting/filter-sensitive-data.yaml[t
 The `without()` method creates a copy of the object with the specified fields removed. This is safer than manually selecting fields because new fields added to the source data are included automatically, so you only need to maintain the exclusion list. Use this when returning database records or API responses that might contain credentials or personal information.
 
 ifdef::env-cloud[]
-See xref:develop:connect/guides/bloblang/methods.adoc#without[`without()`] for field removal.
+For field removal, see xref:develop:connect/guides/bloblang/methods.adoc#without[`without()`].
 endif::[]
 ifndef::env-cloud[]
-See xref:guides:bloblang/methods.adoc#without[`without()`] for field removal.
+For field removal, see xref:guides:bloblang/methods.adoc#without[`without()`].
 endif::[]
 
 === Wrap responses in a success envelope

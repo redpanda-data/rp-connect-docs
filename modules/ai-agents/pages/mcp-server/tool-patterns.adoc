@@ -105,7 +105,7 @@ See also: xref:components:processors/sql_select.adoc[`sql_select` processor]
 
 *Example use cases:* Get open bugs for a sprint, find issues assigned to a user, list recently updated tickets, search by custom fields.
 
-NOTE: The `jira` processor requires an Enterprise license. See xref:get-started:licensing.adoc[].
+NOTE: The `jira` processor requires an Enterprise license. For more information, see xref:get-started:licensing.adoc[].
 
 [source,yaml]
 ----
@@ -138,7 +138,7 @@ meta:
         required: false
 ----
 
-See xref:cookbooks:jira.adoc[] for more patterns including pagination, custom fields, and creating issues via the HTTP processor.
+For more patterns including pagination, custom fields, and creating issues via the HTTP processor, see xref:cookbooks:jira.adoc[].
 
 [[ai-llm-integration]]
 === Integrate with AI/LLM services

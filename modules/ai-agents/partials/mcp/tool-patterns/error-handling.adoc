@@ -25,10 +25,10 @@ include::example$best-practices/error-handling/basic-try-catch.yaml[tags=basic-t
 ----
 
 ifdef::env-cloud[]
-See xref:develop:connect/components/processors/try.adoc[`try` processor] and xref:develop:connect/components/processors/catch.adoc[`catch` processor] for full configuration options.
+For full configuration options, see xref:develop:connect/components/processors/try.adoc[`try` processor] and xref:develop:connect/components/processors/catch.adoc[`catch` processor].
 endif::[]
 ifndef::env-cloud[]
-See xref:components:processors/try.adoc[`try` processor] and xref:components:processors/catch.adoc[`catch` processor] for full configuration options.
+For full configuration options, see xref:components:processors/try.adoc[`try` processor] and xref:components:processors/catch.adoc[`catch` processor].
 endif::[]
 
 === Return error details
@@ -55,10 +55,10 @@ include::example$best-practices/error-handling-snippets/timeout-config.yaml[tags
 ----
 
 ifdef::env-cloud[]
-See xref:develop:connect/components/processors/http.adoc[`http` processor] for all timeout and retry options.
+For all timeout and retry options, see xref:develop:connect/components/processors/http.adoc[`http` processor].
 endif::[]
 ifndef::env-cloud[]
-See xref:components:processors/http.adoc[`http` processor] for all timeout and retry options.
+For all timeout and retry options, see xref:components:processors/http.adoc[`http` processor].
 endif::[]
 
 === Handle specific error types
@@ -80,10 +80,10 @@ include::example$best-practices/error-handling/log-errors.yaml[tags=log-errors,i
 ----
 
 ifdef::env-cloud[]
-See xref:develop:connect/components/processors/log.adoc[`log` processor] for log level options.
+For log level options, see xref:develop:connect/components/processors/log.adoc[`log` processor].
 endif::[]
 ifndef::env-cloud[]
-See xref:components:processors/log.adoc[`log` processor] for log level options.
+For log level options, see xref:components:processors/log.adoc[`log` processor].
 endif::[]
 
 === Preserve input context in errors

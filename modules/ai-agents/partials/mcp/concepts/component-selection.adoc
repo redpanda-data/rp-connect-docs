@@ -63,7 +63,7 @@ Choose a processor tool when the tool's purpose is to compute or transform data,
 
 ==== Use case: Fetch and transform external data
 
-Consider a scenario where an AI assistant needs current weather data to answer a user's question about whether to bring an umbrella.
+Consider a scenario where an AI agent needs current weather data to answer a user's question about whether to bring an umbrella.
 
 The following prompts should trigger this type of tool:
 
@@ -75,7 +75,7 @@ A processor is the right choice because the tool fetches data from an API, trans
 
 ==== Use case: Validate and normalize data
 
-Consider a scenario where an AI assistant needs to validate user-submitted data and return structured feedback about any issues.
+Consider a scenario where an AI agent needs to validate user-submitted data and return structured feedback about any issues.
 
 The following prompts should trigger this type of tool:
 
@@ -107,7 +107,7 @@ The AI client does not receive the written data back. It receives status informa
 
 ==== Use case: Publish events to Redpanda
 
-Consider a scenario where an AI assistant needs to publish order events to Redpanda for downstream processing.
+Consider a scenario where an AI agent needs to publish order events to Redpanda for downstream processing.
 
 The following prompts should trigger this type of tool:
 
@@ -121,7 +121,7 @@ An output is the right choice because the purpose is to write data to Redpanda. 
 
 Output components can include a `processors:` section that transforms data before writing to the destination. This is a single output component, not a combination of component types.
 
-Consider a scenario where an AI assistant asks an LLM to summarize a document, then stores both the original and summary in Redpanda.
+Consider a scenario where an AI agent asks an LLM to summarize a document, then stores both the original and summary in Redpanda.
 
 The following prompts should trigger this type of tool:
 
@@ -173,7 +173,7 @@ Keep these factors in mind when building input tools:
 
 ==== Use case: Query recent events
 
-Consider a scenario where an AI assistant needs to retrieve recent user activity events to understand user behavior.
+Consider a scenario where an AI agent needs to retrieve recent user activity events to understand user behavior.
 
 The following prompts should trigger this type of tool:
 
@@ -199,7 +199,7 @@ Choose a cache tool when the tool's purpose is to store temporary data that expi
 
 ==== Use case: Session state management
 
-Consider a scenario where an AI assistant needs to remember user preferences across multiple tool calls within a conversation.
+Consider a scenario where an AI agent needs to remember user preferences across multiple tool calls within a conversation.
 
 The following prompts should trigger this type of tool:
 
@@ -211,7 +211,7 @@ A cache is the right choice because the data is temporary, session-scoped, and n
 
 ==== Use case: API response caching
 
-Consider a scenario where an AI assistant frequently looks up the same reference data (like exchange rates or product catalogs) and you want to avoid repeated API calls.
+Consider a scenario where an AI agent frequently looks up the same reference data (like exchange rates or product catalogs) and you want to avoid repeated API calls.
 
 The following prompts should trigger cache usage:
 

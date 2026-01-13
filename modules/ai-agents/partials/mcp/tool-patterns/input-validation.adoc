@@ -80,10 +80,10 @@ include::example$best-practices/input-validation/sanitize-string-input.yaml[tags
 The regex `[^a-zA-Z\\s\\-]` matches any character that is not a letter, space, or hyphen, and `re_replace_all` removes all matches. An input like `"New York!@#$"` becomes `"New York"`. The `meta` keyword stores the result in message metadata (using `@sanitized_city`), keeping it separate from the message body until validation passes.
 
 ifdef::env-cloud[]
-See xref:develop:connect/guides/bloblang/methods.adoc#re_replace_all[`re_replace_all`] for regex replacement syntax.
+For regex replacement syntax, see xref:develop:connect/guides/bloblang/methods.adoc#re_replace_all[`re_replace_all`].
 endif::[]
 ifndef::env-cloud[]
-See xref:guides:bloblang/methods.adoc#re_replace_all[`re_replace_all`] for regex replacement syntax.
+For regex replacement syntax, see xref:guides:bloblang/methods.adoc#re_replace_all[`re_replace_all`].
 endif::[]
 
 === Validate numeric ranges
@@ -120,10 +120,10 @@ include::example$best-practices/input-validation/validate-enum-values.yaml[tags=
 The `lowercase()` call normalizes the input so `"PENDING"`, `"Pending"`, and `"pending"` all match. When validation fails, the error response includes the list of allowed values. This helps AI clients self-correct without needing to look up valid options.
 
 ifdef::env-cloud[]
-See xref:develop:connect/guides/bloblang/methods.adoc#contains[`contains`] and xref:develop:connect/guides/bloblang/methods.adoc#lowercase[`lowercase`] for more details.
+For more details, see xref:develop:connect/guides/bloblang/methods.adoc#contains[`contains`] and xref:develop:connect/guides/bloblang/methods.adoc#lowercase[`lowercase`].
 endif::[]
 ifndef::env-cloud[]
-See xref:guides:bloblang/methods.adoc#contains[`contains`] and xref:guides:bloblang/methods.adoc#lowercase[`lowercase`] for more details.
+For more details, see xref:guides:bloblang/methods.adoc#contains[`contains`] and xref:guides:bloblang/methods.adoc#lowercase[`lowercase`].
 endif::[]
 
 === Use throw for validation failures

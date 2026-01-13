@@ -1,4 +1,4 @@
-= Build Your First MCP Server
+= MCP Server Quickstart
 :description: Expose Redpanda Connect components as AI-consumable tools using the Model Context Protocol (MCP).
 :page-topic-type: tutorial
 :personas: ai_agent_developer, streaming_developer, evaluator
@@ -8,7 +8,7 @@
 :learning-objective-2: Create a tool with MCP metadata
 :learning-objective-3: Connect the server to Claude Code and invoke the tool
 
-This quickstart builds a local MCP server that exposes Redpanda Connect components as tools that AI assistants can use. It creates a tool that searches Bluesky posts, then asks Claude Code to perform the search using natural language:
+This quickstart builds a local MCP server that exposes Redpanda Connect components as tools that AI agents can use. It creates a tool that searches Bluesky posts, then asks Claude Code to perform the search using natural language:
 
 > Find recent posts on Bluesky mentioning Redpanda.
 
@@ -116,7 +116,7 @@ This example defines a tool that searches public Bluesky posts based on a query 
 <1> A unique label for identification. Claude uses this label to discover and call the tool.
 <2> A series of xref:ai-agents:mcp-server/concepts.adoc#component-selection[processors] to build the HTTP request, handle the response, and format the output.
 <3> A unique tag (`bluesky`) to control exposure. You can use tags to group related tools or isolate experiments.
-<4> A clear description for LLMs helps Claude understand what the tool does. See xref:ai-agents:mcp-server/create-tool.adoc#anatomy[Anatomy of an MCP tool].
+<4> A clear description for LLMs helps Claude understand what the tool does. For more details, see xref:ai-agents:mcp-server/create-tool.adoc#anatomy[Anatomy of an MCP tool].
 <5> Structured properties for inputs like `query` and `limit`.
 
 == Start the MCP server
@@ -294,12 +294,6 @@ If you change the YAML configuration of your tools, restart the MCP server to pi
 To disconnect or stop the MCP server, press kbd:[Ctrl+C] in the terminal where the server is running. This will gracefully shut down the MCP server process and disconnect any connected clients.
 
 You can also close the terminal window or kill the process using standard OS commands (such as `kill <pid>` on Linux/macOS).
-
-== Summary
-
-You extended Claude's capabilities with a custom tool built from Redpanda Connect components. Claude can now search Bluesky through natural language commands without manual API calls or scripting.
-
-This same pattern works for any workflow you can build with Redpanda Connect: consuming from Kafka topics, transforming data, calling APIs, querying databases, or orchestrating complex data pipelines. Each configuration becomes an AI-consumable tool.
 
 == Troubleshoot
 

@@ -1,10 +1,10 @@
-= Introduction to Redpanda Connect MCP Server
+= MCP Server Overview
 :description: Discover the business value, use cases, and architecture for Redpanda Connect MCP servers.
 :page-topic-type: overview
 :personas: ai_agent_developer, evaluator
 // Reader journey: "I'm evaluating this"
 // Learning objectives - what readers should understand after reading this page:
-:learning-objective-1: Explain what an MCP server is and why it's valuable
+:learning-objective-1: Explain what an MCP server is and how tools differ from pipelines
 :learning-objective-2: Identify use cases where MCP servers provide business value
 :learning-objective-3: Describe how MCP tools expose Redpanda Connect components to AI
 
@@ -23,15 +23,18 @@ include::ai-agents:partial$mcp/overview/what-is-mcp.adoc[]
 
 == What is Redpanda Connect MCP server?
 
-Redpanda Connect's MCP server lets you expose data pipelines and automations as AI-consumable tools (MCP tools) with no custom API code. You write tools as YAML configurations, and the MCP server makes them available to AI assistants.
+Redpanda Connect's MCP server lets you expose data pipelines and automations as AI-consumable tools (MCP tools) with no custom API code. You write tools as YAML configurations, and the MCP server makes them available to AI agents.
 
-This means AI assistants can:
+This means AI agents can:
 
 * Pull information from databases, APIs, message queues, or Redpanda topics
 * Publish messages, update records, trigger workflows, or call external services
 * Only access the specific tools you configure and enable
 
-If you already use Redpanda Connect for data integration and processing, adding an MCP server gives AI assistants controlled access to your existing systems without extra development effort.
+If you already use Redpanda Connect for data integration and processing, adding an MCP server gives AI agents controlled access to your existing systems without extra development effort.
+
+// MCP tools vs pipelines - single-sourced from partial
+include::ai-agents:partial$mcp/overview/mcp-vs-pipelines.adoc[]
 
 // Use cases table - single-sourced from partial
 include::ai-agents:partial$mcp/overview/use-cases-table.adoc[]
@@ -40,11 +43,11 @@ include::ai-agents:partial$mcp/overview/use-cases-table.adoc[]
 
 When you start an MCP server, it runs locally on your system and acts as a bridge between AI clients and your data:
 
-. A user asks their AI assistant something like "What's the weather in London?"
+. A user asks their AI agent something like "What's the weather in London?"
 . The AI client connects to the local MCP server and finds the matching tool
 . The server runs your MCP tools
 . Your tools fetch data, transform it, and return a response
-. The AI assistant gets the data and can use it to answer the user
+. The AI agent gets the data and can use it to answer the user
 
 === What an MCP tool looks like
 
@@ -80,7 +83,7 @@ include::ai-agents:partial$mcp/overview/specification-support.adoc[]
 Continue your learning journey with these resources:
 
 * xref:ai-agents:mcp-server/quickstart.adoc[]: Start your first MCP server
-* xref:ai-agents:mcp-server/concepts.adoc[]: Understand the execution model and component types
+* xref:ai-agents:mcp-server/concepts.adoc[]: Learn about execution and component types
 * xref:ai-agents:mcp-server/create-tool.adoc[]: Create custom tools
 * link:https://docs.anthropic.com/en/docs/mcp[Model Context Protocol documentation^]
 
