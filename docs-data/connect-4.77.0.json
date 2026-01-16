@@ -1,6 +1,6 @@
 {
-  "version": "4.76.1",
-  "date": "2025-12-22T14:45:17Z",
+  "version": "4.77.0",
+  "date": "2026-01-06T13:13:24Z",
   "config": [
     {
       "name": "http",
@@ -28067,7 +28067,7 @@
         {
           "title": "Updating Documents",
           "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn’t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
-          "config": "\n# Partial document update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Performs a partial update ont he document.\n        root.doc = this\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Scripted update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Increments the field \"counter\" by 1.\n        root.script.source = \"ctx._source.counter += 1\"\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Upsert\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # If the product with the ID exists, its price will be updated to 100.\n        # If the product does not exist, a new document with ID 1 and a price\n        # of 50 will be inserted.\n        root.doc.product_price = 50\n        root.upsert.product_price = 100\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n"
+          "config": "\n# Partial document update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Performs a partial update on the document.\n        root.doc = this\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Scripted update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Increments the field \"counter\" by 1.\n        root.script.source = \"ctx._source.counter += 1\"\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Upsert\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # If the product with the ID exists, its price will be updated to 100.\n        # If the product does not exist, a new document with ID 1 and a price\n        # of 50 will be inserted.\n        root.doc.product_price = 50\n        root.upsert.product_price = 100\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n"
         },
         {
           "title": "Indexing documents from Redpanda",
@@ -28424,6 +28424,379 @@
         ]
       },
       "cloudSupported": true,
+      "requiresCgo": false
+    },
+    {
+      "name": "elasticsearch_v9",
+      "type": "output",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Publishes messages into an Elasticsearch index. If the index does not exist then it is created with a dynamic mapping.",
+      "description": "\nBoth the `id` and `index` fields can be dynamically set using function interpolations described xref:configuration:interpolation.adoc#bloblang-queries[here]. When sending batched messages these interpolations are performed per message part.\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "categories": [
+        "Services"
+      ],
+      "examples": [
+        {
+          "title": "Updating Documents",
+          "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn’t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
+          "config": "\n# Partial document update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Performs a partial update on the document.\n        root.doc = this\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Scripted update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Increments the field \"counter\" by 1.\n        root.script.source = \"ctx._source.counter += 1\"\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Upsert\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # If the product with the ID exists, its price will be updated to 100.\n        # If the product does not exist, a new document with ID 1 and a price\n        # of 50 will be inserted.\n        root.doc.product_price = 50\n        root.upsert.product_price = 100\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n"
+        },
+        {
+          "title": "Indexing documents from Redpanda",
+          "summary": "Here we read messages from a Redpanda cluster and write them to an Elasticsearch index using a field from the message as the ID for the Elasticsearch document.",
+          "config": "\ninput:\n  redpanda:\n    seed_brokers: [localhost:19092]\n    topics: [\"things\"]\n    consumer_group: \"rpcn3\"\n  processors:\n    - mapping: |\n        meta id = this.id\n        root = this\noutput:\n  elasticsearch_v9:\n    urls: ['http://localhost:9200']\n    index: \"things\"\n    action: \"index\"\n    id: ${! meta(\"id\") }\n"
+        },
+        {
+          "title": "Indexing documents from S3",
+          "summary": "Here we read messages from a AWS S3 bucket and write them to an Elasticsearch index using the S3 key as the ID for the Elasticsearch document.",
+          "config": "\ninput:\n  aws_s3:\n    bucket: \"my-cool-bucket\"\n    prefix: \"bug-facts/\"\n    scanner:\n      to_the_end: {}\noutput:\n  elasticsearch_v9:\n    urls: ['http://localhost:9200']\n    index: \"cool-bug-facts\"\n    action: \"index\"\n    id: ${! meta(\"s3_key\") }\n"
+        },
+        {
+          "title": "Create Documents",
+          "summary": "When using the `create` action, a new document will be created if the document ID does not already exist. If the document ID already exists, the operation will fail.",
+          "config": "\noutput:\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! json(\"id\") }\n    action: create\n"
+        },
+        {
+          "title": "Upserting Documents",
+          "summary": "When using the `upsert` action, if the document ID already exists, it will be updated. If the document ID does not exist, a new document will be inserted. The request body should contain the document to be indexed.",
+          "config": "\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        root = this.doc\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: upsert\n"
+        }
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "urls",
+            "type": "string",
+            "kind": "array",
+            "description": "A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.",
+            "examples": [
+              [
+                "http://localhost:9200"
+              ]
+            ]
+          },
+          {
+            "name": "index",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The index to place messages.",
+            "interpolated": true
+          },
+          {
+            "name": "action",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The action to take on the document. This field must resolve to one of the following action types: `index`, `update`, `delete`, `create` or `upsert`. See the `Updating Documents` example for more on how the `update` action works and the `Create Documents` and `Upserting Documents` examples for how to use the `create` and `upsert` actions respectively.",
+            "interpolated": true
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The ID for indexed messages. Interpolation should be used in order to create a unique ID for each message.",
+            "interpolated": true,
+            "examples": [
+              "${!counter()}-${!timestamp_unix()}"
+            ]
+          },
+          {
+            "name": "pipeline",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional pipeline id to preprocess incoming documents.",
+            "is_advanced": true,
+            "default": "",
+            "interpolated": true
+          },
+          {
+            "name": "routing",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The routing key to use for the document.",
+            "is_advanced": true,
+            "default": "",
+            "interpolated": true
+          },
+          {
+            "name": "retry_on_conflict",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Specify how many times should an update operation be retried when a conflict occurs",
+            "is_advanced": true,
+            "default": 0
+          },
+          {
+            "name": "tls",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Custom TLS settings can be used to override system defaults.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether custom TLS settings are enabled.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "skip_cert_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to skip server side certificate verification.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "enable_renegotiation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "is_advanced": true,
+                "default": false,
+                "version": "3.45.0"
+              },
+              {
+                "name": "root_cas",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "examples": [
+                  "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                ],
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "root_cas_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "default": "",
+                "examples": [
+                  "./root_cas.pem"
+                ]
+              },
+              {
+                "name": "client_certs",
+                "type": "object",
+                "kind": "array",
+                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "is_advanced": true,
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "cert": "foo",
+                      "key": "bar"
+                    }
+                  ],
+                  [
+                    {
+                      "cert_file": "./example.pem",
+                      "key_file": "./example.key"
+                    }
+                  ]
+                ],
+                "children": [
+                  {
+                    "name": "cert",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate key to use.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "cert_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate key to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "foo",
+                      "${KEY_PASSWORD}"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "max_in_flight",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "default": 64
+          },
+          {
+            "name": "basic_auth",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Allows you to specify basic authentication.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to use basic authentication in requests.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "username",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A username to authenticate as.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "password",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A password to authenticate with.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              }
+            ]
+          },
+          {
+            "name": "batching",
+            "type": "object",
+            "kind": "",
+            "description": "\nAllows you to configure a xref:configuration:batching.adoc[batching policy].",
+            "examples": [
+              {
+                "byte_size": 5000,
+                "count": 0,
+                "period": "1s"
+              },
+              {
+                "count": 10,
+                "period": "1s"
+              },
+              {
+                "check": "this.contains(\"END BATCH\")",
+                "count": 0,
+                "period": "1m"
+              }
+            ],
+            "children": [
+              {
+                "name": "count",
+                "type": "int",
+                "kind": "scalar",
+                "description": "A number of messages at which the batch should be flushed. If `0` disables count based batching.",
+                "default": 0
+              },
+              {
+                "name": "byte_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "An amount of bytes at which the batch should be flushed. If `0` disables size based batching.",
+                "default": 0
+              },
+              {
+                "name": "period",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A period in which an incomplete batch should be flushed regardless of its size.",
+                "default": "",
+                "examples": [
+                  "1s",
+                  "1m",
+                  "500ms"
+                ]
+              },
+              {
+                "name": "check",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.",
+                "default": "",
+                "bloblang": true,
+                "examples": [
+                  "this.type == \"end_of_transaction\""
+                ]
+              },
+              {
+                "name": "processors",
+                "type": "processor",
+                "kind": "array",
+                "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  [
+                    {
+                      "archive": {
+                        "format": "concatenate"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "lines"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "json_array"
+                      }
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "cloudSupported": false,
       "requiresCgo": false
     },
     {

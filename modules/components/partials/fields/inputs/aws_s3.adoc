@@ -186,6 +186,14 @@ The maximum number of SQS messages to consume from each request.
 
 *Default*: `10`
 
+=== `sqs.nack_visibility_timeout`
+
+Custom SQS Nack Visibility timeout in seconds. Default is 0
+
+*Type*: `int`
+
+*Default*: `0`
+
 === `sqs.url`
 
 An optional SQS URL to connect to. When specified this queue will control which objects are downloaded.
