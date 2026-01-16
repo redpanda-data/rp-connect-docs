@@ -95,19 +95,50 @@ jobs:
 
           rm -f full_output.txt pr_summary.txt
 
-      - name: Check if branch already exists
+      - name: Check for existing PR and manual changes
         id: check_branch
+        env:
+          GH_TOKEN: ${{ env.ACTIONS_BOT_TOKEN }}
         run: |
-          if git ls-remote --heads origin auto-docs/update-rpcn-connector-docs | grep -q auto-docs; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "Branch auto-docs/update-rpcn-connector-docs already exists. Skipping PR creation to preserve manual changes."
-          else
+          # Check if branch exists
+          if ! git ls-remote --heads origin auto-docs/update-rpcn-connector-docs | grep -q auto-docs; then
             echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "Branch does not exist. Will create new PR."
+            echo "safe_to_update=true" >> "$GITHUB_OUTPUT"
+            echo "Branch does not exist. Safe to create new PR."
+            exit 0
           fi
 
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+          echo "Branch auto-docs/update-rpcn-connector-docs already exists."
+
+          # Check if there's an open PR
+          PR_STATE=$(gh pr list --head auto-docs/update-rpcn-connector-docs --json state --jq '.[0].state // "NONE"')
+          echo "PR state: $PR_STATE"
+
+          if [ "$PR_STATE" = "OPEN" ]; then
+            # Fetch the branch to inspect commits
+            git fetch origin auto-docs/update-rpcn-connector-docs
+
+            # Check if branch has commits not authored by github-actions[bot]
+            MANUAL_COMMITS=$(git log origin/main..origin/auto-docs/update-rpcn-connector-docs \
+              --pretty=format:"%an" | grep -v "github-actions\[bot\]" | wc -l | tr -d ' ')
+
+            echo "Found $MANUAL_COMMITS manual commit(s) on the branch"
+
+            if [ "$MANUAL_COMMITS" -gt 0 ]; then
+              echo "safe_to_update=false" >> "$GITHUB_OUTPUT"
+              echo "BLOCKING: Branch has $MANUAL_COMMITS manual commit(s). Will NOT update to preserve manual changes."
+              echo "Please merge or close PR #$(gh pr list --head auto-docs/update-rpcn-connector-docs --json number --jq '.[0].number') before running this workflow."
+              exit 0
+            fi
+          fi
+
+          # Branch exists but either no PR or no manual commits - safe to update
+          echo "safe_to_update=true" >> "$GITHUB_OUTPUT"
+          echo "Safe to update branch (no manual changes detected)"
+
       - name: Create Pull Request
-        if: steps.check_branch.outputs.exists == 'false'
+        if: steps.check_branch.outputs.safe_to_update == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ env.ACTIONS_BOT_TOKEN }}
@@ -117,3 +148,5 @@ jobs:
           commit-message: 'docs: Update RPCN connector docs'
           body: ${{ steps.generate.outputs.delta_report }}
           labels: auto-docs
+          # These settings prevent force-pushing over existing work
+          delete-branch: false
