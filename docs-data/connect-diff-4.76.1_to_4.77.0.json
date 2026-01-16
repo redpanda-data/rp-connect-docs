@@ -2,11 +2,11 @@
   "comparison": {
     "oldVersion": "4.76.1",
     "newVersion": "4.77.0",
-    "timestamp": "2026-01-06T17:14:59.220Z"
+    "timestamp": "2026-01-16T16:00:23.317Z"
   },
   "summary": {
-    "newComponents": 1,
-    "removedComponents": 5,
+    "newComponents": 0,
+    "removedComponents": 0,
     "newFields": 0,
     "removedFields": 0,
     "deprecatedComponents": 0,
@@ -16,50 +16,39 @@
   "details": {
     "newComponents": [
       {
-        "name": "elasticsearch_v9",
-        "type": "outputs",
+        "name": "otlp_grpc",
+        "type": "input",
         "status": "stable",
         "version": "",
-        "description": "\nBoth the `id` and `index` fields can be dynamically set using function interpolations described xref:configuration:interpolation.adoc#bloblang-queries[here]. When sending batched messages these interpolations are performed per message part.\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc]."
+        "description": "\nExposes an OpenTelemetry Collector gRPC receiver that accepts traces, logs, and metrics via gRPC.\n\nTelemetry data is received in OTLP protobuf format and converted to individual Redpanda OTEL v1 protobuf messages.\nEach signal (span, log record, or metric) becomes a separate message with embedded Resource and Scope metadata, optimized for Kafka partitioning.\n\n## Protocols\n\nThis input supports OTLP/gRPC on the default port 4317 using the standard OTLP protobuf format for all signal types (traces, logs, metrics).\n\n## Output Format\n\nEach OTLP export request is unbatched into individual messages:\n- **Traces**: One message per span\n- **Logs**: One message per log record\n- **Metrics**: One message per metric\n\nMessages are encoded in Redpanda OTEL v1 protobuf format with metadata:\n- `signal_type`: \"trace\", \"log\", or \"metric\"\n\n## Authentication\n\nWhen `auth_token` is configured, clients must include the token in the gRPC metadata:\n\n**Go Client Example:**\n```go\nimport (\n    \"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc\"\n)\n\nexporter, err := otlptracegrpc.New(ctx,\n    otlptracegrpc.WithEndpoint(\"localhost:4317\"),\n    otlptracegrpc.WithInsecure(), // or WithTLSCredentials() for TLS\n    otlptracegrpc.WithHeaders(map[string]string{\n        \"authorization\": \"Bearer your-token-here\",\n    }),\n)\n```\n\n**Environment Variable:**\n```bash\nexport OTEL_EXPORTER_OTLP_HEADERS=\"authorization=Bearer your-token-here\"\n```\n\n## Rate Limiting\n\nAn optional rate limit resource can be specified to throttle incoming requests. When the rate limit is breached, requests will receive a ResourceExhausted gRPC status code.\n",
+        "summary": "Receive OpenTelemetry traces, logs, and metrics via OTLP/gRPC protocol."
+      },
+      {
+        "name": "otlp_http",
+        "type": "input",
+        "status": "stable",
+        "version": "",
+        "description": "\nExposes an OpenTelemetry Collector HTTP receiver that accepts traces, logs, and metrics via HTTP.\n\nTelemetry data is received in OTLP format (both protobuf and JSON) at standard OTLP endpoints and converted to individual Redpanda OTEL v1 protobuf messages. Each signal (span, log record, or metric) becomes a separate message with embedded Resource and Scope metadata, optimized for Kafka partitioning.\n\n## Endpoints\n\n- `/v1/traces` - OpenTelemetry traces\n- `/v1/logs` - OpenTelemetry logs\n- `/v1/metrics` - OpenTelemetry metrics\n\n## Protocols\n\nThis input supports OTLP/HTTP on the default port 4318. It accepts both:\n- `application/x-protobuf` - OTLP protobuf format\n- `application/json` - OTLP JSON format\n\n## Output Format\n\nEach OTLP export request is unbatched into individual messages:\n- **Traces**: One message per span\n- **Logs**: One message per log record\n- **Metrics**: One message per metric\n\nMessages are encoded in Redpanda OTEL v1 protobuf format with metadata:\n- `signalType`: \"trace\", \"log\", or \"metric\"\n\n## Authentication\n\nWhen `auth_token` is configured, clients must include the token in the HTTP Authorization header:\n\n**Go Client Example:**\n```go\nimport (\n    \"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp\"\n)\n\nexporter, err := otlptracehttp.New(ctx,\n    otlptracehttp.WithEndpoint(\"localhost:4318\"),\n    otlptracehttp.WithInsecure(), // or WithTLSClientConfig() for TLS\n    otlptracehttp.WithHeaders(map[string]string{\n        \"Authorization\": \"Bearer your-token-here\",\n    }),\n)\n```\n\n**cURL Example:**\n```bash\ncurl -X POST http://localhost:4318/v1/traces \\\n  -H \"Content-Type: application/x-protobuf\" \\\n  -H \"Authorization: Bearer your-token-here\" \\\n  --data-binary @traces.pb\n```\n\n**Environment Variable:**\n```bash\nexport OTEL_EXPORTER_OTLP_HEADERS=\"Authorization=Bearer your-token-here\"\n```\n\n## Rate Limiting\n\nAn optional rate limit resource can be specified to throttle incoming requests. When the rate limit is breached, requests will receive a 429 (Too Many Requests) response.\n",
+        "summary": "Receive OpenTelemetry traces, logs, and metrics via OTLP/HTTP protocol."
+      },
+      {
+        "name": "otlp_grpc",
+        "type": "output",
+        "status": "stable",
+        "version": "",
+        "description": "\nSends OpenTelemetry telemetry data to a remote collector via OTLP/gRPC protocol.\n\nAccepts batches of Redpanda OTEL v1 protobuf messages (spans, log records, or metrics) and converts them to OTLP format for transmission to OpenTelemetry collectors.\n\n## Input Format\n\nExpects messages in Redpanda OTEL v1 protobuf format with metadata:\n- `signal_type`: \"trace\", \"log\", or \"metric\"\n\nEach batch must contain messages of the same signal type.\nThe entire batch is converted to a single OTLP export request and sent via gRPC.\n\n## Authentication\n\nSupports multiple authentication methods:\n- Bearer token authentication (via auth_token field)\n- OAuth v2 (via oauth2 configuration block)\n\nNote: OAuth2 requires TLS to be enabled.\n",
+        "summary": "Send OpenTelemetry traces, logs, and metrics via OTLP/gRPC protocol."
+      },
+      {
+        "name": "otlp_http",
+        "type": "output",
+        "status": "stable",
+        "version": "",
+        "description": "\nSends OpenTelemetry telemetry data to a remote collector via OTLP/HTTP protocol.\n\nAccepts batches of Redpanda OTEL v1 protobuf messages (spans, log records, or metrics) and converts them to OTLP format for transmission to OpenTelemetry collectors.\n\n## Input Format\n\nExpects messages in Redpanda OTEL v1 protobuf format with metadata:\n- `signal_type`: \"trace\", \"log\", or \"metric\"\n\nEach batch must contain messages of the same signal type. The entire batch is converted to a single OTLP export request and sent via HTTP POST.\n\n## Endpoints\n\nThe output automatically appends the signal type path to the base endpoint:\n- Traces: `{endpoint}/v1/traces`\n- Logs: `{endpoint}/v1/logs`\n- Metrics: `{endpoint}/v1/metrics`\n\n## Content Types\n\nSupports two content types:\n- `protobuf` (default): `application/x-protobuf`\n- `json`: `application/json`\n\n## Authentication\n\nSupports multiple authentication methods:\n- Basic authentication\n- OAuth v1\n- OAuth v2\n- JWT\n",
+        "summary": "Send OpenTelemetry traces, logs, and metrics via OTLP/HTTP protocol."
       }
     ],
-    "removedComponents": [
-      {
-        "name": "tigerbeetle_cdc",
-        "type": "inputs",
-        "status": "beta",
-        "version": "0.0.1",
-        "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer’s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater."
-      },
-      {
-        "name": "zmq4",
-        "type": "inputs",
-        "status": "stable",
-        "version": "",
-        "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component."
-      },
-      {
-        "name": "zmq4",
-        "type": "outputs",
-        "status": "stable",
-        "version": "",
-        "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component."
-      },
-      {
-        "name": "ffi",
-        "type": "processors",
-        "status": "experimental",
-        "version": "",
-        "description": "A processor that allows for dlopen'ing (or platform equivalent) and invoking functions dynamically at runtime. The result from this processor is an array, where the first element is the return type if not void, and then each `out` parameter in parameter order."
-      },
-      {
-        "name": "a2a_message",
-        "type": "processors",
-        "status": "beta",
-        "version": "4.40.0",
-        "description": "\nThis processor enables Redpanda Connect pipelines to communicate with A2A protocol agents. Currently only JSON-RPC transport is supported.\n\nThe processor sends a message to the agent and polls for task completion. The agent's response\nis returned as the processor output.\n\nFor more information about the A2A protocol, see https://a2a-protocol.org/latest/specification"
-      }
-    ],
+    "removedComponents": [],
     "newFields": [],
     "removedFields": [],
     "deprecatedComponents": [],
@@ -69,24 +58,15 @@
   "binaryAnalysis": {
     "versions": {
       "oss": "4.77.0",
-      "cloud": "4.77.0",
-      "cgo": "4.77.0"
+      "cloud": "4.78.0",
+      "cgo": "4.78.0"
     },
     "current": {
       "cloudSupported": 471,
-      "selfHostedOnly": 75,
+      "selfHostedOnly": 79,
       "cgoOnly": 4
     },
-    "changes": {
-      "cloud": {
-        "added": [],
-        "removed": []
-      },
-      "cgo": {
-        "newCgoOnly": [],
-        "removedCgoOnly": []
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -2567,6 +2547,16 @@
           "status": "stable"
         },
         {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2677,6 +2667,11 @@
           "status": "stable"
         },
         {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -2762,6 +2757,11 @@
           "status": "experimental"
         },
         {
+          "type": "processors",
+          "name": "ffi",
+          "status": "experimental"
+        },
+        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2824,6 +2824,26 @@
       ],
       "cloudOnly": [
         {
+          "type": "inputs",
+          "name": "otlp_grpc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "otlp_http",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "otlp_grpc",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "otlp_http",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "a2a_message",
           "status": "beta"
@@ -2832,23 +2852,23 @@
       "cgoOnly": [
         {
           "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "beta"
+          "name": "otlp_grpc",
+          "status": "stable"
         },
         {
           "type": "inputs",
-          "name": "zmq4",
+          "name": "otlp_http",
           "status": "stable"
         },
         {
           "type": "outputs",
-          "name": "zmq4",
+          "name": "otlp_grpc",
           "status": "stable"
         },
         {
-          "type": "processors",
-          "name": "ffi",
-          "status": "experimental"
+          "type": "outputs",
+          "name": "otlp_http",
+          "status": "stable"
         }
       ]
     }

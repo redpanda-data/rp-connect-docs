@@ -7,10 +7,7 @@ processors:
     unsafe_dynamic_query: false
     args_mapping: "" # No default (optional)
     exec_only: "" # No default (optional)
-    queries:
-      query: "" # No default (required)
-      args_mapping: "" # No default (optional)
-      exec_only: "" # No default (optional)
+    queries: [] # No default (optional)
     init_files: [] # No default (optional)
     init_statement: "" # No default (optional)
     conn_max_idle_time: "" # No default (optional)

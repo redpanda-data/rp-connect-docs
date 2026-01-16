@@ -6,9 +6,7 @@ outputs:
     query: "" # No default (optional)
     unsafe_dynamic_query: false
     args_mapping: "" # No default (optional)
-    queries:
-      query: "" # No default (required)
-      args_mapping: "" # No default (optional)
+    queries: [] # No default (optional)
     max_in_flight: 64
     init_files: [] # No default (optional)
     init_statement: "" # No default (optional)

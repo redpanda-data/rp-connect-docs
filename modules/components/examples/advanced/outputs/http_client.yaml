@@ -37,12 +37,7 @@ outputs:
       enable_renegotiation: false
       root_cas: ""
       root_cas_file: ""
-      client_certs:
-        cert: ""
-        key: ""
-        cert_file: ""
-        key_file: ""
-        password: ""
+      client_certs: []
     extract_headers:
       include_prefixes: []
       include_patterns: []
@@ -67,7 +62,4 @@ outputs:
       period: ""
       check: ""
       processors: [] # No default (optional)
-    multipart:
-      content_type: ""
-      content_disposition: ""
-      body: ""
+    multipart: []
