@@ -1,0 +1,97 @@
+// =============================================================================
+// PARTIAL: error-handling.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/tool-patterns.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/tool-patterns.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/tool-patterns/error-handling.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/tool-patterns/error-handling.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches xref targets for Cloud context
+//
+// DEPENDENCIES:
+//   - example$best-practices/error-handling/*.yaml
+// =============================================================================
+
+Wrap operations that can fail in `try`/`catch` blocks. This ensures the tool returns useful errors instead of failing silently.
+
+[source,yaml]
+----
+include::example$best-practices/error-handling/basic-try-catch.yaml[tags=basic-try-catch,indent=0]
+----
+
+ifdef::env-cloud[]
+For full configuration options, see xref:develop:connect/components/processors/try.adoc[`try` processor] and xref:develop:connect/components/processors/catch.adoc[`catch` processor].
+endif::[]
+ifndef::env-cloud[]
+For full configuration options, see xref:components:processors/try.adoc[`try` processor] and xref:components:processors/catch.adoc[`catch` processor].
+endif::[]
+
+=== Return error details
+
+ifdef::env-cloud[]
+The xref:develop:connect/guides/bloblang/functions.adoc#error[`error()`] function returns the error message from the most recent failure. Use it in `catch` blocks to capture what went wrong:
+endif::[]
+ifndef::env-cloud[]
+The xref:guides:bloblang/functions.adoc#error[`error()`] function returns the error message from the most recent failure. Use it in `catch` blocks to capture what went wrong:
+endif::[]
+
+[source,yaml]
+----
+include::example$best-practices/error-handling/error-with-timestamp.yaml[tags=error-with-timestamp,indent=0]
+----
+
+=== Set timeouts
+
+Always set explicit timeouts on external calls to prevent tools from hanging indefinitely:
+
+[source,yaml]
+----
+include::example$best-practices/error-handling-snippets/timeout-config.yaml[tags=timeout-config,indent=0]
+----
+
+ifdef::env-cloud[]
+For all timeout and retry options, see xref:develop:connect/components/processors/http.adoc[`http` processor].
+endif::[]
+ifndef::env-cloud[]
+For all timeout and retry options, see xref:components:processors/http.adoc[`http` processor].
+endif::[]
+
+=== Handle specific error types
+
+Create different responses based on error type:
+
+[source,yaml]
+----
+include::example$best-practices/error-handling/handle-error-types.yaml[tags=handle-error-types,indent=0]
+----
+
+=== Log errors for debugging
+
+Add logging inside `catch` blocks to aid troubleshooting:
+
+[source,yaml]
+----
+include::example$best-practices/error-handling/log-errors.yaml[tags=log-errors,indent=0]
+----
+
+ifdef::env-cloud[]
+For log level options, see xref:develop:connect/components/processors/log.adoc[`log` processor].
+endif::[]
+ifndef::env-cloud[]
+For log level options, see xref:components:processors/log.adoc[`log` processor].
+endif::[]
+
+=== Preserve input context in errors
+
+Include original input data in error responses to help AI clients retry with corrections:
+
+[source,yaml]
+----
+include::example$best-practices/error-handling/preserve-input-context.yaml[tags=preserve-input-context,indent=0]
+----
+

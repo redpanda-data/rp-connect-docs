@@ -1,0 +1,41 @@
+# Test: Enum value validation from input-validation.adoc
+# Expected: Status normalized and validated against allowed values
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"status": "PENDING"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"status": "approved"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"status": "invalid_status"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {}'
+
+pipeline:
+  processors:
+    # tag::validate-status[]
+    - label: validate_status
+      mutation: |
+        let allowed = ["pending", "approved", "rejected"]
+        let status = this.status.or("").lowercase()
+        root = if $status == "" {
+          {"error": "status is required", "allowed": $allowed}
+        } else if !$allowed.contains($status) {
+          {"error": "invalid status", "received": $status, "allowed": $allowed}
+        } else {
+          {"status": $status, "valid": true}
+        }
+    # end::validate-status[]
+
+output:
+  stdout: {}

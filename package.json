@@ -6,7 +6,9 @@
   "scripts": {
     "build": "antora --to-dir docs --fetch local-antora-playbook.yml --stacktrace",
     "start": "cross-env-shell LIVERELOAD=true npx gulp",
-    "serve": "wds --node-resolve --open / --watch --root-dir docs"
+    "serve": "wds --node-resolve --open / --watch --root-dir docs",
+    "test-mcp-examples": "cd modules/ai-agents/examples && ./test-all.sh",
+    "test": "npm run test-mcp-examples"
   },
   "dependencies": {
     "@antora/cli": "3.1.2",

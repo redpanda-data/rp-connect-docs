@@ -1,0 +1,34 @@
+# Test: Sanitizing string inputs from input-validation.adoc
+# Expected: HTML entities removed, special chars sanitized
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"city": "New York!@#$"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"city": "San-Francisco"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"city": "!@#$%"}'
+
+pipeline:
+  processors:
+    # tag::sanitize-input[]
+    - label: sanitize_input
+      mutation: |
+        let clean_city = this.city.or("").trim().re_replace_all("[^a-zA-Z\\s-]", "")
+        root = if $clean_city == "" {
+          {"error": "City name contains only invalid characters"}
+        } else {
+          {"city": $clean_city}
+        }
+    # end::sanitize-input[]
+
+output:
+  stdout: {}

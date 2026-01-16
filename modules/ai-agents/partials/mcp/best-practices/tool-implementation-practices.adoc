@@ -1,0 +1,51 @@
+// =============================================================================
+// PARTIAL: tool-implementation-practices.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/best-practices.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/best-practices.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/best-practices/tool-implementation-practices.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/best-practices/tool-implementation-practices.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+=== Keep tools focused
+
+Each tool should do one thing well. If you find yourself adding multiple unrelated operations, split them into separate tools.
+
+Tools that do too much or have vague purposes cause problems because AI clients rely on descriptions to choose tools. Vague descriptions lead to wrong tool selection. Also, tools that do too much are harder to test and debug.
+
+Write descriptions that clearly state what the tool does, what input it needs, and what it returns. If a tool is doing multiple things, split it into focused tools.
+
+=== Design for quick completion
+
+MCP tools should complete quickly. AI clients wait for responses, and long-running tools cause poor user experiences.
+
+Tools that wait indefinitely, poll continuously, or never return cause problems because MCP tools use a request/response model. A tool that never completes will time out and fail, and resources remain allocated while waiting.
+
+Follow these guidelines:
+
+ifdef::env-cloud[]
+* Set explicit timeouts on all external calls. For timeout options, see xref:develop:connect/components/processors/http.adoc[`http` processor].
+endif::[]
+ifndef::env-cloud[]
+* Set explicit timeouts on all external calls. For timeout options, see xref:components:processors/http.adoc[`http` processor].
+endif::[]
+* Avoid unbounded reads. Read N messages, not all messages.
+* Consider pagination for large datasets.
+* Return partial results if full processing takes too long.
+
+ifdef::env-cloud[]
+For patterns that handle timeout failures gracefully, see xref:ai-agents:mcp/remote/tool-patterns.adoc#error-handling[error handling patterns].
+endif::[]
+ifndef::env-cloud[]
+For patterns that handle timeout failures gracefully, see xref:ai-agents:mcp-server/tool-patterns.adoc#error-handling[error handling patterns].
+endif::[]

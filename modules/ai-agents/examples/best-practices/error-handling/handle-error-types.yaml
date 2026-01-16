@@ -1,0 +1,55 @@
+# Test: Handle specific error types
+# Source: best-practices.adoc - Error handling section
+# Expected: Categorized errors with retry suggestion
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"simulate": "timeout"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"simulate": "connection"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"simulate": "not_found"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"simulate": "other"}'
+
+pipeline:
+  processors:
+    - try:
+        - mutation: |
+            root = match this.simulate {
+              "timeout" => throw("Request timeout after 30s")
+              "connection" => throw("connection refused")
+              "not_found" => throw("404 resource not found")
+              _ => throw("Something unexpected happened")
+            }
+
+    # tag::handle-error-types[]
+    - catch:
+        - mutation: |
+            let err = error()
+            root.error = true
+            root.error_type = if $err.contains("timeout") {
+              "TIMEOUT"
+            } else if $err.contains("connection refused") {
+              "CONNECTION_ERROR"
+            } else if $err.contains("404") {
+              "NOT_FOUND"
+            } else {
+              "UNKNOWN"
+            }
+            root.message = $err
+            root.retry_suggested = root.error_type == "TIMEOUT" || root.error_type == "CONNECTION_ERROR"
+    # end::handle-error-types[]
+
+output:
+  stdout: {}

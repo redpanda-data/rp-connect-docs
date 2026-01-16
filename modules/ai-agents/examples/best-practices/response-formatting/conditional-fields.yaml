@@ -1,0 +1,28 @@
+# Test: Include fields conditionally
+# Source: best-practices.adoc - Response formatting section
+# Expected: Omits empty/missing fields using deleted()
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"id": "123", "name": "Alice", "email": "alice@example.com", "phone": "+1234567890"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"id": "456", "name": "Bob", "email": ""}'
+
+pipeline:
+  processors:
+    # tag::conditional-fields[]
+    - mutation: |
+        root.id = this.id
+        root.name = this.name
+        root.email = if this.exists("email") && this.email != "" { this.email } else { deleted() }
+        root.phone = if this.exists("phone") { this.phone } else { deleted() }
+    # end::conditional-fields[]
+
+output:
+  stdout: {}

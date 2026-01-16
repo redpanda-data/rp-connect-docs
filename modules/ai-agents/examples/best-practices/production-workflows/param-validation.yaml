@@ -1,0 +1,44 @@
+# Test: Parameter validation patterns
+# Validates: Required field checking and type coercion
+
+label: validate-user-params
+
+# tag::param-validation[]
+processors:
+  - label: validate_params
+    mutation: |
+      # Validate required parameters
+      root = if !this.exists("user_id") {
+        throw("user_id parameter is required")
+      } else { this }
+
+      # Type coercion with validation
+      meta user_id = this.user_id.string()
+      meta limit = this.limit.number().catch(10)
+      meta start_date = this.start_date.parse_timestamp("2006-01-02").catch(now() - duration("24h"))
+# end::param-validation[]
+
+  - mutation: |
+      root = {
+        "user_id": @user_id,
+        "limit": @limit,
+        "validated": true
+      }
+
+meta:
+  mcp:
+    enabled: true
+    description: "Validate and coerce user parameters"
+    properties:
+      - name: user_id
+        type: string
+        description: "User ID (required)"
+        required: true
+      - name: limit
+        type: number
+        description: "Result limit (defaults to 10)"
+        required: false
+      - name: start_date
+        type: string
+        description: "Start date in YYYY-MM-DD format"
+        required: false

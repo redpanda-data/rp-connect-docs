@@ -1,36 +1,24 @@
-= Redpanda Connect MCP Server Quickstart
-:description: Learn how to expose your Redpanda Connect configurations as AI-consumable tools using the Model Context Protocol (MCP).
+= MCP Server Quickstart
+:description: Expose Redpanda Connect components as AI-consumable tools using the Model Context Protocol (MCP).
+:page-topic-type: tutorial
+:personas: ai_agent_developer, streaming_developer, evaluator
+// Reader journey: "I want to try it now"
+// Learning objectives - what readers will achieve by completing this quickstart:
+:learning-objective-1: Initialize an MCP server project using the Redpanda CLI
+:learning-objective-2: Create a tool with MCP metadata
+:learning-objective-3: Connect the server to Claude Code and invoke the tool
 
-This quickstart builds a local MCP server that exposes Redpanda Connect configurations as tools that AI assistants can use. It creates a tool that searches Bluesky posts, then asks Claude Code to perform the search using natural language:
+This quickstart builds a local MCP server that exposes Redpanda Connect components as tools that AI agents can use. It creates a tool that searches Bluesky posts, then asks Claude Code to perform the search using natural language:
 
 > Find recent posts on Bluesky mentioning Redpanda.
 
-== What you'll learn
+By completing this quickstart, you will be able to:
 
-By completing this quickstart, you'll understand:
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
 
-* How MCP enables AI assistants to discover and use your tools.
-* How to structure Redpanda Connect configurations as MCP tools.
-* How to run a local MCP server and connect it to Claude Code.
-* How AI agents orchestrate your tools through natural language.
-
-== How MCP works
-
-The Model Context Protocol (MCP) makes your tools AI-consumable by exposing them with structured metadata:
-
-* **MCP Server**: A local HTTP service that hosts your Redpanda Connect configurations as discoverable tools
-* **Tools**: Individual Redpanda Connect configurations (processors, inputs, outputs, caches) exposed through the server
-* **Metadata**: Structured descriptions of what each tool does, what inputs it needs, and what outputs it returns
-* **Client**: An AI assistant (like Claude Code) that discovers your tools and calls them based on user requests
-
-When you ask Claude to "search Bluesky for Redpanda news," Claude:
-
-. Discovers your `search-bluesky-posts` tool through the MCP server
-. Understands it needs a `query` parameter
-. Calls your tool with the appropriate query
-. Returns the results in natural language
-
-This enables natural-language automation for internal workflows using your own business logic.
+TIP: For background on how MCP tools work and when to use each component type, see xref:ai-agents:mcp-server/concepts.adoc[].
 
 == Prerequisites
 
@@ -87,7 +75,7 @@ If you need to upgrade, see xref:install:rpk.adoc#upgrade[Upgrade Redpanda Conne
 
 == Create a tool definition
 
-In this step, you'll create a Redpanda Connect configuration that searches public link:https://bsky.app/[Bluesky^] posts using a customizable query. You'll define this configuration as a tool that Claude can discover and use.
+In this step, you'll create an MCP tool that searches public link:https://bsky.app/[Bluesky^] posts using a customizable query. You'll define this configuration as a tool that Claude can discover and use.
 
 Save the following YAML to a file named `bluesky.yaml` and save it in the `resources/processors/` directory:
 
@@ -126,9 +114,9 @@ meta:
 This example defines a tool that searches public Bluesky posts based on a query string. Important parts of the configuration include:
 
 <1> A unique label for identification. Claude uses this label to discover and call the tool.
-<2> A series of processors to build the HTTP request, handle the response, and format the output.
+<2> A series of xref:ai-agents:mcp-server/concepts.adoc#component-selection[processors] to build the HTTP request, handle the response, and format the output.
 <3> A unique tag (`bluesky`) to control exposure. You can use tags to group related tools or isolate experiments.
-<4> A clear description for LLMs helps Claude understand what the tool does.
+<4> A clear description for LLMs helps Claude understand what the tool does. For more details, see xref:ai-agents:mcp-server/create-tool.adoc#anatomy[Anatomy of an MCP tool].
 <5> Structured properties for inputs like `query` and `limit`.
 
 == Start the MCP server
@@ -256,7 +244,7 @@ claude Search Bluesky for the latest news about Redpanda Data
 │   Search public Bluesky posts based on a query string.
 │ Do you want to proceed?
 │ ❯ 1. Yes
-│   2. Yes, and don't ask again for local:search-bluesky-posts commands in /Users/jakecahill/Documents/my-agent  │
+│   2. Yes, and don't ask again for local:search-bluesky-posts commands in <path>/my-agent  │
 │   3. No, and tell Claude what to do differently (esc)
 ----
 +
@@ -307,104 +295,24 @@ To disconnect or stop the MCP server, press kbd:[Ctrl+C] in the terminal where t
 
 You can also close the terminal window or kill the process using standard OS commands (such as `kill <pid>` on Linux/macOS).
 
-== Summary
-
-You extended Claude's capabilities with a custom tool built from Redpanda Connect components. Claude can now search Bluesky through natural language commands without manual API calls or scripting.
-
-This same pattern works for any workflow you can build with Redpanda Connect: consuming from Kafka topics, transforming data, calling APIs, querying databases, or orchestrating complex data pipelines. Each configuration becomes an AI-consumable tool.
-
 == Troubleshoot
 
-This section covers issues you might encounter when setting up and using the MCP server.
+If you encounter issues during this quickstart:
 
-=== JSON schema errors
+- **Tool not appearing**: Verify `meta.mcp.enabled: true` is set and the tag matches your `--tag` argument.
+- **Connection issues**: Ensure the MCP server is running and listening on the expected port.
+- **JSON schema errors**: Upgrade to at least version 4.66.1 of Redpanda Connect.
 
-This error indicates you're using an outdated version of Redpanda Connect with an incompatible JSON schema format:
-
-[source,json]
-----
-{
-  "type": "error",
-  "error": {
-    "type": "invalid_request_error",
-    "message": "tools.17.custom.input_schema: JSON schema is invalid. It must match JSON Schema draft 2020-12 (https://json-schema.org/draft/2020-12). Learn more about tool use at https://docs.claude.com/en/docs/tool-use."
-  },
-  "request_id": "req_011CTWPsqnC26DJVUhxnQnn6"
-}
-----
-
-
-*Solution*: Upgrade to at least version 4.66.1 of Redpanda Connect.
-
-[source,bash]
-----
-rpk connect --version
-----
-
-If you need to upgrade, see xref:install:rpk.adoc#upgrade[Upgrade Redpanda Connect].
-
-=== Tool not found or not exposed
-
-If Claude Code doesn't show your tool in the tools list, or shows "No tools available":
-
-. Ensure your YAML files are in the correct directory structure. The expected structure is:
-+
-- Processors: `resources/processors/`
-- Inputs: `resources/inputs/`
-- Outputs: `resources/outputs/`
-- Caches: `resources/caches/`
-
-. Verify MCP metadata:
-+
-- Confirm your tool has the `meta.mcp.enabled: true` property
-- Check that the `meta.tags` array includes the tag you specified when starting the server
-+
-.Example correct structure
-[source,yaml]
-----
-label: my-tool
-# ... processor configuration ...
-meta:
-  tags: [ bluesky ]  # Must match --tag argument
-  mcp:
-    enabled: true    # Required for exposure
-    description: Tool description
-----
-
-=== Connection issues
-
-If Claude Code can't connect to your MCP server:
-
-- Server not running:
-+
-** Verify the MCP server is still running in your terminal.
-** Check that you see the "Registering processor tool" log messages.
-** Ensure the server is listening on the expected address (`localhost:4195` by default).
-
-- If port 4195 is already in use, specify a different port:
-+
-[source,bash]
-----
-rpk connect mcp-server --address localhost:4196 --tag bluesky
-----
-+
-Then update your `mcp-remote` connection:
-+
-[source,bash]
-----
-claude mcp add local -- npx mcp-remote http://localhost:4196/sse
-----
+For detailed solutions, see xref:ai-agents:mcp-server/troubleshooting.adoc[].
 
 == Next steps
 
-Now that you understand how MCP works with Redpanda Connect, you can create custom tools for your specific workflows:
+You've built a working MCP tool and connected it to Claude Code. Here's where to go next:
 
-* **Data pipeline orchestration**: Build tools that consume from Kafka topics, transform data, and write to destinations.
-* **API integrations**: Create tools that call internal APIs, third-party services, or webhooks.
-* **Database operations**: Add tools for querying, inserting, or updating data using natural language.
-* **Monitoring and observability**: Expose tools that check system health, query metrics, or analyze logs.
-* **Multi-step workflows**: Combine multiple tools with different tags to handle complex operations.
-* **Advanced patterns**: See xref:ai-agents:mcp-server/developer-guide.adoc[] to learn advanced patterns for building MCP tools.
-* **Component reference**: View the xref:components:about.adoc[full catalog of Redpanda Connect components] you can use to build tools.
+* xref:ai-agents:mcp-server/concepts.adoc[]: Understand how MCP tools differ from pipelines
+* xref:ai-agents:mcp-server/create-tool.adoc[]: Build production-quality tools with validation
+* xref:ai-agents:mcp-server/best-practices.adoc[]: Apply naming and design guidelines
+* xref:ai-agents:mcp-server/tool-patterns.adoc[]: Find reusable patterns
+* xref:ai-agents:mcp-server/troubleshooting.adoc[]: Diagnose common issues
 
 

@@ -1,0 +1,47 @@
+# Test: Dynamic configuration based on input
+# Validates: Environment-based branching and conditional logic
+
+label: dynamic-order-query
+
+# tag::dynamic-config[]
+processors:
+  - label: dynamic_config
+    mutation: |
+      # Choose data source based on environment
+      meta env = this.environment | "production"
+      meta table_name = match @env {
+        "dev" => "dev_orders",
+        "staging" => "staging_orders",
+        "production" => "prod_orders",
+        _ => "dev_orders"
+      }
+
+      # Adjust query complexity based on urgency
+      meta columns = if this.detailed.bool().catch(false) {
+        ["order_id", "customer_id", "total", "items", "shipping_address"]
+      } else {
+        ["order_id", "customer_id", "total"]
+      }
+# end::dynamic-config[]
+
+  - mutation: |
+      root = {
+        "environment": @env,
+        "table": @table_name,
+        "columns": @columns,
+        "config_applied": true
+      }
+
+meta:
+  mcp:
+    enabled: true
+    description: "Configure query dynamically based on environment"
+    properties:
+      - name: environment
+        type: string
+        description: "Environment: dev, staging, or production"
+        required: false
+      - name: detailed
+        type: boolean
+        description: "Include detailed columns"
+        required: false

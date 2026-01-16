@@ -1,0 +1,34 @@
+# Test: HTTP timeout configuration
+# Validates: Proper timeout, retry, and retry_period settings
+
+label: fetch-with-timeout
+
+processors:
+  # tag::timeout-config[]
+  - label: fetch_with_timeout
+    try:
+      - http:
+          url: "https://httpbin.org/get"
+          verb: GET
+          timeout: "10s"  # Fail after 10 seconds
+          retries: 2      # Retry twice before failing
+          retry_period: "1s"
+  # end::timeout-config[]
+
+  - label: handle_timeout_errors
+    catch:
+      - mutation: |
+          root = {
+            "error": "Request timed out",
+            "details": error()
+          }
+
+meta:
+  mcp:
+    enabled: true
+    description: "Fetch data with timeout and retry configuration"
+    properties:
+      - name: endpoint
+        type: string
+        description: "API endpoint to fetch"
+        required: false

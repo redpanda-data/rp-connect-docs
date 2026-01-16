@@ -1,0 +1,40 @@
+# Test: Validate numeric ranges
+# Source: best-practices.adoc - Input validation section
+# Expected: quantity < 1 or > 100 returns error, valid passes through
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"quantity": 50}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"quantity": 0}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"quantity": 150}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {}'
+
+pipeline:
+  processors:
+    # tag::validate-numeric-ranges[]
+    - mutation: |
+        let quantity = this.quantity.or(0).number()
+        root = if $quantity < 1 {
+          {"error": true, "message": "quantity must be at least 1", "received": $quantity}
+        } else if $quantity > 100 {
+          {"error": true, "message": "quantity cannot exceed 100", "received": $quantity}
+        } else {
+          this
+        }
+    # end::validate-numeric-ranges[]
+
+output:
+  stdout: {}

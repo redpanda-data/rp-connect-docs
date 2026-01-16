@@ -1,0 +1,98 @@
+// =============================================================================
+// PARTIAL: troubleshooting-connection.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/troubleshooting.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/troubleshooting.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/troubleshooting/troubleshooting-connection.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/troubleshooting/troubleshooting-connection.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches troubleshooting steps for Cloud vs self-managed
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+=== MCP client can't connect to server
+
+ifdef::env-cloud[]
+If your MCP client can't connect to your Remote MCP server:
+
+. Verify authentication:
++
+--
+* Run `rpk cloud login` to refresh your authentication token.
+* Tokens expire after 1 hour.
+--
+
+. Check the MCP proxy configuration:
++
+--
+* Verify the cluster ID and MCP server ID are correct.
+* Run `rpk cloud mcp proxy --help` to see available options.
+--
+
+. Verify the MCP server is running:
++
+--
+* Check the server status in the Cloud Console.
+* Review the *Logs* tab for startup errors.
+--
+endif::[]
+
+ifndef::env-cloud[]
+If your MCP client can't connect to your local MCP server:
+
+. Verify the server is running:
++
+--
+* Check that the MCP server process is still running in your terminal.
+* Look for "Registering processor tool" log messages at startup.
+* Confirm the server is listening on the expected address (default: `localhost:4195`).
+--
+
+. Check for port conflicts:
++
+--
+If port 4195 is already in use, specify a different port:
+
+[source,bash]
+----
+rpk connect mcp-server --address localhost:4196 --tag my-tag
+----
+
+Then update your `mcp-remote` connection:
+
+[source,bash]
+----
+claude mcp add local -- npx mcp-remote http://localhost:4196/sse
+----
+--
+
+. Verify the SSE endpoint:
++
+--
+* The MCP client connects to `/sse` endpoint (for example, `http://localhost:4195/sse`).
+* Test the endpoint directly: `curl http://localhost:4195/sse`
+--
+endif::[]
+
+=== Connection drops or times out
+
+If connections are unstable:
+
+. Check network connectivity between the client and server.
+
+. Verify no firewall rules are blocking the connection.
+
+ifdef::env-cloud[]
+. Check if the MCP server is being restarted due to resource limits. Consider scaling up resources.
+endif::[]
+
+ifndef::env-cloud[]
+. Ensure the MCP server process isn't being killed by the OS (check system logs).
+endif::[]

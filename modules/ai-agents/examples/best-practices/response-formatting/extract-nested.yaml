@@ -1,0 +1,32 @@
+# Test: Extract nested fields
+# Source: best-practices.adoc - Response formatting section
+# Expected: Flattens deeply nested structure
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {
+        "data": {
+          "user": {
+            "id": 12345,
+            "profile": {"display_name": "Alice"},
+            "contact": {"email": "alice@example.com"},
+            "status": {"verified": true}
+          }
+        }
+      }
+
+pipeline:
+  processors:
+    # tag::extract-nested[]
+    - mutation: |
+        root.user_id = this.data.user.id.string()
+        root.display_name = this.data.user.profile.display_name
+        root.email = this.data.user.contact.email
+        root.is_verified = this.data.user.status.verified.bool()
+    # end::extract-nested[]
+
+output:
+  stdout: {}

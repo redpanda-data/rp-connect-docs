@@ -5,6 +5,9 @@ site:
   robots: disallow
 urls:
   html_extension_style: indexify
+runtime:
+  log:
+    failure_level: error
 content:
   sources:
   - url: .
@@ -35,9 +38,9 @@ asciidoc:
   - '@redpanda-data/docs-extensions-and-macros/macros/badge'
 antora:
   extensions:
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/generate-rp-connect-info'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/generate-rp-connect-categories'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/collect-bloblang-samples'
-  - require: '@redpanda-data/docs-extensions-and-macros/extensions/generate-rp-connect-info'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/unpublish-pages'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/unlisted-pages'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/add-global-attributes'

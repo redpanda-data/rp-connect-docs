@@ -1,0 +1,30 @@
+# Test: Transform arrays
+# Source: best-practices.adoc - Response formatting section
+# Expected: Maps array items to new structure with count
+
+input:
+  generate:
+    count: 1
+    interval: ""
+    mapping: |
+      root = {
+        "items": [
+          {"id": "prod_1", "name": "Widget", "price": "19.99", "category": "tools"},
+          {"id": "prod_2", "name": "Gadget", "price": "29.99", "category": "electronics"}
+        ]
+      }
+
+pipeline:
+  processors:
+    # tag::transform-arrays[]
+    - mutation: |
+        root.total_items = this.items.length()
+        root.items = this.items.map_each(item -> {
+          "id": item.id,
+          "name": item.name,
+          "price": item.price.number()
+        })
+    # end::transform-arrays[]
+
+output:
+  stdout: {}

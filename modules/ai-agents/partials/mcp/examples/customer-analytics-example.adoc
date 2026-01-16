@@ -1,0 +1,61 @@
+// =============================================================================
+// PARTIAL: customer-analytics-example.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   (currently unused - available for future use)
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/examples/customer-analytics-example.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/examples/customer-analytics-example.adoc[]
+//
+// ATTRIBUTES USED:
+//   - env-cloud: Switches secrets syntax for Cloud vs environment variables
+//
+// DEPENDENCIES:
+//   None
+// =============================================================================
+
+== Example: Customer analytics tool
+
+Here's how you might expose a customer analytics pipeline as an MCP tool:
+
+[source,yaml]
+----
+label: analyze_customer_orders
+processors:
+  - label: fetch_customer_data
+    sql_select:
+      driver: "postgres"
+ifdef::env-cloud[]
+      dsn: "${secrets.POSTGRES_DSN}"
+endif::[]
+ifndef::env-cloud[]
+      dsn: "${POSTGRES_DSN}"
+endif::[]
+      table: "orders"
+      where: "customer_id = ? AND created_at >= NOW() - INTERVAL '30 days'"
+      args_mapping: 'root = [this.customer_id]'
+
+  - label: calculate_metrics
+    mutation: |
+      root = {
+        "customer_id": this.0.customer_id,
+        "total_orders": this.length(),
+        "total_spent": this.map_each(o -> o.total).sum(),
+        "avg_order_value": this.map_each(o -> o.total).mean(),
+        "last_order_date": this.map_each(o -> o.created_at).max()
+      }
+
+meta:
+  mcp:
+    enabled: true
+    description: "Analyze a customer's order history and spending patterns over the last 30 days"
+    properties:
+      - name: customer_id
+        type: string
+        description: "Customer ID to analyze"
+        required: true
+----
+
+This tool can be invoked by an AI agent with prompts like "analyze the order history for customer ID 12345" without needing to know the underlying SQL or processing logic.

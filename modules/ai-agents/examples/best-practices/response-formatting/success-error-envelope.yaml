@@ -1,0 +1,45 @@
+# Test: Wrap in success/error structure
+# Source: best-practices.adoc - Response formatting section
+# Expected: Consistent envelope with success boolean and timestamp
+
+input:
+  sequence:
+    inputs:
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"id": "123", "name": "Alice"}'
+      - generate:
+          count: 1
+          interval: ""
+          mapping: 'root = {"trigger_error": true}'
+
+pipeline:
+  processors:
+    - try:
+        - mutation: |
+            root = if this.exists("trigger_error") {
+              throw("Simulated error for testing")
+            } else {
+              this
+            }
+
+        # tag::success-envelope[]
+        # Success response
+        - mutation: |
+            root.success = true
+            root.data = this
+            root.timestamp = now().ts_format("2006-01-02T15:04:05Z07:00")
+        # end::success-envelope[]
+
+    - catch:
+        # tag::error-envelope[]
+        # Error response (in catch block)
+        - mutation: |
+            root.success = false
+            root.error = {"message": error(), "code": "PROCESSING_ERROR"}
+            root.timestamp = now().ts_format("2006-01-02T15:04:05Z07:00")
+        # end::error-envelope[]
+
+output:
+  stdout: {}

@@ -1,0 +1,29 @@
+// =============================================================================
+// PARTIAL: label-naming-rules.adoc
+// =============================================================================
+//
+// INCLUDED BY:
+//   - rp-connect-docs: modules/ai-agents/pages/mcp-server/create-tool.adoc
+//   - cloud-docs: modules/ai-agents/pages/mcp/remote/create-tool.adoc
+//
+// INCLUDE SYNTAX:
+//   Connect: include::ai-agents:partial$mcp/create-tool/label-naming-rules.adoc[]
+//   Cloud:   include::redpanda-connect:ai-agents:partial$mcp/create-tool/label-naming-rules.adoc[]
+//
+// ATTRIBUTES USED:
+//   None
+//
+// DEPENDENCIES:
+//   None
+//
+// VALIDATION SOURCE:
+//   Tested with rpk connect mcp-server lint (v4.66.1+) on 2025-01-11
+// =============================================================================
+
+The `label` field (tool name) must follow these rules:
+
+* Lowercase letters, numbers, underscores, and hyphens only (`a-z`, `0-9`, `_`, `-`)
+* Cannot start with an underscore
+* No spaces or special characters
+
+Valid examples: `get-weather`, `lookup_customer`, `send-notification-v2`
