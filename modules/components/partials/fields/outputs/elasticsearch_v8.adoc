@@ -30,13 +30,15 @@ A password to authenticate with.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
+include::redpanda-connect:components:partial$secret_warning.adoc[]
+
 *Type*: `string`
 
 *Default*: `""`
 
 === `basic_auth.username`
 
-The username to use for authentication.
+A username to authenticate as.
 
 *Type*: `string`
 
@@ -44,8 +46,7 @@ The username to use for authentication.
 
 === `batching`
 
-
-Allows you to configure a xref:configuration:batching.adoc[batching policy].
+Configure a xref:configuration:batching.adoc[batching policy].
 
 *Type*: `object`
 

@@ -4,12 +4,8 @@ metrics:
     use_histogram_timing: false
     histogram_buckets: []
     summary_quantiles_objectives:
-      - error: 0.05
-        quantile: 0.5
-      - error: 0.01
-        quantile: 0.9
-      - error: 0.001
-        quantile: 0.99
+      quantile: 0
+      error: 0
     add_process_metrics: false
     add_go_metrics: false
     push_url: "" # No default (optional)

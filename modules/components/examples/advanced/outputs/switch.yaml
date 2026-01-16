@@ -3,4 +3,7 @@ outputs:
   switch:
     retry_until_success: false
     strict_mode: false
-    cases: [] # No default (required)
+    cases:
+      check: ""
+      output: "" # No default (required)
+      continue: false

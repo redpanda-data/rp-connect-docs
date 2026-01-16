@@ -4,9 +4,9 @@
 
 === `action`
 
-The action to take on the document. This field must resolve to one of the following action types: `index`, `update`, `delete`, `create` or `upsert`. See the `Updating Documents` example for more on how the `update` action works and the `Create Documents` and `Upserting Documents` examples for how to use the `create` and `upsert` actions respectively.
+The action to perform on each document. This field must resolve to one of the following action types: `index`, `update`, `delete`, `create` or `upsert`. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+For more information on how the `update` action works, see <<updating-documents>>. For examples of how to use the `create` and `upsert` actions, see <<create-documents>> and <<upserting-documents>> respectively.
 
 *Type*: `string`
 
@@ -30,6 +30,8 @@ A password to authenticate with.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
+include::redpanda-connect:components:partial$secret_warning.adoc[]
+
 *Type*: `string`
 
 *Default*: `""`
@@ -44,8 +46,7 @@ A username to authenticate as.
 
 === `batching`
 
-
-Allows you to configure a xref:configuration:batching.adoc[batching policy].
+Configure a xref:configuration:batching.adoc[batching policy].
 
 *Type*: `object`
 
@@ -73,7 +74,7 @@ batching:
 
 === `batching.byte_size`
 
-An amount of bytes at which the batch should be flushed. If `0` disables size based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 *Type*: `int`
 
@@ -81,7 +82,7 @@ An amount of bytes at which the batch should be flushed. If `0` disables size ba
 
 === `batching.check`
 
-A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.
+A xref:guides:bloblang/about.adoc[Bloblang query] that returns a boolean value indicating whether a message should end a batch.
 
 *Type*: `string`
 
@@ -95,7 +96,7 @@ check: this.type == "end_of_transaction"
 
 === `batching.count`
 
-A number of messages at which the batch should be flushed. If `0` disables count based batching.
+The number of messages after which the batch is flushed. Set to `0` to disable count-based batching.
 
 *Type*: `int`
 
@@ -103,7 +104,7 @@ A number of messages at which the batch should be flushed. If `0` disables count
 
 === `batching.period`
 
-A period in which an incomplete batch should be flushed regardless of its size.
+The period of time after which an incomplete batch is flushed regardless of its size. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`.
 
 *Type*: `string`
 
@@ -125,7 +126,7 @@ period: 500ms
 
 === `batching.processors[]`
 
-A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
+A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, and therefore splitting the batch into smaller batches using these processors is a no-op.
 
 *Type*: `processor`
 
@@ -154,7 +155,7 @@ processors:
 
 === `id`
 
-The ID for indexed messages. Interpolation should be used in order to create a unique ID for each message.
+Define the ID for indexed messages. Use xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] to dynamically create a unique ID for each message.
 
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
@@ -168,9 +169,7 @@ id: ${!counter()}-${!timestamp_unix()}
 
 === `index`
 
-The index to place messages.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The Elasticsearch index where messages are published. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -184,9 +183,7 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `pipeline`
 
-An optional pipeline id to preprocess incoming documents.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+Specify the ID of a pipeline to preprocess incoming documents before they are published (optional). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -194,7 +191,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 === `retry_on_conflict`
 
-Specify how many times should an update operation be retried when a conflict occurs
+The number of times to retry an update operation when a version conflict occurs.
 
 *Type*: `int`
 
@@ -202,9 +199,7 @@ Specify how many times should an update operation be retried when a conflict occ
 
 === `routing`
 
-The routing key to use for the document.
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+The routing key to use for the document. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -212,13 +207,22 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 === `tls`
 
-Custom TLS settings can be used to override system defaults.
+Configure Transport Layer Security (TLS) settings to secure network connections. This includes options for standard TLS as well as mutual TLS (mTLS) authentication where both client and server authenticate each other using certificates. Key configuration options include `enabled` to enable TLS, `client_certs` for mTLS authentication, `root_cas`/`root_cas_file` for custom certificate authorities, and `skip_cert_verify` for development environments.
 
 *Type*: `object`
 
 === `tls.client_certs[]`
 
-A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
+A list of client certificates for mutual TLS (mTLS) authentication. Configure this field to enable mTLS, authenticating the client to the server with these certificates.
+
+You must set `tls.enabled: true` for the client certificates to take effect.
+
+**Certificate pairing rules**: For each certificate item, provide either:
+
+- Inline PEM data using both `cert` *and* `key` or
+- File paths using both `cert_file` *and* `key_file`.
+
+Mixing inline and file-based values within the same item is not supported.
 
 *Type*: `object`
 
@@ -311,7 +315,7 @@ endif::[]
 
 === `tls.enabled`
 
-Whether custom TLS settings are enabled.
+Whether to enable TLS for secure connections. Set to `true` to enable TLS encryption. Required to be `true` for other TLS options (like `client_certs`, `root_cas`, etc.) to take effect.
 
 *Type*: `bool`
 
@@ -319,7 +323,7 @@ Whether custom TLS settings are enabled.
 
 === `tls.root_cas`
 
-An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
+Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -338,7 +342,7 @@ root_cas: |-
 
 === `tls.root_cas_file`
 
-An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
+Specify the path to a root certificate authority file (optional). This is a file, often with a `.pem` extension, which contains a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for file-based certificate loading or `root_cas` for inline certificate data.
 
 *Type*: `string`
 
@@ -352,7 +356,7 @@ root_cas_file: ./root_cas.pem
 
 === `tls.skip_cert_verify`
 
-Whether to skip server side certificate verification.
+Whether to skip server-side certificate verification. Set to `true` only for testing environments as this reduces security by disabling certificate validation. When using self-signed certificates or in development, this may be necessary, but should never be used in production. Consider using `root_cas` or `root_cas_file` to specify trusted certificates instead of disabling verification entirely.
 
 *Type*: `bool`
 
@@ -360,7 +364,7 @@ Whether to skip server side certificate verification.
 
 === `urls[]`
 
-A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.
+A list of URLs to connect to. This output attempts to connect to each URL in the list, in order, until a successful connection is established. If an item in the list contains commas, it is split into multiple URLs.
 
 *Type*: `array`
 
