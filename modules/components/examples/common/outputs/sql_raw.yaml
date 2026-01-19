@@ -5,9 +5,7 @@ outputs:
     dsn: "" # No default (required)
     query: "" # No default (optional)
     args_mapping: "" # No default (optional)
-    queries:
-      query: "" # No default (required)
-      args_mapping: "" # No default (optional)
+    queries: [] # No default (optional)
     max_in_flight: 64
     batching:
       count: 0

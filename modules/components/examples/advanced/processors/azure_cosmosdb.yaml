@@ -8,10 +8,7 @@ processors:
     container: "" # No default (required)
     partition_keys_map: "" # No default (required)
     operation: Create
-    patch_operations:
-      operation: Add
-      path: "" # No default (required)
-      value_map: "" # No default (optional)
+    patch_operations: [] # No default (optional)
     patch_condition: "" # No default (optional)
     auto_id: true
     item_id: "" # No default (optional)
