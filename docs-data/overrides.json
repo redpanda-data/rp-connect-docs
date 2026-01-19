@@ -121,7 +121,7 @@
       "description": "The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
     },
     "instance_id": {
-      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
+      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group\u2019s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
     },
     "jwt": {
       "description": "BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services."
@@ -3595,7 +3595,8 @@
             ]
           }
         ]
-      }
+      },
+      "version": "4.77.0"
     },
     {
       "name": "file",
