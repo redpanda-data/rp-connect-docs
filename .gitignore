@@ -3,3 +3,9 @@ node_modules
 docs
 *.DS_Store
 .env
+
+# Temporary files from connector doc generation
+docs-data/connect-info-*.csv
+docs-data/._*-clean.json
+docs-data/._*-augmented.json.tmp
+docs-data/*-augmented.json.tmp

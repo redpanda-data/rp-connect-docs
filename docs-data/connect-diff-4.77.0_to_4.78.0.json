@@ -1,13 +1,13 @@
 {
   "comparison": {
-    "oldVersion": "4.76.0",
-    "newVersion": "4.76.1",
-    "timestamp": "2026-01-05T17:20:31.826Z"
+    "oldVersion": "4.77.0",
+    "newVersion": "4.78.0",
+    "timestamp": "2026-01-19T13:55:40.596Z"
   },
   "summary": {
     "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 0,
+    "newFields": 1,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
@@ -16,7 +16,13 @@
   "details": {
     "newComponents": [],
     "removedComponents": [],
-    "newFields": [],
+    "newFields": [
+      {
+        "component": "inputs:http_server",
+        "field": "tcp",
+        "description": "TCP listener configuration for the HTTP server. Only valid with a custom `address`."
+      }
+    ],
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
@@ -24,25 +30,16 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.76.1",
-      "cloud": "4.76.1",
-      "cgo": "4.76.1"
+      "oss": "4.78.0",
+      "cloud": "4.78.0",
+      "cgo": "4.78.0"
     },
     "current": {
-      "cloudSupported": 471,
-      "selfHostedOnly": 74,
+      "cloudSupported": 475,
+      "selfHostedOnly": 75,
       "cgoOnly": 4
     },
-    "changes": {
-      "cloud": {
-        "added": [],
-        "removed": []
-      },
-      "cgo": {
-        "newCgoOnly": [],
-        "removedCgoOnly": []
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -382,6 +379,16 @@
         },
         {
           "type": "inputs",
+          "name": "otlp_grpc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "otlp_http",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
           "name": "pg_stream",
           "status": "deprecated"
         },
@@ -658,6 +665,16 @@
         {
           "type": "outputs",
           "name": "opensearch",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "otlp_grpc",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "otlp_http",
           "status": "stable"
         },
         {
@@ -2559,6 +2576,11 @@
         },
         {
           "type": "outputs",
+          "name": "elasticsearch_v9",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
           "name": "file",
           "status": "stable"
         },
@@ -2771,6 +2793,13 @@
           "type": "bloblang-functions",
           "name": "hostname",
           "status": "stable"
+        }
+      ],
+      "cloudOnly": [
+        {
+          "type": "processors",
+          "name": "a2a_message",
+          "status": "beta"
         }
       ],
       "cgoOnly": [

@@ -1,13 +1,13 @@
 outputs:
   label: ""
-  splunk_hec:
-    url: "" # No default (required)
-    token: "" # No default (required)
-    gzip: false
-    event_host: "" # No default (optional)
-    event_source: "" # No default (optional)
-    event_sourcetype: "" # No default (optional)
-    event_index: "" # No default (optional)
+  elasticsearch_v9:
+    urls: [] # No default (required)
+    index: "" # No default (required)
+    action: "" # No default (required)
+    id: "" # No default (required)
+    pipeline: ""
+    routing: ""
+    retry_on_conflict: 0
     tls:
       enabled: false
       skip_cert_verify: false
@@ -16,6 +16,10 @@ outputs:
       root_cas_file: ""
       client_certs: []
     max_in_flight: 64
+    basic_auth:
+      enabled: false
+      username: ""
+      password: ""
     batching:
       count: 0
       byte_size: 0

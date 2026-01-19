@@ -14,12 +14,7 @@ outputs:
       enable_renegotiation: false
       root_cas: ""
       root_cas_file: ""
-      client_certs:
-        cert: ""
-        key: ""
-        cert_file: ""
-        key_file: ""
-        password: ""
+      client_certs: []
     address: "" # No default (required)
     username: "" # No default (optional)
     password: "" # No default (optional)

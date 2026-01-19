@@ -60,6 +60,39 @@
     "default_schema_id": {
       "description": "This schema ID is used when a message's schema header cannot be read (`ErrBadHeader`). If this value is not set, schema header errors are returned.\n\nThis configuration does not work with protobuf schemas.\n\nTIP: You can also use the xref:guides:bloblang/functions.adoc#with_schema_registry_header[`with_schema_registry_header`] bloblang function to add a schema ID to messages."
     },
+    "elastic_id": {
+      "description": "Define the ID for indexed messages. Use xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] to dynamically create a unique ID for each message.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+    },
+    "elastic_pipeline": {
+      "description": "Specify the ID of a pipeline to preprocess incoming documents before they are published (optional). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+    },
+    "elastic_routing": {
+      "description": "The routing key to use for the document. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+    },
+    "elastic_urls": {
+      "description": "A list of URLs to connect to. This output attempts to connect to each URL in the list, in order, until a successful connection is established. If an item in the list contains commas, it is split into multiple URLs."
+    },
+    "elasticsearch_basic_auth": {
+      "description": "Allows you to specify basic authentication."
+    },
+    "elasticsearch_basic_auth_enabled": {
+      "description": "Whether to use basic authentication in requests."
+    },
+    "elasticsearch_basic_auth_password": {
+      "description": "A password to authenticate with.\n\ninclude::redpanda-connect:components:partial$secret_warning.adoc[]"
+    },
+    "elasticsearch_basic_auth_username": {
+      "description": "A username to authenticate as."
+    },
+    "elasticsearch_index": {
+      "description": "The Elasticsearch index where messages are published. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+    },
+    "elasticsearch_max_in_flight": {
+      "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput."
+    },
+    "elasticsearch_retry_on_conflict": {
+      "description": "The number of times to retry an update operation when a version conflict occurs."
+    },
     "enable_renegotiation": {
       "description": "Whether to allow the remote server to request renegotiation. Enable this option if you're seeing the error message `local error: \ntls: no renegotiation`."
     },
@@ -88,7 +121,7 @@
       "description": "The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
     },
     "instance_id": {
-      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
+      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group\u2019s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
     },
     "jwt": {
       "description": "BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services."
@@ -3355,11 +3388,11 @@
           {
             "name": "urls",
             "type": "array",
-            "description": "A list of URLs to connect to. This output attempts to connect to each URL in the list, in order, until a successful connection is established. If an item in the list contains commas, it is split into multiple URLs."
+            "$ref": "#/definitions/elastic_urls"
           },
           {
             "name": "index",
-            "description": "The Elasticsearch index where messages are published. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+            "$ref": "#/definitions/elasticsearch_index"
           },
           {
             "name": "action",
@@ -3367,22 +3400,27 @@
           },
           {
             "name": "id",
-            "description": "Define the ID for indexed messages. Use xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] to dynamically create a unique ID for each message."
+            "$ref": "#/definitions/elastic_id"
           },
           {
             "name": "pipeline",
-            "description": "Specify the ID of a pipeline to preprocess incoming documents before they are published (optional). This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+            "$ref": "#/definitions/elastic_pipeline"
           },
           {
             "name": "routing",
-            "description": "The routing key to use for the document. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+            "$ref": "#/definitions/elastic_routing"
           },
           {
             "name": "retry_on_conflict",
-            "description": "The number of times to retry an update operation when a version conflict occurs."
+            "$ref": "#/definitions/elasticsearch_retry_on_conflict"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/elasticsearch_max_in_flight"
           },
           {
             "name": "tls",
+            "$ref": "#/definitions/tls",
             "children": [
               {
                 "name": "enabled",
@@ -3404,20 +3442,29 @@
                 "name": "client_certs",
                 "$ref": "#/definitions/client_certs"
               }
-            ],
-            "$ref": "#/definitions/tls"
+            ]
           },
           {
             "name": "basic_auth",
+            "$ref": "#/definitions/elasticsearch_basic_auth",
             "children": [
               {
+                "name": "enabled",
+                "$ref": "#/definitions/elasticsearch_basic_auth_enabled"
+              },
+              {
                 "name": "username",
-                "description": "The username to use for authentication."
+                "$ref": "#/definitions/elasticsearch_basic_auth_username"
+              },
+              {
+                "name": "password",
+                "$ref": "#/definitions/elasticsearch_basic_auth_password"
               }
             ]
           },
           {
             "name": "batching",
+            "$ref": "#/definitions/batching",
             "children": [
               {
                 "name": "count",
@@ -3439,6 +3486,117 @@
           }
         ]
       }
+    },
+    {
+      "name": "elasticsearch_v9",
+      "config": {
+        "children": [
+          {
+            "name": "action",
+            "description": "The action to perform on each document. This field must resolve to one of the following action types: `index`, `update`, `delete`, `create` or `upsert`. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].\n\nFor more information on how the `update` action works, see <<updating-documents>>. For examples of how to use the `create` and `upsert` actions, see <<create-documents>> and <<upserting-documents>> respectively."
+          },
+          {
+            "name": "urls",
+            "type": "array",
+            "$ref": "#/definitions/elastic_urls"
+          },
+          {
+            "name": "index",
+            "$ref": "#/definitions/elasticsearch_index"
+          },
+          {
+            "name": "id",
+            "$ref": "#/definitions/elastic_id"
+          },
+          {
+            "name": "routing",
+            "$ref": "#/definitions/elastic_routing"
+          },
+          {
+            "name": "pipeline",
+            "$ref": "#/definitions/elastic_pipeline"
+          },
+          {
+            "name": "retry_on_conflict",
+            "$ref": "#/definitions/elasticsearch_retry_on_conflict"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/elasticsearch_max_in_flight"
+          },
+          {
+            "name": "batching",
+            "$ref": "#/definitions/batching",
+            "children": [
+              {
+                "name": "count",
+                "$ref": "#/definitions/count"
+              },
+              {
+                "name": "byte_size",
+                "$ref": "#/definitions/byte_size"
+              },
+              {
+                "name": "period",
+                "$ref": "#/definitions/period"
+              },
+              {
+                "name": "check",
+                "$ref": "#/definitions/check"
+              },
+              {
+                "name": "processors",
+                "$ref": "#/definitions/processors"
+              }
+            ]
+          },
+          {
+            "name": "basic_auth",
+            "$ref": "#/definitions/elasticsearch_basic_auth",
+            "children": [
+              {
+                "name": "enabled",
+                "$ref": "#/definitions/elasticsearch_basic_auth_enabled"
+              },
+              {
+                "name": "username",
+                "$ref": "#/definitions/elasticsearch_basic_auth_username"
+              },
+              {
+                "name": "password",
+                "$ref": "#/definitions/elasticsearch_basic_auth_password"
+              }
+            ]
+          },
+          {
+            "name": "tls",
+            "$ref": "#/definitions/tls",
+            "children": [
+              {
+                "name": "enabled",
+                "$ref": "#/definitions/tls_enabled"
+              },
+              {
+                "name": "skip_cert_verify",
+                "$ref": "#/definitions/skip_cert_verify"
+              },
+              {
+                "name": "root_cas",
+                "$ref": "#/definitions/root_cas"
+              },
+              {
+                "name": "root_cas_file",
+                "$ref": "#/definitions/root_cas_file"
+              },
+              {
+                "name": "client_certs",
+                "$ref": "#/definitions/client_certs"
+              }
+            ]
+          }
+        ]
+      },
+      "version": "4.77.0"
     },
     {
       "name": "file",
