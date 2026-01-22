@@ -55,7 +55,7 @@ This input supports OTLP/HTTP on the default port 4318. It accepts both:
 * `application/x-protobuf` - OTLP protobuf format
 * `application/json` - OTLP JSON format
 
-== Output Format
+== Output format
 
 Each OTLP export request is unbatched into individual messages:
 
@@ -77,7 +77,7 @@ You can access these metadata fields using xref:configuration:interpolation.adoc
 
 When `auth_token` is configured, clients must include the token in the HTTP Authorization header.
 
-=== Go Client Example
+=== Go client example
 
 [source,go]
 ----
@@ -94,7 +94,7 @@ exporter, err := otlptracehttp.New(ctx,
 )
 ----
 
-=== cURL Example
+=== cURL example
 
 [source,bash]
 ----
@@ -104,14 +104,14 @@ curl -X POST http://localhost:4318/v1/traces \
   --data-binary @traces.pb
 ----
 
-=== Environment Variable
+=== Environment variable
 
 [source,bash]
 ----
 export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer your-token-here"
 ----
 
-== Rate Limiting
+== Rate limiting
 
 An optional rate limit resource can be specified to throttle incoming requests. When the rate limit is breached, requests will receive a 429 (Too Many Requests) response.
 

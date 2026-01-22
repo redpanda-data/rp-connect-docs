@@ -40,7 +40,7 @@ include::components:example$advanced/outputs/otlp_http.yaml[]
 --
 ======
 
-== Input Format
+== Input format
 
 Expects messages in Redpanda OTEL v1 protobuf format with metadata:
 
@@ -56,7 +56,7 @@ The output automatically appends the signal type path to the base endpoint:
 * Logs: `{endpoint}/v1/logs`
 * Metrics: `{endpoint}/v1/metrics`
 
-== Content Types
+== Content types
 
 Supports two content types:
 

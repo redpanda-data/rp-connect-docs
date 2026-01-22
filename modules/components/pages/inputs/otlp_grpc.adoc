@@ -44,7 +44,7 @@ include::components:example$advanced/inputs/otlp_grpc.yaml[]
 
 This input supports OTLP/gRPC on the default port 4317 using the standard OTLP protobuf format for all signal types (traces, logs, metrics).
 
-== Output Format
+== Output format
 
 Each OTLP export request is unbatched into individual messages:
 
@@ -66,7 +66,7 @@ You can access these metadata fields using xref:configuration:interpolation.adoc
 
 When `auth_token` is configured, clients must include the token in the gRPC metadata.
 
-=== Go Client Example
+=== Go client example
 
 [source,go]
 ----
@@ -83,14 +83,14 @@ exporter, err := otlptracegrpc.New(ctx,
 )
 ----
 
-=== Environment Variable
+=== Environment variable
 
 [source,bash]
 ----
 export OTEL_EXPORTER_OTLP_HEADERS="authorization=Bearer your-token-here"
 ----
 
-== Rate Limiting
+== Rate limiting
 
 An optional rate limit resource can be specified to throttle incoming requests. When the rate limit is breached, requests will receive a ResourceExhausted gRPC status code.
 
