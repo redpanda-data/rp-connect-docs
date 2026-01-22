@@ -1,6 +1,11 @@
 processors:
   label: ""
   parquet_encode:
-    schema: [] # No default (optional)
+    schema:
+      name: "" # No default (required)
+      type: "" # No default (optional)
+      repeated: false
+      optional: false
+      fields: [] # No default (optional)
     schema_metadata: ""
     default_compression: uncompressed

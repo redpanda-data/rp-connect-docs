@@ -10,7 +10,12 @@ outputs:
       enable_renegotiation: false
       root_cas: ""
       root_cas_file: ""
-      client_certs: []
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
     key: "" # No default (required)
     max_in_flight: 64
     batching:

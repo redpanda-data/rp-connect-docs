@@ -9,7 +9,16 @@ processors:
     temperature: "" # No default (optional)
     save_prompt_metadata: false
     history: "" # No default (optional)
-    tools: []
+    tools:
+      name: "" # No default (required)
+      description: "" # No default (required)
+      parameters:
+        required: []
+        properties:
+          type: "" # No default (required)
+          description: "" # No default (required)
+          enum: []
+      processors: [] # No default (optional)
     runner:
       context_size: "" # No default (optional)
       batch_size: "" # No default (optional)

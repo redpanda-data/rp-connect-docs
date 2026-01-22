@@ -21,7 +21,12 @@ inputs:
       enable_renegotiation: false
       root_cas: ""
       root_cas_file: ""
-      client_certs: []
+      client_certs:
+        cert: ""
+        key: ""
+        cert_file: ""
+        key_file: ""
+        password: ""
     aws:
       enabled: false
       region: "" # No default (optional)
@@ -31,7 +36,9 @@ inputs:
       token: "" # No default (optional)
       role: "" # No default (optional)
       role_external_id: "" # No default (optional)
-      roles: [] # No default (optional)
+      roles:
+        role: ""
+        role_external_id: ""
     auto_replay_nacks: true
     batching:
       count: 0
