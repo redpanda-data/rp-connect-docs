@@ -2,21 +2,23 @@ name: Update RPCN Connector Docs
 
 on:
   workflow_dispatch:
-  repository_dispatch:  # Allows other repositories to trigger this workflow
+  repository_dispatch:
     types: [generate-rpcn-docs]
 
 jobs:
   generate-docs-and-submit-pull-request:
     runs-on: ubuntu-latest
+    timeout-minutes: 30  # Prevent runaway workflows
 
     permissions:
       id-token: write
       contents: read
+      issues: write  # For creating failure notification issues
 
-    # Allow concurrent runs
+    # Prevent concurrent runs to avoid conflicts on the same branch
     concurrency:
       group: update-rpcn-connector-docs
-      cancel-in-progress: false
+      cancel-in-progress: true  # Cancel in-progress runs when a new one starts
 
     env:
       NODE_VERSION: '24'
@@ -24,11 +26,14 @@ jobs:
       AUTO_BRANCH: auto-docs/update-rpcn-connector-docs
 
     steps:
-      - uses: aws-actions/configure-aws-credentials@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ vars.RP_AWS_CRED_REGION }}
           role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
-      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
+
+      - name: Retrieve GitHub bot token from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
             ,sdlc/prod/github/actions_bot_token
@@ -38,40 +43,79 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ env.ACTIONS_BOT_TOKEN }}
-          fetch-depth: 0  # Full history for rebasing
+          fetch-depth: 100  # Sufficient history for rebasing
 
-      - name: Check for existing PR branch and set up workspace
-        id: setup
+      - name: Set up git identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Check for existing PR branch and set up workspace
+        id: setup
+        run: |
+          set -e  # Exit on error
+
           # Check if the auto-docs branch exists on remote
-          if git ls-remote --heads origin $AUTO_BRANCH | grep -q "$AUTO_BRANCH"; then
+          if git ls-remote --heads origin "$AUTO_BRANCH" | grep -q "$AUTO_BRANCH"; then
             echo "branch_exists=true" >> "$GITHUB_OUTPUT"
-            echo "Found existing branch $AUTO_BRANCH"
+            echo "✓ Found existing branch $AUTO_BRANCH"
 
             # Fetch and checkout the existing branch
-            git fetch origin $AUTO_BRANCH
-            git checkout $AUTO_BRANCH
+            git fetch origin "$AUTO_BRANCH"
+            git checkout "$AUTO_BRANCH"
 
-            # Rebase on main to get latest changes
+            # Attempt to rebase on main to get latest changes
+            echo "Attempting to rebase on main..."
             if git rebase origin/main; then
               echo "rebase_success=true" >> "$GITHUB_OUTPUT"
-              echo "Successfully rebased on main"
+              echo "✓ Successfully rebased on main"
             else
               echo "rebase_success=false" >> "$GITHUB_OUTPUT"
-              echo "Rebase failed - will handle conflicts"
+              echo "✗ Rebase failed - conflicts detected"
               git rebase --abort
-              # Stay on the branch but note we couldn't rebase
+
+              # Try merge as fallback
+              echo "Attempting merge as fallback..."
+              if git merge origin/main -m "Merge main into $AUTO_BRANCH"; then
+                echo "✓ Successfully merged main"
+              else
+                echo "✗ Merge also failed - branch has unresolvable conflicts"
+                echo "::error::Cannot update branch $AUTO_BRANCH due to conflicts. Manual intervention required."
+
+                # Save conflict details for issue creation
+                {
+                  echo "failure_type=merge_conflict"
+                  echo "failure_message<<EOF"
+                  echo "## Merge Conflict Detected"
+                  echo ""
+                  echo "The automated doc update workflow cannot merge \`main\` into \`$AUTO_BRANCH\` due to conflicts."
+                  echo ""
+                  echo "### Conflicting Files"
+                  echo "\`\`\`"
+                  git diff --name-only --diff-filter=U 2>/dev/null || echo "Unable to determine conflicting files"
+                  echo "\`\`\`"
+                  echo ""
+                  echo "### Required Action"
+                  echo "1. Checkout the \`$AUTO_BRANCH\` branch"
+                  echo "2. Manually merge or rebase with \`main\`"
+                  echo "3. Resolve conflicts"
+                  echo "4. Re-run this workflow"
+                  echo "EOF"
+                } >> "$GITHUB_OUTPUT"
+
+                exit 1
+              fi
             fi
 
             # Check for manual commits (commits not from the bot)
-            MANUAL_COMMITS=$(git log origin/main..$AUTO_BRANCH --author="^(?!github-actions).*" --perl-regexp --oneline | head -20)
+            # Use grep to filter out bot commits instead of complex regex
+            MANUAL_COMMITS=$(git log origin/main.."$AUTO_BRANCH" --format="%h %an: %s" | grep -v "github-actions\[bot\]" || true)
+
             if [ -n "$MANUAL_COMMITS" ]; then
               echo "has_manual_commits=true" >> "$GITHUB_OUTPUT"
-              echo "Found manual commits:"
+              echo "⚠️  Found manual commits:"
               echo "$MANUAL_COMMITS"
+
               # Save the list for the PR body
               {
                 echo "manual_commits<<EOF"
@@ -80,54 +124,116 @@ jobs:
               } >> "$GITHUB_OUTPUT"
             else
               echo "has_manual_commits=false" >> "$GITHUB_OUTPUT"
+              echo "✓ No manual commits detected"
             fi
           else
             echo "branch_exists=false" >> "$GITHUB_OUTPUT"
             echo "has_manual_commits=false" >> "$GITHUB_OUTPUT"
             echo "rebase_success=true" >> "$GITHUB_OUTPUT"
-            echo "Branch $AUTO_BRANCH does not exist, will create new"
+            echo "✓ Branch $AUTO_BRANCH does not exist, will create new"
 
             # Create new branch from main
-            git checkout -b $AUTO_BRANCH
+            git checkout -b "$AUTO_BRANCH"
           fi
 
-      - name: Set up Node.js (with npm cache)
-        uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Wait for registry update
-        run: sleep 500
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install tools
+      - name: Install npm dependencies
         run: |
+          npm ci  # Use ci for deterministic installs in CI
+          echo "✓ npm dependencies installed"
+
+      - name: Cache rpk connect components
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.rpk
+            ~/.cache/rpk
+          key: rpk-connect-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            rpk-connect-${{ runner.os }}-
+
+      - name: Install documentation tools
+        run: |
+          set -e
+          echo "Installing doc-tools test dependencies..."
           npx --no-install doc-tools install-test-dependencies
+
+          echo "Installing rpk connect..."
           rpk connect install
+
+          echo "✓ All tools installed successfully"
+
+      - name: Wait for npm registry propagation
+        run: |
+          # FIXME: This wait is required for npm registry propagation after package publish
+          # Consider implementing polling/retry logic in doc-tools instead of fixed wait
+          # See: [link to relevant issue/doc]
+
+          WAIT_TIME=300  # Reduced from 500s to 5 minutes
+          echo "⏳ Waiting ${WAIT_TIME}s for registry propagation..."
+          echo "::notice::Sleeping for registry sync - consider implementing retry logic"
+          sleep $WAIT_TIME
+          echo "✓ Wait complete"
 
       - name: Generate RPCN Connector docs
         id: generate
         run: |
-          npx --no-install doc-tools generate rpcn-connector-docs \
-            --fetch-connectors \
-            --overrides $DOCS_OVERRIDES \
-            --draft-missing \
-            --update-whats-new > full_output.txt
+          set -e
 
-          # Extract PR summary (between <!-- PR_SUMMARY_START --> and <!-- PR_SUMMARY_END -->)
+          echo "Starting RPCN connector docs generation..."
+          if ! npx --no-install doc-tools generate rpcn-connector-docs \
+            --fetch-connectors \
+            --overrides "$DOCS_OVERRIDES" \
+            --draft-missing \
+            --update-whats-new > full_output.txt 2>&1; then
+
+            echo "::error::Doc generation failed"
+            cat full_output.txt
+
+            # Save failure details for issue creation
+            {
+              echo "failure_type=generation_failed"
+              echo "failure_message<<EOF"
+              echo "## Documentation Generation Failed"
+              echo ""
+              echo "The \`doc-tools generate rpcn-connector-docs\` command failed during execution."
+              echo ""
+              echo "### Error Output"
+              echo "\`\`\`"
+              tail -50 full_output.txt 2>/dev/null || echo "Unable to read output"
+              echo "\`\`\`"
+              echo ""
+              echo "### Required Action"
+              echo "1. Check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for full details"
+              echo "2. Verify \`doc-tools\` and \`rpk connect\` are properly installed"
+              echo "3. Check if there are issues with the connector data source"
+              echo "4. Review the \`$DOCS_OVERRIDES\` file for syntax errors"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+
+            exit 1
+          fi
+
+          echo "✓ Doc generation completed"
+
+          # Extract PR summary (between markers)
           if grep -q "PR_SUMMARY_START" full_output.txt; then
             sed -n '/<!-- PR_SUMMARY_START -->/,/<!-- PR_SUMMARY_END -->/p' full_output.txt > pr_summary.txt
-            echo "PR summary extracted"
+            echo "✓ PR summary extracted"
           else
-            echo "  No PR summary found in output"
+            echo "ℹ️  No PR summary found in output"
             touch pr_summary.txt
           fi
 
+          # Build the PR body
           {
             echo "delta_report<<EOF"
+
             # Include PR summary at the top if it exists
             if [ -s pr_summary.txt ]; then
               cat pr_summary.txt
@@ -135,7 +241,17 @@ jobs:
               echo "---"
               echo ""
             fi
-            echo "For help reviewing this content, see our [wiki](https://redpandadata.atlassian.net/wiki/spaces/DOC/pages/1247543314/Review+autogenerated+reference+docs+for+Redpanda+Connect)."
+
+            echo "## 📚 Review Guide"
+            echo ""
+            echo "For help reviewing this content, see our [Review Guide](https://redpandadata.atlassian.net/wiki/spaces/DOC/pages/1247543314/Review+autogenerated+reference+docs+for+Redpanda+Connect)."
+            echo ""
+            echo "## 🤖 Generation Details"
+            echo ""
+            echo "- **Workflow Run:** [\`${{ github.run_id }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            echo "- **Triggered By:** \`${{ github.event_name }}\`"
+            echo "- **Generated At:** \`$(date -u +'%Y-%m-%d %H:%M:%S UTC')\`"
+            echo "- **Node Version:** \`${{ env.NODE_VERSION }}\`"
             echo ""
             echo "<details><summary>📋 Full Generation Output</summary>"
             echo ""
@@ -147,94 +263,137 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-          rm -f full_output.txt pr_summary.txt
-
       - name: Check for changes
-        id: changes
+        id: check_changes
         run: |
-          if git diff --quiet && git diff --staged --quiet; then
+          if git diff --quiet && git diff --cached --quiet; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
             echo "No changes detected"
           else
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
-            echo "Changes detected:"
-            git status --short
-          fi
+            echo "✓ Changes detected"
 
-      - name: Commit and push changes
-        if: steps.changes.outputs.has_changes == 'true'
-        id: commit
-        run: |
-          git add -A
-
-          # Create commit message with timestamp for tracking
-          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
-          git commit -m "docs: Update RPCN connector docs
-
-          Auto-generated at $TIMESTAMP"
-
-          # Push to the branch
-          if git push origin $AUTO_BRANCH --force-with-lease; then
-            echo "push_success=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "push_success=false" >> "$GITHUB_OUTPUT"
-            echo "Push failed - likely a concurrent update. Will retry."
-
-            # Fetch latest and try to rebase our commit
-            git fetch origin $AUTO_BRANCH
-            if git rebase origin/$AUTO_BRANCH; then
-              git push origin $AUTO_BRANCH --force-with-lease
-              echo "push_success=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "push_success=false" >> "$GITHUB_OUTPUT"
-              git rebase --abort
-            fi
+            # Show summary of changes
+            echo "Changed files:"
+            git diff --name-status
           fi
 
       - name: Create or Update Pull Request
-        if: steps.changes.outputs.has_changes == 'true' && steps.commit.outputs.push_success == 'true'
+        if: steps.check_changes.outputs.has_changes == 'true'
+        id: create_pr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ env.ACTIONS_BOT_TOKEN }}
           base: main
           branch: ${{ env.AUTO_BRANCH }}
           title: 'auto-docs: Update RPCN connector docs'
-          commit-message: 'docs: Update RPCN connector docs'
+          commit-message: |
+            docs: Update RPCN connector docs
+
+            Auto-generated by workflow run ${{ github.run_id }}
           body: |
             ${{ steps.generate.outputs.delta_report }}
 
-            ${{ steps.setup.outputs.has_manual_commits == 'true' && format('
+            ${{ steps.setup.outputs.has_manual_commits == 'true' && format('---\n\n## Manual Commits Detected\n\nThis PR contains manual commits that have been preserved:\n\n```\n{0}\n```\n\n**Note:** The automation has added new changes on top of these manual edits. Please review carefully to ensure nothing was overwritten.\n', steps.setup.outputs.manual_commits) || '' }}
+
             ---
 
-            ⚠️ **This PR contains manual commits that have been preserved:**
-
-            ```
-            {0}
-            ```
-
-            The automation has added new changes on top of these manual edits.
-            ', steps.setup.outputs.manual_commits) || '' }}
-          labels: auto-docs
-          # Don't delete branch on merge - let the normal PR process handle it
+            _This PR was automatically generated. Please review the changes and merge when ready._
+          labels: |
+            auto-docs
+            documentation
+          assignees: ${{ github.event.client_payload.assignees || '' }}
           delete-branch: false
 
-      - name: Handle no changes
-        if: steps.changes.outputs.has_changes == 'false'
+      - name: PR Result
+        if: always()
         run: |
-          echo "No documentation changes detected. This could mean:"
-          echo "- The connector docs are already up to date"
-          echo "- The generation produced identical output"
-          echo ""
-          if [ "${{ steps.setup.outputs.branch_exists }}" == "true" ]; then
-            echo "Existing PR branch preserved with any manual changes intact."
+          if [ "${{ steps.check_changes.outputs.has_changes }}" != "true" ]; then
+            echo "No changes detected - PR not created/updated"
+            echo "Branch is up to date with generated docs"
+          elif [ "${{ steps.create_pr.outputs.pull-request-number }}" != "" ]; then
+            echo "✓ PR #${{ steps.create_pr.outputs.pull-request-number }} created/updated successfully"
+            echo "PR URL: ${{ steps.create_pr.outputs.pull-request-url }}"
+            echo "::notice title=PR Created::PR #${{ steps.create_pr.outputs.pull-request-number }} - ${{ steps.create_pr.outputs.pull-request-url }}"
+          else
+            echo "No PR created - branch may be up to date with main"
           fi
 
-      - name: Handle push failure
-        if: steps.changes.outputs.has_changes == 'true' && steps.commit.outputs.push_success == 'false'
+      - name: Create failure notification issue
+        if: failure()
+        id: create_issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ env.ACTIONS_BOT_TOKEN }}
+          script: |
+            const failureType = '${{ steps.setup.outputs.failure_type || steps.generate.outputs.failure_type || 'unknown' }}';
+            const failureMessage = `${{ steps.setup.outputs.failure_message || steps.generate.outputs.failure_message || '' }}`.trim();
+
+            // Default message if no specific failure was captured
+            let issueBody = failureMessage || `## Workflow Failure
+
+            The automated RPCN connector docs update workflow failed.
+
+            ### Details
+            - **Workflow Run:** [\`${{ github.run_id }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - **Branch:** \`${{ env.AUTO_BRANCH }}\`
+            - **Triggered By:** \`${{ github.event_name }}\`
+            - **Failed At:** \`${new Date().toISOString()}\`
+
+            ### Required Action
+            Check the workflow logs for details and resolve the issue manually.`;
+
+            // Add common footer
+            issueBody += `
+
+            ---
+
+            _This issue was automatically created by the [Update RPCN Connector Docs workflow](${{ github.server_url }}/${{ github.repository }}/actions/workflows/update-rpcn-connector-docs.yml)._`;
+
+            // Check if there's already an open issue for this workflow
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'auto-docs-failure',
+              per_page: 1
+            });
+
+            let issueNumber;
+
+            if (existingIssues.data.length > 0) {
+              // Update existing issue
+              issueNumber = existingIssues.data[0].number;
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: `## 🔄 Workflow Failed Again\n\n${issueBody}`
+              });
+              console.log(`Updated existing issue #${issueNumber}`);
+            } else {
+              // Create new issue
+              const issue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `Auto-docs workflow failure: ${failureType.replace('_', ' ')}`,
+                body: issueBody,
+                labels: ['auto-docs-failure', 'bug', 'documentation']
+              });
+              issueNumber = issue.data.number;
+              console.log(`Created new issue #${issueNumber}`);
+            }
+
+            // Set output for later steps
+            core.setOutput('issue_number', issueNumber);
+
+      - name: Notify on failure
+        if: failure()
         run: |
-          echo "::error::Failed to push changes after retry. This usually means:"
-          echo "- Another automation run is in progress"
-          echo "- There are unresolvable conflicts"
-          echo ""
-          echo "Manual intervention may be required."
-          exit 1
+          if [ -n "${{ steps.create_issue.outputs.issue_number }}" ]; then
+            echo "::error::Workflow failed - Issue #${{ steps.create_issue.outputs.issue_number }} created/updated"
+            echo "Issue: ${{ github.server_url }}/${{ github.repository }}/issues/${{ steps.create_issue.outputs.issue_number }}"
+          else
+            echo "::error::Workflow failed - check logs for details"
+          fi
+          echo "Branch: ${{ env.AUTO_BRANCH }}"
