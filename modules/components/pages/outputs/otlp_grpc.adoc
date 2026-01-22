@@ -1,0 +1,64 @@
+= otlp_grpc
+// tag::single-source[]
+:type: output
+:status: stable
+:categories: [Services]
+:description: Send OpenTelemetry traces, logs, and metrics via OTLP/gRPC protocol.
+
+component_type_dropdown::[]
+
+Send OpenTelemetry traces, logs, and metrics via OTLP/gRPC protocol.
+
+ifndef::env-cloud[]
+Introduced in version 4.78.0.
+endif::[]
+
+
+Sends OpenTelemetry telemetry data to a remote collector via OTLP/gRPC protocol.
+
+Accepts batches of Redpanda OTEL v1 protobuf messages (spans, log records, or metrics) and converts them to OTLP format for transmission to OpenTelemetry collectors.
+
+## Input Format
+
+Expects messages in Redpanda OTEL v1 protobuf format with metadata:
+- `signal_type`: "trace", "log", or "metric"
+
+Each batch must contain messages of the same signal type.
+The entire batch is converted to a single OTLP export request and sent via gRPC.
+
+## Authentication
+
+Supports multiple authentication methods:
+- Bearer token authentication (via auth_token field)
+- OAuth v2 (via oauth2 configuration block)
+
+Note: OAuth2 requires TLS to be enabled.
+
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/outputs/otlp_grpc.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/otlp_grpc.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/outputs/otlp_grpc.adoc[]
+
+
+
+// end::single-source[]

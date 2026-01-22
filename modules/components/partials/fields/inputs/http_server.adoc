@@ -23,7 +23,7 @@ endif::[]
 *Default*:
 [source,yaml]
 ----
-- POST
+- "POST"
 ----
 
 === `cert_file`
@@ -100,7 +100,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 *Default*:
 [source,yaml]
 ----
-Content-Type: application/octet-stream
+Content-Type: "application/octet-stream"
 ----
 
 === `sync_response.metadata_headers`
@@ -173,6 +173,28 @@ status: ${! json("status") }
 
 status: ${! meta("status") }
 ----
+
+=== `tcp`
+
+TCP listener configuration for the HTTP server. Only valid with a custom `address`.
+
+*Type*: `object`
+
+=== `tcp.reuse_addr`
+
+Enable SO_REUSEADDR, allowing binding to ports in TIME_WAIT state. Useful for graceful restarts and config reloads where the server needs to rebind to the same port immediately after shutdown.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `tcp.reuse_port`
+
+Enable SO_REUSEPORT, allowing multiple sockets to bind to the same port for load balancing across multiple processes/threads.
+
+*Type*: `bool`
+
+*Default*: `false`
 
 === `timeout`
 

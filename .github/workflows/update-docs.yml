@@ -149,64 +149,26 @@ jobs:
 
           rm -f full_output.txt pr_summary.txt
 
-      - name: Check for changes
-        id: changes
-        run: |
-          if git diff --quiet && git diff --staged --quiet; then
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            echo "No changes detected"
-          else
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-            echo "Changes detected:"
-            git status --short
-          fi
-
-      - name: Commit and push changes
-        if: steps.changes.outputs.has_changes == 'true'
-        id: commit
-        run: |
-          git add -A
-
-          # Create commit message with timestamp for tracking
-          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
-          git commit -m "docs: Update RPCN connector docs
-
-          Auto-generated at $TIMESTAMP"
-
-          # Push to the branch
-          if git push origin $AUTO_BRANCH --force-with-lease; then
-            echo "push_success=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "push_success=false" >> "$GITHUB_OUTPUT"
-            echo "Push failed - likely a concurrent update. Will retry."
-
-            # Fetch latest and try to rebase our commit
-            git fetch origin $AUTO_BRANCH
-            if git rebase origin/$AUTO_BRANCH; then
-              git push origin $AUTO_BRANCH --force-with-lease
-              echo "push_success=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "push_success=false" >> "$GITHUB_OUTPUT"
-              git rebase --abort
-            fi
-          fi
-
       - name: Create or Update Pull Request
-        if: steps.changes.outputs.has_changes == 'true' && steps.commit.outputs.push_success == 'true'
+        if: success()
+        id: create_pr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ env.ACTIONS_BOT_TOKEN }}
           base: main
           branch: ${{ env.AUTO_BRANCH }}
           title: 'auto-docs: Update RPCN connector docs'
-          commit-message: 'docs: Update RPCN connector docs'
+          commit-message: |
+            docs: Update RPCN connector docs
+
+            Auto-generated at ${{ github.run_id }}
           body: |
             ${{ steps.generate.outputs.delta_report }}
 
             ${{ steps.setup.outputs.has_manual_commits == 'true' && format('
             ---
 
-            ⚠️ **This PR contains manual commits that have been preserved:**
+            WARNING: **This PR contains manual commits that have been preserved:**
 
             ```
             {0}
@@ -215,26 +177,14 @@ jobs:
             The automation has added new changes on top of these manual edits.
             ', steps.setup.outputs.manual_commits) || '' }}
           labels: auto-docs
-          # Don't delete branch on merge - let the normal PR process handle it
           delete-branch: false
 
-      - name: Handle no changes
-        if: steps.changes.outputs.has_changes == 'false'
+      - name: PR Result
+        if: always()
         run: |
-          echo "No documentation changes detected. This could mean:"
-          echo "- The connector docs are already up to date"
-          echo "- The generation produced identical output"
-          echo ""
-          if [ "${{ steps.setup.outputs.branch_exists }}" == "true" ]; then
-            echo "Existing PR branch preserved with any manual changes intact."
+          if [ "${{ steps.create_pr.outputs.pull-request-number }}" != "" ]; then
+            echo "Created/Updated PR #${{ steps.create_pr.outputs.pull-request-number }}"
+            echo "PR URL: ${{ steps.create_pr.outputs.pull-request-url }}"
+          else
+            echo "No PR created - no changes detected or branch up to date with main"
           fi
-
-      - name: Handle push failure
-        if: steps.changes.outputs.has_changes == 'true' && steps.commit.outputs.push_success == 'false'
-        run: |
-          echo "::error::Failed to push changes after retry. This usually means:"
-          echo "- Another automation run is in progress"
-          echo "- There are unresolvable conflicts"
-          echo ""
-          echo "Manual intervention may be required."
-          exit 1
