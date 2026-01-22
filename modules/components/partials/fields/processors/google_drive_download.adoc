@@ -19,11 +19,11 @@ Maps Google Drive MIME types to https://developers.google.com/workspace/drive/ap
 *Default*:
 [source,yaml]
 ----
-application/vnd.google-apps.document: text/markdown
-application/vnd.google-apps.drawing: image/png
-application/vnd.google-apps.presentation: application/pdf
-application/vnd.google-apps.script: application/vnd.google-apps.script+json
-application/vnd.google-apps.spreadsheet: text/csv
+application/vnd.google-apps.document: "text/markdown"
+application/vnd.google-apps.drawing: "image/png"
+application/vnd.google-apps.presentation: "application/pdf"
+application/vnd.google-apps.script: "application/vnd.google-apps.script+json"
+application/vnd.google-apps.spreadsheet: "text/csv"
 ----
 
 [source,yaml]
