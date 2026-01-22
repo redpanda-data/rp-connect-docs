@@ -253,11 +253,21 @@ jobs:
             echo "- **Generated At:** \`$(date -u +'%Y-%m-%d %H:%M:%S UTC')\`"
             echo "- **Node Version:** \`${{ env.NODE_VERSION }}\`"
             echo ""
-            echo "<details><summary>📋 Full Generation Output</summary>"
+            echo "<details><summary>📋 Generation Output (last 200 lines)</summary>"
             echo ""
             echo '```'
-            cat full_output.txt
+            # Truncate to last 200 lines to avoid PR body size limits (65536 chars)
+            TOTAL_LINES=$(wc -l < full_output.txt)
+            if [ "$TOTAL_LINES" -gt 200 ]; then
+              echo "... (output truncated, showing last 200 of $TOTAL_LINES lines)"
+              echo ""
+              tail -200 full_output.txt
+            else
+              cat full_output.txt
+            fi
             echo '```'
+            echo ""
+            echo "_Full logs available in [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})_"
             echo ""
             echo "</details>"
             echo "EOF"
@@ -326,8 +336,8 @@ jobs:
         with:
           github-token: ${{ env.ACTIONS_BOT_TOKEN }}
           script: |
-            const failureType = '${{ steps.setup.outputs.failure_type || steps.generate.outputs.failure_type || 'unknown' }}';
-            const failureMessage = `${{ steps.setup.outputs.failure_message || steps.generate.outputs.failure_message || '' }}`.trim();
+            const failureType = ${{ toJSON(steps.setup.outputs.failure_type || steps.generate.outputs.failure_type || 'unknown') }};
+            const failureMessage = ${{ toJSON(steps.setup.outputs.failure_message || steps.generate.outputs.failure_message || '') }}.trim();
 
             // Default message if no specific failure was captured
             let issueBody = failureMessage || `## Workflow Failure
