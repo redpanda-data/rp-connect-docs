@@ -138,7 +138,9 @@ Specifies the circumstances under which a destination table is created.
 
 === `credentials_json`
 
-Sets the  https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google Service Account Credentials JSON^] (optional).
+Sets the https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google Service Account Credentials JSON^] (optional).
+
+WARNING: When using xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions] to populate this field, do not wrap the function in double quotes. For example, use `${secrets.GCP_CREDENTIALS_JSON}` instead of `"${secrets.GCP_CREDENTIALS_JSON}"`. Double quotes cause JSON parsing errors because the credentials already contain JSON content.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
