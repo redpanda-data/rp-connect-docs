@@ -134,6 +134,10 @@ jobs:
 
             # Create new branch from main
             git checkout -b "$AUTO_BRANCH"
+
+            # Push the new branch to remote so it exists for peter-evans/create-pull-request
+            git push -u origin "$AUTO_BRANCH"
+            echo "✓ Pushed new branch to remote"
           fi
 
       - name: Set up Node.js

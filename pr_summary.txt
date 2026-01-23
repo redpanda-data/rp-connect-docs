@@ -1,0 +1,184 @@
+<!-- PR_SUMMARY_START -->
+
+## 📊 Redpanda Connect Documentation Update
+
+**OSS Version:** 4.77.0 → 4.78.0
+**Cloud Version:** 4.78.0
+
+### Summary
+
+- **4** new connectors
+  - 4 need cloud docs ☁️
+- **1** new field across 1 connector
+
+### ✍️ Writer Action Required
+
+For each new connector, add the `:page-commercial-names:` attribute to the frontmatter:
+
+```asciidoc
+= Connector Name
+:type: input
+:page-commercial-names: Commercial Name, Alternative Name
+```
+
+_This helps improve discoverability and ensures proper categorization._
+
+### ☁️ Cloud Docs Update Required
+
+**4** new connectors are available in Redpanda Cloud.
+
+**Action:** Submit a separate PR to https://github.com/redpanda-data/cloud-docs to add the connector pages using include syntax:
+
+**For connectors in pages:**
+```asciidoc
+= Connector Name
+
+include::redpanda-connect:components:page$type/connector-name.adoc[tag=single-source]
+```
+
+**Also update the cloud whats-new file:**
+
+Add entries for the new cloud-supported connectors to the Redpanda Cloud whats-new file in the cloud-docs repository.
+
+### 📝 Newly Drafted - Needs Review
+
+**4** connectors have been auto-generated and placed in the proper location. These drafts need writer review:
+
+**inputs:**
+- `otlp_grpc` ☁️ → `modules/components/pages/inputs/otlp_grpc.adoc`
+- `otlp_http` ☁️ → `modules/components/pages/inputs/otlp_http.adoc`
+
+**outputs:**
+- `otlp_grpc` ☁️ → `modules/components/pages/outputs/otlp_grpc.adoc`
+- `otlp_http` ☁️ → `modules/components/pages/outputs/otlp_http.adoc`
+
+### 📝 Action Items for Writers
+
+- [ ] Document new `otlp_grpc` inputs (☁️ **CLOUD SUPPORTED**)
+- [ ] Document new `otlp_http` inputs (☁️ **CLOUD SUPPORTED**)
+- [ ] Document new `otlp_grpc` outputs (☁️ **CLOUD SUPPORTED**)
+- [ ] Document new `otlp_http` outputs (☁️ **CLOUD SUPPORTED**)
+
+<details>
+<summary><strong>📋 Detailed Changes</strong> (click to expand)</summary>
+
+#### New Connectors
+
+**☁️ Cloud Supported:**
+
+- **otlp_grpc** (inputs, stable)
+  - Exposes an OpenTelemetry Collector gRPC receiver that accepts traces, logs, and metrics via gRPC.   Telemetry data is received in OTLP protobuf format and converted to individual Redpanda OTEL v1 prot...
+- **otlp_http** (inputs, stable)
+  - Exposes an OpenTelemetry Collector HTTP receiver that accepts traces, logs, and metrics via HTTP.   Telemetry data is received in OTLP format (both protobuf and JSON) at standard OTLP endpoints and co...
+- **otlp_grpc** (outputs, stable)
+  - Sends OpenTelemetry telemetry data to a remote collector via OTLP/gRPC protocol.   Accepts batches of Redpanda OTEL v1 protobuf messages (spans, log records, or metrics) and converts them to OTLP form...
+- **otlp_http** (outputs, stable)
+  - Sends OpenTelemetry telemetry data to a remote collector via OTLP/HTTP protocol.   Accepts batches of Redpanda OTEL v1 protobuf messages (spans, log records, or metrics) and converts them to OTLP form...
+
+#### New Fields
+
+**inputs/http_server:**
+- `tcp`
+
+#### 🔍 Cloud Support Gap Analysis
+
+**75 connectors available in OSS but not in cloud:**
+
+**buffers:**
+- sqlite (stable)
+
+**caches:**
+- couchbase (experimental)
+- file (stable)
+
+**inputs:**
+- amqp_1 (stable)
+- beanstalkd (experimental)
+- cassandra (experimental)
+- cockroachdb_changefeed (experimental)
+- csv (stable)
+- discord (experimental)
+- dynamic (stable)
+- file (stable)
+- hdfs (stable)
+- nanomsg (stable)
+- nats_stream (stable)
+- nsq (stable)
+- ockam_kafka (experimental)
+- parquet (experimental)
+- pulsar (experimental)
+- socket (stable)
+- socket_server (stable)
+- stdin (stable)
+- subprocess (beta)
+- twitter_search (experimental)
+- websocket (stable)
+
+**outputs:**
+- amqp_1 (stable)
+- beanstalkd (experimental)
+- cassandra (beta)
+- couchbase (experimental)
+- cypher (experimental)
+- discord (experimental)
+- dynamic (stable)
+- elasticsearch_v9 (stable)
+- file (stable)
+- hdfs (stable)
+- http_server (stable)
+- nanomsg (stable)
+- nats_stream (stable)
+- nsq (stable)
+- ockam_kafka (experimental)
+- pulsar (experimental)
+- pusher (experimental)
+- socket (stable)
+- sql (deprecated)
+- stdout (stable)
+- subprocess (beta)
+- websocket (stable)
+
+**processors:**
+- awk (stable)
+- command (experimental)
+- couchbase (experimental)
+- crash (beta)
+- grok (stable)
+- javascript (experimental)
+- msgpack (beta)
+- ollama_chat (experimental)
+- ollama_embeddings (experimental)
+- ollama_moderation (experimental)
+- parquet (deprecated)
+- protobuf (stable)
+- redpanda_data_transform (experimental)
+- sentry_capture (experimental)
+- sql (deprecated)
+- subprocess (stable)
+- wasm (experimental)
+
+**metrics:**
+- aws_cloudwatch (stable)
+- influxdb (beta)
+- json_api (stable)
+- logger (beta)
+- statsd (stable)
+
+**tracers:**
+- jaeger (stable)
+- open_telemetry_collector (experimental)
+
+**bloblang-functions:**
+- count (deprecated)
+- env (stable)
+- file (stable)
+- file_rel (stable)
+- hostname (stable)
+
+</details>
+
+---
+
+*Generated: 2026-01-22T17:53:18.653Z*
+
+<!-- PR_SUMMARY_END -->

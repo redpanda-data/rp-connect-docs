@@ -1,0 +1,14 @@
+inputs:
+  label: ""
+  otlp_grpc:
+    address: 0.0.0.0:4317
+    tls:
+      enabled: false
+      cert_file: ""
+      key_file: ""
+    auth_token: ""
+    max_recv_msg_size: 4194304
+    rate_limit: ""
+    tcp:
+      reuse_addr: false
+      reuse_port: false
