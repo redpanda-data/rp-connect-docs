@@ -7,10 +7,39 @@ This topic includes new content added from version 4.29.0 onwards.
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
 
-
 == Version 4.78.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.78.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:inputs/otlp_grpc.adoc[otlp_grpc]
+|Inputs
+|stable
+|Exposes an OpenTelemetry Collector gRPC receiver that accepts traces, logs, and metrics via gRPC.
+
+|xref:components:inputs/otlp_http.adoc[otlp_http]
+|Inputs
+|stable
+|Exposes an OpenTelemetry Collector HTTP receiver that accepts traces, logs, and metrics via HTTP.
+
+|xref:components:outputs/otlp_grpc.adoc[otlp_grpc]
+|Outputs
+|stable
+|Sends OpenTelemetry telemetry data to a remote collector via OTLP/gRPC protocol.
+
+|xref:components:outputs/otlp_http.adoc[otlp_http]
+|Outputs
+|stable
+|Sends OpenTelemetry telemetry data to a remote collector via OTLP/HTTP protocol.
+
+|===
 
 
 === New field support
