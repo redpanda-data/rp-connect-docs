@@ -28914,7 +28914,7 @@
             "name": "credentials_json",
             "type": "string",
             "kind": "scalar",
-            "description": "Sets the  https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google Service Account Credentials JSON^] (optional).",
+            "description": "Sets the https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account[Google Service Account Credentials JSON^] (optional).\n\nWARNING: When using xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions] to populate this field, wrap the function in single quotes, not double quotes. For example, use `'${secrets.GCP_CREDENTIALS_JSON}'` instead of `\"${secrets.GCP_CREDENTIALS_JSON}\"`. Double quotes cause JSON parsing errors because the credentials already contain JSON content.",
             "is_secret": true,
             "default": "",
             "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
