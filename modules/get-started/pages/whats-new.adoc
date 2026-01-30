@@ -8,6 +8,68 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.79.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.79.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:inputs/aws_dynamodb_cdc.adoc[aws_dynamodb_cdc]
+|Inputs
+|beta
+|Consumes records from DynamoDB Streams with automatic checkpointing and shard management.
+
+|===
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|encoding
+|Encoding format for messages in the batch. Options: 'protobuf' or 'json'.
+|*Inputs:*
+
+* xref:components:inputs/otlp_grpc.adoc#encoding[otlp_grpc]
+* xref:components:inputs/otlp_http.adoc#encoding[otlp_http]
+
+
+|schema_registry
+|Optional Schema Registry configuration for adding Schema Registry wire format headers to messages.
+|*Inputs:*
+
+* xref:components:inputs/otlp_grpc.adoc#schema_registry[otlp_grpc]
+* xref:components:inputs/otlp_http.adoc#schema_registry[otlp_http]
+
+
+|message_format
+|The format at which to expect incoming messages from the rest of the pipeline in.
+|*Outputs:*
+
+* xref:components:outputs/snowflake_streaming.adoc#message_format[snowflake_streaming]
+
+
+|timestamp_format
+|The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Parse] in Golang.
+|*Outputs:*
+
+* xref:components:outputs/snowflake_streaming.adoc#timestamp_format[snowflake_streaming]
+
+
+|===
+
+
 == Version 4.78.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.78.0[See the full release notes^].

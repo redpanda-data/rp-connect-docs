@@ -1,0 +1,86 @@
+= aws_dynamodb_cdc
+// tag::single-source[]
+:type: input
+:status: beta
+:categories: [Services, AWS]
+:description: Reads change data capture (CDC) events from DynamoDB Streams.
+
+component_type_dropdown::[]
+
+Reads change data capture (CDC) events from DynamoDB Streams.
+
+ifndef::env-cloud[]
+Introduced in version 4.79.0.
+endif::[]
+
+
+Consumes records from DynamoDB Streams with automatic checkpointing and shard management.
+
+DynamoDB Streams capture item-level changes in DynamoDB tables. This input supports:
+
+- Automatic shard discovery and management
+- Checkpoint-based resumption after restarts
+- Concurrent processing of multiple shards
+
+### Prerequisites
+
+The source DynamoDB table must have streams enabled. You can enable streams with one of these view types:
+
+- `KEYS_ONLY` - Only the key attributes of the modified item
+- `NEW_IMAGE` - The entire item as it appears after the modification
+- `OLD_IMAGE` - The entire item as it appeared before the modification
+- `NEW_AND_OLD_IMAGES` - Both the new and old item images
+
+### Checkpointing
+
+Checkpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard.
+
+### Alternative
+
+For better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.
+
+### Metadata
+
+This input adds the following metadata fields to each message:
+
+- `dynamodb_shard_id` - The shard ID from which the record was read
+- `dynamodb_sequence_number` - The sequence number of the record in the stream
+- `dynamodb_event_name` - The type of change: INSERT, MODIFY, or REMOVE
+- `dynamodb_table` - The name of the DynamoDB table
+
+### Metrics
+
+This input emits the following metrics:
+
+- `dynamodb_cdc_shards_tracked` - Total number of shards being tracked (gauge)
+- `dynamodb_cdc_shards_active` - Number of shards currently being read from (gauge)
+
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/inputs/aws_dynamodb_cdc.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/aws_dynamodb_cdc.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/inputs/aws_dynamodb_cdc.adoc[]
+
+include::redpanda-connect:components:partial$examples/inputs/aws_dynamodb_cdc.adoc[]
+
+
+// end::single-source[]
