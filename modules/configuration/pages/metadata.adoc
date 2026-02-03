@@ -24,14 +24,14 @@ pipeline:
 
 You can also use xref:guides:bloblang/about.adoc[Bloblang] to delete individual metadata keys with:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 meta foo = deleted()
 ----
 
 Or do more interesting things like remove all metadata keys with a certain prefix:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 meta = @.filter(kv -> !kv.key.has_prefix("kafka_"))
 ----
@@ -68,6 +68,7 @@ pipeline:
                 this.document.bar,
                 @kafka_topic,
               ]
+              # In:  {"document":{"foo":"value1","bar":"value2"}}
 ----
 
 == Restricting metadata

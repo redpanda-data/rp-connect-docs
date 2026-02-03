@@ -7,7 +7,7 @@
 
 Functions can be placed anywhere and allow you to extract information from your environment, generate values, or access data from the underlying message being mapped:
 
-```coffeescript
+```bloblang
 root.doc.id = uuid_v4()
 root.doc.received_at = now()
 root.doc.host = hostname()
@@ -15,9 +15,11 @@ root.doc.host = hostname()
 
 Functions support both named and nameless style arguments:
 
-```coffeescript
+```bloblang
 root.values_one = range(start: 0, stop: this.max, step: 2)
 root.values_two = range(0, this.max, 2)
+
+# In:  {"max":10}
 ```
 
 == General
@@ -33,18 +35,16 @@ Creates a new byte array of a specified length that is zero-initialized. This fu
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.buffer = bytes(10)
 
 # In:  {}
-# Out: {"buffer":"AAAAAAAAAA=="}
 ```
 
-```coffeescript
+```bloblang
 root.data = bytes(this.size)
 
 # In:  {"size":5}
-# Out: {"data":"AAAAAA=="}
 ```
 
 === `counter`
@@ -64,19 +64,17 @@ Returns a non-negative integer that increments each time it is resolved, yieldin
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.id = counter()
 
 # In:  {}
-# Out: {"id":1}
 
 # In:  {}
-# Out: {"id":2}
 ```
 
 It's possible to increment a counter multiple times within a single mapping invocation using a map.
 
-```coffeescript
+```bloblang
 
 map foos {
   root = counter()
@@ -87,46 +85,36 @@ root.woof_id = null.apply("foos")
 
 
 # In:  {}
-# Out: {"meow_id":1,"woof_id":2}
 
 # In:  {}
-# Out: {"meow_id":3,"woof_id":4}
 ```
 
 By specifying an optional `set` parameter it is possible to dynamically reset the counter based on input data.
 
-```coffeescript
+```bloblang
 root.consecutive_doggos = counter(min: 1, set: if !this.sound.lowercase().contains("woof") { 0 })
 
 # In:  {"sound":"woof woof"}
-# Out: {"consecutive_doggos":1}
 
 # In:  {"sound":"woofer wooooo"}
-# Out: {"consecutive_doggos":2}
 
 # In:  {"sound":"meow"}
-# Out: {"consecutive_doggos":0}
 
 # In:  {"sound":"uuuuh uh uh woof uhhhhhh"}
-# Out: {"consecutive_doggos":1}
 ```
 
 The `set` parameter can also be utilized to peek at the counter without mutating it by returning `null`.
 
-```coffeescript
+```bloblang
 root.things = counter(set: if this.id == null { null })
 
 # In:  {"id":"a"}
-# Out: {"things":1}
 
 # In:  {"id":"b"}
-# Out: {"things":2}
 
 # In:  {"what":"just checking"}
-# Out: {"things":2}
 
 # In:  {"id":"c"}
-# Out: {"things":3}
 ```
 
 === `deleted`
@@ -136,21 +124,19 @@ A function that returns a result indicating that the mapping target should be de
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root = this
 root.bar = deleted()
 
 # In:  {"bar":"bar_value","baz":"baz_value","foo":"foo value"}
-# Out: {"baz":"baz_value","foo":"foo value"}
 ```
 
 Since the result is a value it can be used to do things like remove elements of an array within `map_each`.
 
-```coffeescript
+```bloblang
 root.new_nums = this.nums.map_each(num -> if num < 10 { deleted() } else { num - 10 })
 
 # In:  {"nums":[3,11,4,17]}
-# Out: {"new_nums":[1,7]}
 ```
 
 === `ksuid`
@@ -160,7 +146,7 @@ Generates a new ksuid each time it is invoked and prints a string representation
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.id = ksuid()
 ```
 
@@ -176,19 +162,19 @@ Generates a new nanoid each time it is invoked and prints a string representatio
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.id = nanoid()
 ```
 
 It is possible to specify an optional length parameter.
 
-```coffeescript
+```bloblang
 root.id = nanoid(54)
 ```
 
 It is also possible to specify an optional custom alphabet after the length parameter.
 
-```coffeescript
+```bloblang
 root.id = nanoid(54, "abcde")
 ```
 
@@ -199,18 +185,16 @@ Returns the value of the mathematical constant Pi.
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.radians = this.degrees * (pi() / 180)
 
 # In:  {"degrees":45}
-# Out: {"radians":0.7853981633974483}
 ```
 
-```coffeescript
+```bloblang
 root.degrees = this.radians * (180 / pi())
 
 # In:  {"radians":0.78540}
-# Out: {"degrees":45.00010522957486}
 ```
 
 === `random_int`
@@ -229,7 +213,7 @@ Optional `min` and `max` arguments can be provided in order to only generate num
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.first = random_int()
 root.second = random_int(1)
 root.third = random_int(max:20)
@@ -241,7 +225,7 @@ root.sixth = random_int(seed:timestamp_unix_nano(), max:20)
 
 It is possible to specify a dynamic seed argument, in which case the argument will only be resolved once during the lifetime of the mapping.
 
-```coffeescript
+```bloblang
 root.first = random_int(timestamp_unix_nano())
 ```
 
@@ -258,13 +242,12 @@ The `range` function creates an array of integers following a range between a st
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.a = range(0, 10)
 root.b = range(start: 0, stop: this.max, step: 2) # Using named params
 root.c = range(0, -this.max, -2)
 
 # In:  {"max":10}
-# Out: {"a":[0,1,2,3,4,5,6,7,8,9],"b":[0,2,4,6,8],"c":[0,-2,-4,-6,-8]}
 ```
 
 === `snowflake_id`
@@ -278,13 +261,13 @@ Generate a new snowflake ID each time it is invoked and prints a string represen
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.id = snowflake_id()
 ```
 
 It is possible to specify the node_id.
 
-```coffeescript
+```bloblang
 root.id = snowflake_id(2)
 ```
 
@@ -299,7 +282,7 @@ Throws an error similar to a regular mapping error. This is useful for abandonin
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.doc.type = match {
   this.exists("header.id") => "foo"
   this.exists("body.data") => "bar"
@@ -308,10 +291,8 @@ root.doc.type = match {
 root.doc.contents = (this.body.content | this.thing.body)
 
 # In:  {"header":{"id":"first"},"thing":{"body":"hello world"}}
-# Out: {"doc":{"contents":"hello world","type":"foo"}}
 
 # In:  {"nothing":"matches"}
-# Out: Error("failed assignment (line 1): unknown type")
 ```
 
 === `ulid`
@@ -332,19 +313,19 @@ Generate a random ULID.
 
 Using the defaults of Crockford Base32 encoding and secure random source
 
-```coffeescript
+```bloblang
 root.id = ulid()
 ```
 
 ULIDs can be hex-encoded too.
 
-```coffeescript
+```bloblang
 root.id = ulid("hex")
 ```
 
 They can be generated using a fast, but unsafe, random source for use cases that are not security-sensitive.
 
-```coffeescript
+```bloblang
 root.id = ulid("crockford", "fast_random")
 ```
 
@@ -355,7 +336,7 @@ Generates a new RFC-4122 UUID each time it is invoked and prints a string repres
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.id = uuid_v4()
 ```
 
@@ -369,13 +350,13 @@ Generates a new time-ordered UUID each time it is invoked and prints a string re
 
 ==== Examples
 
-```coffeescript
+```bloblang
 root.id = uuid_v7()
 ```
 
 You can also specify the timestamp for the `uuid_v7`.
 
-```coffeescript
+```bloblang
 root.id = uuid_v7(now().ts_sub_iso8601("PT1M"))
 ```
 
@@ -390,12 +371,14 @@ Prepends a 5-byte Schema Registry header to a message. The header consists of a 
 
 ==== Examples
 
-```coffeescript
+```bloblang
+# Skip: true
 # Add header with schema ID 123
 root = with_schema_registry_header(123, content())
 ```
 
-```coffeescript
+```bloblang
+# Skip: true
 # Add header with schema ID from metadata
 root = with_schema_registry_header(meta("schema_id").number(), content())
 ```
@@ -409,7 +392,7 @@ Returns the index of the mapped message within a batch. This is useful for apply
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root = if batch_index() > 0 { deleted() }
 ```
 
@@ -420,7 +403,7 @@ Returns the size of the message batch.
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.foo = batch_size()
 ```
 
@@ -431,11 +414,10 @@ Returns the full raw contents of the mapping target message as a byte array. Whe
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.doc = content().string()
 
 # In:  {"foo":"bar"}
-# Out: {"doc":"{\"foo\":\"bar\"}"}
 ```
 
 === `error`
@@ -445,7 +427,7 @@ If an error occurs during the processing of a message, this function returns the
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.doc.error = error()
 ```
 
@@ -455,7 +437,7 @@ Returns the label of the component that raised the error during the processing o
 
 ==== Examples
 
-```coffeescript
+```bloblang
 root.doc.error_source_label = error_source_label()
 ```
 
@@ -465,7 +447,7 @@ Returns the name of the component that raised the error during the processing of
 
 ==== Examples
 
-```coffeescript
+```bloblang
 root.doc.error_source_name = error_source_name()
 ```
 
@@ -475,7 +457,7 @@ Returns the path of the component that raised the error during the processing of
 
 ==== Examples
 
-```coffeescript
+```bloblang
 root.doc.error_source_path = error_source_path()
 ```
 
@@ -486,7 +468,7 @@ Returns a boolean value indicating whether an error has occurred during the proc
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.doc.status = if errored() { 400 } else { 200 }
 ```
 
@@ -501,20 +483,18 @@ Returns the value of a field within a JSON message located by a [dot path][field
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.mapped = json("foo.bar")
 
 # In:  {"foo":{"bar":"hello world"}}
-# Out: {"mapped":"hello world"}
 ```
 
 The path argument is optional and if omitted the entire JSON payload is returned.
 
-```coffeescript
+```bloblang
 root.doc = json()
 
 # In:  {"foo":{"bar":"hello world"}}
-# Out: {"doc":{"foo":{"bar":"hello world"}}}
 ```
 
 === `metadata`
@@ -528,13 +508,13 @@ Returns the value of a metadata key from the input message, or `null` if the key
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.topic = metadata("kafka_topic")
 ```
 
 The key parameter is optional and if omitted the entire metadata contents are returned as an object.
 
-```coffeescript
+```bloblang
 root.all_metadata = metadata()
 ```
 
@@ -549,7 +529,7 @@ Provides the message trace id. The returned value will be zeroed if the message 
 ==== Examples
 
 
-```coffeescript
+```bloblang
 meta trace_id = tracing_id()
 ```
 
@@ -564,11 +544,10 @@ Provides the message tracing span xref:components:tracers/about.adoc[(created vi
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.headers.traceparent = tracing_span().traceparent
 
 # In:  {"some_stuff":"just can't be explained by science"}
-# Out: {"headers":{"traceparent":"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"}}
 ```
 
 == Environment
@@ -585,17 +564,19 @@ Returns the value of an environment variable, or `null` if the environment varia
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.thing.key = env("key").or("default value")
 ```
 
-```coffeescript
+```bloblang
 root.thing.key = env(this.thing.key_name)
+
+# In:  {"thing":{"key_name":"API_KEY"}}
 ```
 
 When the name parameter is static this function will only resolve once and yield the same result for each invocation as an optimization, this means that updates to env vars during runtime will not be reflected. You can disable this cache with the optional parameter `no_cache`, which when set to `true` will cause the variable lookup to be performed for each execution of the mapping.
 
-```coffeescript
+```bloblang
 root.thing.key = env(name: "key", no_cache: true)
 ```
 
@@ -611,20 +592,18 @@ Reads a file and returns its contents. Relative paths are resolved from the dire
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.doc = file(env("BENTHOS_TEST_BLOBLANG_FILE")).parse_json()
 
 # In:  {}
-# Out: {"doc":{"foo":"bar"}}
 ```
 
 When the path parameter is static this function will only read the specified file once and yield the same result for each invocation as an optimization, this means that updates to files during runtime will not be reflected. You can disable this cache with the optional parameter `no_cache`, which when set to `true` will cause the file to be read for each execution of the mapping.
 
-```coffeescript
+```bloblang
 root.doc = file(path: env("BENTHOS_TEST_BLOBLANG_FILE"), no_cache: true).parse_json()
 
 # In:  {}
-# Out: {"doc":{"foo":"bar"}}
 ```
 
 === `file_rel`
@@ -639,20 +618,18 @@ Reads a file and returns its contents. Relative paths are resolved from the dire
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.doc = file_rel(env("BENTHOS_TEST_BLOBLANG_FILE")).parse_json()
 
 # In:  {}
-# Out: {"doc":{"foo":"bar"}}
 ```
 
 When the path parameter is static this function will only read the specified file once and yield the same result for each invocation as an optimization, this means that updates to files during runtime will not be reflected. You can disable this cache with the optional parameter `no_cache`, which when set to `true` will cause the file to be read for each execution of the mapping.
 
-```coffeescript
+```bloblang
 root.doc = file_rel(path: env("BENTHOS_TEST_BLOBLANG_FILE"), no_cache: true).parse_json()
 
 # In:  {}
-# Out: {"doc":{"foo":"bar"}}
 ```
 
 === `hostname`
@@ -662,7 +639,7 @@ Returns a string matching the hostname of the machine running Benthos.
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.thing.host = hostname()
 ```
 
@@ -673,11 +650,11 @@ Returns the current timestamp as a string in RFC 3339 format with the local time
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.received_at = now()
 ```
 
-```coffeescript
+```bloblang
 root.received_at = now().ts_format("Mon Jan 2 15:04:05 -0700 MST 2006", "UTC")
 ```
 
@@ -688,7 +665,7 @@ Returns the current unix timestamp in seconds.
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.received_at = timestamp_unix()
 ```
 
@@ -699,7 +676,7 @@ Returns the current unix timestamp in microseconds.
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.received_at = timestamp_unix_micro()
 ```
 
@@ -710,7 +687,7 @@ Returns the current unix timestamp in milliseconds.
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.received_at = timestamp_unix_milli()
 ```
 
@@ -721,7 +698,7 @@ Returns the current unix timestamp in nanoseconds.
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.received_at = timestamp_unix_nano()
 ```
 
@@ -744,25 +721,25 @@ Takes in a string that maps to a https://github.com/go-faker/faker[faker^] funct
 
 Use `time_string` to generate a time in the format `00:00:00`:
 
-```coffeescript
+```bloblang
 root.time = fake("time_string")
 ```
 
 Use `email` to generate a string in email address format:
 
-```coffeescript
+```bloblang
 root.email = fake("email")
 ```
 
 Use `jwt` to generate a JWT token:
 
-```coffeescript
+```bloblang
 root.jwt = fake("jwt")
 ```
 
 Use `uuid_hyphenated` to generate a hyphenated UUID:
 
-```coffeescript
+```bloblang
 root.uuid = fake("uuid_hyphenated")
 ```
 
@@ -779,15 +756,13 @@ The `count` function is a counter starting at 1 which increments after each time
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root = this
 root.id = count("bloblang_function_example")
 
 # In:  {"message":"foo"}
-# Out: {"id":1,"message":"foo"}
 
 # In:  {"message":"bar"}
-# Out: {"id":2,"message":"bar"}
 ```
 
 === `meta`
@@ -801,13 +776,13 @@ Returns the value of a metadata key from the input message as a string, or `null
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.topic = meta("kafka_topic")
 ```
 
 The key parameter is optional and if omitted the entire metadata contents are returned as an object.
 
-```coffeescript
+```bloblang
 root.all_metadata = meta()
 ```
 
@@ -822,13 +797,13 @@ Returns the value of a metadata key from the new message being created as a stri
 ==== Examples
 
 
-```coffeescript
+```bloblang
 root.topic = root_meta("kafka_topic")
 ```
 
 The key parameter is optional and if omitted the entire metadata contents are returned as an object.
 
-```coffeescript
+```bloblang
 root.all_metadata = root_meta()
 ```
 
