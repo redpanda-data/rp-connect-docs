@@ -26,9 +26,12 @@ Next, open your browser at `+http://localhost:4195+` and you should see an app w
 
 The primary goal of a Bloblang mapping is to construct a brand new document by using an input document as a reference, which we achieve through a series of assignments. Bloblang is traditionally used to map JSON documents and that's mostly what we'll be doing in this walkthrough. The first mapping you'll see when you open the editor is a single assignment:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this
+
+# In:  {"message":"hello world"}
+# Out: {"message":"hello world"}
 ----
 
 On the left-hand side of the assignment is our assignment target, where `root` is a keyword referring to the root of the new document being constructed. On the right-hand side is a query which determines the value to be assigned, where `this` is a keyword that refers to the context of the mapping which begins as the root of the input document.
@@ -46,10 +49,13 @@ This output is a (neatly formatted) replica of the input document. This is the r
 
 Let's create a brand new document by assigning a fresh object to the root:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = {}
 root.foo = this.message
+
+# In:  {"message":"hello world"}
+# Out: {"foo":"hello world"}
 ----
 
 Bloblang supports a bunch of xref:guides:bloblang/about.adoc#literals[literal types], and the first line of this mapping assigns an empty object literal to the root. The second line then creates a new field `foo` on that object by assigning it the value of `message` from the input document. You should see that our output has changed to:
@@ -63,10 +69,13 @@ Bloblang supports a bunch of xref:guides:bloblang/about.adoc#literals[literal ty
 
 In Bloblang, when the path that we assign to contains fields that are themselves unset then they are created as empty objects. This rule also applies to `root` itself, which means the mapping:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.foo.bar = this.message
 root.foo."buz me".baz = "I like mapping"
+
+# In:  {"message":"hello world"}
+# Out: {"foo":{"bar":"hello world","buz me":{"baz":"I like mapping"}}}
 ----
 
 Will automatically create the objects required to produce the output document:
@@ -89,10 +98,13 @@ Also note that we can use quotes in order to express path segments that contain 
 
 Nothing is ever good enough for you, why should the input document be any different? Usually in our mappings it's necessary to mutate values whilst we map them over, this is almost always done with methods, of which xref:guides:bloblang/methods.adoc[there are many]. To demonstrate we're going to change our mapping to xref:guides:bloblang/methods.adoc#uppercase[uppercase] the field `message` from our input document:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.foo.bar = this.message.uppercase()
 root.foo."buz me".baz = "I like mapping"
+
+# In:  {"message":"hello world"}
+# Out: {"foo":{"bar":"HELLO WORLD","buz me":{"baz":"I like mapping"}}}
 ----
 
 As you can see the syntax for a method is similar to many languages, simply add a dot on the target value followed by the method name and arguments within brackets. With this method added our output document should look like this:
@@ -111,29 +123,37 @@ As you can see the syntax for a method is similar to many languages, simply add 
 
 Since the result of any Bloblang query is a value you can use methods on anything, including other methods. For example, we could expand our mapping of `message` to also replace `WORLD` with `EARTH` using the xref:guides:bloblang/methods.adoc#replace_all[`replace_all` method]:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.foo.bar = this.message.uppercase().replace_all("WORLD", "EARTH")
 root.foo."buz me".baz = "I like mapping"
+
+# In:  {"message":"hello world"}
+# Out: {"foo":{"bar":"HELLO EARTH","buz me":{"baz":"I like mapping"}}}
 ----
 
 As you can see this method required some arguments. Methods support both nameless (like above) and named arguments, which are often literal values but can also be queries themselves. For example try out the following mapping using both named style and a dynamic argument:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.foo.bar = this.message.uppercase().replace_all(old: "WORLD", new: this.message.capitalize())
 root.foo."buz me".baz = "I like mapping"
+
+# In:  {"message":"hello world"}
+# Out: {"foo":{"bar":"HELLO Hello World","buz me":{"baz":"I like mapping"}}}
 ----
 
 Woah, I think that's the plot to Inception, let's move onto functions. Functions are just boring methods that don't have a target, and there are xref:guides:bloblang/functions.adoc[plenty of them as well]. Functions are often used to extract information unrelated to the input document, such as xref:guides:bloblang/functions.adoc#env[environment variables], or to generate data such as xref:guides:bloblang/functions.adoc#now[timestamps] or xref:guides:bloblang/functions.adoc#uuid_v4[UUIDs].
 
 Since we're completionists let's add one to our mapping:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.foo.bar = this.message.uppercase().replace_all("WORLD", "EARTH")
 root.foo."buz me".baz = "I like mapping"
 root.foo.id = uuid_v4()
+
+# In:  {"message":"hello world"}
 ----
 
 Now I can't tell you what the output looks like since it will be different each time it's mapped, how fun!
@@ -153,10 +173,13 @@ Everything in Bloblang is an expression to be assigned, including deletions, whi
 
 If we wanted a full copy of this document without the field `name` then we can assign `deleted()` to it:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this
 root.name = deleted()
+
+# In:  {"name":"fooman barson","age":7,"opinions":["trucks are cool","trains are cool","chores are bad"]}
+# Out: {"age":7,"opinions":["trucks are cool","trains are cool","chores are bad"]}
 ----
 
 And it won't be included in the output:
@@ -179,11 +202,13 @@ An alternative way to delete fields is the xref:guides:bloblang/methods.adoc#wit
 
 Sometimes it's necessary to capture a value for later, but we might not want it to be added to the resulting document. In Bloblang we can achieve this with variables which are created using the `let` keyword, and can be referenced within subsequent queries with a dollar sign prefix:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 let id = uuid_v4()
 root.id_sha1 = $id.hash("sha1").encode("hex")
 root.id_md5 = $id.hash("md5").encode("hex")
+
+# In:  {}
 ----
 
 Variables can be assigned any value type, including objects and arrays.
@@ -196,9 +221,12 @@ You should notice that when a value type is assigned to the root the output is t
 
 Unstructured mapping is not limited to the output. Rather than referencing the input document with `this`, where it must be structured, it is possible to reference it as a binary string with the xref:guides:bloblang/functions.adoc#content[function `content`], try changing your mapping to:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = content().uppercase()
+
+# In:  hello world
+# Out: HELLO WORLD
 ----
 
 When you add content to the input panel, it should be the same in the output panel, but in all uppercase.
@@ -225,12 +253,15 @@ In Bloblang all conditionals are expressions, this is a core principal of Blobla
 
 The simplest conditional is the `if` expression, where the boolean condition does not need to be in parentheses. Let's create a map that modifies the number of treats our pet receives based on a field:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this
 root.pet.treats = if this.pet.is_cute {
   this.pet.treats + 10
 }
+
+# In:  {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
+# Out: {"pet":{"type":"cat","is_cute":true,"treats":15,"toys":3}}
 ----
 
 Try that mapping out and you should see the number of treats in the output increased to 15. Now try changing the input field `pet.is_cute` to `false` and the output treats count should go back to the original 5.
@@ -239,7 +270,7 @@ When a conditional expression doesn't have a branch to execute then the assignme
 
 We can add an `else` block to our `if` expression to remove treats entirely when the pet is not cute:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this
 root.pet.treats = if this.pet.is_cute {
@@ -247,6 +278,9 @@ root.pet.treats = if this.pet.is_cute {
 } else {
   deleted()
 }
+
+# In:  {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
+# Out: {"pet":{"type":"cat","is_cute":true,"treats":15,"toys":3}}
 ----
 
 This is possible because field deletions are expressed as assigned values created with the `deleted()` function.
@@ -255,7 +289,7 @@ This is possible because field deletions are expressed as assigned values create
 
 The `if` keyword can also be used as a statement in order to conditionally apply a series of mapping assignments, the previous example can be rewritten as:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this
 if this.pet.is_cute {
@@ -263,17 +297,23 @@ if this.pet.is_cute {
 } else {
   root.pet.treats = deleted()
 }
+
+# In:  {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
+# Out: {"pet":{"type":"cat","is_cute":true,"treats":15,"toys":3}}
 ----
 
 Converting this mapping to use a statement has resulted in a more verbose mapping as we had to specify `root.pet.treats` multiple times as an assignment target. However, using `if` as a statement can be beneficial when multiple assignments rely on the same logic:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this
 if this.pet.is_cute {
   root.pet.treats = this.pet.treats + 10
   root.pet.toys = this.pet.toys + 10
 }
+
+# In:  {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
+# Out: {"pet":{"type":"cat","is_cute":true,"treats":15,"toys":13}}
 ----
 
 More treats _and_ more toys! Lucky Spot!
@@ -282,7 +322,7 @@ More treats _and_ more toys! Lucky Spot!
 
 Another conditional expression is `match` which allows you to list many branches consisting of a condition and a query to execute separated with `+=>+`, where the first condition to pass is the one that is executed:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this
 root.pet.toys = match {
@@ -292,11 +332,14 @@ root.pet.toys = match {
   this.pet.type == "horse" => this.pet.toys + 10,
   _ => 0,
 }
+
+# In:  {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
+# Out: {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
 ----
 
 Try executing that mapping with different values for `pet.type` and `pet.treats`. Match expressions can also specify a new context for the keyword `this` which can help reduce some of the boilerplate in your boolean conditions. The following mapping is equivalent to the previous:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this
 root.pet.toys = match this.pet {
@@ -306,11 +349,14 @@ root.pet.toys = match this.pet {
   this.type == "horse" => this.toys + 10,
   _ => 0,
 }
+
+# In:  {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
+# Out: {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
 ----
 
 Your boolean conditions can also be expressed as value types, in which case the context being matched will be compared to the value:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this
 root.pet.toys = match this.pet.type {
@@ -320,6 +366,9 @@ root.pet.toys = match this.pet.type {
   "horse" => 20,
   _ => 0,
 }
+
+# In:  {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
+# Out: {"pet":{"type":"cat","is_cute":true,"treats":5,"toys":3}}
 ----
 
 == Error handling
@@ -338,9 +387,11 @@ First, let's take a look at what happens when errors _aren't_ handled, change yo
 
 And change your mapping to something simple like a number comparison:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.in_trouble = this.angry_peasants > this.palace_guards
+
+# In:  {"palace_guards":10,"angry_peasants":"I couldn't be bothered to ask them"}
 ----
 
 Uh oh! It looks like our canvasser was too lazy and our `angry_peasants` count was incorrectly set for this document. You should see an error in the output window that mentions something like `cannot compare types string (from field this.angry_peasants) and number (from field this.palace_guards)`, which means the mapping was abandoned.
@@ -349,22 +400,28 @@ So what if we want to try and map something, but don't care if it fails? In this
 
 For that we have a special xref:guides:bloblang/methods.adoc#catch[method `catch`], which if we add to any query allows us to specify an argument to be returned when an error occurs. Since methods can be added to any query we can surround our arithmetic with brackets and catch the whole thing:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.in_trouble = (this.angry_peasants > this.palace_guards).catch(true)
+
+# In:  {"palace_guards":10,"angry_peasants":"I couldn't be bothered to ask them"}
+# Out: {"in_trouble":true}
 ----
 
 Now instead of an error we should see an output with `in_trouble` set to `true`. Try changing to value of `angry_peasants` to a few different values, including some numbers.
 
 One of the powerful features of `catch` is that when it is added at the end of a series of expressions and methods it will capture errors at any part of the series, allowing you to capture errors at any granularity. For example, the mapping:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.abort_mission = if this.mission.type == "impossible" {
   !this.user.motives.contains("must clear name")
 } else {
   this.mission.difficulty > 10
 }.catch(false)
+
+# In:  {"mission":{"type":"impossible","difficulty":5},"user":{"motives":["must clear name"]}}
+# Out: {"abort_mission":false}
 ----
 
 Will catch errors caused by:
@@ -390,13 +447,16 @@ But will always return `false` if any of those errors occur. Try it out with thi
 
 Now try out this mapping:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.abort_mission = if (this.mission.type == "impossible").catch(true) {
   !this.user.motives.contains("must clear name").catch(false)
 } else {
   (this.mission.difficulty > 10).catch(true)
 }
+
+# In:  {"mission":{"type":"impossible","difficulty":5},"user":{"motives":["must clear name"]}}
+# Out: {"abort_mission":false}
 ----
 
 This version is more granular and will capture each of the errors individually, with each error given a unique `true` or `false` fallback.
@@ -409,11 +469,14 @@ You can read about common Redpanda Connect error handling patterns for bad data 
 
 There are xref:guides:bloblang/methods.adoc#type-coercion[a few helper methods] that make validating and coercing fields nice and easy, try this mapping out:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.foo = this.foo.number()
 root.bar = this.bar.not_null()
 root.baz = this.baz.not_empty()
+
+# In:  {"foo":5,"bar":"hello world","baz":[1,2,3]}
+# Out: {"foo":5,"bar":"hello world","baz":[1,2,3]}
 ----
 
 With some of these sample inputs:
@@ -429,13 +492,15 @@ However, these methods don't cover all use cases. The general purpose error thro
 
 For example, we can check the type of a field with the xref:guides:bloblang/methods.adoc#type[method `type`], and then throw an error if it's not the type we expected:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.foos = if this.user.foos.type() == "array" {
   this.user.foos
 } else {
   throw("foos must be an array, but it ain't, what gives?")
 }
+
+# In:  {"user":{"foos":[1,2,3]}}
 ----
 
 Try this mapping out with a few sample inputs:
@@ -452,34 +517,46 @@ In Bloblang, when we refer to the context we're talking about the value returned
 
 However, in Bloblang there are mechanisms whereby the context might change, we've already seen how this can happen within a `match` expression. Another useful way to change the context is by adding a bracketed query expression as a method to a query, which looks like this:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this.foo.bar.(this.baz + this.buz)
+
+# In:  {"foo":{"bar":{"baz":1,"buz":2}}}
+# Out: 3
 ----
 
 Within the bracketed query expression the context becomes the result of the query that it's a method of, so within the brackets in the above mapping the value of `this` points to the result of `this.foo.bar`, and the mapping is therefore equivalent to:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this.foo.bar.baz + this.foo.bar.buz
+
+# In:  {"foo":{"bar":{"baz":1,"buz":2}}}
+# Out: 3
 ----
 
 With this handy trick the `throw` mapping from the validation section above could be rewritten as:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.foos = this.user.foos.(if this.type() == "array" { this } else {
   throw("foos must be an array, but it ain't, what gives?")
 })
+
+# In:  {"user":{"foos":[1,2,3]}}
+# Out: {"foos":[1,2,3]}
 ----
 
 === Naming the context
 
 Shadowing the keyword `this` with new contexts can look confusing in your mappings, and it also limits you to only being able to reference one context at any given time. As an alternative, Bloblang supports context capture expressions that look similar to lambda functions from other languages, where you can name the new context with the syntax `+<context name> -> <query>+`, which looks like this:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this.foo.bar.(thing -> thing.baz + thing.buz)
+
+# In:  {"foo":{"bar":{"baz":1,"buz":2}}}
+# Out: 3
 ----
 
 Within the brackets we now have a new field `thing`, which returns the context that would have otherwise been captured as `this`. This also means the value returned from `this` hasn't changed and will continue to return the root of the input document.
@@ -504,41 +581,56 @@ To illustrate this problem change the input document to the following:
 
 Let's say we wish to flatten this structure with the following mapping:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.contents = this.thing.article.contents
+
+# In:  {"thing":{"article":{"id":"foo","contents":"Some people did some stuff"}}}
+# Out: {"contents":"Some people did some stuff"}
 ----
 
 But articles are only one of many document types we expect to receive, where the field `contents` remains the same but the field `article` could instead be `comment` or `share`. In this case we could expand our map of `contents` to use a `match` expression where we check for the existence of `article`, `comment`, etc in the input document.
 
 However, a much cleaner way of approaching this is with the pipe operator (`|`), which in Bloblang can be used to join multiple queries, where the first to yield a non-null result is selected. Change your mapping to the following:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.contents = this.thing.article.contents | this.thing.comment.contents
+
+# In:  {"thing":{"article":{"id":"foo","contents":"Some people did some stuff"}}}
+# Out: {"contents":"Some people did some stuff"}
 ----
 
 And now try changing the field `article` in your input document to `comment`. You should see that the value of `contents` remains as `Some people did some stuff` in the output document.
 
 Now, rather than write out the full path prefix `this.thing` each time we can use a bracketed query expression to change the context, giving us more space for adding other fields:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.contents = this.thing.(this.article | this.comment | this.share).contents
+
+# In:  {"thing":{"article":{"id":"foo","contents":"Some people did some stuff"}}}
+# Out: {"contents":"Some people did some stuff"}
 ----
 
 And by the way, the keyword `this` within queries can be omitted and made implicit, which allows us to reduce this even further:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.contents = this.thing.(article | comment | share).contents
+
+# In:  {"thing":{"article":{"id":"foo","contents":"Some people did some stuff"}}}
+# Out: {"contents":"Some people did some stuff"}
 ----
 
 Finally, we can also add a pipe operator at the end to fallback to a literal value when none of our candidates exists:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root.contents = this.thing.(article | comment | share).contents | "nothing"
+
+# In:  {"thing":{"article":{"id":"foo","contents":"Some people did some stuff"}}}
+# Out: {"contents":"Some people did some stuff"}
 ----
 
 Neat.
@@ -580,9 +672,12 @@ Bloblang offers a bunch of advanced methods for xref:guides:bloblang/methods.ado
 
 Let's say we wanted to reduce the `things` in our input document to only those that are cool and where we have enough of them to share with our friends. We can do this with a xref:guides:bloblang/methods.adoc#filter[`filter` method]:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this.things.filter(thing -> thing.is_cool && thing.quantity > this.num_friends)
+
+# In:  {"num_friends":5,"things":[{"name":"yo-yo","quantity":10,"is_cool":true},{"name":"dish soap","quantity":50,"is_cool":false},{"name":"scooter","quantity":1,"is_cool":true},{"name":"pirate hat","quantity":7,"is_cool":true}]}
+# Out: [{"name":"yo-yo","quantity":10,"is_cool":true},{"name":"pirate hat","quantity":7,"is_cool":true}]
 ----
 
 Try running that mapping and you'll see that the output is reduced. What is happening here is that the `filter` method takes an argument that is a query, and that query will be mapped for each individual element of the array (where the context is changed to the element itself). We have captured the context into a field `thing` which allows us to continue referencing the root of the input with `this`.
@@ -607,12 +702,15 @@ Another such method is xref:guides:bloblang/methods.adoc#map_each[`map_each`], w
 
 Here we have an array of talking heads, where each element is a string containing an identifer, a colon, and a comma separated list of their opinions. We wish to map each string into a structured object, which we can do with the following mapping:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this.talking_heads.map_each(raw -> {
   "id": raw.split(":").index(0),
   "opinions": raw.split(":").index(1).split(",")
 })
+
+# In:  {"talking_heads":["1:E.T. is a bad film,Pokemon corrupted an entire generation","2:Digimon ripped off Pokemon,Cats are boring","3:I'm important","4:Science is just made up,The Pokemon films are good,The weather is good"]}
+# Out: [{"id":"1","opinions":["E.T. is a bad film","Pokemon corrupted an entire generation"]},{"id":"2","opinions":["Digimon ripped off Pokemon","Cats are boring"]},{"id":"3","opinions":["I'm important"]},{"id":"4","opinions":["Science is just made up","The Pokemon films are good","The weather is good"]}]
 ----
 
 The argument to `map_each` is a query where the context is the element, which we capture into the field `raw`. The result of the query argument will become the value of the element in the resulting array, and in this case we return an object literal.
@@ -621,12 +719,15 @@ In order to separate the identifier from opinions we perform a `split` by colon 
 
 However, one problem with this mapping is that the split by colon is written out twice and executed twice. A more efficient way of performing the same thing is with the bracketed query expressions we've played with before:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 root = this.talking_heads.map_each(raw -> raw.split(":").(split_string -> {
   "id": split_string.index(0),
   "opinions": split_string.index(1).split(",")
 }))
+
+# In:  {"talking_heads":["1:E.T. is a bad film,Pokemon corrupted an entire generation","2:Digimon ripped off Pokemon,Cats are boring","3:I'm important","4:Science is just made up,The Pokemon films are good,The weather is good"]}
+# Out: [{"id":"1","opinions":["E.T. is a bad film","Pokemon corrupted an entire generation"]},{"id":"2","opinions":["Digimon ripped off Pokemon","Cats are boring"]},{"id":"3","opinions":["I'm important"]},{"id":"4","opinions":["Science is just made up","The Pokemon films are good","The weather is good"]}]
 ----
 
 [NOTE]
@@ -641,7 +742,7 @@ Cool. To find more methods for manipulating structured data types check out the 
 
 Bloblang has cool methods, sure, but there's nothing cooler than methods you've made yourself. When the going gets tough in the mapping world the best solution is often to create a named mapping, which you can do with the keyword `map`:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 map parse_talking_head {
   let split_string = this.split(":")
@@ -651,6 +752,9 @@ map parse_talking_head {
 }
 
 root = this.talking_heads.map_each(raw -> raw.apply("parse_talking_head"))
+
+# In:  {"talking_heads":["1:E.T. is a bad film,Pokemon corrupted an entire generation","2:Digimon ripped off Pokemon,Cats are boring","3:I'm important","4:Science is just made up,The Pokemon films are good,The weather is good"]}
+# Out: [{"id":"1","opinions":["E.T. is a bad film","Pokemon corrupted an entire generation"]},{"id":"2","opinions":["Digimon ripped off Pokemon","Cats are boring"]},{"id":"3","opinions":["I'm important"]},{"id":"4","opinions":["Science is just made up","The Pokemon films are good","The weather is good"]}]
 ----
 
 The body of a named map, encapsulated with squiggly brackets, is a totally isolated mapping where `root` now refers to a new value being created for each invocation of the map, and `this` refers to the root of the context provided to the map.
@@ -661,7 +765,7 @@ As you can see in the above example we were able to use a custom map in order to
 
 A cool feature of named mappings is that they can invoke themselves recursively, allowing you to define mappings that walk deeply nested structures. The following mapping will scrub all values from a document that contain the word "Voldemort" (case insensitive):
 
-[source,coffeescript]
+[source,bloblang]
 ----
 map remove_naughty_man {
   root = match {
@@ -674,6 +778,8 @@ map remove_naughty_man {
 }
 
 root = this.apply("remove_naughty_man")
+
+# In:  {"summer_party":{"theme":"the woman in black","guests":["Emma Bunton","the seal I spotted in Trebarwith","Voldemort","The cast of Swiss Army Man","Richard"],"notes":{"lisa":"I don't think voldemort eats fish","monty":"Seals hate dance music"}},"crushes":["Richard is nice but he hates pokemon","Victoria Beckham but I think she's taken","Charlie but they're totally into Voldemort"]}
 ----
 
 Try running that mapping with the following input document:
@@ -707,7 +813,7 @@ Try running that mapping with the following input document:
 
 Redpanda Connect has it's own xref:configuration:unit_testing.adoc[unit testing capabilities] that you can also use for your mappings. To start with save a mapping into a file called something like `naughty_man.blobl`, we can use the example above from the reusable mappings section:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 map remove_naughty_man {
   root = match {

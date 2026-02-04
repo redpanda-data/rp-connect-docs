@@ -6,7 +6,7 @@
 
 A map definition only has one input parameter, which is the context that it is called upon:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 map formatting {
   root = "(%v)".format(this)
@@ -16,12 +16,11 @@ root.a = this.a.apply("formatting")
 root.b = this.b.apply("formatting")
 
 # In:  {"a":"foo","b":"bar"}
-# Out: {"a":"(foo)","b":"(bar)"}
 ----
 
 However, we can use object literals in order to provide multiple map parameters. Imagine if we wanted a map that is the exact same as above except the pattern is `[%v]` instead, with the potential for even more patterns in the future. To do that we can pass an object with a field `value` with our target to map and a field `pattern` which allows us to specify the pattern to apply:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 map formatting {
   root = this.pattern.format(this.value)
@@ -38,14 +37,13 @@ root.b = {
 }.apply("formatting")
 
 # In:  {"a":"foo","b":"bar","pattern":"[%v]"}
-# Out: {"a":"[foo]","b":"[bar]"}
 ----
 
 == Walking the tree
 
 Sometimes it's necessary to perform a mapping on all values within an unknown tree structure. You can do that easily with recursive mapping:
 
-[source,coffeescript]
+[source,bloblang]
 ----
 map unescape_values {
   root = match {
@@ -59,7 +57,6 @@ map unescape_values {
 root = this.apply("unescape_values")
 
 # In:  {"first":{"nested":"foo &amp; bar"},"second":10,"third":["1 &lt; 2",{"also_nested":"2 &gt; 1"}]}
-# Out: {"first":{"nested":"foo & bar"},"second":10,"third":["1 < 2",{"also_nested":"2 > 1"}]}
 ----
 
 == Message expansion
@@ -91,23 +88,21 @@ pipeline:
 
 However, most of the time we also need to map the elements before expanding them, and often that includes copying fields outside of our target array. We can do that with methods such as `map_each` and `merge`:
 
-[source,coffeescript]
+[source,bloblang]
 ----
-root = this.items.map_each(ele -> this.without("items").merge(ele))
-
 # In:  {"id":"foobar","items":[{"content":"foo"},{"content":"bar"},{"content":"baz"}]}
-# Out: [{"content":"foo","id":"foobar"},{"content":"bar","id":"foobar"},{"content":"baz","id":"foobar"}]
+
+root = this.items.map_each(ele -> this.without("items").merge(ele))
 ----
 
 However, the above mapping is slightly inefficient as we would create a copy of our source object for each element with the `this.without("items")` part. A more efficient way to do this would be to capture that query within a variable:
 
-[source,coffeescript]
+[source,bloblang]
 ----
+# In:  {"id":"foobar","items":[{"content":"foo"},{"content":"bar"},{"content":"baz"}]}
+
 let doc_root = this.without("items")
 root = this.items.map_each($doc_root.merge(this))
-
-# In:  {"id":"foobar","items":[{"content":"foo"},{"content":"bar"},{"content":"baz"}]}
-# Out: [{"content":"foo","id":"foobar"},{"content":"bar","id":"foobar"},{"content":"baz","id":"foobar"}]
 ----
 
 Also note that when we set `doc_root` we remove the field `items` from the target document. The full config would now be:
@@ -129,8 +124,11 @@ Redpanda Connect has a few different ways of outputting a stream of CSV data. Ho
 
 A common and simple use case is to simply flatten documents and write out the column values in alphabetical order. The first row we generate should also be prefixed with a row containing those column names. Here's a mapping that achieves this by using a `count` function to detect the very first invocation of the mapping in a stream pipeline:
 
-[source,coffeescript]
+[source,bloblang]
 ----
+# In:  {"name":"foo","address":"123 Main St, Apt 2"}
+#      foo,"123 Main St, Apt 2"
+
 map escape_csv {
   root = if this.re_match("[\"\n,]+") {
     "\"" + this.replace_all("\"", "\"\"") + "\""

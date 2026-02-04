@@ -73,7 +73,7 @@ Sometimes when working with large {bloblang-url}[Bloblang mappings] it's preferr
 
 For example, if we were to have a file `cities.blobl` containing a mapping:
 
-```coffeescript
+```bloblang
 root.Cities = this.locations.
                 filter(loc -> loc.state == "WA").
                 map_each(loc -> loc.name).
