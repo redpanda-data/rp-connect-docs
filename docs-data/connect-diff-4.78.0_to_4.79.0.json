@@ -53,7 +53,7 @@
       {
         "component": "outputs:snowflake_streaming",
         "field": "timestamp_format",
-        "description": "The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Should be a layout for https://pkg.go.dev/time#Parse[^time.Parse] in Golang."
+        "description": "The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Should be a layout for https://pkg.go.dev/time#Parse[time.Parse^] in Go."
       }
     ],
     "removedFields": [],

@@ -1,0 +1,96 @@
+# tag::config[]
+input:
+  aws_dynamodb_cdc:
+    table: ${DYNAMODB_TABLE}
+    region: ${AWS_REGION}
+    checkpoint_table: redpanda_dynamodb_checkpoints
+    batch_size: 100
+    poll_interval: 500ms
+
+pipeline:
+  processors:
+    # Transform to a Kafka-friendly format with a composite key
+    - mapping: |
+        let keys = this.dynamodb.keys
+        meta kafka_key = [$keys.pk, $keys.sk].filter(v -> v != null).join("#")
+        root.event_type = this.eventName
+        root.table = this.tableName
+        root.timestamp = now()
+        root.keys = this.dynamodb.keys
+        root.new_image = this.dynamodb.newImage
+        root.old_image = this.dynamodb.oldImage
+
+output:
+  kafka_franz:
+    seed_brokers:
+      - ${KAFKA_BROKERS}
+    topic: dynamodb-cdc-events
+    key: ${! @kafka_key }
+    partitioner: murmur2_hash
+    compression: snappy
+    batching:
+      count: 100
+      period: 1s
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Transform for Kafka with composite key
+    target_processors: '/pipeline/processors/0'
+    environment:
+      DYNAMODB_TABLE: test-table
+      AWS_REGION: us-east-1
+      KAFKA_BROKERS: localhost:9092
+    input_batch:
+      - json_content:
+          eventName: "INSERT"
+          tableName: "orders"
+          dynamodb:
+            keys:
+              pk: "order#2024-001"
+              sk: "item#1"
+            newImage:
+              pk: "order#2024-001"
+              sk: "item#1"
+              product: "Widget"
+              quantity: 5
+              price: 19.99
+    output_batches:
+      - - json_contains:
+            event_type: "INSERT"
+            table: "orders"
+            keys:
+              pk: "order#2024-001"
+              sk: "item#1"
+            new_image:
+              product: "Widget"
+              quantity: 5
+              price: 19.99
+          metadata_equals:
+            kafka_key: "order#2024-001#item#1"
+
+  - name: Handle REMOVE event for Kafka
+    target_processors: '/pipeline/processors/0'
+    environment:
+      DYNAMODB_TABLE: test-table
+      AWS_REGION: us-east-1
+      KAFKA_BROKERS: localhost:9092
+    input_batch:
+      - json_content:
+          eventName: "REMOVE"
+          tableName: "orders"
+          dynamodb:
+            keys:
+              pk: "order#2024-001"
+              sk: "item#1"
+            oldImage:
+              pk: "order#2024-001"
+              sk: "item#1"
+              product: "Widget"
+    output_batches:
+      - - json_contains:
+            event_type: "REMOVE"
+            table: "orders"
+          metadata_equals:
+            kafka_key: "order#2024-001#item#1"
+# end::tests[]

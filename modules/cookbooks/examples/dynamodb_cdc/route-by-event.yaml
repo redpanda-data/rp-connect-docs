@@ -1,0 +1,104 @@
+# tag::config[]
+input:
+  aws_dynamodb_cdc:
+    table: ${DYNAMODB_TABLE}
+    region: ${AWS_REGION}
+
+pipeline:
+  processors:
+    # Transform to a common format
+    - mapping: |
+        root.event_type = this.eventName
+        root.table = this.tableName
+        root.timestamp = now()
+        root.keys = this.dynamodb.keys
+        root.data = if this.dynamodb.exists("newImage") {
+          this.dynamodb.newImage
+        } else {
+          this.dynamodb.oldImage
+        }
+
+output:
+  switch:
+    cases:
+      # Route INSERT events to a topic for new records
+      - check: this.event_type == "INSERT"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${KAFKA_BROKERS}
+            topic: dynamodb-inserts
+
+      # Route MODIFY events to a topic for updates
+      - check: this.event_type == "MODIFY"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${KAFKA_BROKERS}
+            topic: dynamodb-updates
+
+      # Route REMOVE events to a topic for deletes
+      - check: this.event_type == "REMOVE"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${KAFKA_BROKERS}
+            topic: dynamodb-deletes
+
+      # Fallback for any unexpected event types
+      - output:
+          drop: {}
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Transform INSERT event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      DYNAMODB_TABLE: test-table
+      AWS_REGION: us-east-1
+      KAFKA_BROKERS: localhost:9092
+    input_batch:
+      - json_content:
+          eventName: "INSERT"
+          tableName: "users"
+          dynamodb:
+            keys:
+              pk: "user#123"
+            newImage:
+              pk: "user#123"
+              name: "Alice"
+    output_batches:
+      - - json_contains:
+            event_type: "INSERT"
+            table: "users"
+            keys:
+              pk: "user#123"
+            data:
+              pk: "user#123"
+              name: "Alice"
+
+  - name: Transform REMOVE event uses oldImage
+    target_processors: '/pipeline/processors/0'
+    environment:
+      DYNAMODB_TABLE: test-table
+      AWS_REGION: us-east-1
+      KAFKA_BROKERS: localhost:9092
+    input_batch:
+      - json_content:
+          eventName: "REMOVE"
+          tableName: "users"
+          dynamodb:
+            keys:
+              pk: "user#456"
+            oldImage:
+              pk: "user#456"
+              name: "Bob"
+    output_batches:
+      - - json_contains:
+            event_type: "REMOVE"
+            table: "users"
+            data:
+              pk: "user#456"
+              name: "Bob"
+# end::tests[]

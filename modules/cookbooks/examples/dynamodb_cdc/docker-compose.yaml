@@ -1,0 +1,57 @@
+# Test environment for DynamoDB CDC examples
+# Usage:
+#   docker compose up -d
+#   ./setup-test-data.sh
+#   DYNAMODB_TABLE=test-users AWS_REGION=us-east-1 rpk connect run basic-capture.yaml
+
+services:
+  dynamodb-local:
+    # Use a stable version for reproducible CI/CD tests
+    image: amazon/dynamodb-local:2.5.3
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:8000 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Optional: Kafka for testing Kafka output examples
+  redpanda:
+    # Use a stable version for reproducible CI/CD tests
+    image: redpandadata/redpanda:v24.3.1
+    container_name: redpanda
+    ports:
+      - "9092:9092"
+      - "8081:8081"
+    command:
+      - redpanda
+      - start
+      - --smp=1
+      - --memory=512M
+      - --overprovisioned
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9092
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Optional: LocalStack for S3 testing
+  localstack:
+    # Use a stable version for reproducible CI/CD tests
+    image: localstack/localstack:3.8
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEBUG=0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

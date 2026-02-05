@@ -54,14 +54,14 @@ This release adds support for the following new fields:
 
 
 |message_format
-|The format at which to expect incoming messages from the rest of the pipeline in.
+|The format to expect incoming messages from the rest of the pipeline.
 |*Outputs:*
 
 * xref:components:outputs/snowflake_streaming.adoc#message_format[snowflake_streaming]
 
 
 |timestamp_format
-|The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Parse] in Golang.
+|The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Should be a layout for https://pkg.go.dev/time#Parse[time.Parse^] in Go.
 |*Outputs:*
 
 * xref:components:outputs/snowflake_streaming.adoc#timestamp_format[snowflake_streaming]

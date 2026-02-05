@@ -1,0 +1,233 @@
+= DynamoDB CDC Patterns
+// tag::single-source[]
+:description: Learn how to capture, filter, transform, and route DynamoDB change data capture (CDC) events with Redpanda Connect.
+:page-categories: Streaming, Integration, AWS
+:page-topic-type: cookbook
+:personas: streaming_developer, data_engineer
+:learning-objective-1: Find reusable patterns for capturing DynamoDB CDC events
+:learning-objective-2: Look up integration patterns for routing CDC data to Kafka and S3
+:learning-objective-3: Identify patterns for filtering and transforming change events
+
+The DynamoDB CDC input enables capturing item-level changes from DynamoDB tables with streams enabled. This cookbook provides reusable patterns for filtering, transforming, and routing DynamoDB CDC events to Kafka, S3, and other destinations.
+
+Use this cookbook to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+== Prerequisites
+
+Before using these patterns, ensure you have the following configured:
+
+=== Redpanda CLI
+
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:get-started:quickstarts/rpk.adoc[] for installation instructions.
+
+=== DynamoDB Streams
+
+The source DynamoDB table must have https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html[DynamoDB Streams^] enabled with an appropriate view type:
+
+- `KEYS_ONLY`: Only the key attributes of the modified item
+- `NEW_IMAGE`: The entire item as it appears after the modification
+- `OLD_IMAGE`: The entire item as it appeared before the modification
+- `NEW_AND_OLD_IMAGES`: Both the new and old item images (recommended for detecting changes)
+
+To enable streams on an existing table using the AWS CLI:
+
+[,bash]
+----
+aws dynamodb update-table \
+  --table-name my-table \
+  --stream-specification StreamEnabled=true,StreamViewType=NEW_AND_OLD_IMAGES
+----
+
+=== Environment variables
+
+The examples in this cookbook use environment variables for AWS configuration. This allows you to keep credentials secure and separate from your pipeline configuration files.
+
+[,bash]
+----
+export DYNAMODB_TABLE=my-table <1>
+export AWS_REGION=us-east-1 <2>
+export KAFKA_BROKERS=localhost:9092 <3>
+export S3_BUCKET=my-cdc-bucket <4>
+----
+<1> The name of the DynamoDB table with streams enabled.
+<2> The AWS region where your DynamoDB table is located.
+<3> The Kafka broker addresses (for Kafka output examples).
+<4> The S3 bucket name (for S3 output examples).
+
+Redpanda Connect loads AWS credentials from the standard https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html[credential chain^] (environment variables, `~/.aws/credentials`, or IAM roles).
+
+== Capture CDC events
+
+The simplest pattern captures all change events from a DynamoDB table and outputs them with metadata:
+
+[source,yaml]
+----
+include::cookbooks:example$dynamodb_cdc/basic-capture.yaml[tag=config]
+----
+
+For details on the CDC event message structure and available fields for Bloblang mappings, see the xref:components:inputs/aws_dynamodb_cdc.adoc#_message_structure[message structure] section in the connector reference.
+
+== Filter CDC events
+
+You can filter events to process only specific change types:
+
+[source,yaml]
+----
+include::cookbooks:example$dynamodb_cdc/filter-events.yaml[tag=config]
+----
+
+This example:
+
+- Filters out `REMOVE` events using `deleted()`
+- Transforms the event to a simplified format
+
+== Route to Kafka
+
+Stream DynamoDB changes to Kafka for real-time processing:
+
+[source,yaml]
+----
+include::cookbooks:example$dynamodb_cdc/to-kafka.yaml[tag=config]
+----
+
+This example:
+
+- Creates a composite Kafka key from the DynamoDB primary key
+- Transforms the DynamoDB format to plain JSON
+- Batches messages for efficient delivery
+
+== Route to S3
+
+Archive CDC events to S3 for long-term storage and analytics:
+
+[source,yaml]
+----
+include::cookbooks:example$dynamodb_cdc/to-s3.yaml[tag=config]
+----
+
+This example:
+
+- Organizes files by time-based partitions (year/month/day/hour)
+- Batches events and archives them as newline-delimited JSON
+- Uses UUID file names to prevent collisions
+
+== Route by event type
+
+Route different event types to different destinations:
+
+[source,yaml]
+----
+include::cookbooks:example$dynamodb_cdc/route-by-event.yaml[tag=config]
+----
+
+This pattern:
+
+- Separates processing pipelines for inserts, updates, and deletes
+- Applies different retention policies per event type
+- Enables specialized downstream consumers
+
+== Detect changed fields
+
+Compare old and new images to identify which fields changed:
+
+[source,yaml]
+----
+include::cookbooks:example$dynamodb_cdc/detect-changes.yaml[tag=config]
+----
+
+This pattern:
+
+- Filters to only MODIFY events
+- Compares old and new images to find differences
+- Outputs a list of changed fields with their old and new values
+
+NOTE: This pattern requires the `NEW_AND_OLD_IMAGES` stream view type. The `.key_values()` method converts an object to an array of key-value pairs that can be filtered and mapped.
+
+== Checkpointing
+
+The DynamoDB CDC input automatically manages checkpoints in a separate DynamoDB table:
+
+[source,yaml]
+----
+input:
+  aws_dynamodb_cdc:
+    table: my-table
+    checkpoint_table: my-app-checkpoints <1>
+    checkpoint_limit: 500 <2>
+    start_from: trim_horizon <3>
+----
+<1> Custom checkpoint table name (default: `redpanda_dynamodb_checkpoints`).
+<2> Checkpoint after every 500 messages (lower = better recovery, higher = fewer writes).
+<3> Start from the oldest available record when no checkpoint exists.
+
+If a checkpoint table doesn't exist, it's created automatically with the required schema.
+
+== Performance tuning
+
+Optimize throughput and latency with these settings:
+
+[source,yaml]
+----
+input:
+  aws_dynamodb_cdc:
+    table: my-table
+    batch_size: 1000 <1>
+    poll_interval: 100ms <2>
+    max_tracked_shards: 10000 <3>
+    throttle_backoff: 50ms <4>
+----
+<1> Maximum records per shard per request (1-1000).
+<2> Time between polls when no records are available.
+<3> Maximum shards to track (for very large tables).
+<4> Backpressure delay when too many messages are in-flight.
+
+=== Throughput considerations
+
+- DynamoDB Streams allows 5 `GetRecords` calls per second per shard
+- Higher `batch_size` improves throughput but increases memory usage
+- Shorter `poll_interval` reduces latency but increases API calls
+
+== Troubleshoot
+
+=== No events received
+
+If you're not receiving events:
+
+. Verify streams are enabled on the table:
++
+[,bash]
+----
+aws dynamodb describe-table --table-name my-table \
+  --query 'Table.StreamSpecification'
+----
+
+. Check that changes are being made to the table
+. Verify `start_from` is set to `trim_horizon` to capture existing stream data
+
+=== Duplicate events
+
+DynamoDB Streams provides at-least-once delivery. To handle duplicates:
+
+- Use idempotent processing in downstream systems
+- Deduplicate using the `dynamodb_sequence_number` metadata
+- Use Kafka's exactly-once semantics with the `offset_token` pattern
+
+=== Stream retention
+
+DynamoDB Streams retains data for 24 hours. If your pipeline is offline longer than that:
+
+- Consider using https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/kds.html[Kinesis Data Streams for DynamoDB^] (up to 1 year retention)
+- Implement a full-table scan fallback for disaster recovery
+
+== Suggested reading
+
+- xref:components:inputs/aws_dynamodb_cdc.adoc[DynamoDB CDC Input Reference]
+- xref:guides:cloud/aws.adoc[AWS Configuration Guide]
+- xref:components:inputs/aws_kinesis.adoc[Kinesis Input] (for Kinesis Data Streams for DynamoDB)
+- https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html[DynamoDB Streams Documentation^]
+
+// end::single-source[]
