@@ -28,6 +28,25 @@ Each cookbook has its own subdirectory containing:
 
 == Running tests
 
+=== Test types
+
+This framework supports two test types:
+
+[cols="1,2,2"]
+|===
+|Type |What it tests |How it works
+
+|**Unit tests**
+|Pipeline logic, Bloblang mappings, message transformations
+|Uses `rpk connect test` with mock inputs/outputs defined in each YAML file
+
+|**Smoke tests**
+|Configuration validity, service connectivity, pipeline startup
+|Starts pipeline with Docker services, verifies it runs without errors for a timeout period
+|===
+
+NOTE: Smoke tests verify that pipelines start and connect successfully but do not validate end-to-end data flow. For full integration testing, consider adding custom test scripts that insert data and verify outputs.
+
 === Unit tests only
 
 [,bash]
@@ -35,7 +54,7 @@ Each cookbook has its own subdirectory containing:
 ./test-examples.sh --unit-only
 ----
 
-=== Integration tests (requires Docker)
+=== Smoke tests (requires Docker)
 
 [,bash]
 ----
