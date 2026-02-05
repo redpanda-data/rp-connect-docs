@@ -210,11 +210,11 @@ aws dynamodb describe-table --table-name my-table \
 
 === Duplicate events
 
-DynamoDB Streams provides at-least-once delivery. To handle duplicates:
+Each stream record appears exactly once in DynamoDB Streams. However, if your pipeline fails before checkpointing, records may be re-read on restart, resulting in at-least-once processing semantics. To handle potential duplicates:
 
 - Use idempotent processing in downstream systems
 - Deduplicate using the `dynamodb_sequence_number` metadata
-- Use Kafka's exactly-once semantics with the `offset_token` pattern
+- Lower `checkpoint_limit` to reduce the window of possible duplicates
 
 === Stream retention
 
