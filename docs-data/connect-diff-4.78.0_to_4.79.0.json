@@ -2,10 +2,10 @@
   "comparison": {
     "oldVersion": "4.78.0",
     "newVersion": "4.79.0",
-    "timestamp": "2026-01-30T18:36:44.580Z"
+    "timestamp": "2026-02-05T17:48:19.090Z"
   },
   "summary": {
-    "newComponents": 1,
+    "newComponents": 0,
     "removedComponents": 0,
     "newFields": 6,
     "removedFields": 0,
@@ -14,15 +14,7 @@
     "changedDefaults": 0
   },
   "details": {
-    "newComponents": [
-      {
-        "name": "aws_dynamodb_cdc",
-        "type": "inputs",
-        "status": "beta",
-        "version": "4.79.0",
-        "description": "\nConsumes records from DynamoDB Streams with automatic checkpointing and shard management.\n\nDynamoDB Streams capture item-level changes in DynamoDB tables. This input supports:\n\n- Automatic shard discovery and management\n- Checkpoint-based resumption after restarts\n- Concurrent processing of multiple shards\n\n### Prerequisites\n\nThe source DynamoDB table must have streams enabled. You can enable streams with one of these view types:\n\n- `KEYS_ONLY` - Only the key attributes of the modified item\n- `NEW_IMAGE` - The entire item as it appears after the modification\n- `OLD_IMAGE` - The entire item as it appeared before the modification\n- `NEW_AND_OLD_IMAGES` - Both the new and old item images\n\n### Checkpointing\n\nCheckpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard.\n\n### Alternative\n\nFor better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.\n\n### Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `dynamodb_shard_id` - The shard ID from which the record was read\n- `dynamodb_sequence_number` - The sequence number of the record in the stream\n- `dynamodb_event_name` - The type of change: INSERT, MODIFY, or REMOVE\n- `dynamodb_table` - The name of the DynamoDB table\n\n### Metrics\n\nThis input emits the following metrics:\n\n- `dynamodb_cdc_shards_tracked` - Total number of shards being tracked (gauge)\n- `dynamodb_cdc_shards_active` - Number of shards currently being read from (gauge)\n"
-      }
-    ],
+    "newComponents": [],
     "removedComponents": [],
     "newFields": [
       {
@@ -53,7 +45,7 @@
       {
         "component": "outputs:snowflake_streaming",
         "field": "timestamp_format",
-        "description": "The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Should be a layout for https://pkg.go.dev/time#Parse[time.Parse^] in Go."
+        "description": "The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Should be a layout for https://pkg.go.dev/time#Parse[^time.Parse] in Golang."
       }
     ],
     "removedFields": [],
@@ -64,30 +56,15 @@
   "binaryAnalysis": {
     "versions": {
       "oss": "4.79.0",
-      "cloud": "4.79.0",
-      "cgo": "4.79.0"
+      "cloud": "4.80.0",
+      "cgo": "4.80.0"
     },
     "current": {
       "cloudSupported": 476,
-      "selfHostedOnly": 75,
-      "cgoOnly": 4
+      "selfHostedOnly": 79,
+      "cgoOnly": 0
     },
-    "changes": {
-      "cloud": {
-        "added": [
-          {
-            "type": "inputs",
-            "name": "aws_dynamodb_cdc",
-            "status": "beta"
-          }
-        ],
-        "removed": []
-      },
-      "cgo": {
-        "newCgoOnly": [],
-        "removedCgoOnly": []
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -2593,6 +2570,16 @@
           "status": "stable"
         },
         {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2703,6 +2690,11 @@
           "status": "stable"
         },
         {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -2788,6 +2780,11 @@
           "status": "experimental"
         },
         {
+          "type": "processors",
+          "name": "ffi",
+          "status": "experimental"
+        },
+        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2855,28 +2852,7 @@
           "status": "beta"
         }
       ],
-      "cgoOnly": [
-        {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "beta"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
-          "status": "experimental"
-        }
-      ]
+      "cgoOnly": []
     }
   }
 }
