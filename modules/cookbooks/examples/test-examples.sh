@@ -173,7 +173,7 @@ run_unit_tests() {
       PASSED_TESTS=$((PASSED_TESTS + 1))
       dir_passed=$((dir_passed + 1))
     else
-      if rpk connect test "$config_file" 2>&1 | grep -q "no tests"; then
+      if rpk connect test "$config_file" 2>&1 | grep -qi "no tests"; then
         log_skip "$basename - no tests defined"
         SKIPPED_TESTS=$((SKIPPED_TESTS + 1))
         TOTAL_TESTS=$((TOTAL_TESTS - 1))
