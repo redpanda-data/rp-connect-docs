@@ -1,0 +1,169 @@
+= Cookbook Examples
+
+This directory contains runnable examples for Redpanda Connect cookbook documentation.
+
+== Directory structure
+
+Each cookbook has its own subdirectory containing:
+
+[cols="1,2"]
+|===
+|File |Purpose
+
+|`*.yaml`
+|Pipeline configuration files with inline unit tests
+
+|`docker-compose.yaml`
+|(Optional) Docker services for integration testing
+
+|`setup-test-data.sh`
+|(Optional) Script to create test data
+
+|`test-config.sh`
+|(Optional) Test configuration for CI/CD
+
+|`README.adoc`
+|Documentation for the examples
+|===
+
+== Running tests
+
+=== Unit tests only
+
+[,bash]
+----
+./test-examples.sh --unit-only
+----
+
+=== Integration tests (requires Docker)
+
+[,bash]
+----
+./test-examples.sh
+----
+
+=== Test a specific cookbook
+
+[,bash]
+----
+./test-examples.sh dynamodb_cdc
+----
+
+== Adding a new cookbook
+
+. Create a directory for your cookbook:
++
+[,bash]
+----
+mkdir my_cookbook
+cd my_cookbook
+----
+
+. Add pipeline YAML files with inline tests:
++
+[,yaml]
+----
+# my-example.yaml
+input:
+  generate:
+    mapping: 'root.message = "hello"'
+    count: 1
+
+output:
+  stdout: {}
+
+tests:
+  - name: generates hello message
+    input_batch:
+      - json_content: {}
+    output_batches:
+      - - json_contains:
+            message: "hello"
+----
+
+. (Optional) Add `test-config.sh` for environment variables:
++
+[,bash]
+----
+# test-config.sh
+export MY_VAR="${MY_VAR:-default-value}"
+----
+
+. (Optional) Add `docker-compose.yaml` for integration tests:
++
+[,yaml]
+----
+services:
+  my-service:
+    image: my-image:1.0.0  # Use stable versions, not :latest
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+----
+
+. (Optional) Add `setup-test-data.sh` to create test fixtures:
++
+[,bash]
+----
+#!/bin/bash
+# setup-test-data.sh
+curl -X POST http://localhost:8080/data -d '{"test": "data"}'
+----
+
+. Add your category to the CI workflow matrix in `.github/workflows/test-cookbooks.yaml`:
++
+[,yaml]
+----
+strategy:
+  matrix:
+    category: [dynamodb_cdc, my_cookbook]  # Add here
+----
+
+== Test configuration reference
+
+The `test-config.sh` file can define:
+
+[cols="1,2,1"]
+|===
+|Variable |Purpose |Default
+
+|`TEST_ENV_VARS`
+|Environment variables for `rpk connect run`
+|`""`
+
+|`TEST_OVERRIDES`
+|Override flags (`-s 'key=value'`) for `rpk connect run`
+|`""`
+
+|`TEST_TIMEOUT`
+|Seconds before integration test times out
+|`20`
+
+|`reset_between_tests()`
+|Function called after each integration test
+|No-op
+|===
+
+Example:
+
+[,bash]
+----
+# test-config.sh
+export MY_TABLE="${MY_TABLE:-test}"
+
+TEST_ENV_VARS="MY_TABLE=integration-test"
+TEST_OVERRIDES="-s 'input.my_input.endpoint=http://localhost:8080'"
+TEST_TIMEOUT=30
+
+reset_between_tests() {
+  curl -X DELETE http://localhost:8080/reset
+}
+----
+
+== Related
+
+* xref:cookbooks:ROOT:index.adoc[Cookbooks Documentation]

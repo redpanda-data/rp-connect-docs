@@ -1,18 +1,32 @@
 name: Test Cookbook Examples
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'modules/cookbooks/examples/**/*.yaml'
   pull_request:
     branches: [main]
     paths:
       - 'modules/cookbooks/examples/**/*.yaml'
+      - 'modules/cookbooks/examples/**/*.sh'
+      - '.github/workflows/test-cookbooks.yaml'
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      category:
+        description: 'Category to test (leave empty for all)'
+        required: false
+        type: string
+      run_integration:
+        description: 'Run integration tests'
+        required: false
+        type: boolean
+        default: true
+  # Triggered by RPCN release workflow
+  repository_dispatch:
+    types: [test-cookbook-examples]
 
 jobs:
-  lint-and-test:
-    name: Lint and Test Examples
+  # Quick unit tests for all examples
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -27,19 +41,25 @@ jobs:
           npx doc-tools install-test-dependencies
           rpk connect install
 
-      # Handles linting + inline tests
-      - name: Run automated test script
+      - name: Run unit tests
         run: |
           cd modules/cookbooks/examples
           chmod +x test-examples.sh
-          ./test-examples.sh "*/*.yaml"
+          ./test-examples.sh --unit-only
 
-  test-matrix:
-    name: Test Examples by Category
+  # Integration tests with Docker Compose (run in parallel by category)
+  integration-tests:
+    name: Integration Tests - ${{ matrix.category }}
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' && github.event.inputs.run_integration == 'true' ||
+      github.event_name == 'repository_dispatch' ||
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request'
+    needs: unit-tests  # Only run if unit tests pass
     strategy:
       matrix:
-        category: [jira]
+        category: [dynamodb_cdc]
       fail-fast: false
 
     steps:
@@ -54,23 +74,77 @@ jobs:
           npx doc-tools install-test-dependencies
           rpk connect install
 
+      - name: Install AWS CLI
+        run: |
+          # AWS CLI is pre-installed on GitHub runners, but ensure it's available
+          aws --version || pip install awscli
+
       - name: Test ${{ matrix.category }} examples
         run: |
           cd modules/cookbooks/examples
-          if [[ -d "${{ matrix.category }}" ]]; then
-            echo "Testing ${{ matrix.category }} examples..."
 
-            # Lint all configs in category
-            echo "🔍 Linting..."
-            rpk connect lint --skip-env-var-check ${{ matrix.category }}/*.yaml
-
-            # Run inline tests (automatically detected)
-            echo "🧪 Running inline tests..."
-            for config_file in ${{ matrix.category }}/*.yaml; do
-              if [[ -f "$config_file" ]]; then
-                echo "Testing: $(basename $config_file)"
-                # Continue on error for configs without tests
-                rpk connect test "$config_file" 2>&1 | grep -E "(Test|succeeded|FAILED)" || echo "  (no tests or test failed)"
-              fi
-            done
+          # Skip if category doesn't exist
+          if [[ ! -d "${{ matrix.category }}" ]]; then
+            echo "Category ${{ matrix.category }} not found, skipping"
+            exit 0
           fi
+
+          # Skip if no docker-compose.yaml
+          if [[ ! -f "${{ matrix.category }}/docker-compose.yaml" ]]; then
+            echo "No docker-compose.yaml in ${{ matrix.category }}, running unit tests only"
+            chmod +x test-examples.sh
+            ./test-examples.sh --unit-only "${{ matrix.category }}"
+            exit 0
+          fi
+
+          echo "🐳 Starting Docker services for ${{ matrix.category }}..."
+          cd "${{ matrix.category }}"
+          docker compose up -d --wait
+
+          echo "📊 Docker service status:"
+          docker compose ps
+
+          # Run setup script if it exists
+          if [[ -x "setup-test-data.sh" ]]; then
+            echo "🔧 Running setup script..."
+            ./setup-test-data.sh
+          fi
+
+          # Run integration tests
+          echo "🧪 Running integration tests..."
+          cd ..
+          chmod +x test-examples.sh
+          ./test-examples.sh --integration-only "${{ matrix.category }}"
+
+      - name: Cleanup Docker
+        if: always()
+        run: |
+          cd modules/cookbooks/examples/${{ matrix.category }}
+          docker compose down -v 2>/dev/null || true
+
+      - name: Show Docker logs on failure
+        if: failure()
+        run: |
+          cd modules/cookbooks/examples/${{ matrix.category }}
+          echo "=== Docker Compose logs ==="
+          docker compose logs 2>/dev/null || true
+
+  # Summary job that depends on all tests
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    if: always()
+
+    steps:
+      - name: Check test results
+        run: |
+          if [[ "${{ needs.unit-tests.result }}" == "failure" ]]; then
+            echo "❌ Unit tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.integration-tests.result }}" == "failure" ]]; then
+            echo "❌ Integration tests failed"
+            exit 1
+          fi
+          echo "✅ All tests passed!"
