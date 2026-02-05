@@ -73,7 +73,7 @@
       "description": "A list of URLs to connect to. This output attempts to connect to each URL in the list, in order, until a successful connection is established. If an item in the list contains commas, it is split into multiple URLs."
     },
     "elasticsearch_basic_auth": {
-      "description": "Allows you to specify basic authentication."
+      "description": "Configure basic authentication credentials for connecting to Elasticsearch. When enabled, these credentials are sent with each request to authenticate with the cluster."
     },
     "elasticsearch_basic_auth_enabled": {
       "description": "Whether to use basic authentication in requests."
