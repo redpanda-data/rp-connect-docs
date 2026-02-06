@@ -1,0 +1,149 @@
+= aws_dynamodb_cdc
+// tag::single-source[]
+:type: input
+:status: beta
+:categories: [Services]
+:page-commercial-names: Amazon DynamoDB CDC
+:description: Reads change data capture (CDC) events from DynamoDB Streams.
+:page-topic-type: reference
+:personas: data_engineer, streaming_developer, platform_operator
+:learning-objective-1: Look up configuration options for DynamoDB CDC streaming
+:learning-objective-2: Find metadata fields available for message processing
+:learning-objective-3: Identify checkpointing and performance tuning settings
+
+component_type_dropdown::[]
+
+Stream item-level changes from DynamoDB tables using DynamoDB Streams. This input automatically manages shards, checkpoints progress for recovery, and processes multiple shards concurrently.
+
+ifndef::env-cloud[]
+Introduced in version 4.79.0.
+endif::[]
+
+Use this reference to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/inputs/aws_dynamodb_cdc.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/aws_dynamodb_cdc.yaml[]
+```
+
+--
+======
+
+== Prerequisites
+
+The source DynamoDB table must have https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html[DynamoDB Streams^] enabled. You can enable streams with one of these view types:
+
+- `KEYS_ONLY`: Only the key attributes of the modified item
+- `NEW_IMAGE`: The entire item as it appears after the modification
+- `OLD_IMAGE`: The entire item as it appeared before the modification
+- `NEW_AND_OLD_IMAGES`: Both the new and old item images
+
+== Checkpointing
+
+Checkpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard.
+
+== Alternative components
+
+For better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.
+
+
+== Message structure
+
+Each CDC event is delivered as a JSON message with the following structure. Use these fields in your Bloblang mappings with `this.<field>`:
+
+[,json]
+----
+{
+  "eventID": "abc123-",                    // <1>
+  "eventName": "INSERT | MODIFY | REMOVE",   // <2>
+  "eventSource": "aws:dynamodb",
+  "awsRegion": "us-east-1",
+  "tableName": "my-table",                   // <3>
+  "dynamodb": {
+    "keys": {                                // <4>
+      "pk": "user#123",
+      "sk": "profile"
+    },
+    "newImage": {                            // <5>
+      "pk": "user#123",
+      "sk": "profile",
+      "name": "Alice",
+      "email": "alice@example.com"
+    },
+    "oldImage": {                            // <6>
+      "pk": "user#123",
+      "sk": "profile",
+      "name": "Alice Smith"
+    },
+    "sequenceNumber": "12345678901234567890", // <7>
+    "sizeBytes": 256,
+    "streamViewType": "NEW_AND_OLD_IMAGES"
+  }
+}
+----
+<1> Unique identifier for this change event.
+<2> Type of change: `INSERT` (new item), `MODIFY` (updated item), or `REMOVE` (deleted item).
+<3> Name of the source DynamoDB table.
+<4> Primary key attributes of the changed item. Always present.
+<5> Item state after the change. Present for `INSERT` and `MODIFY` events (requires `NEW_IMAGE` or `NEW_AND_OLD_IMAGES` stream view type).
+<6> Item state before the change. Present for `MODIFY` and `REMOVE` events (requires `OLD_IMAGE` or `NEW_AND_OLD_IMAGES` stream view type).
+<7> Position of this record in the shard, used for ordering and checkpointing.
+
+NOTE: DynamoDB attribute values are automatically unmarshalled from DynamoDB's type format (`{"S": "value"}`) to plain values (`"value"`).
+
+=== Example mapping
+
+[,yaml]
+----
+pipeline:
+  processors:
+    - mapping: |
+        root.event_type = this.eventName
+        root.table = this.tableName
+        root.keys = this.dynamodb.keys
+        root.new_data = this.dynamodb.newImage
+        root.old_data = this.dynamodb.oldImage
+----
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `dynamodb_shard_id`: The shard ID from which the record was read
+- `dynamodb_sequence_number`: The sequence number of the record in the stream
+- `dynamodb_event_name`: The type of change: INSERT, MODIFY, or REMOVE
+- `dynamodb_table`: The name of the DynamoDB table
+
+== Metrics
+
+This input emits the following metrics:
+
+- `dynamodb_cdc_shards_tracked`: Total number of shards being tracked (gauge)
+- `dynamodb_cdc_shards_active`: Number of shards currently being read from (gauge)
+
+include::redpanda-connect:components:partial$fields/inputs/aws_dynamodb_cdc.adoc[]
+
+include::redpanda-connect:components:partial$examples/inputs/aws_dynamodb_cdc.adoc[]
+
+== Suggested reading
+
+For common patterns including filtering events, routing to Kafka or S3, and detecting changed fields, see the xref:cookbooks:dynamodb_cdc.adoc[DynamoDB CDC Patterns] cookbook.
+// end::single-source[]

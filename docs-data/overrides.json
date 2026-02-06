@@ -73,7 +73,7 @@
       "description": "A list of URLs to connect to. This output attempts to connect to each URL in the list, in order, until a successful connection is established. If an item in the list contains commas, it is split into multiple URLs."
     },
     "elasticsearch_basic_auth": {
-      "description": "Allows you to specify basic authentication."
+      "description": "Configure basic authentication credentials for connecting to Elasticsearch. When enabled, these credentials are sent with each request to authenticate with the cluster."
     },
     "elasticsearch_basic_auth_enabled": {
       "description": "Whether to use basic authentication in requests."
@@ -2769,6 +2769,42 @@
                 "$ref": "#/definitions/initial_interval"
               }
             ]
+          },
+          {
+            "name": "tcp",
+            "$ref": "#/definitions/tcp"
+          }
+        ]
+      }
+    },
+    {
+      "name": "aws_dynamodb_cdc",
+      "description": "Reads change data capture (CDC) events from DynamoDB Streams.\n\nThis input consumes item-level changes from DynamoDB tables with streams enabled. It provides:\n\n- Automatic shard discovery and management as your table scales\n- Checkpoint-based resumption after restarts\n- Concurrent processing of multiple shards\n\n== Prerequisites\n\nThe source DynamoDB table must have https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html[DynamoDB Streams^] enabled. You can enable streams with one of these view types:\n\n- `KEYS_ONLY` - Only the key attributes of the modified item\n- `NEW_IMAGE` - The entire item as it appears after the modification\n- `OLD_IMAGE` - The entire item as it appeared before the modification\n- `NEW_AND_OLD_IMAGES` - Both the new and old item images\n\n== Checkpointing\n\nCheckpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it doesn't exist. On restart, the input resumes from the last checkpointed position for each shard.\n\n== Alternative\n\nFor better performance and longer retention (up to 1 year vs 24 hours for DynamoDB Streams), consider using https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/kds.html[Kinesis Data Streams for DynamoDB^] with the xref:components:inputs/aws_kinesis.adoc[`aws_kinesis`] input.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `dynamodb_shard_id` - The shard ID from which the record was read\n- `dynamodb_sequence_number` - The sequence number of the record in the stream\n- `dynamodb_event_name` - The type of change: `INSERT`, `MODIFY`, or `REMOVE`\n- `dynamodb_table` - The name of the source DynamoDB table\n\n== Metrics\n\nThis input emits the following metrics:\n\n- `dynamodb_cdc_shards_tracked` - Total number of shards being tracked (gauge)\n- `dynamodb_cdc_shards_active` - Number of shards currently being read (gauge)",
+      "config": {
+        "children": [
+          {
+            "name": "table",
+            "description": "The name of the DynamoDB table to read streams from. The table must have https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html[DynamoDB Streams^] enabled."
+          },
+          {
+            "name": "checkpoint_table",
+            "description": "The name of a DynamoDB table used for storing checkpoints. The checkpoint table tracks the last processed sequence number for each shard, enabling the input to resume from where it left off after restarts.\n\nIf this table does not exist, it is created automatically with the following schema:\n\n- Partition key: `shard_id` (String)\n- Sort key: `table_name` (String)"
+          },
+          {
+            "name": "start_from",
+            "description": "Where to start reading when no checkpoint exists for a shard.\n\n- `trim_horizon` - Start from the oldest available record in the stream (up to 24 hours of data).\n- `latest` - Start from new records only, ignoring existing stream data."
+          },
+          {
+            "name": "batch_size",
+            "description": "The maximum number of records to read per shard in a single `GetRecords` API call. Valid range: 1-1000.\n\nHigher values improve throughput but increase memory usage. The DynamoDB Streams API may return fewer records than requested."
+          },
+          {
+            "name": "poll_interval",
+            "description": "Time to wait between polling attempts when no records are available from a shard. This field accepts duration strings such as `100ms`, `1s`, or `5s`.\n\nShorter intervals reduce latency but increase API calls. DynamoDB Streams has a limit of 5 `GetRecords` calls per second per shard."
+          },
+          {
+            "name": "checkpoint_limit",
+            "description": "The maximum number of unacknowledged messages before forcing a checkpoint update. Lower values provide better recovery guarantees but increase DynamoDB write operations to the checkpoint table.\n\nWhen this limit is reached, the input pauses reading until pending messages are acknowledged."
           },
           {
             "name": "tcp",
@@ -5686,6 +5722,24 @@
           {
             "name": "commit_timeout",
             "description": "The maximum duration to wait while data updates from a message batch are asynchronously committed to Snowflake."
+          },
+          {
+            "name": "message_format",
+            "description": "The format to expect incoming messages from the rest of the pipeline.",
+            "annotated_options": [
+              [
+                "array",
+                "Messages are an array of values where each position matches the ordinal of the column in Snowflake."
+              ],
+              [
+                "object",
+                "Messages are JSON or Bloblang objects where each key is the Snowflake column name and the value is the column value."
+              ]
+            ]
+          },
+          {
+            "name": "timestamp_format",
+            "description": "The format to parse string values for `TIMESTAMP`, `TIMESTAMP_LTZ` and `TIMESTAMP_NTZ` columns. Should be a layout for https://pkg.go.dev/time#Parse[time.Parse^] in Go."
           }
         ]
       }

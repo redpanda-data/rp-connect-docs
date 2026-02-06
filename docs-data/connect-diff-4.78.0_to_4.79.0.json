@@ -1,13 +1,13 @@
 {
   "comparison": {
-    "oldVersion": "4.77.0",
-    "newVersion": "4.78.0",
-    "timestamp": "2026-01-24T12:15:53.525Z"
+    "oldVersion": "4.78.0",
+    "newVersion": "4.79.0",
+    "timestamp": "2026-02-05T17:48:19.090Z"
   },
   "summary": {
     "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 1,
+    "newFields": 6,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
@@ -18,9 +18,34 @@
     "removedComponents": [],
     "newFields": [
       {
-        "component": "inputs:http_server",
-        "field": "tcp",
-        "description": "TCP listener configuration for the HTTP server. Only valid with a custom `address`."
+        "component": "inputs:otlp_grpc",
+        "field": "encoding",
+        "description": "Encoding format for messages in the batch. Options: 'protobuf' or 'json'."
+      },
+      {
+        "component": "inputs:otlp_grpc",
+        "field": "schema_registry",
+        "description": "Optional Schema Registry configuration for adding Schema Registry wire format headers to messages."
+      },
+      {
+        "component": "inputs:otlp_http",
+        "field": "encoding",
+        "description": "Encoding format for messages in the batch. Options: 'protobuf' or 'json'."
+      },
+      {
+        "component": "inputs:otlp_http",
+        "field": "schema_registry",
+        "description": "Optional Schema Registry configuration for adding Schema Registry wire format headers to messages."
+      },
+      {
+        "component": "outputs:snowflake_streaming",
+        "field": "message_format",
+        "description": "The format at which to expect incoming messages from the rest of the pipeline in."
+      },
+      {
+        "component": "outputs:snowflake_streaming",
+        "field": "timestamp_format",
+        "description": "The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Should be a layout for https://pkg.go.dev/time#Parse[^time.Parse] in Golang."
       }
     ],
     "removedFields": [],
@@ -30,14 +55,14 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.78.0",
-      "cloud": "4.78.0",
-      "cgo": "4.78.0"
+      "oss": "4.79.0",
+      "cloud": "4.80.0",
+      "cgo": "4.80.0"
     },
     "current": {
-      "cloudSupported": 475,
-      "selfHostedOnly": 75,
-      "cgoOnly": 4
+      "cloudSupported": 476,
+      "selfHostedOnly": 79,
+      "cgoOnly": 0
     },
     "changes": {},
     "details": {
@@ -221,6 +246,11 @@
           "type": "inputs",
           "name": "amqp_0_9",
           "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "aws_dynamodb_cdc",
+          "status": "beta"
         },
         {
           "type": "inputs",
@@ -2540,6 +2570,16 @@
           "status": "stable"
         },
         {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2650,6 +2690,11 @@
           "status": "stable"
         },
         {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -2735,6 +2780,11 @@
           "status": "experimental"
         },
         {
+          "type": "processors",
+          "name": "ffi",
+          "status": "experimental"
+        },
+        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2802,28 +2852,7 @@
           "status": "beta"
         }
       ],
-      "cgoOnly": [
-        {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "beta"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
-          "status": "experimental"
-        }
-      ]
+      "cgoOnly": []
     }
   }
 }

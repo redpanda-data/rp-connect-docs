@@ -52,10 +52,7 @@ jobs:
       - name: Regenerate docs with updated overrides
         run: |
           npx --no-install doc-tools generate rpcn-connector-docs \
-            --fetch-connectors \
-            --overrides $DOCS_OVERRIDES \
-            --draft-missing \
-            --update-whats-new
+            --overrides $DOCS_OVERRIDES
 
       - name: Commit and push if changed
         run: |
