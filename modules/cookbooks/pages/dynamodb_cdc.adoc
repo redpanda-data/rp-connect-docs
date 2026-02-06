@@ -220,7 +220,7 @@ Each stream record appears exactly once in DynamoDB Streams. However, if your pi
 
 DynamoDB Streams retains data for 24 hours. If your pipeline is offline longer than that:
 
-- Consider using https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/kds.html[Kinesis Data Streams for DynamoDB^] (up to 1 year retention)
+- Consider using https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/kds.html[Kinesis Data Streams for DynamoDB^] with the xref:components:inputs/aws_kinesis.adoc[`aws_kinesis` input] instead (up to 1 year retention)
 - Implement a full-table scan fallback for disaster recovery
 
 == Suggested reading
