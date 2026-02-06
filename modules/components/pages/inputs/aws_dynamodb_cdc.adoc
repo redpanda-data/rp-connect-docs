@@ -25,11 +25,27 @@ Use this reference to:
 * [ ] {learning-objective-2}
 * [ ] {learning-objective-3}
 
-DynamoDB Streams capture item-level changes in DynamoDB tables. This input supports:
+[tabs]
+======
+Common::
++
+--
 
-- Automatic shard discovery and management
-- Checkpoint-based resumption after restarts
-- Concurrent processing of multiple shards
+```yml
+include::components:example$common/inputs/aws_dynamodb_cdc.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/aws_dynamodb_cdc.yaml[]
+```
+
+--
+======
 
 == Prerequisites
 
@@ -44,7 +60,7 @@ The source DynamoDB table must have https://docs.aws.amazon.com/amazondynamodb/l
 
 Checkpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard.
 
-== Alternative
+== Alternative components
 
 For better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.
 
@@ -122,29 +138,6 @@ This input emits the following metrics:
 
 - `dynamodb_cdc_shards_tracked`: Total number of shards being tracked (gauge)
 - `dynamodb_cdc_shards_active`: Number of shards currently being read from (gauge)
-
-
-[tabs]
-======
-Common::
-+
---
-
-```yml
-include::components:example$common/inputs/aws_dynamodb_cdc.yaml[]
-```
-
---
-Advanced::
-+
---
-
-```yml
-include::components:example$advanced/inputs/aws_dynamodb_cdc.yaml[]
-```
-
---
-======
 
 include::redpanda-connect:components:partial$fields/inputs/aws_dynamodb_cdc.adoc[]
 
