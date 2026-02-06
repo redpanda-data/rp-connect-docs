@@ -21,9 +21,9 @@ pipeline:
         root.old_image = this.dynamodb.oldImage
 
 output:
-  kafka_franz:
+  redpanda:
     seed_brokers:
-      - ${KAFKA_BROKERS}
+      - ${REDPANDA_BROKERS}
     topic: dynamodb-cdc-events
     key: ${! @kafka_key }
     partitioner: murmur2_hash
@@ -40,7 +40,7 @@ tests:
     environment:
       DYNAMODB_TABLE: test-table
       AWS_REGION: us-east-1
-      KAFKA_BROKERS: localhost:9092
+      REDPANDA_BROKERS: localhost:9092
     input_batch:
       - json_content:
           eventName: "INSERT"
@@ -74,7 +74,7 @@ tests:
     environment:
       DYNAMODB_TABLE: test-table
       AWS_REGION: us-east-1
-      KAFKA_BROKERS: localhost:9092
+      REDPANDA_BROKERS: localhost:9092
     input_batch:
       - json_content:
           eventName: "REMOVE"

@@ -8,14 +8,14 @@
 # Required for linting and rpk connect test
 export DYNAMODB_TABLE="${DYNAMODB_TABLE:-test-table}"
 export AWS_REGION="${AWS_REGION:-us-east-1}"
-export KAFKA_BROKERS="${KAFKA_BROKERS:-localhost:9092}"
+export REDPANDA_BROKERS="${REDPANDA_BROKERS:-localhost:9092}"
 export S3_BUCKET="${S3_BUCKET:-test-bucket}"
 
 # =============================================================================
 # Integration Test Configuration
 # =============================================================================
 # Environment variables for rpk connect run
-TEST_ENV_VARS="DYNAMODB_TABLE=test-users AWS_REGION=us-east-1 KAFKA_BROKERS=localhost:9092 S3_BUCKET=test-cdc-bucket"
+TEST_ENV_VARS="DYNAMODB_TABLE=test-users AWS_REGION=us-east-1 REDPANDA_BROKERS=localhost:9092 S3_BUCKET=test-cdc-bucket"
 
 # Override flags to connect to local Docker services
 TEST_OVERRIDES="-s 'input.aws_dynamodb_cdc.endpoint=http://localhost:8000' \

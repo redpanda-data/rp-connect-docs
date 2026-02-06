@@ -24,25 +24,25 @@ output:
       # Route INSERT events to a topic for new records
       - check: this.event_type == "INSERT"
         output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
-              - ${KAFKA_BROKERS}
+              - ${REDPANDA_BROKERS}
             topic: dynamodb-inserts
 
       # Route MODIFY events to a topic for updates
       - check: this.event_type == "MODIFY"
         output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
-              - ${KAFKA_BROKERS}
+              - ${REDPANDA_BROKERS}
             topic: dynamodb-updates
 
       # Route REMOVE events to a topic for deletes
       - check: this.event_type == "REMOVE"
         output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
-              - ${KAFKA_BROKERS}
+              - ${REDPANDA_BROKERS}
             topic: dynamodb-deletes
 
       # Fallback for any unexpected event types
@@ -57,7 +57,7 @@ tests:
     environment:
       DYNAMODB_TABLE: test-table
       AWS_REGION: us-east-1
-      KAFKA_BROKERS: localhost:9092
+      REDPANDA_BROKERS: localhost:9092
     input_batch:
       - json_content:
           eventName: "INSERT"
@@ -83,7 +83,7 @@ tests:
     environment:
       DYNAMODB_TABLE: test-table
       AWS_REGION: us-east-1
-      KAFKA_BROKERS: localhost:9092
+      REDPANDA_BROKERS: localhost:9092
     input_batch:
       - json_content:
           eventName: "REMOVE"

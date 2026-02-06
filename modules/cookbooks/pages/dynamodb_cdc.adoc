@@ -5,10 +5,10 @@
 :page-topic-type: cookbook
 :personas: streaming_developer, data_engineer
 :learning-objective-1: Find reusable patterns for capturing DynamoDB CDC events
-:learning-objective-2: Look up integration patterns for routing CDC data to Kafka and S3
+:learning-objective-2: Look up integration patterns for routing CDC data to Redpanda and S3
 :learning-objective-3: Identify patterns for filtering and transforming change events
 
-The DynamoDB CDC input enables capturing item-level changes from DynamoDB tables with streams enabled. This cookbook provides reusable patterns for filtering, transforming, and routing DynamoDB CDC events to Kafka, S3, and other destinations.
+The DynamoDB CDC input enables capturing item-level changes from DynamoDB tables with streams enabled. This cookbook provides reusable patterns for filtering, transforming, and routing DynamoDB CDC events to Redpanda, S3, and other destinations.
 
 Use this cookbook to:
 
@@ -50,12 +50,12 @@ The examples in this cookbook use environment variables for AWS configuration. T
 ----
 export DYNAMODB_TABLE=my-table <1>
 export AWS_REGION=us-east-1 <2>
-export KAFKA_BROKERS=localhost:9092 <3>
+export REDPANDA_BROKERS=localhost:9092 <3>
 export S3_BUCKET=my-cdc-bucket <4>
 ----
 <1> The name of the DynamoDB table with streams enabled.
 <2> The AWS region where your DynamoDB table is located.
-<3> The Kafka broker addresses (for Kafka output examples).
+<3> The Redpanda broker addresses (for Redpanda output examples).
 <4> The S3 bucket name (for S3 output examples).
 
 Redpanda Connect loads AWS credentials from the standard https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html[credential chain^] (environment variables, `~/.aws/credentials`, or IAM roles).
@@ -85,18 +85,18 @@ This example:
 - Filters out `REMOVE` events using `deleted()`
 - Transforms the event to a simplified format
 
-== Route to Kafka
+== Route to Redpanda
 
-Stream DynamoDB changes to Kafka for real-time processing:
+Stream DynamoDB changes to Redpanda for real-time processing:
 
 [source,yaml]
 ----
-include::cookbooks:example$dynamodb_cdc/to-kafka.yaml[tag=config]
+include::cookbooks:example$dynamodb_cdc/to-redpanda.yaml[tag=config]
 ----
 
 This example:
 
-- Creates a composite Kafka key from the DynamoDB primary key
+- Creates a composite message key from the DynamoDB primary key
 - Transforms the DynamoDB format to plain JSON
 - Batches messages for efficient delivery
 
