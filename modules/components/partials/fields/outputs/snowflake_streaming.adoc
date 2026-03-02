@@ -281,6 +281,32 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 *Default*: `4`
 
+=== `message_format`
+
+The format to expect incoming messages from the rest of the pipeline.
+
+*Type*: `string`
+
+*Default*: `object`
+
+[cols="1m,2a"]
+|===
+|Option |Summary
+
+|array
+|Messages are an array of values where each position matches the ordinal of the column in Snowflake.
+
+|object
+|Messages are JSON or Bloblang objects where each key is the Snowflake column name and the value is the column value.
+
+|===
+
+[source,yaml]
+----
+# Examples:
+message_format: array
+----
+
 === `offset_token`
 
 The offset token to use for exactly-once delivery of data to a Snowflake table. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
@@ -420,6 +446,14 @@ The Snowflake table you want to write data to. This field supports xref:configur
 # Examples:
 table: MY_TABLE
 ----
+
+=== `timestamp_format`
+
+The format to parse string values for `TIMESTAMP`, `TIMESTAMP_LTZ` and `TIMESTAMP_NTZ` columns. Should be a layout for https://pkg.go.dev/time#Parse[time.Parse^] in Go.
+
+*Type*: `string`
+
+*Default*: `2006-01-02T15:04:05.999999999Z07:00`
 
 === `url`
 

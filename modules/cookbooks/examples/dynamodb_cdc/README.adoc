@@ -1,0 +1,93 @@
+= DynamoDB CDC Examples
+
+Example pipelines for capturing change data from DynamoDB Streams.
+
+== Quick start
+
+. Start the test environment:
++
+[,bash]
+----
+docker compose up -d dynamodb-local
+----
+
+. Create test data:
++
+[,bash]
+----
+./setup-test-data.sh
+----
+
+. Run an example:
++
+[,bash]
+----
+DYNAMODB_TABLE=test-users AWS_REGION=us-east-1 \
+  rpk connect run \
+  -s 'input.aws_dynamodb_cdc.endpoint=http://localhost:8000' \
+  -s 'input.aws_dynamodb_cdc.credentials.id=fakekey' \
+  -s 'input.aws_dynamodb_cdc.credentials.secret=fakesecret' \
+  basic-capture.yaml
+----
+
+== Examples
+
+[cols="1,2"]
+|===
+|File |Description
+
+|`basic-capture.yaml`
+|Capture CDC events and output with metadata
+
+|`filter-events.yaml`
+|Filter to only INSERT and MODIFY events
+
+|`to-kafka.yaml`
+|Route CDC events to Kafka with composite keys
+
+|`to-s3.yaml`
+|Archive CDC events to S3 with time partitioning
+
+|`route-by-event.yaml`
+|Route different event types to different Kafka topics
+
+|`detect-changes.yaml`
+|Detect which fields changed in MODIFY events
+|===
+
+== Test services
+
+The `docker-compose.yaml` includes optional services for testing outputs:
+
+* *dynamodb-local* (port 8000) - DynamoDB Local for CDC input
+* *redpanda* (port 9092) - Kafka-compatible broker for Kafka outputs
+* *localstack* (port 4566) - S3-compatible storage for S3 outputs
+
+Start all services:
+
+[,bash]
+----
+docker compose up -d
+----
+
+Start only DynamoDB:
+
+[,bash]
+----
+docker compose up -d dynamodb-local
+----
+
+== Run unit tests
+
+[,bash]
+----
+DYNAMODB_TABLE=test AWS_REGION=us-east-1 KAFKA_BROKERS=localhost:9092 S3_BUCKET=test \
+  rpk connect test *.yaml
+----
+
+== Cleanup
+
+[,bash]
+----
+docker compose down -v
+----

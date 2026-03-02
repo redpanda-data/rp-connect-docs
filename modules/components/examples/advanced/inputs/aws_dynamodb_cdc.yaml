@@ -1,0 +1,28 @@
+inputs:
+  label: ""
+  aws_dynamodb_cdc:
+    table: "" # No default (required)
+    checkpoint_table: redpanda_dynamodb_checkpoints
+    batch_size: 1000
+    poll_interval: 1s
+    start_from: trim_horizon
+    checkpoint_limit: 1000
+    max_tracked_shards: 10000
+    throttle_backoff: 100ms
+    region: "" # No default (optional)
+    endpoint: "" # No default (optional)
+    tcp:
+      connect_timeout: 0s
+      keep_alive:
+        idle: 15s
+        interval: 15s
+        count: 9
+      tcp_user_timeout: 0s
+    credentials:
+      profile: "" # No default (optional)
+      id: "" # No default (optional)
+      secret: "" # No default (optional)
+      token: "" # No default (optional)
+      from_ec2_role: "" # No default (optional)
+      role: "" # No default (optional)
+      role_external_id: "" # No default (optional)
