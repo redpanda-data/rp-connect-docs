@@ -22,7 +22,12 @@ Before using these patterns, ensure you have the following configured:
 
 === Redpanda CLI
 
+ifndef::env-cloud[]
 Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:get-started:quickstarts/rpk.adoc[] for installation instructions.
+endif::[]
+ifdef::env-cloud[]
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:manage:rpk/rpk-install.adoc[] for installation instructions.
+endif::[]
 
 === DynamoDB Streams
 
