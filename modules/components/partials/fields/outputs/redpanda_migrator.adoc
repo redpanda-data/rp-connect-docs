@@ -621,6 +621,14 @@ A method used to sign the token such as RS256, RS384, RS512 or EdDSA.
 
 *Default*: `""`
 
+=== `schema_registry.max_parallel_http_requests`
+
+Maximum number of parallel HTTP requests to the schema registry. Controls concurrency when syncing multiple schemas.
+
+*Type*: `int`
+
+*Default*: `10`
+
 === `schema_registry.normalize`
 
 Whether to normalize schemas when creating them in the destination registry.

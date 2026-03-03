@@ -1,51 +1,57 @@
 {
   "comparison": {
-    "oldVersion": "4.78.0",
-    "newVersion": "4.79.0",
-    "timestamp": "2026-02-05T17:48:19.090Z"
+    "oldVersion": "4.79.0",
+    "newVersion": "4.81.0",
+    "timestamp": "2026-03-03T10:24:12.575Z"
   },
   "summary": {
-    "newComponents": 0,
+    "newComponents": 1,
     "removedComponents": 0,
-    "newFields": 6,
+    "newFields": 4,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
     "changedDefaults": 0
   },
   "details": {
-    "newComponents": [],
+    "newComponents": [
+      {
+        "name": "iceberg",
+        "type": "outputs",
+        "status": "stable",
+        "version": "4.80.0",
+        "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc]."
+      },
+      {
+        "name": "iceberg",
+        "type": "output",
+        "status": "stable",
+        "version": "",
+        "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+        "summary": "Write data to Apache Iceberg tables via REST catalog."
+      }
+    ],
     "removedComponents": [],
     "newFields": [
       {
-        "component": "inputs:otlp_grpc",
-        "field": "encoding",
-        "description": "Encoding format for messages in the batch. Options: 'protobuf' or 'json'."
+        "component": "inputs:tigerbeetle_cdc",
+        "field": "timeout_seconds",
+        "description": "The timeout in seconds, for querying the TigerBeetle cluster."
       },
       {
-        "component": "inputs:otlp_grpc",
-        "field": "schema_registry",
-        "description": "Optional Schema Registry configuration for adding Schema Registry wire format headers to messages."
+        "component": "outputs:aws_sns",
+        "field": "subject",
+        "description": "An optional subject to set for messages."
       },
       {
-        "component": "inputs:otlp_http",
-        "field": "encoding",
-        "description": "Encoding format for messages in the batch. Options: 'protobuf' or 'json'."
+        "component": "processors:google_drive_download",
+        "field": "shared_drives",
+        "description": "Whether or not to include shared drives."
       },
       {
-        "component": "inputs:otlp_http",
-        "field": "schema_registry",
-        "description": "Optional Schema Registry configuration for adding Schema Registry wire format headers to messages."
-      },
-      {
-        "component": "outputs:snowflake_streaming",
-        "field": "message_format",
-        "description": "The format at which to expect incoming messages from the rest of the pipeline in."
-      },
-      {
-        "component": "outputs:snowflake_streaming",
-        "field": "timestamp_format",
-        "description": "The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Should be a layout for https://pkg.go.dev/time#Parse[^time.Parse] in Golang."
+        "component": "processors:google_drive_search",
+        "field": "shared_drives",
+        "description": "Whether or not to include shared drives in the result."
       }
     ],
     "removedFields": [],
@@ -55,16 +61,51 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.79.0",
-      "cloud": "4.80.0",
-      "cgo": "4.80.0"
+      "oss": "4.81.0",
+      "cloud": "4.82.0-rc1",
+      "cgo": "4.82.0-rc1"
     },
     "current": {
       "cloudSupported": 476,
-      "selfHostedOnly": 79,
-      "cgoOnly": 0
+      "selfHostedOnly": 75,
+      "cgoOnly": 5
     },
-    "changes": {},
+    "changes": {
+      "cloud": {
+        "added": [],
+        "removed": []
+      },
+      "cgo": {
+        "newCgoOnly": [
+          {
+            "type": "inputs",
+            "name": "tigerbeetle_cdc",
+            "status": "beta"
+          },
+          {
+            "type": "inputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "outputs",
+            "name": "iceberg",
+            "status": "stable"
+          },
+          {
+            "type": "outputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "processors",
+            "name": "ffi",
+            "status": "experimental"
+          }
+        ],
+        "removedCgoOnly": []
+      }
+    },
     "details": {
       "cloudSupported": [
         {
@@ -2570,16 +2611,6 @@
           "status": "stable"
         },
         {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "beta"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2690,11 +2721,6 @@
           "status": "stable"
         },
         {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -2780,11 +2806,6 @@
           "status": "experimental"
         },
         {
-          "type": "processors",
-          "name": "ffi",
-          "status": "experimental"
-        },
-        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2847,12 +2868,43 @@
       ],
       "cloudOnly": [
         {
+          "type": "outputs",
+          "name": "iceberg",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "a2a_message",
           "status": "beta"
         }
       ],
-      "cgoOnly": []
+      "cgoOnly": [
+        {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "iceberg",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "ffi",
+          "status": "experimental"
+        }
+      ]
     }
   }
 }

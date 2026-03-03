@@ -9,6 +9,60 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.81.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.81.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:outputs/iceberg.adoc[iceberg]
+|Output
+|stable
+|Write data to Apache Iceberg tables via REST catalog.
+
+|===
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|timeout_seconds
+|The timeout in seconds, for querying the TigerBeetle cluster.
+|*Inputs:*
+
+* xref:components:inputs/tigerbeetle_cdc.adoc#timeout_seconds[tigerbeetle_cdc]
+
+
+|subject
+|An optional subject to set for messages.
+|*Outputs:*
+
+* xref:components:outputs/aws_sns.adoc#subject[aws_sns]
+
+
+|shared_drives
+|Whether or not to include shared drives.
+|*Processors:*
+
+* xref:components:processors/google_drive_download.adoc#shared_drives[google_drive_download]
+* xref:components:processors/google_drive_search.adoc#shared_drives[google_drive_search]
+
+
+|===
+
+
 == Version 4.79.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.79.0[See the full release notes^].
