@@ -3976,6 +3976,22 @@
       }
     },
     {
+      "name": "iceberg",
+      "config": {
+        "children": [
+          {
+            "name": "catalog",
+            "children": [
+              {
+                "name": "headers",
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "kafka",
       "config": {
         "children": [
