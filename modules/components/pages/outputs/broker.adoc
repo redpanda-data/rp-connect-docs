@@ -10,8 +10,11 @@
 component_type_dropdown::[]
 
 
-Allows you to route messages to multiple child outputs using a range of brokering <<patterns>>.
+A meta-output that routes messages to multiple child outputs simultaneously using a range of brokering <<patterns>>. Unlike regular outputs, `broker` doesn't send messages anywhere by itself — it wraps other outputs and controls how messages are delivered to each one.
 
+Use `broker` when you need to write the same message to multiple destinations, such as publishing events to Kafka while also writing them to a database. The delivery pattern determines whether outputs receive messages in parallel, sequentially, or in a round-robin distribution.
+
+NOTE: The name `broker` refers to the brokering delivery pattern, not a Redpanda broker (cluster node).
 
 [tabs]
 ======
@@ -57,7 +60,9 @@ include::redpanda-connect:components:partial$fields/outputs/broker.adoc[]
 
 == Patterns
 
-The broker pattern determines the way in which messages are allocated and can be chosen from the following:
+The broker pattern determines how messages are distributed across outputs. Use `fan_out` (the default) when every output should receive every message. Use `round_robin` or `greedy` when you want to distribute messages across outputs for load balancing rather than duplication.
+
+The available patterns are:
 
 === `fan_out`
 
