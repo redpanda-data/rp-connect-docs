@@ -1233,7 +1233,7 @@
           "name": "idempotent_write",
           "type": "bool",
           "kind": "scalar",
-          "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+          "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
           "is_advanced": true,
           "default": true
         },
@@ -23726,7 +23726,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Enables TigerBeetle CDC streaming for Redpanda Connect.",
-      "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer’s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater.",
+      "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer\u2019s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater.",
       "categories": [
         "Services"
       ],
@@ -29285,7 +29285,7 @@
       "examples": [
         {
           "title": "Updating Documents",
-          "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn’t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
+          "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn\u2019t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
           "config": "\n# Partial document update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Performs a partial update on the document.\n        root.doc = this\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Scripted update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Increments the field \"counter\" by 1.\n        root.script.source = \"ctx._source.counter += 1\"\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Upsert\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # If the product with the ID exists, its price will be updated to 100.\n        # If the product does not exist, a new document with ID 1 and a price\n        # of 50 will be inserted.\n        root.doc.product_price = 50\n        root.upsert.product_price = 100\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n"
         },
         {
@@ -29658,7 +29658,7 @@
       "examples": [
         {
           "title": "Updating Documents",
-          "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn’t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
+          "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn\u2019t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
           "config": "\n# Partial document update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Performs a partial update on the document.\n        root.doc = this\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Scripted update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Increments the field \"counter\" by 1.\n        root.script.source = \"ctx._source.counter += 1\"\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Upsert\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # If the product with the ID exists, its price will be updated to 50.\n        # If the product does not exist, a new document with ID 1 and a price\n        # of 100 will be inserted.\n        root.doc.product_price = 50\n        root.upsert.product_price = 100\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n"
         },
         {
@@ -33250,7 +33250,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -34113,7 +34113,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -37218,7 +37218,7 @@
                 "name": "idempotent_write",
                 "type": "bool",
                 "kind": "scalar",
-                "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+                "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
                 "is_advanced": true,
                 "default": true
               },
@@ -41704,7 +41704,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -42529,7 +42529,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -46762,22 +46762,6 @@
                     "default": false
                   },
                   {
-                    "name": "region",
-                    "type": "string",
-                    "kind": "scalar",
-                    "description": "The AWS region to target.",
-                    "is_advanced": true,
-                    "is_optional": true
-                  },
-                  {
-                    "name": "endpoint",
-                    "type": "string",
-                    "kind": "scalar",
-                    "description": "Allows you to specify a custom endpoint for the AWS API.",
-                    "is_advanced": true,
-                    "is_optional": true
-                  },
-                  {
                     "name": "tcp",
                     "type": "object",
                     "kind": "scalar",
@@ -46886,7 +46870,8 @@
                         "description": "Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].",
                         "is_advanced": true,
                         "is_optional": true,
-                        "version": "4.2.0"
+                        "version": "4.2.0",
+                        "default": false
                       },
                       {
                         "name": "role",
@@ -52587,7 +52572,7 @@
             "name": "timeout",
             "type": "string",
             "kind": "scalar",
-            "description": "A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, -1.5h or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.",
+            "description": "A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, -1.5h or 2h45m. Valid time units are ns, us (or \u00b5s), ms, s, m, h.",
             "is_optional": true,
             "default": "3s"
           },
@@ -60205,7 +60190,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -68186,7 +68171,7 @@
     {
       "status": "stable",
       "name": "parse_duration",
-      "description": "Parses a Go-style duration string into nanoseconds. A duration string is a signed sequence of decimal numbers with unit suffixes like \"300ms\", \"-1.5h\", or \"2h45m\". Valid units: \"ns\", \"us\" (or \"µs\"), \"ms\", \"s\", \"m\", \"h\".",
+      "description": "Parses a Go-style duration string into nanoseconds. A duration string is a signed sequence of decimal numbers with unit suffixes like \"300ms\", \"-1.5h\", or \"2h45m\". Valid units: \"ns\", \"us\" (or \"\u00b5s\"), \"ms\", \"s\", \"m\", \"h\".",
       "params": {},
       "examples": [
         {
@@ -70898,7 +70883,7 @@
           "summary": "Create a slug preserving French language rules",
           "results": [
             [
-              "{\"title\":\"Café & Restaurant\"}",
+              "{\"title\":\"Caf\u00e9 & Restaurant\"}",
               "{\"slug\":\"cafe-et-restaurant\"}"
             ]
           ],
@@ -70926,7 +70911,7 @@
               "summary": "Create a slug preserving French language rules",
               "results": [
                 [
-                  "{\"title\":\"Café & Restaurant\"}",
+                  "{\"title\":\"Caf\u00e9 & Restaurant\"}",
                   "{\"slug\":\"cafe-et-restaurant\"}"
                 ]
               ],
@@ -73094,8 +73079,8 @@
           "summary": "Split text into grapheme clusters (handles complex emoji correctly)",
           "results": [
             [
-              "{\"emoji\":\"👨‍👩‍👧‍👦❤️\"}",
-              "{\"graphemes\":[\"👨‍👩‍👧‍👦\",\"❤️\"]}"
+              "{\"emoji\":\"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66\u2764\ufe0f\"}",
+              "{\"graphemes\":[\"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66\",\"\u2764\ufe0f\"]}"
             ]
           ],
           "skip_testing": false
@@ -73122,8 +73107,8 @@
               "summary": "Split text into grapheme clusters (handles complex emoji correctly)",
               "results": [
                 [
-                  "{\"emoji\":\"👨‍👩‍👧‍👦❤️\"}",
-                  "{\"graphemes\":[\"👨‍👩‍👧‍👦\",\"❤️\"]}"
+                  "{\"emoji\":\"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66\u2764\ufe0f\"}",
+                  "{\"graphemes\":[\"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66\",\"\u2764\ufe0f\"]}"
                 ]
               ],
               "skip_testing": false

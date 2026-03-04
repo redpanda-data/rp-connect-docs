@@ -16,15 +16,9 @@ batching:
   byte_size: 5000
   count: 0
   period: 1s
-
-# ---
-
 batching:
   count: 10
   period: 1s
-
-# ---
-
 batching:
   check: this.contains("END BATCH")
   count: 0
@@ -73,13 +67,7 @@ A period in which an incomplete batch should be flushed regardless of its size.
 ----
 # Examples:
 period: 1s
-
-# ---
-
 period: 1m
-
-# ---
-
 period: 500ms
 ----
 
@@ -96,17 +84,9 @@ processors:
   - archive:
       format: concatenate
 
-
-# ---
-
-processors:
   - archive:
       format: lines
 
-
-# ---
-
-processors:
   - archive:
       format: json_array
 
@@ -194,7 +174,7 @@ OAuth2 token endpoint URI.
 
 Custom HTTP headers to include in all requests to the catalog.
 
-*Type*: `string`
+*Type*: `object`
 
 [source,yaml]
 ----
@@ -221,13 +201,7 @@ The REST catalog endpoint URL.
 ----
 # Examples:
 url: http://localhost:8181/api/catalog
-
-# ---
-
 url: https://polaris.example.com/api/catalog
-
-# ---
-
 url: https://glue.us-east-1.amazonaws.com/iceberg
 ----
 
@@ -285,17 +259,12 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 The Iceberg namespace for the table, dot delimiters are split as nested namespaces.
 
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
 *Type*: `string`
 
 [source,yaml]
 ----
 # Examples:
 namespace: analytics.events
-
-# ---
-
 namespace: production
 ----
 
@@ -315,9 +284,7 @@ Enable automatic schema evolution. When enabled, new columns will be automatical
 
 === `schema_evolution.partition_spec`
 
-A bloblang expression to evalutate when a new table is created to determine the table's partition spec. The result of the mapping should be an iceberg partition spec in the same string format as the https://docs.redpanda.com/current/manage/iceberg/about-iceberg-topics/#use-custom-partitioning[^Redpanda Streaming Topic Property]
-
-This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+A Bloblang expression to evaluate when a new table is created to determine the table's partition spec. The result of the mapping should be an iceberg partition spec in the same string format as the https://docs.redpanda.com/current/manage/iceberg/about-iceberg-topics/#use-custom-partitioning[^Redpanda Streaming Topic Property]
 
 *Type*: `string`
 
@@ -327,35 +294,17 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 ----
 # Examples:
 partition_spec: (col1)
-
-# ---
-
 partition_spec: (nested.col)
-
-# ---
-
 partition_spec: (year(my_ts_col))
-
-# ---
-
 partition_spec: (year(my_ts_col), col2)
-
-# ---
-
 partition_spec: (hour(my_ts_col), truncate(42, col2))
-
-# ---
-
 partition_spec: (day(my_ts_col), bucket(4, nested.col))
-
-# ---
-
 partition_spec: (day(my_ts_col), void(`non.nested column.with.dots`), identity(nested.column))
 ----
 
 === `schema_evolution.table_location`
 
-A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `{prefix}{namespace}/{table}`.
+A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\{prefix}\{namespace}/{table}`.
 
 *Type*: `string`
 
@@ -404,6 +353,8 @@ Requires version 4.2.0 or later.
 endif::[]
 
 *Type*: `bool`
+
+*Default*: `false`
 
 === `storage.aws_s3.credentials.id`
 
@@ -455,12 +406,6 @@ Custom endpoint for S3-compatible storage (e.g., MinIO).
 endpoint: http://localhost:9000
 ----
 
-=== `storage.aws_s3.endpoint`
-
-Allows you to specify a custom endpoint for the AWS API.
-
-*Type*: `string`
-
 === `storage.aws_s3.force_path_style_urls`
 
 Forces the client API to use path style URLs, which is often required when connecting to custom endpoints.
@@ -480,12 +425,6 @@ The AWS region.
 # Examples:
 region: us-west-2
 ----
-
-=== `storage.aws_s3.region`
-
-The AWS region to target.
-
-*Type*: `string`
 
 === `storage.aws_s3.tcp`
 
@@ -659,9 +598,6 @@ The Iceberg table name. Supports interpolation functions for dynamic table names
 ----
 # Examples:
 table: user_events
-
-# ---
-
 table: events_${!meta("topic")}
 ----
 
