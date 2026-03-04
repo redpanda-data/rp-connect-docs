@@ -14,7 +14,7 @@ outputs:
         aws_sigv4:
           region: "" # No default (optional)
           service: "" # No default (optional)
-      headers: {} # No default (optional)
+      headers: "" # No default (optional)
       tls_skip_verify: false
     namespace: "" # No default (required)
     table: "" # No default (required)
