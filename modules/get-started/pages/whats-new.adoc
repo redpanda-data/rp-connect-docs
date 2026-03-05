@@ -10,9 +10,26 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
 == Version 4.81.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.81.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:inputs/aws_cloudwatch_logs.adoc[aws_cloudwatch_logs]
+|Input
+|stable
+|Consumes log events from AWS CloudWatch Logs.
+
+|===
+
 
 === New field support
 
