@@ -1,0 +1,174 @@
+= oracle_cdc
+// tag::single-source[]
+:type: input
+:status: beta
+:categories: ["Services"]
+
+// © 2024 Redpanda Data Inc.
+
+component_type_dropdown::[]
+
+Streams data changes from an Oracle database using Oracle LogMiner to capture data updates in real time.
+
+// TODO: Confirm the version this was introduced in before publishing.
+// ifndef::env-cloud[]
+// Introduced in version X.XX.X.
+// endif::[]
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/inputs/oracle_cdc.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/oracle_cdc.yaml[]
+```
+
+--
+======
+
+The `oracle_cdc` input uses https://docs.oracle.com/en/database/oracle/oracle-database/19/sutil/oracle-logminer-utility.html[Oracle LogMiner^] to capture changes made to an Oracle database in real time and streams them to Redpanda Connect. You can specify which schemas and tables to receive changes from, and choose between two replication modes: snapshot mode, which also streams existing data, and streaming mode, which processes only new changes.
+
+== Prerequisites
+
+// TODO: Confirm the minimum Oracle Database version before publishing.
+- Oracle Database 19c or later
+ifdef::env-cloud[]
+- Network access from the cluster where your Redpanda Connect pipeline is running to the source database environment. For detailed networking information, including how to set up a VPC peering connection, see xref:networking:index.adoc[Redpanda Cloud Networking].
+endif::[]
+- Supplemental logging enabled on your Oracle database
+- A database user with the required LogMiner privileges
+
+=== Configuration resources
+
+// TODO: Verify links and add any missing cloud platforms before publishing.
+[tabs]
+=====
+Cloud platforms::
++
+--
+
+- https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.Oracle.CommonDBATasks.Log.html[Enable supplemental logging on Amazon RDS for Oracle^]
+- https://docs.oracle.com/en-us/iaas/Content/Database/Tasks/logminer.htm[Use LogMiner on Oracle Cloud Infrastructure^]
+
+--
+Self-hosted Oracle::
++
+--
+
+- https://docs.oracle.com/en/database/oracle/oracle-database/19/sutil/oracle-logminer-utility.html[Oracle LogMiner documentation^]
+
+--
+=====
+
+=== Enable supplemental logging
+
+Oracle LogMiner requires supplemental logging to be enabled so that it can capture the full before and after images of changed rows. You can enable it at the database level or on individual tables.
+
+To enable supplemental logging at the database level:
+
+[source,sql]
+----
+ALTER DATABASE ADD SUPPLEMENTAL LOG DATA;
+----
+
+To verify that supplemental logging is enabled:
+
+[source,sql]
+----
+SELECT SUPPLEMENTAL_LOG_DATA_MIN FROM V$DATABASE;
+----
+
+The query returns `YES` if supplemental logging is active.
+
+=== Grant LogMiner privileges
+
+// TODO: Confirm required privilege set with engineering before publishing.
+The database user configured for the `oracle_cdc` input requires the following privileges:
+
+[source,sql]
+----
+GRANT CREATE SESSION TO <username>;
+GRANT LOGMINING TO <username>;
+GRANT SELECT ANY DICTIONARY TO <username>;
+GRANT SELECT ANY TRANSACTION TO <username>;
+----
+
+Replace `<username>` with the Oracle database username.
+
+== Choose a replication mode
+
+The `oracle_cdc` input supports two replication modes, controlled by the <<stream_snapshot,`stream_snapshot`>> field.
+
+=== Snapshot mode
+
+If you set `stream_snapshot` to `true`, Redpanda Connect:
+
+. Takes a snapshot of the selected tables.
+. Streams the existing rows from each table.
+. Begins streaming changes from the LogMiner position captured at snapshot time.
+
+Snapshots can run sequentially (one table at a time) or in parallel across multiple tables, controlled by the <<max_parallel_snapshot_tables,`max_parallel_snapshot_tables`>> field.
+
+If the pipeline restarts during the snapshot, Redpanda Connect resumes from where it left off using the configured <<checkpoint_cache,checkpoint cache>>.
+
+=== Streaming mode
+
+If you set `stream_snapshot` to `false`, Redpanda Connect skips the snapshot and begins streaming changes from the most recent LogMiner position. If the pipeline restarts, Redpanda Connect resumes from the last position written to the checkpoint cache.
+
+== Checkpoint cache
+
+The `oracle_cdc` input tracks its position in the Oracle redo log using a checkpoint cache. By default, it uses an internal Oracle-managed cache stored in the source database. You can also configure an external xref:components:caches/about.adoc[cache resource] using the <<checkpoint_cache,`checkpoint_cache`>> field, which allows you to use any supported cache backend such as Redis or a file cache.
+
+The checkpoint records the System Change Number (SCN), which Oracle uses to order transactions across the redo log.
+
+== Data mappings
+
+// TODO: Fill in Oracle-to-Bloblang type mappings with engineering before publishing.
+// Follow the pattern from postgres_cdc.adoc and mysql_cdc.adoc.
+
+The following table shows how selected Oracle data types are mapped to data types supported in Redpanda Connect. All other data types are mapped to string values.
+
+|===
+| Oracle data type | Bloblang value
+
+| VARCHAR2, CHAR, NVARCHAR2, NCHAR
+| A string value, for example: `"this data"`
+
+| NUMBER, INTEGER, FLOAT
+| A standard numeric type, for example: `123`
+
+| DATE, TIMESTAMP
+| A Bloblang timestamp
+
+| CLOB, NCLOB
+| A string value
+
+| BLOB, RAW
+| An array of byte values
+
+|===
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+// TODO: Confirm exact metadata field names with engineering before publishing.
+- `operation`: The type of database operation that generated the message, such as `read`, `insert`, `update`, or `delete`. A `read` operation occurs when a snapshot of the database is processed.
+- `schema`: The Oracle schema of the table from which the message originated.
+- `table`: The name of the database table from which the message originated.
+- `scn`: The System Change Number (SCN) of the redo log entry, which can be used to determine the order of changes.
+
+include::redpanda-connect:components:partial$fields/inputs/oracle_cdc.adoc[]
+
+// end::single-source[]

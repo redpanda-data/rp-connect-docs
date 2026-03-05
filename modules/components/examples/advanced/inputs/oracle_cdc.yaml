@@ -1,0 +1,14 @@
+input:
+  oracle_cdc:
+    dsn: oracle://user:password@host:1521/ORCLCDB
+    include:
+      - schema: HR
+        tables:
+          - EMPLOYEES
+          - DEPARTMENTS
+      - schema: SALES
+        tables:
+          - ORDERS.*
+    stream_snapshot: true
+    max_parallel_snapshot_tables: 4
+    checkpoint_cache: my_cache_resource

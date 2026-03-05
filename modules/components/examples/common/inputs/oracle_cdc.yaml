@@ -1,0 +1,9 @@
+input:
+  oracle_cdc:
+    dsn: oracle://user:password@host:1521/ORCLCDB
+    include:
+      - schema: HR
+        tables:
+          - EMPLOYEES
+          - DEPARTMENTS
+    stream_snapshot: true
