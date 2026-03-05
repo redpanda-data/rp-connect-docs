@@ -116,6 +116,14 @@ The AWS region to target.
 
 *Type*: `string`
 
+=== `subject`
+
+An optional subject to set for messages.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
 === `tcp`
 
 Configure TCP socket-level settings to optimize network performance and reliability. These low-level controls are useful for:

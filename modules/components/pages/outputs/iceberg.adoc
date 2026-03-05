@@ -1,0 +1,101 @@
+= iceberg
+// tag::single-source[]
+:page-commercial-names: Iceberg
+:type: output
+:status: stable
+:categories: [Services]
+:description: Write data to Apache Iceberg tables via REST catalog.
+
+// TODO: Uncomment when iceberg is added to the upstream info.csv in redpanda-data/connect
+// component_type_dropdown::[]
+
+Write data to Apache Iceberg tables via REST catalog.
+
+ifndef::env-cloud[]
+Introduced in version 4.80.0.
+endif::[]
+
+
+Write streaming data to Apache Iceberg tables using the REST catalog API. This output supports:
+
+* Multiple storage backends (S3, GCS, Azure)
+* Automatic table creation with schema detection
+* Partition transforms (year, month, day, hour, bucket, truncate)
+* Schema evolution (automatic column addition)
+* Transaction retry logic for concurrent writes
+
+This output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.
+
+=== Apache Polaris
+
+To use with https://polaris.apache.org[Apache Polaris^]:
+
+* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).
+* Set `catalog.warehouse` to the catalog name configured in Polaris.
+* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.
+
+=== AWS Glue Data Catalog
+
+To use with AWS Glue Data Catalog:
+
+* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).
+* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).
+* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.
+* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.
+* Configure `storage.aws_s3` with the same bucket and region.
+
+=== Azure Blob Storage (ADLS Gen2)
+
+To use with Azure Data Lake Storage Gen2:
+
+* Configure `storage.azure_blob_storage` with your storage account name and container.
+* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.
+* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.
+
+[%header,format=dsv]
+|===
+Bloblang type:Iceberg type
+string:string
+bytes:binary
+bool:boolean
+number:double
+timestamp:timestamp (with timezone)
+object:struct
+array:list
+|===
+
+
+
+== Performance
+
+This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.
+
+This output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/outputs/iceberg.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/iceberg.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/outputs/iceberg.adoc[]
+
+
+
+// end::single-source[]

@@ -3802,6 +3802,35 @@
       }
     },
     {
+      "name": "iceberg",
+      "config": {
+        "children": [
+          {
+            "name": "catalog",
+            "children": [
+              {
+                "name": "headers",
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "name": "schema_evolution",
+            "children": [
+              {
+                "name": "partition_spec",
+                "description": "A Bloblang expression to evaluate when a new table is created to determine the table's partition spec. The result of the mapping should be an iceberg partition spec in the same string format as the https://docs.redpanda.com/current/manage/iceberg/about-iceberg-topics/#use-custom-partitioning[^Redpanda Streaming Topic Property]"
+              },
+              {
+                "name": "table_location",
+                "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\\{prefix}\\{namespace}/{table}`."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "http_client",
       "config": {
         "children": [
