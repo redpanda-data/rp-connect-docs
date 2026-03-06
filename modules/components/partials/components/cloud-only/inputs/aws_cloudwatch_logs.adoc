@@ -4,6 +4,7 @@
 :status: stable
 :categories: [Services, AWS]
 :description: Consumes log events from AWS CloudWatch Logs.
+:page-commercial-names: Amazon CloudWatch Logs
 
 component_type_dropdown::[]
 
@@ -12,30 +13,6 @@ Consumes log events from AWS CloudWatch Logs.
 ifndef::env-cloud[]
 Introduced in version 4.81.0.
 endif::[]
-
-
-Polls CloudWatch Log Groups for log events. Supports filtering by log streams, CloudWatch filter patterns, and configurable start times.
-
-Each log event becomes a separate message with metadata including the log group name, log stream name, timestamp, and ingestion time.
-
-IMPORTANT: This input tracks its position in memory only. If the process restarts, it will resume from the configured start_time (or the beginning if not set). For exactly-once processing, you should configure an appropriate start_time or implement idempotent downstream processing.
-
-## Credentials
-
-By default Redpanda Connect will use a shared credentials file when connecting to AWS services. It's also possible to set them explicitly at the component level, allowing you to transfer data across accounts. You can find out more in xref:guides:cloud/aws.adoc[].
-
-## Metadata
-
-This input adds the following metadata fields to each message:
-
-- `cloudwatch_log_group` - The name of the log group
-- `cloudwatch_log_stream` - The name of the log stream
-- `cloudwatch_timestamp` - The timestamp of the log event (Unix milliseconds)
-- `cloudwatch_ingestion_time` - The ingestion timestamp (Unix milliseconds)
-- `cloudwatch_event_id` - The unique event ID
-
-You can access these metadata fields using xref:guides:bloblang/about.adoc[Bloblang].
-
 
 [tabs]
 ======
@@ -59,6 +36,28 @@ include::components:example$advanced/inputs/aws_cloudwatch_logs.yaml[]
 --
 ======
 
+Polls CloudWatch Log Groups for log events. Supports filtering by log streams, CloudWatch filter patterns, and configurable start times.
+
+Each log event becomes a separate message with metadata including the log group name, log stream name, timestamp, and ingestion time.
+
+IMPORTANT: This input tracks its position in memory only. If the process restarts, it will resume from the configured `start_time` (or the beginning if not set). For exactly-once processing, configure an appropriate `start_time` or implement idempotent downstream processing.
+
+== Credentials
+
+By default Redpanda Connect will use a shared credentials file when connecting to AWS services. It's also possible to set them explicitly at the component level, allowing you to transfer data across accounts. You can find out more in xref:guides:cloud/aws.adoc[].
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `cloudwatch_log_group`: The name of the log group.
+- `cloudwatch_log_stream`: The name of the log stream.
+- `cloudwatch_timestamp`: The timestamp of the log event (Unix milliseconds).
+- `cloudwatch_ingestion_time`: The ingestion timestamp (Unix milliseconds).
+- `cloudwatch_event_id`: The unique event ID.
+
+You can access these metadata fields using xref:guides:bloblang/about.adoc[Bloblang].
+
 == Requirements
 
 Ensure that your environment meets the following requirements:
@@ -68,7 +67,5 @@ Ensure that your environment meets the following requirements:
 You can either xref:install:prebuilt-binary.adoc[download a prebuilt cgo-enabled binary] or xref:install:build-from-source.adoc[build Redpanda Connect from source with cgo enabled].
 
 include::redpanda-connect:components:partial$fields/inputs/aws_cloudwatch_logs.adoc[]
-
-
 
 // end::single-source[]
