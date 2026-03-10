@@ -31,6 +31,7 @@ Converts an XML document into a JSON structure, where elements appear as keys of
 - If the element is a simple element and has attributes, the element value is given the key `#text`.
 - XML comments, directives, and process instructions are ignored.
 - When elements are repeated the resulting JSON value is an array.
+- XML namespaces are stripped from element and attribute names, and namespace declarations (`xmlns`) are omitted.
 
 For example, given the following XML:
 
