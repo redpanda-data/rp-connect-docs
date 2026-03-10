@@ -455,12 +455,6 @@ Custom endpoint for S3-compatible storage (e.g., MinIO).
 endpoint: http://localhost:9000
 ----
 
-=== `storage.aws_s3.endpoint`
-
-Allows you to specify a custom endpoint for the AWS API.
-
-*Type*: `string`
-
 === `storage.aws_s3.force_path_style_urls`
 
 Forces the client API to use path style URLs, which is often required when connecting to custom endpoints.
@@ -480,12 +474,6 @@ The AWS region.
 # Examples:
 region: us-west-2
 ----
-
-=== `storage.aws_s3.region`
-
-The AWS region to target.
-
-*Type*: `string`
 
 === `storage.aws_s3.tcp`
 
