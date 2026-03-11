@@ -10,7 +10,7 @@
 component_type_dropdown::[]
 
 
-A meta-output that routes messages to multiple child outputs simultaneously using a range of brokering <<patterns>>. Unlike regular outputs, `broker` doesn't send messages anywhere by itself — it wraps other outputs and controls how messages are delivered to each one.
+A meta-output that routes messages to multiple child outputs simultaneously using a range of brokering <<patterns>>. Unlike regular outputs, `broker` doesn't send messages anywhere by itself. Instead, it wraps other outputs and controls how messages are delivered to each one.
 
 Use `broker` when you need to write the same message to multiple destinations, such as publishing events to Kafka while also writing them to a database. The delivery pattern determines whether outputs receive messages in parallel, sequentially, or in a round-robin distribution.
 
