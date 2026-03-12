@@ -33,6 +33,7 @@ Ensure that your environment meets the following requirements:
 You can either xref:install:prebuilt-binary.adoc[download a prebuilt cgo-enabled binary] or xref:install:build-from-source.adoc[build Redpanda Connect from source with cgo enabled].
 
 endif::[]
+
 == Performance
 
 This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.
