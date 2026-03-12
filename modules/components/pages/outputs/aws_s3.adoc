@@ -99,6 +99,31 @@ output:
             format: json_array
 ```
 
+== Bucket name format
+
+The `bucket` field accepts a bucket name only, not an ARN. For example, use `my-bucket`, not `arn:aws:s3:::my-bucket`.
+
+== S3-compatible storage
+
+The `endpoint` and `force_path_style_urls` fields let you connect to S3-compatible storage services such as Cloudflare R2, MinIO, or DigitalOcean Spaces.
+
+For Cloudflare R2, set `endpoint` to your account endpoint URL and enable `force_path_style_urls`:
+
+```yaml
+output:
+  aws_s3:
+    bucket: my-r2-bucket
+    path: ${!uuid_v4()}.json
+    endpoint: https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com
+    force_path_style_urls: true
+    region: auto
+    credentials:
+      id: YOUR_R2_ACCESS_KEY_ID
+      secret: YOUR_R2_SECRET_ACCESS_KEY
+```
+
+Find your account endpoint URL in the Cloudflare dashboard under *R2 > Overview > Account Details*. Generate API credentials under *R2 > Manage R2 API Tokens*.
+
 == Performance
 
 This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.
