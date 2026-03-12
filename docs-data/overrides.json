@@ -2920,6 +2920,15 @@
           {
             "name": "tcp",
             "$ref": "#/definitions/tcp"
+          },
+          {
+            "name": "batching",
+            "children": [
+              {
+                "name": "byte_size",
+                "$ref": "#/definitions/byte_size"
+              }
+            ]
           }
         ]
       }
