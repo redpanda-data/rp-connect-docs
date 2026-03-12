@@ -1,4 +1,4 @@
-= MySQL CDC patterns
+= MySQL CDC Patterns
 // tag::single-source[]
 :description: Learn how to capture, filter, transform, and route MySQL change data capture (CDC) events with Redpanda Connect.
 :page-categories: Streaming, Integration
@@ -8,7 +8,7 @@
 :learning-objective-2: Look up integration patterns for routing CDC data to Redpanda and S3
 :learning-objective-3: Identify patterns for filtering and transforming change events
 
-The `mysql_cdc` input captures row-level changes from MySQL tables using the binary log (binlog). This cookbook provides reusable patterns for filtering, transforming, and routing MySQL CDC events to Redpanda, S3, and other destinations.
+The `mysql_cdc` input captures row-level changes from MySQL tables using the binary log (binlog). Use these patterns to filter, transform, and route MySQL CDC events to Redpanda, S3, and other destinations.
 
 Use this cookbook to:
 
@@ -23,10 +23,10 @@ Before using these patterns, ensure you have the following configured:
 === Redpanda CLI
 
 ifndef::env-cloud[]
-Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:get-started:quickstarts/rpk.adoc[] for installation instructions.
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:get-started:quickstarts/rpk.adoc[rpk installation] for installation instructions.
 endif::[]
 ifdef::env-cloud[]
-Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:manage:rpk/rpk-install.adoc[] for installation instructions.
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:manage:rpk/rpk-install.adoc[rpk installation] for installation instructions.
 endif::[]
 
 === MySQL binlog
@@ -42,7 +42,7 @@ SHOW VARIABLES LIKE 'log_bin';
 SHOW VARIABLES LIKE 'binlog_format';
 ----
 
-Both variables must be set to `ON` and `ROW` respectively. For cloud-managed MySQL, see:
+Set `log_bin` to `ON` and `binlog_format` to `ROW`. For cloud-managed MySQL, see:
 
 - https://aws.amazon.com/blogs/database/enable-change-data-capture-on-amazon-rds-for-mysql-applications-that-are-using-xa-transactions/[Change data capture on Amazon RDS for MySQL^]
 - https://learn.microsoft.com/en-us/fabric/real-time-hub/add-source-mysql-database-cdc[Azure MySQL Database CDC^]
@@ -81,7 +81,7 @@ export S3_BUCKET=my-cdc-bucket <5>
 
 The simplest pattern captures all change events from MySQL tables and outputs them with metadata:
 
-[source,yaml]
+[,yaml]
 ----
 include::cookbooks:example$mysql_cdc/basic-capture.yaml[tag=config]
 ----
@@ -92,12 +92,12 @@ For details on the CDC event message structure and available metadata fields, se
 
 Filter events to process only specific change types using the `operation` metadata field:
 
-[source,yaml]
+[,yaml]
 ----
 include::cookbooks:example$mysql_cdc/filter-events.yaml[tag=config]
 ----
 
-This example:
+This pattern:
 
 - Filters to only `insert` and `update` operations, dropping `delete` events
 - Transforms the event to a simplified format with a timestamp
@@ -106,12 +106,12 @@ This example:
 
 Stream MySQL changes to Redpanda for real-time processing:
 
-[source,yaml]
+[,yaml]
 ----
 include::cookbooks:example$mysql_cdc/to-redpanda.yaml[tag=config]
 ----
 
-This example:
+This pattern:
 
 - Uses the table name as the Redpanda topic
 - Batches messages for efficient delivery
@@ -121,12 +121,12 @@ This example:
 
 Archive CDC events to S3 for long-term storage and analytics:
 
-[source,yaml]
+[,yaml]
 ----
 include::cookbooks:example$mysql_cdc/to-s3.yaml[tag=config]
 ----
 
-This example:
+This pattern:
 
 - Organizes files by table and time-based partitions (year/month/day/hour)
 - Batches events and archives them as newline-delimited JSON
@@ -136,7 +136,7 @@ This example:
 
 Route different event types to different destinations:
 
-[source,yaml]
+[,yaml]
 ----
 include::cookbooks:example$mysql_cdc/route-by-event.yaml[tag=config]
 ----
@@ -150,10 +150,10 @@ This pattern:
 
 The `mysql_cdc` input supports two replication modes controlled by the `stream_snapshot` field:
 
-- `stream_snapshot: true` — Captures a full snapshot of existing table data before streaming live changes. Use this when you need a complete initial load.
-- `stream_snapshot: false` — Skips the snapshot and streams only changes from the current binlog position. Use this when you only need new changes going forward.
+`stream_snapshot: true`:: Captures a full snapshot of existing table data before streaming live changes. Use this when you need a complete initial load.
+`stream_snapshot: false`:: Skips the snapshot and streams only changes from the current binlog position. Use this when you only need new changes going forward.
 
-[source,yaml]
+[,yaml]
 ----
 input:
   mysql_cdc:
@@ -161,16 +161,15 @@ input:
     tables:
       - mydb.orders
     checkpoint_cache: redis_cache
-    stream_snapshot: true <1>
-    snapshot_max_batch_size: 1000 <2>
+    stream_snapshot: true
+    snapshot_max_batch_size: 1000 <1>
 
 cache_resources:
   - label: redis_cache
     redis:
       url: ${REDIS_URL}
 ----
-<1> Set to `false` to skip the snapshot and stream only new changes.
-<2> Number of rows to read per batch during snapshot processing.
+<1> Number of rows to read per batch during snapshot processing.
 
 == Troubleshoot
 
