@@ -1,0 +1,31 @@
+# tag::config[]
+input:
+  mysql_cdc:
+    dsn: ${MYSQL_DSN}
+    tables:
+      - mydb.orders
+      - mydb.customers
+    checkpoint_cache: redis_cache
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        root = this
+        meta topic = meta("table")
+
+output:
+  kafka_franz:
+    seed_brokers:
+      - ${REDPANDA_BROKERS}
+    topic: ${! meta("topic") }
+    key: ${! json("id") }
+    batching:
+      count: 100
+      period: 1s
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]
