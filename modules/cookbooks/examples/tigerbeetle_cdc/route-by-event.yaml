@@ -1,0 +1,34 @@
+# tag::config[]
+input:
+  tigerbeetle_cdc:
+    cluster_id: ${TB_CLUSTER_ID}
+    addresses:
+      - ${TB_REPLICA_1}
+      - ${TB_REPLICA_2}
+      - ${TB_REPLICA_3}
+    progress_cache: redis_cache
+
+output:
+  broker:
+    pattern: fan_out
+    outputs:
+      - kafka_franz:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: tigerbeetle.single_phase
+          processors:
+            - mapping: |
+                root = if meta("event_type") != "single_phase" { deleted() }
+      - kafka_franz:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: tigerbeetle.two_phase
+          processors:
+            - mapping: |
+                root = if meta("event_type") == "single_phase" { deleted() }
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]
