@@ -1,0 +1,27 @@
+# tag::config[]
+input:
+  microsoft_sql_server_cdc:
+    connection_string: ${MSSQL_CONN}
+    include:
+      - dbo.orders
+    stream_snapshot: true
+
+output:
+  broker:
+    pattern: fan_out
+    outputs:
+      - kafka_franz:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: sqlserver.orders.inserts
+          processors:
+            - mapping: |
+                root = if meta("operation") != "insert" { deleted() }
+      - kafka_franz:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: sqlserver.orders.changes
+          processors:
+            - mapping: |
+                root = if meta("operation") == "insert" || meta("operation") == "read" { deleted() }
+# end::config[]
