@@ -132,7 +132,7 @@ include::cookbooks:example$postgres_cdc/route-by-event.yaml[tag=config]
 
 This pattern:
 
-- Routes `insert` events to one Redpanda topic and `update` and `delete` events to another
+- Routes `insert` events to one Redpanda topic and all other change events to another
 - Enables specialized downstream consumers per operation type
 
 == Replication modes

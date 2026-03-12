@@ -9,21 +9,17 @@ input:
     stream_snapshot: true
 
 output:
-  broker:
-    pattern: fan_out
-    outputs:
-      - kafka_franz:
-          seed_brokers:
-            - ${REDPANDA_BROKERS}
-          topic: postgres.orders.inserts
-          processors:
-            - mapping: |
-                root = if meta("operation") != "insert" { deleted() }
-      - kafka_franz:
-          seed_brokers:
-            - ${REDPANDA_BROKERS}
-          topic: postgres.orders.changes
-          processors:
-            - mapping: |
-                root = if meta("operation") == "insert" { deleted() }
+  switch:
+    cases:
+      - check: meta("operation") == "insert"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: postgres.orders.inserts
+      - output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: postgres.orders.changes
 # end::config[]

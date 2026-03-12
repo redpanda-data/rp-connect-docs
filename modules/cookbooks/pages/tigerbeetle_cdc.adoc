@@ -141,7 +141,8 @@ include::cookbooks:example$tigerbeetle_cdc/route-by-event.yaml[tag=config]
 This pattern:
 
 - Routes `single_phase` events (immediate settlements) to one topic
-- Routes all two-phase events (`two_phase_pending`, `two_phase_posted`, `two_phase_voided`, `two_phase_expired`) to another
+- Routes `two_phase_posted` events (settled two-phase transfers) to another topic
+- Drops other two-phase events (`two_phase_pending`, `two_phase_voided`, `two_phase_expired`) that have not yet settled
 - Enables specialized consumers for each settlement model
 
 == Resume from a timestamp

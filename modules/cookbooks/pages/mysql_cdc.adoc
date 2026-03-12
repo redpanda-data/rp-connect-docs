@@ -115,7 +115,7 @@ This pattern:
 
 - Uses the table name as the Redpanda topic
 - Batches messages for efficient delivery
-- Sets the message key to the row's primary key field
+- Sets the message key to the row's primary key field (update `json("id")` to match your table's primary key column)
 
 == Route to S3
 
@@ -143,7 +143,7 @@ include::cookbooks:example$mysql_cdc/route-by-event.yaml[tag=config]
 
 This pattern:
 
-- Routes `insert` events to one Redpanda topic and `update` and `delete` events to another
+- Routes `insert` events to one Redpanda topic and all other change events to another
 - Enables specialized downstream consumers per operation type
 
 == Replication modes

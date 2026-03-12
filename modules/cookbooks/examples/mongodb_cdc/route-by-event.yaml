@@ -9,23 +9,19 @@ input:
     stream_snapshot: true
 
 output:
-  broker:
-    pattern: fan_out
-    outputs:
-      - kafka_franz:
-          seed_brokers:
-            - ${REDPANDA_BROKERS}
-          topic: mongodb.orders.inserts
-          processors:
-            - mapping: |
-                root = if meta("operation") != "create" { deleted() }
-      - kafka_franz:
-          seed_brokers:
-            - ${REDPANDA_BROKERS}
-          topic: mongodb.orders.changes
-          processors:
-            - mapping: |
-                root = if meta("operation") == "create" || meta("operation") == "read" { deleted() }
+  switch:
+    cases:
+      - check: meta("operation") == "create"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: mongodb.orders.inserts
+      - output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: mongodb.orders.changes
 
 cache_resources:
   - label: redis_cache

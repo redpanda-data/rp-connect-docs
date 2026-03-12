@@ -137,7 +137,7 @@ include::cookbooks:example$mongodb_cdc/route-by-event.yaml[tag=config]
 
 This pattern:
 
-- Routes `create` events to one Redpanda topic and `update`, `replace`, and `delete` events to another
+- Routes `create` events to one Redpanda topic and all other change events to another
 - Enables specialized downstream consumers per operation type
 
 == Configure replication mode

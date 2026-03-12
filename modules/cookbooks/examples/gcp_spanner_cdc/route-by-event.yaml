@@ -7,21 +7,17 @@ input:
     stream_id: ${GCP_STREAM_ID}
 
 output:
-  broker:
-    pattern: fan_out
-    outputs:
-      - kafka_franz:
-          seed_brokers:
-            - ${REDPANDA_BROKERS}
-          topic: spanner.inserts
-          processors:
-            - mapping: |
-                root = if this.mod_type != "INSERT" { deleted() }
-      - kafka_franz:
-          seed_brokers:
-            - ${REDPANDA_BROKERS}
-          topic: spanner.changes
-          processors:
-            - mapping: |
-                root = if this.mod_type == "INSERT" { deleted() }
+  switch:
+    cases:
+      - check: this.mod_type == "INSERT"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: spanner.inserts
+      - output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: spanner.changes
 # end::config[]

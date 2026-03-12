@@ -9,23 +9,22 @@ input:
     progress_cache: redis_cache
 
 output:
-  broker:
-    pattern: fan_out
-    outputs:
-      - kafka_franz:
-          seed_brokers:
-            - ${REDPANDA_BROKERS}
-          topic: tigerbeetle.single_phase
-          processors:
-            - mapping: |
-                root = if meta("event_type") != "single_phase" { deleted() }
-      - kafka_franz:
-          seed_brokers:
-            - ${REDPANDA_BROKERS}
-          topic: tigerbeetle.two_phase
-          processors:
-            - mapping: |
-                root = if meta("event_type") == "single_phase" { deleted() }
+  switch:
+    cases:
+      - check: meta("event_type") == "single_phase"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: tigerbeetle.single_phase
+      - check: meta("event_type") == "two_phase_posted"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: tigerbeetle.two_phase
+      - output:
+          drop: {}
 
 cache_resources:
   - label: redis_cache
