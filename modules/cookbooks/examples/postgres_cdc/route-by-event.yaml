@@ -1,0 +1,29 @@
+# tag::config[]
+input:
+  postgres_cdc:
+    dsn: ${PG_DSN}
+    schema: ${PG_SCHEMA}
+    tables:
+      - orders
+    slot_name: ${PG_SLOT_NAME}
+    stream_snapshot: true
+
+output:
+  broker:
+    pattern: fan_out
+    outputs:
+      - kafka_franz:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: postgres.orders.inserts
+          processors:
+            - mapping: |
+                root = if meta("operation") != "insert" { deleted() }
+      - kafka_franz:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: postgres.orders.changes
+          processors:
+            - mapping: |
+                root = if meta("operation") == "insert" { deleted() }
+# end::config[]
