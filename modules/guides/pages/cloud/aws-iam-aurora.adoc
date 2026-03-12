@@ -84,7 +84,7 @@ Attach the following trust policy to the role to allow the Redpanda pipeline rol
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::<RP_ACCT_ID>:role/redpanda-<CLUSTER_ID>-redpanda-connect-pipeline"
+                "AWS": "arn:aws:iam::<RP_ACCT_ID>:role/<PIPELINE_ROLE_NAME>"
             },
             "Action": "sts:AssumeRole"
         }
@@ -92,7 +92,10 @@ Attach the following trust policy to the role to allow the Redpanda pipeline rol
 }
 ----
 
-Replace `<RP_ACCT_ID>` with the Redpanda AWS account ID.
+Replace the following placeholders:
+
+* `<RP_ACCT_ID>`: The AWS account ID where the Redpanda Connect pipeline role lives
+* `<PIPELINE_ROLE_NAME>`: The pipeline role name from <<Step 1: Find the pipeline IAM role name>>
 
 NOTE: The database connect role must be owned by the same AWS account as the Aurora instance. For cross-account setups, create this role in the Aurora account, not the Redpanda account.
 
@@ -108,7 +111,7 @@ The database connect role must have the following tag. Without it, the pipeline 
 
 == Step 4: Grant the pipeline role cross-account access (Redpanda account)
 
-In the Redpanda AWS account, add an inline policy to the `redpanda-<CLUSTER_ID>-redpanda-connect-pipeline` role to allow it to assume your database connect role:
+In the AWS account where the Redpanda Connect pipeline role lives, add an inline policy to the pipeline role (identified in <<Step 1: Find the pipeline IAM role name>>) to allow it to assume your database connect role:
 
 [source,json]
 ----
@@ -134,7 +137,7 @@ Attach the policy using the AWS CLI:
 [source,bash]
 ----
 aws iam put-role-policy \
-  --role-name "redpanda-<CLUSTER_ID>-redpanda-connect-pipeline" \
+  --role-name "<PIPELINE_ROLE_NAME>" \
   --policy-name "allow-x-account-db-connect" \
   --policy-document file://inline-policy.json \
   --profile <redpanda_aws_profile>
@@ -145,7 +148,7 @@ To verify the policy is attached:
 [source,bash]
 ----
 aws iam get-role-policy \
-  --role-name "redpanda-<CLUSTER_ID>-redpanda-connect-pipeline" \
+  --role-name "<PIPELINE_ROLE_NAME>" \
   --policy-name "allow-x-account-db-connect" \
   --profile <redpanda_aws_profile>
 ----
@@ -186,6 +189,7 @@ input:
     aws:
       enabled: true
       region: <REGION>
+      endpoint: <aurora-endpoint>
       roles:
         - role: arn:aws:iam::<DB_ACCT_ID>:role/<DB_CONNECT_ROLE_NAME>
 ----
@@ -200,6 +204,7 @@ input:
     aws:
       enabled: true
       region: <REGION>
+      endpoint: <aurora-endpoint>
       roles:
         - role: arn:aws:iam::<DB_ACCT_ID>:role/<DB_CONNECT_ROLE_NAME>
 ----
