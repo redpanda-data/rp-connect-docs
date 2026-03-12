@@ -1,0 +1,34 @@
+# tag::config[]
+input:
+  mongodb_cdc:
+    url: ${MONGODB_URL}
+    database: ${MONGODB_DB}
+    collections:
+      - orders
+    checkpoint_cache: redis_cache
+    stream_snapshot: true
+
+output:
+  broker:
+    pattern: fan_out
+    outputs:
+      - kafka_franz:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: mongodb.orders.inserts
+          processors:
+            - mapping: |
+                root = if meta("operation") != "create" { deleted() }
+      - kafka_franz:
+          seed_brokers:
+            - ${REDPANDA_BROKERS}
+          topic: mongodb.orders.changes
+          processors:
+            - mapping: |
+                root = if meta("operation") == "create" || meta("operation") == "read" { deleted() }
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]
