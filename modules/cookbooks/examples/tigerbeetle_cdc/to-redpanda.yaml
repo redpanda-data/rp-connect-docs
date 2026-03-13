@@ -1,0 +1,30 @@
+# tag::config[]
+input:
+  tigerbeetle_cdc:
+    cluster_id: ${TB_CLUSTER_ID}
+    addresses:
+      - ${TB_REPLICA_1}
+      - ${TB_REPLICA_2}
+      - ${TB_REPLICA_3}
+    progress_cache: redis_cache
+
+pipeline:
+  processors:
+    - mapping: |
+        meta topic = "transfers." + meta("ledger")
+
+output:
+  kafka_franz:
+    seed_brokers:
+      - ${REDPANDA_BROKERS}
+    topic: ${! meta("topic") }
+    key: ${! json("transfer.id") }
+    batching:
+      count: 100
+      period: 1s
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]

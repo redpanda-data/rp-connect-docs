@@ -1,0 +1,23 @@
+# tag::config[]
+input:
+  gcp_spanner_cdc:
+    project_id: ${GCP_PROJECT_ID}
+    instance_id: ${GCP_INSTANCE_ID}
+    database_id: ${GCP_DATABASE_ID}
+    stream_id: ${GCP_STREAM_ID}
+
+output:
+  switch:
+    cases:
+      - check: this.mod_type == "INSERT"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: spanner.inserts
+      - output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: spanner.changes
+# end::config[]

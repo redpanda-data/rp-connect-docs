@@ -1,0 +1,26 @@
+# tag::config[]
+input:
+  postgres_cdc:
+    dsn: ${PG_DSN}
+    schema: ${PG_SCHEMA}
+    tables:
+      - orders
+      - customers
+    slot_name: ${PG_SLOT_NAME}
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        meta topic = meta("table")
+
+output:
+  kafka_franz:
+    seed_brokers:
+      - ${REDPANDA_BROKERS}
+    topic: ${! meta("topic") }
+    key: ${! json("id") }
+    batching:
+      count: 100
+      period: 1s
+# end::config[]

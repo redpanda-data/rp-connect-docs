@@ -1,0 +1,29 @@
+# tag::config[]
+input:
+  gcp_spanner_cdc:
+    project_id: ${GCP_PROJECT_ID}
+    instance_id: ${GCP_INSTANCE_ID}
+    database_id: ${GCP_DATABASE_ID}
+    stream_id: ${GCP_STREAM_ID}
+
+pipeline:
+  processors:
+    - mapping: |
+        root.mod_type = this.mod_type
+        root.table_name = this.table_name
+        root.commit_timestamp = this.commit_timestamp
+        root.mods = this.mods
+        root.transaction_id = this.server_transaction_id
+
+output:
+  aws_s3:
+    bucket: ${S3_BUCKET}
+    path: >-
+      cdc/${! this.table_name }/${! timestamp_unix().format_timestamp("2006/01/02/15") }/${! uuid_v4() }.ndjson
+    batching:
+      count: 1000
+      period: 5m
+      processors:
+        - archive:
+            format: lines
+# end::config[]

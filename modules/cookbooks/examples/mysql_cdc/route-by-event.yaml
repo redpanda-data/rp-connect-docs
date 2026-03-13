@@ -1,0 +1,29 @@
+# tag::config[]
+input:
+  mysql_cdc:
+    dsn: ${MYSQL_DSN}
+    tables:
+      - mydb.orders
+    checkpoint_cache: redis_cache
+    stream_snapshot: true
+
+output:
+  switch:
+    cases:
+      - check: meta("operation") == "insert"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: mysql.orders.inserts
+      - output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: mysql.orders.changes
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]

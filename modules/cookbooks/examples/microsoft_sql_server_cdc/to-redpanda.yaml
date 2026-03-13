@@ -1,0 +1,24 @@
+# tag::config[]
+input:
+  microsoft_sql_server_cdc:
+    connection_string: ${MSSQL_CONN}
+    include:
+      - dbo.orders
+      - dbo.customers
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        meta topic = meta("schema") + "." + meta("table")
+
+output:
+  kafka_franz:
+    seed_brokers:
+      - ${REDPANDA_BROKERS}
+    topic: ${! meta("topic") }
+    key: ${! json("id") }
+    batching:
+      count: 100
+      period: 1s
+# end::config[]

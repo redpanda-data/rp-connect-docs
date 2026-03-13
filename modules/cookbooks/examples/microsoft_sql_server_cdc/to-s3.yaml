@@ -1,0 +1,29 @@
+# tag::config[]
+input:
+  microsoft_sql_server_cdc:
+    connection_string: ${MSSQL_CONN}
+    include:
+      - dbo.orders
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        root.operation = meta("operation")
+        root.schema = meta("schema")
+        root.table = meta("table")
+        root.data = this
+        root.timestamp = now()
+
+output:
+  aws_s3:
+    bucket: ${S3_BUCKET}
+    path: >-
+      cdc/${! meta("schema") }/${! meta("table") }/${! timestamp_unix().format_timestamp("2006/01/02/15") }/${! uuid_v4() }.ndjson
+    batching:
+      count: 1000
+      period: 5m
+      processors:
+        - archive:
+            format: lines
+# end::config[]

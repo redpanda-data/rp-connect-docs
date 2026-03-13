@@ -1,0 +1,203 @@
+= TigerBeetle CDC Patterns
+// tag::single-source[]
+:description: Learn how to capture, filter, transform, and route TigerBeetle change data capture (CDC) events with Redpanda Connect.
+:page-categories: Streaming, Integration
+:page-topic-type: cookbook
+:personas: streaming_developer, data_engineer
+:learning-objective-1: Find reusable patterns for capturing TigerBeetle CDC events
+:learning-objective-2: Adapt integration patterns to route financial ledger events to Redpanda and S3
+:learning-objective-3: Identify patterns for filtering and transforming financial transfer events
+
+The `tigerbeetle_cdc` input streams financial ledger events from a https://tigerbeetle.com/[TigerBeetle^] cluster in real time. Use these patterns to filter, transform, and route transfer events to Redpanda, S3, and other destinations.
+
+NOTE: The `tigerbeetle_cdc` input is in beta. The API is subject to change.
+
+Use this cookbook to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+== Prerequisites
+
+Before using these patterns, configure the following.
+
+=== Cgo-enabled binary
+
+The `tigerbeetle_cdc` input requires a cgo-enabled build of Redpanda Connect. It is not available in `rpk` or the standard Docker image. To get a cgo-enabled binary:
+
+ifndef::env-cloud[]
+- xref:install:prebuilt-binary.adoc[Download a prebuilt cgo-enabled binary], or
+- xref:install:build-from-source.adoc[Build Redpanda Connect from source] with cgo enabled.
+endif::[]
+ifdef::env-cloud[]
+- xref:develop:connect/install.adoc[Download a prebuilt cgo-enabled binary], or
+- Build Redpanda Connect from source with cgo enabled.
+endif::[]
+
+=== TigerBeetle cluster
+
+A TigerBeetle cluster running version 0.16.57 or later is required. The Redpanda Connect TigerBeetle client version must not be newer than the cluster version.
+
+For a local cluster, see the https://docs.tigerbeetle.com/[TigerBeetle documentation^].
+
+=== Progress cache
+
+The `tigerbeetle_cdc` input requires a xref:components:caches/about.adoc[cache] to store the last acknowledged event timestamp between restarts. The examples in this cookbook use a Redis cache:
+
+[,bash]
+----
+export REDIS_URL=redis://localhost:6379
+----
+
+For production use, any persistent cache supported by Redpanda Connect works, such as xref:components:caches/aws_dynamodb.adoc[`aws_dynamodb`] or xref:components:caches/sql.adoc[`sql`].
+
+=== Environment variables
+
+The examples in this cookbook use environment variables for configuration:
+
+[,bash]
+----
+export TB_CLUSTER_ID="1" <1>
+export TB_REPLICA_1="192.168.1.10:3000" <2>
+export TB_REPLICA_2="192.168.1.11:3000"
+export TB_REPLICA_3="192.168.1.12:3000"
+export REDIS_URL=redis://localhost:6379 <3>
+export REDPANDA_BROKERS=localhost:9092 <4>
+export S3_BUCKET=my-cdc-bucket <5>
+----
+<1> The unique 128-bit TigerBeetle cluster ID. Small integers are valid (for example, `1` represents the 128-bit value `1`).
+<2> The addresses of each replica in `host:port` format. A standard cluster has three replicas.
+<3> The Redis URL for progress tracking.
+<4> The Redpanda broker addresses (for Redpanda output examples).
+<5> The Amazon S3 bucket name (for S3 output examples).
+
+== Capture CDC events
+
+The simplest pattern captures all events from a TigerBeetle cluster and outputs them with metadata:
+
+[,yaml]
+----
+include::cookbooks:example$tigerbeetle_cdc/basic-capture.yaml[tag=config]
+----
+
+For details on the event structure and available metadata fields, see the xref:components:inputs/tigerbeetle_cdc.adoc#_metadata[metadata] section in the connector reference.
+
+Each event contains a full snapshot of the transfer and both the debit and credit accounts at the time of the event.
+
+== Filter CDC events
+
+Filter events to process only settled transfers — `single_phase` (immediate) and `two_phase_posted` (completed two-phase) — using the `event_type` metadata field:
+
+[,yaml]
+----
+include::cookbooks:example$tigerbeetle_cdc/filter-events.yaml[tag=config]
+----
+
+This pattern:
+
+- Keeps only `single_phase` and `two_phase_posted` events, dropping pending, voided, and expired events
+- Flattens the event to key transfer fields and a millisecond timestamp
+
+== Route to Redpanda
+
+Stream TigerBeetle transfer events to Redpanda, partitioned by ledger code:
+
+[,yaml]
+----
+include::cookbooks:example$tigerbeetle_cdc/to-redpanda.yaml[tag=config]
+----
+
+This pattern:
+
+- Creates a Redpanda topic per ledger (for example, `transfers.1`, `transfers.2`)
+- Batches messages for efficient delivery
+- Sets the message key to the transfer ID
+
+== Route to S3
+
+Archive transfer events to Amazon S3 for long-term storage and analytics:
+
+[,yaml]
+----
+include::cookbooks:example$tigerbeetle_cdc/to-s3.yaml[tag=config]
+----
+
+This pattern:
+
+- Organizes files by ledger code and time-based partitions (year/month/day/hour)
+- Batches events and archives them as newline-delimited JSON
+- Uses UUID file names to prevent collisions
+
+== Route by event type
+
+Route single-phase and two-phase transfers to separate Redpanda topics:
+
+[,yaml]
+----
+include::cookbooks:example$tigerbeetle_cdc/route-by-event.yaml[tag=config]
+----
+
+This pattern:
+
+- Routes `single_phase` events (immediate settlements) to one topic
+- Routes `two_phase_posted` events (settled two-phase transfers) to another topic
+- Drops other two-phase events (`two_phase_pending`, `two_phase_voided`, `two_phase_expired`) that have not yet settled
+- Enables specialized consumers for each settlement model
+
+== Resume from a timestamp
+
+By default, the `tigerbeetle_cdc` input streams all events available in the cluster. To start from a specific point in time, set `timestamp_initial` to a TigerBeetle nanosecond timestamp:
+
+[,yaml]
+----
+input:
+  tigerbeetle_cdc:
+    cluster_id: ${TB_CLUSTER_ID}
+    addresses:
+      - ${TB_REPLICA_1}
+      - ${TB_REPLICA_2}
+      - ${TB_REPLICA_3}
+    progress_cache: redis_cache
+    timestamp_initial: "1745328372758695656" <1>
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+----
+<1> Start from events at or after this nanosecond timestamp. Ignored if `progress_cache` already contains a more recent acknowledged timestamp.
+
+== Troubleshoot common issues
+
+Use these steps to diagnose and fix common problems with the `tigerbeetle_cdc` input.
+
+=== Component not available
+
+If the pipeline fails with an error that `tigerbeetle_cdc` is not a recognized input:
+
+- Confirm you are using a cgo-enabled build of Redpanda Connect, not `rpk` or the standard Docker image.
+- Verify the binary version supports `tigerbeetle_cdc` (introduced in version 4.65.0).
+
+=== Cannot connect to cluster
+
+If the pipeline fails to connect to TigerBeetle:
+
+- Verify the `addresses` list contains the correct IP and port for each replica.
+- Confirm `cluster_id` matches the ID used when creating the cluster.
+- Check network access between Redpanda Connect and the TigerBeetle replicas.
+
+=== Duplicate events after restart
+
+The `tigerbeetle_cdc` input provides at-least-once delivery. During crash recovery, the pipeline may replay events that were already delivered. To handle duplicates:
+
+- Use idempotent processing in downstream systems.
+- Deduplicate using the `timestamp` metadata field, which is unique per event with nanosecond precision.
+
+== Next steps
+
+- xref:components:inputs/tigerbeetle_cdc.adoc[TigerBeetle CDC input reference]
+- xref:components:caches/redis.adoc[Redis cache]
+- xref:components:outputs/redpanda.adoc[Redpanda output]
+
+// end::single-source[]

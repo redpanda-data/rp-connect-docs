@@ -1,0 +1,33 @@
+# tag::config[]
+input:
+  mysql_cdc:
+    dsn: ${MYSQL_DSN}
+    tables:
+      - mydb.orders
+    checkpoint_cache: redis_cache
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        # Drop delete events, pass through inserts and updates
+        root = if meta("operation") == "delete" {
+          deleted()
+        } else {
+          {
+            "operation": meta("operation"),
+            "table": meta("table"),
+            "data": this,
+            "timestamp": now()
+          }
+        }
+
+output:
+  stdout:
+    codec: lines
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]
