@@ -55,7 +55,7 @@ When downloading large files, process them in streamed parts to avoid loading th
 
 The `bucket` field accepts a bucket name only, not an ARN. For example, use `my-bucket`, not `arn:aws:s3:::my-bucket`.
 
-The `prefix` field accepts a single string. To consume from multiple prefixes in the same bucket, use multiple `aws_s3` inputs in an xref:components:inputs/broker.adoc[`broker` input]:
+The `prefix` field accepts a single string. To consume from multiple prefixes in the same bucket, use multiple `aws_s3` inputs in a xref:components:inputs/broker.adoc[`broker` input]:
 
 ```yaml
 input:
