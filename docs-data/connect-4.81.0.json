@@ -1,6 +1,6 @@
 {
-  "version": "4.78.0",
-  "date": "2026-01-16T12:58:04Z",
+  "version": "4.81.0",
+  "date": "2026-02-18T22:57:38Z",
   "config": [
     {
       "name": "http",
@@ -1233,7 +1233,7 @@
           "name": "idempotent_write",
           "type": "bool",
           "kind": "scalar",
-          "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+          "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
           "is_advanced": true,
           "default": true
         },
@@ -4461,6 +4461,251 @@
         "linter": "\nroot = if this.url.or(\"\") == \"\" && this.urls.or([]).length() == 0 {\n  \"field 'urls' must be set\"\n}\n"
       },
       "cloudSupported": false,
+      "requiresCgo": false
+    },
+    {
+      "name": "aws_dynamodb_cdc",
+      "type": "input",
+      "status": "beta",
+      "plugin": true,
+      "summary": "Reads change data capture (CDC) events from DynamoDB Streams.",
+      "description": "\nConsumes records from DynamoDB Streams with automatic checkpointing and shard management.\n\nDynamoDB Streams capture item-level changes in DynamoDB tables. This input supports:\n\n- Automatic shard discovery and management\n- Checkpoint-based resumption after restarts\n- Concurrent processing of multiple shards\n\n### Prerequisites\n\nThe source DynamoDB table must have streams enabled. You can enable streams with one of these view types:\n\n- `KEYS_ONLY` - Only the key attributes of the modified item\n- `NEW_IMAGE` - The entire item as it appears after the modification\n- `OLD_IMAGE` - The entire item as it appeared before the modification\n- `NEW_AND_OLD_IMAGES` - Both the new and old item images\n\n### Checkpointing\n\nCheckpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard.\n\n### Alternative\n\nFor better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.\n\n### Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `dynamodb_shard_id` - The shard ID from which the record was read\n- `dynamodb_sequence_number` - The sequence number of the record in the stream\n- `dynamodb_event_name` - The type of change: INSERT, MODIFY, or REMOVE\n- `dynamodb_table` - The name of the DynamoDB table\n\n### Metrics\n\nThis input emits the following metrics:\n\n- `dynamodb_cdc_shards_tracked` - Total number of shards being tracked (gauge)\n- `dynamodb_cdc_shards_active` - Number of shards currently being read from (gauge)\n",
+      "categories": [
+        "Services",
+        "AWS"
+      ],
+      "examples": [
+        {
+          "title": "Consume CDC events",
+          "summary": "Read change events from a DynamoDB table with streams enabled.",
+          "config": "\ninput:\n  aws_dynamodb_cdc:\n    table: my-table\n    region: us-east-1\n"
+        },
+        {
+          "title": "Start from latest",
+          "summary": "Only process new changes, ignoring existing stream data.",
+          "config": "\ninput:\n  aws_dynamodb_cdc:\n    table: orders\n    start_from: latest\n    region: us-west-2\n"
+        }
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "table",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The name of the DynamoDB table to read streams from.",
+            "linter": "root = if this == \"\" { [\"table name cannot be empty\"] }"
+          },
+          {
+            "name": "checkpoint_table",
+            "type": "string",
+            "kind": "scalar",
+            "description": "DynamoDB table name for storing checkpoints. Will be created if it doesn't exist.",
+            "default": "redpanda_dynamodb_checkpoints"
+          },
+          {
+            "name": "batch_size",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Maximum number of records to read per shard in a single request. Valid range: 1-1000.",
+            "is_advanced": true,
+            "default": 1000
+          },
+          {
+            "name": "poll_interval",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Time to wait between polling attempts when no records are available.",
+            "is_advanced": true,
+            "default": "1s"
+          },
+          {
+            "name": "start_from",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Where to start reading when no checkpoint exists. `trim_horizon` starts from the oldest available record, `latest` starts from new records.",
+            "default": "trim_horizon",
+            "options": [
+              "trim_horizon",
+              "latest"
+            ],
+            "linter": "\nlet options = {\n  \"trim_horizon\": true,\n  \"latest\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "checkpoint_limit",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Maximum number of unacknowledged messages before forcing a checkpoint update. Lower values provide better recovery guarantees but increase write overhead.",
+            "is_advanced": true,
+            "default": 1000
+          },
+          {
+            "name": "max_tracked_shards",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Maximum number of shards to track simultaneously. Prevents memory issues with extremely large tables.",
+            "is_advanced": true,
+            "default": 10000
+          },
+          {
+            "name": "throttle_backoff",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Time to wait when applying backpressure due to too many in-flight messages.",
+            "is_advanced": true,
+            "default": "100ms"
+          },
+          {
+            "name": "region",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The AWS region to target.",
+            "is_advanced": true,
+            "is_optional": true
+          },
+          {
+            "name": "endpoint",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Allows you to specify a custom endpoint for the AWS API.",
+            "is_advanced": true,
+            "is_optional": true
+          },
+          {
+            "name": "tcp",
+            "type": "object",
+            "kind": "scalar",
+            "description": "TCP socket configuration.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "connect_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum amount of time a dial will wait for a connect to complete. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              },
+              {
+                "name": "keep_alive",
+                "type": "object",
+                "kind": "scalar",
+                "description": "TCP keep-alive probe configuration.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "idle",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "interval",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration between keep-alive probes. Zero defaults to 15s.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "count",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.",
+                    "is_advanced": true,
+                    "default": 9
+                  }
+                ]
+              },
+              {
+                "name": "tcp_user_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              }
+            ]
+          },
+          {
+            "name": "credentials",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional manual configuration of AWS credentials to use. More information can be found in xref:guides:cloud/aws.adoc[].",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "profile",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A profile from `~/.aws/credentials` to use.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The ID of credentials to use.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "secret",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The secret for the credentials being used.",
+                "is_advanced": true,
+                "is_optional": true,
+                "is_secret": true,
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "token",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The token for the credentials being used, required when using short term credentials.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "from_ec2_role",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].",
+                "is_advanced": true,
+                "is_optional": true,
+                "version": "4.2.0"
+              },
+              {
+                "name": "role",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A role ARN to assume.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "role_external_id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An external ID to provide when assuming a role.",
+                "is_advanced": true,
+                "is_optional": true
+              }
+            ]
+          }
+        ]
+      },
+      "version": "4.79.0",
+      "cloudSupported": true,
       "requiresCgo": false
     },
     {
@@ -12850,7 +13095,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Enables MySQL streaming for RedPanda Connect.",
-      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- operation\n- table\n- binlog_position\n",
+      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- operation: The type of operation (insert, update, delete, or read for snapshot messages)\n- table: The name of the table\n- binlog_position: The binlog position (for CDC messages only, not set for snapshot messages)\n- schema: The table schema in benthos common schema format, compatible with processors like parquet_encode\n",
       "categories": [
         "Services"
       ],
@@ -15372,7 +15617,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Receive OpenTelemetry traces, logs, and metrics via OTLP/gRPC protocol.",
-      "description": "\nExposes an OpenTelemetry Collector gRPC receiver that accepts traces, logs, and metrics via gRPC.\n\nTelemetry data is received in OTLP protobuf format and converted to individual Redpanda OTEL v1 protobuf messages.\nEach signal (span, log record, or metric) becomes a separate message with embedded Resource and Scope metadata, optimized for Kafka partitioning.\n\n## Protocols\n\nThis input supports OTLP/gRPC on the default port 4317 using the standard OTLP protobuf format for all signal types (traces, logs, metrics).\n\n## Output Format\n\nEach OTLP export request is unbatched into individual messages:\n- **Traces**: One message per span\n- **Logs**: One message per log record\n- **Metrics**: One message per metric\n\nMessages are encoded in Redpanda OTEL v1 protobuf format with metadata:\n- `signal_type`: \"trace\", \"log\", or \"metric\"\n\n## Authentication\n\nWhen `auth_token` is configured, clients must include the token in the gRPC metadata:\n\n**Go Client Example:**\n```go\nimport (\n    \"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc\"\n)\n\nexporter, err := otlptracegrpc.New(ctx,\n    otlptracegrpc.WithEndpoint(\"localhost:4317\"),\n    otlptracegrpc.WithInsecure(), // or WithTLSCredentials() for TLS\n    otlptracegrpc.WithHeaders(map[string]string{\n        \"authorization\": \"Bearer your-token-here\",\n    }),\n)\n```\n\n**Environment Variable:**\n```bash\nexport OTEL_EXPORTER_OTLP_HEADERS=\"authorization=Bearer your-token-here\"\n```\n\n## Rate Limiting\n\nAn optional rate limit resource can be specified to throttle incoming requests. When the rate limit is breached, requests will receive a ResourceExhausted gRPC status code.\n",
+      "description": "\nExposes an OpenTelemetry Collector gRPC receiver that accepts traces, logs, and metrics via gRPC.\n\nTelemetry data is received in OTLP protobuf format and converted to individual Redpanda OTEL v1 messages.\nEach signal (span, log record, or metric) becomes a separate message with embedded Resource and Scope metadata.\n\n## Protocols\n\nThis input supports OTLP/gRPC on the default port 4317 using the standard OTLP protobuf format for all signal types (traces, logs, metrics).\n\n## Output Format\n\nEach OTLP export request is unbatched into individual messages:\n- **Traces**: One message per span\n- **Logs**: One message per log record\n- **Metrics**: One message per metric\n\nMessages are encoded in Redpanda OTEL v1 format (protobuf or JSON, configurable via `encoding` field).\n\nEach message includes the following metadata:\n- `otel_signal_type`: The signal type - \"trace\", \"log\", or \"metric\"\n- `otel_encoding` : The message encoding - \"json\" or \"protobuf\"\n\n## Authentication\n\nWhen `auth_token` is configured, clients must include the token in the gRPC metadata:\n\n**Go Client Example:**\n```go\nimport (\n    \"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc\"\n)\n\nexporter, err := otlptracegrpc.New(ctx,\n    otlptracegrpc.WithEndpoint(\"localhost:4317\"),\n    otlptracegrpc.WithInsecure(), // or WithTLSCredentials() for TLS\n    otlptracegrpc.WithHeaders(map[string]string{\n        \"authorization\": \"Bearer your-token-here\",\n    }),\n)\n```\n\n**Environment Variable:**\n```bash\nexport OTEL_EXPORTER_OTLP_HEADERS=\"authorization=Bearer your-token-here\"\n```\n\n## Rate Limiting\n\nAn optional rate limit resource can be specified to throttle incoming requests. When the rate limit is breached, requests will receive a ResourceExhausted gRPC status code.\n",
       "categories": [
         "Network",
         "Services"
@@ -15382,6 +15627,18 @@
         "type": "object",
         "kind": "scalar",
         "children": [
+          {
+            "name": "encoding",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Encoding format for messages in the batch. Options: 'protobuf' or 'json'.",
+            "default": "json",
+            "options": [
+              "protobuf",
+              "json"
+            ],
+            "linter": "\nlet options = {\n  \"protobuf\": true,\n  \"json\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
           {
             "name": "address",
             "type": "string",
@@ -15472,6 +15729,335 @@
                 "default": false
               }
             ]
+          },
+          {
+            "name": "schema_registry",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional Schema Registry configuration for adding Schema Registry wire format headers to messages.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "url",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema Registry URL for schema operations.",
+                "is_advanced": true,
+                "examples": [
+                  "http://localhost:8081"
+                ]
+              },
+              {
+                "name": "timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "HTTP client timeout for Schema Registry requests.",
+                "is_advanced": true,
+                "default": "5s"
+              },
+              {
+                "name": "tls",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Custom TLS settings can be used to override system defaults.",
+                "is_advanced": true,
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether custom TLS settings are enabled.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "skip_cert_verify",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to skip server side certificate verification.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "enable_renegotiation",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                    "is_advanced": true,
+                    "default": false,
+                    "version": "3.45.0"
+                  },
+                  {
+                    "name": "root_cas",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "root_cas_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                    "is_advanced": true,
+                    "default": "",
+                    "examples": [
+                      "./root_cas.pem"
+                    ]
+                  },
+                  {
+                    "name": "client_certs",
+                    "type": "object",
+                    "kind": "array",
+                    "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                    "is_advanced": true,
+                    "default": [],
+                    "examples": [
+                      [
+                        {
+                          "cert": "foo",
+                          "key": "bar"
+                        }
+                      ],
+                      [
+                        {
+                          "cert_file": "./example.pem",
+                          "key_file": "./example.key"
+                        }
+                      ]
+                    ],
+                    "children": [
+                      {
+                        "name": "cert",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A plain text certificate to use.",
+                        "is_advanced": true,
+                        "default": ""
+                      },
+                      {
+                        "name": "key",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A plain text certificate key to use.",
+                        "is_advanced": true,
+                        "is_secret": true,
+                        "default": "",
+                        "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                      },
+                      {
+                        "name": "cert_file",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The path of a certificate to use.",
+                        "is_advanced": true,
+                        "default": ""
+                      },
+                      {
+                        "name": "key_file",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The path of a certificate key to use.",
+                        "is_advanced": true,
+                        "default": ""
+                      },
+                      {
+                        "name": "password",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                        "is_advanced": true,
+                        "is_secret": true,
+                        "default": "",
+                        "examples": [
+                          "foo",
+                          "${KEY_PASSWORD}"
+                        ],
+                        "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "oauth",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Allows you to specify open authentication via OAuth version 1.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to use OAuth version 1 in requests.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "consumer_key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A value used to identify the client to the service provider.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "consumer_secret",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A secret used to establish ownership of the consumer key.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "access_token",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A value used to gain access to the protected resources on behalf of the user.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "access_token_secret",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A secret provided in order to establish ownership of a given access token.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              },
+              {
+                "name": "basic_auth",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Allows you to specify basic authentication.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to use basic authentication in requests.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "username",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A username to authenticate as.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A password to authenticate with.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              },
+              {
+                "name": "jwt",
+                "type": "object",
+                "kind": "scalar",
+                "description": "BETA: Allows you to specify JWT authentication.",
+                "is_advanced": true,
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to use JWT authentication in requests.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "private_key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A file with the PEM encoded via PKCS1 or PKCS8 as private key.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "signing_method",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A method used to sign the token such as RS256, RS384, RS512 or EdDSA.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "claims",
+                    "type": "unknown",
+                    "kind": "map",
+                    "description": "A value used to identify the claims that issued the JWT.",
+                    "is_advanced": true,
+                    "default": {}
+                  },
+                  {
+                    "name": "headers",
+                    "type": "unknown",
+                    "kind": "map",
+                    "description": "Add optional key/value headers to the JWT.",
+                    "is_advanced": true,
+                    "default": {}
+                  }
+                ]
+              },
+              {
+                "name": "common_subject",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema subject name for the common protobuf schema. Only used when encoding is 'protobuf'. Defaults to 'redpanda-otel-common' for protobuf encoding or 'redpanda-otel-common-json' for JSON encoding.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "trace_subject",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema subject name for trace data. Defaults to 'redpanda-otel-traces' for protobuf encoding or 'redpanda-otel-traces-json' for JSON encoding.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "log_subject",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema subject name for log data. Defaults to 'redpanda-otel-logs' for protobuf encoding or 'redpanda-otel-logs-json' for JSON encoding.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "metric_subject",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema subject name for metric data. Defaults to 'redpanda-otel-metrics' for protobuf encoding or 'redpanda-otel-metrics-json' for JSON encoding.",
+                "is_advanced": true,
+                "default": ""
+              }
+            ]
           }
         ]
       },
@@ -15485,7 +16071,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Receive OpenTelemetry traces, logs, and metrics via OTLP/HTTP protocol.",
-      "description": "\nExposes an OpenTelemetry Collector HTTP receiver that accepts traces, logs, and metrics via HTTP.\n\nTelemetry data is received in OTLP format (both protobuf and JSON) at standard OTLP endpoints and converted to individual Redpanda OTEL v1 protobuf messages. Each signal (span, log record, or metric) becomes a separate message with embedded Resource and Scope metadata, optimized for Kafka partitioning.\n\n## Endpoints\n\n- `/v1/traces` - OpenTelemetry traces\n- `/v1/logs` - OpenTelemetry logs\n- `/v1/metrics` - OpenTelemetry metrics\n\n## Protocols\n\nThis input supports OTLP/HTTP on the default port 4318. It accepts both:\n- `application/x-protobuf` - OTLP protobuf format\n- `application/json` - OTLP JSON format\n\n## Output Format\n\nEach OTLP export request is unbatched into individual messages:\n- **Traces**: One message per span\n- **Logs**: One message per log record\n- **Metrics**: One message per metric\n\nMessages are encoded in Redpanda OTEL v1 protobuf format with metadata:\n- `signalType`: \"trace\", \"log\", or \"metric\"\n\n## Authentication\n\nWhen `auth_token` is configured, clients must include the token in the HTTP Authorization header:\n\n**Go Client Example:**\n```go\nimport (\n    \"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp\"\n)\n\nexporter, err := otlptracehttp.New(ctx,\n    otlptracehttp.WithEndpoint(\"localhost:4318\"),\n    otlptracehttp.WithInsecure(), // or WithTLSClientConfig() for TLS\n    otlptracehttp.WithHeaders(map[string]string{\n        \"Authorization\": \"Bearer your-token-here\",\n    }),\n)\n```\n\n**cURL Example:**\n```bash\ncurl -X POST http://localhost:4318/v1/traces \\\n  -H \"Content-Type: application/x-protobuf\" \\\n  -H \"Authorization: Bearer your-token-here\" \\\n  --data-binary @traces.pb\n```\n\n**Environment Variable:**\n```bash\nexport OTEL_EXPORTER_OTLP_HEADERS=\"Authorization=Bearer your-token-here\"\n```\n\n## Rate Limiting\n\nAn optional rate limit resource can be specified to throttle incoming requests. When the rate limit is breached, requests will receive a 429 (Too Many Requests) response.\n",
+      "description": "\nExposes an OpenTelemetry Collector HTTP receiver that accepts traces, logs, and metrics via HTTP.\n\nTelemetry data is received in OTLP format (protobuf or JSON) and converted to individual Redpanda OTEL v1 messages.\nEach signal (span, log record, or metric) becomes a separate message with embedded Resource and Scope metadata.\n\n## Endpoints\n\n- `/v1/traces` - OpenTelemetry traces\n- `/v1/logs` - OpenTelemetry logs\n- `/v1/metrics` - OpenTelemetry metrics\n\n## Protocols\n\nThis input supports OTLP/HTTP on the default port 4318. It accepts both:\n- `application/x-protobuf` - OTLP protobuf format\n- `application/json` - OTLP JSON format\n\n## Output Format\n\nEach OTLP export request is unbatched into individual messages:\n- **Traces**: One message per span\n- **Logs**: One message per log record\n- **Metrics**: One message per metric\n\nMessages are encoded in Redpanda OTEL v1 format (protobuf or JSON, configurable via `encoding` field).\n\nEach message includes the following metadata:\n- `otel_signal_type`: The signal type - \"trace\", \"log\", or \"metric\"\n- `otel_encoding` : The message encoding - \"json\" or \"protobuf\"\n\n## Authentication\n\nWhen `auth_token` is configured, clients must include the token in the HTTP Authorization header:\n\n**Go Client Example:**\n```go\nimport (\n    \"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp\"\n)\n\nexporter, err := otlptracehttp.New(ctx,\n    otlptracehttp.WithEndpoint(\"localhost:4318\"),\n    otlptracehttp.WithInsecure(), // or WithTLSClientConfig() for TLS\n    otlptracehttp.WithHeaders(map[string]string{\n        \"Authorization\": \"Bearer your-token-here\",\n    }),\n)\n```\n\n**cURL Example:**\n```bash\ncurl -X POST http://localhost:4318/v1/traces \\\n  -H \"Content-Type: application/x-protobuf\" \\\n  -H \"Authorization: Bearer your-token-here\" \\\n  --data-binary @traces.pb\n```\n\n**Environment Variable:**\n```bash\nexport OTEL_EXPORTER_OTLP_HEADERS=\"Authorization=Bearer your-token-here\"\n```\n\n## Rate Limiting\n\nAn optional rate limit resource can be specified to throttle incoming requests. When the rate limit is breached, requests will receive a 429 (Too Many Requests) response.\n",
       "categories": [
         "Network",
         "Services"
@@ -15495,6 +16081,18 @@
         "type": "object",
         "kind": "scalar",
         "children": [
+          {
+            "name": "encoding",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Encoding format for messages in the batch. Options: 'protobuf' or 'json'.",
+            "default": "json",
+            "options": [
+              "protobuf",
+              "json"
+            ],
+            "linter": "\nlet options = {\n  \"protobuf\": true,\n  \"json\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
           {
             "name": "address",
             "type": "string",
@@ -15599,6 +16197,335 @@
                 "description": "Enable SO_REUSEPORT, allowing multiple sockets to bind to the same port for load balancing across multiple processes/threads.",
                 "is_advanced": true,
                 "default": false
+              }
+            ]
+          },
+          {
+            "name": "schema_registry",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional Schema Registry configuration for adding Schema Registry wire format headers to messages.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "url",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema Registry URL for schema operations.",
+                "is_advanced": true,
+                "examples": [
+                  "http://localhost:8081"
+                ]
+              },
+              {
+                "name": "timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "HTTP client timeout for Schema Registry requests.",
+                "is_advanced": true,
+                "default": "5s"
+              },
+              {
+                "name": "tls",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Custom TLS settings can be used to override system defaults.",
+                "is_advanced": true,
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether custom TLS settings are enabled.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "skip_cert_verify",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to skip server side certificate verification.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "enable_renegotiation",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                    "is_advanced": true,
+                    "default": false,
+                    "version": "3.45.0"
+                  },
+                  {
+                    "name": "root_cas",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "root_cas_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                    "is_advanced": true,
+                    "default": "",
+                    "examples": [
+                      "./root_cas.pem"
+                    ]
+                  },
+                  {
+                    "name": "client_certs",
+                    "type": "object",
+                    "kind": "array",
+                    "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                    "is_advanced": true,
+                    "default": [],
+                    "examples": [
+                      [
+                        {
+                          "cert": "foo",
+                          "key": "bar"
+                        }
+                      ],
+                      [
+                        {
+                          "cert_file": "./example.pem",
+                          "key_file": "./example.key"
+                        }
+                      ]
+                    ],
+                    "children": [
+                      {
+                        "name": "cert",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A plain text certificate to use.",
+                        "is_advanced": true,
+                        "default": ""
+                      },
+                      {
+                        "name": "key",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A plain text certificate key to use.",
+                        "is_advanced": true,
+                        "is_secret": true,
+                        "default": "",
+                        "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                      },
+                      {
+                        "name": "cert_file",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The path of a certificate to use.",
+                        "is_advanced": true,
+                        "default": ""
+                      },
+                      {
+                        "name": "key_file",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The path of a certificate key to use.",
+                        "is_advanced": true,
+                        "default": ""
+                      },
+                      {
+                        "name": "password",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                        "is_advanced": true,
+                        "is_secret": true,
+                        "default": "",
+                        "examples": [
+                          "foo",
+                          "${KEY_PASSWORD}"
+                        ],
+                        "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "oauth",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Allows you to specify open authentication via OAuth version 1.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to use OAuth version 1 in requests.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "consumer_key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A value used to identify the client to the service provider.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "consumer_secret",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A secret used to establish ownership of the consumer key.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "access_token",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A value used to gain access to the protected resources on behalf of the user.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "access_token_secret",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A secret provided in order to establish ownership of a given access token.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              },
+              {
+                "name": "basic_auth",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Allows you to specify basic authentication.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to use basic authentication in requests.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "username",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A username to authenticate as.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A password to authenticate with.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              },
+              {
+                "name": "jwt",
+                "type": "object",
+                "kind": "scalar",
+                "description": "BETA: Allows you to specify JWT authentication.",
+                "is_advanced": true,
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Whether to use JWT authentication in requests.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "private_key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A file with the PEM encoded via PKCS1 or PKCS8 as private key.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "signing_method",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A method used to sign the token such as RS256, RS384, RS512 or EdDSA.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "claims",
+                    "type": "unknown",
+                    "kind": "map",
+                    "description": "A value used to identify the claims that issued the JWT.",
+                    "is_advanced": true,
+                    "default": {}
+                  },
+                  {
+                    "name": "headers",
+                    "type": "unknown",
+                    "kind": "map",
+                    "description": "Add optional key/value headers to the JWT.",
+                    "is_advanced": true,
+                    "default": {}
+                  }
+                ]
+              },
+              {
+                "name": "common_subject",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema subject name for the common protobuf schema. Only used when encoding is 'protobuf'. Defaults to 'redpanda-otel-common' for protobuf encoding or 'redpanda-otel-common-json' for JSON encoding.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "trace_subject",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema subject name for trace data. Defaults to 'redpanda-otel-traces' for protobuf encoding or 'redpanda-otel-traces-json' for JSON encoding.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "log_subject",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema subject name for log data. Defaults to 'redpanda-otel-logs' for protobuf encoding or 'redpanda-otel-logs-json' for JSON encoding.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "metric_subject",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Schema subject name for metric data. Defaults to 'redpanda-otel-metrics' for protobuf encoding or 'redpanda-otel-metrics-json' for JSON encoding.",
+                "is_advanced": true,
+                "default": ""
               }
             ]
           }
@@ -17121,7 +18048,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Consume from a Redis publish/subscribe channel using either the SUBSCRIBE or PSUBSCRIBE commands.",
-      "description": "\nIn order to subscribe to channels using the `PSUBSCRIBE` command set the field `use_patterns` to `true`, then you can include glob-style patterns in your channel names. For example:\n\n- `h?llo` subscribes to hello, hallo and hxllo\n- `h*llo` subscribes to hllo and heeeello\n- `h[ae]llo` subscribes to hello and hallo, but not hillo\n\nUse `\\` to escape special characters if you want to match them verbatim.",
+      "description": "\nIn order to subscribe to channels using the `PSUBSCRIBE` command set the field `use_patterns` to `true`, then you can include glob-style patterns in your channel names. For example:\n\n- `h?llo` subscribes to hello, hallo and hxllo\n- `h*llo` subscribes to hllo and heeeello\n- `h[ae]llo` subscribes to hello and hallo, but not hillo\n\nUse `\\` to escape special characters if you want to match them verbatim.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- redis_pubsub_channel\n- redis_pubsub_pattern\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
       "categories": [
         "Services"
       ],
@@ -22799,7 +23726,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Enables TigerBeetle CDC streaming for Redpanda Connect.",
-      "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer’s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater.",
+      "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer\u2019s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater.",
       "categories": [
         "Services"
       ],
@@ -22858,6 +23785,14 @@
             "description": "The initial timestamp to start extracting events from. If not defined, all events since the beginning will be included.\nIgnored if a more recent timestamp has already been acknowledged.\nThis is a TigerBeetle timestamp with nanosecond precision.",
             "default": "",
             "linter": "root = if this.length() > 0 && !this.re_match(\"^[0-9]+$\") {\n\t\t\t\t\t\t[ \"field 'timestamp_initial' must be a valid integer\" ]\n\t\t\t\t\t}"
+          },
+          {
+            "name": "timeout_seconds",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The timeout in seconds, for querying the TigerBeetle cluster.",
+            "default": 15,
+            "linter": "root = if this <= 0 {\n\t\t\t\t\t\t[ \"field 'timeout_seconds' must be greater than 0\" ]\n\t\t\t\t\t}"
           },
           {
             "name": "auto_replay_nacks",
@@ -25178,6 +26113,14 @@
             "is_optional": true,
             "interpolated": true,
             "version": "3.60.0"
+          },
+          {
+            "name": "subject",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional subject to set for messages.",
+            "is_optional": true,
+            "interpolated": true
           },
           {
             "name": "max_in_flight",
@@ -28342,7 +29285,7 @@
       "examples": [
         {
           "title": "Updating Documents",
-          "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn’t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
+          "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn\u2019t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
           "config": "\n# Partial document update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Performs a partial update on the document.\n        root.doc = this\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Scripted update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Increments the field \"counter\" by 1.\n        root.script.source = \"ctx._source.counter += 1\"\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Upsert\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # If the product with the ID exists, its price will be updated to 100.\n        # If the product does not exist, a new document with ID 1 and a price\n        # of 50 will be inserted.\n        root.doc.product_price = 50\n        root.upsert.product_price = 100\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n"
         },
         {
@@ -28715,7 +29658,7 @@
       "examples": [
         {
           "title": "Updating Documents",
-          "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn’t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
+          "summary": "When updating documents, the request body should contain a combination of a `doc`, `upsert`, and/or `script` fields at the top level, this should be done via mapping processors. `doc` updates using a partial document, `script` performs an update using a scripting language such as the built in Painless language, and `upsert` updates an existing document or inserts a new one if it doesn\u2019t exist. For more information on the structures and behaviors of these fields, please see the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Elasticsearch Update API^]",
           "config": "\n# Partial document update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Performs a partial update on the document.\n        root.doc = this\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Scripted update\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # Increments the field \"counter\" by 1.\n        root.script.source = \"ctx._source.counter += 1\"\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n\n# Upsert\noutput:\n  processors:\n    - mapping: |\n        meta id = this.id\n        # If the product with the ID exists, its price will be updated to 50.\n        # If the product does not exist, a new document with ID 1 and a price\n        # of 100 will be inserted.\n        root.doc.product_price = 50\n        root.upsert.product_price = 100\n  elasticsearch_v9:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! @id }\n    action: update\n"
         },
         {
@@ -32307,7 +33250,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -33170,7 +34113,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -36275,7 +37218,7 @@
                 "name": "idempotent_write",
                 "type": "bool",
                 "kind": "scalar",
-                "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+                "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
                 "is_advanced": true,
                 "default": true
               },
@@ -40761,7 +41704,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -41586,7 +42529,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -42033,6 +42976,14 @@
                 "description": "Error on unknown schema IDs. Only relevant when translate_ids is true. When false (default), unknown schema IDs are passed through unchanged, allowing migration of topics with mixed message formats. Note: messages with 0-byte prefixes (e.g., protobuf) cannot be distinguished from schema registry headers and may fail when strict is enabled.",
                 "default": false,
                 "linter": "root = if this && !this.schema_registry.translate_ids { \"strict is only relevant when translate_ids is true\" }"
+              },
+              {
+                "name": "max_parallel_http_requests",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum number of parallel HTTP requests to the schema registry. Controls concurrency when syncing multiple schemas.",
+                "default": 10,
+                "linter": "root = if this < 1 { \"max_parallel_http_requests must be at least 1\" }"
               }
             ]
           },
@@ -43754,6 +44705,36 @@
               "10s",
               "10m"
             ]
+          },
+          {
+            "name": "message_format",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The format at which to expect incoming messages from the rest of the pipeline in.",
+            "is_advanced": true,
+            "default": "object",
+            "examples": [
+              "array"
+            ],
+            "annotated_options": [
+              [
+                "array",
+                "Messages are an array of values where the position in the array matches up the with ordinal of the column in snowflake"
+              ],
+              [
+                "object",
+                "Messages are an object in JSON or bloblang where the key of the object is the column name in snowflake and the value is the value for the column"
+              ]
+            ],
+            "linter": "\nlet options = {\n  \"array\": true,\n  \"object\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "timestamp_format",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Should be a layout for https://pkg.go.dev/time#Parse[^time.Parse] in Golang.",
+            "is_advanced": true,
+            "default": "2006-01-02T15:04:05.999999999Z07:00"
           }
         ],
         "linter": "root = match {\n  this.exists(\"channel_prefix\") && this.exists(\"channel_name\") => [ \"both `channel_prefix` and `channel_name` can't be set simultaneously\" ],\n}"
@@ -45560,6 +46541,659 @@
       },
       "cloudSupported": false,
       "requiresCgo": false
+    },
+    {
+      "name": "iceberg",
+      "type": "output",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Write data to Apache Iceberg tables via REST catalog.",
+      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "categories": [
+        "Services"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "catalog",
+            "type": "object",
+            "kind": "scalar",
+            "description": "REST catalog configuration.",
+            "children": [
+              {
+                "name": "url",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The REST catalog endpoint URL.",
+                "examples": [
+                  "http://localhost:8181/api/catalog",
+                  "https://polaris.example.com/api/catalog",
+                  "https://glue.us-east-1.amazonaws.com/iceberg"
+                ]
+              },
+              {
+                "name": "warehouse",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The REST catalog warehouse.",
+                "is_optional": true,
+                "examples": [
+                  "redpanda-catalog"
+                ]
+              },
+              {
+                "name": "auth",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Authentication configuration for the REST catalog. Only one authentication method can be active at a time.",
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "oauth2",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "OAuth2 authentication configuration.",
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "server_uri",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "OAuth2 token endpoint URI.",
+                        "default": "/v1/oauth/tokens"
+                      },
+                      {
+                        "name": "client_id",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "OAuth2 client identifier."
+                      },
+                      {
+                        "name": "client_secret",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "OAuth2 client secret.",
+                        "is_secret": true,
+                        "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                      },
+                      {
+                        "name": "scope",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "OAuth2 scope to request.",
+                        "is_optional": true
+                      }
+                    ]
+                  },
+                  {
+                    "name": "bearer",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Static bearer token for authentication. For testing only, not recommended for production.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "aws_sigv4",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "AWS SigV4 authentication (for AWS Glue Data Catalog or API Gateway). Uses the same credentials as the storage configuration.",
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "region",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "AWS region for SigV4 signing. If not specified, uses the region from AWS credentials.",
+                        "is_optional": true,
+                        "examples": [
+                          "us-east-1"
+                        ]
+                      },
+                      {
+                        "name": "service",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "AWS service name for SigV4 signing.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "headers",
+                "type": "string",
+                "kind": "map",
+                "description": "Custom HTTP headers to include in all requests to the catalog.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  {
+                    "X-Api-Key": "your-api-key"
+                  }
+                ]
+              },
+              {
+                "name": "tls_skip_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Skip TLS certificate verification. Not recommended for production.",
+                "is_advanced": true,
+                "default": false
+              }
+            ]
+          },
+          {
+            "name": "namespace",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The Iceberg namespace for the table, dot delimiters are split as nested namespaces.",
+            "interpolated": true,
+            "examples": [
+              "analytics.events",
+              "production"
+            ]
+          },
+          {
+            "name": "table",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The Iceberg table name. Supports interpolation functions for dynamic table names.",
+            "interpolated": true,
+            "examples": [
+              "user_events",
+              "events_${!meta(\"topic\")}"
+            ]
+          },
+          {
+            "name": "storage",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Storage backend configuration for data files. Exactly one of `aws_s3`, `gcp_cloud_storage`, or `azure_blob_storage` must be specified.",
+            "children": [
+              {
+                "name": "aws_s3",
+                "type": "object",
+                "kind": "scalar",
+                "description": "S3 storage configuration.",
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "bucket",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The S3 bucket name.",
+                    "examples": [
+                      "my-iceberg-data"
+                    ]
+                  },
+                  {
+                    "name": "region",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The AWS region.",
+                    "is_optional": true,
+                    "examples": [
+                      "us-west-2"
+                    ]
+                  },
+                  {
+                    "name": "endpoint",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Custom endpoint for S3-compatible storage (e.g., MinIO).",
+                    "is_optional": true,
+                    "examples": [
+                      "http://localhost:9000"
+                    ]
+                  },
+                  {
+                    "name": "force_path_style_urls",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Forces the client API to use path style URLs, which is often required when connecting to custom endpoints.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "tcp",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "TCP socket configuration.",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "connect_timeout",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "Maximum amount of time a dial will wait for a connect to complete. Zero disables.",
+                        "is_advanced": true,
+                        "default": "0s"
+                      },
+                      {
+                        "name": "keep_alive",
+                        "type": "object",
+                        "kind": "scalar",
+                        "description": "TCP keep-alive probe configuration.",
+                        "is_advanced": true,
+                        "is_optional": true,
+                        "children": [
+                          {
+                            "name": "idle",
+                            "type": "string",
+                            "kind": "scalar",
+                            "description": "Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.",
+                            "is_advanced": true,
+                            "default": "15s"
+                          },
+                          {
+                            "name": "interval",
+                            "type": "string",
+                            "kind": "scalar",
+                            "description": "Duration between keep-alive probes. Zero defaults to 15s.",
+                            "is_advanced": true,
+                            "default": "15s"
+                          },
+                          {
+                            "name": "count",
+                            "type": "int",
+                            "kind": "scalar",
+                            "description": "Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.",
+                            "is_advanced": true,
+                            "default": 9
+                          }
+                        ]
+                      },
+                      {
+                        "name": "tcp_user_timeout",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.",
+                        "is_advanced": true,
+                        "default": "0s"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "credentials",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "Optional manual configuration of AWS credentials to use. More information can be found in xref:guides:cloud/aws.adoc[].",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "profile",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A profile from `~/.aws/credentials` to use.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "id",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The ID of credentials to use.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "secret",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The secret for the credentials being used.",
+                        "is_advanced": true,
+                        "is_optional": true,
+                        "is_secret": true,
+                        "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                      },
+                      {
+                        "name": "token",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The token for the credentials being used, required when using short term credentials.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "from_ec2_role",
+                        "type": "bool",
+                        "kind": "scalar",
+                        "description": "Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].",
+                        "is_advanced": true,
+                        "is_optional": true,
+                        "version": "4.2.0",
+                        "default": false
+                      },
+                      {
+                        "name": "role",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A role ARN to assume.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "role_external_id",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "An external ID to provide when assuming a role.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "gcp_cloud_storage",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Google Cloud Storage configuration.",
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "bucket",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The GCS bucket name.",
+                    "examples": [
+                      "my-iceberg-data"
+                    ]
+                  },
+                  {
+                    "name": "endpoint",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Custom endpoint for GCS-compatible storage.",
+                    "is_advanced": true,
+                    "is_optional": true
+                  },
+                  {
+                    "name": "credentials_type",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The type of credentials to use. Valid values: `service_account`, `authorized_user`, `impersonated_service_account`, `external_account`.",
+                    "is_optional": true,
+                    "examples": [
+                      "service_account"
+                    ]
+                  },
+                  {
+                    "name": "credentials_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Path to a GCP credentials JSON file.",
+                    "is_optional": true
+                  },
+                  {
+                    "name": "credentials_json",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "GCP credentials JSON content. Use this or `credentials_file`, not both.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              },
+              {
+                "name": "azure_blob_storage",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Azure Blob Storage (ADLS Gen2) configuration.",
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "storage_account",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The Azure storage account name.",
+                    "examples": [
+                      "mystorageaccount"
+                    ]
+                  },
+                  {
+                    "name": "container",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The Azure blob container name.",
+                    "examples": [
+                      "iceberg-data"
+                    ]
+                  },
+                  {
+                    "name": "endpoint",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Custom endpoint for Azure-compatible storage.",
+                    "is_advanced": true,
+                    "is_optional": true
+                  },
+                  {
+                    "name": "storage_sas_token",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "SAS token for authentication. Prefix with the container name followed by a dot if container-specific.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "storage_connection_string",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Azure storage connection string. Use this or other auth methods, not both.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "storage_access_key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Azure storage access key for shared key authentication.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "schema_evolution",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Schema evolution configuration.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Enable automatic schema evolution. When enabled, new columns will be automatically added to the table.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "partition_spec",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A bloblang expression to evalutate when a new table is created to determine the table's partition spec. The result of the mapping should be an iceberg partition spec in the same string format as the https://docs.redpanda.com/current/manage/iceberg/about-iceberg-topics/#use-custom-partitioning[^Redpanda Streaming Topic Property]",
+                "is_advanced": true,
+                "default": "()",
+                "interpolated": true,
+                "examples": [
+                  "(col1)",
+                  "(nested.col)",
+                  "(year(my_ts_col))",
+                  "(year(my_ts_col), col2)",
+                  "(hour(my_ts_col), truncate(42, col2))",
+                  "(day(my_ts_col), bucket(4, nested.col))",
+                  "(day(my_ts_col), void(`non.nested column.with.dots`), identity(nested.column))"
+                ]
+              },
+              {
+                "name": "table_location",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `{prefix}{namespace}/{table}`.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  "s3://my-iceberg-bucket/"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "commit",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Commit behavior configuration.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "manifest_merge_enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Merge small manifest files during commits to reduce metadata overhead.",
+                "is_advanced": true,
+                "default": true
+              },
+              {
+                "name": "max_snapshot_age",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum age of snapshots to retain for time-travel queries. Set to zero to disable removing old snapshots.",
+                "is_advanced": true,
+                "default": "24h"
+              },
+              {
+                "name": "max_retries",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum number of times to retry a failed transaction commit.",
+                "is_advanced": true,
+                "default": 3
+              }
+            ]
+          },
+          {
+            "name": "batching",
+            "type": "object",
+            "kind": "",
+            "description": "\nAllows you to configure a xref:configuration:batching.adoc[batching policy].",
+            "examples": [
+              {
+                "byte_size": 5000,
+                "count": 0,
+                "period": "1s"
+              },
+              {
+                "count": 10,
+                "period": "1s"
+              },
+              {
+                "check": "this.contains(\"END BATCH\")",
+                "count": 0,
+                "period": "1m"
+              }
+            ],
+            "children": [
+              {
+                "name": "count",
+                "type": "int",
+                "kind": "scalar",
+                "description": "A number of messages at which the batch should be flushed. If `0` disables count based batching.",
+                "default": 0
+              },
+              {
+                "name": "byte_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "An amount of bytes at which the batch should be flushed. If `0` disables size based batching.",
+                "default": 0
+              },
+              {
+                "name": "period",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A period in which an incomplete batch should be flushed regardless of its size.",
+                "default": "",
+                "examples": [
+                  "1s",
+                  "1m",
+                  "500ms"
+                ]
+              },
+              {
+                "name": "check",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.",
+                "default": "",
+                "bloblang": true,
+                "examples": [
+                  "this.type == \"end_of_transaction\""
+                ]
+              },
+              {
+                "name": "processors",
+                "type": "processor",
+                "kind": "array",
+                "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  [
+                    {
+                      "archive": {
+                        "format": "concatenate"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "lines"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "json_array"
+                      }
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "name": "max_in_flight",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "default": 4
+          }
+        ]
+      },
+      "version": "4.80.0",
+      "requiresCgo": true,
+      "cloudSupported": false
     },
     {
       "name": "zmq4",
@@ -48850,6 +50484,13 @@
                 "application/vnd.google-apps.spreadsheet": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               }
             ]
+          },
+          {
+            "name": "shared_drives",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether or not to include shared drives.",
+            "default": false
           }
         ]
       },
@@ -48950,6 +50591,13 @@
             "kind": "scalar",
             "description": "The maximum number of results to return.",
             "default": 64
+          },
+          {
+            "name": "shared_drives",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether or not to include shared drives in the result.",
+            "default": false
           }
         ]
       },
@@ -50924,7 +52572,7 @@
             "name": "timeout",
             "type": "string",
             "kind": "scalar",
-            "description": "A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, -1.5h or 2h45m. Valid time units are ns, us (or µs), ms, s, m, h.",
+            "description": "A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as 300ms, -1.5h or 2h45m. Valid time units are ns, us (or \u00b5s), ms, s, m, h.",
             "is_optional": true,
             "default": "3s"
           },
@@ -58542,7 +60190,7 @@
             "name": "idempotent_write",
             "type": "bool",
             "kind": "scalar",
-            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior—duplicates may occur on producer retries, but the pipeline will continue to function normally.",
+            "description": "Enable the idempotent write producer option. When enabled, the producer initializes a producer ID and uses it to guarantee exactly-once semantics per partition (no duplicates on retries). This requires the `IDEMPOTENT_WRITE` permission on the `CLUSTER` resource. If your cluster does not grant this permission or uses ACLs restrictively, disable this option. Note: Idempotent writes are strictly a win for data integrity but may be unavailable in restricted environments (e.g., some managed Kafka services, Redpanda with strict ACLs). Disabling this option is safe and only affects retry behavior\u2014duplicates may occur on producer retries, but the pipeline will continue to function normally.",
             "is_advanced": true,
             "default": true
           },
@@ -66523,7 +68171,7 @@
     {
       "status": "stable",
       "name": "parse_duration",
-      "description": "Parses a Go-style duration string into nanoseconds. A duration string is a signed sequence of decimal numbers with unit suffixes like \"300ms\", \"-1.5h\", or \"2h45m\". Valid units: \"ns\", \"us\" (or \"µs\"), \"ms\", \"s\", \"m\", \"h\".",
+      "description": "Parses a Go-style duration string into nanoseconds. A duration string is a signed sequence of decimal numbers with unit suffixes like \"300ms\", \"-1.5h\", or \"2h45m\". Valid units: \"ns\", \"us\" (or \"\u00b5s\"), \"ms\", \"s\", \"m\", \"h\".",
       "params": {},
       "examples": [
         {
@@ -69235,7 +70883,7 @@
           "summary": "Create a slug preserving French language rules",
           "results": [
             [
-              "{\"title\":\"Café & Restaurant\"}",
+              "{\"title\":\"Caf\u00e9 & Restaurant\"}",
               "{\"slug\":\"cafe-et-restaurant\"}"
             ]
           ],
@@ -69263,7 +70911,7 @@
               "summary": "Create a slug preserving French language rules",
               "results": [
                 [
-                  "{\"title\":\"Café & Restaurant\"}",
+                  "{\"title\":\"Caf\u00e9 & Restaurant\"}",
                   "{\"slug\":\"cafe-et-restaurant\"}"
                 ]
               ],
@@ -69427,6 +71075,14 @@
             "type": "string",
             "no_dynamic": false,
             "scalars_to_literal": false
+          },
+          {
+            "name": "empty_as_null",
+            "description": "To treat empty substrings as null values",
+            "type": "bool",
+            "no_dynamic": false,
+            "scalars_to_literal": false,
+            "default": false
           }
         ]
       },
@@ -69438,6 +71094,17 @@
             [
               "{\"value\":\"foo,bar,baz\"}",
               "{\"new_value\":[\"foo\",\"bar\",\"baz\"]}"
+            ]
+          ],
+          "skip_testing": false
+        },
+        {
+          "mapping": "root.new_value = this.value.split(\",\", true)",
+          "summary": "",
+          "results": [
+            [
+              "{\"value\":\"foo,,qux\"}",
+              "{\"new_value\":[\"foo\",null,\"qux\"]}"
             ]
           ],
           "skip_testing": false
@@ -69466,6 +71133,17 @@
                 [
                   "{\"value\":\"foo,bar,baz\"}",
                   "{\"new_value\":[\"foo\",\"bar\",\"baz\"]}"
+                ]
+              ],
+              "skip_testing": false
+            },
+            {
+              "mapping": "root.new_value = this.value.split(\",\", true)",
+              "summary": "",
+              "results": [
+                [
+                  "{\"value\":\"foo,,qux\"}",
+                  "{\"new_value\":[\"foo\",null,\"qux\"]}"
                 ]
               ],
               "skip_testing": false
@@ -71401,8 +73079,8 @@
           "summary": "Split text into grapheme clusters (handles complex emoji correctly)",
           "results": [
             [
-              "{\"emoji\":\"👨‍👩‍👧‍👦❤️\"}",
-              "{\"graphemes\":[\"👨‍👩‍👧‍👦\",\"❤️\"]}"
+              "{\"emoji\":\"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66\u2764\ufe0f\"}",
+              "{\"graphemes\":[\"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66\",\"\u2764\ufe0f\"]}"
             ]
           ],
           "skip_testing": false
@@ -71429,8 +73107,8 @@
               "summary": "Split text into grapheme clusters (handles complex emoji correctly)",
               "results": [
                 [
-                  "{\"emoji\":\"👨‍👩‍👧‍👦❤️\"}",
-                  "{\"graphemes\":[\"👨‍👩‍👧‍👦\",\"❤️\"]}"
+                  "{\"emoji\":\"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66\u2764\ufe0f\"}",
+                  "{\"graphemes\":[\"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66\",\"\u2764\ufe0f\"]}"
                 ]
               ],
               "skip_testing": false

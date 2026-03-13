@@ -55,6 +55,14 @@ An optional https://docs.redpanda.com/redpanda-connect/components/rate_limits/ab
 
 *Default*: `""`
 
+=== `timeout_seconds`
+
+The timeout in seconds, for querying the TigerBeetle cluster.
+
+*Type*: `int`
+
+*Default*: `15`
+
 === `timestamp_initial`
 
 The initial timestamp to start extracting events from. If not defined, all events since the beginning will be included.

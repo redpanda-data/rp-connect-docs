@@ -1,51 +1,50 @@
 {
   "comparison": {
-    "oldVersion": "4.78.0",
-    "newVersion": "4.79.0",
-    "timestamp": "2026-02-05T17:48:19.090Z"
+    "oldVersion": "4.79.0",
+    "newVersion": "4.81.0",
+    "timestamp": "2026-03-04T21:34:54.448Z"
   },
   "summary": {
     "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 6,
+    "newFields": 4,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
     "changedDefaults": 0
   },
   "details": {
-    "newComponents": [],
+    "newComponents": [
+      {
+        "name": "aws_cloudwatch_logs",
+        "type": "input",
+        "status": "stable",
+        "version": "",
+        "description": "\nPolls CloudWatch Log Groups for log events. Supports filtering by log streams, CloudWatch filter patterns, and configurable start times.\n\nEach log event becomes a separate message with metadata including the log group name, log stream name, timestamp, and ingestion time.\n\nIMPORTANT: This input tracks its position in memory only. If the process restarts, it will resume from the configured start_time (or the beginning if not set). For exactly-once processing, you should configure an appropriate start_time or implement idempotent downstream processing.\n\n## Credentials\n\nBy default Redpanda Connect will use a shared credentials file when connecting to AWS services. It's also possible to set them explicitly at the component level, allowing you to transfer data across accounts. You can find out more in xref:guides:cloud/aws.adoc[].\n\n## Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `cloudwatch_log_group` - The name of the log group\n- `cloudwatch_log_stream` - The name of the log stream\n- `cloudwatch_timestamp` - The timestamp of the log event (Unix milliseconds)\n- `cloudwatch_ingestion_time` - The ingestion timestamp (Unix milliseconds)\n- `cloudwatch_event_id` - The unique event ID\n\nYou can access these metadata fields using xref:guides:bloblang/about.adoc[Bloblang].\n",
+        "summary": "Consumes log events from AWS CloudWatch Logs."
+      }
+    ],
     "removedComponents": [],
     "newFields": [
       {
-        "component": "inputs:otlp_grpc",
-        "field": "encoding",
-        "description": "Encoding format for messages in the batch. Options: 'protobuf' or 'json'."
+        "component": "inputs:tigerbeetle_cdc",
+        "field": "timeout_seconds",
+        "description": "The timeout in seconds, for querying the TigerBeetle cluster."
       },
       {
-        "component": "inputs:otlp_grpc",
-        "field": "schema_registry",
-        "description": "Optional Schema Registry configuration for adding Schema Registry wire format headers to messages."
+        "component": "outputs:aws_sns",
+        "field": "subject",
+        "description": "An optional subject to set for messages."
       },
       {
-        "component": "inputs:otlp_http",
-        "field": "encoding",
-        "description": "Encoding format for messages in the batch. Options: 'protobuf' or 'json'."
+        "component": "processors:google_drive_download",
+        "field": "shared_drives",
+        "description": "Whether or not to include shared drives."
       },
       {
-        "component": "inputs:otlp_http",
-        "field": "schema_registry",
-        "description": "Optional Schema Registry configuration for adding Schema Registry wire format headers to messages."
-      },
-      {
-        "component": "outputs:snowflake_streaming",
-        "field": "message_format",
-        "description": "The format at which to expect incoming messages from the rest of the pipeline in."
-      },
-      {
-        "component": "outputs:snowflake_streaming",
-        "field": "timestamp_format",
-        "description": "The format to parse string values for TIMESTAMP, TIMESTAMP_LTZ and TIMESTAMP_NTZ columns. Should be a layout for https://pkg.go.dev/time#Parse[^time.Parse] in Golang."
+        "component": "processors:google_drive_search",
+        "field": "shared_drives",
+        "description": "Whether or not to include shared drives in the result."
       }
     ],
     "removedFields": [],
@@ -55,14 +54,14 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.79.0",
-      "cloud": "4.80.0",
-      "cgo": "4.80.0"
+      "oss": "4.81.0",
+      "cloud": "4.82.0-rc2",
+      "cgo": "4.82.0-rc2"
     },
     "current": {
-      "cloudSupported": 476,
+      "cloudSupported": 477,
       "selfHostedOnly": 79,
-      "cgoOnly": 0
+      "cgoOnly": 1
     },
     "changes": {},
     "details": {
@@ -835,6 +834,11 @@
         {
           "type": "outputs",
           "name": "sync_response",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "iceberg",
           "status": "stable"
         },
         {
@@ -2847,12 +2851,23 @@
       ],
       "cloudOnly": [
         {
+          "type": "inputs",
+          "name": "aws_cloudwatch_logs",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "a2a_message",
           "status": "beta"
         }
       ],
-      "cgoOnly": []
+      "cgoOnly": [
+        {
+          "type": "inputs",
+          "name": "aws_cloudwatch_logs",
+          "status": "stable"
+        }
+      ]
     }
   }
 }
