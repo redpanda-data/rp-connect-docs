@@ -12,7 +12,7 @@
 component_type_dropdown::[]
 
 
-Downloads objects within an Amazon S3 bucket, optionally filtered by a prefix, either by walking the items in the bucket or by streaming upload notifications in realtime.
+Downloads objects within an Amazon S3 bucket, optionally filtered by a prefix, either by walking the items in the bucket or by streaming upload notifications in real time.
 
 
 [tabs]
@@ -39,21 +39,59 @@ include::components:example$advanced/inputs/aws_s3.yaml[]
 
 == Stream objects on upload with SQS
 
-A common pattern for consuming S3 objects is to emit upload notification events from the bucket either directly to an SQS queue, or to an SNS topic that is consumed by an SQS queue, and then have your consumer listen for events which prompt it to download the newly uploaded objects. More information about this pattern and how to set it up can be found at in the https://docs.aws.amazon.com/AmazonS3/latest/dev/ways-to-add-notification-config-to-bucket.html[Amazon S3 docs].
+A common pattern for consuming S3 objects is to emit upload notification events from the bucket either directly to an SQS queue, or to an SNS topic that is consumed by an SQS queue, and then have your consumer listen for events that prompt it to download the newly uploaded objects. More information about this pattern and how to set it up can be found in the https://docs.aws.amazon.com/AmazonS3/latest/dev/ways-to-add-notification-config-to-bucket.html[Amazon S3 docs].
 
-Redpanda Connect is able to follow this pattern when you configure an `sqs.url`, where it consumes events from SQS and only downloads object keys received within those events. In order for this to work Redpanda Connect needs to know where within the event the key and bucket names can be found, specified as xref:configuration:field_paths.adoc[dot paths] with the fields `sqs.key_path` and `sqs.bucket_path`. The default values for these fields should already be correct when following the guide above.
+Redpanda Connect is able to follow this pattern when you configure an `sqs.url`, where it consumes events from SQS and downloads only the object keys contained in those events. For this to work, Redpanda Connect needs to know where within the event the key and bucket names can be found, specified as xref:configuration:field_paths.adoc[dot paths] with the fields `sqs.key_path` and `sqs.bucket_path`. The default values for these fields should already be correct when following the guide above.
 
-If your notification events are being routed to SQS via an SNS topic then the events will be enveloped by SNS, in which case you also need to specify the field `sqs.envelope_path`, which in the case of SNS to SQS will usually be `Message`.
+If your notification events are being routed to SQS via an SNS topic, the events are enveloped by SNS, in which case you also need to specify the field `sqs.envelope_path`, which in the case of SNS to SQS will usually be `Message`.
 
-When using SQS please make sure you have sensible values for `sqs.max_messages` and also the visibility timeout of the queue itself. When Redpanda Connect consumes an S3 object the SQS message that triggered it is not deleted until the S3 object has been sent onwards. This ensures at-least-once crash resiliency, but also means that if the S3 object takes longer to process than the visibility timeout of your queue then the same objects might be processed multiple times.
+When using SQS, make sure you have sensible values for `sqs.max_messages` and also the visibility timeout of the queue itself. When Redpanda Connect consumes an S3 object the SQS message that triggered it is not deleted until the S3 object has been sent onwards. This ensures at-least-once crash resiliency, but also means that if the S3 object takes longer to process than the visibility timeout of your queue, then the same objects might be processed multiple times.
 
 == Download large files
 
-When downloading large files it's often necessary to process it in streamed parts in order to avoid loading the entire file in memory at a given time. In order to do this a <<scanner, `scanner`>> can be specified that determines how to break the input into smaller individual messages.
+When downloading large files, process them in streamed parts to avoid loading the entire file into memory at once. To do this, specify a <<scanner, `scanner`>> that determines how to break the input into smaller individual messages.
+
+== Bucket and prefix
+
+The `bucket` field accepts a bucket name only, not an ARN. For example, use `my-bucket`, not `arn:aws:s3:::my-bucket`.
+
+The `prefix` field accepts a single string. To consume from multiple prefixes in the same bucket, use multiple `aws_s3` inputs in a xref:components:inputs/broker.adoc[`broker` input]:
+
+```yaml
+input:
+  broker:
+    inputs:
+      - aws_s3:
+          bucket: my-bucket
+          prefix: logs/app1/
+      - aws_s3:
+          bucket: my-bucket
+          prefix: logs/app2/
+```
 
 == Credentials
 
-By default Redpanda Connect will use a shared credentials file when connecting to AWS services. It's also possible to set them explicitly at the component level, allowing you to transfer data across accounts. You can find out more  in xref:guides:cloud/aws.adoc[].
+By default, Redpanda Connect uses a shared credentials file when connecting to AWS services. You can also set credentials explicitly at the component level to transfer data across accounts. You can find out more in xref:guides:cloud/aws.adoc[AWS credentials].
+
+== S3-compatible storage
+
+The `endpoint` and `force_path_style_urls` fields let you connect to S3-compatible storage services such as Cloudflare R2, MinIO, or DigitalOcean Spaces.
+
+For Cloudflare R2, set `endpoint` to your account endpoint URL and enable `force_path_style_urls`:
+
+```yaml
+input:
+  aws_s3:
+    bucket: my-r2-bucket
+    endpoint: https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com
+    force_path_style_urls: true
+    region: auto
+    credentials:
+      id: YOUR_R2_ACCESS_KEY_ID
+      secret: YOUR_R2_SECRET_ACCESS_KEY
+```
+
+Find your account endpoint URL in the Cloudflare dashboard under *R2 > Overview > Account Details*. Generate API credentials under *R2 > Manage R2 API Tokens*.
 
 == Metadata
 
@@ -68,7 +106,7 @@ This input adds the following metadata fields to each message:
 - s3_version_id
 - All user defined metadata
 
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation]. Note that user defined metadata is case insensitive within AWS, and it is likely that the keys will be received in a capitalized form, if you wish to make them consistent you can map all metadata keys to lower or uppercase using a Bloblang mapping such as `meta = meta().map_each_key(key -> key.lowercase())`.
+You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation]. User-defined metadata is case insensitive in AWS, so keys are often received in capitalized form. To normalize them, map all metadata keys to lowercase or uppercase using a Bloblang mapping such as `meta = meta().map_each_key(key -> key.lowercase())`.
 
 include::redpanda-connect:components:partial$fields/inputs/aws_s3.adoc[]
 
