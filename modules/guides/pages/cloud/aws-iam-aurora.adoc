@@ -51,6 +51,7 @@ The resource ID has the format `cluster-<alphanumeric-string>`.
 
 In the AWS account where Aurora is hosted, create an IAM role with the following permission policy:
 
+.permission-policy.json
 [source,json]
 ----
 {
@@ -76,6 +77,7 @@ Replace the following placeholders:
 
 Attach the following trust policy to the role to allow the Redpanda pipeline role to assume it:
 
+.trust-policy.json
 [source,json]
 ----
 {
@@ -109,10 +111,34 @@ The database connect role must have the following tag. Without it, the pipeline 
 |`redpanda_scope_redpanda_connect` |`true`
 |===
 
+=== Create the role
+
+Run the following AWS CLI commands to create the role and apply the permission policy and tag:
+
+[source,bash]
+----
+aws iam create-role \
+  --role-name "<DB_CONNECT_ROLE_NAME>" \
+  --assume-role-policy-document file://trust-policy.json \
+  --profile <db_account_aws_profile>
+
+aws iam put-role-policy \
+  --role-name "<DB_CONNECT_ROLE_NAME>" \
+  --policy-name "aurora-rds-connect" \
+  --policy-document file://permission-policy.json \
+  --profile <db_account_aws_profile>
+
+aws iam tag-role \
+  --role-name "<DB_CONNECT_ROLE_NAME>" \
+  --tags Key=redpanda_scope_redpanda_connect,Value=true \
+  --profile <db_account_aws_profile>
+----
+
 == Step 4: Grant the pipeline role cross-account access (Redpanda account)
 
 In the AWS account where the Redpanda Connect pipeline role lives, add an inline policy to the pipeline role (identified in <<Step 1: Find the pipeline IAM role name>>) to allow it to assume your database connect role:
 
+.inline-policy.json
 [source,json]
 ----
 {
