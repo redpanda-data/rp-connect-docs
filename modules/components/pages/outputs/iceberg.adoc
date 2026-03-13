@@ -1,22 +1,21 @@
 = iceberg
 // tag::single-source[]
-:page-commercial-names: Iceberg
+:page-commercial-names: Apache Iceberg, Iceberg, Apache Polaris, AWS Glue, Databricks Unity Catalog
 :type: output
 :status: stable
-:categories: [Services]
-:description: Write data to Apache Iceberg tables via REST catalog.
+:categories: ["Services","AWS","GCP","Azure"]
+:description: Fan out Redpanda topics to Apache Iceberg tables using the REST catalog API.
 
 // TODO: Uncomment when iceberg is added to the upstream info.csv in redpanda-data/connect
 // component_type_dropdown::[]
 
-Write data to Apache Iceberg tables via REST catalog.
+Fan out Redpanda topics to Apache Iceberg tables using the REST catalog API.
 
 ifndef::env-cloud[]
 Introduced in version 4.80.0.
 endif::[]
 
-
-Write streaming data to Apache Iceberg tables using the REST catalog API. This output supports:
+This output is well suited for migrating fanout pipelines from Kafka Connect to Redpanda Connect, and supports:
 
 * Multiple storage backends (S3, GCS, Azure)
 * Automatic table creation with schema detection
@@ -24,47 +23,16 @@ Write streaming data to Apache Iceberg tables using the REST catalog API. This o
 * Schema evolution (automatic column addition)
 * Transaction retry logic for concurrent writes
 
-This output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.
+ifndef::env-cloud[]
+== Requirements
 
-=== Apache Polaris
+Ensure that your environment meets the following requirements:
 
-To use with https://polaris.apache.org[Apache Polaris^]:
+- This component is only available in cgo-enabled builds of Redpanda Connect (not in the Redpanda CLI or Docker image).
++
+You can either xref:install:prebuilt-binary.adoc[download a prebuilt cgo-enabled binary] or xref:install:build-from-source.adoc[build Redpanda Connect from source with cgo enabled].
 
-* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).
-* Set `catalog.warehouse` to the catalog name configured in Polaris.
-* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.
-
-=== AWS Glue Data Catalog
-
-To use with AWS Glue Data Catalog:
-
-* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).
-* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).
-* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.
-* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.
-* Configure `storage.aws_s3` with the same bucket and region.
-
-=== Azure Blob Storage (ADLS Gen2)
-
-To use with Azure Data Lake Storage Gen2:
-
-* Configure `storage.azure_blob_storage` with your storage account name and container.
-* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.
-* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.
-
-[%header,format=dsv]
-|===
-Bloblang type:Iceberg type
-string:string
-bytes:binary
-bool:boolean
-number:double
-timestamp:timestamp (with timezone)
-object:struct
-array:list
-|===
-
-
+endif::[]
 
 == Performance
 
@@ -94,8 +62,50 @@ include::components:example$advanced/outputs/iceberg.yaml[]
 --
 ======
 
+== Catalog integration
+
+This output works with REST catalog implementations including Apache Polaris, AWS Glue Data Catalog, and Databricks Unity Catalog.
+
+=== Apache Polaris
+
+To use with https://polaris.apache.org[Apache Polaris^]:
+
+* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).
+* Set `catalog.warehouse` to the catalog name configured in Polaris.
+* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.
+
+=== AWS Glue Data Catalog
+
+To use with AWS Glue Data Catalog:
+
+* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).
+* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).
+* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.
+* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.
+* Configure `storage.aws_s3` with the same bucket and region.
+
+=== Azure Blob Storage (ADLS Gen2)
+
+To use with Azure Data Lake Storage Gen2:
+
+* Configure `storage.azure_blob_storage` with your storage account name and container.
+* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.
+* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.
+
+== Type mapping
+
+[%header,format=dsv]
+|===
+Bloblang type:Iceberg type
+string:string
+bytes:binary
+bool:boolean
+number:double
+timestamp:timestamp (with timezone)
+object:struct
+array:list
+|===
+
 include::redpanda-connect:components:partial$fields/outputs/iceberg.adoc[]
-
-
 
 // end::single-source[]

@@ -517,7 +517,7 @@ A username to provide for PLAIN or SCRAM-* authentication.
 
 === `seed_brokers[]`
 
-A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item.
+A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item. Optional when `seed_brokers` is configured in a top-level `redpanda` block.
 
 *Type*: `array`
 
