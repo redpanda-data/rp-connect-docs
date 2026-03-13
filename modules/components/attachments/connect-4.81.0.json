@@ -1,6 +1,6 @@
 {
-  "version": "4.79.0",
-  "date": "2026-01-30T14:06:29Z",
+  "version": "4.81.0",
+  "date": "2026-02-18T22:57:38Z",
   "config": [
     {
       "name": "http",
@@ -13107,7 +13107,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Enables MySQL streaming for RedPanda Connect.",
-      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- operation\n- table\n- binlog_position\n",
+      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- operation: The type of operation (insert, update, delete, or read for snapshot messages)\n- table: The name of the table\n- binlog_position: The binlog position (for CDC messages only, not set for snapshot messages)\n- schema: The table schema in benthos common schema format, compatible with processors like parquet_encode\n",
       "categories": [
         "Services"
       ],
@@ -23811,6 +23811,14 @@
             "linter": "root = if this.length() > 0 && !this.re_match(\"^[0-9]+$\") {\n\t\t\t\t\t\t[ \"field 'timestamp_initial' must be a valid integer\" ]\n\t\t\t\t\t}"
           },
           {
+            "name": "timeout_seconds",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The timeout in seconds, for querying the TigerBeetle cluster.",
+            "default": 15,
+            "linter": "root = if this <= 0 {\n\t\t\t\t\t\t[ \"field 'timeout_seconds' must be greater than 0\" ]\n\t\t\t\t\t}"
+          },
+          {
             "name": "auto_replay_nacks",
             "type": "bool",
             "kind": "scalar",
@@ -26129,6 +26137,14 @@
             "is_optional": true,
             "interpolated": true,
             "version": "3.60.0"
+          },
+          {
+            "name": "subject",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional subject to set for messages.",
+            "is_optional": true,
+            "interpolated": true
           },
           {
             "name": "max_in_flight",
@@ -43007,6 +43023,14 @@
                 "description": "Error on unknown schema IDs. Only relevant when translate_ids is true. When false (default), unknown schema IDs are passed through unchanged, allowing migration of topics with mixed message formats. Note: messages with 0-byte prefixes (e.g., protobuf) cannot be distinguished from schema registry headers and may fail when strict is enabled.",
                 "default": false,
                 "linter": "root = if this && !this.schema_registry.translate_ids { \"strict is only relevant when translate_ids is true\" }"
+              },
+              {
+                "name": "max_parallel_http_requests",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum number of parallel HTTP requests to the schema registry. Controls concurrency when syncing multiple schemas.",
+                "default": 10,
+                "linter": "root = if this < 1 { \"max_parallel_http_requests must be at least 1\" }"
               }
             ]
           },
@@ -46569,6 +46593,659 @@
       "requiresCgo": false
     },
     {
+      "name": "iceberg",
+      "type": "output",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Write data to Apache Iceberg tables via REST catalog.",
+      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "categories": [
+        "Services"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "catalog",
+            "type": "object",
+            "kind": "scalar",
+            "description": "REST catalog configuration.",
+            "children": [
+              {
+                "name": "url",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The REST catalog endpoint URL.",
+                "examples": [
+                  "http://localhost:8181/api/catalog",
+                  "https://polaris.example.com/api/catalog",
+                  "https://glue.us-east-1.amazonaws.com/iceberg"
+                ]
+              },
+              {
+                "name": "warehouse",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The REST catalog warehouse.",
+                "is_optional": true,
+                "examples": [
+                  "redpanda-catalog"
+                ]
+              },
+              {
+                "name": "auth",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Authentication configuration for the REST catalog. Only one authentication method can be active at a time.",
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "oauth2",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "OAuth2 authentication configuration.",
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "server_uri",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "OAuth2 token endpoint URI.",
+                        "default": "/v1/oauth/tokens"
+                      },
+                      {
+                        "name": "client_id",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "OAuth2 client identifier."
+                      },
+                      {
+                        "name": "client_secret",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "OAuth2 client secret.",
+                        "is_secret": true,
+                        "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                      },
+                      {
+                        "name": "scope",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "OAuth2 scope to request.",
+                        "is_optional": true
+                      }
+                    ]
+                  },
+                  {
+                    "name": "bearer",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Static bearer token for authentication. For testing only, not recommended for production.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "aws_sigv4",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "AWS SigV4 authentication (for AWS Glue Data Catalog or API Gateway). Uses the same credentials as the storage configuration.",
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "region",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "AWS region for SigV4 signing. If not specified, uses the region from AWS credentials.",
+                        "is_optional": true,
+                        "examples": [
+                          "us-east-1"
+                        ]
+                      },
+                      {
+                        "name": "service",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "AWS service name for SigV4 signing.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "headers",
+                "type": "object",
+                "kind": "map",
+                "description": "Custom HTTP headers to include in all requests to the catalog.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  {
+                    "X-Api-Key": "your-api-key"
+                  }
+                ]
+              },
+              {
+                "name": "tls_skip_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Skip TLS certificate verification. Not recommended for production.",
+                "is_advanced": true,
+                "default": false
+              }
+            ]
+          },
+          {
+            "name": "namespace",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The Iceberg namespace for the table, dot delimiters are split as nested namespaces.",
+            "interpolated": true,
+            "examples": [
+              "analytics.events",
+              "production"
+            ]
+          },
+          {
+            "name": "table",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The Iceberg table name. Supports interpolation functions for dynamic table names.",
+            "interpolated": true,
+            "examples": [
+              "user_events",
+              "events_${!meta(\"topic\")}"
+            ]
+          },
+          {
+            "name": "storage",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Storage backend configuration for data files. Exactly one of `aws_s3`, `gcp_cloud_storage`, or `azure_blob_storage` must be specified.",
+            "children": [
+              {
+                "name": "aws_s3",
+                "type": "object",
+                "kind": "scalar",
+                "description": "S3 storage configuration.",
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "bucket",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The S3 bucket name.",
+                    "examples": [
+                      "my-iceberg-data"
+                    ]
+                  },
+                  {
+                    "name": "region",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The AWS region.",
+                    "is_optional": true,
+                    "examples": [
+                      "us-west-2"
+                    ]
+                  },
+                  {
+                    "name": "endpoint",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Custom endpoint for S3-compatible storage (e.g., MinIO).",
+                    "is_optional": true,
+                    "examples": [
+                      "http://localhost:9000"
+                    ]
+                  },
+                  {
+                    "name": "force_path_style_urls",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "Forces the client API to use path style URLs, which is often required when connecting to custom endpoints.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "tcp",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "TCP socket configuration.",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "connect_timeout",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "Maximum amount of time a dial will wait for a connect to complete. Zero disables.",
+                        "is_advanced": true,
+                        "default": "0s"
+                      },
+                      {
+                        "name": "keep_alive",
+                        "type": "object",
+                        "kind": "scalar",
+                        "description": "TCP keep-alive probe configuration.",
+                        "is_advanced": true,
+                        "is_optional": true,
+                        "children": [
+                          {
+                            "name": "idle",
+                            "type": "string",
+                            "kind": "scalar",
+                            "description": "Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.",
+                            "is_advanced": true,
+                            "default": "15s"
+                          },
+                          {
+                            "name": "interval",
+                            "type": "string",
+                            "kind": "scalar",
+                            "description": "Duration between keep-alive probes. Zero defaults to 15s.",
+                            "is_advanced": true,
+                            "default": "15s"
+                          },
+                          {
+                            "name": "count",
+                            "type": "int",
+                            "kind": "scalar",
+                            "description": "Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.",
+                            "is_advanced": true,
+                            "default": 9
+                          }
+                        ]
+                      },
+                      {
+                        "name": "tcp_user_timeout",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.",
+                        "is_advanced": true,
+                        "default": "0s"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "credentials",
+                    "type": "object",
+                    "kind": "scalar",
+                    "description": "Optional manual configuration of AWS credentials to use. More information can be found in xref:guides:cloud/aws.adoc[].",
+                    "is_advanced": true,
+                    "is_optional": true,
+                    "children": [
+                      {
+                        "name": "profile",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A profile from `~/.aws/credentials` to use.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "id",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The ID of credentials to use.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "secret",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The secret for the credentials being used.",
+                        "is_advanced": true,
+                        "is_optional": true,
+                        "is_secret": true,
+                        "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                      },
+                      {
+                        "name": "token",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "The token for the credentials being used, required when using short term credentials.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "from_ec2_role",
+                        "type": "bool",
+                        "kind": "scalar",
+                        "description": "Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].",
+                        "is_advanced": true,
+                        "is_optional": true,
+                        "version": "4.2.0",
+                        "default": false
+                      },
+                      {
+                        "name": "role",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "A role ARN to assume.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      },
+                      {
+                        "name": "role_external_id",
+                        "type": "string",
+                        "kind": "scalar",
+                        "description": "An external ID to provide when assuming a role.",
+                        "is_advanced": true,
+                        "is_optional": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "gcp_cloud_storage",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Google Cloud Storage configuration.",
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "bucket",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The GCS bucket name.",
+                    "examples": [
+                      "my-iceberg-data"
+                    ]
+                  },
+                  {
+                    "name": "endpoint",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Custom endpoint for GCS-compatible storage.",
+                    "is_advanced": true,
+                    "is_optional": true
+                  },
+                  {
+                    "name": "credentials_type",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The type of credentials to use. Valid values: `service_account`, `authorized_user`, `impersonated_service_account`, `external_account`.",
+                    "is_optional": true,
+                    "examples": [
+                      "service_account"
+                    ]
+                  },
+                  {
+                    "name": "credentials_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Path to a GCP credentials JSON file.",
+                    "is_optional": true
+                  },
+                  {
+                    "name": "credentials_json",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "GCP credentials JSON content. Use this or `credentials_file`, not both.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              },
+              {
+                "name": "azure_blob_storage",
+                "type": "object",
+                "kind": "scalar",
+                "description": "Azure Blob Storage (ADLS Gen2) configuration.",
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "storage_account",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The Azure storage account name.",
+                    "examples": [
+                      "mystorageaccount"
+                    ]
+                  },
+                  {
+                    "name": "container",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The Azure blob container name.",
+                    "examples": [
+                      "iceberg-data"
+                    ]
+                  },
+                  {
+                    "name": "endpoint",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Custom endpoint for Azure-compatible storage.",
+                    "is_advanced": true,
+                    "is_optional": true
+                  },
+                  {
+                    "name": "storage_sas_token",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "SAS token for authentication. Prefix with the container name followed by a dot if container-specific.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "storage_connection_string",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Azure storage connection string. Use this or other auth methods, not both.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "storage_access_key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Azure storage access key for shared key authentication.",
+                    "is_optional": true,
+                    "is_secret": true,
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "schema_evolution",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Schema evolution configuration.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Enable automatic schema evolution. When enabled, new columns will be automatically added to the table.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "partition_spec",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A Bloblang expression to evaluate when a new table is created to determine the table's partition spec. The result of the mapping should be an iceberg partition spec in the same string format as the https://docs.redpanda.com/current/manage/iceberg/about-iceberg-topics/#use-custom-partitioning[^Redpanda Streaming Topic Property]",
+                "is_advanced": true,
+                "default": "()",
+                "interpolated": true,
+                "examples": [
+                  "(col1)",
+                  "(nested.col)",
+                  "(year(my_ts_col))",
+                  "(year(my_ts_col), col2)",
+                  "(hour(my_ts_col), truncate(42, col2))",
+                  "(day(my_ts_col), bucket(4, nested.col))",
+                  "(day(my_ts_col), void(`non.nested column.with.dots`), identity(nested.column))"
+                ]
+              },
+              {
+                "name": "table_location",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\\{prefix}\\{namespace}/{table}`.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  "s3://my-iceberg-bucket/"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "commit",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Commit behavior configuration.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "manifest_merge_enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Merge small manifest files during commits to reduce metadata overhead.",
+                "is_advanced": true,
+                "default": true
+              },
+              {
+                "name": "max_snapshot_age",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum age of snapshots to retain for time-travel queries. Set to zero to disable removing old snapshots.",
+                "is_advanced": true,
+                "default": "24h"
+              },
+              {
+                "name": "max_retries",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum number of times to retry a failed transaction commit.",
+                "is_advanced": true,
+                "default": 3
+              }
+            ]
+          },
+          {
+            "name": "batching",
+            "type": "object",
+            "kind": "",
+            "description": "\nAllows you to configure a xref:configuration:batching.adoc[batching policy].",
+            "examples": [
+              {
+                "byte_size": 5000,
+                "count": 0,
+                "period": "1s"
+              },
+              {
+                "count": 10,
+                "period": "1s"
+              },
+              {
+                "check": "this.contains(\"END BATCH\")",
+                "count": 0,
+                "period": "1m"
+              }
+            ],
+            "children": [
+              {
+                "name": "count",
+                "type": "int",
+                "kind": "scalar",
+                "description": "A number of messages at which the batch should be flushed. If `0` disables count based batching.",
+                "default": 0
+              },
+              {
+                "name": "byte_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "An amount of bytes at which the batch should be flushed. If `0` disables size based batching.",
+                "default": 0
+              },
+              {
+                "name": "period",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A period in which an incomplete batch should be flushed regardless of its size.",
+                "default": "",
+                "examples": [
+                  "1s",
+                  "1m",
+                  "500ms"
+                ]
+              },
+              {
+                "name": "check",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.",
+                "default": "",
+                "bloblang": true,
+                "examples": [
+                  "this.type == \"end_of_transaction\""
+                ]
+              },
+              {
+                "name": "processors",
+                "type": "processor",
+                "kind": "array",
+                "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  [
+                    {
+                      "archive": {
+                        "format": "concatenate"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "lines"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "json_array"
+                      }
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "name": "max_in_flight",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "default": 4
+          }
+        ]
+      },
+      "version": "4.80.0",
+      "requiresCgo": true,
+      "cloudSupported": false
+    },
+    {
       "name": "zmq4",
       "type": "output",
       "status": "stable",
@@ -49857,6 +50534,13 @@
                 "application/vnd.google-apps.spreadsheet": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               }
             ]
+          },
+          {
+            "name": "shared_drives",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether or not to include shared drives.",
+            "default": false
           }
         ]
       },
@@ -49957,6 +50641,13 @@
             "kind": "scalar",
             "description": "The maximum number of search results to return.",
             "default": 64
+          },
+          {
+            "name": "shared_drives",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether or not to include shared drives in the result.",
+            "default": false
           }
         ]
       },
@@ -70455,6 +71146,14 @@
             "type": "string",
             "no_dynamic": false,
             "scalars_to_literal": false
+          },
+          {
+            "name": "empty_as_null",
+            "description": "To treat empty substrings as null values",
+            "type": "bool",
+            "no_dynamic": false,
+            "scalars_to_literal": false,
+            "default": false
           }
         ]
       },
@@ -70466,6 +71165,17 @@
             [
               "{\"value\":\"foo,bar,baz\"}",
               "{\"new_value\":[\"foo\",\"bar\",\"baz\"]}"
+            ]
+          ],
+          "skip_testing": false
+        },
+        {
+          "mapping": "root.new_value = this.value.split(\",\", true)",
+          "summary": "",
+          "results": [
+            [
+              "{\"value\":\"foo,,qux\"}",
+              "{\"new_value\":[\"foo\",null,\"qux\"]}"
             ]
           ],
           "skip_testing": false
@@ -70494,6 +71204,17 @@
                 [
                   "{\"value\":\"foo,bar,baz\"}",
                   "{\"new_value\":[\"foo\",\"bar\",\"baz\"]}"
+                ]
+              ],
+              "skip_testing": false
+            },
+            {
+              "mapping": "root.new_value = this.value.split(\",\", true)",
+              "summary": "",
+              "results": [
+                [
+                  "{\"value\":\"foo,,qux\"}",
+                  "{\"new_value\":[\"foo\",null,\"qux\"]}"
                 ]
               ],
               "skip_testing": false

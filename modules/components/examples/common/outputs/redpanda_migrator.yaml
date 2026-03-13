@@ -38,6 +38,7 @@ outputs:
       translate_ids: false
       normalize: false
       strict: false
+      max_parallel_http_requests: 10
     consumer_groups:
       enabled: true
       interval: 1m
