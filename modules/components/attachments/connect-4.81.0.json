@@ -18770,7 +18770,7 @@
             "name": "seed_brokers",
             "type": "string",
             "kind": "array",
-            "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item.",
+            "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item. Optional when `seed_brokers` is configured in a top-level `redpanda` block.",
             "is_optional": true,
             "examples": [
               [
@@ -23743,6 +23743,266 @@
       },
       "cloudSupported": false,
       "requiresCgo": false
+    },
+    {
+      "name": "aws_cloudwatch_logs",
+      "type": "input",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Consumes log events from AWS CloudWatch Logs.",
+      "description": "\nPolls CloudWatch Log Groups for log events. Supports filtering by log streams, CloudWatch filter patterns, and configurable start times.\n\nEach log event becomes a separate message with metadata including the log group name, log stream name, timestamp, and ingestion time.\n\nIMPORTANT: This input tracks its position in memory only. If the process restarts, it will resume from the configured start_time (or the beginning if not set). For exactly-once processing, you should configure an appropriate start_time or implement idempotent downstream processing.\n\n## Credentials\n\nBy default Redpanda Connect will use a shared credentials file when connecting to AWS services. It's also possible to set them explicitly at the component level, allowing you to transfer data across accounts. You can find out more in xref:guides:cloud/aws.adoc[].\n\n## Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `cloudwatch_log_group` - The name of the log group\n- `cloudwatch_log_stream` - The name of the log stream\n- `cloudwatch_timestamp` - The timestamp of the log event (Unix milliseconds)\n- `cloudwatch_ingestion_time` - The ingestion timestamp (Unix milliseconds)\n- `cloudwatch_event_id` - The unique event ID\n\nYou can access these metadata fields using xref:guides:bloblang/about.adoc[Bloblang].\n",
+      "categories": [
+        "Services",
+        "AWS"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "log_group_name",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The name of the CloudWatch Log Group to consume from.",
+            "examples": [
+              "my-app-logs"
+            ]
+          },
+          {
+            "name": "log_stream_names",
+            "type": "string",
+            "kind": "array",
+            "description": "An optional list of log stream names to consume from. If not set, events from all streams in the log group will be consumed.",
+            "is_optional": true,
+            "examples": [
+              [
+                "stream-1",
+                "stream-2"
+              ]
+            ]
+          },
+          {
+            "name": "log_stream_prefix",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional log stream name prefix to filter streams. Only streams starting with this prefix will be consumed.",
+            "is_optional": true,
+            "examples": [
+              "prod-"
+            ]
+          },
+          {
+            "name": "filter_pattern",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional CloudWatch Logs filter pattern to apply when querying log events. See AWS documentation for filter pattern syntax.",
+            "is_optional": true,
+            "examples": [
+              "[ERROR]"
+            ]
+          },
+          {
+            "name": "start_time",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The time to start consuming log events from. Can be an RFC3339 timestamp (e.g., `2024-01-01T00:00:00Z`) or the string `now` to start consuming from the current time. If not set, starts from the beginning of available logs.",
+            "is_optional": true,
+            "examples": [
+              "2024-01-01T00:00:00Z",
+              "now"
+            ]
+          },
+          {
+            "name": "poll_interval",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The interval at which to poll for new log events.",
+            "default": "5s"
+          },
+          {
+            "name": "limit",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of log events to return in a single API call. Valid range: 1-10000.",
+            "is_advanced": true,
+            "default": 1000,
+            "linter": "root = if this < 1 || this > 10000 { [\"limit must be between 1 and 10000\"] }"
+          },
+          {
+            "name": "structured_log",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether to output log events as structured JSON objects with all metadata fields, or as plain text messages with metadata in message metadata.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
+            "name": "api_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The maximum time to wait for an API request to complete.",
+            "is_advanced": true,
+            "default": "30s"
+          },
+          {
+            "name": "auto_replay_nacks",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
+            "default": true
+          },
+          {
+            "name": "region",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The AWS region to target.",
+            "is_advanced": true,
+            "is_optional": true
+          },
+          {
+            "name": "endpoint",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Allows you to specify a custom endpoint for the AWS API.",
+            "is_advanced": true,
+            "is_optional": true
+          },
+          {
+            "name": "tcp",
+            "type": "object",
+            "kind": "scalar",
+            "description": "TCP socket configuration.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "connect_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum amount of time a dial will wait for a connect to complete. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              },
+              {
+                "name": "keep_alive",
+                "type": "object",
+                "kind": "scalar",
+                "description": "TCP keep-alive probe configuration.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "idle",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "interval",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration between keep-alive probes. Zero defaults to 15s.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "count",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.",
+                    "is_advanced": true,
+                    "default": 9
+                  }
+                ]
+              },
+              {
+                "name": "tcp_user_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              }
+            ]
+          },
+          {
+            "name": "credentials",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional manual configuration of AWS credentials to use. More information can be found in xref:guides:cloud/aws.adoc[].",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "profile",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A profile from `~/.aws/credentials` to use.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The ID of credentials to use.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "secret",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The secret for the credentials being used.",
+                "is_advanced": true,
+                "is_optional": true,
+                "is_secret": true,
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "token",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The token for the credentials being used, required when using short term credentials.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "from_ec2_role",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].",
+                "is_advanced": true,
+                "is_optional": true,
+                "version": "4.2.0"
+              },
+              {
+                "name": "role",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A role ARN to assume.",
+                "is_advanced": true,
+                "is_optional": true
+              },
+              {
+                "name": "role_external_id",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An external ID to provide when assuming a role.",
+                "is_advanced": true,
+                "is_optional": true
+              }
+            ]
+          }
+        ],
+        "linter": "\nroot = if this.log_stream_names.or([]).length() > 0 && this.exists(\"log_stream_prefix\") {\n  \"cannot specify both log_stream_names and log_stream_prefix\"\n}\n"
+      },
+      "version": "4.81.0",
+      "requiresCgo": true,
+      "cloudSupported": false
     },
     {
       "name": "tigerbeetle_cdc",
@@ -41042,7 +41302,7 @@
             "name": "seed_brokers",
             "type": "string",
             "kind": "array",
-            "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item.",
+            "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item. Optional when `seed_brokers` is configured in a top-level `redpanda` block.",
             "is_optional": true,
             "examples": [
               [
@@ -46812,6 +47072,22 @@
                     "default": false
                   },
                   {
+                    "name": "region",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The AWS region to target.",
+                    "is_advanced": true,
+                    "is_optional": true
+                  },
+                  {
+                    "name": "endpoint",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Allows you to specify a custom endpoint for the AWS API.",
+                    "is_advanced": true,
+                    "is_optional": true
+                  },
+                  {
                     "name": "tcp",
                     "type": "object",
                     "kind": "scalar",
@@ -46920,8 +47196,7 @@
                         "description": "Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].",
                         "is_advanced": true,
                         "is_optional": true,
-                        "version": "4.2.0",
-                        "default": false
+                        "version": "4.2.0"
                       },
                       {
                         "name": "role",
