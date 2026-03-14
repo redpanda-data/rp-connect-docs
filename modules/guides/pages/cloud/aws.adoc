@@ -84,8 +84,10 @@ credentials:
   role_external_id: bar_id
 ----
 
+ifndef::env-cloud[]
 == Related guides
 
 * xref:guides:cloud/aws-iam-aurora.adoc[Authenticate to Amazon Aurora using IAM roles]
 
+endif::[]
 // end::single-source[]
