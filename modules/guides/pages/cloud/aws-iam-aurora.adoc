@@ -1,0 +1,258 @@
+= Authenticate to Amazon Aurora using IAM roles
+// tag::single-source[]
+:description: Configure IAM roles to authenticate Redpanda Connect pipelines to Amazon Aurora on AWS without static credentials.
+
+On AWS, you can use IAM Roles for Service Accounts (IRSA) to authenticate Redpanda Connect pipelines to Amazon Aurora without storing static credentials.
+
+== How it works
+
+Authentication happens through a two-hop role chain:
+
+. The Redpanda Connect pod uses a projected OIDC token to assume the cluster's pipeline IAM role (`redpanda-<CLUSTER_ID>-redpanda-connect-pipeline`) using `sts:AssumeRoleWithWebIdentity` (IRSA).
+. The pipeline role assumes a database-specific role in your Aurora account using `sts:AssumeRole`.
+. The database role generates a short-lived RDS IAM authentication token that Aurora accepts as a password.
+
+Both roles must exist with trust relationships that permit this chain. The pipeline role is managed by Redpanda — you add a single inline policy to it. The database connect role is created and owned by you.
+
+== Prerequisites
+
+* Redpanda Connect deployed on AWS
+* An Aurora cluster (PostgreSQL or MySQL)
+* Permissions to create IAM roles and attach inline policies in both the Redpanda and Aurora AWS accounts
+* An IAM role associated with the Redpanda Connect pod (see <<Step 1: Find the pipeline IAM role name>>)
+
+== Step 1: Find the pipeline IAM role name
+
+For Redpanda Cloud BYOC deployments, the pipeline role is pre-created in the AWS account where your cluster is deployed and follows this naming convention:
+
+----
+redpanda-<CLUSTER_ID>-redpanda-connect-pipeline
+----
+
+CAUTION: Do not modify the existing policies attached to this role. Redpanda manages these policies and reverts manual changes automatically. Only add new inline policies.
+
+For self-managed deployments, use the IAM role associated with your Redpanda Connect pod or EC2 instance.
+
+== Step 2: Find the Aurora cluster resource ID
+
+The IAM policy for RDS IAM authentication requires the Aurora cluster resource ID (not the cluster identifier). Retrieve it with:
+
+[source,bash]
+----
+aws rds describe-db-clusters \
+  --query "DBClusters[?DBClusterIdentifier=='<cluster-name>'].[DbClusterResourceId]" \
+  --output text \
+  --profile <db_account_aws_profile>
+----
+
+The resource ID has the format `cluster-<alphanumeric-string>`.
+
+== Step 3: Create the database connect role (Aurora account)
+
+In the AWS account where Aurora is hosted, create an IAM role with the following permission policy:
+
+.permission-policy.json
+[source,json]
+----
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "rds-db:connect",
+            "Effect": "Allow",
+            "Resource": "arn:aws:rds-db:<REGION>:<DB_ACCT_ID>:dbuser:cluster-<RESOURCE_ID>/<iam_db_user>"
+        }
+    ]
+}
+----
+
+Replace the following placeholders:
+
+* `<REGION>`: The AWS region of the Aurora cluster
+* `<DB_ACCT_ID>`: The AWS account ID that hosts Aurora
+* `<RESOURCE_ID>`: The cluster resource ID from <<Step 2: Find the Aurora cluster resource ID>>
+* `<iam_db_user>`: The database user configured for IAM authentication
+
+=== Trust policy
+
+Attach the following trust policy to the role to allow the Redpanda pipeline role to assume it:
+
+.trust-policy.json
+[source,json]
+----
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::<RP_ACCT_ID>:role/<PIPELINE_ROLE_NAME>"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+----
+
+Replace the following placeholders:
+
+* `<RP_ACCT_ID>`: The AWS account ID where the Redpanda Connect pipeline role lives
+* `<PIPELINE_ROLE_NAME>`: The pipeline role name from <<Step 1: Find the pipeline IAM role name>>
+
+NOTE: The database connect role must be owned by the same AWS account as the Aurora instance. For cross-account setups, create this role in the Aurora account, not the Redpanda account.
+
+=== Required tag
+
+The database connect role must have the following tag. Without it, the pipeline role cannot assume the database role.
+
+[cols="1,1",options="header"]
+|===
+|Key |Value
+|`redpanda_scope_redpanda_connect` |`true`
+|===
+
+=== Create the role
+
+Run the following AWS CLI commands to create the role and apply the permission policy and tag:
+
+[source,bash]
+----
+aws iam create-role \
+  --role-name "<DB_CONNECT_ROLE_NAME>" \
+  --assume-role-policy-document file://trust-policy.json \
+  --profile <db_account_aws_profile>
+
+aws iam put-role-policy \
+  --role-name "<DB_CONNECT_ROLE_NAME>" \
+  --policy-name "aurora-rds-connect" \
+  --policy-document file://permission-policy.json \
+  --profile <db_account_aws_profile>
+
+aws iam tag-role \
+  --role-name "<DB_CONNECT_ROLE_NAME>" \
+  --tags Key=redpanda_scope_redpanda_connect,Value=true \
+  --profile <db_account_aws_profile>
+----
+
+== Step 4: Grant the pipeline role cross-account access (Redpanda account)
+
+In the AWS account where the Redpanda Connect pipeline role lives, add an inline policy to the pipeline role (identified in <<Step 1: Find the pipeline IAM role name>>) to allow it to assume your database connect role:
+
+.inline-policy.json
+[source,json]
+----
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Resource": "arn:aws:iam::<DB_ACCT_ID>:role/<DB_CONNECT_ROLE_NAME>",
+            "Condition": {
+                "StringEquals": {
+                    "aws:ResourceTag/redpanda_scope_redpanda_connect": "true"
+                }
+            }
+        }
+    ]
+}
+----
+
+Attach the policy using the AWS CLI:
+
+[source,bash]
+----
+aws iam put-role-policy \
+  --role-name "<PIPELINE_ROLE_NAME>" \
+  --policy-name "allow-x-account-db-connect" \
+  --policy-document file://inline-policy.json \
+  --profile <redpanda_aws_profile>
+----
+
+To verify the policy is attached:
+
+[source,bash]
+----
+aws iam get-role-policy \
+  --role-name "<PIPELINE_ROLE_NAME>" \
+  --policy-name "allow-x-account-db-connect" \
+  --profile <redpanda_aws_profile>
+----
+
+== Step 5: Configure the network
+
+The Aurora security group must allow inbound traffic from your Redpanda Connect cluster's outbound IP addresses on the database port (5432 for PostgreSQL, 3306 for MySQL).
+
+For Redpanda Cloud BYOC deployments, retrieve the NAT Gateway IPs using the Redpanda Cloud API:
+
+[source,bash]
+----
+AUTH_TOKEN=$(curl -s --request POST \
+  --url 'https://auth.prd.cloud.redpanda.com/oauth/token' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data grant_type=client_credentials \
+  --data client_id="${REDPANDA_CLIENT_ID}" \
+  --data client_secret="${REDPANDA_CLIENT_SECRET}" \
+  --data audience=cloudv2-production.redpanda.cloud | jq -r '.access_token')
+
+curl -s -X GET "https://api.cloud.redpanda.com/v1/clusters/${RP_CLUSTER_ID}" \
+  -H "Authorization: Bearer ${AUTH_TOKEN}" | jq .cluster.nat_gateways
+----
+
+== Step 6: Configure the pipeline
+
+In your Redpanda Connect pipeline YAML, set the `aws.roles` field to the ARN of the database connect role created in <<Step 3: Create the database connect role (Aurora account)>>.
+
+This configuration applies to the `postgres_cdc`, `pg_stream`, and `mysql_cdc` inputs.
+
+For the `postgres_cdc` and `pg_stream` inputs:
+
+[source,yaml]
+----
+input:
+  postgres_cdc:
+    dsn: "host=<aurora-endpoint> port=5432 user=<iam_db_user> dbname=<db_name> sslmode=require"
+    aws:
+      enabled: true
+      region: <REGION>
+      endpoint: <aurora-endpoint>
+      roles:
+        - role: arn:aws:iam::<DB_ACCT_ID>:role/<DB_CONNECT_ROLE_NAME>
+----
+
+For the `mysql_cdc` input:
+
+[source,yaml]
+----
+input:
+  mysql_cdc:
+    dsn: "<iam_db_user>@tcp(<aurora-endpoint>:3306)/<db_name>?tls=true"
+    aws:
+      enabled: true
+      region: <REGION>
+      endpoint: <aurora-endpoint>
+      roles:
+        - role: arn:aws:iam::<DB_ACCT_ID>:role/<DB_CONNECT_ROLE_NAME>
+----
+
+The `aws.roles` field accepts an array of role ARNs, which are assumed in sequence. This supports chaining multiple role assumptions for more complex cross-account setups.
+
+== Troubleshoot
+
+=== is not authorized to perform: sts:AssumeRole
+
+The inline assume-role policy is missing from the Redpanda Connect pipeline role, or the tag condition is not met.
+
+. Verify that the database connect role has the `redpanda_scope_redpanda_connect: true` tag.
+. Attach the inline policy as described in <<Step 4: Grant the pipeline role cross-account access (Redpanda account)>>.
+
+The error clears automatically once the policy is in place. Monitor pipeline logs to confirm:
+
+[source,bash]
+----
+rpk topic consume __redpanda.connect.logs --offset end | grep '<PIPELINE_ID>'
+----
+
+Look for a message like `postgres_cdc input go active` or `mysql_cdc input go active` to confirm successful authentication.
+
+// end::single-source[]
