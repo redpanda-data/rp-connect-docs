@@ -239,7 +239,7 @@ The `aws.roles` field accepts an array of role ARNs, which are assumed in sequen
 
 == Troubleshoot
 
-=== `is not authorized to perform: sts:AssumeRole`
+=== is not authorized to perform: sts:AssumeRole
 
 The inline assume-role policy is missing from the Redpanda Connect pipeline role, or the tag condition is not met.
 
