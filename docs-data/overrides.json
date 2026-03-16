@@ -1783,7 +1783,7 @@
           },
           {
             "name": "seed_brokers",
-            "$ref": "#/definitions/seed_brokers"
+            "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item. Optional when `seed_brokers` is configured in a top-level `redpanda` block."
           },
           {
             "name": "tls",
@@ -4018,6 +4018,22 @@
       }
     },
     {
+      "name": "iceberg",
+      "config": {
+        "children": [
+          {
+            "name": "catalog",
+            "children": [
+              {
+                "name": "headers",
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "kafka",
       "config": {
         "children": [
@@ -4873,7 +4889,7 @@
         "children": [
           {
             "name": "seed_brokers",
-            "$ref": "#/definitions/seed_brokers"
+            "description": "A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item. Optional when `seed_brokers` is configured in a top-level `redpanda` block."
           },
           {
             "name": "tls",
