@@ -1,8 +1,16 @@
-metrics:
+inputs:
   label: ""
-  aws_cloudwatch:
-    namespace: Benthos
-    flush_period: 100ms
+  aws_cloudwatch_logs:
+    log_group_name: "" # No default (required)
+    log_stream_names: [] # No default (optional)
+    log_stream_prefix: "" # No default (optional)
+    filter_pattern: "" # No default (optional)
+    start_time: "" # No default (optional)
+    poll_interval: 5s
+    limit: 1000
+    structured_log: true
+    api_timeout: 30s
+    auto_replay_nacks: true
     region: "" # No default (optional)
     endpoint: "" # No default (optional)
     tcp:
