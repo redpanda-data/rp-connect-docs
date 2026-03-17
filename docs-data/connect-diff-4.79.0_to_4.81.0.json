@@ -2,7 +2,7 @@
   "comparison": {
     "oldVersion": "4.79.0",
     "newVersion": "4.81.0",
-    "timestamp": "2026-03-11T00:11:04.297Z"
+    "timestamp": "2026-03-13T22:52:48.391Z"
   },
   "summary": {
     "newComponents": 0,
@@ -16,12 +16,12 @@
   "details": {
     "newComponents": [
       {
-        "name": "aws_cloudwatch_logs",
+        "name": "oracledb_cdc",
         "type": "input",
-        "status": "stable",
+        "status": "experimental",
         "version": "",
-        "description": "\nPolls CloudWatch Log Groups for log events. Supports filtering by log streams, CloudWatch filter patterns, and configurable start times.\n\nEach log event becomes a separate message with metadata including the log group name, log stream name, timestamp, and ingestion time.\n\nIMPORTANT: This input tracks its position in memory only. If the process restarts, it will resume from the configured start_time (or the beginning if not set). For exactly-once processing, you should configure an appropriate start_time or implement idempotent downstream processing.\n\n## Credentials\n\nBy default Redpanda Connect will use a shared credentials file when connecting to AWS services. It's also possible to set them explicitly at the component level, allowing you to transfer data across accounts. You can find out more in xref:guides:cloud/aws.adoc[].\n\n## Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `cloudwatch_log_group` - The name of the log group\n- `cloudwatch_log_stream` - The name of the log stream\n- `cloudwatch_timestamp` - The timestamp of the log event (Unix milliseconds)\n- `cloudwatch_ingestion_time` - The ingestion timestamp (Unix milliseconds)\n- `cloudwatch_event_id` - The unique event ID\n\nYou can access these metadata fields using xref:guides:bloblang/about.adoc[Bloblang].\n",
-        "summary": "Consumes log events from AWS CloudWatch Logs."
+        "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
+        "summary": "Enables Change Data Capture by consuming from OracleDB."
       }
     ],
     "removedComponents": [],
@@ -55,11 +55,11 @@
   "binaryAnalysis": {
     "versions": {
       "oss": "4.81.0",
-      "cloud": "4.82.0",
-      "cgo": "4.82.0"
+      "cloud": "4.83.0",
+      "cgo": "4.83.0"
     },
     "current": {
-      "cloudSupported": 477,
+      "cloudSupported": 478,
       "selfHostedOnly": 79,
       "cgoOnly": 1
     },
@@ -525,6 +525,11 @@
           "type": "inputs",
           "name": "timeplus",
           "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "aws_cloudwatch_logs",
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -2852,8 +2857,8 @@
       "cloudOnly": [
         {
           "type": "inputs",
-          "name": "aws_cloudwatch_logs",
-          "status": "stable"
+          "name": "oracledb_cdc",
+          "status": "experimental"
         },
         {
           "type": "processors",
@@ -2864,8 +2869,8 @@
       "cgoOnly": [
         {
           "type": "inputs",
-          "name": "aws_cloudwatch_logs",
-          "status": "stable"
+          "name": "oracledb_cdc",
+          "status": "experimental"
         }
       ]
     }
