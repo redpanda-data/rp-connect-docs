@@ -218,7 +218,7 @@ If the pipeline fails because it cannot create the metadata table:
 
 === Duplicate events after restart
 
-The `gcp_spanner_cdc` input delivers messages at least once. If the pipeline fails mid-stream, it may replay some records on restart. To handle duplicates:
+The `gcp_spanner_cdc` input provides at-least-once delivery. If the pipeline fails mid-stream, it may replay some records on restart. To handle duplicates:
 
 - Use idempotent processing in downstream systems.
 - Deduplicate using the `server_transaction_id` and `record_sequence` fields from the change record.

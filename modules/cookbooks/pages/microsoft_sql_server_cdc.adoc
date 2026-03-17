@@ -54,7 +54,7 @@ For cloud-managed SQL Server, see:
 
 === Checkpoint storage
 
-By default, the `microsoft_sql_server_cdc` input creates a table (`rpcn.CdcCheckpointCache`) and stored procedure in your SQL Server database to store the last processed Log Sequence Number (LSN). This requires the pipeline user to have `CREATE TABLE` and `CREATE PROCEDURE` permissions.
+By default, the `microsoft_sql_server_cdc` input creates a table (`rpcn.CdcCheckpointCache`) and stored procedure in your SQL Server database to store the last processed Log Sequence Number (LSN). The pipeline user must have `CREATE TABLE` and `CREATE PROCEDURE` permissions.
 
 To use an external cache instead, set the `checkpoint_cache` field to a cache label defined in `cache_resources`. See the xref:components:inputs/microsoft_sql_server_cdc.adoc#_checkpoint_cache_table_name[connector reference] for details.
 

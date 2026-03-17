@@ -171,7 +171,7 @@ cache_resources:
 ----
 <1> Number of rows to read per batch during snapshot processing.
 
-== Troubleshoot
+== Troubleshoot common issues
 
 === No events received
 
@@ -211,7 +211,7 @@ The `mysql_cdc` input provides at-least-once delivery. If the pipeline fails bet
 - Deduplicate using the `binlog_position` metadata field.
 - Lower `checkpoint_limit` to reduce the window of possible duplicates.
 
-== Suggested reading
+== Next steps
 
 - xref:components:inputs/mysql_cdc.adoc[MySQL CDC input reference]
 - xref:components:caches/redis.adoc[Redis cache]
