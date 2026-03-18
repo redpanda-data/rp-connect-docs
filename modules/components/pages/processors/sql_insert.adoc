@@ -45,7 +45,9 @@ include::redpanda-connect:components:partial$examples/processors/sql_insert.adoc
 
 == Dynamic SQL operations
 
-The `table` and `columns` fields are static strings — they do not support Bloblang interpolation. For dynamic table names, dynamic column lists, DELETE operations, or any other SQL that `sql_insert` cannot express, use the xref:components:processors/sql_raw.adoc[`sql_raw` processor] instead. To use Bloblang interpolation inside `sql_raw`'s `query` field, you must enable `unsafe_dynamic_query: true`. Use this with caution, as interpolating unsanitized values into a query can introduce SQL injection risks.
+The `table` and `columns` fields are static strings that do not support Bloblang interpolation. For dynamic table names, dynamic column lists, DELETE operations, or any other SQL that `sql_insert` cannot express, use the xref:components:processors/sql_raw.adoc[`sql_raw` processor] instead. To use Bloblang interpolation inside `sql_raw`'s `query` field, you must enable `unsafe_dynamic_query: true`.
+
+CAUTION: Interpolating unsanitized values into a query can introduce SQL injection risks. Always validate or sanitize the interpolated value beforehand.
 
 include::redpanda-connect:components:partial$fields/processors/sql_insert.adoc[]
 
