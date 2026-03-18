@@ -41,6 +41,37 @@ include::components:example$advanced/outputs/sql_insert.yaml[]
 
 include::redpanda-connect:components:partial$examples/outputs/sql_insert.adoc[]
 
+== Dynamic SQL operations
+
+The `table` and `columns` fields are static strings that do not support Bloblang interpolation. For dynamic table names, dynamic column lists, DELETE operations, or any other SQL that `sql_insert` cannot express, use the xref:components:outputs/sql_raw.adoc[`sql_raw` output] instead.
+
+There is no dedicated `sql_delete` output. To delete rows, use `sql_raw` with a DELETE statement:
+
+[source,yaml]
+----
+output:
+  sql_raw:
+    driver: postgres
+    dsn: postgres://user:pass@localhost:5432/mydb?sslmode=disable
+    query: "DELETE FROM my_table WHERE id = $1"
+    args_mapping: root = [ this.id ]
+----
+
+To insert into a table determined at runtime, use `sql_raw` with `unsafe_dynamic_query: true`, which enables Bloblang interpolation in the `query` field.
+
+CAUTION: Interpolating user-supplied values into a query can introduce SQL injection risks. Always validate or sanitize the interpolated value beforehand.
+
+[source,yaml]
+----
+output:
+  sql_raw:
+    driver: postgres
+    dsn: postgres://user:pass@localhost:5432/mydb?sslmode=disable
+    unsafe_dynamic_query: true
+    query: 'INSERT INTO ${! this.table_name } (id, value) VALUES ($1, $2)'
+    args_mapping: root = [ this.id, this.value ]
+----
+
 include::redpanda-connect:components:partial$fields/outputs/sql_insert.adoc[]
 
 // end::single-source[]
