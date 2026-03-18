@@ -6,7 +6,7 @@ input:
     tables:
       - orders
     slot_name: ${PG_SLOT_NAME}
-    stream_snapshot: true
+    stream_snapshot: false
 
 pipeline:
   processors:

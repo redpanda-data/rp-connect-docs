@@ -58,7 +58,7 @@ Service account key:: Set the `credentials_json` field to a base64-encoded servi
 +
 [,bash]
 ----
-export GCP_CREDENTIALS=$(base64 -i /path/to/service-account.json)
+export GCP_CREDENTIALS="$(base64 < /path/to/service-account.json | tr -d '\n')"
 ----
 +
 Then reference it in your pipeline config:

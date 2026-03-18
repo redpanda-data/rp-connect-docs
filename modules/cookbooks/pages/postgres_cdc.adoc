@@ -171,11 +171,11 @@ If no events arrive:
 SHOW wal_level;
 ----
 
-. Confirm the user has the required PostgreSQL privileges:
+. Grant the required PostgreSQL privileges:
 +
 [,sql]
 ----
-GRANT REPLICATION ON DATABASE mydb TO your_user;
+ALTER ROLE your_user WITH REPLICATION;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO your_user;
 ----
 

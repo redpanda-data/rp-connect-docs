@@ -6,7 +6,7 @@ input:
     collections:
       - orders
     checkpoint_cache: redis_cache
-    stream_snapshot: true
+    stream_snapshot: false
 
 output:
   switch:
