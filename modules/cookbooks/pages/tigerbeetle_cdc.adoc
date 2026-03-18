@@ -4,7 +4,7 @@
 :page-categories: Streaming, Integration
 :page-topic-type: cookbook
 :personas: streaming_developer, data_engineer
-:learning-objective-1: Find reusable patterns for capturing TigerBeetle CDC events
+:learning-objective-1: Apply reusable patterns for capturing TigerBeetle CDC events
 :learning-objective-2: Adapt integration patterns to route financial ledger events to Redpanda and S3
 :learning-objective-3: Identify patterns for filtering and transforming financial transfer events
 
@@ -24,7 +24,7 @@ Before using these patterns, configure the following.
 
 === Cgo-enabled binary
 
-The `tigerbeetle_cdc` input requires a cgo-enabled build of Redpanda Connect. It is not available in `rpk` or the standard Docker image. To get a cgo-enabled binary:
+The `tigerbeetle_cdc` input requires a cgo-enabled build of Redpanda Connect. The `rpk` CLI and the standard Docker image do not include the `tigerbeetle_cdc` input. To get a cgo-enabled binary:
 
 ifndef::env-cloud[]
 - xref:install:prebuilt-binary.adoc[Download a prebuilt cgo-enabled binary], or

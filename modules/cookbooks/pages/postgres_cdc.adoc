@@ -4,8 +4,8 @@
 :page-categories: Streaming, Integration
 :page-topic-type: cookbook
 :personas: streaming_developer, data_engineer
-:learning-objective-1: Find reusable patterns for capturing PostgreSQL CDC events
-:learning-objective-2: Look up integration patterns for routing CDC data to Redpanda and S3
+:learning-objective-1: Apply reusable patterns for capturing PostgreSQL CDC events
+:learning-objective-2: Adapt integration patterns to route CDC data to Redpanda and S3
 :learning-objective-3: Identify patterns for filtering and transforming change events
 
 The `postgres_cdc` input captures row-level changes from PostgreSQL tables using logical replication and the Write-Ahead Log (WAL). Use these patterns to filter, transform, and route PostgreSQL CDC events to Redpanda, S3, and other destinations.
@@ -135,7 +135,7 @@ This pattern:
 - Routes `insert` events to one Redpanda topic and all other change events to another
 - Enables specialized downstream consumers per operation type
 
-== Replication modes
+== Configure replication mode
 
 The `postgres_cdc` input supports two replication modes controlled by the `stream_snapshot` field:
 

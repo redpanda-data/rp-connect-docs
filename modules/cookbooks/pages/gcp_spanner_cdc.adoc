@@ -4,8 +4,8 @@
 :page-categories: Streaming, Integration
 :page-topic-type: cookbook
 :personas: streaming_developer, data_engineer
-:learning-objective-1: Find reusable patterns for capturing Google Cloud Spanner CDC events
-:learning-objective-2: Look up integration patterns for routing CDC data to Redpanda and S3
+:learning-objective-1: Apply reusable patterns for capturing Google Cloud Spanner CDC events
+:learning-objective-2: Adapt integration patterns to route CDC data to Redpanda and S3
 :learning-objective-3: Identify patterns for filtering and transforming Spanner change records
 
 The `gcp_spanner_cdc` input captures row-level changes from Google Cloud Spanner tables using https://cloud.google.com/spanner/docs/change-streams[Spanner change streams^]. Use these patterns to filter, transform, and route Spanner change records to Redpanda, Amazon S3, and other destinations.
