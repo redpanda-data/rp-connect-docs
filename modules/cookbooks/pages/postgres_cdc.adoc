@@ -58,7 +58,7 @@ export PG_DSN="postgres://user:password@localhost:5432/mydb" <1>
 export PG_SCHEMA="public" <2>
 export PG_SLOT_NAME="my_connect_slot" <3>
 export REDPANDA_BROKERS=localhost:9092 <4>
-export S3_BUCKET=my-cdc-bucket <5>
+export S3_BUCKET=cdc-archive <5>
 ----
 <1> The PostgreSQL DSN in `postgres://user:password@host:port/dbname` format.
 <2> The schema containing the tables to capture.

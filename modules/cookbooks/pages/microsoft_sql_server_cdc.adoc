@@ -66,7 +66,7 @@ The examples in this cookbook use environment variables for configuration:
 ----
 export MSSQL_CONN="sqlserver://user:password@localhost:1433?database=mydb" <1>
 export REDPANDA_BROKERS=localhost:9092 <2>
-export S3_BUCKET=my-cdc-bucket <3>
+export S3_BUCKET=cdc-archive <3>
 ----
 <1> The SQL Server connection string in `sqlserver://user:password@host:port?database=dbname` format.
 <2> The Redpanda broker addresses (for Redpanda output examples).
@@ -110,7 +110,7 @@ include::cookbooks:example$microsoft_sql_server_cdc/to-redpanda.yaml[tag=config]
 
 This pattern:
 
-- Uses `schema.table` as the Redpanda topic name
+- Uses `database_schema.table` as the Redpanda topic name
 - Batches messages for efficient delivery
 - Sets the message key to the primary key field (update `json("id")` to match your table's primary key column)
 
@@ -125,7 +125,7 @@ include::cookbooks:example$microsoft_sql_server_cdc/to-s3.yaml[tag=config]
 
 This pattern:
 
-- Organizes files by schema, table, and time-based partitions (year/month/day/hour)
+- Organizes files by database schema, table, and time-based partitions (year/month/day/hour)
 - Batches events and archives them as newline-delimited JSON
 - Uses UUID file names to prevent collisions
 

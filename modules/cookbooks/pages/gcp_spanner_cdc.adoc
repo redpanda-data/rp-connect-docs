@@ -84,12 +84,12 @@ The examples in this cookbook use environment variables for configuration:
 
 [,bash]
 ----
-export GCP_PROJECT_ID="my-project" <1>
-export GCP_INSTANCE_ID="my-instance" <2>
-export GCP_DATABASE_ID="my-database" <3>
+export GCP_PROJECT_ID="analytics-prod" <1>
+export GCP_INSTANCE_ID="primary" <2>
+export GCP_DATABASE_ID="orders" <3>
 export GCP_STREAM_ID="AllChanges" <4>
 export REDPANDA_BROKERS=localhost:9092 <5>
-export S3_BUCKET=my-cdc-bucket <6>
+export S3_BUCKET=cdc-archive <6>
 ----
 <1> The GCP project ID.
 <2> The Spanner instance ID.
@@ -109,7 +109,7 @@ include::cookbooks:example$gcp_spanner_cdc/basic-capture.yaml[tag=config]
 
 For details on the change record structure and available fields, see the https://cloud.google.com/spanner/docs/change-streams/details#record-types[Spanner change record reference^].
 
-Each change record contains the `mod_type` (INSERT, UPDATE, or DELETE), `table_name`, `commit_timestamp`, and the actual row changes in the `mods` array.
+The `gcp_spanner_cdc` input emits one message per data change. Fields such as `mod_type` (INSERT, UPDATE, or DELETE), `table_name`, `commit_timestamp`, and `server_transaction_id` are available as message metadata (use `meta("field_name")`). The message body contains the row data with `keys`, `new_values`, and `old_values`.
 
 == Filter CDC events
 

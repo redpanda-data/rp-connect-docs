@@ -64,7 +64,7 @@ export TB_REPLICA_2="192.168.1.11:3000"
 export TB_REPLICA_3="192.168.1.12:3000"
 export REDIS_URL=redis://localhost:6379 <3>
 export REDPANDA_BROKERS=localhost:9092 <4>
-export S3_BUCKET=my-cdc-bucket <5>
+export S3_BUCKET=cdc-archive <5>
 ----
 <1> The unique 128-bit TigerBeetle cluster ID. Small integers are valid (for example, `1` represents the 128-bit value `1`).
 <2> The addresses of each replica in `host:port` format. A standard cluster has three replicas.

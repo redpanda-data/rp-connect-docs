@@ -69,7 +69,7 @@ export MYSQL_DSN="user:password@tcp(localhost:3306)/mydb" <1>
 export MYSQL_TABLES="mydb.orders,mydb.customers" <2>
 export REDIS_URL=redis://localhost:6379 <3>
 export REDPANDA_BROKERS=localhost:9092 <4>
-export S3_BUCKET=my-cdc-bucket <5>
+export S3_BUCKET=cdc-archive <5>
 ----
 <1> The MySQL DSN in `user:password@tcp(host:port)/database` format.
 <2> Comma-separated list of tables to capture in `database.table` format.

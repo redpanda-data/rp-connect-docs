@@ -63,7 +63,7 @@ export MONGODB_URL="mongodb://user:password@localhost:27017" <1>
 export MONGODB_DB="mydb" <2>
 export REDIS_URL=redis://localhost:6379 <3>
 export REDPANDA_BROKERS=localhost:9092 <4>
-export S3_BUCKET=my-cdc-bucket <5>
+export S3_BUCKET=cdc-archive <5>
 ----
 <1> The MongoDB connection string.
 <2> The name of the database to capture changes from.

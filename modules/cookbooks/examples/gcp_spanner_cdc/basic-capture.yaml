@@ -9,11 +9,11 @@ input:
 pipeline:
   processors:
     - mapping: |
-        root.mod_type = this.mod_type
-        root.table_name = this.table_name
-        root.commit_timestamp = this.commit_timestamp
-        root.mods = this.mods
-        root.transaction_id = this.server_transaction_id
+        root.mod_type = meta("mod_type")
+        root.table_name = meta("table_name")
+        root.commit_timestamp = meta("commit_timestamp")
+        root.data = this
+        root.transaction_id = meta("server_transaction_id")
 
 output:
   stdout:

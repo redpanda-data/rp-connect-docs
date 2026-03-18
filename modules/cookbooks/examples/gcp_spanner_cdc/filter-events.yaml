@@ -12,10 +12,10 @@ input:
 pipeline:
   processors:
     - mapping: |
-        root.mod_type = this.mod_type
-        root.table_name = this.table_name
-        root.commit_timestamp = this.commit_timestamp
-        root.new_values = this.mods.map_each(m -> m.new_values)
+        root.mod_type = meta("mod_type")
+        root.table_name = meta("table_name")
+        root.commit_timestamp = meta("commit_timestamp")
+        root.new_values = this.new_values
 
 output:
   stdout:

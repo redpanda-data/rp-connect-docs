@@ -9,14 +9,14 @@ input:
 pipeline:
   processors:
     - mapping: |
-        meta topic = this.table_name
+        meta topic = meta("table_name")
 
 output:
   kafka_franz:
     seed_brokers:
       - ${REDPANDA_BROKERS}
     topic: ${! meta("topic") }
-    key: ${! this.server_transaction_id }
+    key: ${! meta("server_transaction_id") }
     batching:
       count: 100
       period: 1s

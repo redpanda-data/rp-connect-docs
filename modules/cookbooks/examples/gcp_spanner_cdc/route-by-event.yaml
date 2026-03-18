@@ -9,7 +9,7 @@ input:
 output:
   switch:
     cases:
-      - check: this.mod_type == "INSERT"
+      - check: meta("mod_type") == "INSERT"
         output:
           kafka_franz:
             seed_brokers:

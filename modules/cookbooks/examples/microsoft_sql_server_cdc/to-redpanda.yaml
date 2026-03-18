@@ -10,7 +10,7 @@ input:
 pipeline:
   processors:
     - mapping: |
-        meta topic = meta("schema") + "." + meta("table")
+        meta topic = meta("database_schema") + "." + meta("table")
 
 output:
   kafka_franz:
