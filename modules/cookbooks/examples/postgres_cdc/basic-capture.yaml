@@ -1,0 +1,23 @@
+# tag::config[]
+input:
+  postgres_cdc:
+    dsn: ${PG_DSN}
+    schema: ${PG_SCHEMA}
+    tables:
+      - orders
+    slot_name: ${PG_SLOT_NAME}
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        root.operation = meta("operation")
+        root.table = meta("table")
+        root.lsn = meta("lsn")
+        root.data = this
+        root.timestamp = now()
+
+output:
+  stdout:
+    codec: lines
+# end::config[]

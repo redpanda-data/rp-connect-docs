@@ -1,0 +1,24 @@
+# tag::config[]
+input:
+  microsoft_sql_server_cdc:
+    connection_string: ${MSSQL_CONN}
+    include:
+      - dbo.orders
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        root = if meta("operation") != "insert" && meta("operation") != "update_after" {
+          deleted()
+        }
+    - mapping: |
+        root.operation = meta("operation")
+        root.table = meta("table")
+        root.data = this
+        root.timestamp = now()
+
+output:
+  stdout:
+    codec: lines
+# end::config[]

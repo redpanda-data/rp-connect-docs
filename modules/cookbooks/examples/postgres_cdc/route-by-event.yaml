@@ -1,0 +1,25 @@
+# tag::config[]
+input:
+  postgres_cdc:
+    dsn: ${PG_DSN}
+    schema: ${PG_SCHEMA}
+    tables:
+      - orders
+    slot_name: ${PG_SLOT_NAME}
+    stream_snapshot: true
+
+output:
+  switch:
+    cases:
+      - check: meta("operation") == "insert"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: postgres.orders.inserts
+      - output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: postgres.orders.changes
+# end::config[]

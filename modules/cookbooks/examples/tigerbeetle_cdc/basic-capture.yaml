@@ -1,0 +1,30 @@
+# tag::config[]
+input:
+  tigerbeetle_cdc:
+    cluster_id: ${TB_CLUSTER_ID}
+    addresses:
+      - ${TB_REPLICA_1}
+      - ${TB_REPLICA_2}
+      - ${TB_REPLICA_3}
+    progress_cache: redis_cache
+
+pipeline:
+  processors:
+    - mapping: |
+        root.event_type = meta("event_type")
+        root.ledger = meta("ledger")
+        root.transfer_code = meta("transfer_code")
+        root.timestamp_ms = meta("timestamp_ms")
+        root.transfer = this.transfer
+        root.debit_account = this.debit_account
+        root.credit_account = this.credit_account
+
+output:
+  stdout:
+    codec: lines
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]

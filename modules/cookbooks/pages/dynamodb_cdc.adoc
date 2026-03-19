@@ -43,7 +43,7 @@ To enable streams on an existing table using the AWS CLI:
 [,bash]
 ----
 aws dynamodb update-table \
-  --table-name my-table \
+  --table-name orders \
   --stream-specification StreamEnabled=true,StreamViewType=NEW_AND_OLD_IMAGES
 ----
 
@@ -53,10 +53,10 @@ The examples in this cookbook use environment variables for AWS configuration. T
 
 [,bash]
 ----
-export DYNAMODB_TABLE=my-table <1>
+export DYNAMODB_TABLE=orders <1>
 export AWS_REGION=us-east-1 <2>
 export REDPANDA_BROKERS=localhost:9092 <3>
-export S3_BUCKET=my-cdc-bucket <4>
+export S3_BUCKET=cdc-archive <4>
 ----
 <1> The name of the DynamoDB table with streams enabled.
 <2> The AWS region where your DynamoDB table is located.
@@ -160,8 +160,8 @@ The DynamoDB CDC input automatically manages checkpoints in a separate DynamoDB 
 ----
 input:
   aws_dynamodb_cdc:
-    table: my-table
-    checkpoint_table: my-app-checkpoints <1>
+    table: orders
+    checkpoint_table: cdc-checkpoints <1>
     checkpoint_limit: 500 <2>
     start_from: trim_horizon <3>
 ----
@@ -179,7 +179,7 @@ Optimize throughput and latency with these settings:
 ----
 input:
   aws_dynamodb_cdc:
-    table: my-table
+    table: orders
     batch_size: 1000 <1>
     poll_interval: 100ms <2>
     max_tracked_shards: 10000 <3>
@@ -206,7 +206,7 @@ If you're not receiving events:
 +
 [,bash]
 ----
-aws dynamodb describe-table --table-name my-table \
+aws dynamodb describe-table --table-name orders \
   --query 'Table.StreamSpecification'
 ----
 

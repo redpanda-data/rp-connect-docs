@@ -1,0 +1,23 @@
+# tag::config[]
+input:
+  microsoft_sql_server_cdc:
+    connection_string: ${MSSQL_CONN}
+    include:
+      - dbo.orders
+    stream_snapshot: true
+
+output:
+  switch:
+    cases:
+      - check: meta("operation") == "insert"
+        output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: sqlserver.orders.inserts
+      - output:
+          kafka_franz:
+            seed_brokers:
+              - ${REDPANDA_BROKERS}
+            topic: sqlserver.orders.changes
+# end::config[]

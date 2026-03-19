@@ -1,0 +1,222 @@
+= MySQL CDC Patterns
+// tag::single-source[]
+:description: Learn how to capture, filter, transform, and route MySQL change data capture (CDC) events with Redpanda Connect.
+:page-categories: Streaming, Integration
+:page-topic-type: cookbook
+:personas: streaming_developer, data_engineer
+:learning-objective-1: Apply reusable patterns for capturing MySQL CDC events
+:learning-objective-2: Adapt integration patterns to route CDC data to Redpanda and S3
+:learning-objective-3: Identify patterns for filtering and transforming change events
+
+The `mysql_cdc` input captures row-level changes from MySQL tables using the binary log (binlog). Use these patterns to filter, transform, and route MySQL CDC events to Redpanda, S3, and other destinations.
+
+Use this cookbook to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+== Prerequisites
+
+Before using these patterns, ensure you have the following configured:
+
+=== Redpanda CLI
+
+ifndef::env-cloud[]
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:get-started:quickstarts/rpk.adoc[rpk installation] for installation instructions.
+endif::[]
+ifdef::env-cloud[]
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:manage:rpk/rpk-install.adoc[rpk installation] for installation instructions.
+endif::[]
+
+=== MySQL binlog
+
+The source MySQL database must have binary logging enabled with row-based replication:
+
+[,sql]
+----
+-- Verify binary logging is enabled
+SHOW VARIABLES LIKE 'log_bin';
+
+-- Verify row-based format
+SHOW VARIABLES LIKE 'binlog_format';
+----
+
+Set `log_bin` to `ON` and `binlog_format` to `ROW`. For cloud-managed MySQL, see:
+
+- https://aws.amazon.com/blogs/database/enable-change-data-capture-on-amazon-rds-for-mysql-applications-that-are-using-xa-transactions/[Change data capture on Amazon RDS for MySQL^]
+- https://learn.microsoft.com/en-us/fabric/real-time-hub/add-source-mysql-database-cdc[Azure MySQL Database CDC^]
+- https://cloud.google.com/datastream/docs/configure-cloudsql-mysql[Google Cloud SQL for MySQL^]
+
+=== Checkpoint cache
+
+The `mysql_cdc` input requires a xref:components:caches/about.adoc[cache] to store the binlog position between restarts. The examples in this cookbook use a Redis cache:
+
+[,bash]
+----
+export REDIS_URL=redis://localhost:6379
+----
+
+For production use, any persistent cache supported by Redpanda Connect works, such as `aws_dynamodb` or `postgres`.
+
+=== Environment variables
+
+The examples in this cookbook use environment variables for configuration:
+
+[,bash]
+----
+export MYSQL_DSN="user:password@tcp(localhost:3306)/mydb" <1>
+export MYSQL_TABLES="mydb.orders,mydb.customers" <2>
+export REDIS_URL=redis://localhost:6379 <3>
+export REDPANDA_BROKERS=localhost:9092 <4>
+export S3_BUCKET=cdc-archive <5>
+----
+<1> The MySQL DSN in `user:password@tcp(host:port)/database` format.
+<2> Comma-separated list of tables to capture in `database.table` format.
+<3> The Redis URL for checkpoint storage.
+<4> The Redpanda broker addresses (for Redpanda output examples).
+<5> The S3 bucket name (for S3 output examples).
+
+== Capture CDC events
+
+The simplest pattern captures all change events from MySQL tables and outputs them with metadata:
+
+[,yaml]
+----
+include::cookbooks:example$mysql_cdc/basic-capture.yaml[tag=config]
+----
+
+For details on the CDC event message structure and available metadata fields, see the xref:components:inputs/mysql_cdc.adoc#_metadata[metadata] section in the connector reference.
+
+== Filter CDC events
+
+Filter events to process only specific change types using the `operation` metadata field:
+
+[,yaml]
+----
+include::cookbooks:example$mysql_cdc/filter-events.yaml[tag=config]
+----
+
+This pattern:
+
+- Filters to only `insert` and `update` operations, dropping `delete` events
+- Transforms the event to a simplified format with a timestamp
+
+== Route to Redpanda
+
+Stream MySQL changes to Redpanda for real-time processing:
+
+[,yaml]
+----
+include::cookbooks:example$mysql_cdc/to-redpanda.yaml[tag=config]
+----
+
+This pattern:
+
+- Uses the table name as the Redpanda topic
+- Batches messages for efficient delivery
+- Sets the message key to the row's primary key field (update `json("id")` to match your table's primary key column)
+
+== Route to S3
+
+Archive CDC events to S3 for long-term storage and analytics:
+
+[,yaml]
+----
+include::cookbooks:example$mysql_cdc/to-s3.yaml[tag=config]
+----
+
+This pattern:
+
+- Organizes files by table and time-based partitions (year/month/day/hour)
+- Batches events and archives them as newline-delimited JSON
+- Uses UUID file names to prevent collisions
+
+== Route by event type
+
+Route different event types to different destinations:
+
+[,yaml]
+----
+include::cookbooks:example$mysql_cdc/route-by-event.yaml[tag=config]
+----
+
+This pattern:
+
+- Routes `insert` events to one Redpanda topic and all other change events to another
+- Enables specialized downstream consumers per operation type
+
+== Configure replication mode
+
+The `mysql_cdc` input supports two replication modes controlled by the `stream_snapshot` field:
+
+`stream_snapshot: true`:: Captures a full snapshot of existing table data before streaming live changes. Use this when you need a complete initial load.
+`stream_snapshot: false`:: Skips the snapshot and streams only changes from the current binlog position. Use this when you only need new changes going forward.
+
+[,yaml]
+----
+input:
+  mysql_cdc:
+    dsn: ${MYSQL_DSN}
+    tables:
+      - mydb.orders
+    checkpoint_cache: redis_cache
+    stream_snapshot: true
+    snapshot_max_batch_size: 1000 <1>
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+----
+<1> Number of rows to read per batch during snapshot processing.
+
+== Troubleshoot common issues
+
+Use these steps to diagnose and fix the most common problems with the `mysql_cdc` input.
+
+=== No events received
+
+If you're not receiving events:
+
+. Verify binary logging is enabled:
++
+[,sql]
+----
+SHOW VARIABLES LIKE 'log_bin';
+SHOW VARIABLES LIKE 'binlog_format';
+----
+
+. Confirm the user has the required MySQL privileges:
++
+[,sql]
+----
+GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'your_user'@'%';
+GRANT SELECT ON mydb.* TO 'your_user'@'%';
+----
+
+. Check that the table names in `tables` use the `database.table` format.
+
+=== Pipeline restarts lose position
+
+If the pipeline restarts and replays events from the beginning:
+
+- Verify the checkpoint cache is persistent and accessible.
+- Check that `checkpoint_key` is consistent across restarts (default: `mysql_binlog_position`).
+- Use a durable cache backend such as Redis with persistence enabled, `aws_dynamodb`, or `postgres`.
+
+=== Duplicate events
+
+The `mysql_cdc` input provides at-least-once delivery. If the pipeline fails between checkpoints, events may be re-read on restart. To handle duplicates:
+
+- Use idempotent processing in downstream systems.
+- Deduplicate using the `binlog_position` metadata field.
+- Lower `checkpoint_limit` to reduce the window of possible duplicates.
+
+== Next steps
+
+- xref:components:inputs/mysql_cdc.adoc[MySQL CDC input reference]
+- xref:components:caches/redis.adoc[Redis cache]
+- xref:components:outputs/redpanda.adoc[Redpanda output]
+
+// end::single-source[]
