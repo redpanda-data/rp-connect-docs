@@ -17,6 +17,8 @@ ifndef::env-cloud[]
 Introduced in version 4.37.0.
 endif::[]
 
+The following shows all available configuration fields and their defaults.
+
 [tabs]
 ======
 Common::
@@ -42,7 +44,7 @@ include::components:example$advanced/outputs/redpanda_migrator.yaml[]
 
 == Multiple migrator pairs
 
-When a pipeline uses multiple migrator pairs, set the `label` field to the same value on the paired input and output.
+Each migrator pair requires a unique `label`. Set the same label value on both the input and output within a pair.
 
 == Performance tuning
 
@@ -61,70 +63,70 @@ On the paired xref:components:inputs/redpanda_migrator.adoc#performance-tuning[`
 
 === Topics
 
-- Topic names are preserved from the source by default. Use the `topic` field with interpolation to rename topics at the destination.
-- Topics are created at the destination with the same partition count as the source.
+- Topic names carry over from the source by default. Use the `topic` field with interpolation to rename topics at the destination.
+- The migrator creates each topic at the destination with the same partition count as the source.
 - Replication factor defaults to the source value. Set `topic_replication_factor` to override it.
-- A serverless-aware subset of topic configuration keys is copied.
+- The migrator copies a serverless-aware subset of topic configuration keys.
 - ACL replication is optional (`sync_topic_acls`):
-  - `ALLOW WRITE` ACL entries are not copied.
-  - `ALLOW ALL` ACL entries are downgraded to `ALLOW READ`.
-  - Resource pattern type and host filters are preserved.
+  - The migrator does not copy `ALLOW WRITE` ACL entries.
+  - The migrator downgrades `ALLOW ALL` ACL entries to `ALLOW READ`.
+  - Resource pattern type and host filters carry over.
 
 === Schema Registry
 
-- Synced once at startup, then periodically based on `schema_registry.interval` (default: every 5 minutes). Set `schema_registry.interval: 0s` for a one-time sync only.
+- Syncs once at startup, then periodically based on `schema_registry.interval` (default: every 5 minutes). Set `schema_registry.interval: 0s` for a one-time sync only.
 - Use include and exclude regex patterns to filter which subjects are migrated.
 - Use the `subject` field with interpolation to rename subjects at the destination.
 - Schema versions: `latest` (most recent version only) or `all` (full history). Defaults to `all`.
-- Soft-deleted subjects can be included with `schema_registry.include_deleted`.
-- Schema IDs can be translated to new destination IDs or preserved as-is. See `schema_registry.translate_ids`.
+- Include soft-deleted subjects with `schema_registry.include_deleted`.
+- The migrator can translate schema IDs to new destination IDs or preserve them as-is. See `schema_registry.translate_ids`.
 - Schema normalization is optional (`schema_registry.normalize`).
-- Compatibility settings are copied per-subject. Schema metadata and rules are not copied in Serverless mode.
+- Compatibility settings carry over per-subject. Schema metadata and rules do not carry over in Serverless mode.
 
 === Consumer groups
 
-- Synced periodically based on `consumer_groups.interval` (default: every 1 minute).
+- Sync periodically based on `consumer_groups.interval` (default: every 1 minute).
 - Use include and exclude regex patterns to filter which groups are migrated.
-- By default, all groups except those in `Dead` state are migrated. Set `consumer_groups.only_empty: true` to migrate only `Empty` state groups.
-- Consumer offsets are translated using timestamps. This is approximate and may be imprecise when multiple records share the same timestamp.
-- Offsets only move forward and are never rewound at the destination.
+- By default, all groups except those in `Dead` state migrate. Set `consumer_groups.only_empty: true` to migrate only `Empty` state groups.
+- The migrator translates consumer offsets using timestamps. This is approximate and may be imprecise when multiple records share the same timestamp.
+- Offsets only move forward and never rewind at the destination.
 - Source and destination must have matching partition counts for each migrated group.
 
 == How it works
 
 Each migration component synchronizes on a different schedule:
 
-- *Topics*: Synced from source on startup and every 5 minutes by default, including empty source topics. Data flows as messages are read from the input. Configure the sync interval with `sync_topic_interval`, or set it to `0s` to create topics only when data flows.
-- *Schema Registry*: Synced at startup, then periodically as configured.
-- *Consumer groups*: Synced in the background, filtered to the topics being migrated.
+- *Topics*: Sync from source on startup and every 5 minutes by default, including empty source topics. Data flows as messages are read from the input. Configure the sync interval with `sync_topic_interval`, or set it to `0s` to create topics only when data flows.
+- *Schema Registry*: Syncs at startup, then periodically as configured.
+- *Consumer groups*: Sync in the background, filtered to the topics being migrated.
 
 == Guarantees
 
 The migrator upholds the following guarantees:
 
-- Topics are created at the destination with the intended partition count and replication factor.
-- Existing destination topics are not overwritten. The migrator logs any partition count mismatches.
-- Consumer group offsets are never rewound.
+- Creates each destination topic with the intended partition count and replication factor.
+- Never overwrites existing destination topics and logs any partition count mismatches.
+- Consumer group offsets never rewind.
 - ACL replication never grants write access at the destination.
 
 == Limitations
 
-- The destination Schema Registry must be in `READWRITE` or `IMPORT` mode.
+- The destination cluster's Schema Registry must be in `READWRITE` or `IMPORT` mode.
 - Offset translation is best-effort.
 - Consumer group migration requires identical partition counts at source and destination.
 
 == Metrics
 
-[cols="2,1,2,2"]
+[cols="4,1,1,3"]
 |===
 | Metric Name | Type | Labels | Description
 
-|*Topic migration metrics*|||
+|*Topic migration*|||
 |`redpanda_migrator_topics_created_total` | counter |  | Total topics created on destination
 |`redpanda_migrator_topic_create_errors_total` | counter |  | Topic creation errors
 |`redpanda_migrator_topic_create_latency_ns` | timer |  | Topic creation latency (ns)
 
-|*Schema Registry migration metrics*|||
+|*Schema Registry migration*|||
 |`redpanda_migrator_sr_schemas_created_total` | counter |  | Schemas created in destination registry
 |`redpanda_migrator_sr_schema_create_errors_total` | counter |  | Schema creation errors
 |`redpanda_migrator_sr_schema_create_latency_ns` | timer |  | Schema creation latency (ns)
@@ -132,7 +134,7 @@ The migrator upholds the following guarantees:
 |`redpanda_migrator_sr_compatibility_update_errors_total` | counter |  | Compatibility update errors
 |`redpanda_migrator_sr_compatibility_update_latency_ns` | timer |  | Compatibility update latency (ns)
 
-|*Consumer group migration metrics*|||
+|*Consumer group migration*|||
 |`redpanda_migrator_cg_offsets_translated_total` | counter | group | Offsets translated per consumer group
 |`redpanda_migrator_cg_offset_translation_errors_total` | counter | group | Offset translation errors per group
 |`redpanda_migrator_cg_offset_translation_latency_ns` | timer | group | Offset translation latency per group (ns)
@@ -140,7 +142,7 @@ The migrator upholds the following guarantees:
 |`redpanda_migrator_cg_offset_commit_errors_total` | counter | group | Offset commit errors per group
 |`redpanda_migrator_cg_offset_commit_latency_ns` | timer | group | Offset commit latency per group (ns)
 
-|*Consumer lag metrics*|||
+|*Consumer lag*|||
 |`redpanda_lag` | gauge | topic, partition | Current consumer lag in messages for each topic partition. Shows difference between high water mark and current consumer position.
 |===
 
