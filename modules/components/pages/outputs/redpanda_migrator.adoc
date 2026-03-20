@@ -6,13 +6,11 @@
 
 component_type_dropdown::[]
 
-A Kafka producer for migrating data between Kafka/Redpanda clusters.
-
-The `redpanda_migrator` output coordinates migration of topics, schemas, and consumer groups from a source Kafka/Redpanda cluster to a destination cluster.
+Migrates topics, schemas, and consumer groups between Kafka and Redpanda clusters.
 
 [IMPORTANT]
 ====
-This output **must** be paired with a xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] in the same pipeline. Each pipeline requires both input and output components.
+Pair this output with a xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] in the same pipeline.
 ====
 
 ifndef::env-cloud[]
@@ -44,77 +42,78 @@ include::components:example$advanced/outputs/redpanda_migrator.yaml[]
 
 == Multiple migrator pairs
 
-When using multiple migrator pairs in a pipeline, match the `label` field exactly between input and output components for correct coordination.
+When a pipeline uses multiple migrator pairs, set the `label` field to the same value on the paired input and output.
 
 == Performance tuning
 
 For high-throughput workloads, adjust the following settings:
 
-On this output component:
+On this output:
 
-- `max_in_flight`: Set to the total number of partitions being copied in parallel (up to all partitions in the cluster)
+- `max_in_flight`: Set to the total number of partitions being migrated. Higher values provide no benefit beyond the partition count.
 
-On the paired xref:components:inputs/redpanda_migrator.adoc#performance-tuning[`redpanda_migrator` input component]:
+On the paired xref:components:inputs/redpanda_migrator.adoc#performance-tuning[`redpanda_migrator` input]:
 
-- `partition_buffer_bytes`: Set to 2MB to increase per-partition buffer size
-- `max_yield_batch_bytes`: Set to 1MB to allow larger batches to be yielded
+- `partition_buffer_bytes`: Set to `2MB` to increase the per-partition buffer.
+- `max_yield_batch_bytes`: Set to `1MB` to yield larger batches.
 
 == Synchronization details
 
-*Topics*
+=== Topics
 
-- Name resolution with interpolation (default: preserve source name)
-- Automatic creation with mirrored partition counts
-- Selectable replication factor (default: inherit from source)
-- Supported topic configuration keys (serverless-aware subset)
-- Optional ACL replication:
-  - Excludes `ALLOW WRITE` entries
-  - Downgrades `ALLOW ALL` to `READ`
-  - Preserves resource pattern type and host filters
+- Topic names are preserved from the source by default. Use the `topic` field with interpolation to rename topics at the destination.
+- Topics are created at the destination with the same partition count as the source.
+- Replication factor defaults to the source value. Set `topic_replication_factor` to override it.
+- A serverless-aware subset of topic configuration keys is copied.
+- ACL replication is optional (`sync_topic_acls`):
+  - `ALLOW WRITE` ACL entries are not copied.
+  - `ALLOW ALL` ACL entries are downgraded to `ALLOW READ`.
+  - Resource pattern type and host filters are preserved.
 
-*Schema Registry*
+=== Schema Registry
 
-- One-shot or periodic syncing
-- Subject selection via include/exclude regex
-- Subject renaming with interpolation
-- Versions: `latest` or `all` (default: `all`)
-- Optional include of soft-deleted subjects
-- ID handling: translate IDs or keep fixed
-- Optional schema normalization
-- Compatibility propagation (per-subject only)
-- Schema metadata/rules not copied in Serverless mode
+- Synced once at startup, then periodically based on `schema_registry.interval` (default: every 5 minutes). Set `schema_registry.interval: 0s` for a one-time sync only.
+- Use include and exclude regex patterns to filter which subjects are migrated.
+- Use the `subject` field with interpolation to rename subjects at the destination.
+- Schema versions: `latest` (most recent version only) or `all` (full history). Defaults to `all`.
+- Soft-deleted subjects can be included with `schema_registry.include_deleted`.
+- Schema IDs can be translated to new destination IDs or preserved as-is. See `schema_registry.translate_ids`.
+- Schema normalization is optional (`schema_registry.normalize`).
+- Compatibility settings are copied per-subject. Schema metadata and rules are not copied in Serverless mode.
 
-*Consumer Groups*
+=== Consumer groups
 
-- Periodic syncing
-- Group selection using regex
-- Only `Empty` state groups migrated
-- Timestamp-based offset translation (approximate)
-- No rewind guarantee: offsets only move forward
-- Requires matching partition counts
+- Synced periodically based on `consumer_groups.interval` (default: every 1 minute).
+- Use include and exclude regex patterns to filter which groups are migrated.
+- By default, all groups except those in `Dead` state are migrated. Set `consumer_groups.only_empty: true` to migrate only `Empty` state groups.
+- Consumer offsets are translated using timestamps. This is approximate and may be imprecise when multiple records share the same timestamp.
+- Offsets only move forward and are never rewound at the destination.
+- Source and destination must have matching partition counts for each migrated group.
 
 == How it works
 
-- Topics: Synced on demand. First write triggers creation.
-- Schema Registry: Synced at connect, then as needed.
-- Consumer Groups: Background loop, filtered by topic mappings.
+Each migration component synchronizes on a different schedule:
+
+- *Topics*: Synced from source on startup and every 5 minutes by default, including empty source topics. Data flows as messages are read from the input. Configure the sync interval with `sync_topic_interval`, or set it to `0s` to create topics only when data flows.
+- *Schema Registry*: Synced at startup, then periodically as configured.
+- *Consumer groups*: Synced in the background, filtered to the topics being migrated.
 
 == Guarantees
 
-- Topics created with intended partitioning/replication.
-- Existing topics respected. Mismatches logged.
-- Consumer group offsets never rewound.
-- ACL replication excludes unsafe grants.
+The migrator upholds the following guarantees:
+
+- Topics are created at the destination with the intended partition count and replication factor.
+- Existing destination topics are not overwritten. The migrator logs any partition count mismatches.
+- Consumer group offsets are never rewound.
+- ACL replication never grants write access at the destination.
 
 == Limitations
 
-- Destination Schema Registry must be in `READWRITE` or `IMPORT` mode.
+- The destination Schema Registry must be in `READWRITE` or `IMPORT` mode.
 - Offset translation is best-effort.
-- Consumer group migration requires identical partition counts.
+- Consumer group migration requires identical partition counts at source and destination.
 
 == Metrics
-
-The component exposes comprehensive metrics for monitoring migration operations:
 
 [cols="2,1,2,2"]
 |===
