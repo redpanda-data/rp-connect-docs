@@ -4,8 +4,7 @@
 
 === `batching`
 
-
-Allows you to configure a xref:configuration:batching.adoc[batching policy].
+Configure a xref:configuration:batching.adoc[batching policy].
 
 *Type*: `object`
 
@@ -33,7 +32,7 @@ batching:
 
 === `batching.byte_size`
 
-An amount of bytes at which the batch should be flushed. If `0` disables size based batching.
+The number of bytes at which the batch is flushed. Set to `0` to disable size-based batching.
 
 *Type*: `int`
 
@@ -55,7 +54,7 @@ check: this.type == "end_of_transaction"
 
 === `batching.count`
 
-A number of messages at which the batch should be flushed. If `0` disables count based batching.
+The number of messages after which the batch is flushed. Set to `0` to disable count-based batching.
 
 *Type*: `int`
 
