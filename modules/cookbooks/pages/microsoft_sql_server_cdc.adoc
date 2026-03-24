@@ -141,7 +141,7 @@ include::cookbooks:example$microsoft_sql_server_cdc/route-by-event.yaml[tag=conf
 This pattern:
 
 - Routes `insert` events to one Redpanda topic and all other change events to another
-- Enables specialized downstream consumers per operation type
+- Supports specialized downstream consumers per operation type
 
 == Configure replication mode
 

@@ -10,13 +10,13 @@
 
 The `tigerbeetle_cdc` input streams financial ledger events from a https://tigerbeetle.com/[TigerBeetle^] cluster in real time. Use these patterns to filter, transform, and route transfer events to Redpanda, S3, and other destinations.
 
-NOTE: The `tigerbeetle_cdc` input is in beta. The API is subject to change.
-
 Use this cookbook to:
 
 * [ ] {learning-objective-1}
 * [ ] {learning-objective-2}
 * [ ] {learning-objective-3}
+
+NOTE: The `tigerbeetle_cdc` input is in beta. The API is subject to change.
 
 == Prerequisites
 
@@ -143,7 +143,7 @@ This pattern:
 - Routes `single_phase` events (immediate settlements) to one topic
 - Routes `two_phase_posted` events (settled two-phase transfers) to another topic
 - Drops other two-phase events (`two_phase_pending`, `two_phase_voided`, `two_phase_expired`) that have not yet settled
-- Enables specialized consumers for each settlement model
+- Supports specialized consumers for each settlement model
 
 == Resume from a timestamp
 

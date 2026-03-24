@@ -18,7 +18,7 @@ Use this cookbook to:
 
 == Prerequisites
 
-Before using these patterns, ensure you have the following configured:
+Before using these patterns, configure the following.
 
 === Redpanda CLI
 
@@ -144,7 +144,7 @@ include::cookbooks:example$mysql_cdc/route-by-event.yaml[tag=config]
 This pattern:
 
 - Routes `insert` events to one Redpanda topic and all other change events to another
-- Enables specialized downstream consumers per operation type
+- Supports specialized downstream consumers per operation type
 
 == Configure replication mode
 

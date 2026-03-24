@@ -167,7 +167,7 @@ include::cookbooks:example$gcp_spanner_cdc/route-by-event.yaml[tag=config]
 This pattern:
 
 - Routes `INSERT` events to one Redpanda topic and all other changes (`UPDATE`, `DELETE`) to another
-- Enables specialized downstream consumers per operation type
+- Supports specialized downstream consumers per operation type
 
 == Stream a time range
 
