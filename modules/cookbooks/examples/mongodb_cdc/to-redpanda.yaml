@@ -1,0 +1,31 @@
+# tag::config[]
+input:
+  mongodb_cdc:
+    url: ${MONGODB_URL}
+    database: ${MONGODB_DB}
+    collections:
+      - orders
+      - customers
+    checkpoint_cache: redis_cache
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        meta topic = meta("collection")
+
+output:
+  kafka_franz:
+    seed_brokers:
+      - ${REDPANDA_BROKERS}
+    topic: ${! meta("topic") }
+    key: ${! json("_id") }
+    batching:
+      count: 100
+      period: 1s
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]

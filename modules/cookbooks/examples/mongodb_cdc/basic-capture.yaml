@@ -1,0 +1,28 @@
+# tag::config[]
+input:
+  mongodb_cdc:
+    url: ${MONGODB_URL}
+    database: ${MONGODB_DB}
+    collections:
+      - orders
+    checkpoint_cache: redis_cache
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        root.operation = meta("operation")
+        root.collection = meta("collection")
+        root.operation_time = meta("operation_time")
+        root.data = this
+        root.timestamp = now()
+
+output:
+  stdout:
+    codec: lines
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]

@@ -2,7 +2,7 @@
   "comparison": {
     "oldVersion": "4.79.0",
     "newVersion": "4.81.0",
-    "timestamp": "2026-03-17T19:12:59.240Z"
+    "timestamp": "2026-03-23T17:34:49.755Z"
   },
   "summary": {
     "newComponents": 0,
@@ -16,12 +16,44 @@
   "details": {
     "newComponents": [
       {
+        "name": "parallel",
+        "type": "config",
+        "status": "",
+        "version": "",
+        "description": "Whether test cases should be executed in parallel.",
+        "summary": ""
+      },
+      {
         "name": "oracledb_cdc",
         "type": "input",
         "status": "experimental",
         "version": "",
-        "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
+        "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
         "summary": "Enables Change Data Capture by consuming from OracleDB."
+      },
+      {
+        "name": "escape_url_path",
+        "type": "bloblang-method",
+        "status": "stable",
+        "version": "",
+        "description": "",
+        "summary": ""
+      },
+      {
+        "name": "parse_logfmt",
+        "type": "bloblang-method",
+        "status": "stable",
+        "version": "",
+        "description": "",
+        "summary": ""
+      },
+      {
+        "name": "unescape_url_path",
+        "type": "bloblang-method",
+        "status": "stable",
+        "version": "",
+        "description": "",
+        "summary": ""
       }
     ],
     "removedComponents": [],
@@ -55,13 +87,13 @@
   "binaryAnalysis": {
     "versions": {
       "oss": "4.81.0",
-      "cloud": "4.83.0",
-      "cgo": "4.83.0"
+      "cloud": "4.84.1",
+      "cgo": "4.84.1"
     },
     "current": {
-      "cloudSupported": 478,
-      "selfHostedOnly": 79,
-      "cgoOnly": 1
+      "cloudSupported": 472,
+      "selfHostedOnly": 85,
+      "cgoOnly": 5
     },
     "changes": {},
     "details": {
@@ -358,16 +390,6 @@
         },
         {
           "type": "inputs",
-          "name": "legacy_redpanda_migrator",
-          "status": "deprecated"
-        },
-        {
-          "type": "inputs",
-          "name": "legacy_redpanda_migrator_offsets",
-          "status": "deprecated"
-        },
-        {
-          "type": "inputs",
           "name": "microsoft_sql_server_cdc",
           "status": "beta"
         },
@@ -465,11 +487,6 @@
           "type": "inputs",
           "name": "redpanda_migrator",
           "status": "experimental"
-        },
-        {
-          "type": "inputs",
-          "name": "redpanda_migrator_bundle",
-          "status": "deprecated"
         },
         {
           "type": "inputs",
@@ -663,16 +680,6 @@
         },
         {
           "type": "outputs",
-          "name": "legacy_redpanda_migrator",
-          "status": "deprecated"
-        },
-        {
-          "type": "outputs",
-          "name": "legacy_redpanda_migrator_offsets",
-          "status": "deprecated"
-        },
-        {
-          "type": "outputs",
           "name": "mongodb",
           "status": "experimental"
         },
@@ -760,11 +767,6 @@
           "type": "outputs",
           "name": "redpanda_migrator",
           "status": "experimental"
-        },
-        {
-          "type": "outputs",
-          "name": "redpanda_migrator_bundle",
-          "status": "deprecated"
         },
         {
           "type": "outputs",
@@ -2520,6 +2522,16 @@
         },
         {
           "type": "inputs",
+          "name": "legacy_redpanda_migrator",
+          "status": "deprecated"
+        },
+        {
+          "type": "inputs",
+          "name": "legacy_redpanda_migrator_offsets",
+          "status": "deprecated"
+        },
+        {
+          "type": "inputs",
           "name": "nanomsg",
           "status": "stable"
         },
@@ -2547,6 +2559,11 @@
           "type": "inputs",
           "name": "pulsar",
           "status": "experimental"
+        },
+        {
+          "type": "inputs",
+          "name": "redpanda_migrator_bundle",
+          "status": "deprecated"
         },
         {
           "type": "inputs",
@@ -2645,6 +2662,16 @@
         },
         {
           "type": "outputs",
+          "name": "legacy_redpanda_migrator",
+          "status": "deprecated"
+        },
+        {
+          "type": "outputs",
+          "name": "legacy_redpanda_migrator_offsets",
+          "status": "deprecated"
+        },
+        {
+          "type": "outputs",
           "name": "nanomsg",
           "status": "stable"
         },
@@ -2672,6 +2699,11 @@
           "type": "outputs",
           "name": "pusher",
           "status": "experimental"
+        },
+        {
+          "type": "outputs",
+          "name": "redpanda_migrator_bundle",
+          "status": "deprecated"
         },
         {
           "type": "outputs",
@@ -2856,6 +2888,11 @@
       ],
       "cloudOnly": [
         {
+          "type": "config",
+          "name": "parallel",
+          "status": "stable"
+        },
+        {
           "type": "inputs",
           "name": "oracledb_cdc",
           "status": "experimental"
@@ -2864,13 +2901,47 @@
           "type": "processors",
           "name": "a2a_message",
           "status": "beta"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "escape_url_path",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_logfmt",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "unescape_url_path",
+          "status": "stable"
         }
       ],
       "cgoOnly": [
         {
+          "type": "config",
+          "name": "parallel"
+        },
+        {
           "type": "inputs",
           "name": "oracledb_cdc",
           "status": "experimental"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "escape_url_path",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "parse_logfmt",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
+          "name": "unescape_url_path",
+          "status": "stable"
         }
       ]
     }

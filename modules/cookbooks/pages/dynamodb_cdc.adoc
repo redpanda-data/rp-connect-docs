@@ -4,8 +4,8 @@
 :page-categories: Streaming, Integration, AWS
 :page-topic-type: cookbook
 :personas: streaming_developer, data_engineer
-:learning-objective-1: Find reusable patterns for capturing DynamoDB CDC events
-:learning-objective-2: Look up integration patterns for routing CDC data to Redpanda and S3
+:learning-objective-1: Apply reusable patterns for capturing DynamoDB CDC events
+:learning-objective-2: Adapt integration patterns to route CDC data to Redpanda and S3
 :learning-objective-3: Identify patterns for filtering and transforming change events
 
 The DynamoDB CDC input enables capturing item-level changes from DynamoDB tables with streams enabled. This cookbook provides reusable patterns for filtering, transforming, and routing DynamoDB CDC events to Redpanda, S3, and other destinations.
@@ -18,7 +18,7 @@ Use this cookbook to:
 
 == Prerequisites
 
-Before using these patterns, ensure you have the following configured:
+Before using these patterns, configure the following.
 
 === Redpanda CLI
 
@@ -43,20 +43,20 @@ To enable streams on an existing table using the AWS CLI:
 [,bash]
 ----
 aws dynamodb update-table \
-  --table-name my-table \
+  --table-name orders \
   --stream-specification StreamEnabled=true,StreamViewType=NEW_AND_OLD_IMAGES
 ----
 
 === Environment variables
 
-The examples in this cookbook use environment variables for AWS configuration. This allows you to keep credentials secure and separate from your pipeline configuration files.
+The examples in this cookbook use environment variables for AWS configuration. Environment variables keep credentials out of your pipeline configuration files.
 
 [,bash]
 ----
-export DYNAMODB_TABLE=my-table <1>
+export DYNAMODB_TABLE=orders <1>
 export AWS_REGION=us-east-1 <2>
 export REDPANDA_BROKERS=localhost:9092 <3>
-export S3_BUCKET=my-cdc-bucket <4>
+export S3_BUCKET=cdc-archive <4>
 ----
 <1> The name of the DynamoDB table with streams enabled.
 <2> The AWS region where your DynamoDB table is located.
@@ -78,7 +78,7 @@ For details on the CDC event message structure and available fields for Bloblang
 
 == Filter CDC events
 
-You can filter events to process only specific change types:
+Filter events to process only specific change types:
 
 [source,yaml]
 ----
@@ -133,7 +133,7 @@ This pattern:
 
 - Separates processing pipelines for inserts, updates, and deletes
 - Applies different retention policies per event type
-- Enables specialized downstream consumers
+- Supports specialized downstream consumers
 
 == Detect changed fields
 
@@ -160,8 +160,8 @@ The DynamoDB CDC input automatically manages checkpoints in a separate DynamoDB 
 ----
 input:
   aws_dynamodb_cdc:
-    table: my-table
-    checkpoint_table: my-app-checkpoints <1>
+    table: orders
+    checkpoint_table: cdc-checkpoints <1>
     checkpoint_limit: 500 <2>
     start_from: trim_horizon <3>
 ----
@@ -179,7 +179,7 @@ Optimize throughput and latency with these settings:
 ----
 input:
   aws_dynamodb_cdc:
-    table: my-table
+    table: orders
     batch_size: 1000 <1>
     poll_interval: 100ms <2>
     max_tracked_shards: 10000 <3>
@@ -196,7 +196,7 @@ input:
 - Higher `batch_size` improves throughput but increases memory usage
 - Shorter `poll_interval` reduces latency but increases API calls
 
-== Troubleshoot
+== Troubleshoot common issues
 
 === No events received
 
@@ -206,7 +206,7 @@ If you're not receiving events:
 +
 [,bash]
 ----
-aws dynamodb describe-table --table-name my-table \
+aws dynamodb describe-table --table-name orders \
   --query 'Table.StreamSpecification'
 ----
 
@@ -228,7 +228,7 @@ DynamoDB Streams retains data for 24 hours. If your pipeline is offline longer t
 - Consider using https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/kds.html[Kinesis Data Streams for DynamoDB^] with the xref:components:inputs/aws_kinesis.adoc[`aws_kinesis` input] instead (up to 1 year retention)
 - Implement a full-table scan fallback for disaster recovery
 
-== Suggested reading
+== Next steps
 
 - xref:components:inputs/aws_dynamodb_cdc.adoc[DynamoDB CDC Input Reference]
 - xref:guides:cloud/aws.adoc[AWS Configuration Guide]

@@ -1,0 +1,232 @@
+= SQL Server CDC Patterns
+// tag::single-source[]
+:description: Learn how to capture, filter, transform, and route Microsoft SQL Server change data capture (CDC) events with Redpanda Connect.
+:page-categories: Streaming, Integration
+:page-topic-type: cookbook
+:personas: streaming_developer, data_engineer
+:learning-objective-1: Apply reusable patterns for capturing SQL Server CDC events
+:learning-objective-2: Adapt integration patterns to route CDC data to Redpanda, S3, and other destinations
+:learning-objective-3: Identify patterns for filtering and transforming change events
+
+The `microsoft_sql_server_cdc` input captures row-level changes from SQL Server tables using SQL Server's built-in CDC change tables. Use these patterns to filter, transform, and route SQL Server CDC events to Redpanda, S3, and other destinations.
+
+Use this cookbook to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+NOTE: The `microsoft_sql_server_cdc` input is in beta. The API is subject to change.
+
+== Prerequisites
+
+Before using these patterns, configure the following.
+
+=== Redpanda CLI
+
+ifndef::env-cloud[]
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:get-started:quickstarts/rpk.adoc[rpk installation] for installation instructions.
+endif::[]
+ifdef::env-cloud[]
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:manage:rpk/rpk-install.adoc[rpk installation] for installation instructions.
+endif::[]
+
+=== SQL Server CDC
+
+CDC must be enabled on both the database and each table you want to capture. Run the following as a user with `db_owner` or `sysadmin` privileges:
+
+[,sql]
+----
+-- Enable CDC on the database
+EXEC sys.sp_cdc_enable_db;
+
+-- Enable CDC on a table
+EXEC sys.sp_cdc_enable_table
+  @source_schema = N'dbo',
+  @source_name = N'orders',
+  @role_name = NULL;
+----
+
+For cloud-managed SQL Server, see:
+
+- https://learn.microsoft.com/en-us/azure/azure-sql/database/change-data-capture-overview[Azure SQL Database CDC^]
+- https://learn.microsoft.com/en-us/sql/relational-databases/track-changes/enable-and-disable-change-data-capture[SQL Server CDC documentation^]
+
+=== Checkpoint storage
+
+By default, the `microsoft_sql_server_cdc` input creates a table (`rpcn.CdcCheckpointCache`) and stored procedure in your SQL Server database to store the last processed Log Sequence Number (LSN). The pipeline user must have `CREATE TABLE` and `CREATE PROCEDURE` permissions.
+
+To use an external cache instead, set the `checkpoint_cache` field to a cache label defined in `cache_resources`. See the xref:components:inputs/microsoft_sql_server_cdc.adoc#_checkpoint_cache_table_name[connector reference] for details.
+
+=== Environment variables
+
+The examples in this cookbook use environment variables for configuration:
+
+[,bash]
+----
+export MSSQL_CONN="sqlserver://user:password@localhost:1433?database=mydb" <1>
+export REDPANDA_BROKERS=localhost:9092 <2>
+export S3_BUCKET=cdc-archive <3>
+----
+<1> The SQL Server connection string in `sqlserver://user:password@host:port?database=dbname` format.
+<2> The Redpanda broker addresses (for Redpanda output examples).
+<3> The Amazon S3 bucket name (for S3 output examples).
+
+== Capture CDC events
+
+The simplest pattern captures all change events from SQL Server tables and outputs them with metadata:
+
+[,yaml]
+----
+include::cookbooks:example$microsoft_sql_server_cdc/basic-capture.yaml[tag=config]
+----
+
+For details on the CDC event message structure and available metadata fields, see the xref:components:inputs/microsoft_sql_server_cdc.adoc#_metadata[metadata] section in the connector reference.
+
+NOTE: SQL Server CDC generates two events for each row update: `update_before` (the previous row values) and `update_after` (the new row values). Most downstream use cases only need the `update_after` event.
+
+== Filter CDC events
+
+Filter events to process only the current row state after each change, using the `operation` metadata field:
+
+[,yaml]
+----
+include::cookbooks:example$microsoft_sql_server_cdc/filter-events.yaml[tag=config]
+----
+
+This pattern:
+
+- Keeps only `insert` and `update_after` operations, dropping `delete`, `update_before`, and `read` events
+- Transforms the event to a simplified format with a timestamp
+
+== Route to Redpanda
+
+Stream SQL Server changes to Redpanda for real-time processing:
+
+[,yaml]
+----
+include::cookbooks:example$microsoft_sql_server_cdc/to-redpanda.yaml[tag=config]
+----
+
+This pattern:
+
+- Uses `database_schema.table` as the Redpanda topic name
+- Batches messages for efficient delivery
+- Sets the message key to the primary key field (update `json("id")` to match your table's primary key column)
+
+== Route to S3
+
+Archive CDC events to S3 for long-term storage and analytics:
+
+[,yaml]
+----
+include::cookbooks:example$microsoft_sql_server_cdc/to-s3.yaml[tag=config]
+----
+
+This pattern:
+
+- Organizes files by database schema, table, and time-based partitions (year/month/day/hour)
+- Batches events and archives them as newline-delimited JSON
+- Uses UUID file names to prevent collisions
+
+== Route by event type
+
+Route different event types to different destinations:
+
+[,yaml]
+----
+include::cookbooks:example$microsoft_sql_server_cdc/route-by-event.yaml[tag=config]
+----
+
+This pattern:
+
+- Routes `insert` events to one Redpanda topic and all other change events to another
+- Supports specialized downstream consumers per operation type
+
+== Configure replication mode
+
+The `microsoft_sql_server_cdc` input supports two replication modes controlled by the `stream_snapshot` field:
+
+`stream_snapshot: true`:: Captures a full snapshot of existing table data before streaming live changes. Use this when you need a complete initial load.
+`stream_snapshot: false`:: Skips the snapshot and streams only changes from the current LSN position. Use this when you only need new changes going forward.
+
+[,yaml]
+----
+input:
+  microsoft_sql_server_cdc:
+    connection_string: ${MSSQL_CONN}
+    include:
+      - dbo.orders
+      - dbo.customers
+    stream_snapshot: true
+    max_parallel_snapshot_tables: 4 <1>
+    snapshot_max_batch_size: 1000 <2>
+----
+<1> Number of tables to snapshot in parallel.
+<2> Number of rows to read per batch during snapshot processing.
+
+== Filter tables with patterns
+
+The `include` field accepts regular expressions, so you can capture multiple tables without listing each one:
+
+[,yaml]
+----
+input:
+  microsoft_sql_server_cdc:
+    connection_string: ${MSSQL_CONN}
+    include:
+      - dbo.* <1>
+    exclude:
+      - dbo.audit_log <2>
+    stream_snapshot: false
+----
+<1> Captures all tables in the `dbo` schema.
+<2> Excludes a specific table matched by the include pattern.
+
+== Troubleshoot common issues
+
+Use these steps to diagnose and fix the most common problems with the `microsoft_sql_server_cdc` input.
+
+=== No events received
+
+If no events arrive:
+
+. Verify CDC is enabled on the database and table:
++
+[,sql]
+----
+SELECT name, is_cdc_enabled FROM sys.databases WHERE name = 'mydb';
+SELECT name, is_tracked_by_cdc FROM sys.tables WHERE name = 'orders';
+----
+
+. Confirm CDC agent jobs are running:
++
+[,sql]
+----
+EXEC sys.sp_cdc_help_jobs;
+----
+
+. Check that the table pattern in `include` matches the target table, using `schema.table` format.
+
+=== Checkpoint table creation fails
+
+If the pipeline fails to start because it cannot create the checkpoint table:
+
+- Grant `CREATE TABLE` and `CREATE PROCEDURE` permissions to the pipeline user, or
+- Create the schema manually (`CREATE SCHEMA rpcn`) and grant the user permissions on it, or
+- Use an external `checkpoint_cache` to avoid creating a table in SQL Server.
+
+=== Duplicate events
+
+The `microsoft_sql_server_cdc` input provides at-least-once delivery. If the pipeline fails between checkpoints, events may be re-read on restart. To handle duplicates:
+
+- Use idempotent processing in downstream systems.
+- Deduplicate using the `lsn` metadata field.
+- Lower `checkpoint_limit` to reduce the window of possible duplicates.
+
+== Next steps
+
+- xref:components:inputs/microsoft_sql_server_cdc.adoc[SQL Server CDC input reference]
+- xref:components:outputs/redpanda.adoc[Redpanda output]
+
+// end::single-source[]

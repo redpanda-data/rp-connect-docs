@@ -1,0 +1,231 @@
+= Google Cloud Spanner CDC Patterns
+// tag::single-source[]
+:description: Learn how to capture, filter, transform, and route Google Cloud Spanner change data capture (CDC) events with Redpanda Connect.
+:page-categories: Streaming, Integration
+:page-topic-type: cookbook
+:personas: streaming_developer, data_engineer
+:learning-objective-1: Apply reusable patterns for capturing Google Cloud Spanner CDC events
+:learning-objective-2: Adapt integration patterns to route CDC data to Redpanda and S3
+:learning-objective-3: Identify patterns for filtering and transforming Spanner change records
+
+The `gcp_spanner_cdc` input captures row-level changes from Google Cloud Spanner tables using https://cloud.google.com/spanner/docs/change-streams[Spanner change streams^]. Use these patterns to filter, transform, and route Spanner change records to Redpanda, Amazon S3, and other destinations.
+
+Use this cookbook to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+NOTE: The `gcp_spanner_cdc` input is in beta. The API is subject to change.
+
+== Prerequisites
+
+Before using these patterns, configure the following.
+
+=== Redpanda CLI
+
+ifndef::env-cloud[]
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:get-started:quickstarts/rpk.adoc[rpk installation] for installation instructions.
+endif::[]
+ifdef::env-cloud[]
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:manage:rpk/rpk-install.adoc[rpk installation] for installation instructions.
+endif::[]
+
+=== Spanner change stream
+
+The `gcp_spanner_cdc` input reads from a Spanner change stream. The change stream must be created in your Spanner database before running the pipeline. To create a change stream that tracks all tables:
+
+[,sql]
+----
+CREATE CHANGE STREAM AllChanges FOR ALL;
+----
+
+To track specific tables:
+
+[,sql]
+----
+CREATE CHANGE STREAM OrderChanges FOR orders, customers;
+----
+
+For more information, see the https://cloud.google.com/spanner/docs/change-streams/manage[Spanner change streams documentation^].
+
+=== Google Cloud Platform (GCP) authentication
+
+The `gcp_spanner_cdc` input supports two authentication methods:
+
+Application Default Credentials (ADC):: The recommended approach for GCP-native environments (Cloud Run, GKE, Compute Engine). No configuration needed when running with a service account attached to the instance.
+Service account key:: Set the `credentials_json` field to a base64-encoded service account key JSON file. Use this approach when running outside GCP or when ADC is not available:
++
+[,bash]
+----
+export GCP_CREDENTIALS="$(base64 < /path/to/service-account.json | tr -d '\n')"
+----
++
+Then reference it in your pipeline config:
++
+[,yaml]
+----
+input:
+  gcp_spanner_cdc:
+    project_id: ${GCP_PROJECT_ID}
+    instance_id: ${GCP_INSTANCE_ID}
+    database_id: ${GCP_DATABASE_ID}
+    stream_id: ${GCP_STREAM_ID}
+    credentials_json: ${GCP_CREDENTIALS}
+----
+
+=== Progress tracking
+
+The `gcp_spanner_cdc` input stores progress in a Spanner metadata table (`cdc_metadata_<stream_id>` by default). No external cache is required. The pipeline resumes from the last acknowledged change record after a restart.
+
+=== Environment variables
+
+The examples in this cookbook use environment variables for configuration:
+
+[,bash]
+----
+export GCP_PROJECT_ID="analytics-prod" <1>
+export GCP_INSTANCE_ID="primary" <2>
+export GCP_DATABASE_ID="orders" <3>
+export GCP_STREAM_ID="AllChanges" <4>
+export REDPANDA_BROKERS=localhost:9092 <5>
+export S3_BUCKET=cdc-archive <6>
+----
+<1> The GCP project ID.
+<2> The Spanner instance ID.
+<3> The Spanner database ID.
+<4> The name of the change stream to read from.
+<5> The Redpanda broker addresses (for Redpanda output examples).
+<6> The Amazon S3 bucket name (for S3 output examples).
+
+== Capture CDC events
+
+The simplest pattern captures all change records from a Spanner change stream and outputs them with key fields:
+
+[,yaml]
+----
+include::cookbooks:example$gcp_spanner_cdc/basic-capture.yaml[tag=config]
+----
+
+For details on the change record structure and available fields, see the https://cloud.google.com/spanner/docs/change-streams/details#record-types[Spanner change record reference^].
+
+The `gcp_spanner_cdc` input emits one message per data change. Fields such as `mod_type` (INSERT, UPDATE, or DELETE), `table_name`, `commit_timestamp`, and `server_transaction_id` are available as message metadata (use `meta("field_name")`). The message body contains the row data with `keys`, `new_values`, and `old_values`.
+
+== Filter CDC events
+
+The `gcp_spanner_cdc` input supports built-in filtering with the `allowed_mod_types` field. This filters events at the source before they reach your pipeline, which is more efficient than post-ingestion filtering:
+
+[,yaml]
+----
+include::cookbooks:example$gcp_spanner_cdc/filter-events.yaml[tag=config]
+----
+
+This pattern:
+
+- Captures only `INSERT` and `UPDATE` changes at the input level, ignoring `DELETE` events entirely
+- Extracts new values from each change record
+
+== Route to Redpanda
+
+Stream Spanner changes to Redpanda, using the table name as the topic:
+
+[,yaml]
+----
+include::cookbooks:example$gcp_spanner_cdc/to-redpanda.yaml[tag=config]
+----
+
+This pattern:
+
+- Uses the table name as the Redpanda topic
+- Batches messages for efficient delivery
+- Sets the message key to `server_transaction_id`, grouping related changes together
+
+== Route to S3
+
+Archive change records to Amazon S3 for long-term storage and analytics:
+
+[,yaml]
+----
+include::cookbooks:example$gcp_spanner_cdc/to-s3.yaml[tag=config]
+----
+
+This pattern:
+
+- Organizes files by table name and time-based partitions (year/month/day/hour)
+- Batches events and archives them as newline-delimited JSON
+- Uses UUID file names to prevent collisions
+
+== Route by event type
+
+Route different change types to different Redpanda topics:
+
+[,yaml]
+----
+include::cookbooks:example$gcp_spanner_cdc/route-by-event.yaml[tag=config]
+----
+
+This pattern:
+
+- Routes `INSERT` events to one Redpanda topic and all other changes (`UPDATE`, `DELETE`) to another
+- Supports specialized downstream consumers per operation type
+
+== Stream a time range
+
+Use `start_timestamp` and `end_timestamp` to process a specific window of changes. Both fields accept RFC 3339 timestamps:
+
+[,yaml]
+----
+input:
+  gcp_spanner_cdc:
+    project_id: ${GCP_PROJECT_ID}
+    instance_id: ${GCP_INSTANCE_ID}
+    database_id: ${GCP_DATABASE_ID}
+    stream_id: ${GCP_STREAM_ID}
+    start_timestamp: "2024-01-01T00:00:00Z" <1>
+    end_timestamp: "2024-01-02T00:00:00Z" <2>
+----
+<1> Start reading from this timestamp. Defaults to the current time if not set.
+<2> Stop reading at this timestamp. Omit to stream continuously.
+
+== Troubleshoot common issues
+
+Use these steps to diagnose and fix common problems with the `gcp_spanner_cdc` input.
+
+=== No events received
+
+If no events arrive:
+
+. Verify the change stream exists in the database:
++
+[,sql]
+----
+SELECT * FROM INFORMATION_SCHEMA.CHANGE_STREAMS
+WHERE CHANGE_STREAM_NAME = 'AllChanges';
+----
+
+. Confirm the service account has the required IAM roles:
+- `roles/spanner.databaseReader` on the Spanner database
+- `roles/spanner.databaseUser` to create and read the metadata table
+
+. Check that `stream_id` matches the exact name of the change stream.
+
+=== Metadata table creation fails
+
+If the pipeline fails because it cannot create the metadata table:
+
+- Confirm the service account has `roles/spanner.databaseUser` on the database.
+- Use the `metadata_table` field to specify an existing table if you prefer not to create a new one.
+
+=== Duplicate events after restart
+
+The `gcp_spanner_cdc` input provides at-least-once delivery. If the pipeline fails mid-stream, it may replay some records on restart. To handle duplicates:
+
+- Use idempotent processing in downstream systems.
+- Deduplicate using the `server_transaction_id` and `record_sequence` fields from the change record.
+
+== Next steps
+
+- xref:components:inputs/gcp_spanner_cdc.adoc[Google Cloud Spanner CDC input reference]
+- xref:components:outputs/redpanda.adoc[Redpanda output]
+
+// end::single-source[]
