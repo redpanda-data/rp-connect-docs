@@ -134,7 +134,7 @@ Deduplicate records that appear in both snapshot and CDC stream. Requires buffer
 
 === `snapshot_mode`
 
-Snapshot behavior. `none`: CDC only (default). `snapshot_only`: one-time table scan, no streaming. `snapshot_and_cdc`: scan entire table then stream changes.
+`none`: Streams CDC events only (default). `snapshot_only`: Performs a one-time full table scan with no ongoing streaming. `snapshot_and_cdc`: Scans the entire table, then streams changes.
 
 *Type*: `string`
 
@@ -144,7 +144,7 @@ Snapshot behavior. `none`: CDC only (default). `snapshot_only`: one-time table s
 
 === `snapshot_segments`
 
-Number of parallel scan segments (1-10). Higher parallelism scans faster but consumes more RCUs. Start with 1 for safety.
+Number of parallel scan segments (1-10). Higher parallelism scans faster but consumes more Read Capacity Units (RCUs). A lower value is safer to start with.
 
 *Type*: `int`
 
@@ -152,7 +152,7 @@ Number of parallel scan segments (1-10). Higher parallelism scans faster but con
 
 === `snapshot_throttle`
 
-Minimum time between scan requests per segment. Use this to limit RCU consumption during snapshot.
+Minimum time between scan requests per segment. Use this to limit Read Capacity Unit (RCU) consumption during snapshot.
 
 *Type*: `string`
 
@@ -178,7 +178,7 @@ Interval for rescanning and discovering new tables when using `tag` or `includel
 
 === `table_discovery_mode`
 
-Table discovery mode. `single`: stream from tables specified in `tables` list. `tag`: auto-discover tables by tags (ignores `tables` field). `includelist`: stream from tables in `tables` list (alias for `single`, kept for compatibility).
+`single`: Streams from tables specified in the `tables` list. `tag`: Auto-discovers tables by tags (ignores the `tables` field). `includelist`: Streams from tables in the `tables` list. Use `single` instead; `includelist` is kept for backward compatibility.
 
 *Type*: `string`
 
@@ -188,7 +188,7 @@ Table discovery mode. `single`: stream from tables specified in `tables` list. `
 
 === `table_tag_filter`
 
-Multi-tag filter: 'key1:v1,v2;key2:v3,v4'. Matches tables with (key1=v1 OR key1=v2) AND (key2=v3 OR key2=v4). Required when `table_discovery_mode` is `tag`.
+Multi-tag filter in the format `key1:v1,v2;key2:v3,v4`. Matches tables where (key1=v1 OR key1=v2) AND (key2=v3 OR key2=v4). Required when `table_discovery_mode` is `tag`.
 
 *Type*: `string`
 

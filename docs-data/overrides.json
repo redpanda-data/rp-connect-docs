@@ -368,6 +368,52 @@
       }
     },
     {
+      "name": "aws_cloudwatch_logs",
+      "config": {
+        "children": [
+          {
+            "name": "filter_pattern",
+            "description": "An optional CloudWatch Logs filter pattern to apply when querying log events. For syntax details, see the https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html[CloudWatch Logs filter and pattern syntax^] documentation."
+          },
+          {
+            "name": "start_time",
+            "description": "The time to start consuming log events from. Can be an RFC3339 timestamp (for example, `2024-01-01T00:00:00Z`) or the string `now` to start consuming from the current time. If not set, starts from the beginning of available logs."
+          },
+          {
+            "name": "structured_log",
+            "description": "Whether to output log events as structured JSON objects with all metadata fields, or as plain text messages with metadata stored in Redpanda Connect message metadata."
+          }
+        ]
+      }
+    },
+    {
+      "name": "aws_dynamodb_cdc",
+      "config": {
+        "children": [
+          {
+            "name": "snapshot_mode",
+            "description": "`none`: Streams CDC events only (default). `snapshot_only`: Performs a one-time full table scan with no ongoing streaming. `snapshot_and_cdc`: Scans the entire table, then streams changes."
+          },
+          {
+            "name": "snapshot_throttle",
+            "description": "Minimum time between scan requests per segment. Use this to limit Read Capacity Unit (RCU) consumption during snapshot."
+          },
+          {
+            "name": "snapshot_segments",
+            "description": "Number of parallel scan segments (1-10). Higher parallelism scans faster but consumes more Read Capacity Units (RCUs). A lower value is safer to start with."
+          },
+          {
+            "name": "table_tag_filter",
+            "description": "Multi-tag filter in the format `key1:v1,v2;key2:v3,v4`. Matches tables where (key1=v1 OR key1=v2) AND (key2=v3 OR key2=v4). Required when `table_discovery_mode` is `tag`."
+          },
+          {
+            "name": "table_discovery_mode",
+            "description": "`single`: Streams from tables specified in the `tables` list. `tag`: Auto-discovers tables by tags (ignores the `tables` field). `includelist`: Streams from tables in the `tables` list. Use `single` instead; `includelist` is kept for backward compatibility."
+          }
+        ]
+      }
+    },
+    {
       "name": "aws_kinesis",
       "config": {
         "children": [
