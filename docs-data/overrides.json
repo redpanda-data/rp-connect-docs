@@ -272,6 +272,24 @@
     },
     "username": {
       "description": "The username of the account credentials to authenticate as. Used together with `password` for basic authentication."
+    },
+    "sf_client_id": {
+      "description": "Client ID for the Salesforce Connected App."
+    },
+    "sf_client_secret": {
+      "description": "Client secret for the Salesforce Connected App."
+    },
+    "sf_org_url": {
+      "description": "Salesforce instance base URL (for example, https://your-domain.salesforce.com)."
+    },
+    "sf_request_timeout": {
+      "description": "Timeout for HTTP requests."
+    },
+    "sf_restapi_version": {
+      "description": "Salesforce REST API version to use (for example, v65.0)."
+    },
+    "sf_max_retries": {
+      "description": "Maximum number of retries on a 429 Too Many Requests error."
     }
   },
   "inputs": [
@@ -1494,6 +1512,26 @@
             "name": "tls_handshake_first",
             "version": "4.60.0",
             "$ref": "#/definitions/tls_handshake_first"
+          }
+        ]
+      }
+    },
+    {
+      "name": "oracledb_cdc",
+      "config": {
+        "children": [
+          {
+            "name": "checkpoint_cache",
+            "description": "A xref:components:caches/about.adoc[cache resource] to use for storing the current System Change Number (SCN) that has been successfully delivered. This allows Redpanda Connect to continue from that SCN upon restart, rather than consume the entire state of OracleDB redo logs. If not set, the default Oracle-based cache is used. See `checkpoint_cache_table_name` for more information."
+          },
+          {
+            "name": "logminer",
+            "children": [
+              {
+                "name": "strategy",
+                "description": "Controls how LogMiner retrieves data dictionary information. `online_catalog` uses the current data dictionary for best performance but cannot capture DDL changes. Currently, only `online_catalog` is supported."
+              }
+            ]
           }
         ]
       }
@@ -5313,6 +5351,87 @@
       }
     },
     {
+      "name": "salesforce_sink",
+      "config": {
+        "children": [
+          {
+            "name": "batch_period",
+            "description": "Maximum period to wait before flushing an incomplete batch."
+          },
+          {
+            "name": "bulk_batch_size",
+            "description": "Number of records per bulk job. Also controls the output batch size."
+          },
+          {
+            "name": "bulk_poll_interval",
+            "description": "How often to poll Salesforce for bulk job completion status."
+          },
+          {
+            "name": "client_id",
+            "$ref": "#/definitions/sf_client_id"
+          },
+          {
+            "name": "client_secret",
+            "$ref": "#/definitions/sf_client_secret"
+          },
+          {
+            "name": "max_concurrent_bulk_jobs",
+            "description": "Maximum number of bulk jobs polling concurrently in the background. Each in-flight job buffers its CSV payload in memory. Lower this value if memory usage is a concern."
+          },
+          {
+            "name": "max_in_flight",
+            "description": "Maximum number of batches to send concurrently. Increasing this value improves real-time write throughput."
+          },
+          {
+            "name": "max_retries",
+            "$ref": "#/definitions/sf_max_retries"
+          },
+          {
+            "name": "org_url",
+            "$ref": "#/definitions/sf_org_url"
+          },
+          {
+            "name": "request_timeout",
+            "$ref": "#/definitions/sf_request_timeout"
+          },
+          {
+            "name": "restapi_version",
+            "$ref": "#/definitions/sf_restapi_version"
+          },
+          {
+            "name": "topic_mappings",
+            "description": "Per-topic Salesforce write configuration. Each entry maps a Kafka topic to an sObject and write settings.",
+            "children": [
+              {
+                "name": "all_or_none",
+                "description": "Real-time only: rolls back the entire batch if any record fails."
+              },
+              {
+                "name": "external_id_field",
+                "description": "External ID field name. Required for upsert operations."
+              },
+              {
+                "name": "mode",
+                "description": "Write mode: `realtime` (sObject Collections API) or `bulk` (Bulk API 2.0)."
+              },
+              {
+                "name": "operation",
+                "description": "Write operation: insert, update, upsert, or delete."
+              },
+              {
+                "name": "sobject",
+                "description": "Salesforce sObject API name (for example, Account, Contact, MyObject__c)."
+              },
+              {
+                "name": "topic",
+                "description": "Kafka topic name to match against the message's `topic` field."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "slack_reaction",
       "type": "output",
       "status": "experimental",
@@ -7452,6 +7571,101 @@
                 "$ref": "#/definitions/initial_interval"
               }
             ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "salesforce",
+      "config": {
+        "children": [
+          {
+            "name": "cache_resource",
+            "description": "Name of the cache resource used for checkpointing state (must be defined in `cache_resources`)."
+          },
+          {
+            "name": "cdc_batch_size",
+            "description": "Number of CDC events to request per gRPC fetch."
+          },
+          {
+            "name": "cdc_buffer_size",
+            "description": "Size of the internal CDC event buffer."
+          },
+          {
+            "name": "cdc_enabled",
+            "description": "Enables Change Data Capture streaming after the REST snapshot completes."
+          },
+          {
+            "name": "cdc_objects",
+            "description": "sObject types to capture changes for (for example, `[\"Account\", \"Contact\"]`). When empty, subscribes to `/data/ChangeEvents` for all objects."
+          },
+          {
+            "name": "cdc_replay_preset",
+            "description": "CDC replay preset when no checkpoint exists: `latest` (default) or `earliest`."
+          },
+          {
+            "name": "client_id",
+            "$ref": "#/definitions/sf_client_id"
+          },
+          {
+            "name": "client_secret",
+            "$ref": "#/definitions/sf_client_secret"
+          },
+          {
+            "name": "grpc_reconnect_base_delay",
+            "description": "Base delay for gRPC reconnection backoff."
+          },
+          {
+            "name": "grpc_reconnect_max_attempts",
+            "description": "Maximum number of gRPC reconnection attempts (0 = unlimited)."
+          },
+          {
+            "name": "grpc_reconnect_max_delay",
+            "description": "Maximum delay for gRPC reconnection backoff."
+          },
+          {
+            "name": "grpc_shutdown_timeout",
+            "description": "Timeout for graceful gRPC client shutdown."
+          },
+          {
+            "name": "max_retries",
+            "$ref": "#/definitions/sf_max_retries"
+          },
+          {
+            "name": "org_url",
+            "$ref": "#/definitions/sf_org_url"
+          },
+          {
+            "name": "parallel_fetch",
+            "description": "Number of sObjects to fetch concurrently during the REST snapshot (no-query mode). Higher values improve throughput but consume more API quota."
+          },
+          {
+            "name": "pubsub_topic",
+            "description": "Arbitrary Pub/Sub API topic (for example, `/event/MyEvent__e`). When set, overrides `cdc_objects` for topic selection."
+          },
+          {
+            "name": "query",
+            "description": "Optional SOQL (REST) or GraphQL query. When empty, all sObjects are fetched using REST."
+          },
+          {
+            "name": "query_batch_size",
+            "description": "Number of records Salesforce returns per query page (200-2000). Lower values reduce individual response size and avoid timeouts on wide sObjects."
+          },
+          {
+            "name": "query_type",
+            "description": "API mode: `rest` (default) or `graphql`."
+          },
+          {
+            "name": "request_timeout",
+            "$ref": "#/definitions/sf_request_timeout"
+          },
+          {
+            "name": "rest_objects",
+            "description": "Limits the REST snapshot to only these sObject types (for example, `[\"Account\", \"Contact\"]`). When empty, all queryable sObjects are fetched."
+          },
+          {
+            "name": "restapi_version",
+            "$ref": "#/definitions/sf_restapi_version"
           }
         ]
       }

@@ -4,7 +4,7 @@
 
 === `cache_resource`
 
-Name of the Benthos cache resource used for checkpointing state (must be defined in cache_resources).
+Name of the cache resource used for checkpointing state (must be defined in `cache_resources`).
 
 *Type*: `string`
 
@@ -12,7 +12,7 @@ Name of the Benthos cache resource used for checkpointing state (must be defined
 
 === `cdc_batch_size`
 
-Number of CDC events to request per gRPC fetch
+Number of CDC events to request per gRPC fetch.
 
 *Type*: `int`
 
@@ -20,7 +20,7 @@ Number of CDC events to request per gRPC fetch
 
 === `cdc_buffer_size`
 
-Size of the internal CDC event buffer
+Size of the internal CDC event buffer.
 
 *Type*: `int`
 
@@ -28,7 +28,7 @@ Size of the internal CDC event buffer
 
 === `cdc_enabled`
 
-Enable Change Data Capture streaming after REST snapshot completes
+Enables Change Data Capture streaming after the REST snapshot completes.
 
 *Type*: `bool`
 
@@ -36,7 +36,7 @@ Enable Change Data Capture streaming after REST snapshot completes
 
 === `cdc_objects[]`
 
-SObject types to capture changes for (e.g., ["Account", "Contact"]). When empty, subscribes to /data/ChangeEvents for all objects.
+sObject types to capture changes for (for example, `["Account", "Contact"]`). When empty, subscribes to `/data/ChangeEvents` for all objects.
 
 *Type*: `array`
 
@@ -44,7 +44,7 @@ SObject types to capture changes for (e.g., ["Account", "Contact"]). When empty,
 
 === `cdc_replay_preset`
 
-CDC replay preset when no checkpoint exists: "latest" (default) or "earliest"
+CDC replay preset when no checkpoint exists: `latest` (default) or `earliest`.
 
 *Type*: `string`
 
@@ -52,13 +52,13 @@ CDC replay preset when no checkpoint exists: "latest" (default) or "earliest"
 
 === `client_id`
 
-Client ID for the Salesforce Connected App
+Client ID for the Salesforce Connected App.
 
 *Type*: `string`
 
 === `client_secret`
 
-Client Secret for the Salesforce Connected App
+Client secret for the Salesforce Connected App.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -66,7 +66,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 === `grpc_reconnect_base_delay`
 
-Base delay for gRPC reconnection backoff
+Base delay for gRPC reconnection backoff.
 
 *Type*: `string`
 
@@ -74,7 +74,7 @@ Base delay for gRPC reconnection backoff
 
 === `grpc_reconnect_max_attempts`
 
-Maximum number of gRPC reconnection attempts (0 = unlimited)
+Maximum number of gRPC reconnection attempts (0 = unlimited).
 
 *Type*: `int`
 
@@ -82,7 +82,7 @@ Maximum number of gRPC reconnection attempts (0 = unlimited)
 
 === `grpc_reconnect_max_delay`
 
-Maximum delay for gRPC reconnection backoff
+Maximum delay for gRPC reconnection backoff.
 
 *Type*: `string`
 
@@ -90,7 +90,7 @@ Maximum delay for gRPC reconnection backoff
 
 === `grpc_shutdown_timeout`
 
-Timeout for graceful gRPC client shutdown
+Timeout for graceful gRPC client shutdown.
 
 *Type*: `string`
 
@@ -98,7 +98,7 @@ Timeout for graceful gRPC client shutdown
 
 === `max_retries`
 
-Maximum number of retries in case of 429 HTTP Status Code
+Maximum number of retries on a 429 Too Many Requests error.
 
 *Type*: `int`
 
@@ -106,13 +106,13 @@ Maximum number of retries in case of 429 HTTP Status Code
 
 === `org_url`
 
-Salesforce instance base URL (e.g., https://your-domain.salesforce.com)
+Salesforce instance base URL (for example, https://your-domain.salesforce.com).
 
 *Type*: `string`
 
 === `parallel_fetch`
 
-Number of SObjects to fetch concurrently during the REST snapshot (no-query mode). Higher values improve throughput but consume more API quota.
+Number of sObjects to fetch concurrently during the REST snapshot (no-query mode). Higher values improve throughput but consume more API quota.
 
 *Type*: `int`
 
@@ -120,7 +120,7 @@ Number of SObjects to fetch concurrently during the REST snapshot (no-query mode
 
 === `pubsub_topic`
 
-Arbitrary Pub/Sub API topic (e.g., "/event/MyEvent__e"). When set, overrides cdc_objects for topic selection.
+Arbitrary Pub/Sub API topic (for example, `/event/MyEvent__e`). When set, overrides `cdc_objects` for topic selection.
 
 *Type*: `string`
 
@@ -128,7 +128,7 @@ Arbitrary Pub/Sub API topic (e.g., "/event/MyEvent__e"). When set, overrides cdc
 
 === `query`
 
-Optional SOQL (rest) or GraphQL query. When empty, all SObjects are fetched via REST.
+Optional SOQL (REST) or GraphQL query. When empty, all sObjects are fetched using REST.
 
 *Type*: `string`
 
@@ -136,7 +136,7 @@ Optional SOQL (rest) or GraphQL query. When empty, all SObjects are fetched via 
 
 === `query_batch_size`
 
-Number of records Salesforce returns per query page (200–2000). Lower values reduce individual response size and avoid timeouts on wide SObjects.
+Number of records Salesforce returns per query page (200-2000). Lower values reduce individual response size and avoid timeouts on wide sObjects.
 
 *Type*: `int`
 
@@ -144,7 +144,7 @@ Number of records Salesforce returns per query page (200–2000). Lower values r
 
 === `query_type`
 
-API mode: "rest" (default) or "graphql"
+API mode: `rest` (default) or `graphql`.
 
 *Type*: `string`
 
@@ -152,7 +152,7 @@ API mode: "rest" (default) or "graphql"
 
 === `request_timeout`
 
-HTTP request timeout
+Timeout for HTTP requests.
 
 *Type*: `string`
 
@@ -160,7 +160,7 @@ HTTP request timeout
 
 === `rest_objects[]`
 
-Limit the REST snapshot to only these SObject types (e.g., ["Account", "Contact"]). When empty, all queryable SObjects are fetched.
+Limits the REST snapshot to only these sObject types (for example, `["Account", "Contact"]`). When empty, all queryable sObjects are fetched.
 
 *Type*: `array`
 
@@ -168,7 +168,7 @@ Limit the REST snapshot to only these SObject types (e.g., ["Account", "Contact"
 
 === `restapi_version`
 
-Salesforce REST API version to use (example: v64.0). Default: v65.0
+Salesforce REST API version to use (for example, v65.0).
 
 *Type*: `string`
 

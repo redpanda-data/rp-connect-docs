@@ -2,10 +2,10 @@
   "comparison": {
     "oldVersion": "4.81.0",
     "newVersion": "4.85.0",
-    "timestamp": "2026-03-26T15:36:02.428Z"
+    "timestamp": "2026-03-26T20:45:06.102Z"
   },
   "summary": {
-    "newComponents": 7,
+    "newComponents": 4,
     "removedComponents": 6,
     "newFields": 44,
     "removedFields": 4,
@@ -21,27 +21,6 @@
         "status": "bool",
         "version": "",
         "description": "Whether test cases should be executed in parallel."
-      },
-      {
-        "name": "oracledb_cdc",
-        "type": "inputs",
-        "status": "experimental",
-        "version": "4.83.0",
-        "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t"
-      },
-      {
-        "name": "salesforce_sink",
-        "type": "outputs",
-        "status": "experimental",
-        "version": "",
-        "description": "Consumes batches of messages and writes them to Salesforce.\n\nEach message must have a `topic` field (set by the per-topic processor) and a `data` field\ncontaining the Salesforce record fields. The `topic` is used to look up the correct\n`topic_mappings` entry which defines the SObject, operation, and write mode.\n\n**Realtime mode** uses the sObject Collections REST API (synchronous, up to 200 records/call).\n**Bulk mode** uses the Bulk API 2.0 (asynchronous, polls until complete).\n\n```yaml\ninput:\n  broker:\n    inputs:\n      - kafka_franz:\n          seed_brokers: [localhost:9092]\n          topics: [salesforce-account]\n          consumer_group: sf-sink-account\n        processors:\n          - mapping: |\n              root.topic = @kafka_topic\n              root.data = this\n      - kafka_franz:\n          seed_brokers: [localhost:9092]\n          topics: [salesforce-contact]\n          consumer_group: sf-sink-contact\n        processors:\n          - mapping: |\n              root.topic = @kafka_topic\n              root.data = this\n\noutput:\n  salesforce_sink:\n    org_url: \"${SALESFORCE_ORG_URL}\"\n    client_id: \"${SALESFORCE_CLIENT_ID}\"\n    client_secret: \"${SALESFORCE_CLIENT_SECRET}\"\n    topic_mappings:\n      - topic: salesforce-account\n        sobject: Account\n        operation: upsert\n        external_id_field: External_Id__c\n        mode: realtime\n      - topic: salesforce-contact\n        sobject: Contact\n        operation: upsert\n        external_id_field: External_Id__c\n        mode: bulk\n```"
-      },
-      {
-        "name": "salesforce",
-        "type": "processors",
-        "status": "experimental",
-        "version": "",
-        "description": "This salesforceProcessor takes input messages containing Salesforce queries and returns Salesforce data.\n\nSupports the following Salesforce resources:\n- SObject REST snapshot (all queryable SObjects or a filtered subset)\n- Filtered SOQL queries via REST or GraphQL\n- Change Data Capture (CDC) streaming via the Pub/Sub gRPC API\n- Platform Events via the Pub/Sub gRPC API\n\nConfiguration examples:\n\n```configYAML\n# Minimal configuration\npipeline:\n  processors:\n    - salesforce:\n        org_url: \"https://your-domain.salesforce.com\"\n        client_id: \"${SALESFORCE_CLIENT_ID}\"\n        client_secret: \"${SALESFORCE_CLIENT_SECRET}\"\n\n# Full configuration with CDC\npipeline:\n  processors:\n    - salesforce:\n        org_url: \"https://your-domain.salesforce.com\"\n        client_id: \"${SALESFORCE_CLIENT_ID}\"\n        client_secret: \"${SALESFORCE_CLIENT_SECRET}\"\n        restapi_version: \"v64.0\"\n        request_timeout: \"30s\"\n        max_retries: 50\n        cdc_enabled: true\n        cdc_objects:\n          - Account\n          - Contact\n        cdc_batch_size: 100\n        cdc_buffer_size: 1000\n        cdc_replay_preset: \"latest\"\n\n# Platform Events (standalone, no REST snapshot)\npipeline:\n  processors:\n    - salesforce:\n        org_url: \"https://your-domain.salesforce.com\"\n        client_id: \"${SALESFORCE_CLIENT_ID}\"\n        client_secret: \"${SALESFORCE_CLIENT_SECRET}\"\n        pubsub_topic: \"/event/MyEvent__e\"\n```"
       },
       {
         "name": "escape_url_path",
@@ -400,103 +379,10 @@
     },
     "current": {
       "cloudSupported": 477,
-      "selfHostedOnly": 77,
-      "cgoOnly": 4
+      "selfHostedOnly": 81,
+      "cgoOnly": 0
     },
-    "changes": {
-      "cloud": {
-        "added": [
-          {
-            "type": "config",
-            "name": "parallel",
-            "status": "bool"
-          },
-          {
-            "type": "inputs",
-            "name": "oracledb_cdc",
-            "status": "experimental"
-          },
-          {
-            "type": "bloblang-methods",
-            "name": "escape_url_path",
-            "status": "stable"
-          },
-          {
-            "type": "bloblang-methods",
-            "name": "parse_logfmt",
-            "status": "stable"
-          },
-          {
-            "type": "bloblang-methods",
-            "name": "unescape_url_path",
-            "status": "stable"
-          }
-        ],
-        "removed": [
-          {
-            "type": "inputs",
-            "name": "legacy_redpanda_migrator",
-            "status": "deprecated"
-          },
-          {
-            "type": "inputs",
-            "name": "legacy_redpanda_migrator_offsets",
-            "status": "deprecated"
-          },
-          {
-            "type": "inputs",
-            "name": "redpanda_migrator_bundle",
-            "status": "deprecated"
-          },
-          {
-            "type": "outputs",
-            "name": "legacy_redpanda_migrator",
-            "status": "deprecated"
-          },
-          {
-            "type": "outputs",
-            "name": "legacy_redpanda_migrator_offsets",
-            "status": "deprecated"
-          },
-          {
-            "type": "outputs",
-            "name": "redpanda_migrator_bundle",
-            "status": "deprecated"
-          }
-        ]
-      },
-      "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "beta"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "ffi",
-            "status": "experimental"
-          }
-        ],
-        "removedCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "oracledb_cdc",
-            "status": "experimental"
-          }
-        ]
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -3007,6 +2893,16 @@
           "status": "stable"
         },
         {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -3122,6 +3018,11 @@
           "status": "stable"
         },
         {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -3212,6 +3113,11 @@
           "status": "experimental"
         },
         {
+          "type": "processors",
+          "name": "ffi",
+          "status": "experimental"
+        },
+        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -3279,28 +3185,7 @@
           "status": "beta"
         }
       ],
-      "cgoOnly": [
-        {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "beta"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
-          "status": "experimental"
-        }
-      ]
+      "cgoOnly": []
     }
   }
 }

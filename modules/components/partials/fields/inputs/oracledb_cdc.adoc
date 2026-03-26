@@ -122,7 +122,7 @@ processors:
 
 === `checkpoint_cache`
 
-A https://www.docs.redpanda.com/redpanda-connect/components/caches/about[cache resource^] to use for storing the current System Change Number (SCN) that has been successfully delivered, this allows Redpanda Connect to continue from that System Change Number (SCN) upon restart, rather than consume the entire state of OracleDB's redo logs. If not set the default Oracle based cache will be used, see `checkpoint_cache_table_name` for more information.
+A xref:components:caches/about.adoc[cache resource] to use for storing the current System Change Number (SCN) that has been successfully delivered. This allows Redpanda Connect to continue from that SCN upon restart, rather than consume the entire state of OracleDB redo logs. If not set, the default Oracle-based cache is used. See `checkpoint_cache_table_name` for more information.
 
 *Type*: `string`
 
@@ -260,7 +260,7 @@ The SCN range to mine per cycle. Each cycle reads changes between the current SC
 
 === `logminer.strategy`
 
-Controls how LogMiner retrieves data dictionary information. `online_catalog` (default) uses the current data dictionary for best performance but cannot capture DDL changes. `online_catalog` currently only supported.
+Controls how LogMiner retrieves data dictionary information. `online_catalog` uses the current data dictionary for best performance but cannot capture DDL changes. Currently, only `online_catalog` is supported.
 
 *Type*: `string`
 

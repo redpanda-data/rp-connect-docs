@@ -2,60 +2,26 @@
 // tag::single-source[]
 :type: processor
 :status: experimental
-:categories: []
-:description: Fetches data from Salesforce based on input messages
+:categories: [Services]
+:page-commercial-names: Salesforce
+:description: Fetches data from Salesforce based on input messages.
 
 component_type_dropdown::[]
 
-Fetches data from Salesforce based on input messages
+Fetches data from Salesforce based on input messages.
 
+ifndef::env-cloud[]
+Introduced in version 4.85.0.
+endif::[]
 
-This salesforceProcessor takes input messages containing Salesforce queries and returns Salesforce data.
+This processor takes input messages containing Salesforce queries and returns Salesforce data.
 
 Supports the following Salesforce resources:
-- SObject REST snapshot (all queryable SObjects or a filtered subset)
+
+- sObject REST snapshot (all queryable sObjects or a filtered subset)
 - Filtered SOQL queries via REST or GraphQL
 - Change Data Capture (CDC) streaming via the Pub/Sub gRPC API
 - Platform Events via the Pub/Sub gRPC API
-
-Configuration examples:
-
-```configYAML
-# Minimal configuration
-pipeline:
-  processors:
-    - salesforce:
-        org_url: "https://your-domain.salesforce.com"
-        client_id: "${SALESFORCE_CLIENT_ID}"
-        client_secret: "${SALESFORCE_CLIENT_SECRET}"
-
-# Full configuration with CDC
-pipeline:
-  processors:
-    - salesforce:
-        org_url: "https://your-domain.salesforce.com"
-        client_id: "${SALESFORCE_CLIENT_ID}"
-        client_secret: "${SALESFORCE_CLIENT_SECRET}"
-        restapi_version: "v64.0"
-        request_timeout: "30s"
-        max_retries: 50
-        cdc_enabled: true
-        cdc_objects:
-          - Account
-          - Contact
-        cdc_batch_size: 100
-        cdc_buffer_size: 1000
-        cdc_replay_preset: "latest"
-
-# Platform Events (standalone, no REST snapshot)
-pipeline:
-  processors:
-    - salesforce:
-        org_url: "https://your-domain.salesforce.com"
-        client_id: "${SALESFORCE_CLIENT_ID}"
-        client_secret: "${SALESFORCE_CLIENT_SECRET}"
-        pubsub_topic: "/event/MyEvent__e"
-```
 
 [tabs]
 ======

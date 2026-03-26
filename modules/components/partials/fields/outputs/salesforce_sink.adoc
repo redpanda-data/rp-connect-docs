@@ -28,13 +28,13 @@ How often to poll Salesforce for bulk job completion status.
 
 === `client_id`
 
-Client ID for the Salesforce Connected App
+Client ID for the Salesforce Connected App.
 
 *Type*: `string`
 
 === `client_secret`
 
-Client Secret for the Salesforce Connected App
+Client secret for the Salesforce Connected App.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -42,7 +42,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 === `max_concurrent_bulk_jobs`
 
-Maximum number of bulk jobs polling concurrently in the background. Each in-flight job buffers its CSV payload in memory; lower this value if memory usage is a concern.
+Maximum number of bulk jobs polling concurrently in the background. Each in-flight job buffers its CSV payload in memory. Lower this value if memory usage is a concern.
 
 *Type*: `int`
 
@@ -50,7 +50,7 @@ Maximum number of bulk jobs polling concurrently in the background. Each in-flig
 
 === `max_in_flight`
 
-Maximum number of batches to send concurrently. Increasing this improves realtime write throughput.
+Maximum number of batches to send concurrently. Increasing this value improves real-time write throughput.
 
 *Type*: `int`
 
@@ -58,7 +58,7 @@ Maximum number of batches to send concurrently. Increasing this improves realtim
 
 === `max_retries`
 
-Maximum number of retries on 429 Too Many Requests
+Maximum number of retries on a 429 Too Many Requests error.
 
 *Type*: `int`
 
@@ -66,13 +66,13 @@ Maximum number of retries on 429 Too Many Requests
 
 === `org_url`
 
-Salesforce instance base URL (e.g., https://your-domain.salesforce.com)
+Salesforce instance base URL (for example, https://your-domain.salesforce.com).
 
 *Type*: `string`
 
 === `request_timeout`
 
-HTTP request timeout
+Timeout for HTTP requests.
 
 *Type*: `string`
 
@@ -80,7 +80,7 @@ HTTP request timeout
 
 === `restapi_version`
 
-Salesforce REST API version to use (e.g., v65.0)
+Salesforce REST API version to use (for example, v65.0).
 
 *Type*: `string`
 
@@ -88,13 +88,13 @@ Salesforce REST API version to use (e.g., v65.0)
 
 === `topic_mappings[]`
 
-Per-topic Salesforce write configuration. Each entry maps a Kafka topic to an SObject and write settings.
+Per-topic Salesforce write configuration. Each entry maps a Kafka topic to an sObject and write settings.
 
 *Type*: `object`
 
 === `topic_mappings[].all_or_none`
 
-Realtime only: roll back the entire batch if any record fails
+Real-time only: rolls back the entire batch if any record fails.
 
 *Type*: `bool`
 
@@ -102,7 +102,7 @@ Realtime only: roll back the entire batch if any record fails
 
 === `topic_mappings[].external_id_field`
 
-External ID field name, required for upsert
+External ID field name. Required for upsert operations.
 
 *Type*: `string`
 
@@ -110,7 +110,7 @@ External ID field name, required for upsert
 
 === `topic_mappings[].mode`
 
-Write mode: realtime (sObject Collections API) or bulk (Bulk API 2.0)
+Write mode: `realtime` (sObject Collections API) or `bulk` (Bulk API 2.0).
 
 *Type*: `string`
 
@@ -118,7 +118,7 @@ Write mode: realtime (sObject Collections API) or bulk (Bulk API 2.0)
 
 === `topic_mappings[].operation`
 
-Write operation: insert, update, upsert, or delete
+Write operation: insert, update, upsert, or delete.
 
 *Type*: `string`
 
@@ -126,13 +126,13 @@ Write operation: insert, update, upsert, or delete
 
 === `topic_mappings[].sobject`
 
-Salesforce SObject API name (e.g., Account, Contact, MyObject__c)
+Salesforce sObject API name (for example, Account, Contact, MyObject__c).
 
 *Type*: `string`
 
 === `topic_mappings[].topic`
 
-Kafka topic name to match against the message's 'topic' field
+Kafka topic name to match against the message's `topic` field.
 
 *Type*: `string`
 

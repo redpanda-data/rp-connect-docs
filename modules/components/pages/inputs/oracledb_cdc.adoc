@@ -3,6 +3,7 @@
 :type: input
 :status: experimental
 :categories: [Services]
+:page-commercial-names: Oracle CDC, OracleDB CDC, Oracle Database CDC
 :description: Enables Change Data Capture by consuming from OracleDB.
 
 component_type_dropdown::[]
@@ -23,13 +24,13 @@ This input adds the following metadata fields to each message:
 - database_schema: The database schema for the table where the message originates from.
 - table_name: Name of the table that the message originated from.
 - operation: Type of operation that generated the message: "read", "delete", "insert", or "update". "read" is from messages that are read in the initial snapshot phase.
-- scn: the System Change Number in Oracle.
+- scn: The System Change Number in Oracle.
 - schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.
 
 == Permissions
 
-When using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.
-		
+When using the default Oracle-based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn schema must already exist. See `checkpoint_cache_table_name` for more information.
+
 
 [tabs]
 ======
