@@ -2,6 +2,18 @@
 
 == Fields
 
+=== `client_name`
+
+Set the client name for the Redis connection.
+
+ifndef::env-cloud[]
+Requires version 4.82.0 or later.
+endif::[]
+
+*Type*: `string`
+
+*Default*: `redpanda-connect`
+
 === `fields`
 
 A map of key/value pairs to set as hash fields.

@@ -7,6 +7,380 @@ This topic includes new content added from version 4.29.0 onwards.
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
 
 
+
+== Version 4.85.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.85.0[See the full release notes^].
+
+=== Bloblang updates
+
+This release adds the following new Bloblang capabilities:
+
+* Methods:
+** xref:guides:bloblang/methods.adoc#escape_url_path[`escape_url_path`]
++
+// TODO: Add description for escape_url_path method
+** xref:guides:bloblang/methods.adoc#parse_logfmt[`parse_logfmt`]
++
+// TODO: Add description for parse_logfmt method
+** xref:guides:bloblang/methods.adoc#unescape_url_path[`unescape_url_path`]
++
+// TODO: Add description for unescape_url_path method
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:configs/parallel.adoc[parallel]
+|Config
+|bool
+|Whether test cases should be executed in parallel.
+
+|xref:components:inputs/oracledb_cdc.adoc[oracledb_cdc]
+|Inputs
+|experimental
+|Streams changes from an Oracle database for Change Data Capture (CDC).
+
+|xref:components:outputs/salesforce_sink.adoc[salesforce_sink]
+|Outputs
+|experimental
+|Consumes batches of messages and writes them to Salesforce.
+
+|xref:components:processors/salesforce.adoc[salesforce]
+|Processors
+|experimental
+|This salesforceProcessor takes input messages containing Salesforce queries and returns Salesforce data.
+
+|===
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|client_name
+|Set the client name for the Redis connection.
+|*Caches:*
+
+* xref:components:caches/redis.adoc#client_name[redis]
+
+
+*Inputs:*
+
+* xref:components:inputs/redis_list.adoc#client_name[redis_list]
+* xref:components:inputs/redis_pubsub.adoc#client_name[redis_pubsub]
+* xref:components:inputs/redis_scan.adoc#client_name[redis_scan]
+* xref:components:inputs/redis_streams.adoc#client_name[redis_streams]
+
+
+*Outputs:*
+
+* xref:components:outputs/redis_hash.adoc#client_name[redis_hash]
+* xref:components:outputs/redis_list.adoc#client_name[redis_list]
+* xref:components:outputs/redis_pubsub.adoc#client_name[redis_pubsub]
+* xref:components:outputs/redis_streams.adoc#client_name[redis_streams]
+
+
+*Processors:*
+
+* xref:components:processors/redis.adoc#client_name[redis]
+* xref:components:processors/redis_script.adoc#client_name[redis_script]
+
+
+*Rate-limits:*
+
+* xref:components:rate-limits/redis.adoc#client_name[redis]
+
+
+|tables
+|List of table names to stream from. For single table mode, provide one table.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#tables[aws_dynamodb_cdc]
+
+
+|table_discovery_mode
+|Table discovery mode.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#table_discovery_mode[aws_dynamodb_cdc]
+
+
+|table_tag_filter
+|Multi-tag filter: 'key1:v1,v2;key2:v3,v4'. Matches tables with (key1=v1 OR key1=v2) AND (key2=v3 OR key2=v4).
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#table_tag_filter[aws_dynamodb_cdc]
+
+
+|table_discovery_interval
+|Interval for rescanning and discovering new tables when using `tag` or `includelist` mode. Set to 0 to disable periodic rescanning.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#table_discovery_interval[aws_dynamodb_cdc]
+
+
+|snapshot_mode
+|Snapshot behavior.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#snapshot_mode[aws_dynamodb_cdc]
+
+
+|snapshot_segments
+|Number of parallel scan segments (1-10). Higher parallelism scans faster but consumes more RCUs.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#snapshot_segments[aws_dynamodb_cdc]
+
+
+|snapshot_batch_size
+|Records per scan request during snapshot. Maximum 1000.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#snapshot_batch_size[aws_dynamodb_cdc]
+
+
+|snapshot_throttle
+|Minimum time between scan requests per segment. Use this to limit RCU consumption during snapshot.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#snapshot_throttle[aws_dynamodb_cdc]
+
+
+|snapshot_deduplicate
+|Deduplicate records that appear in both snapshot and CDC stream. Requires buffering CDC events during snapshot.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#snapshot_deduplicate[aws_dynamodb_cdc]
+
+
+|snapshot_buffer_size
+|Maximum CDC events to buffer for deduplication (approximately 100 bytes per entry). If exceeded, deduplication is disabled and duplicates may be emitted.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#snapshot_buffer_size[aws_dynamodb_cdc]
+
+
+|create_stream
+|Whether to automatically create the stream if it doesn't exist (requires the stream field to be set).
+|*Inputs:*
+
+* xref:components:inputs/nats_jetstream.adoc#create_stream[nats_jetstream]
+
+
+|extract_tracing_map
+|adoc[Bloblang mapping] that attempts to extract an object containing tracing propagation information, which will then be used as the root tracing span for the message. The specification of the extracted fields must match the format used by the service wide tracer.
+|*Inputs:*
+
+* xref:components:inputs/redpanda.adoc#extract_tracing_map[redpanda]
+
+
+|id
+|The entry ID for the stream message. Allows function interpolations.
+|*Outputs:*
+
+* xref:components:outputs/redis_streams.adoc#id[redis_streams]
+
+
+|inject_tracing_map
+|adoc[Bloblang mapping] used to inject an object containing tracing propagation information into outbound messages. The specification of the injected fields will match the format used by the service wide tracer.
+|*Outputs:*
+
+* xref:components:outputs/redpanda.adoc#inject_tracing_map[redpanda]
+
+
+|sync_topic_interval
+|How often to synchronize topics from the source cluster to the destination. This creates destination topics for any new source topics, including empty topics with no message flow.
+|*Outputs:*
+
+* xref:components:outputs/redpanda_migrator.adoc#sync_topic_interval[redpanda_migrator]
+
+
+|commit_backoff
+|Control how frequently Snowflake is polled to check if data has been committed.
+|*Outputs:*
+
+* xref:components:outputs/snowflake_streaming.adoc#commit_backoff[snowflake_streaming]
+
+
+|timeout
+|HTTP request timeout.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#timeout[jira]
+
+
+|tls
+|Custom TLS settings can be used to override system defaults.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#tls[jira]
+
+
+|proxy_url
+|HTTP proxy URL. Empty string disables proxying.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#proxy_url[jira]
+
+
+|disable_http2
+|Disable HTTP/2 and force HTTP/1.1.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#disable_http2[jira]
+
+
+|tps_limit
+|Rate limit in requests per second. 0 disables rate limiting.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#tps_limit[jira]
+
+
+|tps_burst
+|Maximum burst size for rate limiting.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#tps_burst[jira]
+
+
+|backoff
+|Adaptive backoff configuration for 429 (Too Many Requests) responses. Always active.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#backoff[jira]
+
+
+|tcp
+|TCP socket configuration.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#tcp[jira]
+
+
+|http
+|HTTP transport settings controlling connection pooling, timeouts, and HTTP/2.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#http[jira]
+
+
+|access_log_level
+|Log level for HTTP request/response logging. Empty disables logging.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#access_log_level[jira]
+
+
+|access_log_body_limit
+|Maximum bytes of request/response body to include in logs. 0 to skip body logging.
+|*Processors:*
+
+* xref:components:processors/jira.adoc#access_log_body_limit[jira]
+
+
+|schema_metadata
+|When set, the processor reads a schema in benthos common schema format from this metadata key on each message, converts it to the format specified by `format`, registers it with the schema registry under the configured subject, and encodes the message. When empty (the default), the processor pulls the latest schema from the registry instead.
+|*Processors:*
+
+* xref:components:processors/schema_registry_encode.adoc#schema_metadata[schema_registry_encode]
+
+
+|format
+|The encoding format to use when converting a common schema from metadata.
+|*Processors:*
+
+* xref:components:processors/schema_registry_encode.adoc#format[schema_registry_encode]
+
+
+|normalize
+|Whether to normalize the schema before registering with the schema registry (schema_metadata mode only).
+|*Processors:*
+
+* xref:components:processors/schema_registry_encode.adoc#normalize[schema_registry_encode]
+
+
+|avro
+|Configuration for Avro encoding.
+|*Processors:*
+
+* xref:components:processors/schema_registry_encode.adoc#avro[schema_registry_encode]
+
+
+|continue
+|Indicates whether, if this case passes for a message, the next case should also be tested.
+|*Processors:*
+
+* xref:components:processors/switch.adoc#continue[switch]
+
+
+|===
+
+
+=== Deprecations
+
+The following fields are now deprecated:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|commit_timeout
+|max_elapsed_time` instead.
+|*Outputs:*
+
+* xref:components:outputs/snowflake_streaming.adoc#commit_timeout[snowflake_streaming]
+
+
+|avro_raw_json
+|raw_json instead.
+|*Processors:*
+
+* xref:components:processors/schema_registry_encode.adoc#avro_raw_json[schema_registry_encode]
+
+
+|===
+
+
+=== Default value changes
+
+This release includes the following default value changes:
+
+[cols="1m,1,1,3,2a"]
+|===
+|Field |Old default |New default |Description |Affected components
+
+|target_address
+|none
+|
+|The target address to write to.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#target_address[amqp_1]
+
+
+|commit_timeout
+|60s
+|
+|max_elapsed_time` instead.
+|*Outputs:*
+
+* xref:components:outputs/snowflake_streaming.adoc#commit_timeout[snowflake_streaming]
+
+
+|===
+
+
 == Version 4.81.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.81.0[See the full release notes^].

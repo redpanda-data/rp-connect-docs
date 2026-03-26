@@ -10,6 +10,18 @@ Whether messages that are rejected (nacked) at the output level should be automa
 
 *Default*: `true`
 
+=== `client_name`
+
+Set the client name for the Redis connection.
+
+ifndef::env-cloud[]
+Requires version 4.82.0 or later.
+endif::[]
+
+*Type*: `string`
+
+*Default*: `redpanda-connect`
+
 === `kind`
 
 Specifies a simple, cluster-aware, or failover-aware redis client.

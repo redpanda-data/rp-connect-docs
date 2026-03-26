@@ -108,6 +108,56 @@ The AWS region to target.
 
 *Type*: `string`
 
+=== `snapshot_batch_size`
+
+Records per scan request during snapshot. Maximum 1000. Lower values provide better backpressure control but require more API calls.
+
+*Type*: `int`
+
+*Default*: `100`
+
+=== `snapshot_buffer_size`
+
+Maximum CDC events to buffer for deduplication (approximately 100 bytes per entry). If exceeded, deduplication is disabled and duplicates may be emitted.
+
+*Type*: `int`
+
+*Default*: `100000`
+
+=== `snapshot_deduplicate`
+
+Deduplicate records that appear in both snapshot and CDC stream. Requires buffering CDC events during snapshot. If buffer is exceeded, deduplication is disabled to prevent data loss.
+
+*Type*: `bool`
+
+*Default*: `true`
+
+=== `snapshot_mode`
+
+Snapshot behavior. `none`: CDC only (default). `snapshot_only`: one-time table scan, no streaming. `snapshot_and_cdc`: scan entire table then stream changes.
+
+*Type*: `string`
+
+*Default*: `none`
+
+*Options*: `none`, `snapshot_only`, `snapshot_and_cdc`
+
+=== `snapshot_segments`
+
+Number of parallel scan segments (1-10). Higher parallelism scans faster but consumes more RCUs. Start with 1 for safety.
+
+*Type*: `int`
+
+*Default*: `1`
+
+=== `snapshot_throttle`
+
+Minimum time between scan requests per segment. Use this to limit RCU consumption during snapshot.
+
+*Type*: `string`
+
+*Default*: `100ms`
+
 === `start_from`
 
 Where to start reading when no checkpoint exists. `trim_horizon` starts from the oldest available record, `latest` starts from new records.
@@ -118,11 +168,39 @@ Where to start reading when no checkpoint exists. `trim_horizon` starts from the
 
 *Options*: `trim_horizon`, `latest`
 
-=== `table`
+=== `table_discovery_interval`
 
-The name of the DynamoDB table to read streams from.
+Interval for rescanning and discovering new tables when using `tag` or `includelist` mode. Set to 0 to disable periodic rescanning.
 
 *Type*: `string`
+
+*Default*: `5m`
+
+=== `table_discovery_mode`
+
+Table discovery mode. `single`: stream from tables specified in `tables` list. `tag`: auto-discover tables by tags (ignores `tables` field). `includelist`: stream from tables in `tables` list (alias for `single`, kept for compatibility).
+
+*Type*: `string`
+
+*Default*: `single`
+
+*Options*: `single`, `tag`, `includelist`
+
+=== `table_tag_filter`
+
+Multi-tag filter: 'key1:v1,v2;key2:v3,v4'. Matches tables with (key1=v1 OR key1=v2) AND (key2=v3 OR key2=v4). Required when `table_discovery_mode` is `tag`.
+
+*Type*: `string`
+
+*Default*: `""`
+
+=== `tables[]`
+
+List of table names to stream from. For single table mode, provide one table. For multi-table mode, provide multiple tables.
+
+*Type*: `array`
+
+*Default*: `[]`
 
 === `tcp`
 

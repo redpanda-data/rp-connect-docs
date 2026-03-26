@@ -112,6 +112,18 @@ processors:
 
 ----
 
+=== `client_name`
+
+Set the client name for the Redis connection.
+
+ifndef::env-cloud[]
+Requires version 4.82.0 or later.
+endif::[]
+
+*Type*: `string`
+
+*Default*: `redpanda-connect`
+
 === `command`
 
 The command used to push elements to the Redis list

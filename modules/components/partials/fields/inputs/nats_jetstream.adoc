@@ -56,6 +56,28 @@ An optional file containing a NKey seed.
 nkey_file: ./seed.nk
 ----
 
+=== `auth.password`
+
+An optional plain text password (given along with the corresponding user name).
+
+include::redpanda-connect:components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+=== `auth.token`
+
+An optional plain text token.
+
+include::redpanda-connect:components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+=== `auth.user`
+
+An optional plain text user name (given along with the corresponding user password).
+
+*Type*: `string`
+
 === `auth.user_credentials_file`
 
 An optional file containing user credentials which consist of a user JWT and corresponding NKey seed.
@@ -89,6 +111,14 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 Indicates that the subscription should use an existing consumer.
 
 *Type*: `bool`
+
+=== `create_stream`
+
+Whether to automatically create the stream if it doesn't exist (requires the stream field to be set).
+
+*Type*: `bool`
+
+*Default*: `false`
 
 === `deliver`
 

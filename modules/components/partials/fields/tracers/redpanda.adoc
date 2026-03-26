@@ -555,10 +555,6 @@ Whether to use OAuth version 2 in requests.
 
 A list of optional endpoint parameters, values should be arrays of strings.
 
-ifndef::env-cloud[]
-Requires version 4.21.0 or later.
-endif::[]
-
 *Type*: `object`
 
 *Default*: `{}`
@@ -567,20 +563,15 @@ endif::[]
 ----
 # Examples:
 endpoint_params:
-  bar:
-    - woof
-  foo:
-    - meow
-    - quack
+  audience:
+    - https://example.com
+  resource:
+    - https://api.example.com
 ----
 
 === `schema_registry.oauth2.scopes[]`
 
 A list of optional requested permissions.
-
-ifndef::env-cloud[]
-Requires version 3.45.0 or later.
-endif::[]
 
 *Type*: `array`
 

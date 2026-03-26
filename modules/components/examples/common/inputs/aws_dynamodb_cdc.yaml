@@ -1,6 +1,7 @@
 inputs:
   label: ""
   aws_dynamodb_cdc:
-    table: "" # No default (required)
+    tables: []
     checkpoint_table: redpanda_dynamodb_checkpoints
     start_from: trim_horizon
+    snapshot_mode: none

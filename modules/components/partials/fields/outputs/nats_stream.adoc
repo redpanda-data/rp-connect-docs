@@ -38,6 +38,28 @@ An optional file containing a NKey seed.
 nkey_file: ./seed.nk
 ----
 
+=== `auth.password`
+
+An optional plain text password (given along with the corresponding user name).
+
+include::redpanda-connect:components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+=== `auth.token`
+
+An optional plain text token.
+
+include::redpanda-connect:components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+=== `auth.user`
+
+An optional plain text user name (given along with the corresponding user password).
+
+*Type*: `string`
+
 === `auth.user_credentials_file`
 
 An optional file containing user credentials which consist of a user JWT and corresponding NKey seed.

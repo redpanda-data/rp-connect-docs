@@ -74,6 +74,7 @@ outputs:
       only_empty: false
     topic: ${! @kafka_topic }
     topic_replication_factor: "" # No default (optional)
+    sync_topic_interval: 5m
     sync_topic_acls: false
     serverless: false
     provenance_header: redpanda-migrator-provenance

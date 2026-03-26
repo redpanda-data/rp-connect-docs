@@ -1,0 +1,27 @@
+inputs:
+  label: ""
+  oracledb_cdc:
+    connection_string: "" # No default (required)
+    stream_snapshot: false
+    max_parallel_snapshot_tables: 1
+    snapshot_max_batch_size: 1000
+    logminer:
+      scn_window_size: 20000
+      backoff_interval: 5s
+      mining_interval: 300ms
+      strategy: online_catalog
+      max_transaction_events: 0
+      lob_enabled: true
+    include: [] # No default (required)
+    exclude: [] # No default (optional)
+    checkpoint_cache: "" # No default (optional)
+    checkpoint_cache_table_name: RPCN.CDC_CHECKPOINT_CACHE
+    checkpoint_cache_key: oracledb_cdc
+    checkpoint_limit: 1024
+    auto_replay_nacks: true
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
+      processors: [] # No default (optional)
