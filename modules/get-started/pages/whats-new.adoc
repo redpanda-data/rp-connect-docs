@@ -173,7 +173,7 @@ This release adds support for the following new fields:
 
 
 |extract_tracing_map
-|adoc[Bloblang mapping] that attempts to extract an object containing tracing propagation information, which will then be used as the root tracing span for the message. The specification of the extracted fields must match the format used by the service wide tracer.
+|A xref:guides:bloblang/about.adoc[Bloblang mapping] that attempts to extract an object containing tracing propagation information, which will then be used as the root tracing span for the message. The specification of the extracted fields must match the format used by the service wide tracer.
 |*Inputs:*
 
 * xref:components:inputs/redpanda.adoc#extract_tracing_map[redpanda]
@@ -187,7 +187,7 @@ This release adds support for the following new fields:
 
 
 |inject_tracing_map
-|adoc[Bloblang mapping] used to inject an object containing tracing propagation information into outbound messages. The specification of the injected fields will match the format used by the service wide tracer.
+|A xref:guides:bloblang/about.adoc[Bloblang mapping] used to inject an object containing tracing propagation information into outbound messages. The specification of the injected fields will match the format used by the service wide tracer.
 |*Outputs:*
 
 * xref:components:outputs/redpanda.adoc#inject_tracing_map[redpanda]
@@ -338,7 +338,7 @@ The following fields are now deprecated:
 
 
 |avro_raw_json
-|raw_json instead.
+|Use `avro.raw_json` instead.
 |*Processors:*
 
 * xref:components:processors/schema_registry_encode.adoc#avro_raw_json[schema_registry_encode]
@@ -1276,9 +1276,9 @@ The release also adds the xref:components:processors/cohere_rerank.adoc[`cohere_
 This release adds:
 
 - The `transaction_isolation_level` field to the following inputs: xref:components:inputs/kafka_franz.adoc[`kafka_franz`], xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`].
-- The `request_timeout_overhead` and `conn_idle_timeout` fields to the following components: xref:components:inputs/kafka_franz.adoc[`kafka_franz` input], xref:components:inputs/redpanda.adoc[`redpanda` input], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input], xref:components:outputs/kafka_franz.adoc[`kafka_franz` output], xref:components:outputs/redpanda.adoc[`redpanda` output], xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output], ``redpanda_migrator_offsets` output`, xref:components:redpanda/about.adoc[`redpanda` configuration service].
+- The `request_timeout_overhead` and `conn_idle_timeout` fields to the following components: xref:components:inputs/kafka_franz.adoc[`kafka_franz` input], xref:components:inputs/redpanda.adoc[`redpanda` input], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input], xref:components:outputs/kafka_franz.adoc[`kafka_franz` output], xref:components:outputs/redpanda.adoc[`redpanda` output], xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output], `redpanda_migrator_offsets` output, xref:components:redpanda/about.adoc[`redpanda` configuration service].
 - The `start_offset` field to the following components: xref:components:inputs/kafka_franz.adoc[`kafka_franz` input], xref:components:inputs/ockam_kafka.adoc[`ockam_kafka` input], xref:components:inputs/redpanda.adoc[`redpanda` input], xref:components:inputs/redpanda_common.adoc[`redpanda_common` input], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input].
-- The `topic_prefix` field to the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output], and the `offset_topic_prefix` field to the ``redpanda_migrator_offsets` output`, to more easily identify migrated topics.
+- The `topic_prefix` field to the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output], and the `offset_topic_prefix` field to the `redpanda_migrator_offsets` output, to more easily identify migrated topics.
 - The `use_enum_numbers` field to the xref:components:processors/protobuf.adoc[`protobuf` processor].
 - The `dimensions` field to the xref:components:processors/cohere_embeddings.adoc[`cohere_embeddings` processor].
 - The `region`, `endpoint`, and `credentials` fields to the `dynamodb` section of the xref:components:inputs/aws_kinesis.adoc[`aws_kinesis` input].
@@ -1341,7 +1341,7 @@ This release adds:
 - Two new metrics to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]: `snowflake_register_latency_ns` and `snowflake_commit_latency_ns`.
 - An `ignore_nulls` option for schema evolution in the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output]. 
 - The `translate_ids` field to the xref:components:outputs/schema_registry.adoc[`schema_registry` output].
-- The `translate_schema_ids` field to the ``redpanda_migrator_bundle` output`.
+- The `translate_schema_ids` field to the `redpanda_migrator_bundle` output.
 
 Also, the `translate_schema_ids` field in the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output] now defaults to `false`.
 
@@ -1361,8 +1361,8 @@ This release adds:
 - The `heartbeat_interval` field to the xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input], which helps manage the size of the Write-Ahead Log when you subscribe to data changes from tables with low activity.
 - The `commit_timeout` field to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output].
 - The `url` field to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output], which allows you to override the default connection URL.
-- The `is_high_watermark` field to the ``redpanda_migrator_offsets` output`.
-- The `kafka_is_high_watermark` metadata field to the ``redpanda_migrator_offsets` input`.
+- The `is_high_watermark` field to the `redpanda_migrator_offsets` output.
+- The `kafka_is_high_watermark` metadata field to the `redpanda_migrator_offsets` input.
 
 Other changes:
 
@@ -1445,7 +1445,7 @@ This release adds:
 - The `content_type` field to the xref:components:outputs/amqp_1.adoc[`amqp_1` output].
 - The `offset_token` field to the xref:components:outputs/snowflake_streaming.adoc[`snowflake_streaming` output].
 - The `save_prompt_metadata`, `max_tool_calls` fields and `tools` object to the xref:components:processors/ollama_chat.adoc[`ollama_chat` processor].
-- The `offset_topic`, `offset_group`, `offset_partition`, `offset_commit_timestamp` and `offset_metadata` fields to the ``redpanda_migrator_offsets` output`.
+- The `offset_topic`, `offset_group`, `offset_partition`, `offset_commit_timestamp` and `offset_metadata` fields to the `redpanda_migrator_offsets` output.
 - The `topic_lag_refresh_period` field to the xref:components:inputs/redpanda.adoc[`redpanda`] and xref:components:inputs/redpanda_common.adoc[`redpanda_common`] inputs.
 - The `redpanda_lag` metric to the xref:components:inputs/redpanda.adoc[`redpanda`] and xref:components:inputs/redpanda_common.adoc[`redpanda_common`] inputs.
 - The `fetch_max_wait` field to the xref:components:inputs/kafka_franz.adoc[`kafka_franz`], xref:components:inputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], and xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`] inputs.
@@ -1473,7 +1473,7 @@ All changes are backward-compatible. No action is required if you are using an e
 | xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input], xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output]
 
 | `kafka_key`, `max_in_flight`
-| ``redpanda_migrator_offsets` output`
+| `redpanda_migrator_offsets` output
 
 | `batch_size`, `multi_header`, `replication_factor`, `replication_factor_override`, `output_resource`
 | xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input]
@@ -1541,7 +1541,7 @@ It also introduces a new xref:guides:bloblang/methods.adoc#timestamp[Bloblang me
 
 This release adds:
 
-* The `metadata_max_age` field to the ``redpanda_migrator_offsets` output`.
+* The `metadata_max_age` field to the `redpanda_migrator_offsets` output.
 * The `timestamp_ms` field to the following outputs: xref:components:outputs/ockam_kafka.adoc[`ockam_kafka`], xref:components:outputs/kafka.adoc[`kafka`], xref:components:outputs/kafka_franz.adoc[`kafka_franz`], xref:components:outputs/redpanda.adoc[`redpanda`], xref:components:outputs/redpanda_common.adoc[`redpanda_common`], xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator`].
 * The `kafka_timestamp_ms` metadata field, which uses a Unix timestamp with millisecond precision, to the following inputs: xref:components:inputs/kafka.adoc[`kafka`], xref:components:inputs/kafka_franz.adoc[`kafka_franz`], xref:components:inputs/redpanda.adoc[`redpanda`], xref:components:inputs/redpanda_common.adoc[`redpanda_common`], xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator`].
 * The `translate_schema_ids` and `schema_registry_output_resource` to the xref:components:outputs/redpanda_migrator.adoc[`redpanda_migrator` output].
@@ -1688,7 +1688,7 @@ Redpanda Connect has new bundled <<redpanda-migrator-components-beta,Redpanda Mi
 
 === Redpanda Migrator components (beta)
 
-You can now move workloads from any Apache Kafka system to Redpanda using the ``redpanda_migrator_bundle` input` and `output`. 
+You can now move workloads from any Apache Kafka system to Redpanda using the `redpanda_migrator_bundle` input and `output`. 
 
 For full details, see the Redpanda Migrator Cookbook for xref:cookbooks:redpanda_migrator.adoc[Self-Managed] and xref:redpanda-cloud:develop:connect/cookbooks/redpanda_migrator.adoc[Cloud].
 
@@ -1729,8 +1729,8 @@ Redpanda Connect is now fully integrated with the Redpanda Cloud platform. This 
 Redpanda Connect now includes beta versions of Redpanda Migrator components:
 
 * xref:components:inputs/redpanda_migrator.adoc[`redpanda_migrator` input] and xref:components:outputs/redpanda_migrator.adoc[output]
-* ``redpanda_migrator_bundle` input` and `output`
-* ``redpanda_migrator_offsets` output`
+* `redpanda_migrator_bundle` input and `output`
+* `redpanda_migrator_offsets` output
 
 For full details, see the Redpanda Migrator Cookbook for xref:cookbooks:redpanda_migrator.adoc[Self-Managed] and xref:redpanda-cloud:develop:connect/cookbooks/redpanda_migrator.adoc[Cloud].
 
