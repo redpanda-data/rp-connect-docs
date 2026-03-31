@@ -1,67 +1,386 @@
 {
   "comparison": {
-    "oldVersion": "4.79.0",
-    "newVersion": "4.81.0",
-    "timestamp": "2026-03-17T19:12:59.240Z"
+    "oldVersion": "4.81.0",
+    "newVersion": "4.85.0",
+    "timestamp": "2026-03-26T21:57:01.502Z"
   },
   "summary": {
-    "newComponents": 0,
-    "removedComponents": 0,
-    "newFields": 4,
-    "removedFields": 0,
+    "newComponents": 4,
+    "removedComponents": 6,
+    "newFields": 44,
+    "removedFields": 4,
     "deprecatedComponents": 0,
-    "deprecatedFields": 0,
-    "changedDefaults": 0
+    "deprecatedFields": 2,
+    "changedDefaults": 2
   },
   "details": {
     "newComponents": [
       {
-        "name": "oracledb_cdc",
-        "type": "input",
-        "status": "experimental",
+        "name": "parallel",
+        "type": "config",
+        "status": "bool",
         "version": "",
-        "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
-        "summary": "Enables Change Data Capture by consuming from OracleDB."
+        "description": "Whether test cases should be executed in parallel."
+      },
+      {
+        "name": "escape_url_path",
+        "type": "bloblang-methods",
+        "status": "stable",
+        "version": "",
+        "description": ""
+      },
+      {
+        "name": "parse_logfmt",
+        "type": "bloblang-methods",
+        "status": "stable",
+        "version": "",
+        "description": ""
+      },
+      {
+        "name": "unescape_url_path",
+        "type": "bloblang-methods",
+        "status": "stable",
+        "version": "",
+        "description": ""
       }
     ],
-    "removedComponents": [],
+    "removedComponents": [
+      {
+        "name": "legacy_redpanda_migrator",
+        "type": "inputs",
+        "status": "deprecated",
+        "version": "4.37.0",
+        "description": "\nReads a batch of messages from a Kafka broker and waits for the output to acknowledge the writes before updating the Kafka consumer group offset.\n\nThis input should be used in combination with a `legacy_redpanda_migrator` output.\n\nWhen a consumer group is specified this input consumes one or more topics where partitions will automatically balance across any other connected clients with the same consumer group. When a consumer group is not specified topics can either be consumed in their entirety or with explicit partitions.\n\nIt provides the same delivery guarantees and ordering semantics as the `redpanda` input.\n\n== Metrics\n\nEmits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- kafka_key\n- kafka_topic\n- kafka_partition\n- kafka_offset\n- kafka_lag\n- kafka_timestamp_ms\n- kafka_timestamp_unix\n- kafka_tombstone_message\n- All record headers\n```\n"
+      },
+      {
+        "name": "legacy_redpanda_migrator_offsets",
+        "type": "inputs",
+        "status": "deprecated",
+        "version": "4.45.0",
+        "description": "\nThis input reads consumer group updates via the `OffsetFetch` API and should be used in combination with the `legacy_redpanda_migrator_offsets` output.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- kafka_offset_topic\n- kafka_offset_group\n- kafka_offset_partition\n- kafka_offset_commit_timestamp\n- kafka_offset_metadata\n- kafka_is_high_watermark\n```\n"
+      },
+      {
+        "name": "redpanda_migrator_bundle",
+        "type": "inputs",
+        "status": "deprecated",
+        "version": "",
+        "description": "All-in-one input which reads messages and schemas from a Kafka or Redpanda cluster. This input is meant to be used\ntogether with the `redpanda_migrator_bundle` output.\n"
+      },
+      {
+        "name": "legacy_redpanda_migrator",
+        "type": "outputs",
+        "status": "deprecated",
+        "version": "4.37.0",
+        "description": "\nWrites a batch of messages to a Kafka broker and waits for acknowledgement before propagating it back to the input.\n\nThis output should be used in combination with a `legacy_redpanda_migrator` input identified by the label specified in\n`input_resource` which it can query for topic and ACL configurations. Once connected, the output will attempt to\ncreate all topics which the input consumes from along with their ACLs.\n\nIf the configured broker does not contain the current message topic, this output attempts to create it along with its\nACLs.\n\nACL migration adheres to the following principles:\n\n- `ALLOW WRITE` ACLs for topics are not migrated\n- `ALLOW ALL` ACLs for topics are downgraded to `ALLOW READ`\n- Only topic ACLs are migrated, group ACLs are not migrated\n"
+      },
+      {
+        "name": "legacy_redpanda_migrator_offsets",
+        "type": "outputs",
+        "status": "deprecated",
+        "version": "4.37.0",
+        "description": "This output should be used in combination with the `legacy_redpanda_migrator_offsets` input"
+      },
+      {
+        "name": "redpanda_migrator_bundle",
+        "type": "outputs",
+        "status": "deprecated",
+        "version": "",
+        "description": "All-in-one output which writes messages and schemas to a Kafka or Redpanda cluster. This output is meant to be used\ntogether with the `redpanda_migrator_bundle` input.\n"
+      }
+    ],
     "newFields": [
       {
-        "component": "inputs:tigerbeetle_cdc",
-        "field": "timeout_seconds",
-        "description": "The timeout in seconds, for querying the TigerBeetle cluster."
+        "component": "caches:redis",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
       },
       {
-        "component": "outputs:aws_sns",
-        "field": "subject",
-        "description": "An optional subject to set for messages."
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "tables",
+        "description": "List of table names to stream from. For single table mode, provide one table. For multi-table mode, provide multiple tables."
       },
       {
-        "component": "processors:google_drive_download",
-        "field": "shared_drives",
-        "description": "Whether or not to include shared drives."
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "table_discovery_mode",
+        "description": "Table discovery mode. `single`: stream from tables specified in `tables` list. `tag`: auto-discover tables by tags (ignores `tables` field). `includelist`: stream from tables in `tables` list (alias for `single`, kept for compatibility)."
       },
       {
-        "component": "processors:google_drive_search",
-        "field": "shared_drives",
-        "description": "Whether or not to include shared drives in the result."
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "table_tag_filter",
+        "description": "Multi-tag filter: 'key1:v1,v2;key2:v3,v4'. Matches tables with (key1=v1 OR key1=v2) AND (key2=v3 OR key2=v4). Required when `table_discovery_mode` is `tag`."
+      },
+      {
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "table_discovery_interval",
+        "description": "Interval for rescanning and discovering new tables when using `tag` or `includelist` mode. Set to 0 to disable periodic rescanning."
+      },
+      {
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "snapshot_mode",
+        "description": "Snapshot behavior. `none`: CDC only (default). `snapshot_only`: one-time table scan, no streaming. `snapshot_and_cdc`: scan entire table then stream changes."
+      },
+      {
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "snapshot_segments",
+        "description": "Number of parallel scan segments (1-10). Higher parallelism scans faster but consumes more RCUs. Start with 1 for safety."
+      },
+      {
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "snapshot_batch_size",
+        "description": "Records per scan request during snapshot. Maximum 1000. Lower values provide better backpressure control but require more API calls."
+      },
+      {
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "snapshot_throttle",
+        "description": "Minimum time between scan requests per segment. Use this to limit RCU consumption during snapshot."
+      },
+      {
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "snapshot_deduplicate",
+        "description": "Deduplicate records that appear in both snapshot and CDC stream. Requires buffering CDC events during snapshot. If buffer is exceeded, deduplication is disabled to prevent data loss."
+      },
+      {
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "snapshot_buffer_size",
+        "description": "Maximum CDC events to buffer for deduplication (approximately 100 bytes per entry). If exceeded, deduplication is disabled and duplicates may be emitted."
+      },
+      {
+        "component": "inputs:nats_jetstream",
+        "field": "create_stream",
+        "description": "Whether to automatically create the stream if it doesn't exist (requires the stream field to be set)."
+      },
+      {
+        "component": "inputs:redis_list",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "inputs:redis_pubsub",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "inputs:redis_scan",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "inputs:redis_streams",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "inputs:redpanda",
+        "field": "extract_tracing_map",
+        "introducedIn": "3.45.0",
+        "description": "EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] that attempts to extract an object containing tracing propagation information, which will then be used as the root tracing span for the message. The specification of the extracted fields must match the format used by the service wide tracer."
+      },
+      {
+        "component": "outputs:redis_hash",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "outputs:redis_list",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "outputs:redis_pubsub",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "outputs:redis_streams",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "outputs:redis_streams",
+        "field": "id",
+        "description": "The entry ID for the stream message. Allows function interpolations. When set to `*` (the default), Redis auto-generates a unique ID based on the current time. Set a custom ID to control message ordering, for example to replay messages in upstream order."
+      },
+      {
+        "component": "outputs:redpanda",
+        "field": "inject_tracing_map",
+        "introducedIn": "3.45.0",
+        "description": "EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] used to inject an object containing tracing propagation information into outbound messages. The specification of the injected fields will match the format used by the service wide tracer."
+      },
+      {
+        "component": "outputs:redpanda_migrator",
+        "field": "sync_topic_interval",
+        "description": "How often to synchronize topics from the source cluster to the destination. This creates destination topics for any new source topics, including empty topics with no message flow. Set to 0s to disable periodic sync (topics are still created on first message)."
+      },
+      {
+        "component": "outputs:snowflake_streaming",
+        "field": "commit_backoff",
+        "description": "Control how frequently Snowflake is polled to check if data has been committed."
+      },
+      {
+        "component": "processors:jira",
+        "field": "timeout",
+        "description": "HTTP request timeout."
+      },
+      {
+        "component": "processors:jira",
+        "field": "tls",
+        "description": "Custom TLS settings can be used to override system defaults."
+      },
+      {
+        "component": "processors:jira",
+        "field": "proxy_url",
+        "description": "HTTP proxy URL. Empty string disables proxying."
+      },
+      {
+        "component": "processors:jira",
+        "field": "disable_http2",
+        "description": "Disable HTTP/2 and force HTTP/1.1."
+      },
+      {
+        "component": "processors:jira",
+        "field": "tps_limit",
+        "description": "Rate limit in requests per second. 0 disables rate limiting."
+      },
+      {
+        "component": "processors:jira",
+        "field": "tps_burst",
+        "description": "Maximum burst size for rate limiting."
+      },
+      {
+        "component": "processors:jira",
+        "field": "backoff",
+        "description": "Adaptive backoff configuration for 429 (Too Many Requests) responses. Always active."
+      },
+      {
+        "component": "processors:jira",
+        "field": "tcp",
+        "description": "TCP socket configuration."
+      },
+      {
+        "component": "processors:jira",
+        "field": "http",
+        "description": "HTTP transport settings controlling connection pooling, timeouts, and HTTP/2."
+      },
+      {
+        "component": "processors:jira",
+        "field": "access_log_level",
+        "description": "Log level for HTTP request/response logging. Empty disables logging."
+      },
+      {
+        "component": "processors:jira",
+        "field": "access_log_body_limit",
+        "description": "Maximum bytes of request/response body to include in logs. 0 to skip body logging."
+      },
+      {
+        "component": "processors:redis",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "processors:redis_script",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
+      },
+      {
+        "component": "processors:schema_registry_encode",
+        "field": "schema_metadata",
+        "description": "When set, the processor reads a schema in benthos common schema format from this metadata key on each message, converts it to the format specified by `format`, registers it with the schema registry under the configured subject, and encodes the message. When empty (the default), the processor pulls the latest schema from the registry instead."
+      },
+      {
+        "component": "processors:schema_registry_encode",
+        "field": "format",
+        "description": "The encoding format to use when converting a common schema from metadata. Required when `schema_metadata` is set."
+      },
+      {
+        "component": "processors:schema_registry_encode",
+        "field": "normalize",
+        "description": "Whether to normalize the schema before registering with the schema registry (schema_metadata mode only)."
+      },
+      {
+        "component": "processors:schema_registry_encode",
+        "field": "avro",
+        "description": "Configuration for Avro encoding."
+      },
+      {
+        "component": "processors:switch",
+        "field": "continue",
+        "description": "Indicates whether, if this case passes for a message, the next case should also be tested. Unlike `fallthrough`, which skips the next case's check, `continue` will evaluate the next case's condition before executing."
+      },
+      {
+        "component": "rate-limits:redis",
+        "field": "client_name",
+        "introducedIn": "4.82.0",
+        "description": "Set the client name for the Redis connection."
       }
     ],
-    "removedFields": [],
+    "removedFields": [
+      {
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "table"
+      },
+      {
+        "component": "outputs:aws_s3",
+        "field": "content_md5"
+      },
+      {
+        "component": "processors:jira",
+        "field": "request_timeout"
+      },
+      {
+        "component": "processors:jira",
+        "field": "max_retries"
+      }
+    ],
     "deprecatedComponents": [],
-    "deprecatedFields": [],
-    "changedDefaults": []
+    "deprecatedFields": [
+      {
+        "component": "outputs:snowflake_streaming",
+        "field": "commit_timeout",
+        "description": "Deprecated: use `commit_backoff.max_elapsed_time` instead."
+      },
+      {
+        "component": "processors:schema_registry_encode",
+        "field": "avro_raw_json",
+        "description": "DEPRECATED: Use avro.raw_json instead."
+      }
+    ],
+    "changedDefaults": [
+      {
+        "component": "outputs:amqp_1",
+        "field": "target_address",
+        "newDefault": "",
+        "description": "The target address to write to. When left empty, the output uses the Anonymous Terminus pattern where the destination is specified per-message using `message_properties_to`."
+      },
+      {
+        "component": "outputs:snowflake_streaming",
+        "field": "commit_timeout",
+        "oldDefault": "60s",
+        "newDefault": "",
+        "description": "Deprecated: use `commit_backoff.max_elapsed_time` instead."
+      }
+    ]
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.81.0",
-      "cloud": "4.83.0",
-      "cgo": "4.83.0"
+      "oss": "4.85.0",
+      "cloud": "4.85.0",
+      "cgo": "4.85.0"
     },
     "current": {
-      "cloudSupported": 478,
-      "selfHostedOnly": 79,
-      "cgoOnly": 1
+      "cloudSupported": 477,
+      "selfHostedOnly": 81,
+      "cgoOnly": 0
     },
     "changes": {},
     "details": {
@@ -145,6 +464,11 @@
           "type": "config",
           "name": "tests",
           "status": "object"
+        },
+        {
+          "type": "config",
+          "name": "parallel",
+          "status": "bool"
         },
         {
           "type": "config",
@@ -244,6 +568,11 @@
         {
           "type": "inputs",
           "name": "amqp_0_9",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "aws_cloudwatch_logs",
           "status": "stable"
         },
         {
@@ -358,16 +687,6 @@
         },
         {
           "type": "inputs",
-          "name": "legacy_redpanda_migrator",
-          "status": "deprecated"
-        },
-        {
-          "type": "inputs",
-          "name": "legacy_redpanda_migrator_offsets",
-          "status": "deprecated"
-        },
-        {
-          "type": "inputs",
           "name": "microsoft_sql_server_cdc",
           "status": "beta"
         },
@@ -405,6 +724,11 @@
           "type": "inputs",
           "name": "nats_kv",
           "status": "beta"
+        },
+        {
+          "type": "inputs",
+          "name": "oracledb_cdc",
+          "status": "experimental"
         },
         {
           "type": "inputs",
@@ -468,11 +792,6 @@
         },
         {
           "type": "inputs",
-          "name": "redpanda_migrator_bundle",
-          "status": "deprecated"
-        },
-        {
-          "type": "inputs",
           "name": "resource",
           "status": "stable"
         },
@@ -525,11 +844,6 @@
           "type": "inputs",
           "name": "timeplus",
           "status": "experimental"
-        },
-        {
-          "type": "inputs",
-          "name": "aws_cloudwatch_logs",
-          "status": "stable"
         },
         {
           "type": "outputs",
@@ -648,6 +962,11 @@
         },
         {
           "type": "outputs",
+          "name": "iceberg",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
           "name": "inproc",
           "status": "stable"
         },
@@ -660,16 +979,6 @@
           "type": "outputs",
           "name": "kafka_franz",
           "status": "beta"
-        },
-        {
-          "type": "outputs",
-          "name": "legacy_redpanda_migrator",
-          "status": "deprecated"
-        },
-        {
-          "type": "outputs",
-          "name": "legacy_redpanda_migrator_offsets",
-          "status": "deprecated"
         },
         {
           "type": "outputs",
@@ -763,11 +1072,6 @@
         },
         {
           "type": "outputs",
-          "name": "redpanda_migrator_bundle",
-          "status": "deprecated"
-        },
-        {
-          "type": "outputs",
           "name": "reject",
           "status": "stable"
         },
@@ -839,11 +1143,6 @@
         {
           "type": "outputs",
           "name": "sync_response",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "iceberg",
           "status": "stable"
         },
         {
@@ -1663,6 +1962,11 @@
         },
         {
           "type": "bloblang-methods",
+          "name": "escape_url_path",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
           "name": "escape_url_query",
           "status": "stable"
         },
@@ -2068,6 +2372,11 @@
         },
         {
           "type": "bloblang-methods",
+          "name": "parse_logfmt",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
           "name": "parse_msgpack",
           "status": "stable"
         },
@@ -2403,6 +2712,11 @@
         },
         {
           "type": "bloblang-methods",
+          "name": "unescape_url_path",
+          "status": "stable"
+        },
+        {
+          "type": "bloblang-methods",
           "name": "unescape_url_query",
           "status": "stable"
         },
@@ -2675,6 +2989,11 @@
         },
         {
           "type": "outputs",
+          "name": "salesforce_sink",
+          "status": "experimental"
+        },
+        {
+          "type": "outputs",
           "name": "socket",
           "status": "stable"
         },
@@ -2770,6 +3089,11 @@
         },
         {
           "type": "processors",
+          "name": "salesforce",
+          "status": "experimental"
+        },
+        {
+          "type": "processors",
           "name": "sentry_capture",
           "status": "experimental"
         },
@@ -2856,23 +3180,12 @@
       ],
       "cloudOnly": [
         {
-          "type": "inputs",
-          "name": "oracledb_cdc",
-          "status": "experimental"
-        },
-        {
           "type": "processors",
           "name": "a2a_message",
           "status": "beta"
         }
       ],
-      "cgoOnly": [
-        {
-          "type": "inputs",
-          "name": "oracledb_cdc",
-          "status": "experimental"
-        }
-      ]
+      "cgoOnly": []
     }
   }
 }

@@ -1,0 +1,60 @@
+= oracledb_cdc
+// tag::single-source[]
+:type: input
+:status: experimental
+:categories: [Services]
+:page-commercial-names: Oracle CDC, OracleDB CDC, Oracle Database CDC
+:description: Enables Change Data Capture by consuming from OracleDB.
+
+component_type_dropdown::[]
+
+Enables Change Data Capture by consuming from OracleDB.
+
+ifndef::env-cloud[]
+Introduced in version 4.83.0.
+endif::[]
+
+Streams changes from an Oracle database for Change Data Capture (CDC).
+Additionally, if `stream_snapshot` is set to true, existing data in the database is also streamed.
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/inputs/oracledb_cdc.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/oracledb_cdc.yaml[]
+```
+
+--
+======
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- database_schema: The database schema for the table where the message originates from.
+- table_name: Name of the table that the message originated from.
+- operation: Type of operation that generated the message: "read", "delete", "insert", or "update". "read" is from messages that are read in the initial snapshot phase.
+- scn: The System Change Number in Oracle.
+- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.
+
+== Permissions
+
+When using the default Oracle-based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn schema must already exist. See `checkpoint_cache_table_name` for more information.
+
+include::redpanda-connect:components:partial$fields/inputs/oracledb_cdc.adoc[]
+
+
+
+// end::single-source[]

@@ -5,9 +5,6 @@ site:
   robots: disallow
 urls:
   html_extension_style: indexify
-runtime:
-  log:
-    failure_level: error
 content:
   sources:
   - url: .
@@ -21,7 +18,7 @@ content:
     branches: main
     start_paths: [docs,'*/docs']
   - url: https://github.com/redpanda-data/cloud-docs
-    branches: main
+    branches: rpcn-4.85.0-cloud-docs
 ui:
   bundle:
     url: https://github.com/redpanda-data/docs-ui/releases/latest/download/ui-bundle.zip

@@ -4,6 +4,7 @@ rate-limits:
     url: "" # No default (required)
     kind: simple
     master: ""
+    client_name: redpanda-connect
     tls:
       enabled: false
       skip_cert_verify: false

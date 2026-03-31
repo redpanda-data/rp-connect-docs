@@ -25,6 +25,13 @@ inputs:
         root_cas: ""
         root_cas_file: ""
         client_certs: []
+      oauth2:
+        enabled: false
+        client_key: ""
+        client_secret: ""
+        token_url: ""
+        scopes: []
+        endpoint_params: {}
       oauth:
         enabled: false
         consumer_key: ""

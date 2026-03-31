@@ -80,7 +80,7 @@ Allows you to specify a custom endpoint for the AWS API.
 
 === `filter_pattern`
 
-An optional CloudWatch Logs filter pattern to apply when querying log events. See AWS documentation for filter pattern syntax.
+An optional CloudWatch Logs filter pattern to apply when querying log events. For syntax details, see the https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html[CloudWatch Logs filter and pattern syntax^] documentation.
 
 *Type*: `string`
 
@@ -152,7 +152,7 @@ The AWS region to target.
 
 === `start_time`
 
-The time to start consuming log events from. Can be an RFC3339 timestamp (e.g., `2024-01-01T00:00:00Z`) or the string `now` to start consuming from the current time. If not set, starts from the beginning of available logs.
+The time to start consuming log events from. Can be an RFC3339 timestamp (for example, `2024-01-01T00:00:00Z`) or the string `now` to start consuming from the current time. If not set, starts from the beginning of available logs.
 
 *Type*: `string`
 
@@ -168,7 +168,7 @@ start_time: now
 
 === `structured_log`
 
-Whether to output log events as structured JSON objects with all metadata fields, or as plain text messages with metadata in message metadata.
+Whether to output log events as structured JSON objects with all metadata fields, or as plain text messages with metadata stored in Redpanda Connect message metadata.
 
 *Type*: `bool`
 

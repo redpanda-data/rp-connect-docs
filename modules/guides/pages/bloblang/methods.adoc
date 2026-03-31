@@ -276,6 +276,27 @@ root.escaped = this.value.escape_url_query()
 # In:  {"value":"foo & bar"}
 ```
 
+=== `escape_url_path`
+
+Encodes a string for safe use in URL path segments using percent-encoding. Unlike `escape_url_query`, spaces are encoded as `%20` instead of `+`. Use when building URL paths with dynamic segments.
+
+==== Examples
+
+
+```bloblang
+root.escaped = this.value.escape_url_path()
+
+# In:  {"value":"foo & bar"}
+# Out: {"escaped":"foo%20&%20bar"}
+```
+
+```bloblang
+root.url = "https://example.com/docs/" + this.path.escape_url_path()
+
+# In:  {"path":"my document.pdf"}
+# Out: {"url":"https://example.com/docs/my%20document.pdf"}
+```
+
 === `filepath_join`
 
 Joins an array of path elements into a single file path. The separator depends on the operating system of the machine.
@@ -693,6 +714,27 @@ Expands escape sequences from a URL query string.
 root.unescaped = this.value.unescape_url_query()
 
 # In:  {"value":"foo+%26+bar"}
+```
+
+=== `unescape_url_path`
+
+Decodes URL path percent-encoding, converting `%20` to spaces and other percent-encoded characters to their original values. Use for parsing URL path segments.
+
+==== Examples
+
+
+```bloblang
+root.unescaped = this.value.unescape_url_path()
+
+# In:  {"value":"foo%20&%20bar"}
+# Out: {"unescaped":"foo & bar"}
+```
+
+```bloblang
+root.filename = this.path.unescape_url_path()
+
+# In:  {"path":"my%20document.pdf"}
+# Out: {"filename":"my document.pdf"}
 ```
 
 === `unicode_segments`
@@ -3000,6 +3042,20 @@ Attempts to parse a url-encoded query string (from an x-www-form-urlencoded requ
 root.values = this.body.parse_form_url_encoded()
 
 # In:  {"body":"noise=meow&animal=cat&fur=orange&fur=fluffy"}
+```
+
+=== `parse_logfmt`
+
+Attempts to parse a logfmt-encoded string into an object. A logfmt string contains key=value pairs separated by spaces, where values can optionally be quoted.
+
+==== Example
+
+
+```bloblang
+root = this.msg.parse_logfmt()
+
+# In:  {"msg":"level=info msg=\"hello world\" dur=1.5s"}
+# Out: {"dur":"1.5s","level":"info","msg":"hello world"}
 ```
 
 === `parse_json`

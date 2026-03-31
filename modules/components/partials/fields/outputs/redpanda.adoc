@@ -169,6 +169,26 @@ Enable the idempotent write producer option. This requires the `IDEMPOTENT_WRITE
 
 *Default*: `true`
 
+=== `inject_tracing_map`
+
+EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] used to inject an object containing tracing propagation information into outbound messages. The specification of the injected fields will match the format used by the service wide tracer.
+
+ifndef::env-cloud[]
+Requires version 3.45.0 or later.
+endif::[]
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+inject_tracing_map: meta = @.merge(this)
+
+# ---
+
+inject_tracing_map: root.meta.span = this
+----
+
 === `key`
 
 An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].

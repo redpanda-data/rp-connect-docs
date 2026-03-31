@@ -20,9 +20,17 @@ check: this.type == "foo"
 check: this.contents.urls.contains("https://benthos.dev/")
 ----
 
+=== `continue`
+
+Indicates whether, if this case passes for a message, the next case should also be tested. Unlike `fallthrough`, which skips the next case's check, `continue` will evaluate the next case's condition before executing.
+
+*Type*: `bool`
+
+*Default*: `false`
+
 === `fallthrough`
 
-Indicates whether, if this case passes for a message, the next case should also be executed.
+Indicates whether, if this case passes for a message, the next case should also be executed without checking its condition.
 
 *Type*: `bool`
 

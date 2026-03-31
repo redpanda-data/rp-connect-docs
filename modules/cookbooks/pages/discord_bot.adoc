@@ -86,7 +86,7 @@ By changing our mapping out to this switch we can add specialised commands for d
 
 The only case we've added here is one that activates when the message type is a specific one sent when a new person joins, and in response we give them a warm welcome. The welcome mentions the new user by injecting the user id into the welcome string with `.format(this.author.id)`, which replaces the `%v` placeholder with the author ID (the user that joined and therefore created the join message).
 
-This response is cool but not very interactive, let's add a few commands that people can play with:
+This response is good but not very interactive. Let's add a few commands that people can play with:
 
 [source,yaml]
 ----

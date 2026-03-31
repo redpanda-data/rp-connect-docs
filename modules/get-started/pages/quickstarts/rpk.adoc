@@ -165,7 +165,7 @@ For Docker installations:
 docker run --rm -it -v $(pwd)/connect.yaml:/connect.yaml docker.redpanda.com/redpandadata/connect run
 ----
 
-Anything you write to stdin will get written unchanged to stdout, cool! Resist the temptation to play with this for hours, there's more stuff to try out.
+Anything you write to stdin will get written unchanged to stdout! Resist the temptation to play with this for hours, there's more stuff to try out.
 
 Next, let's add some processing steps in order to mutate messages. The most powerful one is the xref:components:processors/mapping.adoc[`mapping` processor] which allows us to perform mappings, let's add a mapping to uppercase our messages:
 

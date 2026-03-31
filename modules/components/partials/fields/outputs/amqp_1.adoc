@@ -30,7 +30,9 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 === `message_properties_to`
 
-The field specifies the node that is the intended destination of the message, which may differ from the node currently receiving the transfer.
+The field specifies the node that is the intended destination of the message, which may differ from the node currently receiving the transfer. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -38,6 +40,10 @@ The field specifies the node that is the intended destination of the message, wh
 ----
 # Examples:
 message_properties_to: amqp://localhost:5672/
+
+# ---
+
+message_properties_to: ${! meta("target_address") }
 ----
 
 === `metadata`
@@ -123,9 +129,11 @@ user: ${USER}
 
 === `target_address`
 
-The target address to write to.
+The target address to write to. When left empty, the output uses the Anonymous Terminus pattern where the destination is specified per-message using `message_properties_to`.
 
 *Type*: `string`
+
+*Default*: `""`
 
 [source,yaml]
 ----
@@ -139,6 +147,10 @@ target_address: queue:/bar
 # ---
 
 target_address: topic:/baz
+
+# ---
+
+target_address: 
 ----
 
 === `target_capabilities[]`

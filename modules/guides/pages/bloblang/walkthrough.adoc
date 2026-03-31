@@ -736,7 +736,7 @@ root = this.talking_heads.map_each(raw -> raw.split(":").(split_string -> {
 Try updating that map so that only opinions that mention Pokemon are kept
 ====
 
-Cool. To find more methods for manipulating structured data types check out the xref:guides:bloblang/methods.adoc#object--array-manipulation[methods page].
+To find more methods for manipulating structured data types check out the xref:guides:bloblang/methods.adoc#object--array-manipulation[methods page].
 
 == Reusable mappings
 
@@ -763,7 +763,7 @@ Named maps are executed with the xref:guides:bloblang/methods.adoc#apply[method 
 
 As you can see in the above example we were able to use a custom map in order to create our talking head objects without the object literal. Within a named map we can also create variables that exist only within the scope of the map.
 
-A cool feature of named mappings is that they can invoke themselves recursively, allowing you to define mappings that walk deeply nested structures. The following mapping will scrub all values from a document that contain the word "Voldemort" (case insensitive):
+A nice feature of named mappings is that they can invoke themselves recursively, allowing you to define mappings that walk deeply nested structures. The following mapping will scrub all values from a document that contain the word "Voldemort" (case insensitive):
 
 [source,bloblang]
 ----

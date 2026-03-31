@@ -1,0 +1,47 @@
+= salesforce_sink
+// tag::single-source[]
+:type: output
+:status: experimental
+:categories: [Services]
+:page-commercial-names: Salesforce, Salesforce Sink
+:description: Writes messages to Salesforce, routing each Kafka topic to its own sObject configuration.
+
+component_type_dropdown::[]
+
+Writes messages to Salesforce, routing each Kafka topic to its own sObject configuration.
+
+ifndef::env-cloud[]
+Introduced in version 4.85.0.
+endif::[]
+
+Consumes batches of messages and writes them to Salesforce. Each message must have a `topic` field (set by the per-topic processor) and a `data` field containing the Salesforce record fields. The `topic` is used to look up the correct `topic_mappings` entry which defines the sObject, operation, and write mode.
+
+**Realtime mode** uses the sObject Collections REST API (synchronous, up to 200 records/call). **Bulk mode** uses the Bulk API 2.0 (asynchronous, polls until complete).
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/outputs/salesforce_sink.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/salesforce_sink.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/outputs/salesforce_sink.adoc[]
+
+
+
+// end::single-source[]

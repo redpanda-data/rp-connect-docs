@@ -120,6 +120,46 @@ A key to set the raw body of the message to.
 
 *Default*: `body`
 
+=== `client_name`
+
+Set the client name for the Redis connection.
+
+ifndef::env-cloud[]
+Requires version 4.82.0 or later.
+endif::[]
+
+*Type*: `string`
+
+*Default*: `redpanda-connect`
+
+=== `id`
+
+The entry ID for the stream message. Allows function interpolations. When set to `*` (the default), Redis auto-generates a unique ID based on the current time. Set a custom ID to control message ordering, for example to replay messages in upstream order.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+*Default*: `*`
+
+[source,yaml]
+----
+# Examples:
+id: *
+
+# ---
+
+id: ${! @redis_stream }
+
+# ---
+
+id: ${! this.id }
+
+# ---
+
+id: ${! counter() }-0
+----
+
 === `kind`
 
 Specifies a simple, cluster-aware, or failover-aware redis client.

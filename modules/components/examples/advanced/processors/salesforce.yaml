@@ -1,0 +1,25 @@
+processors:
+  label: ""
+  salesforce:
+    org_url: "" # No default (required)
+    client_id: "" # No default (required)
+    client_secret: "" # No default (required)
+    restapi_version: v65.0
+    request_timeout: 30s
+    max_retries: 10
+    query_type: rest
+    query: ""
+    cdc_enabled: false
+    cdc_objects: []
+    cdc_batch_size: 100
+    cdc_buffer_size: 1000
+    cdc_replay_preset: latest
+    pubsub_topic: ""
+    grpc_reconnect_base_delay: 500ms
+    grpc_reconnect_max_delay: 30s
+    grpc_reconnect_max_attempts: 0
+    grpc_shutdown_timeout: 10s
+    cache_resource: salesforce_checkpoint
+    parallel_fetch: 1
+    query_batch_size: 2000
+    rest_objects: []

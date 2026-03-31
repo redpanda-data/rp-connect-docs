@@ -18,6 +18,18 @@ args_mapping: root = [ this.key ]
 args_mapping: root = [ meta("kafka_key"), "hardcoded_value" ]
 ----
 
+=== `client_name`
+
+Set the client name for the Redis connection.
+
+ifndef::env-cloud[]
+Requires version 4.82.0 or later.
+endif::[]
+
+*Type*: `string`
+
+*Default*: `redpanda-connect`
+
 === `keys_mapping`
 
 A xref:guides:bloblang/about.adoc[Bloblang mapping] which should evaluate to an array of keys matching in size to the number of arguments required for the specified Redis script.
