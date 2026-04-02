@@ -1,44 +1,23 @@
 {
   "comparison": {
-    "oldVersion": "4.81.0",
-    "newVersion": "4.85.0",
-    "timestamp": "2026-03-26T21:57:01.502Z"
+    "oldVersion": "4.85.0",
+    "newVersion": "4.86.0",
+    "timestamp": "2026-04-02T16:23:59.381Z"
   },
   "summary": {
-    "newComponents": 4,
-    "removedComponents": 6,
-    "newFields": 44,
-    "removedFields": 4,
+    "newComponents": 1,
+    "removedComponents": 5,
+    "newFields": 0,
+    "removedFields": 0,
     "deprecatedComponents": 0,
-    "deprecatedFields": 2,
-    "changedDefaults": 2
+    "deprecatedFields": 0,
+    "changedDefaults": 0
   },
   "details": {
     "newComponents": [
       {
-        "name": "parallel",
-        "type": "config",
-        "status": "bool",
-        "version": "",
-        "description": "Whether test cases should be executed in parallel."
-      },
-      {
-        "name": "escape_url_path",
-        "type": "bloblang-methods",
-        "status": "stable",
-        "version": "",
-        "description": ""
-      },
-      {
-        "name": "parse_logfmt",
-        "type": "bloblang-methods",
-        "status": "stable",
-        "version": "",
-        "description": ""
-      },
-      {
-        "name": "unescape_url_path",
-        "type": "bloblang-methods",
+        "name": "string_split",
+        "type": "processors",
         "status": "stable",
         "version": "",
         "description": ""
@@ -46,343 +25,95 @@
     ],
     "removedComponents": [
       {
-        "name": "legacy_redpanda_migrator",
+        "name": "tigerbeetle_cdc",
         "type": "inputs",
-        "status": "deprecated",
-        "version": "4.37.0",
-        "description": "\nReads a batch of messages from a Kafka broker and waits for the output to acknowledge the writes before updating the Kafka consumer group offset.\n\nThis input should be used in combination with a `legacy_redpanda_migrator` output.\n\nWhen a consumer group is specified this input consumes one or more topics where partitions will automatically balance across any other connected clients with the same consumer group. When a consumer group is not specified topics can either be consumed in their entirety or with explicit partitions.\n\nIt provides the same delivery guarantees and ordering semantics as the `redpanda` input.\n\n== Metrics\n\nEmits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- kafka_key\n- kafka_topic\n- kafka_partition\n- kafka_offset\n- kafka_lag\n- kafka_timestamp_ms\n- kafka_timestamp_unix\n- kafka_tombstone_message\n- All record headers\n```\n"
+        "status": "beta",
+        "version": "0.0.1",
+        "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer’s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater."
       },
       {
-        "name": "legacy_redpanda_migrator_offsets",
+        "name": "zmq4",
         "type": "inputs",
-        "status": "deprecated",
-        "version": "4.45.0",
-        "description": "\nThis input reads consumer group updates via the `OffsetFetch` API and should be used in combination with the `legacy_redpanda_migrator_offsets` output.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- kafka_offset_topic\n- kafka_offset_group\n- kafka_offset_partition\n- kafka_offset_commit_timestamp\n- kafka_offset_metadata\n- kafka_is_high_watermark\n```\n"
-      },
-      {
-        "name": "redpanda_migrator_bundle",
-        "type": "inputs",
-        "status": "deprecated",
+        "status": "stable",
         "version": "",
-        "description": "All-in-one input which reads messages and schemas from a Kafka or Redpanda cluster. This input is meant to be used\ntogether with the `redpanda_migrator_bundle` output.\n"
+        "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component."
       },
       {
-        "name": "legacy_redpanda_migrator",
+        "name": "zmq4",
         "type": "outputs",
-        "status": "deprecated",
-        "version": "4.37.0",
-        "description": "\nWrites a batch of messages to a Kafka broker and waits for acknowledgement before propagating it back to the input.\n\nThis output should be used in combination with a `legacy_redpanda_migrator` input identified by the label specified in\n`input_resource` which it can query for topic and ACL configurations. Once connected, the output will attempt to\ncreate all topics which the input consumes from along with their ACLs.\n\nIf the configured broker does not contain the current message topic, this output attempts to create it along with its\nACLs.\n\nACL migration adheres to the following principles:\n\n- `ALLOW WRITE` ACLs for topics are not migrated\n- `ALLOW ALL` ACLs for topics are downgraded to `ALLOW READ`\n- Only topic ACLs are migrated, group ACLs are not migrated\n"
-      },
-      {
-        "name": "legacy_redpanda_migrator_offsets",
-        "type": "outputs",
-        "status": "deprecated",
-        "version": "4.37.0",
-        "description": "This output should be used in combination with the `legacy_redpanda_migrator_offsets` input"
-      },
-      {
-        "name": "redpanda_migrator_bundle",
-        "type": "outputs",
-        "status": "deprecated",
+        "status": "stable",
         "version": "",
-        "description": "All-in-one output which writes messages and schemas to a Kafka or Redpanda cluster. This output is meant to be used\ntogether with the `redpanda_migrator_bundle` input.\n"
+        "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component."
+      },
+      {
+        "name": "ffi",
+        "type": "processors",
+        "status": "experimental",
+        "version": "",
+        "description": "A processor that allows for dlopen'ing (or platform equivalent) and invoking functions dynamically at runtime. The result from this processor is an array, where the first element is the return type if not void, and then each `out` parameter in parameter order."
+      },
+      {
+        "name": "a2a_message",
+        "type": "processors",
+        "status": "beta",
+        "version": "4.40.0",
+        "description": "\nThis processor enables Redpanda Connect pipelines to communicate with A2A protocol agents. Currently only JSON-RPC transport is supported.\n\nThe processor sends a message to the agent and polls for task completion. The agent's response\nis returned as the processor output.\n\nFor more information about the A2A protocol, see https://a2a-protocol.org/latest/specification"
       }
     ],
-    "newFields": [
-      {
-        "component": "caches:redis",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "tables",
-        "description": "List of table names to stream from. For single table mode, provide one table. For multi-table mode, provide multiple tables."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "table_discovery_mode",
-        "description": "Table discovery mode. `single`: stream from tables specified in `tables` list. `tag`: auto-discover tables by tags (ignores `tables` field). `includelist`: stream from tables in `tables` list (alias for `single`, kept for compatibility)."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "table_tag_filter",
-        "description": "Multi-tag filter: 'key1:v1,v2;key2:v3,v4'. Matches tables with (key1=v1 OR key1=v2) AND (key2=v3 OR key2=v4). Required when `table_discovery_mode` is `tag`."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "table_discovery_interval",
-        "description": "Interval for rescanning and discovering new tables when using `tag` or `includelist` mode. Set to 0 to disable periodic rescanning."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "snapshot_mode",
-        "description": "Snapshot behavior. `none`: CDC only (default). `snapshot_only`: one-time table scan, no streaming. `snapshot_and_cdc`: scan entire table then stream changes."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "snapshot_segments",
-        "description": "Number of parallel scan segments (1-10). Higher parallelism scans faster but consumes more RCUs. Start with 1 for safety."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "snapshot_batch_size",
-        "description": "Records per scan request during snapshot. Maximum 1000. Lower values provide better backpressure control but require more API calls."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "snapshot_throttle",
-        "description": "Minimum time between scan requests per segment. Use this to limit RCU consumption during snapshot."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "snapshot_deduplicate",
-        "description": "Deduplicate records that appear in both snapshot and CDC stream. Requires buffering CDC events during snapshot. If buffer is exceeded, deduplication is disabled to prevent data loss."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "snapshot_buffer_size",
-        "description": "Maximum CDC events to buffer for deduplication (approximately 100 bytes per entry). If exceeded, deduplication is disabled and duplicates may be emitted."
-      },
-      {
-        "component": "inputs:nats_jetstream",
-        "field": "create_stream",
-        "description": "Whether to automatically create the stream if it doesn't exist (requires the stream field to be set)."
-      },
-      {
-        "component": "inputs:redis_list",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "inputs:redis_pubsub",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "inputs:redis_scan",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "inputs:redis_streams",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "inputs:redpanda",
-        "field": "extract_tracing_map",
-        "introducedIn": "3.45.0",
-        "description": "EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] that attempts to extract an object containing tracing propagation information, which will then be used as the root tracing span for the message. The specification of the extracted fields must match the format used by the service wide tracer."
-      },
-      {
-        "component": "outputs:redis_hash",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "outputs:redis_list",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "outputs:redis_pubsub",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "outputs:redis_streams",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "outputs:redis_streams",
-        "field": "id",
-        "description": "The entry ID for the stream message. Allows function interpolations. When set to `*` (the default), Redis auto-generates a unique ID based on the current time. Set a custom ID to control message ordering, for example to replay messages in upstream order."
-      },
-      {
-        "component": "outputs:redpanda",
-        "field": "inject_tracing_map",
-        "introducedIn": "3.45.0",
-        "description": "EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] used to inject an object containing tracing propagation information into outbound messages. The specification of the injected fields will match the format used by the service wide tracer."
-      },
-      {
-        "component": "outputs:redpanda_migrator",
-        "field": "sync_topic_interval",
-        "description": "How often to synchronize topics from the source cluster to the destination. This creates destination topics for any new source topics, including empty topics with no message flow. Set to 0s to disable periodic sync (topics are still created on first message)."
-      },
-      {
-        "component": "outputs:snowflake_streaming",
-        "field": "commit_backoff",
-        "description": "Control how frequently Snowflake is polled to check if data has been committed."
-      },
-      {
-        "component": "processors:jira",
-        "field": "timeout",
-        "description": "HTTP request timeout."
-      },
-      {
-        "component": "processors:jira",
-        "field": "tls",
-        "description": "Custom TLS settings can be used to override system defaults."
-      },
-      {
-        "component": "processors:jira",
-        "field": "proxy_url",
-        "description": "HTTP proxy URL. Empty string disables proxying."
-      },
-      {
-        "component": "processors:jira",
-        "field": "disable_http2",
-        "description": "Disable HTTP/2 and force HTTP/1.1."
-      },
-      {
-        "component": "processors:jira",
-        "field": "tps_limit",
-        "description": "Rate limit in requests per second. 0 disables rate limiting."
-      },
-      {
-        "component": "processors:jira",
-        "field": "tps_burst",
-        "description": "Maximum burst size for rate limiting."
-      },
-      {
-        "component": "processors:jira",
-        "field": "backoff",
-        "description": "Adaptive backoff configuration for 429 (Too Many Requests) responses. Always active."
-      },
-      {
-        "component": "processors:jira",
-        "field": "tcp",
-        "description": "TCP socket configuration."
-      },
-      {
-        "component": "processors:jira",
-        "field": "http",
-        "description": "HTTP transport settings controlling connection pooling, timeouts, and HTTP/2."
-      },
-      {
-        "component": "processors:jira",
-        "field": "access_log_level",
-        "description": "Log level for HTTP request/response logging. Empty disables logging."
-      },
-      {
-        "component": "processors:jira",
-        "field": "access_log_body_limit",
-        "description": "Maximum bytes of request/response body to include in logs. 0 to skip body logging."
-      },
-      {
-        "component": "processors:redis",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "processors:redis_script",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      },
-      {
-        "component": "processors:schema_registry_encode",
-        "field": "schema_metadata",
-        "description": "When set, the processor reads a schema in benthos common schema format from this metadata key on each message, converts it to the format specified by `format`, registers it with the schema registry under the configured subject, and encodes the message. When empty (the default), the processor pulls the latest schema from the registry instead."
-      },
-      {
-        "component": "processors:schema_registry_encode",
-        "field": "format",
-        "description": "The encoding format to use when converting a common schema from metadata. Required when `schema_metadata` is set."
-      },
-      {
-        "component": "processors:schema_registry_encode",
-        "field": "normalize",
-        "description": "Whether to normalize the schema before registering with the schema registry (schema_metadata mode only)."
-      },
-      {
-        "component": "processors:schema_registry_encode",
-        "field": "avro",
-        "description": "Configuration for Avro encoding."
-      },
-      {
-        "component": "processors:switch",
-        "field": "continue",
-        "description": "Indicates whether, if this case passes for a message, the next case should also be tested. Unlike `fallthrough`, which skips the next case's check, `continue` will evaluate the next case's condition before executing."
-      },
-      {
-        "component": "rate-limits:redis",
-        "field": "client_name",
-        "introducedIn": "4.82.0",
-        "description": "Set the client name for the Redis connection."
-      }
-    ],
-    "removedFields": [
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "table"
-      },
-      {
-        "component": "outputs:aws_s3",
-        "field": "content_md5"
-      },
-      {
-        "component": "processors:jira",
-        "field": "request_timeout"
-      },
-      {
-        "component": "processors:jira",
-        "field": "max_retries"
-      }
-    ],
+    "newFields": [],
+    "removedFields": [],
     "deprecatedComponents": [],
-    "deprecatedFields": [
-      {
-        "component": "outputs:snowflake_streaming",
-        "field": "commit_timeout",
-        "description": "Deprecated: use `commit_backoff.max_elapsed_time` instead."
-      },
-      {
-        "component": "processors:schema_registry_encode",
-        "field": "avro_raw_json",
-        "description": "DEPRECATED: Use avro.raw_json instead."
-      }
-    ],
-    "changedDefaults": [
-      {
-        "component": "outputs:amqp_1",
-        "field": "target_address",
-        "newDefault": "",
-        "description": "The target address to write to. When left empty, the output uses the Anonymous Terminus pattern where the destination is specified per-message using `message_properties_to`."
-      },
-      {
-        "component": "outputs:snowflake_streaming",
-        "field": "commit_timeout",
-        "oldDefault": "60s",
-        "newDefault": "",
-        "description": "Deprecated: use `commit_backoff.max_elapsed_time` instead."
-      }
-    ]
+    "deprecatedFields": [],
+    "changedDefaults": []
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.85.0",
-      "cloud": "4.85.0",
-      "cgo": "4.85.0"
+      "oss": "4.86.0",
+      "cloud": "4.86.0",
+      "cgo": "4.86.0"
     },
     "current": {
-      "cloudSupported": 477,
-      "selfHostedOnly": 81,
-      "cgoOnly": 0
+      "cloudSupported": 478,
+      "selfHostedOnly": 77,
+      "cgoOnly": 4
     },
-    "changes": {},
+    "changes": {
+      "cloud": {
+        "added": [
+          {
+            "type": "processors",
+            "name": "string_split",
+            "status": "stable"
+          }
+        ],
+        "removed": []
+      },
+      "cgo": {
+        "newCgoOnly": [
+          {
+            "type": "inputs",
+            "name": "tigerbeetle_cdc",
+            "status": "stable"
+          },
+          {
+            "type": "inputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "outputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "processors",
+            "name": "ffi",
+            "status": "stable"
+          }
+        ],
+        "removedCgoOnly": []
+      }
+    },
     "details": {
       "cloudSupported": [
         {
@@ -503,7 +234,7 @@
         {
           "type": "caches",
           "name": "gcp_cloud_storage",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "caches",
@@ -523,7 +254,7 @@
         {
           "type": "caches",
           "name": "mongodb",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "caches",
@@ -533,7 +264,7 @@
         {
           "type": "caches",
           "name": "nats_kv",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "caches",
@@ -548,7 +279,7 @@
         {
           "type": "caches",
           "name": "redpanda",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "caches",
@@ -558,7 +289,7 @@
         {
           "type": "caches",
           "name": "sql",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "caches",
@@ -578,7 +309,7 @@
         {
           "type": "inputs",
           "name": "aws_dynamodb_cdc",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -598,22 +329,22 @@
         {
           "type": "inputs",
           "name": "azure_blob_storage",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "azure_cosmosdb",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "azure_queue_storage",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "azure_table_storage",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -633,12 +364,12 @@
         {
           "type": "inputs",
           "name": "gcp_bigquery_select",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "gcp_cloud_storage",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -648,7 +379,7 @@
         {
           "type": "inputs",
           "name": "gcp_spanner_cdc",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -658,7 +389,7 @@
         {
           "type": "inputs",
           "name": "git",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -688,17 +419,17 @@
         {
           "type": "inputs",
           "name": "microsoft_sql_server_cdc",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "mongodb",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "mongodb_cdc",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -708,7 +439,7 @@
         {
           "type": "inputs",
           "name": "mysql_cdc",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -723,12 +454,12 @@
         {
           "type": "inputs",
           "name": "nats_kv",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "oracledb_cdc",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -748,7 +479,7 @@
         {
           "type": "inputs",
           "name": "postgres_cdc",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -768,7 +499,7 @@
         {
           "type": "inputs",
           "name": "redis_scan",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -778,7 +509,7 @@
         {
           "type": "inputs",
           "name": "redpanda",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -788,7 +519,7 @@
         {
           "type": "inputs",
           "name": "redpanda_migrator",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -798,7 +529,7 @@
         {
           "type": "inputs",
           "name": "schema_registry",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -808,17 +539,17 @@
         {
           "type": "inputs",
           "name": "sftp",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "slack",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "slack_users",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -828,22 +559,22 @@
         {
           "type": "inputs",
           "name": "splunk",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "sql_raw",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "sql_select",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "timeplus",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -883,27 +614,27 @@
         {
           "type": "outputs",
           "name": "azure_blob_storage",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "azure_cosmosdb",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "azure_data_lake_gen2",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "azure_queue_storage",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "azure_table_storage",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -918,7 +649,7 @@
         {
           "type": "outputs",
           "name": "cyborgdb",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -943,12 +674,12 @@
         {
           "type": "outputs",
           "name": "gcp_bigquery",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "gcp_cloud_storage",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -978,12 +709,12 @@
         {
           "type": "outputs",
           "name": "kafka_franz",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "mongodb",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -1003,7 +734,7 @@
         {
           "type": "outputs",
           "name": "nats_kv",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -1023,17 +754,17 @@
         {
           "type": "outputs",
           "name": "pinecone",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "qdrant",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "questdb",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -1058,7 +789,7 @@
         {
           "type": "outputs",
           "name": "redpanda",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -1068,7 +799,7 @@
         {
           "type": "outputs",
           "name": "redpanda_migrator",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -1093,37 +824,37 @@
         {
           "type": "outputs",
           "name": "schema_registry",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "sftp",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "slack_post",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "slack_reaction",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "snowflake_put",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "snowflake_streaming",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "splunk_hec",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -1153,22 +884,22 @@
         {
           "type": "processors",
           "name": "avro",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "aws_bedrock_chat",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "aws_bedrock_embeddings",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "aws_dynamodb_partiql",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1178,12 +909,12 @@
         {
           "type": "processors",
           "name": "azure_cosmosdb",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "benchmark",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1208,7 +939,7 @@
         {
           "type": "processors",
           "name": "cached",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1218,17 +949,17 @@
         {
           "type": "processors",
           "name": "cohere_chat",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "cohere_embeddings",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "cohere_rerank",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1253,32 +984,32 @@
         {
           "type": "processors",
           "name": "gcp_bigquery_select",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "gcp_vertex_ai_chat",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "gcp_vertex_ai_embeddings",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "google_drive_download",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "google_drive_list_labels",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "google_drive_search",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1303,7 +1034,7 @@
         {
           "type": "processors",
           "name": "jira",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1338,7 +1069,7 @@
         {
           "type": "processors",
           "name": "mongodb",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1348,12 +1079,12 @@
         {
           "type": "processors",
           "name": "nats_kv",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "nats_request_reply",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1363,32 +1094,32 @@
         {
           "type": "processors",
           "name": "openai_chat_completion",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "openai_embeddings",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "openai_image_generation",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "openai_speech",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "openai_transcription",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "openai_translation",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1398,12 +1129,12 @@
         {
           "type": "processors",
           "name": "parquet_decode",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "parquet_encode",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1418,7 +1149,7 @@
         {
           "type": "processors",
           "name": "qdrant",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1433,7 +1164,7 @@
         {
           "type": "processors",
           "name": "redis_script",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1448,12 +1179,12 @@
         {
           "type": "processors",
           "name": "schema_registry_decode",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "schema_registry_encode",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1463,7 +1194,7 @@
         {
           "type": "processors",
           "name": "slack_thread",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1492,6 +1223,11 @@
         },
         {
           "type": "processors",
+          "name": "string_split",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
           "name": "switch",
           "status": "stable"
         },
@@ -1503,7 +1239,7 @@
         {
           "type": "processors",
           "name": "text_chunker",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -1528,7 +1264,7 @@
         {
           "type": "processors",
           "name": "xml",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "rate-limits",
@@ -1538,7 +1274,7 @@
         {
           "type": "rate-limits",
           "name": "redis",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "metrics",
@@ -1553,7 +1289,7 @@
         {
           "type": "tracers",
           "name": "gcp_cloudtrace",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "tracers",
@@ -1563,7 +1299,7 @@
         {
           "type": "tracers",
           "name": "redpanda",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "scanners",
@@ -1683,7 +1419,7 @@
         {
           "type": "bloblang-functions",
           "name": "fake",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "bloblang-functions",
@@ -1783,7 +1519,7 @@
         {
           "type": "bloblang-functions",
           "name": "ulid",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-functions",
@@ -1803,7 +1539,7 @@
         {
           "type": "bloblang-functions",
           "name": "with_schema_registry_header",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
@@ -1938,7 +1674,7 @@
         {
           "type": "bloblang-methods",
           "name": "diff",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
@@ -2108,42 +1844,42 @@
         {
           "type": "bloblang-methods",
           "name": "geoip_anonymous_ip",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
           "name": "geoip_asn",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
           "name": "geoip_city",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
           "name": "geoip_connection_type",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
           "name": "geoip_country",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
           "name": "geoip_domain",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
           "name": "geoip_enterprise",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
           "name": "geoip_isp",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
@@ -2208,7 +1944,7 @@
         {
           "type": "bloblang-methods",
           "name": "json_path",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
@@ -2413,7 +2149,7 @@
         {
           "type": "bloblang-methods",
           "name": "patch",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
@@ -2553,7 +2289,7 @@
         {
           "type": "bloblang-methods",
           "name": "slug",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
@@ -2723,7 +2459,7 @@
         {
           "type": "bloblang-methods",
           "name": "unicode_segments",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
@@ -2753,7 +2489,7 @@
         {
           "type": "bloblang-methods",
           "name": "vector",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "bloblang-methods",
@@ -2780,7 +2516,7 @@
         {
           "type": "caches",
           "name": "couchbase",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "caches",
@@ -2795,17 +2531,17 @@
         {
           "type": "inputs",
           "name": "beanstalkd",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "cassandra",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "cockroachdb_changefeed",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -2815,7 +2551,7 @@
         {
           "type": "inputs",
           "name": "discord",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -2850,17 +2586,17 @@
         {
           "type": "inputs",
           "name": "ockam_kafka",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "parquet",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
           "name": "pulsar",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "inputs",
@@ -2893,16 +2629,6 @@
           "status": "stable"
         },
         {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "beta"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2910,27 +2636,27 @@
         {
           "type": "outputs",
           "name": "beanstalkd",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "cassandra",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "couchbase",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "cypher",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "discord",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -2975,22 +2701,22 @@
         {
           "type": "outputs",
           "name": "ockam_kafka",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "pulsar",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "pusher",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
           "name": "salesforce_sink",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "outputs",
@@ -3018,11 +2744,6 @@
           "status": "stable"
         },
         {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -3030,12 +2751,12 @@
         {
           "type": "processors",
           "name": "command",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "couchbase",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -3050,27 +2771,27 @@
         {
           "type": "processors",
           "name": "javascript",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "msgpack",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "ollama_chat",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "ollama_embeddings",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "ollama_moderation",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -3085,17 +2806,17 @@
         {
           "type": "processors",
           "name": "redpanda_data_transform",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "salesforce",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
           "name": "sentry_capture",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "processors",
@@ -3110,12 +2831,7 @@
         {
           "type": "processors",
           "name": "wasm",
-          "status": "experimental"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "metrics",
@@ -3125,7 +2841,7 @@
         {
           "type": "metrics",
           "name": "influxdb",
-          "status": "beta"
+          "status": "stable"
         },
         {
           "type": "metrics",
@@ -3150,7 +2866,7 @@
         {
           "type": "tracers",
           "name": "open_telemetry_collector",
-          "status": "experimental"
+          "status": "stable"
         },
         {
           "type": "bloblang-functions",
@@ -3182,10 +2898,31 @@
         {
           "type": "processors",
           "name": "a2a_message",
-          "status": "beta"
+          "status": "stable"
         }
       ],
-      "cgoOnly": []
+      "cgoOnly": [
+        {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "ffi",
+          "status": "stable"
+        }
+      ]
     }
   }
 }
