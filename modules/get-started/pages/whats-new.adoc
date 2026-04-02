@@ -31,23 +31,20 @@ Unescapes a URL path segment, converting percent-encoded sequences back to their
 
 This release adds the following new components:
 
-[cols="1m,1a,1a,3a"]
+[cols="1m,1a,3a"]
 |===
-|Component |Type |Status |Description
+|Component |Type |Description
 
 |xref:components:inputs/oracledb_cdc.adoc[oracledb_cdc]
 |Inputs
-|experimental
 |Streams changes from an Oracle database for Change Data Capture (CDC).
 
 |xref:components:outputs/salesforce_sink.adoc[salesforce_sink]
 |Outputs
-|experimental
 |Consumes batches of messages and writes them to Salesforce.
 
 |xref:components:processors/salesforce.adoc[salesforce]
 |Processors
-|experimental
 |Fetches data from Salesforce based on input messages.
 
 |===
@@ -395,13 +392,12 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.81.0[See the full 
 
 This release adds the following new components:
 
-[cols="1m,1a,1a,3a"]
+[cols="1m,1a,3a"]
 |===
-|Component |Type |Status |Description
+|Component |Type |Description
 
 |xref:components:inputs/aws_cloudwatch_logs.adoc[aws_cloudwatch_logs]
 |Input
-|stable
 |Consumes log events from AWS CloudWatch Logs.
 
 |===
@@ -448,13 +444,12 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.80.0[See the full 
 
 This release adds the following new components:
 
-[cols="1m,1a,1a,3a"]
+[cols="1m,1a,3a"]
 |===
-|Component |Type |Status |Description
+|Component |Type |Description
 
 |xref:components:outputs/iceberg.adoc[iceberg]
 |Output
-|stable
 |Write data to Apache Iceberg tables via REST catalog.
 
 |===
@@ -468,13 +463,12 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.79.0[See the full 
 
 This release adds the following new components:
 
-[cols="1m,1a,1a,3a"]
+[cols="1m,1a,3a"]
 |===
-|Component |Type |Status |Description
+|Component |Type |Description
 
 |xref:components:inputs/aws_dynamodb_cdc.adoc[aws_dynamodb_cdc]
 |Inputs
-|beta
 |Consumes records from DynamoDB Streams with automatic checkpointing and shard management.
 
 |===
@@ -552,13 +546,12 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.77.0[See the full 
 
 This release adds the following new components:
 
-[cols="1m,1a,1a,3a"]
+[cols="1m,1a,3a"]
 |===
-|Component |Type |Status |Description
+|Component |Type |Description
 
 |xref:components:outputs/elasticsearch_v9.adoc[elasticsearch_v9]
 |Outputs
-|stable
 |Publish messages into an Elasticsearch index.
 
 |===
@@ -577,14 +570,13 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.76.0[See the full 
 
 This release adds the following new components:
 
-[cols="1m,1a,1a,3a"]
+[cols="1m,1a,3a"]
 |===
-|Component |Type |Status |Description
+|Component |Type |Description
 
 
 |xref:components:processors/ffi.adoc[ffi]
 |Processor
-|experimental
 |Invoke a function within a shared library as a processing step.
 
 
@@ -694,13 +686,12 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.71.0[See the full 
 
 This release adds the following new components:
 
-[cols="1m,1,1,3"]
+[cols="1m,1,3"]
 |===
-|Component |Type |Status |Description
+|Component |Type |Description
 
 |xref:components:tracers/redpanda.adoc[redpanda]
 |Tracers
-|experimental
 |-
 
 |===
@@ -958,7 +949,7 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.68.0[See the full 
 This release adds the following new components:
 
 * Processors:
-** xref:components:processors/jira.adoc[`jira`] (experimental): Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.
+** xref:components:processors/jira.adoc[`jira`]: Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.
 
 
 This release adds support for the following new fields:
@@ -1018,14 +1009,14 @@ link:https://github.com/redpanda-data/connect/releases/tag/v4.66.0[See the full 
 This release adds the following new components:
 
 * Outputs:
-** xref:components:outputs/cyborgdb.adoc[`cyborgdb`] (experimental): This output allows you to write vectors to a CyborgDB encrypted index. CyborgDB provides
+** xref:components:outputs/cyborgdb.adoc[`cyborgdb`]: This output allows you to write vectors to a CyborgDB encrypted index. CyborgDB provides
 end-to-end encrypted vector storage with automatic dimension detection and index optimization.
 
 All vector data is encrypted client-side before being sent to the server, ensuring complete
 data privacy. The encryption key never leaves your infrastructure.
 
 * Bloblang-functions:
-** xref:guides:bloblang/functions.adoc#with_schema_registry_header[`with_schema_registry_header`] (beta): Prepends a 5-byte Schema Registry header to a message. The header consists of a magic byte (0x00) followed by a 4-byte big-endian schema ID.
+** xref:guides:bloblang/functions.adoc#with_schema_registry_header[`with_schema_registry_header`]: Prepends a 5-byte Schema Registry header to a message. The header consists of a magic byte (0x00) followed by a 4-byte big-endian schema ID.
 
 This release adds support for the following new fields:
 
@@ -1174,7 +1165,7 @@ This release introduces an experimental Slack output and expands support for aut
 
 === New components
 
-* xref:components:outputs/slack_reaction.adoc[`slack_reaction`] (experimental): Adds or removes emoji reactions from Slack messages by channel ID and timestamp.
+* xref:components:outputs/slack_reaction.adoc[`slack_reaction`]: Adds or removes emoji reactions from Slack messages by channel ID and timestamp.
 
 === Component updates
 
@@ -1199,7 +1190,7 @@ This release introduces a dynamic xref:plugins:about.adoc[plugins] framework. It
 
 === New components
 
-* xref:components:inputs/gcp_spanner_cdc.adoc[`gcp_spanner_cdc`] (beta): Streams change data from a Google Cloud Spanner instance.
+* xref:components:inputs/gcp_spanner_cdc.adoc[`gcp_spanner_cdc`]: Streams change data from a Google Cloud Spanner instance.
 
 === Component updates
 
@@ -1224,7 +1215,7 @@ This release introduces a new beta Redpanda cache component and new fields acros
 
 === New components
 
-* xref:components:caches/redpanda.adoc[`redpanda`] (beta): A new cache that stores key/value pairs in a compacted Redpanda topic.
+* xref:components:caches/redpanda.adoc[`redpanda`]: A new cache that stores key/value pairs in a compacted Redpanda topic.
 
 === Component updates
 
