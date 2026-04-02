@@ -19,7 +19,7 @@ Applies a mapping to each element of an array or object
 
 == Examples
 
-##### On arrays
+==== On arrays
 
 Transforms each array element using a query. Return deleted() to remove an element, or the new value to replace it:
 
@@ -35,7 +35,7 @@ root.new_nums = this.nums.map_each(num -> if num < 10 {
 # Out: {"new_nums":[1,7]}
 ----
 
-##### On objects
+==== On objects
 
 Transforms each object value using a query. The query receives an object with 'key' and 'value' fields for each entry:
 
