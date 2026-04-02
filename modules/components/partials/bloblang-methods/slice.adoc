@@ -5,15 +5,23 @@
 
 
 
-
-Extracts a portion of a string or array
-
 == Parameters
 
-*`low`* &lt;integer&gt; The low bound, which is the first element of the selection, or if negative selects from the end.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`high`* &lt;integer&gt; (optional) An optional high bound.
+| `low`
+| `integer`
+| The low bound, which is the first element of the selection, or if negative selects from the end.
 
+| `high`^*^
+| `integer`
+| An optional high bound.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 
@@ -26,10 +34,10 @@ root.end = this.value.slice(4)
 # Out: {"beginning":"fo","end":"bar"}
 ----
 
+A negative low index can be used, indicating an offset from the end of the sequence. If the low index is greater than the length of the sequence then an empty result is returned.
+
 [,bloblang]
 ----
-# A negative low index can be used, indicating an offset from the end of the sequence. If the low index is greater than the length of the sequence then an empty result is returned.
-
 root.last_chunk = this.value.slice(-4)
 root.the_rest = this.value.slice(0, -4)
 
@@ -46,10 +54,10 @@ root.end = this.value.slice(4)
 # Out: {"beginning":["foo","bar"],"end":["bev"]}
 ----
 
+A negative low index can be used, indicating an offset from the end of the sequence. If the low index is greater than the length of the sequence then an empty result is returned.
+
 [,bloblang]
 ----
-# A negative low index can be used, indicating an offset from the end of the sequence. If the low index is greater than the length of the sequence then an empty result is returned.
-
 root.last_chunk = this.value.slice(-2)
 root.the_rest = this.value.slice(0, -2)
 

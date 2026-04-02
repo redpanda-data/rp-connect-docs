@@ -8,10 +8,21 @@ Generates a URL-safe unique identifier using Nano ID. Use this for compact, URL-
 
 == Parameters
 
-*`length`* &lt;integer&gt; (optional) An optional length.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`alphabet`* &lt;string&gt; (optional) An optional custom alphabet to use for generating IDs. When specified the field &#x60;length&#x60; must also be present.
+| `length`^*^
+| `integer`
+| An optional length.
 
+| `alphabet`^*^
+| `string`
+| An optional custom alphabet to use for generating IDs. When specified the field `length` must also be present.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 
@@ -20,17 +31,17 @@ Generates a URL-safe unique identifier using Nano ID. Use this for compact, URL-
 root.id = nanoid()
 ----
 
+Generate a longer ID for additional uniqueness.
+
 [,bloblang]
 ----
-# Generate a longer ID for additional uniqueness.
-
 root.id = nanoid(54)
 ----
 
+Use a custom alphabet for domain-specific IDs.
+
 [,bloblang]
 ----
-# Use a custom alphabet for domain-specific IDs.
-
 root.id = nanoid(54, "abcde")
 ----
 

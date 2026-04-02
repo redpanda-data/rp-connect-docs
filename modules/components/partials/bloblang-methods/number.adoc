@@ -5,13 +5,19 @@
 
 
 
-
-Converts a value to a number (int64 or float64)
-
 == Parameters
 
-*`default`* &lt;float&gt; (optional) An optional value to yield if the target cannot be parsed as a number.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
+| `default`^*^
+| `float`
+| An optional value to yield if the target cannot be parsed as a number.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 

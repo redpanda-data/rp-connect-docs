@@ -5,9 +5,6 @@
 
 
 
-
-Calculates the sum of numeric values in an array
-
 == Examples
 
 [,bloblang]
@@ -18,10 +15,10 @@ root.sum = this.foo.sum()
 # Out: {"sum":15}
 ----
 
+Works with decimals
+
 [,bloblang]
 ----
-# Works with decimals
-
 root.total = this.prices.sum()
 
 # In:  {"prices":[10.5,20.25,5.00]}

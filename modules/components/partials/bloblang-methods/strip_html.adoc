@@ -8,25 +8,34 @@ Removes HTML tags from a string, returning only the text content. Useful for ext
 
 == Parameters
 
-*`preserve`* &lt;unknown&gt; (optional) Optional array of HTML element names to preserve (e.g., [&quot;strong&quot;, &quot;em&quot;, &quot;a&quot;]). All other HTML tags will be removed.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
+| `preserve`^*^
+| `unknown`
+| Optional array of HTML element names to preserve (e.g., ["strong", "em", "a"]). All other HTML tags will be removed.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 
+Extract plain text from HTML content
+
 [,bloblang]
 ----
-# Extract plain text from HTML content
-
 root.plain_text = this.html_content.strip_html()
 
 # In:  {"html_content":"<p>Welcome to <strong>Redpanda Connect</strong>!</p>"}
 # Out: {"plain_text":"Welcome to Redpanda Connect!"}
 ----
 
+Preserve specific HTML elements while removing others
+
 [,bloblang]
 ----
-# Preserve specific HTML elements while removing others
-
 root.sanitized = this.html.strip_html(["strong", "em"])
 
 # In:  {"html":"<div><p>Some <strong>bold</strong> and <em>italic</em> text with a <script>alert('xss')</script></p></div>"}

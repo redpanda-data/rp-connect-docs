@@ -5,12 +5,17 @@
 
 
 
-
-Sorts array elements using a custom comparison query
-
 == Parameters
 
-*`query`* &lt;query expression&gt; A query to apply to each element that yields a value used for sorting.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `query`
+| `query expression`
+| A query to apply to each element that yields a value used for sorting.
+
+|===
 
 
 == Examples
@@ -23,10 +28,10 @@ root.sorted = this.foo.sort_by(ele -> ele.id)
 # Out: {"sorted":[{"id":"aaa","message":"foo"},{"id":"bbb","message":"bar"},{"id":"ccc","message":"baz"}]}
 ----
 
+Sort by numeric field
+
 [,bloblang]
 ----
-# Sort by numeric field
-
 root.sorted = this.items.sort_by(item -> item.priority)
 
 # In:  {"items":[{"name":"low","priority":3},{"name":"high","priority":1},{"name":"med","priority":2}]}

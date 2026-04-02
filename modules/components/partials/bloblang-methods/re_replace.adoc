@@ -3,14 +3,24 @@
 = re_replace
 
 
-Replaces all regex matches with a replacement string that can reference capture groups using &#x60;$1&#x60;, &#x60;$2&#x60;, etc. Use for pattern-based transformations or data reformatting.
+Replaces all regex matches with a replacement string that can reference capture groups using `$1`, `$2`, etc. Use for pattern-based transformations or data reformatting.
 
 
 == Parameters
 
-*`pattern`* &lt;string&gt; The pattern to match against.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`value`* &lt;string&gt; The value to replace with.
+| `pattern`
+| `string`
+| The pattern to match against.
+
+| `value`
+| `string`
+| The value to replace with.
+
+|===
 
 
 

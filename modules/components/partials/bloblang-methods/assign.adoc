@@ -8,7 +8,15 @@ Merges two objects or arrays with override behavior. For objects, source values 
 
 == Parameters
 
-*`with`* &lt;unknown&gt; A value to merge the target value with.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `with`
+| `unknown`
+| A value to merge the target value with.
+
+|===
 
 
 == Examples
@@ -21,10 +29,10 @@ root = this.foo.assign(this.bar)
 # Out: {"first_name":"fooer","likes":"foos","second_name":"barer"}
 ----
 
+Override defaults with user settings
+
 [,bloblang]
 ----
-# Override defaults with user settings
-
 root.config = this.defaults.assign(this.user_settings)
 
 # In:  {"defaults":{"timeout":30,"retries":3},"user_settings":{"timeout":60}}

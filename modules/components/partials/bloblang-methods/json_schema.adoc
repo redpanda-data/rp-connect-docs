@@ -8,7 +8,15 @@ Checks a https://json-schema.org/[JSON schema^] against a value and returns the 
 
 == Parameters
 
-*`schema`* &lt;string&gt; The schema to check values against.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `schema`
+| `string`
+| The schema to check values against.
+
+|===
 
 
 == Examples
@@ -31,10 +39,10 @@ root = this.json_schema("""{
 # Out: Error("failed assignment (line 1): field `this`: foo invalid type. expected: string, given: integer")
 ----
 
+In order to load a schema from a file use the `file` function.
+
 [,bloblang]
 ----
-# In order to load a schema from a file use the `file` function.
-
 root = this.json_schema(file(env("BENTHOS_TEST_BLOBLANG_SCHEMA_FILE")))
 ----
 

@@ -16,10 +16,10 @@ root.result = this.flatten()
 # Out: {"result":["foo","bar","baz","buz"]}
 ----
 
+Deeper nesting requires multiple flatten calls
+
 [,bloblang]
 ----
-# Deeper nesting requires multiple flatten calls
-
 root.result = this.data.flatten()
 
 # In:  {"data":["a",["b",["c","d"]],"e"]}

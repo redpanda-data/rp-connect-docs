@@ -8,9 +8,20 @@ Formats a timestamp as a string using strptime format specifiers (like %Y, %m, %
 
 == Parameters
 
-*`format`* &lt;string&gt; The output format using strptime specifiers.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`tz`* &lt;string&gt; (optional) Optional timezone. Defaults to input timezone or local time for unix timestamps.
+| `format`
+| `string`
+| The output format using strptime specifiers.
 
+| `tz`^*^
+| `string`
+| Optional timezone. Defaults to input timezone or local time for unix timestamps.
+
+|===
+
+^*^ Optional parameter
 
 

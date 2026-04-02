@@ -3,14 +3,24 @@
 = file
 
 
-Reads a file and returns its contents as bytes. Paths are resolved from the process working directory. For paths relative to the mapping file, use &#x60;file_rel&#x60;. By default, files are cached after first read.
+Reads a file and returns its contents as bytes. Paths are resolved from the process working directory. For paths relative to the mapping file, use `file_rel`. By default, files are cached after first read.
 
 
 == Parameters
 
-*`path`* &lt;string&gt; The absolute or relative path to the file.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`no_cache`* &lt;bool&gt; Disable caching to read the latest file contents on each invocation.
+| `path`
+| `string`
+| The absolute or relative path to the file.
+
+| `no_cache`
+| `bool`
+| Disable caching to read the latest file contents on each invocation.
+
+|===
 
 
 == Examples
@@ -25,10 +35,10 @@ root.config = file("/etc/config.json").parse_json()
 root.template = file("./templates/email.html").string()
 ----
 
+Use `no_cache` to read updated file contents during runtime, useful for hot-reloading configuration.
+
 [,bloblang]
 ----
-# Use `no_cache` to read updated file contents during runtime, useful for hot-reloading configuration.
-
 root.rules = file(path: "/etc/rules.yaml", no_cache: true).parse_yaml()
 ----
 

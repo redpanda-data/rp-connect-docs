@@ -8,22 +8,30 @@ Parses Apache Parquet binary data into an array of objects. Parquet is a columna
 
 == Parameters
 
-*`byte_array_as_string`* &lt;bool&gt; Deprecated: This parameter is no longer used.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `byte_array_as_string`
+| `bool`
+| Deprecated: This parameter is no longer used.
+
+|===
 
 
 == Examples
 
+Parse Parquet file data into structured objects
+
 [,bloblang]
 ----
-# Parse Parquet file data into structured objects
-
 root.records = content().parse_parquet()
 ----
 
+Process Parquet data from a field and extract specific columns
+
 [,bloblang]
 ----
-# Process Parquet data from a field and extract specific columns
-
 root.users = this.parquet_data.parse_parquet().map_each(row -> {"name": row.name, "email": row.email})
 ----
 

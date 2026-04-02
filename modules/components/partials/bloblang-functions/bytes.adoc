@@ -8,7 +8,15 @@ Creates a zero-initialized byte array of specified length. Use this to allocate 
 
 == Parameters
 
-*`length`* &lt;integer&gt; The size of the resulting byte array.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `length`
+| `integer`
+| The size of the resulting byte array.
+
+|===
 
 
 == Examples
@@ -18,10 +26,10 @@ Creates a zero-initialized byte array of specified length. Use this to allocate 
 root.data = bytes(5)
 ----
 
+Create a buffer for binary operations.
+
 [,bloblang]
 ----
-# Create a buffer for binary operations.
-
 root.header = bytes(16)
 root.payload = content()
 ----

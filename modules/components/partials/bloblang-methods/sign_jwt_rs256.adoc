@@ -8,10 +8,21 @@ Hash and sign an object representing JSON Web Token (JWT) claims using RS256.
 
 == Parameters
 
-*`signing_secret`* &lt;string&gt; The secret to use for signing the token.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`headers`* &lt;unknown&gt; (optional) Optional object of JWT header fields to include in the token. Keys &quot;alg&quot;, &quot;typ&quot;, &quot;jku&quot;, &quot;jwk&quot;, &quot;x5u&quot;, &quot;x5c&quot;, &quot;x5t&quot;,&quot;x5t#S256&quot; and &quot;crit&quot; will be ignored if provided.
+| `signing_secret`
+| `string`
+| The secret to use for signing the token.
 
+| `headers`^*^
+| `unknown`
+| Optional object of JWT header fields to include in the token. Keys "alg", "typ", "jku", "jwk", "x5u", "x5c", "x5t","x5t#S256" and "crit" will be ignored if provided.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 

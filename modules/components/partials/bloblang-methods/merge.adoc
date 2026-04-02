@@ -8,7 +8,15 @@ Combines two objects or arrays. When merging objects, conflicting keys create ar
 
 == Parameters
 
-*`with`* &lt;unknown&gt; A value to merge the target value with.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `with`
+| `unknown`
+| A value to merge the target value with.
+
+|===
 
 
 == Examples
@@ -21,10 +29,10 @@ root = this.foo.merge(this.bar)
 # Out: {"first_name":"fooer","likes":["bars","foos"],"second_name":"barer"}
 ----
 
+Merge arrays
+
 [,bloblang]
 ----
-# Merge arrays
-
 root.combined = this.list1.merge(this.list2)
 
 # In:  {"list1":["a","b"],"list2":["c","d"]}

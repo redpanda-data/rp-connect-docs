@@ -5,13 +5,19 @@
 
 
 
-
-Parses a JSON string into a structured value
-
 == Parameters
 
-*`use_number`* &lt;bool&gt; (optional) An optional flag that when set makes parsing numbers as json.Number instead of the default float64.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
+| `use_number`^*^
+| `bool`
+| An optional flag that when set makes parsing numbers as json.Number instead of the default float64.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 

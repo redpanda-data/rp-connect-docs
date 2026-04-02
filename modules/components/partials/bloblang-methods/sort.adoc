@@ -5,13 +5,19 @@
 
 
 
-
-Sorts array elements in ascending order
-
 == Parameters
 
-*`compare`* &lt;query expression&gt; (optional) An optional query that should explicitly compare elements &#x60;left&#x60; and &#x60;right&#x60; and provide a boolean result.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
+| `compare`^*^
+| `query expression`
+| An optional query that should explicitly compare elements `left` and `right` and provide a boolean result.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 
@@ -23,10 +29,10 @@ root.sorted = this.foo.sort()
 # Out: {"sorted":["aaa","bbb","ccc"]}
 ----
 
+Custom comparison for complex objects - return true if left < right
+
 [,bloblang]
 ----
-# Custom comparison for complex objects - return true if left < right
-
 root.sorted = this.foo.sort(item -> item.left.v < item.right.v)
 
 # In:  {"foo":[{"id":"foo","v":"bbb"},{"id":"bar","v":"ccc"},{"id":"baz","v":"aaa"}]}

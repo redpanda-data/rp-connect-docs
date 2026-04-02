@@ -5,16 +5,25 @@
 
 
 
-
-Decrypts an encrypted string using AES
-
 == Parameters
 
-*`scheme`* &lt;string&gt; The scheme to use for decryption, one of &#x60;ctr&#x60;, &#x60;gcm&#x60;, &#x60;ofb&#x60;, &#x60;cbc&#x60;.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`key`* &lt;string&gt; A key to decrypt with.
+| `scheme`
+| `string`
+| The scheme to use for decryption, one of `ctr`, `gcm`, `ofb`, `cbc`.
 
-*`iv`* &lt;string&gt; An initialization vector / nonce.
+| `key`
+| `string`
+| A key to decrypt with.
+
+| `iv`
+| `string`
+| An initialization vector / nonce.
+
+|===
 
 
 == Examples

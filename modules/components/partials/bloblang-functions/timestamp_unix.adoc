@@ -13,10 +13,10 @@ Returns the current Unix timestamp in seconds since epoch. Use this for numeric 
 root.received_at = timestamp_unix()
 ----
 
+Create a sortable ID combining timestamp with a counter.
+
 [,bloblang]
 ----
-# Create a sortable ID combining timestamp with a counter.
-
 root.id = "%v-%v".format(timestamp_unix(), batch_index())
 ----
 

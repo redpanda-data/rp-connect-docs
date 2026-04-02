@@ -5,9 +5,6 @@
 
 
 
-
-Returns an array of all values from an object
-
 == Examples
 
 [,bloblang]
@@ -18,10 +15,10 @@ root.foo_vals = this.foo.values().sort()
 # Out: {"foo_vals":[1,2]}
 ----
 
+Find max value in object
+
 [,bloblang]
 ----
-# Find max value in object
-
 root.max = this.scores.values().sort().index(-1)
 
 # In:  {"scores":{"player1":85,"player2":92,"player3":78}}

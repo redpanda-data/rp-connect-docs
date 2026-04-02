@@ -13,10 +13,10 @@ Returns the total number of messages in the current batch. Use this to determine
 root.total = batch_size()
 ----
 
+Check if processing the last message in a batch.
+
 [,bloblang]
 ----
-# Check if processing the last message in a batch.
-
 root.is_last = batch_index() == batch_size() - 1
 ----
 

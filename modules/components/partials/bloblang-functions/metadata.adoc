@@ -3,12 +3,20 @@
 = metadata
 
 
-Returns metadata from the input message by key, or &#x60;null&#x60; if the key doesn&#x27;t exist. This reads the original metadata; to access modified metadata during mapping, use the &#x60;@&#x60; operator instead. Use this to extract message properties like topics, headers, or timestamps.
+Returns metadata from the input message by key, or `null` if the key doesn't exist. This reads the original metadata; to access modified metadata during mapping, use the `@` operator instead. Use this to extract message properties like topics, headers, or timestamps.
 
 
 == Parameters
 
-*`key`* &lt;string&gt; An optional key of a metadata value to obtain.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `key`
+| `string`
+| An optional key of a metadata value to obtain.
+
+|===
 
 
 == Examples
@@ -18,17 +26,17 @@ Returns metadata from the input message by key, or &#x60;null&#x60; if the key d
 root.topic = metadata("kafka_topic")
 ----
 
+Retrieve all metadata as an object by omitting the key parameter.
+
 [,bloblang]
 ----
-# Retrieve all metadata as an object by omitting the key parameter.
-
 root.all_metadata = metadata()
 ----
 
+Copy specific metadata fields to the message body.
+
 [,bloblang]
 ----
-# Copy specific metadata fields to the message body.
-
 root.source = {
   "topic": metadata("kafka_topic"),
   "partition": metadata("kafka_partition"),

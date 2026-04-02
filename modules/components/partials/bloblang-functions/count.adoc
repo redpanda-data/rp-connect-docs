@@ -3,12 +3,20 @@
 = count
 
 
-The &#x60;count&#x60; function is a counter starting at 1 which increments after each time it is called. Count takes an argument which is an identifier for the counter, allowing you to specify multiple unique counters in your configuration.
+The `count` function is a counter starting at 1 which increments after each time it is called. Count takes an argument which is an identifier for the counter, allowing you to specify multiple unique counters in your configuration.
 
 
 == Parameters
 
-*`name`* &lt;string&gt; An identifier for the counter.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `name`
+| `string`
+| An identifier for the counter.
+
+|===
 
 
 == Examples

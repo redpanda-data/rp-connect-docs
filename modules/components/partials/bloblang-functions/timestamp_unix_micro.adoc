@@ -13,10 +13,10 @@ Returns the current Unix timestamp in microseconds since epoch. Use this for hig
 root.received_at = timestamp_unix_micro()
 ----
 
+Measure elapsed time between events.
+
 [,bloblang]
 ----
-# Measure elapsed time between events.
-
 root.processing_duration_us = timestamp_unix_micro() - this.start_time_us
 ----
 

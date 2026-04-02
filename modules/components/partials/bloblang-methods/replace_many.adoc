@@ -3,12 +3,20 @@
 = replace_many
 
 
-Performs multiple find-and-replace operations in sequence using an array of &#x60;[old, new]&#x60; pairs. More efficient than chaining multiple &#x60;replace_all&#x60; calls. Use for bulk text transformations.
+Performs multiple find-and-replace operations in sequence using an array of `[old, new]` pairs. More efficient than chaining multiple `replace_all` calls. Use for bulk text transformations.
 
 
 == Parameters
 
-*`values`* &lt;array&gt; An array of values, each even value will be replaced with the following odd value.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `values`
+| `array`
+| An array of values, each even value will be replaced with the following odd value.
+
+|===
 
 
 

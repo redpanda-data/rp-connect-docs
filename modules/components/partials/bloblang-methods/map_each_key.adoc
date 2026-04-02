@@ -5,12 +5,17 @@
 
 
 
-
-Transforms object keys using a mapping query
-
 == Parameters
 
-*`query`* &lt;query expression&gt; A query that will be used to map each key.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `query`
+| `query expression`
+| A query that will be used to map each key.
+
+|===
 
 
 == Examples
@@ -23,10 +28,10 @@ root.new_dict = this.dict.map_each_key(key -> key.uppercase())
 # Out: {"new_dict":{"KEYA":"hello","KEYB":"world"}}
 ----
 
+Conditionally transform keys
+
 [,bloblang]
 ----
-# Conditionally transform keys
-
 root = this.map_each_key(key -> if key.contains("kafka") { "_" + key })
 
 # In:  {"amqp_key":"foo","kafka_key":"bar","kafka_topic":"baz"}

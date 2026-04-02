@@ -5,9 +5,6 @@
 
 
 
-
-Formats a value as a YAML string
-
 == Examples
 
 [,bloblang]
@@ -18,10 +15,10 @@ root = this.doc.format_yaml()
 # Out: foo: bar
 ----
 
+Use the `.string()` method in order to coerce the result into a string.
+
 [,bloblang]
 ----
-# Use the `.string()` method in order to coerce the result into a string.
-
 root.doc = this.doc.format_yaml().string()
 
 # In:  {"doc":{"foo":"bar"}}

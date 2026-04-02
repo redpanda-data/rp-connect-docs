@@ -13,10 +13,10 @@ Returns the zero-based index of the current message within its batch. Use this t
 root = if batch_index() > 0 { deleted() }
 ----
 
+Create a unique identifier combining batch position with timestamp.
+
 [,bloblang]
 ----
-# Create a unique identifier combining batch position with timestamp.
-
 root.id = "%v-%v".format(timestamp_unix(), batch_index())
 ----
 

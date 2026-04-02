@@ -3,20 +3,28 @@
 = from
 
 
-Modifies a target query such that certain functions are executed from the perspective of another message in the batch. This allows you to mutate events based on the contents of other messages. Functions that support this behavior are &#x60;content&#x60;, &#x60;json&#x60; and &#x60;meta&#x60;.
+Modifies a target query such that certain functions are executed from the perspective of another message in the batch. This allows you to mutate events based on the contents of other messages. Functions that support this behavior are `content`, `json` and `meta`.
 
 
 == Parameters
 
-*`index`* &lt;integer&gt; The message index to use as a perspective.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `index`
+| `integer`
+| The message index to use as a perspective.
+
+|===
 
 
 == Examples
 
+For example, the following map extracts the contents of the JSON field `foo` specifically from message index `1` of a batch, effectively overriding the field `foo` for all messages of a batch to that of message 1:
+
 [,bloblang]
 ----
-# For example, the following map extracts the contents of the JSON field `foo` specifically from message index `1` of a batch, effectively overriding the field `foo` for all messages of a batch to that of message 1:
-
 root = this
 root.foo = json("foo").from(1)
 ----

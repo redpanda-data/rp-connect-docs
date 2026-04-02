@@ -8,7 +8,15 @@ Immediately fails the mapping with a custom error message. Use this to halt proc
 
 == Parameters
 
-*`why`* &lt;string&gt; A string explanation for why an error was thrown, this will be added to the resulting error message.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `why`
+| `string`
+| A string explanation for why an error was thrown, this will be added to the resulting error message.
+
+|===
 
 
 == Examples
@@ -29,10 +37,10 @@ root.doc.contents = (this.body.content | this.thing.body)
 # Out: Error("failed assignment (line 1): unknown type")
 ----
 
+Validate required fields before processing.
+
 [,bloblang]
 ----
-# Validate required fields before processing.
-
 root = if this.exists("user_id") {
   this
 } else {

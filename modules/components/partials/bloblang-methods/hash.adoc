@@ -5,17 +5,27 @@
 
 
 
-
-Generates a hash of a value using a specified algorithm
-
 == Parameters
 
-*`algorithm`* &lt;string&gt; The hashing algorithm to use.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`key`* &lt;string&gt; (optional) An optional key to use.
+| `algorithm`
+| `string`
+| The hashing algorithm to use.
 
-*`polynomial`* &lt;string&gt; An optional polynomial key to use when selecting the &#x60;crc32&#x60; algorithm, otherwise ignored. Options are &#x60;IEEE&#x60; (default), &#x60;Castagnoli&#x60; and &#x60;Koopman&#x60;
+| `key`^*^
+| `string`
+| An optional key to use.
 
+| `polynomial`
+| `string`
+| An optional polynomial key to use when selecting the `crc32` algorithm, otherwise ignored. Options are `IEEE` (default), `Castagnoli` and `Koopman`
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 
@@ -28,10 +38,10 @@ root.h2 = this.value.hash("hmac_sha1","static-key").encode("hex")
 # Out: {"h1":"2aae6c35c94fcfb415dbe95f408b9ce91ee846ed","h2":"d87e5f068fa08fe90bb95bc7c8344cb809179d76"}
 ----
 
+The `crc32` algorithm supports options for the polynomial.
+
 [,bloblang]
 ----
-# The `crc32` algorithm supports options for the polynomial.
-
 root.h1 = this.value.hash(algorithm: "crc32", polynomial: "Castagnoli").encode("hex")
 root.h2 = this.value.hash(algorithm: "crc32", polynomial: "Koopman").encode("hex")
 

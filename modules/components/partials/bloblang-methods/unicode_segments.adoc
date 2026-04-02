@@ -8,25 +8,33 @@ Splits text into segments based on Unicode text segmentation rules. Returns an a
 
 == Parameters
 
-*`segmentation_type`* &lt;string&gt; Type of segmentation: &quot;grapheme&quot;, &quot;word&quot;, or &quot;sentence&quot;
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `segmentation_type`
+| `string`
+| Type of segmentation: "grapheme", "word", or "sentence"
+
+|===
 
 
 == Examples
 
+Split text into sentences (preserves trailing spaces)
+
 [,bloblang]
 ----
-# Split text into sentences (preserves trailing spaces)
-
 root.sentences = this.text.unicode_segments("sentence")
 
 # In:  {"text":"Hello world. How are you?"}
 # Out: {"sentences":["Hello world. ","How are you?"]}
 ----
 
+Split text into grapheme clusters (handles complex emoji correctly)
+
 [,bloblang]
 ----
-# Split text into grapheme clusters (handles complex emoji correctly)
-
 root.graphemes = this.emoji.unicode_segments("grapheme")
 
 # In:  {"emoji":"👨‍👩‍👧‍👦❤️"}

@@ -3,25 +3,25 @@
 = parse_duration
 
 
-Parses a Go-style duration string into nanoseconds. A duration string is a signed sequence of decimal numbers with unit suffixes like &quot;300ms&quot;, &quot;-1.5h&quot;, or &quot;2h45m&quot;. Valid units: &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;.
+Parses a Go-style duration string into nanoseconds. A duration string is a signed sequence of decimal numbers with unit suffixes like "300ms", "-1.5h", or "2h45m". Valid units: "ns", "us" (or "µs"), "ms", "s", "m", "h".
 
 
 == Examples
 
+Parse microseconds to nanoseconds.
+
 [,bloblang]
 ----
-# Parse microseconds to nanoseconds.
-
 root.delay_for_ns = this.delay_for.parse_duration()
 
 # In:  {"delay_for":"50us"}
 # Out: {"delay_for_ns":50000}
 ----
 
+Parse hours to seconds.
+
 [,bloblang]
 ----
-# Parse hours to seconds.
-
 root.delay_for_s = this.delay_for.parse_duration() / 1000000000
 
 # In:  {"delay_for":"2h"}

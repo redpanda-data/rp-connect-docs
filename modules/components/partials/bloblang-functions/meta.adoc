@@ -3,12 +3,20 @@
 = meta
 
 
-Returns the value of a metadata key from the input message as a string, or &#x60;null&#x60; if the key does not exist. Since values are extracted from the read-only input message they do NOT reflect changes made from within the map. In order to query metadata mutations made within a mapping use the &lt;&lt;root_meta, &#x60;root_meta&#x60; function&gt;&gt;. This function supports extracting metadata from other messages of a batch with the &#x60;from&#x60; method.
+Returns the value of a metadata key from the input message as a string, or `null` if the key does not exist. Since values are extracted from the read-only input message they do NOT reflect changes made from within the map. In order to query metadata mutations made within a mapping use the <<root_meta, `root_meta` function>>. This function supports extracting metadata from other messages of a batch with the `from` method.
 
 
 == Parameters
 
-*`key`* &lt;string&gt; An optional key of a metadata value to obtain.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `key`
+| `string`
+| An optional key of a metadata value to obtain.
+
+|===
 
 
 == Examples
@@ -18,10 +26,10 @@ Returns the value of a metadata key from the input message as a string, or &#x60
 root.topic = meta("kafka_topic")
 ----
 
+The key parameter is optional and if omitted the entire metadata contents are returned as an object.
+
 [,bloblang]
 ----
-# The key parameter is optional and if omitted the entire metadata contents are returned as an object.
-
 root.all_metadata = meta()
 ----
 

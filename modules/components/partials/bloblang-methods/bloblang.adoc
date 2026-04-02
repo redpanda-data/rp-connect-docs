@@ -3,12 +3,20 @@
 = bloblang
 
 
-Executes an argument Bloblang mapping on the target. This method can be used in order to execute dynamic mappings. Imports and functions that interact with the environment, such as &#x60;file&#x60; and &#x60;env&#x60;, or that access message information directly, such as &#x60;content&#x60; or &#x60;json&#x60;, are not enabled for dynamic Bloblang mappings.
+Executes an argument Bloblang mapping on the target. This method can be used in order to execute dynamic mappings. Imports and functions that interact with the environment, such as `file` and `env`, or that access message information directly, such as `content` or `json`, are not enabled for dynamic Bloblang mappings.
 
 
 == Parameters
 
-*`mapping`* &lt;string&gt; The mapping to execute.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `mapping`
+| `string`
+| The mapping to execute.
+
+|===
 
 
 == Examples

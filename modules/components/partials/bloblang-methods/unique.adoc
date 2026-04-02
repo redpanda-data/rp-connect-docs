@@ -5,13 +5,19 @@
 
 
 
-
-Returns an array with duplicate elements removed
-
 == Parameters
 
-*`emit`* &lt;query expression&gt; (optional) An optional query that can be used in order to yield a value for each element to determine uniqueness.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
+| `emit`^*^
+| `query expression`
+| An optional query that can be used in order to yield a value for each element to determine uniqueness.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 
@@ -23,10 +29,10 @@ root.uniques = this.foo.unique()
 # Out: {"uniques":["a","b","c"]}
 ----
 
+Use a query to determine uniqueness by a field
+
 [,bloblang]
 ----
-# Use a query to determine uniqueness by a field
-
 root.unique_users = this.users.unique(u -> u.id)
 
 # In:  {"users":[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"},{"id":1,"name":"Alice Duplicate"}]}

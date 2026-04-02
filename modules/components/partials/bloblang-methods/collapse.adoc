@@ -5,12 +5,17 @@
 
 
 
-
-Flattens a nested structure into a flat object with dot-notation keys
-
 == Parameters
 
-*`include_empty`* &lt;bool&gt; Whether to include empty objects and arrays in the resulting object.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `include_empty`
+| `bool`
+| Whether to include empty objects and arrays in the resulting object.
+
+|===
 
 
 == Examples
@@ -23,10 +28,10 @@ root.result = this.collapse()
 # Out: {"result":{"foo.0.bar":"1","foo.2.bar":"2"}}
 ----
 
+Set include_empty to true to preserve empty objects and arrays in the output.
+
 [,bloblang]
 ----
-# Set include_empty to true to preserve empty objects and arrays in the output.
-
 root.result = this.collapse(include_empty: true)
 
 # In:  {"foo":[{"bar":"1"},{"bar":{}},{"bar":"2"},{"bar":[]}]}

@@ -8,20 +8,20 @@ Serializes structured data into MessagePack binary format. MessagePack is a comp
 
 == Examples
 
+Serialize object to MessagePack and encode as hex for transmission
+
 [,bloblang]
 ----
-# Serialize object to MessagePack and encode as hex for transmission
-
 root = this.format_msgpack().encode("hex")
 
 # In:  {"foo":"bar"}
 # Out: 81a3666f6fa3626172
 ----
 
+Serialize data to MessagePack and base64 encode for embedding in JSON
+
 [,bloblang]
 ----
-# Serialize data to MessagePack and base64 encode for embedding in JSON
-
 root.msgpack_payload = this.data.format_msgpack().encode("base64")
 
 # In:  {"data":{"foo":"bar"}}

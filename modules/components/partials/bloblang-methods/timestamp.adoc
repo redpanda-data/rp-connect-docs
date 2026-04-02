@@ -5,13 +5,19 @@
 
 
 
-
-Converts a value to a timestamp
-
 == Parameters
 
-*`default`* &lt;timestamp&gt; (optional) An optional value to yield if the target cannot be parsed as a timestamp.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
+| `default`^*^
+| `timestamp`
+| An optional value to yield if the target cannot be parsed as a timestamp.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 

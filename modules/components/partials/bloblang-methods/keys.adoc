@@ -16,10 +16,10 @@ root.foo_keys = this.foo.keys()
 # Out: {"foo_keys":["bar","baz"]}
 ----
 
+Check if specific keys exist
+
 [,bloblang]
 ----
-# Check if specific keys exist
-
 root.has_id = this.data.keys().contains("id")
 
 # In:  {"data":{"id":123,"name":"test"}}

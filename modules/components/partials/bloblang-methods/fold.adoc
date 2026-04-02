@@ -8,37 +8,47 @@ Reduces an array to a single value by iteratively applying a function. Also know
 
 == Parameters
 
-*`initial`* &lt;unknown&gt; The initial value to start the fold with. For example, an empty object &#x60;{}&#x60;, a zero count &#x60;0&#x60;, or an empty string &#x60;&quot;&quot;&#x60;.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`query`* &lt;query expression&gt; A query to apply for each element. The query is provided an object with two fields; &#x60;tally&#x60; containing the current tally, and &#x60;value&#x60; containing the value of the current element. The query should result in a new tally to be passed to the next element query.
+| `initial`
+| `unknown`
+| The initial value to start the fold with. For example, an empty object `{}`, a zero count `0`, or an empty string `""`.
+
+| `query`
+| `query expression`
+| A query to apply for each element. The query is provided an object with two fields; `tally` containing the current tally, and `value` containing the value of the current element. The query should result in a new tally to be passed to the next element query.
+
+|===
 
 
 == Examples
 
+Sum numbers in an array
+
 [,bloblang]
 ----
-# Sum numbers in an array
-
 root.sum = this.foo.fold(0, item -> item.tally + item.value)
 
 # In:  {"foo":[3,8,11]}
 # Out: {"sum":22}
 ----
 
+Concatenate strings
+
 [,bloblang]
 ----
-# Concatenate strings
-
 root.result = this.foo.fold("", item -> "%v%v".format(item.tally, item.value))
 
 # In:  {"foo":["hello ", "world"]}
 # Out: {"result":"hello world"}
 ----
 
+Merge an array of objects into a single object
+
 [,bloblang]
 ----
-# Merge an array of objects into a single object
-
 root.smoothie = this.fruits.fold({}, item -> item.tally.merge(item.value))
 
 # In:  {"fruits":[{"apple":5},{"banana":3},{"orange":8}]}

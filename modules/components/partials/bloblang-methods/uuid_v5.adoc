@@ -5,13 +5,19 @@
 
 
 
-
-Generates a version 5 UUID from a namespace and name
-
 == Parameters
 
-*`ns`* &lt;string&gt; (optional) An optional namespace name or UUID. It supports the &#x60;dns&#x60;, &#x60;url&#x60;, &#x60;oid&#x60; and &#x60;x500&#x60; predefined namespaces and any valid RFC-9562 UUID. If empty, the nil UUID will be used.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
+| `ns`^*^
+| `string`
+| An optional namespace name or UUID. It supports the `dns`, `url`, `oid` and `x500` predefined namespaces and any valid RFC-9562 UUID. If empty, the nil UUID will be used.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 

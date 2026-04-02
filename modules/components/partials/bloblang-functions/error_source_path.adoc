@@ -3,7 +3,7 @@
 = error_source_path
 
 
-Returns the dot-separated path to the component that caused the error, or &#x60;null&#x60; if the message has no error. Use this to identify the exact location of a failed component in nested pipeline configurations.
+Returns the dot-separated path to the component that caused the error, or `null` if the message has no error. Use this to identify the exact location of a failed component in nested pipeline configurations.
 
 
 == Examples
@@ -13,10 +13,10 @@ Returns the dot-separated path to the component that caused the error, or &#x60;
 root.doc.error_source_path = error_source_path()
 ----
 
+Build comprehensive error context for debugging.
+
 [,bloblang]
 ----
-# Build comprehensive error context for debugging.
-
 root.error_info = {
   "path": error_source_path(),
   "component": error_source_name(),

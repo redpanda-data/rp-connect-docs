@@ -3,7 +3,7 @@
 = key_values
 
 
-Converts an object into an array of key-value pair objects. Each element has a &#x27;key&#x27; field and a &#x27;value&#x27; field. Order is not guaranteed unless sorted.
+Converts an object into an array of key-value pair objects. Each element has a 'key' field and a 'value' field. Order is not guaranteed unless sorted.
 
 
 == Examples
@@ -16,10 +16,10 @@ root.foo_key_values = this.foo.key_values().sort_by(pair -> pair.key)
 # Out: {"foo_key_values":[{"key":"bar","value":1},{"key":"baz","value":2}]}
 ----
 
+Filter object entries by value
+
 [,bloblang]
 ----
-# Filter object entries by value
-
 root.large_items = this.items.key_values().filter(pair -> pair.value > 15).map_each(pair -> pair.key)
 
 # In:  {"items":{"a":5,"b":15,"c":20,"d":3}}

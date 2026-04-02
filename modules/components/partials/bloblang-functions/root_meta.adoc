@@ -3,12 +3,20 @@
 = root_meta
 
 
-Returns the value of a metadata key from the new message being created as a string, or &#x60;null&#x60; if the key does not exist. Changes made to metadata during a mapping will be reflected by this function.
+Returns the value of a metadata key from the new message being created as a string, or `null` if the key does not exist. Changes made to metadata during a mapping will be reflected by this function.
 
 
 == Parameters
 
-*`key`* &lt;string&gt; An optional key of a metadata value to obtain.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `key`
+| `string`
+| An optional key of a metadata value to obtain.
+
+|===
 
 
 == Examples
@@ -18,10 +26,10 @@ Returns the value of a metadata key from the new message being created as a stri
 root.topic = root_meta("kafka_topic")
 ----
 
+The key parameter is optional and if omitted the entire metadata contents are returned as an object.
+
 [,bloblang]
 ----
-# The key parameter is optional and if omitted the entire metadata contents are returned as an object.
-
 root.all_metadata = root_meta()
 ----
 

@@ -3,7 +3,7 @@
 = error
 
 
-Returns the error message string if the message has failed processing, otherwise &#x60;null&#x60;. Use this in error handling pipelines to log or route failed messages based on their error details.
+Returns the error message string if the message has failed processing, otherwise `null`. Use this in error handling pipelines to log or route failed messages based on their error details.
 
 
 == Examples
@@ -13,10 +13,10 @@ Returns the error message string if the message has failed processing, otherwise
 root.doc.error = error()
 ----
 
+Route messages to different outputs based on error presence.
+
 [,bloblang]
 ----
-# Route messages to different outputs based on error presence.
-
 root = this
 root.error_msg = error()
 root.has_error = error() != null

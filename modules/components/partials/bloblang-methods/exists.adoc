@@ -8,7 +8,15 @@ Checks whether a field exists at the specified dot path within an object. Return
 
 == Parameters
 
-*`path`* &lt;string&gt; A xref:configuration:field_paths.adoc[dot path] to a field.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `path`
+| `string`
+| A xref:configuration:field_paths.adoc[dot path] to a field.
+
+|===
 
 
 == Examples
@@ -27,10 +35,10 @@ root.result = this.foo.exists("bar.baz")
 # Out: {"result":false}
 ----
 
+Also returns true for null values if the field exists
+
 [,bloblang]
 ----
-# Also returns true for null values if the field exists
-
 root.has_field = this.data.exists("optional_field")
 
 # In:  {"data":{"optional_field":null}}

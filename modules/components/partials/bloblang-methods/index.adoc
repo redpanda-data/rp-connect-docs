@@ -8,7 +8,15 @@ Extract an element from an array by an index. The index can be negative, and if 
 
 == Parameters
 
-*`index`* &lt;integer&gt; The index to obtain from an array.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `index`
+| `integer`
+| The index to obtain from an array.
+
+|===
 
 
 == Examples
@@ -21,10 +29,10 @@ root.last_name = this.names.index(-1)
 # Out: {"last_name":"stevens"}
 ----
 
+It is also possible to use this method on byte arrays, in which case the selected element will be returned as an integer.
+
 [,bloblang]
 ----
-# It is also possible to use this method on byte arrays, in which case the selected element will be returned as an integer.
-
 root.last_byte = this.name.bytes().index(-1)
 
 # In:  {"name":"foobar bazson"}

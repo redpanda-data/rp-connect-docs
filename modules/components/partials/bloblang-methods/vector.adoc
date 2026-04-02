@@ -3,23 +3,23 @@
 = vector
 
 
-Converts an array of numbers into a vector type suitable for insertion into SQL databases with vector/embedding support. This is commonly used with PostgreSQL&#x27;s pgvector extension for storing and querying machine learning embeddings, enabling similarity search and vector operations in your database.
+Converts an array of numbers into a vector type suitable for insertion into SQL databases with vector/embedding support. This is commonly used with PostgreSQL's pgvector extension for storing and querying machine learning embeddings, enabling similarity search and vector operations in your database.
 
 
 == Examples
 
+Convert embeddings array to vector for pgvector storage
+
 [,bloblang]
 ----
-# Convert embeddings array to vector for pgvector storage
-
 root.embedding = this.embeddings.vector()
 root.text = this.text
 ----
 
+Process ML model output into database-ready vector format
+
 [,bloblang]
 ----
-# Process ML model output into database-ready vector format
-
 root.doc_id = this.id
 root.vector_embedding = this.model_output.map_each(num -> num.number()).vector()
 ----

@@ -8,7 +8,15 @@ Parses a claims object from a JWT string encoded with ES256. This method does no
 
 == Parameters
 
-*`signing_secret`* &lt;string&gt; The ES256 secret that was used for signing the token.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `signing_secret`
+| `string`
+| The ES256 secret that was used for signing the token.
+
+|===
 
 
 == Examples

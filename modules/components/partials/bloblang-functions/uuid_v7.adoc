@@ -8,8 +8,17 @@ Generates a time-ordered UUID version 7 with millisecond timestamp precision. Us
 
 == Parameters
 
-*`time`* &lt;timestamp&gt; (optional) An optional timestamp to use for the time ordered portion of the UUID.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
+| `time`^*^
+| `timestamp`
+| An optional timestamp to use for the time ordered portion of the UUID.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 
@@ -18,10 +27,10 @@ Generates a time-ordered UUID version 7 with millisecond timestamp precision. Us
 root.id = uuid_v7()
 ----
 
+Generate a UUID with a specific timestamp for backdating events.
+
 [,bloblang]
 ----
-# Generate a UUID with a specific timestamp for backdating events.
-
 root.id = uuid_v7(now().ts_sub_iso8601("PT1M"))
 ----
 

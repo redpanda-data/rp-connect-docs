@@ -5,9 +5,6 @@
 
 
 
-
-Returns an array with specified elements removed
-
 == Examples
 
 [,bloblang]
@@ -18,10 +15,10 @@ root = this.without("inner.a","inner.c","d")
 # Out: {"e":"fifth","inner":{"b":"second"}}
 ----
 
+Remove sensitive fields
+
 [,bloblang]
 ----
-# Remove sensitive fields
-
 root = this.without("password","ssn","creditCard")
 
 # In:  {"username":"alice","password":"secret","email":"alice@example.com","ssn":"123-45-6789"}

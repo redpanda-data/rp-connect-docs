@@ -5,16 +5,25 @@
 
 
 
-
-Formats a value as a JSON string with optional indentation
-
 == Parameters
 
-*`indent`* &lt;string&gt; Indentation string. Each element in a JSON object or array will begin on a new, indented line followed by one or more copies of indent according to the indentation nesting.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
-*`no_indent`* &lt;bool&gt; Disable indentation.
+| `indent`
+| `string`
+| Indentation string. Each element in a JSON object or array will begin on a new, indented line followed by one or more copies of indent according to the indentation nesting.
 
-*`escape_html`* &lt;bool&gt; Escape problematic HTML characters.
+| `no_indent`
+| `bool`
+| Disable indentation.
+
+| `escape_html`
+| `bool`
+| Escape problematic HTML characters.
+
+|===
 
 
 == Examples
@@ -29,10 +38,10 @@ root = this.doc.format_json()
 }
 ----
 
+Pass a string to the `indent` parameter in order to customise the indentation.
+
 [,bloblang]
 ----
-# Pass a string to the `indent` parameter in order to customise the indentation.
-
 root = this.format_json("  ")
 
 # In:  {"doc":{"foo":"bar"}}
@@ -43,30 +52,30 @@ root = this.format_json("  ")
 }
 ----
 
+Use the `.string()` method in order to coerce the result into a string.
+
 [,bloblang]
 ----
-# Use the `.string()` method in order to coerce the result into a string.
-
 root.doc = this.doc.format_json().string()
 
 # In:  {"doc":{"foo":"bar"}}
 # Out: {"doc":"{\n    \"foo\": \"bar\"\n}"}
 ----
 
+Set the `no_indent` parameter to true to disable indentation. The result is equivalent to calling `bytes()`.
+
 [,bloblang]
 ----
-# Set the `no_indent` parameter to true to disable indentation. The result is equivalent to calling `bytes()`.
-
 root = this.doc.format_json(no_indent: true)
 
 # In:  {"doc":{"foo":"bar"}}
 # Out: {"foo":"bar"}
 ----
 
+Escapes problematic HTML characters.
+
 [,bloblang]
 ----
-# Escapes problematic HTML characters.
-
 root = this.doc.format_json()
 
 # In:  {"doc":{"email":"foo&bar@benthos.dev","name":"foo>bar"}}
@@ -76,10 +85,10 @@ root = this.doc.format_json()
 }
 ----
 
+Set the `escape_html` parameter to false to disable escaping of problematic HTML characters.
+
 [,bloblang]
 ----
-# Set the `escape_html` parameter to false to disable escaping of problematic HTML characters.
-
 root = this.doc.format_json(escape_html: false)
 
 # In:  {"doc":{"email":"foo&bar@benthos.dev","name":"foo>bar"}}

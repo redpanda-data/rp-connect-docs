@@ -3,7 +3,7 @@
 = error_source_label
 
 
-Returns the user-defined label of the component that caused the error, empty string if no label is set, or &#x60;null&#x60; if the message has no error. Use this for more human-readable error tracking when components have custom labels.
+Returns the user-defined label of the component that caused the error, empty string if no label is set, or `null` if the message has no error. Use this for more human-readable error tracking when components have custom labels.
 
 
 == Examples
@@ -13,10 +13,10 @@ Returns the user-defined label of the component that caused the error, empty str
 root.doc.error_source_label = error_source_label()
 ----
 
+Route errors based on component labels.
+
 [,bloblang]
 ----
-# Route errors based on component labels.
-
 root.error_category = error_source_label().or("unknown")
 ----
 

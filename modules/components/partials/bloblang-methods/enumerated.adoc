@@ -16,10 +16,10 @@ root.foo = this.foo.enumerated()
 # Out: {"foo":[{"index":0,"value":"bar"},{"index":1,"value":"baz"}]}
 ----
 
+Useful for filtering by index position
+
 [,bloblang]
 ----
-# Useful for filtering by index position
-
 root.first_two = this.items.enumerated().filter(item -> item.index < 2).map_each(item -> item.value)
 
 # In:  {"items":["a","b","c","d"]}

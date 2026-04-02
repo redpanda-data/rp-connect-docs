@@ -8,7 +8,15 @@ Returns a field from the original JSON message by dot path, always accessing the
 
 == Parameters
 
-*`path`* &lt;string&gt; An optional [dot path][field_paths] identifying a field to obtain.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `path`
+| `string`
+| An optional [dot path][field_paths] identifying a field to obtain.
+
+|===
 
 
 == Examples
@@ -21,10 +29,10 @@ root.mapped = json("foo.bar")
 # Out: {"mapped":"hello world"}
 ----
 
+Access the original message from within nested mapping contexts.
+
 [,bloblang]
 ----
-# Access the original message from within nested mapping contexts.
-
 root.doc = json()
 
 # In:  {"foo":{"bar":"hello world"}}

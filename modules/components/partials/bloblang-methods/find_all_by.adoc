@@ -8,7 +8,15 @@ Searches an array for all elements that satisfy a condition and returns an array
 
 == Parameters
 
-*`query`* &lt;query expression&gt; A query to execute for each element.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `query`
+| `query expression`
+| A query to execute for each element.
+
+|===
 
 
 == Examples
@@ -21,10 +29,10 @@ root.index = this.find_all_by(v -> v != "bar")
 # Out: {"index":[0,2]}
 ----
 
+Find all indexes matching criteria
+
 [,bloblang]
 ----
-# Find all indexes matching criteria
-
 root.error_indexes = this.logs.find_all_by(log -> log.level == "error")
 
 # In:  {"logs":[{"level":"info"},{"level":"error"},{"level":"warn"},{"level":"error"}]}

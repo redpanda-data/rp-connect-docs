@@ -8,7 +8,15 @@ Searches an array for the first element that satisfies a condition and returns i
 
 == Parameters
 
-*`query`* &lt;query expression&gt; A query to execute for each element.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `query`
+| `query expression`
+| A query to execute for each element.
+
+|===
 
 
 == Examples
@@ -21,10 +29,10 @@ root.index = this.find_by(v -> v != "bar")
 # Out: {"index":0}
 ----
 
+Find first object matching criteria
+
 [,bloblang]
 ----
-# Find first object matching criteria
-
 root.first_adult = this.users.find_by(u -> u.age >= 18)
 
 # In:  {"users":[{"name":"Alice","age":15},{"name":"Bob","age":22},{"name":"Carol","age":19}]}

@@ -5,8 +5,8 @@
 
 Parses an XML document into a structured object. Converts XML elements to JSON-like objects following these rules:
 
-- Element attributes are prefixed with a hyphen (e.g., &#x60;-id&#x60; for an &#x60;id&#x60; attribute)
-- Elements with both attributes and text content store the text in a &#x60;#text&#x60; field
+- Element attributes are prefixed with a hyphen (e.g., `-id` for an `id` attribute)
+- Elements with both attributes and text content store the text in a `#text` field
 - Repeated elements become arrays
 - XML comments, directives, and processing instructions are ignored
 - Optionally cast numeric and boolean strings to their proper types
@@ -14,25 +14,34 @@ Parses an XML document into a structured object. Converts XML elements to JSON-l
 
 == Parameters
 
-*`cast`* &lt;bool&gt; (optional) Whether to automatically cast numeric and boolean string values to their proper types. When false, all values remain as strings.
+[cols="1,1,3"]
+|===
+| Name | Type | Description
 
+| `cast`^*^
+| `bool`
+| Whether to automatically cast numeric and boolean string values to their proper types. When false, all values remain as strings.
+
+|===
+
+^*^ Optional parameter
 
 == Examples
 
+Parse XML document into object structure
+
 [,bloblang]
 ----
-# Parse XML document into object structure
-
 root.doc = this.doc.parse_xml()
 
 # In:  {"doc":"<root><title>This is a title</title><content>This is some content</content></root>"}
 # Out: {"doc":{"root":{"content":"This is some content","title":"This is a title"}}}
 ----
 
+Parse XML with type casting enabled to convert strings to numbers and booleans
+
 [,bloblang]
 ----
-# Parse XML with type casting enabled to convert strings to numbers and booleans
-
 root.doc = this.doc.parse_xml(cast: true)
 
 # In:  {"doc":"<root><title>This is a title</title><number id=\"99\">123</number><bool>True</bool></root>"}
