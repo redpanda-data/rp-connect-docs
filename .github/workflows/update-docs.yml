@@ -194,7 +194,8 @@ jobs:
             --fetch-connectors \
             --overrides "$DOCS_OVERRIDES" \
             --draft-missing \
-            --update-whats-new > full_output.txt 2>&1; then
+            --update-whats-new \
+            --include-bloblang > full_output.txt 2>&1; then
 
             echo "::error::Doc generation failed"
             cat full_output.txt

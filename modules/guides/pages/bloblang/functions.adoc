@@ -1,6 +1,6 @@
 = Bloblang Functions
 // tag::single-source[]
-:description: A list of Bloblang functions.
+:description: A list of Bloblang functions
 
 // © 2024 Redpanda Data Inc.
 
@@ -22,789 +22,86 @@ root.values_two = range(0, this.max, 2)
 # In:  {"max":10}
 ```
 
-== General
+include::redpanda-connect:components:partial$bloblang-functions/batch_index.adoc[leveloffset=+1]
 
-=== `bytes`
+include::redpanda-connect:components:partial$bloblang-functions/batch_size.adoc[leveloffset=+1]
 
-Creates a new byte array of a specified length that is zero-initialized. This function is useful when you need to allocate a fixed-size byte buffer for binary data operations.
+include::redpanda-connect:components:partial$bloblang-functions/bytes.adoc[leveloffset=+1]
 
-==== Parameters
+include::redpanda-connect:components:partial$bloblang-functions/content.adoc[leveloffset=+1]
 
-*`length`* &lt;integer&gt; The number of bytes to allocate in the array. Must be a non-negative integer.
+include::redpanda-connect:components:partial$bloblang-functions/count.adoc[leveloffset=+1]
 
-==== Examples
+include::redpanda-connect:components:partial$bloblang-functions/counter.adoc[leveloffset=+1]
 
+include::redpanda-connect:components:partial$bloblang-functions/deleted.adoc[leveloffset=+1]
 
-```bloblang
-root.buffer = bytes(10)
+include::redpanda-connect:components:partial$bloblang-functions/env.adoc[leveloffset=+1]
 
-# In:  {}
-```
+include::redpanda-connect:components:partial$bloblang-functions/error.adoc[leveloffset=+1]
 
-```bloblang
-root.data = bytes(this.size)
+include::redpanda-connect:components:partial$bloblang-functions/error_source_label.adoc[leveloffset=+1]
 
-# In:  {"size":5}
-```
+include::redpanda-connect:components:partial$bloblang-functions/error_source_name.adoc[leveloffset=+1]
 
-=== `counter`
+include::redpanda-connect:components:partial$bloblang-functions/error_source_path.adoc[leveloffset=+1]
 
-[CAUTION]
-====
-This function is experimental and therefore breaking changes could be made to it outside of major version releases.
-====
-Returns a non-negative integer that increments each time it is resolved, yielding the minimum (`1` by default) as the first value. Each instantiation of `counter` has its own independent count. Once the maximum integer (or `max` argument) is reached the counter resets back to the minimum.
+include::redpanda-connect:components:partial$bloblang-functions/errored.adoc[leveloffset=+1]
 
-==== Parameters
+include::redpanda-connect:components:partial$bloblang-functions/fake.adoc[leveloffset=+1]
 
-- *`min`* &lt;query expression, default `1`&gt; The minimum value of the counter, this is the first value that will be yielded. If this parameter is dynamic it will be resolved only once during the lifetime of the mapping.  
-- *`max`* &lt;query expression, default `9223372036854775807`&gt; The maximum value of the counter, once this value is yielded the counter will reset back to the min. If this parameter is dynamic it will be resolved only once during the lifetime of the mapping.  
-- *`set`* &lt;(optional) query expression&gt; An optional mapping that when specified will be executed each time the counter is resolved. When this mapping resolves to a non-negative integer value it will cause the counter to reset to this value and yield it. If this mapping is omitted or doesn't resolve to anything then the counter will increment and yield the value as normal. If this mapping resolves to `null` then the counter is not incremented and the current value is yielded. If this mapping resolves to a deletion then the counter is reset to the `min` value.  
+include::redpanda-connect:components:partial$bloblang-functions/file.adoc[leveloffset=+1]
 
-==== Examples
+include::redpanda-connect:components:partial$bloblang-functions/file_rel.adoc[leveloffset=+1]
 
+include::redpanda-connect:components:partial$bloblang-functions/hostname.adoc[leveloffset=+1]
 
-```bloblang
-root.id = counter()
+include::redpanda-connect:components:partial$bloblang-functions/json.adoc[leveloffset=+1]
 
-# In:  {}
+include::redpanda-connect:components:partial$bloblang-functions/ksuid.adoc[leveloffset=+1]
 
-# In:  {}
-```
+include::redpanda-connect:components:partial$bloblang-functions/meta.adoc[leveloffset=+1]
 
-It's possible to increment a counter multiple times within a single mapping invocation using a map.
+include::redpanda-connect:components:partial$bloblang-functions/metadata.adoc[leveloffset=+1]
 
-```bloblang
+include::redpanda-connect:components:partial$bloblang-functions/nanoid.adoc[leveloffset=+1]
 
-map foos {
-  root = counter()
-}
+include::redpanda-connect:components:partial$bloblang-functions/nothing.adoc[leveloffset=+1]
 
-root.meow_id = null.apply("foos")
-root.woof_id = null.apply("foos")
+include::redpanda-connect:components:partial$bloblang-functions/now.adoc[leveloffset=+1]
 
+include::redpanda-connect:components:partial$bloblang-functions/pi.adoc[leveloffset=+1]
 
-# In:  {}
+include::redpanda-connect:components:partial$bloblang-functions/random_int.adoc[leveloffset=+1]
 
-# In:  {}
-```
+include::redpanda-connect:components:partial$bloblang-functions/range.adoc[leveloffset=+1]
 
-By specifying an optional `set` parameter it is possible to dynamically reset the counter based on input data.
+include::redpanda-connect:components:partial$bloblang-functions/root_meta.adoc[leveloffset=+1]
 
-```bloblang
-root.consecutive_doggos = counter(min: 1, set: if !this.sound.lowercase().contains("woof") { 0 })
+include::redpanda-connect:components:partial$bloblang-functions/snowflake_id.adoc[leveloffset=+1]
 
-# In:  {"sound":"woof woof"}
+include::redpanda-connect:components:partial$bloblang-functions/throw.adoc[leveloffset=+1]
 
-# In:  {"sound":"woofer wooooo"}
+include::redpanda-connect:components:partial$bloblang-functions/timestamp_unix.adoc[leveloffset=+1]
 
-# In:  {"sound":"meow"}
+include::redpanda-connect:components:partial$bloblang-functions/timestamp_unix_micro.adoc[leveloffset=+1]
 
-# In:  {"sound":"uuuuh uh uh woof uhhhhhh"}
-```
+include::redpanda-connect:components:partial$bloblang-functions/timestamp_unix_milli.adoc[leveloffset=+1]
 
-The `set` parameter can also be utilized to peek at the counter without mutating it by returning `null`.
+include::redpanda-connect:components:partial$bloblang-functions/timestamp_unix_nano.adoc[leveloffset=+1]
 
-```bloblang
-root.things = counter(set: if this.id == null { null })
+include::redpanda-connect:components:partial$bloblang-functions/tracing_id.adoc[leveloffset=+1]
 
-# In:  {"id":"a"}
+include::redpanda-connect:components:partial$bloblang-functions/tracing_span.adoc[leveloffset=+1]
 
-# In:  {"id":"b"}
+include::redpanda-connect:components:partial$bloblang-functions/ulid.adoc[leveloffset=+1]
 
-# In:  {"what":"just checking"}
+include::redpanda-connect:components:partial$bloblang-functions/uuid_v4.adoc[leveloffset=+1]
 
-# In:  {"id":"c"}
-```
+include::redpanda-connect:components:partial$bloblang-functions/uuid_v7.adoc[leveloffset=+1]
 
-=== `deleted`
+include::redpanda-connect:components:partial$bloblang-functions/var.adoc[leveloffset=+1]
 
-A function that returns a result indicating that the mapping target should be deleted. Deleting, also known as dropping, messages will result in them being acknowledged as successfully processed to inputs in a Redpanda Connect pipeline. For more information about error handling patterns read xref:configuration:error_handling.adoc[].
-
-==== Examples
-
-
-```bloblang
-root = this
-root.bar = deleted()
-
-# In:  {"bar":"bar_value","baz":"baz_value","foo":"foo value"}
-```
-
-Since the result is a value it can be used to do things like remove elements of an array within `map_each`.
-
-```bloblang
-root.new_nums = this.nums.map_each(num -> if num < 10 { deleted() } else { num - 10 })
-
-# In:  {"nums":[3,11,4,17]}
-```
-
-=== `ksuid`
-
-Generates a new ksuid each time it is invoked and prints a string representation.
-
-==== Examples
-
-
-```bloblang
-root.id = ksuid()
-```
-
-=== `nanoid`
-
-Generates a new nanoid each time it is invoked and prints a string representation.
-
-==== Parameters
-
-- *`length`* &lt;(optional) integer&gt; An optional length.  
-- *`alphabet`* &lt;(optional) string&gt; An optional custom alphabet to use for generating IDs. When specified the field `length` must also be present.  
-
-==== Examples
-
-
-```bloblang
-root.id = nanoid()
-```
-
-It is possible to specify an optional length parameter.
-
-```bloblang
-root.id = nanoid(54)
-```
-
-It is also possible to specify an optional custom alphabet after the length parameter.
-
-```bloblang
-root.id = nanoid(54, "abcde")
-```
-
-=== `pi`
-
-Returns the value of the mathematical constant Pi.
-
-==== Examples
-
-
-```bloblang
-root.radians = this.degrees * (pi() / 180)
-
-# In:  {"degrees":45}
-```
-
-```bloblang
-root.degrees = this.radians * (180 / pi())
-
-# In:  {"radians":0.78540}
-```
-
-=== `random_int`
-
-
-Generates a non-negative pseudo-random 64-bit integer. An optional integer argument can be provided in order to seed the random number generator.
-
-Optional `min` and `max` arguments can be provided in order to only generate numbers within a range. Neither of these parameters can be set via a dynamic expression (i.e. from values taken from mapped data). Instead, for dynamic ranges extract a min and max manually using a modulo operator (`random_int() % a + b`).
-
-==== Parameters
-
-- *`seed`* &lt;query expression, default `{"Value":0}`&gt; A seed to use, if a query is provided it will only be resolved once during the lifetime of the mapping.  
-- *`min`* &lt;integer, default `0`&gt; The minimum value the random generated number will have. The default value is 0.  
-- *`max`* &lt;integer, default `9223372036854775806`&gt; The maximum value the random generated number will have. The default value is 9223372036854775806 (math.MaxInt64 - 1).  
-
-==== Examples
-
-
-```bloblang
-root.first = random_int()
-root.second = random_int(1)
-root.third = random_int(max:20)
-root.fourth = random_int(min:10, max:20)
-root.fifth = random_int(timestamp_unix_nano(), 5, 20)
-root.sixth = random_int(seed:timestamp_unix_nano(), max:20)
-
-```
-
-It is possible to specify a dynamic seed argument, in which case the argument will only be resolved once during the lifetime of the mapping.
-
-```bloblang
-root.first = random_int(timestamp_unix_nano())
-```
-
-=== `range`
-
-The `range` function creates an array of integers following a range between a start, stop and optional step integer argument. If the step argument is omitted then it defaults to 1. A negative step can be provided as long as stop < start.
-
-==== Parameters
-
-- *`start`* &lt;integer&gt; The start value.  
-- *`stop`* &lt;integer&gt; The stop value.  
-- *`step`* &lt;integer, default `1`&gt; The step value.  
-
-==== Examples
-
-
-```bloblang
-root.a = range(0, 10)
-root.b = range(start: 0, stop: this.max, step: 2) # Using named params
-root.c = range(0, -this.max, -2)
-
-# In:  {"max":10}
-```
-
-=== `snowflake_id`
-
-Generate a new snowflake ID each time it is invoked and prints a string representation. I.e.: 1559229974454472704
-
-==== Parameters
-
-- *`node_id`* &lt;integer, default `1`&gt; It is possible to specify the node_id.  
-
-==== Examples
-
-
-```bloblang
-root.id = snowflake_id()
-```
-
-It is possible to specify the node_id.
-
-```bloblang
-root.id = snowflake_id(2)
-```
-
-=== `throw`
-
-Throws an error similar to a regular mapping error. This is useful for abandoning a mapping entirely given certain conditions.
-
-==== Parameters
-
-- *`why`* &lt;string&gt; A string explanation for why an error was thrown, this will be added to the resulting error message.  
-
-==== Examples
-
-
-```bloblang
-root.doc.type = match {
-  this.exists("header.id") => "foo"
-  this.exists("body.data") => "bar"
-  _ => throw("unknown type")
-}
-root.doc.contents = (this.body.content | this.thing.body)
-
-# In:  {"header":{"id":"first"},"thing":{"body":"hello world"}}
-
-# In:  {"nothing":"matches"}
-```
-
-=== `ulid`
-
-[CAUTION]
-====
-This function is experimental and therefore breaking changes could be made to it outside of major version releases.
-====
-Generate a random ULID.
-
-==== Parameters
-
-- *`encoding`* &lt;string, default `"crockford"`&gt; The format to encode a ULID into. Valid options are: crockford, hex  
-- *`random_source`* &lt;string, default `"secure_random"`&gt; The source of randomness to use for generating ULIDs. "secure_random" is recommended for most use cases. "fast_random" can be used if security is not a concern.  
-
-==== Examples
-
-
-Using the defaults of Crockford Base32 encoding and secure random source
-
-```bloblang
-root.id = ulid()
-```
-
-ULIDs can be hex-encoded too.
-
-```bloblang
-root.id = ulid("hex")
-```
-
-They can be generated using a fast, but unsafe, random source for use cases that are not security-sensitive.
-
-```bloblang
-root.id = ulid("crockford", "fast_random")
-```
-
-=== `uuid_v4`
-
-Generates a new RFC-4122 UUID each time it is invoked and prints a string representation.
-
-==== Examples
-
-
-```bloblang
-root.id = uuid_v4()
-```
-
-=== `uuid_v7`
-
-Generates a new time-ordered UUID each time it is invoked and prints a string representation. This function is useful when the exact timing of events is important, such as during data migration or replication.
-
-==== Parameters
-
-- *`time`* &lt;(optional) timestamp&gt; The timestamp to use for the time-ordered portion of the UUID. If not specified, the current time is used.
-
-==== Examples
-
-```bloblang
-root.id = uuid_v7()
-```
-
-You can also specify the timestamp for the `uuid_v7`.
-
-```bloblang
-root.id = uuid_v7(now().ts_sub_iso8601("PT1M"))
-```
-
-=== `with_schema_registry_header`
-
-Prepends a 5-byte Schema Registry header to a message. The header consists of a magic byte (0x00) followed by a 4-byte big-endian schema ID.
-
-==== Parameters
-
-- *`schema_id`* &lt;number&gt; The schema ID to encode in the header.
-- *`payload`* &lt;string|bytes&gt; The message payload to which the header will be prepended.
-
-==== Examples
-
-```bloblang
-# Skip: true
-# Add header with schema ID 123
-root = with_schema_registry_header(123, content())
-```
-
-```bloblang
-# Skip: true
-# Add header with schema ID from metadata
-root = with_schema_registry_header(meta("schema_id").number(), content())
-```
-
-== Message Info
-
-=== `batch_index`
-
-Returns the index of the mapped message within a batch. This is useful for applying maps only on certain messages of a batch.
-
-==== Examples
-
-
-```bloblang
-root = if batch_index() > 0 { deleted() }
-```
-
-=== `batch_size`
-
-Returns the size of the message batch.
-
-==== Examples
-
-
-```bloblang
-root.foo = batch_size()
-```
-
-=== `content`
-
-Returns the full raw contents of the mapping target message as a byte array. When mapping to a JSON field the value should be encoded using the method xref:guides:bloblang/methods.adoc#encode[`encode`], or cast to a string directly using the method xref:guides:bloblang/methods.adoc#string[`string`], otherwise it will be base64 encoded by default.
-
-==== Examples
-
-
-```bloblang
-root.doc = content().string()
-
-# In:  {"foo":"bar"}
-```
-
-=== `error`
-
-If an error occurs during the processing of a message, this function returns the reported cause as a string, otherwise `null`. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
-
-==== Examples
-
-
-```bloblang
-root.doc.error = error()
-```
-
-=== `error_source_label`
-
-Returns the label of the component that raised the error during the processing of a message, or an empty string if not set. A `null` is returned when the error is null or no component is associated with the source of the error. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
-
-==== Examples
-
-```bloblang
-root.doc.error_source_label = error_source_label()
-```
-
-=== `error_source_name`
-
-Returns the name of the component that raised the error during the processing of a message. A `null` is returned when the error is null or no component is associated with the source of the error. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
-
-==== Examples
-
-```bloblang
-root.doc.error_source_name = error_source_name()
-```
-
-=== `error_source_path`
-
-Returns the path of the component that raised the error during the processing of a message. A `null` is returned when the error is null or no component is associated with source of the error. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
-
-==== Examples
-
-```bloblang
-root.doc.error_source_path = error_source_path()
-```
-
-=== `errored`
-
-Returns a boolean value indicating whether an error has occurred during the processing of a message. For more information about error-handling patterns, see xref:configuration:error_handling.adoc[].
-
-==== Examples
-
-
-```bloblang
-root.doc.status = if errored() { 400 } else { 200 }
-```
-
-=== `json`
-
-Returns the value of a field within a JSON message located by a [dot path][field_paths] argument. This function always targets the entire source JSON document regardless of the mapping context.
-
-==== Parameters
-
-- *`path`* &lt;string, default `""`&gt; An optional [dot path][field_paths] identifying a field to obtain.  
-
-==== Examples
-
-
-```bloblang
-root.mapped = json("foo.bar")
-
-# In:  {"foo":{"bar":"hello world"}}
-```
-
-The path argument is optional and if omitted the entire JSON payload is returned.
-
-```bloblang
-root.doc = json()
-
-# In:  {"foo":{"bar":"hello world"}}
-```
-
-=== `metadata`
-
-Returns the value of a metadata key from the input message, or `null` if the key does not exist. Since values are extracted from the read-only input message they do NOT reflect changes made from within the map, in order to query metadata mutations made within a mapping use the xref:guides:bloblang/about.adoc#metadata[`@` operator]. This function supports extracting metadata from other messages of a batch with the `from` method.
-
-==== Parameters
-
-- *`key`* &lt;string, default `""`&gt; An optional key of a metadata value to obtain.  
-
-==== Examples
-
-
-```bloblang
-root.topic = metadata("kafka_topic")
-```
-
-The key parameter is optional and if omitted the entire metadata contents are returned as an object.
-
-```bloblang
-root.all_metadata = metadata()
-```
-
-=== `tracing_id`
-
-[CAUTION]
-====
-This function is experimental and therefore breaking changes could be made to it outside of major version releases.
-====
-Provides the message trace id. The returned value will be zeroed if the message does not contain a span.
-
-==== Examples
-
-
-```bloblang
-meta trace_id = tracing_id()
-```
-
-=== `tracing_span`
-
-[CAUTION]
-====
-This function is experimental and therefore breaking changes could be made to it outside of major version releases.
-====
-Provides the message tracing span xref:components:tracers/about.adoc[(created via Open Telemetry APIs)] as an object serialized via text map formatting. The returned value will be `null` if the message does not have a span.
-
-==== Examples
-
-
-```bloblang
-root.headers.traceparent = tracing_span().traceparent
-
-# In:  {"some_stuff":"just can't be explained by science"}
-```
-
-== Environment
-
-=== `env`
-
-Returns the value of an environment variable, or `null` if the environment variable does not exist.
-
-==== Parameters
-
-- *`name`* &lt;string&gt; The name of an environment variable.  
-- *`no_cache`* &lt;bool, default `false`&gt; Force the variable lookup to occur for each mapping invocation.  
-
-==== Examples
-
-
-```bloblang
-root.thing.key = env("key").or("default value")
-```
-
-```bloblang
-root.thing.key = env(this.thing.key_name)
-
-# In:  {"thing":{"key_name":"API_KEY"}}
-```
-
-When the name parameter is static this function will only resolve once and yield the same result for each invocation as an optimization, this means that updates to env vars during runtime will not be reflected. You can disable this cache with the optional parameter `no_cache`, which when set to `true` will cause the variable lookup to be performed for each execution of the mapping.
-
-```bloblang
-root.thing.key = env(name: "key", no_cache: true)
-```
-
-=== `file`
-
-Reads a file and returns its contents. Relative paths are resolved from the directory of the process executing the mapping. In order to read files relative to the mapping file use the newer <<file_rel, `file_rel` function>>
-
-==== Parameters
-
-- *`path`* &lt;string&gt; The path of the target file.  
-- *`no_cache`* &lt;bool, default `false`&gt; Force the file to be read for each mapping invocation.  
-
-==== Examples
-
-
-```bloblang
-root.doc = file(env("BENTHOS_TEST_BLOBLANG_FILE")).parse_json()
-
-# In:  {}
-```
-
-When the path parameter is static this function will only read the specified file once and yield the same result for each invocation as an optimization, this means that updates to files during runtime will not be reflected. You can disable this cache with the optional parameter `no_cache`, which when set to `true` will cause the file to be read for each execution of the mapping.
-
-```bloblang
-root.doc = file(path: env("BENTHOS_TEST_BLOBLANG_FILE"), no_cache: true).parse_json()
-
-# In:  {}
-```
-
-=== `file_rel`
-
-Reads a file and returns its contents. Relative paths are resolved from the directory of the mapping.
-
-==== Parameters
-
-- *`path`* &lt;string&gt; The path of the target file.  
-- *`no_cache`* &lt;bool, default `false`&gt; Force the file to be read for each mapping invocation.  
-
-==== Examples
-
-
-```bloblang
-root.doc = file_rel(env("BENTHOS_TEST_BLOBLANG_FILE")).parse_json()
-
-# In:  {}
-```
-
-When the path parameter is static this function will only read the specified file once and yield the same result for each invocation as an optimization, this means that updates to files during runtime will not be reflected. You can disable this cache with the optional parameter `no_cache`, which when set to `true` will cause the file to be read for each execution of the mapping.
-
-```bloblang
-root.doc = file_rel(path: env("BENTHOS_TEST_BLOBLANG_FILE"), no_cache: true).parse_json()
-
-# In:  {}
-```
-
-=== `hostname`
-
-Returns a string matching the hostname of the machine running Benthos.
-
-==== Examples
-
-
-```bloblang
-root.thing.host = hostname()
-```
-
-=== `now`
-
-Returns the current timestamp as a string in RFC 3339 format with the local timezone. Use the method `ts_format` in order to change the format and timezone.
-
-==== Examples
-
-
-```bloblang
-root.received_at = now()
-```
-
-```bloblang
-root.received_at = now().ts_format("Mon Jan 2 15:04:05 -0700 MST 2006", "UTC")
-```
-
-=== `timestamp_unix`
-
-Returns the current unix timestamp in seconds.
-
-==== Examples
-
-
-```bloblang
-root.received_at = timestamp_unix()
-```
-
-=== `timestamp_unix_micro`
-
-Returns the current unix timestamp in microseconds.
-
-==== Examples
-
-
-```bloblang
-root.received_at = timestamp_unix_micro()
-```
-
-=== `timestamp_unix_milli`
-
-Returns the current unix timestamp in milliseconds.
-
-==== Examples
-
-
-```bloblang
-root.received_at = timestamp_unix_milli()
-```
-
-=== `timestamp_unix_nano`
-
-Returns the current unix timestamp in nanoseconds.
-
-==== Examples
-
-
-```bloblang
-root.received_at = timestamp_unix_nano()
-```
-
-== Fake Data Generation
-
-=== `fake`
-
-[NOTE]
-====
-This function is mostly stable but breaking changes could still be made outside of major version releases if a fundamental problem with it is found.
-====
-Takes in a string that maps to a https://github.com/go-faker/faker[faker^] function and returns the result from that faker function. Returns an error if the given string doesn't match a supported faker function. Supported functions: `latitude`, `longitude`, `unix_time`, `date`, `time_string`, `month_name`, `year_string`, `day_of_week`, `day_of_month`, `timestamp`, `century`, `timezone`, `time_period`, `email`, `mac_address`, `domain_name`, `url`, `username`, `ipv4`, `ipv6`, `password`, `jwt`, `word`, `sentence`, `paragraph`, `cc_type`, `cc_number`, `currency`, `amount_with_currency`, `title_male`, `title_female`, `first_name`, `first_name_male`, `first_name_female`, `last_name`, `name`, `gender`, `chinese_first_name`, `chinese_last_name`, `chinese_name`, `phone_number`, `toll_free_phone_number`, `e164_phone_number`, `uuid_hyphenated`, `uuid_digit`. Refer to the https://github.com/go-faker/faker[faker^] docs for details on these functions.
-
-==== Parameters
-
-- *`function`* &lt;string, default `""`&gt; The name of the function to use to generate the value.  
-
-==== Examples
-
-
-Use `time_string` to generate a time in the format `00:00:00`:
-
-```bloblang
-root.time = fake("time_string")
-```
-
-Use `email` to generate a string in email address format:
-
-```bloblang
-root.email = fake("email")
-```
-
-Use `jwt` to generate a JWT token:
-
-```bloblang
-root.jwt = fake("jwt")
-```
-
-Use `uuid_hyphenated` to generate a hyphenated UUID:
-
-```bloblang
-root.uuid = fake("uuid_hyphenated")
-```
-
-== Deprecated
-
-=== `count`
-
-The `count` function is a counter starting at 1 which increments after each time it is called. Count takes an argument which is an identifier for the counter, allowing you to specify multiple unique counters in your configuration.
-
-==== Parameters
-
-- *`name`* &lt;string&gt; An identifier for the counter.  
-
-==== Examples
-
-
-```bloblang
-root = this
-root.id = count("bloblang_function_example")
-
-# In:  {"message":"foo"}
-
-# In:  {"message":"bar"}
-```
-
-=== `meta`
-
-Returns the value of a metadata key from the input message as a string, or `null` if the key does not exist. Since values are extracted from the read-only input message they do NOT reflect changes made from within the map. In order to query metadata mutations made within a mapping use the <<root_meta, `root_meta` function>>. This function supports extracting metadata from other messages of a batch with the `from` method.
-
-==== Parameters
-
-- *`key`* &lt;string, default `""`&gt; An optional key of a metadata value to obtain.  
-
-==== Examples
-
-
-```bloblang
-root.topic = meta("kafka_topic")
-```
-
-The key parameter is optional and if omitted the entire metadata contents are returned as an object.
-
-```bloblang
-root.all_metadata = meta()
-```
-
-=== `root_meta`
-
-Returns the value of a metadata key from the new message being created as a string, or `null` if the key does not exist. Changes made to metadata during a mapping will be reflected by this function.
-
-==== Parameters
-
-- *`key`* &lt;string, default `""`&gt; An optional key of a metadata value to obtain.  
-
-==== Examples
-
-
-```bloblang
-root.topic = root_meta("kafka_topic")
-```
-
-The key parameter is optional and if omitted the entire metadata contents are returned as an object.
-
-```bloblang
-root.all_metadata = root_meta()
-```
+include::redpanda-connect:components:partial$bloblang-functions/with_schema_registry_header.adoc[leveloffset=+1]
 
 // end::single-source[]
