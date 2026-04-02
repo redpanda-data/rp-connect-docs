@@ -24,7 +24,7 @@ This release adds the following new components:
 |xref:components:processors/string_split.adoc[string_split]
 |Processors
 |stable
-|// TODO: Add description
+|Splits a string by a delimiter into an array. Generally, using bloblang's `split` method is preferred. In some high performance use cases this processor can be faster than the equivalent bloblang if there is no additional logic.
 
 |===
 
