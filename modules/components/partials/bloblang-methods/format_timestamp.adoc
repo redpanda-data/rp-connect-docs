@@ -20,12 +20,11 @@ Formats a timestamp as a string using Go's reference time format. Defaults to RF
 | `string`
 | The output format using Go's reference time.
 
-| `tz`^*^
+| `tz` (optional)
 | `string`
 | Optional timezone (e.g., 'UTC', 'America/New_York'). Defaults to input timezone or local time for unix timestamps.
 
 |===
 
-^*^ Optional parameter
 
 

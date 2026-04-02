@@ -19,13 +19,12 @@ Generates an incrementing sequence of integers starting from a minimum value (de
 | `query expression`
 | The maximum value before the counter resets to min. Evaluated once when the mapping is initialized.
 
-| `set`^*^
+| `set` (optional)
 | `query expression`
 | An optional query that controls counter behavior: when it resolves to a non-negative integer, the counter is set to that value; when it resolves to `null`, the counter is read without incrementing; when it resolves to a deletion, the counter resets to min; otherwise the counter increments normally.
 
 |===
 
-^*^ Optional parameter
 
 == Examples
 

@@ -11,13 +11,12 @@ Removes HTML tags from a string, returning only the text content. Useful for ext
 |===
 | Name | Type | Description
 
-| `preserve`^*^
+| `preserve` (optional)
 | `unknown`
 | Optional array of HTML element names to preserve (e.g., ["strong", "em", "a"]). All other HTML tags will be removed.
 
 |===
 
-^*^ Optional parameter
 
 == Examples
 

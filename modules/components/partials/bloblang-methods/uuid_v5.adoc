@@ -9,13 +9,12 @@
 |===
 | Name | Type | Description
 
-| `ns`^*^
+| `ns` (optional)
 | `string`
 | An optional namespace name or UUID. It supports the `dns`, `url`, `oid` and `x500` predefined namespaces and any valid RFC-9562 UUID. If empty, the nil UUID will be used.
 
 |===
 
-^*^ Optional parameter
 
 == Examples
 

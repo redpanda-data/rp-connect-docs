@@ -11,17 +11,16 @@ Generates a URL-safe unique identifier using Nano ID. Use this for compact, URL-
 |===
 | Name | Type | Description
 
-| `length`^*^
+| `length` (optional)
 | `integer`
 | An optional length.
 
-| `alphabet`^*^
+| `alphabet` (optional)
 | `string`
 | An optional custom alphabet to use for generating IDs. When specified the field `length` must also be present.
 
 |===
 
-^*^ Optional parameter
 
 == Examples
 

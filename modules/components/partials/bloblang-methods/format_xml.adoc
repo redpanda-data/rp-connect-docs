@@ -19,13 +19,12 @@ Serializes an object into an XML document. Converts structured data to XML forma
 | `bool`
 | Disable indentation and newlines to produce compact XML on a single line.
 
-| `root_tag`^*^
+| `root_tag` (optional)
 | `string`
 | Custom name for the root XML element. By default, the root element name is derived from the first key in the object.
 
 |===
 
-^*^ Optional parameter
 
 == Examples
 
