@@ -2,6 +2,10 @@
 
 = format_timestamp_unix_micro
 
+[WARNING]
+====
+This method is deprecated and will be removed in a future version.
+====
 
 Converts a timestamp to a unix timestamp with microsecond precision (microseconds since epoch). Accepts unix timestamps or RFC 3339 strings. Returns an integer representing microseconds.
 

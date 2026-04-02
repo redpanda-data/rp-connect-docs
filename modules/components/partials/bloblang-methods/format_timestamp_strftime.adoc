@@ -2,6 +2,10 @@
 
 = format_timestamp_strftime
 
+[WARNING]
+====
+This method is deprecated and will be removed in a future version.
+====
 
 Formats a timestamp as a string using strptime format specifiers (like %Y, %m, %d). Accepts unix timestamps (with decimal precision) or RFC 3339 strings. Supports %f for microseconds. Use ts_format for Go-style reference time formats.
 

@@ -2,6 +2,10 @@
 
 = format_timestamp_unix
 
+[WARNING]
+====
+This method is deprecated and will be removed in a future version.
+====
 
 Converts a timestamp to a unix timestamp (seconds since epoch). Accepts unix timestamps or RFC 3339 strings. Returns an integer representing seconds.
 

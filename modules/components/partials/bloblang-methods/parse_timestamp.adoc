@@ -2,6 +2,10 @@
 
 = parse_timestamp
 
+[WARNING]
+====
+This method is deprecated and will be removed in a future version.
+====
 
 Parses a timestamp string using Go's reference time format and outputs a timestamp object. The format uses "Mon Jan 2 15:04:05 -0700 MST 2006" as a reference - show how this reference time would appear in your format. Use ts_strptime for strftime-style formats instead.
 

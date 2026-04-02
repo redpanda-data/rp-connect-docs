@@ -2,6 +2,10 @@
 
 = format_timestamp
 
+[WARNING]
+====
+This method is deprecated and will be removed in a future version.
+====
 
 Formats a timestamp as a string using Go's reference time format. Defaults to RFC 3339 if no format specified. The format uses "Mon Jan 2 15:04:05 -0700 MST 2006" as a reference. Accepts unix timestamps (with decimal precision) or RFC 3339 strings. Use ts_strftime for strftime-style formats.
 
