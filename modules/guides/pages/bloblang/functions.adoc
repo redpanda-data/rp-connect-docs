@@ -24,82 +24,82 @@ root.values_two = range(0, this.max, 2)
 
 == Functions
 
-include::redpanda-connect:partial$bloblang-functions/batch_index.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/batch_index.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/batch_size.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/batch_size.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/bytes.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/bytes.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/content.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/content.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/count.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/count.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/counter.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/counter.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/deleted.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/deleted.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/env.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/env.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/error.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/error.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/error_source_label.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/error_source_label.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/error_source_name.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/error_source_name.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/error_source_path.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/error_source_path.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/errored.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/errored.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/fake.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/fake.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/file.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/file.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/file_rel.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/file_rel.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/hostname.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/hostname.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/json.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/json.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/ksuid.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/ksuid.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/meta.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/meta.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/metadata.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/metadata.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/nanoid.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/nanoid.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/now.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/now.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/pi.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/pi.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/random_int.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/random_int.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/range.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/range.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/root_meta.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/root_meta.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/snowflake_id.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/snowflake_id.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/throw.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/throw.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/timestamp_unix.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/timestamp_unix.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/timestamp_unix_micro.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/timestamp_unix_micro.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/timestamp_unix_milli.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/timestamp_unix_milli.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/timestamp_unix_nano.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/timestamp_unix_nano.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/tracing_id.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/tracing_id.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/tracing_span.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/tracing_span.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/ulid.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/ulid.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/uuid_v4.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/uuid_v4.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/uuid_v7.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/uuid_v7.adoc[leveloffset=+2]
 
-include::redpanda-connect:partial$bloblang-functions/with_schema_registry_header.adoc[leveloffset=+2]
+include::redpanda-connect:components:partial$bloblang-functions/with_schema_registry_header.adoc[leveloffset=+2]
 
 // end::single-source[]
