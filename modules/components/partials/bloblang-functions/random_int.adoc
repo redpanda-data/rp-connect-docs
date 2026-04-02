@@ -3,7 +3,6 @@
 = random_int
 
 
-
 Generates a pseudo-random non-negative 64-bit integer. Use this for creating random IDs, sampling data, or generating test values. Provide a seed for reproducible randomness, or use a dynamic seed like `timestamp_unix_nano()` for unique values per mapping instance.
 
 Optional `min` and `max` parameters constrain the output range (both inclusive). For dynamic ranges based on message data, use the modulo operator instead: `random_int() % dynamic_max + dynamic_min`.

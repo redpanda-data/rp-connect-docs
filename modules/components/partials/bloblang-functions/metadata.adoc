@@ -2,7 +2,6 @@
 
 = metadata
 
-
 Returns metadata from the input message by key, or `null` if the key doesn't exist. This reads the original metadata; to access modified metadata during mapping, use the `@` operator instead. Use this to extract message properties like topics, headers, or timestamps.
 
 

@@ -2,14 +2,13 @@
 
 = parse_xml
 
-
 Parses an XML document into a structured object. Converts XML elements to JSON-like objects following these rules:
 
 - Element attributes are prefixed with a hyphen (e.g., `-id` for an `id` attribute)
 - Elements with both attributes and text content store the text in a `#text` field
 - Repeated elements become arrays
 - XML comments, directives, and processing instructions are ignored
-- Optionally cast numeric and boolean strings to their proper types
+- Optionally cast numeric and boolean strings to their proper types.
 
 
 == Parameters

@@ -2,7 +2,6 @@
 
 = tracing_span
 
-
 Returns the OpenTelemetry tracing span attached to the message as a text map object, or `null` if no span exists. Use this to propagate trace context to downstream systems via headers or metadata.
 
 
