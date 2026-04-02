@@ -22,7 +22,7 @@
 
 ##### On arrays
 
-Transforms each array element using a query. Return deleted() to remove an element, or the new value to replace it.
+Transforms each array element using a query. Return deleted() to remove an element, or the new value to replace it:
 
 [,bloblang]
 ----
@@ -38,7 +38,7 @@ root.new_nums = this.nums.map_each(num -> if num < 10 {
 
 ##### On objects
 
-Transforms each object value using a query. The query receives an object with 'key' and 'value' fields for each entry.
+Transforms each object value using a query. The query receives an object with 'key' and 'value' fields for each entry:
 
 [,bloblang]
 ----

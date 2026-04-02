@@ -34,7 +34,7 @@ root.end = this.value.slice(4)
 # Out: {"beginning":"fo","end":"bar"}
 ----
 
-A negative low index can be used, indicating an offset from the end of the sequence. If the low index is greater than the length of the sequence then an empty result is returned.
+A negative low index can be used, indicating an offset from the end of the sequence. If the low index is greater than the length of the sequence then an empty result is returned:
 
 [,bloblang]
 ----
@@ -54,7 +54,7 @@ root.end = this.value.slice(4)
 # Out: {"beginning":["foo","bar"],"end":["bev"]}
 ----
 
-A negative low index can be used, indicating an offset from the end of the sequence. If the low index is greater than the length of the sequence then an empty result is returned.
+A negative low index can be used, indicating an offset from the end of the sequence. If the low index is greater than the length of the sequence then an empty result is returned:
 
 [,bloblang]
 ----

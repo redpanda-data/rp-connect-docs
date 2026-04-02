@@ -28,7 +28,7 @@
 
 == Examples
 
-Parses CSV data with a header row
+Parses CSV data with a header row:
 
 [,bloblang]
 ----
@@ -38,7 +38,7 @@ root.orders = this.orders.parse_csv()
 # Out: {"orders":[{"bar":"bar 1","foo":"foo 1"},{"bar":"bar 2","foo":"foo 2"}]}
 ----
 
-Parses CSV data without a header row
+Parses CSV data without a header row:
 
 [,bloblang]
 ----
@@ -48,7 +48,7 @@ root.orders = this.orders.parse_csv(false)
 # Out: {"orders":[["foo 1","bar 1"],["foo 2","bar 2"]]}
 ----
 
-Parses CSV data delimited by dots
+Parses CSV data delimited by dots:
 
 [,bloblang]
 ----
@@ -58,7 +58,7 @@ root.orders = this.orders.parse_csv(delimiter:".")
 # Out: {"orders":[{"bar":"bar 1","foo":"foo 1"},{"bar":"bar 2","foo":"foo 2"}]}
 ----
 
-Parses CSV data containing a quote in an unquoted field
+Parses CSV data containing a quote in an unquoted field:
 
 [,bloblang]
 ----

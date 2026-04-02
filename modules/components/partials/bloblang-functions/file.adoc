@@ -35,7 +35,7 @@ root.config = file("/etc/config.json").parse_json()
 root.template = file("./templates/email.html").string()
 ----
 
-Use `no_cache` to read updated file contents during runtime, useful for hot-reloading configuration.
+Use `no_cache` to read updated file contents during runtime, useful for hot-reloading configuration:
 
 [,bloblang]
 ----

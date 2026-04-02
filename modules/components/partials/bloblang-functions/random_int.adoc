@@ -42,7 +42,7 @@ root.fifth = random_int(timestamp_unix_nano(), 5, 20)
 root.sixth = random_int(seed:timestamp_unix_nano(), max:20)
 ----
 
-Use a dynamic seed for unique random values per mapping instance.
+Use a dynamic seed for unique random values per mapping instance:
 
 [,bloblang]
 ----

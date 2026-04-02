@@ -21,7 +21,7 @@ Compares the current value with another value and returns a detailed changelog d
 
 == Examples
 
-Compare two objects to track field changes
+Compare two objects to track field changes:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.changes = this.before.diff(this.after)
 # Out: {"changes":[{"From":30,"Path":["age"],"To":31,"Type":"update"},{"From":null,"Path":["city"],"To":"NYC","Type":"create"}]}
 ----
 
-Detect deletions in configuration changes
+Detect deletions in configuration changes:
 
 [,bloblang]
 ----

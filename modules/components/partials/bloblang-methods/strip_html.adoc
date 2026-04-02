@@ -22,7 +22,7 @@ Removes HTML tags from a string, returning only the text content. Useful for ext
 
 == Examples
 
-Extract plain text from HTML content
+Extract plain text from HTML content:
 
 [,bloblang]
 ----
@@ -32,7 +32,7 @@ root.plain_text = this.html_content.strip_html()
 # Out: {"plain_text":"Welcome to Redpanda Connect!"}
 ----
 
-Preserve specific HTML elements while removing others
+Preserve specific HTML elements while removing others:
 
 [,bloblang]
 ----

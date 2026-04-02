@@ -25,7 +25,7 @@ Generates a Universally Unique Lexicographically Sortable Identifier (ULID). ULI
 
 == Examples
 
-Generate time-sortable IDs for distributed message ordering
+Generate time-sortable IDs for distributed message ordering:
 
 [,bloblang]
 ----
@@ -34,7 +34,7 @@ root.timestamp = now()
 root.data = this
 ----
 
-Generate hex-encoded ULIDs for systems that prefer hexadecimal format
+Generate hex-encoded ULIDs for systems that prefer hexadecimal format:
 
 [,bloblang]
 ----

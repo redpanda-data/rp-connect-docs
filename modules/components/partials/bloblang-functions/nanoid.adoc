@@ -31,14 +31,14 @@ Generates a URL-safe unique identifier using Nano ID. Use this for compact, URL-
 root.id = nanoid()
 ----
 
-Generate a longer ID for additional uniqueness.
+Generate a longer ID for additional uniqueness:
 
 [,bloblang]
 ----
 root.id = nanoid(54)
 ----
 
-Use a custom alphabet for domain-specific IDs.
+Use a custom alphabet for domain-specific IDs:
 
 [,bloblang]
 ----

@@ -21,7 +21,7 @@ Decompresses a byte array using the specified decompression algorithm. Returns d
 
 == Examples
 
-Decompress base64-encoded compressed data
+Decompress base64-encoded compressed data:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root = this.compressed.decode("base64").decompress("gzip")
 # Out: hello world I love space
 ----
 
-Convert decompressed bytes to string for JSON output
+Convert decompressed bytes to string for JSON output:
 
 [,bloblang]
 ----

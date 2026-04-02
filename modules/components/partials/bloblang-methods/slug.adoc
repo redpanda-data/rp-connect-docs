@@ -22,7 +22,7 @@ Converts a string into a URL-friendly slug by replacing spaces with hyphens, rem
 
 == Examples
 
-Create a URL-friendly slug from a string with special characters
+Create a URL-friendly slug from a string with special characters:
 
 [,bloblang]
 ----
@@ -32,7 +32,7 @@ root.slug = this.title.slug()
 # Out: {"slug":"hello-world-welcome-to-redpanda-connect"}
 ----
 
-Create a slug preserving French language rules
+Create a slug preserving French language rules:
 
 [,bloblang]
 ----

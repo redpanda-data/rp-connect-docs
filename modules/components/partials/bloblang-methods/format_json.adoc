@@ -38,7 +38,7 @@ root = this.doc.format_json()
 }
 ----
 
-Pass a string to the `indent` parameter in order to customise the indentation.
+Pass a string to the `indent` parameter in order to customise the indentation:
 
 [,bloblang]
 ----
@@ -52,7 +52,7 @@ root = this.format_json("  ")
 }
 ----
 
-Use the `.string()` method in order to coerce the result into a string.
+Use the `.string()` method in order to coerce the result into a string:
 
 [,bloblang]
 ----
@@ -62,7 +62,7 @@ root.doc = this.doc.format_json().string()
 # Out: {"doc":"{\n    \"foo\": \"bar\"\n}"}
 ----
 
-Set the `no_indent` parameter to true to disable indentation. The result is equivalent to calling `bytes()`.
+Set the `no_indent` parameter to true to disable indentation. The result is equivalent to calling `bytes()`:
 
 [,bloblang]
 ----
@@ -72,7 +72,7 @@ root = this.doc.format_json(no_indent: true)
 # Out: {"foo":"bar"}
 ----
 
-Escapes problematic HTML characters.
+Escapes problematic HTML characters:
 
 [,bloblang]
 ----
@@ -85,7 +85,7 @@ root = this.doc.format_json()
 }
 ----
 
-Set the `escape_html` parameter to false to disable escaping of problematic HTML characters.
+Set the `escape_html` parameter to false to disable escaping of problematic HTML characters:
 
 [,bloblang]
 ----

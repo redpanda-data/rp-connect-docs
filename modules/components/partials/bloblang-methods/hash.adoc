@@ -38,7 +38,7 @@ root.h2 = this.value.hash("hmac_sha1","static-key").encode("hex")
 # Out: {"h1":"2aae6c35c94fcfb415dbe95f408b9ce91ee846ed","h2":"d87e5f068fa08fe90bb95bc7c8344cb809179d76"}
 ----
 
-The `crc32` algorithm supports options for the polynomial.
+The `crc32` algorithm supports options for the polynomial:
 
 [,bloblang]
 ----

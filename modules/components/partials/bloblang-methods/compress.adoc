@@ -25,7 +25,7 @@ Compresses a string or byte array using the specified compression algorithm. Ret
 
 == Examples
 
-Compress and encode for safe transmission
+Compress and encode for safe transmission:
 
 [,bloblang]
 ----
@@ -35,7 +35,7 @@ root.compressed = content().bytes().compress("gzip").encode("base64")
 # Out: {"compressed":"H4sIAAAJbogA/wAmANn/eyJtZXNzYWdlIjoiaGVsbG8gd29ybGQgSSBsb3ZlIHNwYWNlIn0DAHEvdwomAAAA"}
 ----
 
-Compare compression ratios across algorithms
+Compare compression ratios across algorithms:
 
 [,bloblang]
 ----

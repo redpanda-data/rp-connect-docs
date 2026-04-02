@@ -30,7 +30,7 @@ Serializes an object into an XML document. Converts structured data to XML forma
 
 == Examples
 
-Serialize object to pretty-printed XML with default indentation
+Serialize object to pretty-printed XML with default indentation:
 
 [,bloblang]
 ----
@@ -44,7 +44,7 @@ root = this.format_xml()
 </foo>
 ----
 
-Create compact XML without indentation for smaller message size
+Create compact XML without indentation for smaller message size:
 
 [,bloblang]
 ----

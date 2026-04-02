@@ -13,7 +13,7 @@ Returns true if the message has failed processing, false otherwise. Use this for
 root.doc.status = if errored() { 400 } else { 200 }
 ----
 
-Send only failed messages to a separate stream.
+Send only failed messages to a separate stream:
 
 [,bloblang]
 ----

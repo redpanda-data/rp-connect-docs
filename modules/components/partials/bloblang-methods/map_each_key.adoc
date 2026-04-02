@@ -28,7 +28,7 @@ root.new_dict = this.dict.map_each_key(key -> key.uppercase())
 # Out: {"new_dict":{"KEYA":"hello","KEYB":"world"}}
 ----
 
-Conditionally transform keys
+Conditionally transform keys:
 
 [,bloblang]
 ----

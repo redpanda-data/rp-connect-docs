@@ -2,7 +2,7 @@
   "comparison": {
     "oldVersion": "4.81.0",
     "newVersion": "4.85.0",
-    "timestamp": "2026-04-02T11:20:18.486Z"
+    "timestamp": "2026-04-02T11:53:20.403Z"
   },
   "summary": {
     "newComponents": 4,
@@ -11,7 +11,11 @@
     "removedFields": 4,
     "deprecatedComponents": 0,
     "deprecatedFields": 2,
-    "changedDefaults": 2
+    "changedDefaults": 2,
+    "newBloblangMethods": 3,
+    "removedBloblangMethods": 0,
+    "newBloblangFunctions": 0,
+    "removedBloblangFunctions": 0
   },
   "details": {
     "newComponents": [
@@ -369,6 +373,14 @@
         "newDefault": "",
         "description": "Deprecated: use `commit_backoff.max_elapsed_time` instead."
       }
-    ]
+    ],
+    "newBloblangMethods": [
+      "escape_url_path",
+      "parse_logfmt",
+      "unescape_url_path"
+    ],
+    "removedBloblangMethods": [],
+    "newBloblangFunctions": [],
+    "removedBloblangFunctions": []
   }
 }

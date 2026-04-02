@@ -21,7 +21,7 @@ Subtracts an ISO 8601 duration from a timestamp with calendar-aware precision fo
 
 == Examples
 
-Subtract one year from a timestamp.
+Subtract one year from a timestamp:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.last_year = this.created_at.ts_sub_iso8601("P1Y")
 # Out: {"last_year":"2019-08-14T05:54:23Z"}
 ----
 
-Subtract a complex duration with multiple units.
+Subtract a complex duration with multiple units:
 
 [,bloblang]
 ----

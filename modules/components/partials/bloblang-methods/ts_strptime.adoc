@@ -21,7 +21,7 @@ Parses a timestamp string using strptime format specifiers (like %Y, %m, %d) and
 
 == Examples
 
-Parse date with abbreviated month using strptime format.
+Parse date with abbreviated month using strptime format:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.doc.timestamp = this.doc.timestamp.ts_strptime("%Y-%b-%d")
 # Out: {"doc":{"timestamp":"2020-08-14T00:00:00Z"}}
 ----
 
-Parse datetime with microseconds using %f directive.
+Parse datetime with microseconds using %f directive:
 
 [,bloblang]
 ----

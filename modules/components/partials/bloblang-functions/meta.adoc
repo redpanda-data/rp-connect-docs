@@ -26,7 +26,7 @@ Returns the value of a metadata key from the input message as a string, or `null
 root.topic = meta("kafka_topic")
 ----
 
-The key parameter is optional and if omitted the entire metadata contents are returned as an object.
+The key parameter is optional and if omitted the entire metadata contents are returned as an object:
 
 [,bloblang]
 ----

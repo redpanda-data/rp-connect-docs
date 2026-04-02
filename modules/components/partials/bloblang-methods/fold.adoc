@@ -25,7 +25,7 @@ Reduces an array to a single value by iteratively applying a function. Also know
 
 == Examples
 
-Sum numbers in an array
+Sum numbers in an array:
 
 [,bloblang]
 ----
@@ -35,7 +35,7 @@ root.sum = this.foo.fold(0, item -> item.tally + item.value)
 # Out: {"sum":22}
 ----
 
-Concatenate strings
+Concatenate strings:
 
 [,bloblang]
 ----
@@ -45,7 +45,7 @@ root.result = this.foo.fold("", item -> "%v%v".format(item.tally, item.value))
 # Out: {"result":"hello world"}
 ----
 
-Merge an array of objects into a single object
+Merge an array of objects into a single object:
 
 [,bloblang]
 ----

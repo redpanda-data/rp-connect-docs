@@ -21,14 +21,14 @@ Parses Apache Parquet binary data into an array of objects. Parquet is a columna
 
 == Examples
 
-Parse Parquet file data into structured objects
+Parse Parquet file data into structured objects:
 
 [,bloblang]
 ----
 root.records = content().parse_parquet()
 ----
 
-Process Parquet data from a field and extract specific columns
+Process Parquet data from a field and extract specific columns:
 
 [,bloblang]
 ----

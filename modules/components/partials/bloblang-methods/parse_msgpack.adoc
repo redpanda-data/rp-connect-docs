@@ -8,7 +8,7 @@ Parses MessagePack binary data into a structured object. MessagePack is an effic
 
 == Examples
 
-Parse MessagePack data from hex-encoded content
+Parse MessagePack data from hex-encoded content:
 
 [,bloblang]
 ----
@@ -18,7 +18,7 @@ root = content().decode("hex").parse_msgpack()
 # Out: {"foo":"bar"}
 ----
 
-Parse MessagePack from base64-encoded field
+Parse MessagePack from base64-encoded field:
 
 [,bloblang]
 ----

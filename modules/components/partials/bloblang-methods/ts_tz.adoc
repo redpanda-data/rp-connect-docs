@@ -21,7 +21,7 @@ Converts a timestamp to a different timezone while preserving the moment in time
 
 == Examples
 
-Convert timestamp to UTC timezone.
+Convert timestamp to UTC timezone:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.created_at_utc = this.created_at.ts_tz("UTC")
 # Out: {"created_at_utc":"2021-02-03T16:05:06Z"}
 ----
 
-Convert timestamp to a specific timezone.
+Convert timestamp to a specific timezone:
 
 [,bloblang]
 ----

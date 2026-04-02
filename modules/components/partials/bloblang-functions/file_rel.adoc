@@ -35,7 +35,7 @@ root.schema = file_rel("./schemas/user.json").parse_json()
 root.lookup = file_rel("../data/lookup.csv").parse_csv()
 ----
 
-Use `no_cache` to read updated file contents during runtime, useful for reloading data files without restarting.
+Use `no_cache` to read updated file contents during runtime, useful for reloading data files without restarting:
 
 [,bloblang]
 ----

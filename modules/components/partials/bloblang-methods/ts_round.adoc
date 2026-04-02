@@ -21,7 +21,7 @@ Rounds a timestamp to the nearest multiple of the specified duration. Halfway va
 
 == Examples
 
-Round timestamp to the nearest hour.
+Round timestamp to the nearest hour:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.created_at_hour = this.created_at.ts_round("1h".parse_duration())
 # Out: {"created_at_hour":"2020-08-14T06:00:00Z"}
 ----
 
-Round timestamp to the nearest minute.
+Round timestamp to the nearest minute:
 
 [,bloblang]
 ----

@@ -21,7 +21,7 @@ Splits text into segments based on Unicode text segmentation rules. Returns an a
 
 == Examples
 
-Split text into sentences (preserves trailing spaces)
+Split text into sentences (preserves trailing spaces):
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.sentences = this.text.unicode_segments("sentence")
 # Out: {"sentences":["Hello world. ","How are you?"]}
 ----
 
-Split text into grapheme clusters (handles complex emoji correctly)
+Split text into grapheme clusters (handles complex emoji correctly):
 
 [,bloblang]
 ----

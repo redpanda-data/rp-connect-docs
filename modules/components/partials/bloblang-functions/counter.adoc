@@ -30,7 +30,7 @@ Generates an incrementing sequence of integers starting from a minimum value (de
 
 == Examples
 
-Generate sequential IDs for each message.
+Generate sequential IDs for each message:
 
 [,bloblang]
 ----
@@ -43,7 +43,7 @@ root.id = counter()
 # Out: {"id":2}
 ----
 
-Use a custom range for the counter.
+Use a custom range for the counter:
 
 [,bloblang]
 ----
@@ -56,7 +56,7 @@ root.batch_num = counter(min: 100, max: 200)
 # Out: {"batch_num":101}
 ----
 
-Increment a counter multiple times within a single mapping using a named map.
+Increment a counter multiple times within a single mapping using a named map:
 
 [,bloblang]
 ----
@@ -74,7 +74,7 @@ root.second_id = null.apply("increment")
 # Out: {"first_id":3,"second_id":4}
 ----
 
-Conditionally reset a counter based on input data.
+Conditionally reset a counter based on input data:
 
 [,bloblang]
 ----
@@ -93,7 +93,7 @@ root.streak = counter(set: if this.status != "success" { 0 })
 # Out: {"streak":1}
 ----
 
-Peek at the current counter value without incrementing by using null in the set parameter.
+Peek at the current counter value without incrementing by using null in the set parameter:
 
 [,bloblang]
 ----

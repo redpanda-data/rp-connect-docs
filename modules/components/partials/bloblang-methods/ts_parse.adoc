@@ -21,7 +21,7 @@ Parses a timestamp string using Go's reference time format and outputs a timesta
 
 == Examples
 
-Parse a date with abbreviated month name.
+Parse a date with abbreviated month name:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.doc.timestamp = this.doc.timestamp.ts_parse("2006-Jan-02")
 # Out: {"doc":{"timestamp":"2020-08-14T00:00:00Z"}}
 ----
 
-Parse a custom datetime format.
+Parse a custom datetime format:
 
 [,bloblang]
 ----

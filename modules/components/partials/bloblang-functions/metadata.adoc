@@ -26,14 +26,14 @@ Returns metadata from the input message by key, or `null` if the key doesn't exi
 root.topic = metadata("kafka_topic")
 ----
 
-Retrieve all metadata as an object by omitting the key parameter.
+Retrieve all metadata as an object by omitting the key parameter:
 
 [,bloblang]
 ----
 root.all_metadata = metadata()
 ----
 
-Copy specific metadata fields to the message body.
+Copy specific metadata fields to the message body:
 
 [,bloblang]
 ----

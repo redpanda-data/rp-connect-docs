@@ -21,7 +21,7 @@ Applies a changelog (created by the diff method) to the current value, transform
 
 == Examples
 
-Apply recorded changes to update an object
+Apply recorded changes to update an object:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.updated = this.current.patch(this.changelog)
 # Out: {"updated":{"age":31,"city":"NYC","name":"Alice"}}
 ----
 
-Restore previous state by applying inverse changes
+Restore previous state by applying inverse changes:
 
 [,bloblang]
 ----

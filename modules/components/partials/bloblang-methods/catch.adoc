@@ -26,7 +26,7 @@ If the result of a target query fails (due to incorrect types, failed parsing, e
 root.doc.id = this.thing.id.string().catch(uuid_v4())
 ----
 
-The fallback argument can be a mapping, allowing you to capture the error string and yield structured data back.
+The fallback argument can be a mapping, allowing you to capture the error string and yield structured data back:
 
 [,bloblang]
 ----
@@ -36,7 +36,7 @@ root.url = this.url.parse_url().catch(err -> {"error":err,"input":this.url})
 # Out: {"url":{"error":"field `this.url`: parse \"invalid %&\": invalid URL escape \"%&\"","input":"invalid %&# url"}}
 ----
 
-When the input document is not structured attempting to reference structured fields with `this` will result in an error. Therefore, a convenient way to delete non-structured data is with a catch.
+When the input document is not structured attempting to reference structured fields with `this` will result in an error. Therefore, a convenient way to delete non-structured data is with a catch:
 
 [,bloblang]
 ----

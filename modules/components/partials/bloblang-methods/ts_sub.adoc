@@ -21,7 +21,7 @@ Calculates the duration in nanoseconds between two timestamps (t1 - t2). Returns
 
 == Examples
 
-Calculate absolute duration between two timestamps.
+Calculate absolute duration between two timestamps:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.between = this.started_at.ts_sub("2020-08-14T05:54:23Z").abs()
 # Out: {"between":86400000000000}
 ----
 
-Calculate signed duration (can be negative).
+Calculate signed duration (can be negative):
 
 [,bloblang]
 ----

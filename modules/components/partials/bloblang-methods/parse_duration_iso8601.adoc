@@ -8,7 +8,7 @@ Parses an ISO 8601 duration string into nanoseconds. Format: "P[n]Y[n]M[n]DT[n]H
 
 == Examples
 
-Parse complex ISO 8601 duration to nanoseconds.
+Parse complex ISO 8601 duration to nanoseconds:
 
 [,bloblang]
 ----
@@ -18,7 +18,7 @@ root.delay_for_ns = this.delay_for.parse_duration_iso8601()
 # Out: {"delay_for_ns":110839937000000000}
 ----
 
-Parse hours to seconds.
+Parse hours to seconds:
 
 [,bloblang]
 ----

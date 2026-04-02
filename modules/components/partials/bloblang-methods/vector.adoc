@@ -8,7 +8,7 @@ Converts an array of numbers into a vector type suitable for insertion into SQL 
 
 == Examples
 
-Convert embeddings array to vector for pgvector storage
+Convert embeddings array to vector for pgvector storage:
 
 [,bloblang]
 ----
@@ -16,7 +16,7 @@ root.embedding = this.embeddings.vector()
 root.text = this.text
 ----
 
-Process ML model output into database-ready vector format
+Process ML model output into database-ready vector format:
 
 [,bloblang]
 ----

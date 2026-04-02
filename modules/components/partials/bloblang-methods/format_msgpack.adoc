@@ -8,7 +8,7 @@ Serializes structured data into MessagePack binary format. MessagePack is a comp
 
 == Examples
 
-Serialize object to MessagePack and encode as hex for transmission
+Serialize object to MessagePack and encode as hex for transmission:
 
 [,bloblang]
 ----
@@ -18,7 +18,7 @@ root = this.format_msgpack().encode("hex")
 # Out: 81a3666f6fa3626172
 ----
 
-Serialize data to MessagePack and base64 encode for embedding in JSON
+Serialize data to MessagePack and base64 encode for embedding in JSON:
 
 [,bloblang]
 ----

@@ -8,7 +8,7 @@ Converts a timestamp to a unix timestamp (seconds since epoch). Accepts unix tim
 
 == Examples
 
-Convert RFC 3339 timestamp to unix seconds.
+Convert RFC 3339 timestamp to unix seconds:
 
 [,bloblang]
 ----
@@ -18,7 +18,7 @@ root.created_at_unix = this.created_at.ts_unix()
 # Out: {"created_at_unix":1257894000}
 ----
 
-Unix timestamp passthrough returns same value.
+Unix timestamp passthrough returns same value:
 
 [,bloblang]
 ----

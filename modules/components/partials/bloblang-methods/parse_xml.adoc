@@ -28,7 +28,7 @@ Parses an XML document into a structured object. Converts XML elements to JSON-l
 
 == Examples
 
-Parse XML document into object structure
+Parse XML document into object structure:
 
 [,bloblang]
 ----
@@ -38,7 +38,7 @@ root.doc = this.doc.parse_xml()
 # Out: {"doc":{"root":{"content":"This is some content","title":"This is a title"}}}
 ----
 
-Parse XML with type casting enabled to convert strings to numbers and booleans
+Parse XML with type casting enabled to convert strings to numbers and booleans:
 
 [,bloblang]
 ----

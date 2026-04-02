@@ -21,7 +21,7 @@ Adds an ISO 8601 duration to a timestamp with calendar-aware precision for years
 
 == Examples
 
-Add one year to a timestamp.
+Add one year to a timestamp:
 
 [,bloblang]
 ----
@@ -31,7 +31,7 @@ root.next_year = this.created_at.ts_add_iso8601("P1Y")
 # Out: {"next_year":"2021-08-14T05:54:23Z"}
 ----
 
-Add a complex duration with multiple units.
+Add a complex duration with multiple units:
 
 [,bloblang]
 ----

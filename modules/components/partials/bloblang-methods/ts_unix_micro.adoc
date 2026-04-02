@@ -8,7 +8,7 @@ Converts a timestamp to a unix timestamp with microsecond precision (microsecond
 
 == Examples
 
-Convert timestamp to microseconds since epoch.
+Convert timestamp to microseconds since epoch:
 
 [,bloblang]
 ----
@@ -18,7 +18,7 @@ root.created_at_unix = this.created_at.ts_unix_micro()
 # Out: {"created_at_unix":1257894000000000}
 ----
 
-Preserve microsecond precision from timestamp.
+Preserve microsecond precision from timestamp:
 
 [,bloblang]
 ----

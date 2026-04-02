@@ -21,7 +21,7 @@ Generates a unique, time-ordered Snowflake ID. Snowflake IDs are 64-bit integers
 
 == Examples
 
-Generate a unique Snowflake ID for each message
+Generate a unique Snowflake ID for each message:
 
 [,bloblang]
 ----
@@ -29,7 +29,7 @@ root.id = snowflake_id()
 root.payload = this
 ----
 
-Generate Snowflake IDs with different node IDs for multi-datacenter deployments
+Generate Snowflake IDs with different node IDs for multi-datacenter deployments:
 
 [,bloblang]
 ----

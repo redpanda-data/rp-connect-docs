@@ -13,7 +13,7 @@ Returns the OpenTelemetry trace ID for the message, or an empty string if no tra
 meta trace_id = tracing_id()
 ----
 
-Add trace ID to structured logs.
+Add trace ID to structured logs:
 
 [,bloblang]
 ----

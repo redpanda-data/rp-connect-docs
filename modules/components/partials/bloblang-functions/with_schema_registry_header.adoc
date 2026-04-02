@@ -25,14 +25,14 @@ Prepends a Confluent Schema Registry wire format header to message bytes. The he
 
 == Examples
 
-Add Schema Registry header to Avro-encoded message
+Add Schema Registry header to Avro-encoded message:
 
 [,bloblang]
 ----
 root = with_schema_registry_header(123, content())
 ----
 
-Use schema ID from metadata to add header dynamically
+Use schema ID from metadata to add header dynamically:
 
 [,bloblang]
 ----

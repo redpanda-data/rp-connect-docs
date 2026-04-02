@@ -8,7 +8,7 @@ Converts a timestamp to a unix timestamp with nanosecond precision (nanoseconds 
 
 == Examples
 
-Convert timestamp to nanoseconds since epoch.
+Convert timestamp to nanoseconds since epoch:
 
 [,bloblang]
 ----
@@ -18,7 +18,7 @@ root.created_at_unix = this.created_at.ts_unix_nano()
 # Out: {"created_at_unix":1257894000000000000}
 ----
 
-Preserve full nanosecond precision.
+Preserve full nanosecond precision:
 
 [,bloblang]
 ----

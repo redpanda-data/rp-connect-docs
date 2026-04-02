@@ -8,7 +8,7 @@ Parses a Go-style duration string into nanoseconds. A duration string is a signe
 
 == Examples
 
-Parse microseconds to nanoseconds.
+Parse microseconds to nanoseconds:
 
 [,bloblang]
 ----
@@ -18,7 +18,7 @@ root.delay_for_ns = this.delay_for.parse_duration()
 # Out: {"delay_for_ns":50000}
 ----
 
-Parse hours to seconds.
+Parse hours to seconds:
 
 [,bloblang]
 ----

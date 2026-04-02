@@ -8,7 +8,7 @@ Converts a timestamp to a unix timestamp with millisecond precision (millisecond
 
 == Examples
 
-Convert timestamp to milliseconds since epoch.
+Convert timestamp to milliseconds since epoch:
 
 [,bloblang]
 ----
@@ -18,7 +18,7 @@ root.created_at_unix = this.created_at.ts_unix_milli()
 # Out: {"created_at_unix":1257894000000}
 ----
 
-Useful for JavaScript timestamp compatibility.
+Useful for JavaScript timestamp compatibility:
 
 [,bloblang]
 ----
