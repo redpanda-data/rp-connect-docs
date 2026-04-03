@@ -8,6 +8,27 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.86.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.86.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:processors/string_split.adoc[string_split]
+|Processors
+|stable
+|Splits a string by a delimiter into an array. Generally, using bloblang's `split` method is preferred. In some high performance use cases this processor can be faster than the equivalent bloblang if there is no additional logic.
+
+|===
+
+
 == Version 4.85.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.85.0[See the full release notes^].

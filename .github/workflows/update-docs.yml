@@ -151,6 +151,14 @@ jobs:
           npm ci  # Use ci for deterministic installs in CI
           echo "✓ npm dependencies installed"
 
+      - name: Update doc-tools to latest version
+        run: |
+          # Ensure we use the latest doc-tools version after npm registry propagation
+          # This prevents using stale package-lock.json versions that may have bugs
+          npm update @redpanda-data/docs-extensions-and-macros
+          echo "✓ Updated to latest doc-tools version"
+          npm list @redpanda-data/docs-extensions-and-macros
+
       - name: Cache rpk connect components
         uses: actions/cache@v4
         with:

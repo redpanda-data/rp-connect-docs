@@ -1,0 +1,41 @@
+= string_split
+// tag::single-source[]
+:type: processor
+:support: certified
+:categories: [Parsing]
+:description: Splits a string by a delimiter into an array. Generally, using bloblang's `split` method is preferred. In some high performance use cases this processor can be faster than the equivalent bloblang if there is no additional logic.
+
+component_type_dropdown::[]
+
+Splits a string by a delimiter into an array. Generally, using bloblang's `split` method is preferred. In some high performance use cases this processor can be faster than the equivalent bloblang if there is no additional logic.
+
+
+// TODO: Missing description. Add a description in the overrides file or source data.
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/processors/string_split.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/processors/string_split.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/processors/string_split.adoc[]
+
+
+
+// end::single-source[]

@@ -1,6 +1,6 @@
 {
-  "version": "4.85.0",
-  "date": "2026-03-26T13:24:38Z",
+  "version": "4.86.0",
+  "date": "2026-04-02T16:03:59Z",
   "config": [
     {
       "name": "http",
@@ -2038,7 +2038,7 @@
     {
       "name": "couchbase",
       "type": "cache",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Use a Couchbase instance as a cache.",
       "categories": null,
@@ -2171,7 +2171,7 @@
     {
       "name": "gcp_cloud_storage",
       "type": "cache",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Use a Google Cloud Storage bucket as a cache.",
       "description": "It is not possible to atomically upload cloud storage objects exclusively when the target does not already exist, therefore this cache is not suitable for deduplication.",
@@ -2427,7 +2427,7 @@
     {
       "name": "mongodb",
       "type": "cache",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Use a MongoDB instance as a cache.",
       "categories": null,
@@ -2522,7 +2522,7 @@
     {
       "name": "nats_kv",
       "type": "cache",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Cache key/values in a NATS key-value bucket.",
       "description": "== Connection name\n\nWhen monitoring and managing a production NATS system, it is often useful to\nknow which connection a message was send/received from. This can be achieved by\nsetting the connection name option when creating a NATS connection.\n\nRedpanda Connect will automatically set the connection name based off the label of the given\nNATS component, so that monitoring tools between NATS and Redpanda Connect can stay in sync.\n\n\n== Authentication\n\nThere are several components within Redpanda Connect which uses NATS services. You will find that each of these components\nsupport optional advanced authentication parameters for https://docs.nats.io/nats-server/configuration/securing_nats/auth_intro/nkey_auth[NKeys^]\nand https://docs.nats.io/using-nats/developer/connecting/creds[User Credentials^].\n\nSee an https://docs.nats.io/running-a-nats-service/nats_admin/security/jwt[in-depth tutorial^].\n\n=== NKey file\n\nThe NATS server can use these NKeys in several ways for authentication. The simplest is for the server to be configured\nwith a list of known public keys and for the clients to respond to the challenge by signing it with its private NKey\nconfigured in the `nkey_file` or `nkey` field.\n\nhttps://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[More details^].\n\n=== User credentials\n\nNATS server supports decentralized authentication based on JSON Web Tokens (JWT). Clients need an https://docs.nats.io/nats-server/configuration/securing_nats/jwt#json-web-tokens[user JWT^]\nand a corresponding https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NKey secret^] when connecting to a server\nwhich is configured to use this authentication scheme.\n\nThe `user_credentials_file` field should point to a file containing both the private key and the JWT and can be\ngenerated with the https://docs.nats.io/nats-tools/nsc[nsc tool^].\n\nAlternatively, the `user_jwt` field can contain a plain text JWT and the `user_nkey_seed`can contain\nthe plain text NKey Seed.\n\nhttps://docs.nats.io/using-nats/developer/connecting/creds[More details^].\n\n=== Token\n\nThe `token` field can contain a plain text token string for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/tokens[token-based authentication^].\n\n=== User and password\n\nThe `user` and `password` fields can be used for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/username_password[username/password authentication^].",
@@ -3073,7 +3073,7 @@
     {
       "name": "redpanda",
       "type": "cache",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "A Kafka cache using the https://github.com/twmb/franz-go[Franz Kafka client library^].",
       "description": "\nA cache that stores data in a Kafka topic.\n\nThis cache is useful for data that is written frequently and queried infrequently.\nReads from the cache require scanning the entire topic partition. If you expect frequent access, consider placing an in-memory caching layer in front of this one.\n\nBecause only the latest values are needed, configure compaction for topics used as caches so that reads are less expensive when topics are rescanned. See xref:ROOT:manage:cluster-maintenance/compaction-settings.adoc[].\n\nThe cache does not have any time-to-live (TTL) mechanism. Use the Kafka topic retention policies to manage TTL.\n",
@@ -3671,7 +3671,7 @@
     {
       "name": "sql",
       "type": "cache",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Uses an SQL database table as a destination for storing cache key/value items.",
       "description": "\nEach cache key/value pair will exist as a row within the specified table. Currently only the key and value columns are set, and therefore any other columns present within the target table must allow NULL values if this cache is going to be used for set and add operations.\n\nCache operations are translated into SQL statements as follows:\n\n== Get\n\nAll `get` operations are performed with a traditional `select` statement.\n\n== Delete\n\nAll `delete` operations are performed with a traditional `delete` statement.\n\n== Set\n\nThe `set` operation is performed with a traditional `insert` statement.\n\nThis will behave as an `add` operation by default, and so ideally needs to be adapted in order to provide updates instead of failing on collision\ts. Since different SQL engines implement upserts differently it is necessary to specify a `set_suffix` that modifies an `insert` statement in order to perform updates on conflict.\n\n== Add\n\nThe `add` operation is performed with a traditional `insert` statement.\n",
@@ -4727,7 +4727,7 @@
     {
       "name": "aws_dynamodb_cdc",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Reads change data capture (CDC) events from DynamoDB Streams.",
       "description": "\nConsumes records from DynamoDB Streams with automatic checkpointing and shard management.\n\nDynamoDB Streams capture item-level changes in DynamoDB tables. This input supports:\n\n- Automatic shard discovery and management\n- Checkpoint-based resumption after restarts\n- Concurrent processing of multiple shards\n- Optional initial snapshot of existing table data\n- Multi-table streaming with auto-discovery by tags or explicit table lists\n\n### Table Discovery Modes\n\nThis input supports three table discovery modes:\n\n- `single` (default) - Stream from a single table specified in the `tables` field\n- `tag` - Auto-discover and stream from multiple tables based on DynamoDB table tags. Use `table_tag_filter` to filter tables (e.g. `key:value`)\n- `includelist` - Stream from an explicit list of tables specified in the `tables` field\n\nWhen using `tag` or `includelist` mode, the connector will stream from all matching tables simultaneously. Each table maintains its own checkpoint state. Use `table_discovery_interval` to periodically rescan for new tables (useful for dynamically tagged tables).\n\n### Prerequisites\n\nThe source DynamoDB table(s) must have streams enabled. You can enable streams with one of these view types:\n\n- `KEYS_ONLY` - Only the key attributes of the modified item\n- `NEW_IMAGE` - The entire item as it appears after the modification\n- `OLD_IMAGE` - The entire item as it appeared before the modification\n- `NEW_AND_OLD_IMAGES` - Both the new and old item images\n\n### Snapshots\n\nWhen `snapshot_mode` is set to `snapshot_only` or `snapshot_and_cdc`, the input will first scan the entire table before (or instead of) streaming changes. This is useful for:\n\n- Building a replica or cache with all existing data\n- Syncing historical data to a data warehouse\n- Populating a search index with existing records\n\nWARNING: Snapshots use the DynamoDB Scan API which consumes read capacity units (RCUs). For large tables, this can be expensive and take considerable time. Use `snapshot_segments` and `snapshot_throttle` to control RCU consumption.\n\nNOTE: Snapshots use eventually consistent reads and do not provide point-in-time consistency. Records modified during the snapshot may appear in both the snapshot and CDC stream (with different values). Use `snapshot_deduplicate` to minimize duplicates.\n\n### Checkpointing\n\nCheckpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard. Snapshot progress is also checkpointed, allowing resumption mid-snapshot after failures.\n\n### Alternative\n\nFor better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.\n\n### Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `dynamodb_shard_id` - The shard ID from which the record was read (empty for snapshot records)\n- `dynamodb_sequence_number` - The sequence number of the record in the stream (empty for snapshot records)\n- `dynamodb_event_name` - The type of change: INSERT, MODIFY, REMOVE, or READ (for snapshot records)\n- `dynamodb_table` - The name of the DynamoDB table\n\n### Metrics\n\nThis input emits the following metrics:\n\n- `dynamodb_cdc_shards_tracked` - Total number of shards being tracked (gauge)\n- `dynamodb_cdc_shards_active` - Number of shards currently being read from (gauge)\n- `dynamodb_cdc_snapshot_state` - Snapshot state: 0=not_started, 1=in_progress, 2=complete (gauge)\n- `dynamodb_cdc_snapshot_records_read` - Total records read during snapshot (counter)\n- `dynamodb_cdc_snapshot_segments_active` - Number of active snapshot scan segments (gauge)\n- `dynamodb_cdc_snapshot_buffer_overflow` - Incremented when the deduplication buffer exceeds its size limit, disabling dedup (counter)\n- `dynamodb_cdc_snapshot_segment_duration` - Time taken by each snapshot scan segment to complete (timer)\n- `dynamodb_cdc_checkpoint_failures` - Number of failed checkpoint writes to the checkpoint table (counter)\n",
@@ -6187,7 +6187,7 @@
     {
       "name": "azure_blob_storage",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Downloads objects within an Azure Blob Storage container, optionally filtered by a prefix.",
       "description": "\nSupports multiple authentication methods but only one of the following is required:\n\n- `storage_connection_string`\n- `storage_account` and `storage_access_key`\n- `storage_account` and `storage_sas_token`\n- `storage_account` to access via https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#DefaultAzureCredential[DefaultAzureCredential^]\n\nIf multiple are set then the `storage_connection_string` is given priority.\n\nIf the `storage_connection_string` does not contain the `AccountName` parameter, please specify it in the\n`storage_account` field.\n\n== Download large files\n\nWhen downloading large files it's often necessary to process it in streamed parts in order to avoid loading the entire file in memory at a given time. In order to do this a <<scanner, `scanner`>> can be specified that determines how to break the input into smaller individual messages.\n\n== Stream new files\n\nBy default this input will consume all files found within the target container and will then gracefully terminate. This is referred to as a \"batch\" mode of operation. However, it's possible to instead configure a container as https://learn.microsoft.com/en-gb/azure/event-grid/event-schema-blob-storage[an Event Grid source^] and then use this as a <<targetsinput, `targets_input`>>, in which case new files are consumed as they're uploaded and Redpanda Connect will continue listening for and downloading files as they arrive. This is referred to as a \"streamed\" mode of operation.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- blob_storage_key\n- blob_storage_container\n- blob_storage_last_modified\n- blob_storage_last_modified_unix\n- blob_storage_content_type\n- blob_storage_content_encoding\n- All user defined metadata\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
@@ -6386,7 +6386,7 @@
     {
       "name": "azure_cosmosdb",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a SQL query against https://learn.microsoft.com/en-us/azure/cosmos-db/introduction[Azure CosmosDB^] and creates a batch of messages from each page of items.",
       "description": "\n== Cross-partition queries\n\nCross-partition queries are currently not supported by the underlying driver. For every query, the PartitionKey values must be known in advance and specified in the config. https://github.com/Azure/azure-sdk-for-go/issues/18578#issuecomment-1222510989[See details^].\n\n\n== Credentials\n\nYou can use one of the following authentication mechanisms:\n\n- Set the `endpoint` field and the `account_key` field\n- Set only the `endpoint` field to use https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#DefaultAzureCredential[DefaultAzureCredential^]\n- Set the `connection_string` field\n\n\n== Metadata\n\nThis component adds the following metadata fields to each message:\n```\n- activity_id\n- request_charge\n```\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n",
@@ -6516,7 +6516,7 @@
     {
       "name": "azure_queue_storage",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Dequeue objects from an Azure Storage Queue.",
       "description": "\nThis input adds the following metadata fields to each message:\n\n```\n- queue_storage_insertion_time\n- queue_storage_queue_name\n- queue_storage_message_lag (if 'track_properties' set to true)\n- All user defined queue metadata\n```\n\nOnly one authentication method is required, `storage_connection_string` or `storage_account` and `storage_access_key`. If both are set then the `storage_connection_string` is given priority.",
@@ -6601,7 +6601,7 @@
     {
       "name": "azure_table_storage",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Queries an Azure Storage Account Table, optionally with multiple filters.",
       "description": "\nQueries an Azure Storage Account Table, optionally with multiple filters.\n== Metadata\nThis input adds the following metadata fields to each message:\n\n- table_storage_name\n- row_num\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
@@ -6806,7 +6806,7 @@
     {
       "name": "beanstalkd",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Reads messages from a Beanstalkd queue.",
       "categories": [
@@ -6957,7 +6957,7 @@
     {
       "name": "cassandra",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a find query and creates a message for each row received.",
       "categories": [
@@ -7301,7 +7301,7 @@
     {
       "name": "cockroachdb_changefeed",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Listens to a https://www.cockroachlabs.com/docs/stable/changefeed-examples[CockroachDB Core Changefeed^] and creates a message for each row received. Each message is a json object looking like: \n```json\n{\n\t\"primary_key\": \"[\\\"1a7ff641-3e3b-47ee-94fe-a0cadb56cd8f\\\", 2]\", // stringified JSON array\n\t\"row\": \"{\\\"after\\\": {\\\"k\\\": \\\"1a7ff641-3e3b-47ee-94fe-a0cadb56cd8f\\\", \\\"v\\\": 2}, \\\"updated\\\": \\\"1637953249519902405.0000000000\\\"}\", // stringified JSON object\n\t\"table\": \"strm_2\"\n}\n```",
       "description": "This input will continue to listen to the changefeed until shutdown. A backfill of the full current state of the table will be delivered upon each run unless a cache is configured for storing cursor timestamps, as this is how Redpanda Connect keeps track as to which changes have been successfully delivered.\n\nNote: You must have `SET CLUSTER SETTING kv.rangefeed.enabled = true;` on your CRDB cluster, for more information refer to https://www.cockroachlabs.com/docs/stable/changefeed-examples?filters=core[the official CockroachDB documentation^].",
@@ -7566,7 +7566,7 @@
     {
       "name": "discord",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Consumes messages posted in a Discord channel.",
       "description": "This input works by authenticating as a bot using token based authentication. The ID of the newest message consumed and acked is stored in a cache in order to perform a backfill of unread messages each time the input is initialised. Ideally this cache should be persisted across restarts.",
@@ -7947,7 +7947,7 @@
     {
       "name": "gcp_bigquery_select",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a `SELECT` query against BigQuery and creates a message for each row received.",
       "description": "Once the rows from the query are exhausted, this input shuts down, allowing the pipeline to gracefully terminate (or the next input in a xref:components:inputs/sequence.adoc[sequence] to execute).",
@@ -8061,7 +8061,7 @@
     {
       "name": "gcp_cloud_storage",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Downloads objects within a Google Cloud Storage bucket, optionally filtered by a prefix.",
       "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```\n- gcs_key\n- gcs_bucket\n- gcs_last_modified\n- gcs_last_modified_unix\n- gcs_content_type\n- gcs_content_encoding\n- All user defined metadata\n```\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n=== Credentials\n\nBy default Redpanda Connect will use a shared credentials file when connecting to GCP services. You can find out more in xref:guides:cloud/gcp.adoc[].",
@@ -8306,7 +8306,7 @@
     {
       "name": "gcp_spanner_cdc",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Creates an input that consumes from a spanner change stream.",
       "description": "\nConsumes change records from a Google Cloud Spanner change stream. This input allows\nyou to track and process database changes in real-time, making it useful for data\nreplication, event-driven architectures, and maintaining derived data stores.\n\nThe input reads from a specified change stream within a Spanner database and converts\neach change record into a message. The message payload contains the change records in\nJSON format, and metadata is added with details about the Spanner instance, database,\nand stream.\n\nChange streams provide a way to track mutations to your Spanner database tables. For\nmore information about Spanner change streams, refer to the link:https://cloud.google.com/spanner/docs/change-streams[Google Cloud documentation^].",
@@ -8596,7 +8596,7 @@
     {
       "name": "git",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "A Git input that clones (or pulls) a repository and reads the repository contents.",
       "description": "\nThe git input clones the specified repository (or pulls updates if already cloned) and reads \nthe content of the specified file. It periodically polls the repository for new commits and emits \na message when changes are detected.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- git_file_path\n- git_file_size\n- git_file_mode\n- git_file_modified\n- git_commit\n- git_mime_type\n- git_is_binary\n- git_encoding (present if the file was base64 encoded)\n- git_deleted (only present if the file was deleted)\n\nYou can access these metadata fields using function interpolation.",
@@ -11188,7 +11188,7 @@
     {
       "name": "microsoft_sql_server_cdc",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Enables Change Data Capture by consuming from Microsoft SQL Server's change tables.",
       "description": "Streams changes from a Microsoft SQL Server database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n- database_schema (The database schema for the table where the message originates from)\n- schema (The table schema in benthos common schema format, compatible with processors like parquet_encode)\n- table (Name of the table that the message originated from)\n- operation (Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update_before\" and \"update_after\". \"read\" is from messages that are read in the initial snapshot phase.)\n- lsn (the Log Sequence Number in Microsoft SQL Server)\n\n== Permissions\n\nWhen using the default Microsoft SQL Server based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
@@ -11402,7 +11402,7 @@
     {
       "name": "mongodb",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a query and creates a message for each document received.",
       "description": "Once the documents from the query are exhausted, this input shuts down, allowing the pipeline to gracefully terminate (or the next input in a xref:components:inputs/sequence.adoc[sequence] to execute).",
@@ -11554,7 +11554,7 @@
     {
       "name": "mongodb_cdc",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Streams changes from a MongoDB replica set.",
       "description": "Read from a MongoDB replica set using https://www.mongodb.com/docs/manual/changeStreams/[^Change Streams]. It's only possible to watch for changes when using a sharded MongoDB or a MongoDB cluster running as a replica set.\n\nBy default MongoDB does not propagate changes in all cases. In order to capture all changes (including deletes) in a MongoDB cluster one needs to enable pre and post image saving and the collection needs to also enable saving these pre and post images. For more information see https://www.mongodb.com/docs/manual/changeStreams/#change-streams-with-document-pre--and-post-images[^MongoDB documentation].\n\n== Metadata\n\nEach message emitted by this plugin has the following metadata:\n\n- operation: either \"insert\", \"replace\", \"delete\" or \"update\" for changes streamed. Documents from the initial snapshot have the operation set to \"read\".\n- collection: the collection the document was written to.\n- operation_time: the oplog time for when this operation occurred.\n- schema: the collection schema in benthos common schema format (set as immutable metadata). Extracted from the collection's `$jsonSchema` validator if available, otherwise inferred from the first document seen. Not present on messages where no schema could be determined (e.g. deletes without pre-images when no prior schema is cached).\n\n== Schema Detection\n\nSchema metadata is discovered using a two-tier strategy:\n\n1. *$jsonSchema validators* are preferred and queried at startup for each watched collection. When a validator exists, the schema provides accurate type information and required/optional field classification.\n2. When no validator exists, schema is *inferred from the first document* received per collection. All fields are marked optional.\n\n*Change detection:* when a document's top-level field set differs from the cached schema, the schema is re-inferred from that document. This applies to both validator-sourced and inference-sourced schemas.\n\n*Limitations:* type changes within existing fields and structural changes inside nested subdocuments are not detected automatically. Restart the input to force a full schema refresh.\n\n*Fields with null values, unknown BSON types, or mixed-type arrays* are mapped to the `Any` schema type. The `parquet_encode` processor does not support `Any` and will error if it encounters one. Add an upstream processor (e.g. `mapping`) to convert or remove these fields before `parquet_encode`.\n\n*Schema stability:* MongoDB collections may contain documents with varying field sets. When this occurs, the schema updates on each structural change, which can cause frequent schema version bumps in schema registries with compatibility modes. For schema registry targets, configuring a `$jsonSchema` validator on the collection is strongly recommended.\n    ",
@@ -12026,7 +12026,7 @@
     {
       "name": "mysql_cdc",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Enables MySQL streaming for RedPanda Connect.",
       "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- operation: The type of operation (insert, update, delete, or read for snapshot messages)\n- table: The name of the table\n- binlog_position: The binlog position (for CDC messages only, not set for snapshot messages)\n- schema: The table schema in benthos common schema format, compatible with processors like parquet_encode\n",
@@ -13238,7 +13238,7 @@
     {
       "name": "nats_kv",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Watches for updates in a NATS key-value bucket.",
       "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n``` text\n- nats_kv_key\n- nats_kv_bucket\n- nats_kv_revision\n- nats_kv_delta\n- nats_kv_operation\n- nats_kv_created\n```\n\n== Connection name\n\nWhen monitoring and managing a production NATS system, it is often useful to\nknow which connection a message was send/received from. This can be achieved by\nsetting the connection name option when creating a NATS connection.\n\nRedpanda Connect will automatically set the connection name based off the label of the given\nNATS component, so that monitoring tools between NATS and Redpanda Connect can stay in sync.\n\n\n== Authentication\n\nThere are several components within Redpanda Connect which uses NATS services. You will find that each of these components\nsupport optional advanced authentication parameters for https://docs.nats.io/nats-server/configuration/securing_nats/auth_intro/nkey_auth[NKeys^]\nand https://docs.nats.io/using-nats/developer/connecting/creds[User Credentials^].\n\nSee an https://docs.nats.io/running-a-nats-service/nats_admin/security/jwt[in-depth tutorial^].\n\n=== NKey file\n\nThe NATS server can use these NKeys in several ways for authentication. The simplest is for the server to be configured\nwith a list of known public keys and for the clients to respond to the challenge by signing it with its private NKey\nconfigured in the `nkey_file` or `nkey` field.\n\nhttps://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[More details^].\n\n=== User credentials\n\nNATS server supports decentralized authentication based on JSON Web Tokens (JWT). Clients need an https://docs.nats.io/nats-server/configuration/securing_nats/jwt#json-web-tokens[user JWT^]\nand a corresponding https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NKey secret^] when connecting to a server\nwhich is configured to use this authentication scheme.\n\nThe `user_credentials_file` field should point to a file containing both the private key and the JWT and can be\ngenerated with the https://docs.nats.io/nats-tools/nsc[nsc tool^].\n\nAlternatively, the `user_jwt` field can contain a plain text JWT and the `user_nkey_seed`can contain\nthe plain text NKey Seed.\n\nhttps://docs.nats.io/using-nats/developer/connecting/creds[More details^].\n\n=== Token\n\nThe `token` field can contain a plain text token string for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/tokens[token-based authentication^].\n\n=== User and password\n\nThe `user` and `password` fields can be used for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/username_password[username/password authentication^].",
@@ -14108,7 +14108,7 @@
     {
       "name": "ockam_kafka",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Ockam",
       "categories": [
@@ -14664,7 +14664,7 @@
     {
       "name": "oracledb_cdc",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Enables Change Data Capture by consuming from OracleDB.",
       "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
@@ -15991,7 +15991,7 @@
     {
       "name": "parquet",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Reads and decodes https://parquet.apache.org/docs/[Parquet files^] into a stream of structured messages.",
       "description": "\nThis input uses https://github.com/parquet-go/parquet-go[https://github.com/parquet-go/parquet-go^], which is itself experimental. Therefore changes could be made into how this processor functions outside of major version releases.\n\nBy default any BYTE_ARRAY or FIXED_LEN_BYTE_ARRAY value will be extracted as a byte slice (`[]byte`) unless the logical type is UTF8, in which case they are extracted as a string (`string`).\n\nWhen a value extracted as a byte slice exists within a document which is later JSON serialized by default it will be base 64 encoded into strings, which is the default for arbitrary data fields. It is possible to convert these binary values to strings (or other data types) using Bloblang transformations such as `root.foo = this.foo.string()` or `root.foo = this.foo.encode(\"hex\")`, etc.",
@@ -16521,7 +16521,7 @@
     {
       "name": "postgres_cdc",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Streams changes from a PostgreSQL database using logical replication.",
       "description": "Using this field overrides the SSL/TLS settings in the environment and DSN.",
@@ -17006,7 +17006,7 @@
     {
       "name": "pulsar",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Reads messages from an Apache Pulsar server.",
       "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- pulsar_message_id\n- pulsar_key\n- pulsar_ordering_key\n- pulsar_event_time_unix\n- pulsar_publish_time_unix\n- pulsar_topic\n- pulsar_producer_name\n- pulsar_redelivery_count\n- All properties of the message\n```\n\nYou can access these metadata fields using\nxref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n",
@@ -17712,7 +17712,7 @@
     {
       "name": "redis_scan",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Scans the set of keys in the current selected database and gets their values, using the Scan and Get commands.",
       "description": "Optionally, iterates only elements matching a blob-style pattern. For example:\n\n- `*foo*` iterates only keys which contain `foo` in it.\n- `foo*` iterates only keys starting with `foo`.\n\nThis input generates a message for each key value pair in the following format:\n\n```json\n{\"key\":\"foo\",\"value\":\"bar\"}\n```\n",
@@ -18201,7 +18201,7 @@
     {
       "name": "redpanda",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "A Kafka input using the https://github.com/twmb/franz-go[Franz Kafka client library^].",
       "description": "\nWhen a consumer group is specified this input consumes one or more topics where partitions will automatically balance across any other connected clients with the same consumer group. When a consumer group is not specified topics can either be consumed in their entirety or with explicit partitions.\n\n== Delivery Guarantees\n\nWhen using consumer groups the offsets of \"delivered\" records will be committed automatically and continuously, and in the event of restarts these committed offsets will be used in order to resume from where the input left off. Redpanda Connect guarantees at least once delivery by ensuring that records are only considered to be delivered when all configured outputs that the record is routed to have confirmed delivery.\n\n== Ordering\n\nIn order to preserve ordering of topic partitions, records consumed from each partition are processed and delivered in the order that they are received, and only one batch of records of a given partition will ever be processed at a time. This means that parallel processing can only occur when multiple topic partitions are being consumed, but ensures that data is processed in a sequential order as determined from the source partition.\n\nHowever, one way in which the order of records can be mixed is when delivery errors occur and error handling mechanisms kick in. Redpanda Connect always leans towards at least once delivery unless instructed otherwise, and this includes reattempting delivery of data when the ordering of that data can no longer be guaranteed.\n\nFor example, a batch of records may have been sent to an output broker and only a subset of records were delivered, in this case Redpanda Connect by default will reattempt to deliver the records that failed, even though these failed records may have come before records that were previously delivered successfully.\n\nIn order to avoid this scenario you must specify in your configuration an alternative way to handle delivery errors in the form of a xref:components:outputs/fallback.adoc[`fallback`] output. It is good practice to also disable the field `auto_retry_nacks` by setting it to `false` when you've added an explicit fallback output as this will improve the throughput of your pipeline. For example, the following config avoids ordering issues by specifying a fallback output into a DLQ topic, which is also retried indefinitely as a way to apply back pressure during connectivity issues:\n\n```yaml\noutput:\n  fallback:\n    - redpanda:\n        seed_brokers: [ localhost:9092 ]\n        topic: foo\n    - retry:\n        output:\n          redpanda:\n            seed_brokers: [ localhost:9092 ]\n            topic: foo_dlq\n```\n\n== Batching\n\nRecords are processed and delivered from each partition in batches as received from brokers. These batch sizes are therefore dynamically sized in order to optimise throughput, but can be tuned with the config field `max_yield_batch_bytes`, or `unordered_processing.batching` when unordered processing is enabled. Batches can be further broken down using the xref:components:processors/split.adoc[`split`] processor.\n\n== Metrics\n\nEmits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- kafka_key\n- kafka_topic\n- kafka_partition\n- kafka_offset\n- kafka_lag\n- kafka_timestamp_ms\n- kafka_timestamp_unix\n- kafka_tombstone_message\n- All record headers\n```\n",
@@ -19336,7 +19336,7 @@
     {
       "name": "redpanda_migrator",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Kafka consumer for migration pipelines. All migration logic is handled by the redpanda_migrator output.",
       "description": "\nThe `redpanda_migrator` input simply consumes records from the source cluster and forwards them downstream.\nIt does not perform topic/schema/group synchronisation.\nAll migration features and coordination live in the paired `redpanda_migrator` output.\n\n**IMPORTANT:** This input requires a corresponding `redpanda_migrator` output in the same pipeline.\nEach pipeline must have both input and output components configured.\nFor capabilities, guarantees, scheduling, and examples, see the output documentation.\n\n**Performance tuning for high throughput:** For workloads with high message rates or large messages,\nadjust the following fields to increase buffer sizes and batch processing:\n\n- `partition_buffer_bytes: 2MB`\n- `max_yield_batch_bytes: 1MB`\n\nThese settings allow the consumer to buffer more data per partition and yield larger batches,\nreducing overhead and improving throughput at the cost of higher memory usage.",
@@ -20384,7 +20384,7 @@
     {
       "name": "schema_registry",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Reads schemas from SchemaRegistry.",
       "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- schema_registry_subject\n- schema_registry_subject_compatibility_level\n- schema_registry_version\n```\n\nYou can access these metadata fields using\nxref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n",
@@ -20814,7 +20814,7 @@
     {
       "name": "sftp",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Consumes files from an SFTP server.",
       "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- sftp_path\n- sftp_mod_time\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
@@ -21084,7 +21084,7 @@
     {
       "name": "slack",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "description": "Connects to Slack using https://api.slack.com/apis/socket-mode[^Socket Mode]. This allows for receiving events, interactions and slash commands. Each message emitted from this input has a @type metadata of the event type \"events_api\", \"interactions\" or \"slash_commands\".",
       "categories": null,
@@ -21127,7 +21127,7 @@
     {
       "name": "slack_users",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "description": "Reads all users in a slack organization (optionally filtered by a team ID).",
       "categories": null,
@@ -21885,7 +21885,7 @@
     {
       "name": "splunk",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Consumes messages from Splunk.",
       "categories": [
@@ -22069,7 +22069,7 @@
     {
       "name": "sql_raw",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a select query and creates a message for each row received.",
       "description": "Once the rows from the query are exhausted this input shuts down, allowing the pipeline to gracefully terminate (or the next input in a xref:components:inputs/sequence.adoc[sequence] to execute).",
@@ -22220,7 +22220,7 @@
     {
       "name": "sql_select",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a select query and creates a message for each row received.",
       "description": "Once the rows from the query are exhausted this input shuts down, allowing the pipeline to gracefully terminate (or the next input in a xref:components:inputs/sequence.adoc[sequence] to execute).",
@@ -22597,7 +22597,7 @@
     {
       "name": "timeplus",
       "type": "input",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a query on Timeplus Enterprise and creates a message from each row received",
       "description": "\nThis input can execute a query on Timeplus Enterprise Cloud, Timeplus Enterprise (self-hosted) or Timeplusd. A structured message will be created\nfrom each row received.\n\nIf it is a streaming query, this input will keep running until the query is terminated. If it is a table query, this input will shut down once the rows from the query are exhausted.",
@@ -23124,7 +23124,7 @@
     {
       "name": "tigerbeetle_cdc",
       "type": "input",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Enables TigerBeetle CDC streaming for Redpanda Connect.",
       "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer’s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater.",
@@ -26045,7 +26045,7 @@
     {
       "name": "azure_blob_storage",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Sends message parts as objects to an Azure Blob Storage Account container. Each object is uploaded with the filename specified with the `container` field.",
       "description": "\nIn order to have a different path for each object you should use function\ninterpolations described xref:configuration:interpolation.adoc#bloblang-queries[here], which are\ncalculated per message of a batch.\n\nSupports multiple authentication methods but only one of the following is required:\n\n- `storage_connection_string`\n- `storage_account` and `storage_access_key`\n- `storage_account` and `storage_sas_token`\n- `storage_account` to access via https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#DefaultAzureCredential[DefaultAzureCredential^]\n\nIf multiple are set then the `storage_connection_string` is given priority.\n\nIf the `storage_connection_string` does not contain the `AccountName` parameter, please specify it in the\n`storage_account` field.\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.",
@@ -26153,7 +26153,7 @@
     {
       "name": "azure_cosmosdb",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Creates or updates messages as JSON documents in https://learn.microsoft.com/en-us/azure/cosmos-db/introduction[Azure CosmosDB^].",
       "description": "\nWhen creating documents, each message must have the `id` property (case-sensitive) set (or use `auto_id: true`). It is the unique name that identifies the document, that is, no two documents share the same `id` within a logical partition. The `id` field must not exceed 255 characters. https://learn.microsoft.com/en-us/rest/api/cosmos-db/documents[See details^].\n\nThe `partition_keys` field must resolve to the same value(s) across the entire message batch.\n\n\n== Credentials\n\nYou can use one of the following authentication mechanisms:\n\n- Set the `endpoint` field and the `account_key` field\n- Set only the `endpoint` field to use https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#DefaultAzureCredential[DefaultAzureCredential^]\n- Set the `connection_string` field\n\n\n== Batching\n\nCosmosDB limits the maximum batch size to 100 messages and the payload must not exceed 2MB (https://learn.microsoft.com/en-us/azure/cosmos-db/concepts-limits#per-request-limits[details here^]).\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -26479,7 +26479,7 @@
     {
       "name": "azure_data_lake_gen2",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Sends message parts as files to an Azure Data Lake Gen2 filesystem. Each file is uploaded with the filename specified with the `path` field.",
       "description": "\nIn order to have a different path for each file you should use function\ninterpolations described xref:configuration:interpolation.adoc#bloblang-queries[here], which are\ncalculated per message of a batch.\n\nSupports multiple authentication methods but only one of the following is required:\n\n- `storage_connection_string`\n- `storage_account` and `storage_access_key`\n- `storage_account` and `storage_sas_token`\n- `storage_account` to access via https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#DefaultAzureCredential[DefaultAzureCredential^]\n\nIf multiple are set then the `storage_connection_string` is given priority.\n\nIf the `storage_connection_string` does not contain the `AccountName` parameter, please specify it in the\n`storage_account` field.\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.",
@@ -26558,7 +26558,7 @@
     {
       "name": "azure_queue_storage",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Sends messages to an Azure Storage Queue.",
       "description": "\nOnly one authentication method is required, `storage_connection_string` or `storage_account` and `storage_access_key`. If both are set then the `storage_connection_string` is given priority.\n\nIn order to set the `queue_name` you can use function interpolations described xref:configuration:interpolation.adoc#bloblang-queries[here], which are calculated per message of a batch.\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -26727,7 +26727,7 @@
     {
       "name": "azure_table_storage",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Stores messages in an Azure Table Storage table.",
       "description": "\nOnly one authentication method is required, `storage_connection_string` or `storage_account` and `storage_access_key`. If both are set then the `storage_connection_string` is given priority.\n\nIn order to set the `table_name`,  `partition_key` and `row_key` you can use function interpolations described xref:configuration:interpolation.adoc#bloblang-queries[here], which are calculated per message of a batch.\n\nIf the `properties` are not set in the config, all the `json` fields are marshalled and stored in the table, which will be created if it does not exist.\n\nThe `object` and `array` fields are marshaled as strings. e.g.:\n\nThe JSON message:\n\n```json\n{\n  \"foo\": 55,\n  \"bar\": {\n    \"baz\": \"a\",\n    \"bez\": \"b\"\n  },\n  \"diz\": [\"a\", \"b\"]\n}\n```\n\nWill store in the table the following properties:\n\n```yml\nfoo: '55'\nbar: '{ \"baz\": \"a\", \"bez\": \"b\" }'\ndiz: '[\"a\", \"b\"]'\n```\n\nIt's also possible to use function interpolations to get or transform the properties values, e.g.:\n\n```yml\nproperties:\n  device: '${! json(\"device\") }'\n  timestamp: '${! json(\"timestamp\") }'\n```\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -26968,7 +26968,7 @@
     {
       "name": "beanstalkd",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Write messages to a Beanstalkd queue.",
       "categories": [
@@ -27202,7 +27202,7 @@
     {
       "name": "cassandra",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Runs a query against a Cassandra database for each message in order to insert data.",
       "description": "\nQuery arguments can be set using a bloblang array for the fields using the `args_mapping` field.\n\nWhen populating timestamp columns the value must either be a string in ISO 8601 format (2006-01-02T15:04:05Z07:00), or an integer representing unix time in seconds.\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -27679,7 +27679,7 @@
     {
       "name": "couchbase",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Performs operations against Couchbase for each message, allowing you to store or delete data.",
       "description": "When inserting, replacing or upserting documents, each must have the `content` property set.\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -27937,7 +27937,7 @@
     {
       "name": "cyborgdb",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Inserts items into a CyborgDB encrypted vector index.",
       "description": "\nThis output allows you to write vectors to a CyborgDB encrypted index. CyborgDB provides\nend-to-end encrypted vector storage with automatic dimension detection and index optimization.\n\nAll vector data is encrypted client-side before being sent to the server, ensuring complete\ndata privacy. The encryption key never leaves your infrastructure.\n",
@@ -28142,7 +28142,7 @@
     {
       "name": "cypher",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "description": "The cypher output type writes a batch of messages to any graph database that supports the Neo4j or Bolt protocols.",
       "categories": [
@@ -28471,7 +28471,7 @@
     {
       "name": "discord",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Writes messages to a Discord channel.",
       "description": "\nThis output POSTs messages to the `/channels/\\{channel_id}/messages` Discord API endpoint authenticated as a bot using token based authentication.\n\nIf the format of a message is a JSON object matching the https://discord.com/developers/docs/resources/channel#message-object[Discord API message type^] then it is sent directly, otherwise an object matching the API type is created with the content of the message added as a string.\n",
@@ -29451,7 +29451,7 @@
     {
       "name": "gcp_bigquery",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Sends messages as new rows to a Google Cloud BigQuery table.",
       "description": "\n== Credentials\n\nBy default Redpanda Connect will use a shared credentials file when connecting to GCP services. You can find out more in xref:guides:cloud/gcp.adoc[].\n\n== Format\n\nThis output currently supports only CSV, NEWLINE_DELIMITED_JSON and PARQUET, formats. Learn more about how to use GCP BigQuery with them here:\n\n- https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-json[`NEWLINE_DELIMITED_JSON`^]\n- https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-csv[`CSV`^]\n- https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-parquet[`PARQUET`^]\n\nEach message may contain multiple elements separated by newlines. For example a single message containing:\n\n```json\n{\"key\": \"1\"}\n{\"key\": \"2\"}\n```\n\nIs equivalent to two separate messages:\n\n```json\n{\"key\": \"1\"}\n```\n\nAnd:\n\n```json\n{\"key\": \"2\"}\n```\n\nThe same is true for the CSV format.\n\n=== CSV\n\nFor the CSV format when the field `csv.header` is specified a header row will be inserted as the first line of each message batch. If this field is not provided then the first message of each message batch must include a header line.\n\n=== Parquet\n\nFor parquet, the data can be encoded using the `parquet_encode` processor and each message that is sent to the output must be a full parquet message.\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -29735,7 +29735,7 @@
     {
       "name": "gcp_cloud_storage",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Sends message parts as objects to a Google Cloud Storage bucket. Each object is uploaded with the path specified with the `path` field.",
       "description": "\nIn order to have a different path for each object you should use function interpolations described in xref:configuration:interpolation.adoc#bloblang-queries[Bloblang queries], which are calculated per message of a batch.\n\n== Metadata\n\nMetadata fields on messages will be sent as headers, in order to mutate these values (or remove them) check out the xref:configuration:metadata.adoc[metadata docs].\n\n== Credentials\n\nBy default Redpanda Connect will use a shared credentials file when connecting to GCP services. You can find out more in xref:guides:cloud/gcp.adoc[].\n\n== Batching\n\nIt's common to want to upload messages to Google Cloud Storage as batched archives, the easiest way to do this is to batch your messages at the output level and join the batch of messages with an xref:components:processors/archive.adoc[`archive`] and/or xref:components:processors/compress.adoc[`compress`] processor.\n\nFor example, if we wished to upload messages as a .tar.gz archive of documents we could achieve that with the following config:\n\n```yaml\noutput:\n  gcp_cloud_storage:\n    bucket: TODO\n    path: ${!counter()}-${!timestamp_unix_nano()}.tar.gz\n    batching:\n      count: 100\n      period: 10s\n      processors:\n        - archive:\n            format: tar\n        - compress:\n            algorithm: gzip\n```\n\nAlternatively, if we wished to upload JSON documents as a single large document containing an array of objects we can do that with:\n\n```yaml\noutput:\n  gcp_cloud_storage:\n    bucket: TODO\n    path: ${!counter()}-${!timestamp_unix_nano()}.json\n    batching:\n      count: 100\n      processors:\n        - archive:\n            format: json_array\n```\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -32562,7 +32562,7 @@
     {
       "name": "kafka_franz",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "A Kafka output using the https://github.com/twmb/franz-go[Franz Kafka client library^].",
       "description": "\nWrites a batch of messages to Kafka brokers and waits for acknowledgement before propagating it back to the input.\n\nThis output often out-performs the traditional `kafka` output as well as providing more useful logs and error messages.\n",
@@ -33360,7 +33360,7 @@
     {
       "name": "mongodb",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Inserts items into a MongoDB collection.",
       "description": "\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -34758,7 +34758,7 @@
     {
       "name": "nats_kv",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Put messages in a NATS key-value bucket.",
       "description": "\nThe field `key` supports\nxref:configuration:interpolation.adoc#bloblang-queries[interpolation functions], allowing\nyou to create a unique key for each message.\n\n== Connection name\n\nWhen monitoring and managing a production NATS system, it is often useful to\nknow which connection a message was send/received from. This can be achieved by\nsetting the connection name option when creating a NATS connection.\n\nRedpanda Connect will automatically set the connection name based off the label of the given\nNATS component, so that monitoring tools between NATS and Redpanda Connect can stay in sync.\n\n\n== Authentication\n\nThere are several components within Redpanda Connect which uses NATS services. You will find that each of these components\nsupport optional advanced authentication parameters for https://docs.nats.io/nats-server/configuration/securing_nats/auth_intro/nkey_auth[NKeys^]\nand https://docs.nats.io/using-nats/developer/connecting/creds[User Credentials^].\n\nSee an https://docs.nats.io/running-a-nats-service/nats_admin/security/jwt[in-depth tutorial^].\n\n=== NKey file\n\nThe NATS server can use these NKeys in several ways for authentication. The simplest is for the server to be configured\nwith a list of known public keys and for the clients to respond to the challenge by signing it with its private NKey\nconfigured in the `nkey_file` or `nkey` field.\n\nhttps://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[More details^].\n\n=== User credentials\n\nNATS server supports decentralized authentication based on JSON Web Tokens (JWT). Clients need an https://docs.nats.io/nats-server/configuration/securing_nats/jwt#json-web-tokens[user JWT^]\nand a corresponding https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NKey secret^] when connecting to a server\nwhich is configured to use this authentication scheme.\n\nThe `user_credentials_file` field should point to a file containing both the private key and the JWT and can be\ngenerated with the https://docs.nats.io/nats-tools/nsc[nsc tool^].\n\nAlternatively, the `user_jwt` field can contain a plain text JWT and the `user_nkey_seed`can contain\nthe plain text NKey Seed.\n\nhttps://docs.nats.io/using-nats/developer/connecting/creds[More details^].\n\n=== Token\n\nThe `token` field can contain a plain text token string for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/tokens[token-based authentication^].\n\n=== User and password\n\nThe `user` and `password` fields can be used for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/username_password[username/password authentication^].",
@@ -35546,7 +35546,7 @@
     {
       "name": "ockam_kafka",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Ockam",
       "categories": [
@@ -37216,7 +37216,7 @@
     {
       "name": "pinecone",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Inserts items into a Pinecone index.",
       "description": "\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -37403,7 +37403,7 @@
     {
       "name": "pulsar",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Write messages to an Apache Pulsar server.",
       "categories": [
@@ -37569,7 +37569,7 @@
     {
       "name": "pusher",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Output for publishing messages to Pusher API (https://pusher.com)",
       "categories": [
@@ -37734,7 +37734,7 @@
     {
       "name": "qdrant",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Adds items to a https://qdrant.tech/[Qdrant^] collection",
       "description": "\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -38047,7 +38047,7 @@
     {
       "name": "questdb",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Pushes messages to a QuestDB table",
       "description": "Important: We recommend that the dedupe feature is enabled on the QuestDB server. Please visit https://questdb.io/docs/ for more information about deploying, configuring, and using QuestDB.\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -39626,7 +39626,7 @@
     {
       "name": "redpanda",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "A Kafka output using the https://github.com/twmb/franz-go[Franz Kafka client library^].",
       "description": "\nWrites a batch of messages to Kafka brokers and waits for acknowledgement before propagating it back to the input.\n",
@@ -40652,7 +40652,7 @@
     {
       "name": "redpanda_migrator",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "A specialised Kafka producer for comprehensive data migration between Apache Kafka and Redpanda clusters.",
       "description": "\nThe `redpanda_migrator` output performs all migration work.\nIt coordinates topics, schema registry, and consumer groups to migrate data from a source Kafka/Redpanda cluster to a destination cluster.\n\n**IMPORTANT:** This output requires a corresponding `redpanda_migrator` input in the same pipeline.\nEach pipeline must have both input and output components configured.\n\n**Multiple migrator pairs:** When using multiple migrator pairs in a single pipeline,\nthe mapping between input and output components is done based on the label field.\nThe label of the input and output must match exactly for proper coordination.\n\n**Performance tuning for high throughput:** For workloads with high message rates or large messages,\nadjust the following settings to optimize throughput:\n\nOn the paired input component:\n- `partition_buffer_bytes: 2MB` - increases per-partition buffer size\n- `max_yield_batch_bytes: 1MB` - allows larger batches to be yielded\n\nOn this output component:\n- `max_in_flight` - set to the total number of partitions being copied in parallel (up to all partitions in the cluster)\n\nWhat gets synchronised:\n\n- Topics\n  - Name resolution with interpolation (default: preserve source name)\n  - Automatic creation with mirrored partition counts\n  - Selectable replication factor (default: inherit from source)\n  - Copy of supported topic configuration keys (serverless-aware subset)\n  - Optional ACL replication with safe transforms:\n    - Excludes `ALLOW WRITE` entries\n    - Downgrades `ALLOW ALL` to `READ`\n    - Preserves resource pattern type and host filters\n\n- Schema Registry\n  - One-shot or periodic syncing\n  - Subject selection via include/exclude regex\n  - Subject renaming with interpolation\n  - Versions: `latest` or `all` (default: `all`)\n  - Optional include of soft-deleted subjects\n  - ID handling: translate IDs (create-or-reuse) or keep fixed IDs and versions\n  - Optional schema normalisation on create\n  - Optional per-subject compatibility propagation when explicitly set on source (global mode is not forced)\n  - Serverless note: schema metadata and rule sets are not copied in serverless mode\n\n- Consumer Groups\n  - Periodic syncing\n  - Group selection via include/exclude regex\n  - Only groups in `Empty` state are migrated (active groups are skipped)\n  - Timestamp-based offset translation (approximate) per partition using previous-record timestamp and `ListOffsetsAfterMilli`\n  - No rewind guarantee: destination offsets are never moved backwards\n  - Commit performed in parallel with per-group metrics\n  - Requires matching partition counts between source and destination topics\n\nHow it runs:\n\n- Topics: synced on demand. The first write triggers discovery and creation; subsequent writes create on first encounter per topic.\n- Schema Registry: one sync at connect, then triggered when topic record has unknown schema; optional background loop controlled by `schema_registry.interval`.\n- Consumer Groups: background loop controlled by `consumer_groups.interval` and filtered by the current topic mappings.\n\nGuarantees:\n\n- Topics are created with the intended partitioning and configured replication factor. Existing topics are respected; partition mismatches are logged and consumer group migration for mismatched topics is skipped.\n- Consumer group offsets are never rewound. Only translated forward positions are committed.\n- ACL replication excludes `ALLOW WRITE` operations and downgrades `ALLOW ALL` to `READ` to avoid unsafe grants.\n\nLimitations and requirements:\n\n- Destination Schema Registry must be in `READWRITE` or `IMPORT` mode.\n- Offset translation is best-effort: if the previous-offset timestamp cannot be read, or no destination offset exists after the timestamp, that partition is skipped.\n- Consumer group migration requires identical partition counts for source and destination topics.\n\nMetrics:\n\nThe component exposes comprehensive metrics for monitoring migration operations:\n\nTopic Migration Metrics:\n- `redpanda_migrator_topics_created_total` (counter): Total number of topics successfully created on the destination cluster\n- `redpanda_migrator_topic_create_errors_total` (counter): Total number of errors encountered when creating topics\n- `redpanda_migrator_topic_create_latency_ns` (timer): Latency in nanoseconds for topic creation operations\n\nSchema Registry Migration Metrics:\n- `redpanda_migrator_sr_schemas_created_total` (counter): Total number of schemas successfully created in the destination schema registry\n- `redpanda_migrator_sr_schema_create_errors_total` (counter): Total number of errors encountered when creating schemas\n- `redpanda_migrator_sr_schema_create_latency_ns` (timer): Latency in nanoseconds for schema creation operations\n- `redpanda_migrator_sr_compatibility_updates_total` (counter): Total number of compatibility level updates applied to subjects\n- `redpanda_migrator_sr_compatibility_update_errors_total` (counter): Total number of errors encountered when updating compatibility levels\n- `redpanda_migrator_sr_compatibility_update_latency_ns` (timer): Latency in nanoseconds for compatibility level update operations\n\nConsumer Group Migration Metrics (with group label):\n- `redpanda_migrator_cg_offsets_translated_total` (counter): Total number of offsets successfully translated per consumer group\n- `redpanda_migrator_cg_offset_translation_errors_total` (counter): Total number of errors encountered when translating offsets per consumer group\n- `redpanda_migrator_cg_offset_translation_latency_ns` (timer): Latency in nanoseconds for offset translation operations per consumer group\n- `redpanda_migrator_cg_offsets_committed_total` (counter): Total number of offsets successfully committed per consumer group\n- `redpanda_migrator_cg_offset_commit_errors_total` (counter): Total number of errors encountered when committing offsets per consumer group\n- `redpanda_migrator_cg_offset_commit_latency_ns` (timer): Latency in nanoseconds for offset commit operations per consumer group\n\nConsumer Lag Metrics (with topic and partition labels):\n- `redpanda_lag` (gauge): Current consumer lag in messages for each topic partition being consumed by the migrator input. This metric shows the difference between the high water mark and the current consumer position, providing visibility into how far behind the consumer is on each partition. The metric includes labels for topic name and partition number to enable per-partition monitoring.\n\nThis component must be paired with the `redpanda_migrator` input in the same pipeline.",
@@ -41937,9 +41937,9 @@
     {
       "name": "salesforce_sink",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
-      "summary": "Writes messages to Salesforce, routing each Kafka topic to its own SObject configuration.",
+      "summary": "Writes messages to Salesforce, routing each topic to its own SObject configuration.",
       "description": "Consumes batches of messages and writes them to Salesforce.\n\nEach message must have a `topic` field (set by the per-topic processor) and a `data` field\ncontaining the Salesforce record fields. The `topic` is used to look up the correct\n`topic_mappings` entry which defines the SObject, operation, and write mode.\n\n**Realtime mode** uses the sObject Collections REST API (synchronous, up to 200 records/call).\n**Bulk mode** uses the Bulk API 2.0 (asynchronous, polls until complete).\n\n```yaml\ninput:\n  broker:\n    inputs:\n      - kafka_franz:\n          seed_brokers: [localhost:9092]\n          topics: [salesforce-account]\n          consumer_group: sf-sink-account\n        processors:\n          - mapping: |\n              root.topic = @kafka_topic\n              root.data = this\n      - kafka_franz:\n          seed_brokers: [localhost:9092]\n          topics: [salesforce-contact]\n          consumer_group: sf-sink-contact\n        processors:\n          - mapping: |\n              root.topic = @kafka_topic\n              root.data = this\n\noutput:\n  salesforce_sink:\n    org_url: \"${SALESFORCE_ORG_URL}\"\n    client_id: \"${SALESFORCE_CLIENT_ID}\"\n    client_secret: \"${SALESFORCE_CLIENT_SECRET}\"\n    topic_mappings:\n      - topic: salesforce-account\n        sobject: Account\n        operation: upsert\n        external_id_field: External_Id__c\n        mode: realtime\n      - topic: salesforce-contact\n        sobject: Contact\n        operation: upsert\n        external_id_field: External_Id__c\n        mode: bulk\n```",
       "categories": null,
       "config": {
@@ -42077,7 +42077,7 @@
     {
       "name": "schema_registry",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Publishes schemas to SchemaRegistry.",
       "description": "\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.",
@@ -42452,7 +42452,7 @@
     {
       "name": "sftp",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Writes files to an SFTP server.",
       "description": "In order to have a different path for each object you should use function interpolations described xref:configuration:interpolation.adoc#bloblang-queries[here].\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.",
@@ -42593,7 +42593,7 @@
     {
       "name": "slack_post",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "description": "Post a new message to a Slack channel using https://api.slack.com/methods/chat.postMessage[^chat.postMessage]",
       "categories": null,
@@ -42681,7 +42681,7 @@
     {
       "name": "slack_reaction",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "description": "Add or remove an emoji reaction from a Slack message.",
       "categories": null,
@@ -42743,7 +42743,7 @@
     {
       "name": "snowflake_put",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Sends messages to Snowflake stages and, optionally, calls Snowpipe to load this data into one or more tables.",
       "description": "\nIn order to use a different stage and / or Snowpipe for each message, you can use function interpolations as described in\nxref:configuration:interpolation.adoc#bloblang-queries[Bloblang queries]. When using batching, messages are grouped by the calculated\nstage and Snowpipe and are streamed to individual files in their corresponding stage and, optionally, a Snowpipe\n`insertFiles` REST API call will be made for each individual file.\n\n== Credentials\n\nTwo authentication mechanisms are supported:\n\n- User/password\n- Key Pair Authentication\n\n=== User/password\n\nThis is a basic authentication mechanism which allows you to PUT data into a stage. However, it is not compatible with\nSnowpipe.\n\n=== Key pair authentication\n\nThis authentication mechanism allows Snowpipe functionality, but it does require configuring an SSH Private Key\nbeforehand. Please consult the https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication[documentation^]\nfor details on how to set it up and assign the Public Key to your user.\n\nNote that the Snowflake documentation https://twitter.com/felipehoffa/status/1560811785606684672[used to suggest^]\nusing this command:\n\n```bash\nopenssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8\n```\n\nto generate an encrypted SSH private key. However, in this case, it uses an encryption algorithm called\n`pbeWithMD5AndDES-CBC`, which is part of the PKCS#5 v1.5 and is considered insecure. Due to this, Redpanda Connect does not\nsupport it and, if you wish to use password-protected keys directly, you must use PKCS#5 v2.0 to encrypt them by using\nthe following command (as the current Snowflake docs suggest):\n\n```bash\nopenssl genrsa 2048 | openssl pkcs8 -topk8 -v2 des3 -inform PEM -out rsa_key.p8\n```\n\nIf you have an existing key encrypted with PKCS#5 v1.5, you can re-encrypt it with PKCS#5 v2.0 using this command:\n\n```bash\nopenssl pkcs8 -in rsa_key_original.p8 -topk8 -v2 des3 -out rsa_key.p8\n```\n\nPlease consult the https://linux.die.net/man/1/pkcs8[pkcs8 command documentation^] for details on PKCS#5 algorithms.\n\n== Batching\n\nIt's common to want to upload messages to Snowflake as batched archives. The easiest way to do this is to batch your\nmessages at the output level and join the batch of messages with an\nxref:components:processors/archive.adoc[`archive`] and/or xref:components:processors/compress.adoc[`compress`]\nprocessor.\n\nFor the optimal batch size, please consult the Snowflake https://docs.snowflake.com/en/user-guide/data-load-considerations-prepare.html[documentation^].\n\n== Snowpipe\n\nGiven a table called `BENTHOS_TBL` with one column of type `variant`:\n\n```sql\nCREATE OR REPLACE TABLE BENTHOS_DB.PUBLIC.BENTHOS_TBL(RECORD variant)\n```\n\nand the following `BENTHOS_PIPE` Snowpipe:\n\n```sql\nCREATE OR REPLACE PIPE BENTHOS_DB.PUBLIC.BENTHOS_PIPE AUTO_INGEST = FALSE AS COPY INTO BENTHOS_DB.PUBLIC.BENTHOS_TBL FROM (SELECT * FROM @%BENTHOS_TBL) FILE_FORMAT = (TYPE = JSON COMPRESSION = AUTO)\n```\n\nyou can configure Redpanda Connect to use the implicit table stage `@%BENTHOS_TBL` as the `stage` and\n`BENTHOS_PIPE` as the `snowpipe`. In this case, you must set `compression` to `AUTO` and, if\nusing message batching, you'll need to configure an xref:components:processors/archive.adoc[`archive`] processor\nwith the `concatenate` format. Since the `compression` is set to `AUTO`, the\nhttps://github.com/snowflakedb/gosnowflake[gosnowflake^] client library will compress the messages automatically so you\ndon't need to add a xref:components:processors/compress.adoc[`compress`] processor for message batches.\n\nIf you add `STRIP_OUTER_ARRAY = TRUE` in your Snowpipe `FILE_FORMAT`\ndefinition, then you must use `json_array` instead of `concatenate` as the archive processor format.\n\nNOTE: Only Snowpipes with `FILE_FORMAT` `TYPE` `JSON` are currently supported.\n\n== Snowpipe troubleshooting\n\nSnowpipe https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest-apis.html[provides^] the `insertReport`\nand `loadHistoryScan` REST API endpoints which can be used to get information about recent Snowpipe calls. In\norder to query them, you'll first need to generate a valid JWT token for your Snowflake account. There are two methods\nfor doing so:\n\n- Using the `snowsql` https://docs.snowflake.com/en/user-guide/snowsql.html[utility^]:\n\n```bash\nsnowsql --private-key-path rsa_key.p8 --generate-jwt -a <account> -u <user>\n```\n\n- Using the Python `sql-api-generate-jwt` https://docs.snowflake.com/en/developer-guide/sql-api/authenticating.html#generating-a-jwt-in-python[utility^]:\n\n```bash\npython3 sql-api-generate-jwt.py --private_key_file_path=rsa_key.p8 --account=<account> --user=<user>\n```\n\nOnce you successfully generate a JWT token and store it into the `JWT_TOKEN` environment variable, then you can,\nfor example, query the `insertReport` endpoint using `curl`:\n\n```bash\ncurl -H \"Authorization: Bearer ${JWT_TOKEN}\" \"https://<account>.snowflakecomputing.com/v1/data/pipes/<database>.<schema>.<snowpipe>/insertReport\"\n```\n\nIf you need to pass in a valid `requestId` to any of these Snowpipe REST API endpoints, you can set a\nxref:guides:bloblang/functions.adoc#uuid_v4[uuid_v4()] string in a metadata field called\n`request_id`, log it via the xref:components:processors/log.adoc[`log`] processor and\nthen configure `request_id: ${ @request_id }` ). Alternatively, you can xref:components:logger/about.adoc[enable debug logging]\n and Redpanda Connect will print the Request IDs that it sends to Snowpipe.\n\n== General troubleshooting\n\nThe underlying https://github.com/snowflakedb/gosnowflake[`gosnowflake` driver^] requires write access to\nthe default directory to use for temporary files. Please consult the https://pkg.go.dev/os#TempDir[`os.TempDir`^]\ndocs for details on how to change this directory via environment variables.\n\nA silent failure can occur due to https://github.com/snowflakedb/gosnowflake/issues/701[this issue^], where the\nunderlying https://github.com/snowflakedb/gosnowflake[`gosnowflake` driver^] doesn't return an error and doesn't\nlog a failure if it can't figure out the current username. One way to trigger this behavior is by running Redpanda Connect in a\nDocker container with a non-existent user ID (such as `--user 1000:1000`).\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -43094,7 +43094,7 @@
     {
       "name": "snowflake_streaming",
       "type": "output",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Ingest data into Snowflake using Snowpipe Streaming.",
       "description": "\nIngest data into Snowflake using Snowpipe Streaming.\n\n[%header,format=dsv]\n|===\nSnowflake column type:Allowed format in Redpanda Connect\nCHAR, VARCHAR:string\nBINARY:[]byte\nNUMBER:any numeric type, string\nFLOAT:any numeric type\nBOOLEAN:bool,any numeric type,string parsable according to `strconv.ParseBool`\nTIME,DATE,TIMESTAMP:unix or RFC 3339 with nanoseconds timestamps\nVARIANT,ARRAY,OBJECT:any data type is converted into JSON\nGEOGRAPHY,GEOMETRY: Not supported\n|===\n\nFor TIMESTAMP, TIME and DATE columns, you can parse different string formats using a bloblang `mapping`.\n\nAuthentication can be configured using a https://docs.snowflake.com/en/user-guide/key-pair-auth[RSA Key Pair^].\n\nThere are https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#limitations[limitations^] of what data types can be loaded into Snowflake using this method.\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].\n\nIt is recommended that each batches results in at least 16MiB of compressed output being written to Snowflake.\nYou can monitor the output batch size using the `snowflake_compressed_output_size_bytes` metric.\n",
@@ -43735,7 +43735,7 @@
     {
       "name": "splunk_hec",
       "type": "output",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Publishes messages to a Splunk HTTP Endpoint Collector (HEC).",
       "description": "\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
@@ -45454,7 +45454,7 @@
     {
       "name": "avro",
       "type": "processor",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Performs Avro based operations on messages based on a schema.",
       "description": "\nWARNING: If you are consuming or generating messages using a schema registry service then it is likely this processor will fail as those services require messages to be prefixed with the identifier of the schema version being used. Instead, try the xref:components:processors/schema_registry_encode.adoc[`schema_registry_encode`] and xref:components:processors/schema_registry_decode.adoc[`schema_registry_decode`] processors.\n\n== Operators\n\n=== `to_json`\n\nConverts Avro documents into a JSON structure. This makes it easier to\nmanipulate the contents of the document within Benthos. The encoding field\nspecifies how the source documents are encoded.\n\n=== `from_json`\n\nAttempts to convert JSON documents into Avro documents according to the\nspecified encoding.",
@@ -45563,7 +45563,7 @@
     {
       "name": "aws_bedrock_chat",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates responses to messages in a chat conversation, using the AWS Bedrock API.",
       "description": "This processor sends prompts to your chosen large language model (LLM) and generates text from the responses, using the AWS Bedrock API.\nFor more information, see the https://docs.aws.amazon.com/bedrock/latest/userguide[AWS Bedrock documentation^].",
@@ -45786,7 +45786,7 @@
     {
       "name": "aws_bedrock_embeddings",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Computes vector embeddings on text, using the AWS Bedrock API.",
       "description": "This processor sends text to your chosen large language model (LLM) and computes vector embeddings, using the AWS Bedrock API.\nFor more information, see the https://docs.aws.amazon.com/bedrock/latest/userguide[AWS Bedrock documentation^].",
@@ -45976,7 +45976,7 @@
     {
       "name": "aws_dynamodb_partiql",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a PartiQL expression against a DynamoDB table for each message.",
       "description": "Both writes or reads are supported, when the query is a read the contents of the message will be replaced with the result. This processor is more efficient when messages are pre-batched as the whole batch will be executed in a single call.",
@@ -46377,7 +46377,7 @@
     {
       "name": "azure_cosmosdb",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Creates or updates messages as JSON documents in https://learn.microsoft.com/en-us/azure/cosmos-db/introduction[Azure CosmosDB^].",
       "description": "\nWhen creating documents, each message must have the `id` property (case-sensitive) set (or use `auto_id: true`). It is the unique name that identifies the document, that is, no two documents share the same `id` within a logical partition. The `id` field must not exceed 255 characters. https://learn.microsoft.com/en-us/rest/api/cosmos-db/documents[See details^].\n\nThe `partition_keys` field must resolve to the same value(s) across the entire message batch.\n\n\n== Credentials\n\nYou can use one of the following authentication mechanisms:\n\n- Set the `endpoint` field and the `account_key` field\n- Set only the `endpoint` field to use https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#DefaultAzureCredential[DefaultAzureCredential^]\n- Set the `connection_string` field\n\n\n== Metadata\n\nThis component adds the following metadata fields to each message:\n```\n- activity_id\n- request_charge\n```\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n\n== Batching\n\nCosmosDB limits the maximum batch size to 100 messages and the payload must not exceed 2MB (https://learn.microsoft.com/en-us/azure/cosmos-db/concepts-limits#per-request-limits[details here^]).\n",
@@ -46611,7 +46611,7 @@
     {
       "name": "benchmark",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Logs basic throughput statistics of messages that pass through this processor.",
       "description": "Logs messages per second and bytes per second of messages that are processed at a regular interval. A summary of the amount of messages processed over the entire lifetime of the processor will also be printed when the processor shuts down.\n\nThe following metrics are exposed:\n- benchmark_messages_per_second (gauge): The current throughput in messages per second\n- benchmark_messages_total (counter): The total number of messages processed\n- benchmark_bytes_per_second (gauge): The current throughput in bytes per second\n- benchmark_bytes_total (counter): The total number of bytes processed",
@@ -46881,7 +46881,7 @@
     {
       "name": "cached",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Cache the result of applying one or more processors to messages identified by a key. If the key already exists within the cache the contents of the message will be replaced with the cached result instead of applying the processors. This component is therefore useful in situations where an expensive set of processors need only be executed periodically.",
       "description": "The format of the data when stored within the cache is a custom and versioned schema chosen to balance performance and storage space. It is therefore not possible to point this processor to a cache that is pre-populated with data that this processor has not created itself.",
@@ -46973,7 +46973,7 @@
     {
       "name": "cohere_chat",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates responses to messages in a chat conversation, using the Cohere API.",
       "description": "\nThis processor sends the contents of user prompts to the Cohere API, which generates responses. By default, the processor submits the entire payload of each message as a string, unless you use the `prompt` configuration field to customize it.\n\nTo learn more about chat completion, see the https://docs.cohere.com/docs/chat-api[Cohere API documentation^].",
@@ -47485,7 +47485,7 @@
     {
       "name": "cohere_embeddings",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates vector embeddings to represent input text, using the Cohere API.",
       "description": "\nThis processor sends text strings to the Cohere API, which generates vector embeddings. By default, the processor submits the entire payload of each message as a string, unless you use the `text_mapping` configuration field to customize it.\n\nTo learn more about vector embeddings, see the https://docs.cohere.com/docs/embeddings[Cohere API documentation^].",
@@ -47579,7 +47579,7 @@
     {
       "name": "cohere_rerank",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates vector embeddings to represent input text, using the Cohere API.",
       "description": "\nThis processor sends document strings to the Cohere API, which reranks them based on the relevance to the query.\n\nTo learn more about reranking, see the https://docs.cohere.com/docs/rerank-2[Cohere API documentation^].\n\nThe output of this processor is an array of objects, each containing a \"document\" field with the original document content, a \"relevance_score\" field indicating how relevant it is to the query, and an index field that refers to the document's position within the input documents array. The objects are ordered by their relevance score (highest first).\n\n\t\t",
@@ -47658,7 +47658,7 @@
     {
       "name": "command",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a command for each message.",
       "description": "\nThe specified command is executed for each message processed, with the raw bytes of the message being fed into the stdin of the command process, and the resulting message having its contents replaced with the stdout of it.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- command_stderr - Contains the stderr output of a successful command, if any.\n- exit_code - The exit code returned by the command.\n```\n\nYou can access these metadata fields using\nxref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n== Performance\n\nSince this processor executes a new process for each message performance will likely be an issue for high throughput streams. If this is the case then consider using the xref:components:processors/subprocess.adoc[`subprocess` processor] instead as it keeps the underlying process alive long term and uses codecs to insert and extract inputs and outputs to it via stdin/stdout.\n\n== Error handling\n\nIf a non-zero error code is returned by the command then an error containing the entirety of stderr (or a generic message if nothing is written) is set on the message. These failed messages will continue through the pipeline unchanged, but can be dropped or placed in a dead letter queue according to your config, you can read about xref:configuration:error_handling.adoc[these patterns].\n",
@@ -47751,7 +47751,7 @@
     {
       "name": "couchbase",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Performs operations against Couchbase for each message, allowing you to store or retrieve data within message payloads.",
       "description": "When inserting, replacing or upserting documents, each must have the `content` property set.",
@@ -48028,7 +48028,7 @@
     {
       "name": "gcp_bigquery_select",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a `SELECT` query against BigQuery and replaces messages with the rows returned.",
       "categories": [
@@ -48126,7 +48126,7 @@
     {
       "name": "gcp_vertex_ai_chat",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates responses to messages in a chat conversation, using the Vertex AI API.",
       "description": "This processor sends prompts to your chosen large language model (LLM) and generates text from the responses, using the Vertex AI API.\n\nFor more information, see the https://cloud.google.com/vertex-ai/docs[Vertex AI documentation^].",
@@ -48373,7 +48373,7 @@
     {
       "name": "gcp_vertex_ai_embeddings",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates vector embeddings to represent input text, using the Vertex AI API.",
       "description": "This processor sends text strings to the Vertex AI API, which generates vector embeddings. By default, the processor submits the entire payload of each message as a string, unless you use the `text` configuration field to customize it.\n\nFor more information, see the https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings[Vertex AI documentation^].",
@@ -48477,7 +48477,7 @@
     {
       "name": "google_drive_download",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Downloads files from Google Drive",
       "description": "\nCan download a file from Google Drive based on a file ID.\n== Authentication\nBy default, this connector will use Google Application Default Credentials (ADC) to authenticate with Google APIs.\n\nTo use this mechanism locally, the following gcloud commands can be used:\n\n\t# Login for the application default credentials and add scopes for readonly drive access\n\tgcloud auth application-default login --scopes='openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/drive.readonly'\n\t# When logging in with a user account, you may need to set the quota project for the application default credentials\n\tgcloud auth application-default set-quota-project <project-id>\n\nOtherwise if using a service account, you can create a JSON key for the service account and set it in the `credentials_json` field.\nIn order for a service account to access files in Google Drive either files need to be explicitly shared with the service account email, otherwise https://support.google.com/a/answer/162106[^domain wide delegation] can be used to share all files within a Google Workspace.\n",
@@ -48560,7 +48560,7 @@
     {
       "name": "google_drive_list_labels",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Lists labels for a file in Google Drive",
       "description": "\nCan list all labels from Google Drive.\n\t\t== Authentication\nBy default, this connector will use Google Application Default Credentials (ADC) to authenticate with Google APIs.\n\nTo use this mechanism locally, the following gcloud commands can be used:\n\n\t# Login for the application default credentials and add scopes for readonly drive access\n\tgcloud auth application-default login --scopes='openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/drive.labels.readonly'\n\t# When logging in with a user account, you may need to set the quota project for the application default credentials\n\tgcloud auth application-default set-quota-project <project-id>\n\nOtherwise if using a service account, you can create a JSON key for the service account and set it in the `credentials_json` field.\nIn order for a service account to access files in Google Drive either files need to be explicitly shared with the service account email, otherwise https://support.google.com/a/answer/162106[^domain wide delegation] can be used to share all files within a Google Workspace.\n",
@@ -48587,7 +48587,7 @@
     {
       "name": "google_drive_search",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Searches Google Drive for files matching the provided query.",
       "description": "\nThis processor searches for files in Google Drive using the provided query.\n\nSearch results are emitted as message batch, where each message is a https://developers.google.com/workspace/drive/api/reference/rest/v3/files#File[^Google Drive File]\n\n== Authentication\nBy default, this connector will use Google Application Default Credentials (ADC) to authenticate with Google APIs.\n\nTo use this mechanism locally, the following gcloud commands can be used:\n\n\t# Login for the application default credentials and add scopes for readonly drive access\n\tgcloud auth application-default login --scopes='openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/drive.readonly'\n\t# When logging in with a user account, you may need to set the quota project for the application default credentials\n\tgcloud auth application-default set-quota-project <project-id>\n\nOtherwise if using a service account, you can create a JSON key for the service account and set it in the `credentials_json` field.\nIn order for a service account to access files in Google Drive either files need to be explicitly shared with the service account email, otherwise https://support.google.com/a/answer/162106[^domain wide delegation] can be used to share all files within a Google Workspace.\n",
@@ -49457,7 +49457,7 @@
     {
       "name": "javascript",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a provided JavaScript code block or file for each message.",
       "description": "\nThe https://github.com/dop251/goja[execution engine^] behind this processor provides full ECMAScript 5.1 support (including regex and strict mode). Most of the ECMAScript 6 spec is implemented but this is a work in progress.\n\nImports via `require` should work similarly to NodeJS, and access to the console is supported which will print via the Redpanda Connect logger. More caveats can be found on https://github.com/dop251/goja#known-incompatibilities-and-caveats[GitHub^].\n\nThis processor is implemented using the https://github.com/dop251/goja[github.com/dop251/goja^] library.",
@@ -49511,7 +49511,7 @@
     {
       "name": "jira",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Queries Jira resources and returns structured data",
       "description": "Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.\n\nSupports querying the following Jira resources:\n- Issues (JQL queries)\n- Issue transitions\n- Users\n- Roles\n- Project versions\n- Project categories\n- Project types\n- Projects\n\nThe processor authenticates using basic authentication with username and API token. Input messages should contain valid Jira queries in JSON format.",
@@ -50324,7 +50324,7 @@
     {
       "name": "mongodb",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Performs operations against MongoDB for each message, allowing you to store or retrieve data within message payloads.",
       "categories": [
@@ -50542,7 +50542,7 @@
     {
       "name": "msgpack",
       "type": "processor",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Converts messages to or from the https://msgpack.org/[MessagePack^] format.",
       "categories": [
@@ -50608,7 +50608,7 @@
     {
       "name": "nats_kv",
       "type": "processor",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Perform operations on a NATS key-value bucket.",
       "description": "\n== KV operations\n\nThe NATS KV processor supports a multitude of KV operations via the <<operation>> field. Along with `get`, `put`, and `delete`, this processor supports atomic operations like `update` and `create`, as well as utility operations like `purge`, `history`, and `keys`.\n\n== Metadata\n\nThis processor adds the following metadata fields to each message, depending on the chosen `operation`:\n\n=== get, get_revision\n``` text\n- nats_kv_key\n- nats_kv_bucket\n- nats_kv_revision\n- nats_kv_delta\n- nats_kv_operation\n- nats_kv_created\n```\n\n=== create, update, delete, purge\n``` text\n- nats_kv_key\n- nats_kv_bucket\n- nats_kv_revision\n- nats_kv_operation\n```\n\n=== keys\n``` text\n- nats_kv_bucket\n```\n\n== Connection name\n\nWhen monitoring and managing a production NATS system, it is often useful to\nknow which connection a message was send/received from. This can be achieved by\nsetting the connection name option when creating a NATS connection.\n\nRedpanda Connect will automatically set the connection name based off the label of the given\nNATS component, so that monitoring tools between NATS and Redpanda Connect can stay in sync.\n\n\n== Authentication\n\nThere are several components within Redpanda Connect which uses NATS services. You will find that each of these components\nsupport optional advanced authentication parameters for https://docs.nats.io/nats-server/configuration/securing_nats/auth_intro/nkey_auth[NKeys^]\nand https://docs.nats.io/using-nats/developer/connecting/creds[User Credentials^].\n\nSee an https://docs.nats.io/running-a-nats-service/nats_admin/security/jwt[in-depth tutorial^].\n\n=== NKey file\n\nThe NATS server can use these NKeys in several ways for authentication. The simplest is for the server to be configured\nwith a list of known public keys and for the clients to respond to the challenge by signing it with its private NKey\nconfigured in the `nkey_file` or `nkey` field.\n\nhttps://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[More details^].\n\n=== User credentials\n\nNATS server supports decentralized authentication based on JSON Web Tokens (JWT). Clients need an https://docs.nats.io/nats-server/configuration/securing_nats/jwt#json-web-tokens[user JWT^]\nand a corresponding https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NKey secret^] when connecting to a server\nwhich is configured to use this authentication scheme.\n\nThe `user_credentials_file` field should point to a file containing both the private key and the JWT and can be\ngenerated with the https://docs.nats.io/nats-tools/nsc[nsc tool^].\n\nAlternatively, the `user_jwt` field can contain a plain text JWT and the `user_nkey_seed`can contain\nthe plain text NKey Seed.\n\nhttps://docs.nats.io/using-nats/developer/connecting/creds[More details^].\n\n=== Token\n\nThe `token` field can contain a plain text token string for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/tokens[token-based authentication^].\n\n=== User and password\n\nThe `user` and `password` fields can be used for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/username_password[username/password authentication^].",
@@ -50972,7 +50972,7 @@
     {
       "name": "nats_request_reply",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Sends a message to a NATS subject and expects a reply, from a NATS subscriber acting as a responder, back.",
       "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```text\n- nats_subject\n- nats_sequence_stream\n- nats_sequence_consumer\n- nats_num_delivered\n- nats_num_pending\n- nats_domain\n- nats_timestamp_unix_nano\n```\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n== Connection name\n\nWhen monitoring and managing a production NATS system, it is often useful to\nknow which connection a message was send/received from. This can be achieved by\nsetting the connection name option when creating a NATS connection.\n\nRedpanda Connect will automatically set the connection name based off the label of the given\nNATS component, so that monitoring tools between NATS and Redpanda Connect can stay in sync.\n\n\n== Authentication\n\nThere are several components within Redpanda Connect which uses NATS services. You will find that each of these components\nsupport optional advanced authentication parameters for https://docs.nats.io/nats-server/configuration/securing_nats/auth_intro/nkey_auth[NKeys^]\nand https://docs.nats.io/using-nats/developer/connecting/creds[User Credentials^].\n\nSee an https://docs.nats.io/running-a-nats-service/nats_admin/security/jwt[in-depth tutorial^].\n\n=== NKey file\n\nThe NATS server can use these NKeys in several ways for authentication. The simplest is for the server to be configured\nwith a list of known public keys and for the clients to respond to the challenge by signing it with its private NKey\nconfigured in the `nkey_file` or `nkey` field.\n\nhttps://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[More details^].\n\n=== User credentials\n\nNATS server supports decentralized authentication based on JSON Web Tokens (JWT). Clients need an https://docs.nats.io/nats-server/configuration/securing_nats/jwt#json-web-tokens[user JWT^]\nand a corresponding https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/nkey_auth[NKey secret^] when connecting to a server\nwhich is configured to use this authentication scheme.\n\nThe `user_credentials_file` field should point to a file containing both the private key and the JWT and can be\ngenerated with the https://docs.nats.io/nats-tools/nsc[nsc tool^].\n\nAlternatively, the `user_jwt` field can contain a plain text JWT and the `user_nkey_seed`can contain\nthe plain text NKey Seed.\n\nhttps://docs.nats.io/using-nats/developer/connecting/creds[More details^].\n\n=== Token\n\nThe `token` field can contain a plain text token string for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/tokens[token-based authentication^].\n\n=== User and password\n\nThe `user` and `password` fields can be used for https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro/username_password[username/password authentication^].",
@@ -51347,7 +51347,7 @@
     {
       "name": "ollama_chat",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates responses to messages in a chat conversation, using the Ollama API.",
       "description": "This processor sends prompts to your chosen Ollama large language model (LLM) and generates text from the responses, using the Ollama API.\n\nBy default, the processor starts and runs a locally installed Ollama server. Alternatively, to use an already running Ollama server, add your server details to the `server_address` field. You can https://ollama.com/download[download and install Ollama from the Ollama website^].\n\nFor more information, see the https://github.com/ollama/ollama/tree/main/docs[Ollama documentation^].",
@@ -51687,7 +51687,7 @@
     {
       "name": "ollama_embeddings",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates vector embeddings from text, using the Ollama API.",
       "description": "This processor sends text to your chosen Ollama large language model (LLM) and creates vector embeddings, using the Ollama API. Vector embeddings are long arrays of numbers that represent values or objects, in this case text. \n\nBy default, the processor starts and runs a locally installed Ollama server. Alternatively, to use an already running Ollama server, add your server details to the `server_address` field. You can https://ollama.com/download[download and install Ollama from the Ollama website^].\n\nFor more information, see the https://github.com/ollama/ollama/tree/main/docs[Ollama documentation^].",
@@ -51819,7 +51819,7 @@
     {
       "name": "ollama_moderation",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates responses to messages in a chat conversation, using the Ollama API.",
       "description": "This processor checks LLM response safety using either `llama-guard3` or `shieldgemma`. If you want to check if a given prompt is safe, then that can be done with the `ollama_chat` processor - this processor is for response classification only.\n\nBy default, the processor starts and runs a locally installed Ollama server. Alternatively, to use an already running Ollama server, add your server details to the `server_address` field. You can https://ollama.com/download[download and install Ollama from the Ollama website^].\n\nFor more information, see the https://github.com/ollama/ollama/tree/main/docs[Ollama documentation^].",
@@ -51956,7 +51956,7 @@
     {
       "name": "openai_chat_completion",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates responses to messages in a chat conversation, using the OpenAI API.",
       "description": "\nThis processor sends the contents of user prompts to the OpenAI API, which generates responses. By default, the processor submits the entire payload of each message as a string, unless you use the `prompt` configuration field to customize it.\n\nTo learn more about chat completion, see the https://platform.openai.com/docs/guides/chat-completions[OpenAI API documentation^].",
@@ -52536,7 +52536,7 @@
     {
       "name": "openai_embeddings",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates vector embeddings to represent input text, using the OpenAI API.",
       "description": "\nThis processor sends text strings to the OpenAI API, which generates vector embeddings. By default, the processor submits the entire payload of each message as a string, unless you use the `text_mapping` configuration field to customize it.\n\nTo learn more about vector embeddings, see the https://platform.openai.com/docs/guides/embeddings[OpenAI API documentation^].",
@@ -52608,7 +52608,7 @@
     {
       "name": "openai_image_generation",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates an image from a text description and other attributes, using OpenAI API.",
       "description": "\nThis processor sends an image description and other attributes, such as image size and quality to the OpenAI API, which generates an image. By default, the processor submits the entire payload of each message as a string, unless you use the `prompt` configuration field to customize it.\n\nTo learn more about image generation, see the https://platform.openai.com/docs/guides/images[OpenAI API documentation^].",
@@ -52701,7 +52701,7 @@
     {
       "name": "openai_speech",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates audio from a text description and other attributes, using OpenAI API.",
       "description": "\nThis processor sends a text description and other attributes, such as a voice type and format to the OpenAI API, which generates audio. By default, the processor submits the entire payload of each message as a string, unless you use the `input` configuration field to customize it.\n\nTo learn more about turning text into spoken audio, see the https://platform.openai.com/docs/guides/text-to-speech[OpenAI API documentation^].",
@@ -52785,7 +52785,7 @@
     {
       "name": "openai_transcription",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Generates a transcription of spoken audio in the input language, using the OpenAI API.",
       "description": "\nThis processor sends an audio file object along with the input language to OpenAI API to generate a transcription. By default, the processor submits the entire payload of each message as a string, unless you use the `file` configuration field to customize it.\n\nTo learn more about audio transcription, see the: https://platform.openai.com/docs/guides/speech-to-text[OpenAI API documentation^].",
@@ -52859,7 +52859,7 @@
     {
       "name": "openai_translation",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Translates spoken audio into English, using the OpenAI API.",
       "description": "\nThis processor sends an audio file object to OpenAI API to generate a translation. By default, the processor submits the entire payload of each message as a string, unless you use the `file` configuration field to customize it.\n\nTo learn more about translation, see the https://platform.openai.com/docs/guides/speech-to-text[OpenAI API documentation^].",
@@ -53022,7 +53022,7 @@
     {
       "name": "parquet_decode",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Decodes https://parquet.apache.org/docs/[Parquet files^] into a batch of structured messages.",
       "description": "\nThis processor uses https://github.com/parquet-go/parquet-go[https://github.com/parquet-go/parquet-go^], which is itself experimental. Therefore changes could be made into how this processor functions outside of major version releases.",
@@ -53077,7 +53077,7 @@
     {
       "name": "parquet_encode",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Encodes https://parquet.apache.org/docs/[Parquet files^] from a batch of structured messages.",
       "description": "\nThis processor uses https://github.com/parquet-go/parquet-go[https://github.com/parquet-go/parquet-go^], which is itself experimental. Therefore changes could be made into how this processor functions outside of major version releases.\n",
@@ -53429,7 +53429,7 @@
     {
       "name": "qdrant",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Query items within a https://qdrant.tech/[Qdrant^] collection.",
       "categories": [
@@ -53972,7 +53972,7 @@
     {
       "name": "redis_script",
       "type": "processor",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Performs actions against Redis using https://redis.io/docs/manual/programmability/eval-intro/[LUA scripts^].",
       "description": "Actions are performed for each message and the message contents are replaced with the result.\n\nIn order to merge the result into the original message compose this processor within a xref:components:processors/branch.adoc[`branch` processor].",
@@ -54224,7 +54224,7 @@
     {
       "name": "redpanda_data_transform",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a Redpanda Data Transform as a processor",
       "description": "\nThis processor executes a Redpanda Data Transform WebAssembly module, calling OnRecordWritten for each message being processed.\n\nYou can find out about how transforms work here: https://docs.redpanda.com/current/develop/data-transforms/how-transforms-work/[https://docs.redpanda.com/current/develop/data-transforms/how-transforms-work/^]\n",
@@ -54484,7 +54484,7 @@
     {
       "name": "salesforce",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Fetches data from Salesforce based on input messages",
       "description": "This salesforceProcessor takes input messages containing Salesforce queries and returns Salesforce data.\n\nSupports the following Salesforce resources:\n- SObject REST snapshot (all queryable SObjects or a filtered subset)\n- Filtered SOQL queries via REST or GraphQL\n- Change Data Capture (CDC) streaming via the Pub/Sub gRPC API\n- Platform Events via the Pub/Sub gRPC API\n\nConfiguration examples:\n\n```configYAML\n# Minimal configuration\npipeline:\n  processors:\n    - salesforce:\n        org_url: \"https://your-domain.salesforce.com\"\n        client_id: \"${SALESFORCE_CLIENT_ID}\"\n        client_secret: \"${SALESFORCE_CLIENT_SECRET}\"\n\n# Full configuration with CDC\npipeline:\n  processors:\n    - salesforce:\n        org_url: \"https://your-domain.salesforce.com\"\n        client_id: \"${SALESFORCE_CLIENT_ID}\"\n        client_secret: \"${SALESFORCE_CLIENT_SECRET}\"\n        restapi_version: \"v64.0\"\n        request_timeout: \"30s\"\n        max_retries: 50\n        cdc_enabled: true\n        cdc_objects:\n          - Account\n          - Contact\n        cdc_batch_size: 100\n        cdc_buffer_size: 1000\n        cdc_replay_preset: \"latest\"\n\n# Platform Events (standalone, no REST snapshot)\npipeline:\n  processors:\n    - salesforce:\n        org_url: \"https://your-domain.salesforce.com\"\n        client_id: \"${SALESFORCE_CLIENT_ID}\"\n        client_secret: \"${SALESFORCE_CLIENT_SECRET}\"\n        pubsub_topic: \"/event/MyEvent__e\"\n```",
@@ -54653,7 +54653,7 @@
     {
       "name": "schema_registry_decode",
       "type": "processor",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Automatically decodes and validates messages with schemas from a Confluent Schema Registry service.",
       "description": "\nDecodes messages automatically from a schema stored within a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by extracting a schema ID from the message and obtaining the associated schema from the registry. If a message fails to match against the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and Json schemas are supported, all are capable of expanding from schema references as of v4.22.0.\n\n== Avro JSON format\n\nThis processor creates documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when decoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `{\"string\": \"a\"}`; and\n- a `Foo` instance as `{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead create documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting the field <<avro_raw_json, `avro_raw_json`>> to `true`.\n\n== Protobuf format\n\nThis processor decodes protobuf messages to JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n== Metadata\n\nThis processor also adds the following metadata to each outgoing message:\n\nschema_id: the ID of the schema in the schema registry that was associated with the message.\n",
@@ -55061,7 +55061,7 @@
     {
       "name": "schema_registry_encode",
       "type": "processor",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Automatically encodes and validates messages with schemas from a Confluent Schema Registry service.",
       "description": "\nEncodes messages automatically from schemas obtained from a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by polling the service for the latest schema version for target subjects.\n\nAlternatively, when `schema_metadata` is set, the processor reads a schema in benthos common schema format from message metadata (as produced by CDC inputs such as `postgresql`, `mysql_cdc`, and `microsoft_sql_server_cdc`), converts it to the target `format` (Avro or JSON Schema), registers it with the schema registry, and encodes the message. This is useful when the schema is not pre-registered in the registry and instead travels with the data.\n\nIf a message fails to encode under the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and JSON Schema formats are supported. In registry-pull mode all three are auto-detected from the registry. In metadata mode Avro and JSON Schema are supported, with the target format selected via the `format` field. Schema references are supported in registry-pull mode as of v4.22.0.\n\n== Avro JSON format\n\nBy default this processor expects documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when encoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `\\{\"string\": \"a\"}`; and\n- a `Foo` instance as `\\{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead consume documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting `avro.raw_json` to `true`. This is strongly recommended when using `schema_metadata` mode, as CDC sources emit standard JSON rather than Avro JSON.\n\nNOTE: The top-level `avro_raw_json` field is deprecated in favor of `avro.raw_json`.\n\n=== Known issues\n\nImportant! There is an outstanding issue in the https://github.com/linkedin/goavro[avro serializing library^] that Redpanda Connect uses which means it https://github.com/linkedin/goavro/issues/252[doesn't encode logical types correctly^]. It's still possible to encode logical types that are in-line with the spec if `avro.raw_json` is set to true, though now of course non-logical types will not be in-line with the spec.\n\n== Protobuf format\n\nThis processor encodes protobuf messages either from any format parsed within Redpanda Connect (encoded as JSON by default), or from raw JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n=== Multiple message support\n\nWhen a target subject presents a protobuf schema that contains multiple messages it becomes ambiguous which message definition a given input data should be encoded against. In such scenarios Redpanda Connect will attempt to encode the data against each of them and select the first to successfully match against the data, this process currently *ignores all nested message definitions*. In order to speed up this exhaustive search the last known successful message will be attempted first for each subsequent input.\n\nWe will be considering alternative approaches in future so please https://redpanda.com/slack[get in touch^] with thoughts and feedback.\n",
@@ -55467,7 +55467,7 @@
     {
       "name": "sentry_capture",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Captures log events from messages and submits them to https://sentry.io/[Sentry^].",
       "categories": null,
@@ -55589,7 +55589,7 @@
     {
       "name": "slack_thread",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "description": "Read a thread using the https://api.slack.com/methods/conversations.replies[^Slack API]",
       "categories": null,
@@ -56343,6 +56343,45 @@
       "version": "3.59.0"
     },
     {
+      "name": "string_split",
+      "type": "processor",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Splits a string by a delimiter into an array. Generally, using bloblang's `split` method is preferred. In some high performance use cases this processor can be faster than the equivalent bloblang if there is no additional logic.",
+      "categories": [
+        "Parsing"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "delimiter",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The delimiter to split the string by.",
+            "default": "\n"
+          },
+          {
+            "name": "emit_bytes",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "When true, the output will be bloblang bytes instead of strings.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
+            "name": "empty_as_null",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "When true, empty strings resulting from the split are converted to null.",
+            "default": false
+          }
+        ]
+      }
+    },
+    {
       "name": "subprocess",
       "type": "processor",
       "status": "stable",
@@ -56497,7 +56536,7 @@
     {
       "name": "text_chunker",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "A processor that allows chunking and splitting text based on some strategy. Usually used for creating vector embeddings of large documents.",
       "description": "A processor allowing splitting text into chunks based on several different strategies.",
@@ -56712,7 +56751,7 @@
     {
       "name": "wasm",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Executes a function exported by a WASM module for each message.",
       "description": "\nThis processor uses https://github.com/tetratelabs/wazero[Wazero^] to execute a WASM module (with support for WASI), calling a specific function for each message being processed. From within the WASM module it is possible to query and mutate the message being processed via a suite of functions exported to the module.\n\nThis ecosystem is delicate as WASM doesn't have a single clearly defined way to pass strings back and forth between the host and the module. In order to remedy this we're gradually working on introducing libraries and examples for multiple languages which can be found in https://github.com/redpanda-data/benthos/tree/main/public/wasm/README.md[the codebase^].\n\nThese examples, as well as the processor itself, is a work in progress.\n\n== Parallelism\n\nIt's not currently possible to execute a single WASM runtime across parallel threads with this processor. Therefore, in order to support parallel processing this processor implements pooling of module runtimes. Ideally your WASM module shouldn't depend on any global state, but if it does then you need to ensure the processor xref:configuration:processing_pipelines.adoc[is only run on a single thread].\n",
@@ -56918,7 +56957,7 @@
     {
       "name": "xml",
       "type": "processor",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Parses messages as an XML document, performs a mutation on the data, and then overwrites the previous contents with the new value.",
       "description": "\n== Operators\n\n=== `to_json`\n\nConverts an XML document into a JSON structure, where elements appear as keys of an object according to the following rules:\n\n- If an element contains attributes they are parsed by prefixing a hyphen, `-`, to the attribute label.\n- If the element is a simple element and has attributes, the element value is given the key `#text`.\n- XML comments, directives, and process instructions are ignored.\n- When elements are repeated the resulting JSON value is an array.\n\nFor example, given the following XML:\n\n```xml\n<root>\n  <title>This is a title</title>\n  <description tone=\"boring\">This is a description</description>\n  <elements id=\"1\">foo1</elements>\n  <elements id=\"2\">foo2</elements>\n  <elements>foo3</elements>\n</root>\n```\n\nThe resulting JSON structure would look like this:\n\n```json\n{\n  \"root\":{\n    \"title\":\"This is a title\",\n    \"description\":{\n      \"#text\":\"This is a description\",\n      \"-tone\":\"boring\"\n    },\n    \"elements\":[\n      {\"#text\":\"foo1\",\"-id\":\"1\"},\n      {\"#text\":\"foo2\",\"-id\":\"2\"},\n      \"foo3\"\n    ]\n  }\n}\n```\n\nWith cast set to true, the resulting JSON structure would look like this:\n\n```json\n{\n  \"root\":{\n    \"title\":\"This is a title\",\n    \"description\":{\n      \"#text\":\"This is a description\",\n      \"-tone\":\"boring\"\n    },\n    \"elements\":[\n      {\"#text\":\"foo1\",\"-id\":1},\n      {\"#text\":\"foo2\",\"-id\":2},\n      \"foo3\"\n    ]\n  }\n}\n```",
@@ -56954,7 +56993,7 @@
     {
       "name": "ffi",
       "type": "processor",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Invoke a function within a shared library as a processing step.",
       "description": "The `ffi` processor allows you to dynamically load shared libraries (.so, .dylib, or .dll files) and invoke their functions as a processing step. This enables integration with external C/C++ libraries without requiring custom Go code or rebuilding Redpanda Connect.\n\nThe processor uses `dlopen` (or platform equivalent) to load the specified library at runtime, looks up the function by name, and invokes it with arguments provided through Bloblang mapping. Function signatures are defined using the `signature` field, specifying parameter and return types.\n\nResults are returned as an array, where the first element is the return value (if not void), followed by any output parameters in their declaration order.",
@@ -57079,7 +57118,7 @@
     {
       "name": "a2a_message",
       "type": "processor",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Sends messages to an A2A (Agent-to-Agent) protocol agent and returns the response.",
       "description": "\nThis processor enables Redpanda Connect pipelines to communicate with A2A protocol agents. Currently only JSON-RPC transport is supported.\n\nThe processor sends a message to the agent and polls for task completion. The agent's response\nis returned as the processor output.\n\nFor more information about the A2A protocol, see https://a2a-protocol.org/latest/specification",
@@ -57153,7 +57192,7 @@
     {
       "name": "redis",
       "type": "rate_limit",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "A rate limit implementation using Redis. It works by using a simple token bucket algorithm to limit the number of requests to a given count within a given time period. The rate limit is shared across all instances of Redpanda Connect that use the same Redis instance, which must all have a consistent count and interval.",
       "categories": null,
@@ -57548,7 +57587,7 @@
     {
       "name": "influxdb",
       "type": "metrics",
-      "status": "beta",
+      "status": "stable",
       "plugin": true,
       "summary": "Send metrics to InfluxDB 1.x using the `/write` endpoint.",
       "description": "See https://docs.influxdata.com/influxdb/v1.8/tools/api/#write-http-endpoint for further details on the write API.",
@@ -58101,7 +58140,7 @@
     {
       "name": "gcp_cloudtrace",
       "type": "tracer",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Send tracing events to a https://cloud.google.com/trace[Google Cloud Trace^].",
       "categories": null,
@@ -58235,7 +58274,7 @@
     {
       "name": "open_telemetry_collector",
       "type": "tracer",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Send tracing events to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].",
       "categories": null,
@@ -58360,7 +58399,7 @@
     {
       "name": "redpanda",
       "type": "tracer",
-      "status": "experimental",
+      "status": "stable",
       "plugin": true,
       "summary": "Send tracing events to a Redpanda Message Broker.",
       "categories": null,
@@ -60161,7 +60200,7 @@
       "impure": false
     },
     {
-      "status": "beta",
+      "status": "stable",
       "category": "Fake Data Generation",
       "name": "fake",
       "description": "Generates realistic fake data for testing and development purposes. Supports a wide variety of data types including personal information, network addresses, dates/times, financial data, and UUIDs. Useful for creating mock data, populating test databases, or anonymizing sensitive information.\n\nSupported functions: `latitude`, `longitude`, `unix_time`, `date`, `time_string`, `month_name`, `year_string`, `day_of_week`, `day_of_month`, `timestamp`, `century`, `timezone`, `time_period`, `email`, `mac_address`, `domain_name`, `url`, `username`, `ipv4`, `ipv6`, `password`, `jwt`, `word`, `sentence`, `paragraph`, `cc_type`, `cc_number`, `currency`, `amount_with_currency`, `title_male`, `title_female`, `first_name`, `first_name_male`, `first_name_female`, `last_name`, `name`, `gender`, `chinese_first_name`, `chinese_last_name`, `chinese_name`, `phone_number`, `toll_free_phone_number`, `e164_phone_number`, `uuid_hyphenated`, `uuid_digit`.",
@@ -60908,7 +60947,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "category": "General",
       "name": "ulid",
       "description": "Generates a Universally Unique Lexicographically Sortable Identifier (ULID). ULIDs are 128-bit identifiers that are sortable by creation time, URL-safe, and case-insensitive. They consist of a 48-bit timestamp (millisecond precision) and 80 bits of randomness, making them ideal for distributed systems that need time-ordered unique IDs without coordination.",
@@ -61021,7 +61060,7 @@
       "impure": false
     },
     {
-      "status": "beta",
+      "status": "stable",
       "category": "Encoding",
       "name": "with_schema_registry_header",
       "description": "Prepends a Confluent Schema Registry wire format header to message bytes. The header is 5 bytes: a magic byte (0x00) followed by a 4-byte big-endian schema ID. This format is required when producing messages to Kafka topics that use Confluent Schema Registry for schema validation and evolution.",
@@ -61411,6 +61450,7 @@
     {
       "status": "stable",
       "name": "array",
+      "description": "Converts a value to an array",
       "params": {},
       "examples": [
         {
@@ -61790,6 +61830,7 @@
     {
       "status": "stable",
       "name": "bool",
+      "description": "Converts a value to a boolean with optional fallback",
       "params": {
         "named": [
           {
@@ -61829,6 +61870,7 @@
     {
       "status": "stable",
       "name": "bytes",
+      "description": "Marshals a value into a byte array",
       "params": {},
       "examples": [
         {
@@ -61867,6 +61909,7 @@
     {
       "status": "stable",
       "name": "capitalize",
+      "description": "Converts a string to title case with Unicode letter mapping",
       "params": {},
       "examples": [
         {
@@ -62087,6 +62130,7 @@
     {
       "status": "stable",
       "name": "collapse",
+      "description": "Flattens a nested structure into a flat object with dot-notation keys",
       "params": {
         "named": [
           {
@@ -62420,6 +62464,7 @@
     {
       "status": "stable",
       "name": "contains",
+      "description": "Tests if an array or object contains a value",
       "params": {
         "named": [
           {
@@ -62597,6 +62642,7 @@
     {
       "status": "stable",
       "name": "decode",
+      "description": "Decodes an encoded string according to a chosen scheme",
       "params": {
         "named": [
           {
@@ -62738,6 +62784,7 @@
     {
       "status": "stable",
       "name": "decrypt_aes",
+      "description": "Decrypts an AES-encrypted string or byte array",
       "params": {
         "named": [
           {
@@ -62798,7 +62845,7 @@
       "impure": false
     },
     {
-      "status": "beta",
+      "status": "stable",
       "name": "diff",
       "description": "Compares the current value with another value and returns a detailed changelog describing all differences. The changelog contains operations (create, update, delete) with their paths and values, enabling you to track changes between data versions, implement audit logs, or synchronize data between systems.",
       "params": {
@@ -62872,6 +62919,7 @@
     {
       "status": "stable",
       "name": "encode",
+      "description": "Encodes a string or byte array according to a chosen scheme",
       "params": {
         "named": [
           {
@@ -62942,6 +62990,7 @@
     {
       "status": "stable",
       "name": "encrypt_aes",
+      "description": "Encrypts a string or byte array using AES encryption",
       "params": {
         "named": [
           {
@@ -63065,6 +63114,7 @@
     {
       "status": "stable",
       "name": "escape_html",
+      "description": "Escapes HTML special characters",
       "params": {},
       "examples": [
         {
@@ -63125,6 +63175,7 @@
     {
       "status": "stable",
       "name": "escape_url_path",
+      "description": "Escapes a string for use in URL paths",
       "params": {},
       "examples": [
         {
@@ -63185,6 +63236,7 @@
     {
       "status": "stable",
       "name": "escape_url_query",
+      "description": "Escapes a string for use in URL query parameters",
       "params": {},
       "examples": [
         {
@@ -63340,6 +63392,7 @@
     {
       "status": "stable",
       "name": "explode",
+      "description": "Expands a nested field into multiple documents",
       "params": {
         "named": [
           {
@@ -63410,6 +63463,7 @@
     {
       "status": "stable",
       "name": "filepath_join",
+      "description": "Joins filepath components into a single path",
       "params": {},
       "examples": [
         {
@@ -63448,6 +63502,7 @@
     {
       "status": "stable",
       "name": "filepath_split",
+      "description": "Splits a filepath into directory and filename components",
       "params": {},
       "examples": [
         {
@@ -63494,6 +63549,7 @@
     {
       "status": "stable",
       "name": "filter",
+      "description": "Filters array or object elements based on a condition",
       "params": {
         "named": [
           {
@@ -64156,6 +64212,7 @@
     {
       "status": "stable",
       "name": "format",
+      "description": "Formats a value using a specified format string",
       "params": {
         "variadic": true
       },
@@ -64218,6 +64275,7 @@
     {
       "status": "beta",
       "name": "format_json",
+      "description": "Formats a value as a JSON string",
       "params": {
         "named": [
           {
@@ -64663,6 +64721,7 @@
     {
       "status": "stable",
       "name": "format_yaml",
+      "description": "Formats a value as a YAML string",
       "params": {},
       "examples": [
         {
@@ -64789,7 +64848,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "name": "geoip_anonymous_ip",
       "description": "Looks up an IP address against a https://www.maxmind.com/en/home[MaxMind database file^] and, if found, returns an object describing the anonymous IP associated with it.",
       "params": {
@@ -64813,7 +64872,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "name": "geoip_asn",
       "description": "Looks up an IP address against a https://www.maxmind.com/en/home[MaxMind database file^] and, if found, returns an object describing the ASN associated with it.",
       "params": {
@@ -64837,7 +64896,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "name": "geoip_city",
       "description": "Looks up an IP address against a https://www.maxmind.com/en/home[MaxMind database file^] and, if found, returns an object describing the city associated with it.",
       "params": {
@@ -64861,7 +64920,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "name": "geoip_connection_type",
       "description": "Looks up an IP address against a https://www.maxmind.com/en/home[MaxMind database file^] and, if found, returns an object describing the connection type associated with it.",
       "params": {
@@ -64885,7 +64944,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "name": "geoip_country",
       "description": "Looks up an IP address against a https://www.maxmind.com/en/home[MaxMind database file^] and, if found, returns an object describing the country associated with it.",
       "params": {
@@ -64909,7 +64968,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "name": "geoip_domain",
       "description": "Looks up an IP address against a https://www.maxmind.com/en/home[MaxMind database file^] and, if found, returns an object describing the domain associated with it.",
       "params": {
@@ -64933,7 +64992,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "name": "geoip_enterprise",
       "description": "Looks up an IP address against a https://www.maxmind.com/en/home[MaxMind database file^] and, if found, returns an object describing the enterprise associated with it.",
       "params": {
@@ -64957,7 +65016,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "name": "geoip_isp",
       "description": "Looks up an IP address against a https://www.maxmind.com/en/home[MaxMind database file^] and, if found, returns an object describing the ISP associated with it.",
       "params": {
@@ -65040,6 +65099,7 @@
     {
       "status": "stable",
       "name": "has_prefix",
+      "description": "Tests if a string starts with a specified prefix",
       "params": {
         "named": [
           {
@@ -65088,6 +65148,7 @@
     {
       "status": "stable",
       "name": "has_suffix",
+      "description": "Tests if a string ends with a specified suffix",
       "params": {
         "named": [
           {
@@ -65136,6 +65197,7 @@
     {
       "status": "stable",
       "name": "hash",
+      "description": "Hashes a string or byte array using a specified algorithm",
       "params": {
         "named": [
           {
@@ -65293,6 +65355,7 @@
     {
       "status": "stable",
       "name": "index_of",
+      "description": "Returns the index of the first occurrence of a substring",
       "params": {
         "named": [
           {
@@ -65621,6 +65684,7 @@
     {
       "status": "stable",
       "name": "join",
+      "description": "Joins an array of strings with an optional delimiter",
       "params": {
         "named": [
           {
@@ -65668,7 +65732,7 @@
       "impure": false
     },
     {
-      "status": "experimental",
+      "status": "stable",
       "name": "json_path",
       "description": "Executes the given JSONPath expression on an object or array and returns the result. The JSONPath expression syntax can be found at https://goessner.net/articles/JsonPath/. For more complex logic, you can use Gval expressions (https://github.com/PaesslerAG/gval).",
       "params": {
@@ -65940,6 +66004,7 @@
     {
       "status": "stable",
       "name": "length",
+      "description": "Returns the length of an array, object, or string",
       "params": {},
       "examples": [
         {
@@ -66152,6 +66217,7 @@
     {
       "status": "stable",
       "name": "lowercase",
+      "description": "Converts all letters in a string to lowercase",
       "params": {},
       "examples": [
         {
@@ -66236,6 +66302,7 @@
     {
       "status": "stable",
       "name": "map_each",
+      "description": "Applies a mapping to each element of an array or object",
       "params": {
         "named": [
           {
@@ -66306,6 +66373,7 @@
     {
       "status": "stable",
       "name": "map_each_key",
+      "description": "Transforms object keys using a mapping query",
       "params": {
         "named": [
           {
@@ -66583,6 +66651,7 @@
     {
       "status": "stable",
       "name": "not_empty",
+      "description": "Ensures a value is not empty",
       "params": {},
       "examples": [
         {
@@ -66661,6 +66730,7 @@
     {
       "status": "stable",
       "name": "not_null",
+      "description": "Ensures a value is not null",
       "params": {},
       "examples": [
         {
@@ -66707,6 +66777,7 @@
     {
       "status": "stable",
       "name": "number",
+      "description": "Converts a value to a number with optional fallback",
       "params": {
         "named": [
           {
@@ -66785,6 +66856,7 @@
     {
       "status": "stable",
       "name": "parse_csv",
+      "description": "Parses CSV data into an array",
       "params": {
         "named": [
           {
@@ -67077,6 +67149,7 @@
     {
       "status": "stable",
       "name": "parse_json",
+      "description": "Parses a JSON string into a structured value",
       "params": {
         "named": [
           {
@@ -67598,6 +67671,7 @@
     {
       "status": "stable",
       "name": "parse_logfmt",
+      "description": "Parses logfmt formatted data into an object",
       "params": {},
       "examples": [
         {
@@ -67939,6 +68013,7 @@
     {
       "status": "stable",
       "name": "parse_yaml",
+      "description": "Parses a YAML string into a structured value",
       "params": {},
       "examples": [
         {
@@ -67975,7 +68050,7 @@
       "impure": false
     },
     {
-      "status": "beta",
+      "status": "stable",
       "name": "patch",
       "description": "Applies a changelog (created by the diff method) to the current value, transforming it according to the specified operations. This enables you to synchronize data, replay changes, or implement event sourcing patterns by applying recorded changes to reconstruct state.",
       "params": {
@@ -68120,6 +68195,7 @@
     {
       "status": "stable",
       "name": "quote",
+      "description": "Wraps a string in double quotes and escapes special characters",
       "params": {},
       "examples": [
         {
@@ -68180,6 +68256,7 @@
     {
       "status": "stable",
       "name": "re_find_all",
+      "description": "Finds all matches of a regular expression in a string",
       "params": {
         "named": [
           {
@@ -68250,6 +68327,7 @@
     {
       "status": "stable",
       "name": "re_find_all_object",
+      "description": "Finds all regex matches as objects with named groups",
       "params": {
         "named": [
           {
@@ -68320,6 +68398,7 @@
     {
       "status": "stable",
       "name": "re_find_all_submatch",
+      "description": "Finds all regex matches with capture groups",
       "params": {
         "named": [
           {
@@ -68390,6 +68469,7 @@
     {
       "status": "stable",
       "name": "re_find_object",
+      "description": "Finds the first regex match as an object with named groups",
       "params": {
         "named": [
           {
@@ -68460,6 +68540,7 @@
     {
       "status": "stable",
       "name": "re_match",
+      "description": "Tests if a string matches a regular expression",
       "params": {
         "named": [
           {
@@ -68547,6 +68628,7 @@
     {
       "status": "stable",
       "name": "re_replace_all",
+      "description": "Replaces all regex matches with a replacement string",
       "params": {
         "named": [
           {
@@ -68624,6 +68706,7 @@
     {
       "status": "stable",
       "name": "repeat",
+      "description": "Creates a string by repeating the input a specified number of times",
       "params": {
         "named": [
           {
@@ -68725,6 +68808,7 @@
     {
       "status": "stable",
       "name": "replace_all",
+      "description": "Replaces all occurrences of a substring with another",
       "params": {
         "named": [
           {
@@ -68802,6 +68886,7 @@
     {
       "status": "stable",
       "name": "replace_all_many",
+      "description": "Performs multiple find-and-replace operations in sequence",
       "params": {
         "named": [
           {
@@ -68874,6 +68959,7 @@
     {
       "status": "stable",
       "name": "reverse",
+      "description": "Reverses the order of characters in a string",
       "params": {},
       "examples": [
         {
@@ -69778,6 +69864,7 @@
     {
       "status": "stable",
       "name": "slice",
+      "description": "Extracts a portion of an array or string",
       "params": {
         "named": [
           {
@@ -69904,7 +69991,7 @@
       "impure": false
     },
     {
-      "status": "beta",
+      "status": "stable",
       "name": "slug",
       "description": "Converts a string into a URL-friendly slug by replacing spaces with hyphens, removing special characters, and converting to lowercase. Supports multiple languages for proper transliteration of non-ASCII characters.",
       "params": {
@@ -69979,6 +70066,7 @@
     {
       "status": "stable",
       "name": "sort",
+      "description": "Sorts array elements in ascending order",
       "params": {
         "named": [
           {
@@ -70050,6 +70138,7 @@
     {
       "status": "stable",
       "name": "sort_by",
+      "description": "Sorts array elements by a specified field or expression",
       "params": {
         "named": [
           {
@@ -70120,6 +70209,7 @@
     {
       "status": "stable",
       "name": "split",
+      "description": "Splits a string into an array of substrings",
       "params": {
         "named": [
           {
@@ -70259,6 +70349,7 @@
     {
       "status": "stable",
       "name": "string",
+      "description": "Converts a value to a string representation",
       "params": {},
       "examples": [
         {
@@ -70391,6 +70482,7 @@
     {
       "status": "stable",
       "name": "sum",
+      "description": "Returns the sum of numeric values in an array",
       "params": {},
       "examples": [
         {
@@ -70506,6 +70598,7 @@
     {
       "status": "stable",
       "name": "timestamp",
+      "description": "Converts a value to a timestamp with optional fallback",
       "params": {
         "named": [
           {
@@ -70545,6 +70638,7 @@
     {
       "status": "stable",
       "name": "trim",
+      "description": "Removes leading and trailing characters from a string",
       "params": {
         "named": [
           {
@@ -70594,6 +70688,7 @@
     {
       "status": "stable",
       "name": "trim_prefix",
+      "description": "Removes a specified prefix from the beginning of a string",
       "params": {
         "named": [
           {
@@ -70643,6 +70738,7 @@
     {
       "status": "stable",
       "name": "trim_suffix",
+      "description": "Removes a specified suffix from the end of a string",
       "params": {
         "named": [
           {
@@ -71595,6 +71691,7 @@
     {
       "status": "stable",
       "name": "type",
+      "description": "Returns the type of a value as a string",
       "params": {},
       "examples": [
         {
@@ -71983,6 +72080,7 @@
     {
       "status": "stable",
       "name": "unescape_html",
+      "description": "Converts HTML entities back to their original characters",
       "params": {},
       "examples": [
         {
@@ -72043,6 +72141,7 @@
     {
       "status": "stable",
       "name": "unescape_url_path",
+      "description": "Unescapes URL path encoding",
       "params": {},
       "examples": [
         {
@@ -72103,6 +72202,7 @@
     {
       "status": "stable",
       "name": "unescape_url_query",
+      "description": "Unescapes URL query parameter encoding",
       "params": {},
       "examples": [
         {
@@ -72161,7 +72261,7 @@
       "impure": false
     },
     {
-      "status": "beta",
+      "status": "stable",
       "name": "unicode_segments",
       "description": "Splits text into segments based on Unicode text segmentation rules. Returns an array of strings representing individual graphemes (visual characters), words (including punctuation and whitespace), or sentences. Handles complex Unicode correctly, including emoji with skin tone modifiers and zero-width joiners.",
       "params": {
@@ -72234,6 +72334,7 @@
     {
       "status": "stable",
       "name": "unique",
+      "description": "Returns an array with duplicate elements removed",
       "params": {
         "named": [
           {
@@ -72305,6 +72406,7 @@
     {
       "status": "stable",
       "name": "unquote",
+      "description": "Removes surrounding quotes and interprets escape sequences",
       "params": {},
       "examples": [
         {
@@ -72365,6 +72467,7 @@
     {
       "status": "stable",
       "name": "uppercase",
+      "description": "Converts all letters in a string to uppercase",
       "params": {},
       "examples": [
         {
@@ -72425,6 +72528,7 @@
     {
       "status": "stable",
       "name": "uuid_v5",
+      "description": "Generates a version 5 UUID from a namespace and name",
       "params": {
         "named": [
           {
@@ -72488,6 +72592,7 @@
     {
       "status": "stable",
       "name": "values",
+      "description": "Returns an array of all values from an object",
       "params": {},
       "examples": [
         {
@@ -72546,7 +72651,7 @@
       "impure": false
     },
     {
-      "status": "beta",
+      "status": "stable",
       "name": "vector",
       "description": "Converts an array of numbers into a vector type suitable for insertion into SQL databases with vector/embedding support. This is commonly used with PostgreSQL's pgvector extension for storing and querying machine learning embeddings, enabling similarity search and vector operations in your database.",
       "params": {},
@@ -72631,6 +72736,7 @@
     {
       "status": "stable",
       "name": "without",
+      "description": "Returns an object with specified keys removed",
       "params": {
         "variadic": true
       },
