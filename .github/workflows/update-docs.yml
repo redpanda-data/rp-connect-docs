@@ -194,6 +194,8 @@ jobs:
 
       - name: Generate RPCN Connector docs
         id: generate
+        env:
+          GITHUB_TOKEN: ${{ env.ACTIONS_BOT_TOKEN }}
         run: |
           set -e
 
