@@ -38,7 +38,7 @@ This release adds support for the following new fields:
 
 
 |wallet_password
-|p12` PKCS#12 wallet file. sso`.
+|Password for the `ewallet.p12` PKCS#12 wallet file. Only required when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.
 |*Inputs:*
 
 * xref:components:inputs/oracledb_cdc.adoc#wallet_password[oracledb_cdc]
