@@ -1,6 +1,6 @@
 {
-  "version": "4.86.0",
-  "date": "2026-04-02T16:03:59Z",
+  "version": "4.87.0",
+  "date": "2026-04-09T16:22:47Z",
   "config": [
     {
       "name": "http",
@@ -11271,6 +11271,16 @@
             ]
           },
           {
+            "name": "checkpoint_cache_connection_string",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, the checkpoint cache table is created on this remote server instead of the source database. If `checkpoint_cache` is also set, that takes precedence.",
+            "is_optional": true,
+            "examples": [
+              "sqlserver://username:password@remotehost/instance?param1=value&param2=value"
+            ]
+          },
+          {
             "name": "checkpoint_cache_key",
             "type": "string",
             "kind": "scalar",
@@ -14680,10 +14690,30 @@
             "name": "connection_string",
             "type": "string",
             "kind": "scalar",
-            "description": "The connection string of the Oracle database to connect to.",
+            "description": "The connection string of the Oracle database to connect to. Additional connection options can be supplied as URL query parameters, for example: `oracle://user:password@host:1522/service?WALLET=/opt/oracle/wallet&SSL=true`.",
             "examples": [
-              "oracle://username:password@host:port/service_name"
+              "oracle://username:password@host:port/service_name",
+              "oracle://user:password@host:1522/service?WALLET=/opt/oracle/wallet&SSL=true"
             ]
+          },
+          {
+            "name": "wallet_path",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Path to the Oracle Wallet directory. When set, SSL is enabled automatically. The directory must contain either `cwallet.sso` (auto-login, no password required) or `ewallet.p12` (requires `wallet_password`).",
+            "is_optional": true,
+            "examples": [
+              "/opt/oracle/wallet"
+            ]
+          },
+          {
+            "name": "wallet_password",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only required when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.",
+            "is_optional": true,
+            "is_secret": true,
+            "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
           },
           {
             "name": "stream_snapshot",
@@ -23120,161 +23150,6 @@
           }
         ]
       }
-    },
-    {
-      "name": "tigerbeetle_cdc",
-      "type": "input",
-      "status": "stable",
-      "plugin": true,
-      "summary": "Enables TigerBeetle CDC streaming for Redpanda Connect.",
-      "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer’s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater.",
-      "categories": [
-        "Services"
-      ],
-      "config": {
-        "name": "",
-        "type": "object",
-        "kind": "scalar",
-        "children": [
-          {
-            "name": "cluster_id",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The TigerBeetle unique 128-bit cluster ID.",
-            "linter": "root = if !this.re_match(\"^[0-9]+$\") {\n\t\t\t\t\t\t[ \"field 'cluster_id' must be a valid integer\" ]\n\t\t\t\t\t}"
-          },
-          {
-            "name": "addresses",
-            "type": "string",
-            "kind": "array",
-            "description": "A list of IP addresses of all the TigerBeetle replicas in the cluster. The order of addresses must correspond to the order of replicas.",
-            "linter": "root = if this.length() == 0 {\n\t\t\t\t \t\t[ \"field 'addresses' must contain at least one address\" ]\n\t\t\t\t\t}"
-          },
-          {
-            "name": "progress_cache",
-            "type": "string",
-            "kind": "scalar",
-            "description": "A https://docs.redpanda.com/redpanda-connect/components/caches/about[cache resource^] used to track progress by storing the last acknowledged timestamp.\nThis allows Redpanda Connect to resume from the latest delivered event upon restart."
-          },
-          {
-            "name": "rate_limit",
-            "type": "string",
-            "kind": "scalar",
-            "description": "An optional https://docs.redpanda.com/redpanda-connect/components/rate_limits/about/[rate limit^] to throttle the number of **requests** made to TigerBeetle.",
-            "default": ""
-          },
-          {
-            "name": "event_count_max",
-            "type": "int",
-            "kind": "scalar",
-            "description": "The maximum number of events fetched from TigerBeetle per **request**.\nMust be greater than zero.",
-            "default": 2730,
-            "linter": "root = if this <= 0 {\n\t\t\t\t\t\t[ \"field 'event_count_max' must be greater than 0\" ]\n\t\t\t\t\t}"
-          },
-          {
-            "name": "idle_interval_ms",
-            "type": "int",
-            "kind": "scalar",
-            "description": "The time interval in milliseconds to wait before querying again when the last request returned no events.\nMust be greater than zero.",
-            "default": 1000,
-            "linter": "root = if this <= 0 {\n\t\t\t\t\t\t[ \"field 'idle_interval_ms' must be greater than 0\" ]\n\t\t\t\t\t}"
-          },
-          {
-            "name": "timestamp_initial",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The initial timestamp to start extracting events from. If not defined, all events since the beginning will be included.\nIgnored if a more recent timestamp has already been acknowledged.\nThis is a TigerBeetle timestamp with nanosecond precision.",
-            "default": "",
-            "linter": "root = if this.length() > 0 && !this.re_match(\"^[0-9]+$\") {\n\t\t\t\t\t\t[ \"field 'timestamp_initial' must be a valid integer\" ]\n\t\t\t\t\t}"
-          },
-          {
-            "name": "timeout_seconds",
-            "type": "int",
-            "kind": "scalar",
-            "description": "The timeout in seconds, for querying the TigerBeetle cluster.",
-            "default": 15,
-            "linter": "root = if this <= 0 {\n\t\t\t\t\t\t[ \"field 'timeout_seconds' must be greater than 0\" ]\n\t\t\t\t\t}"
-          },
-          {
-            "name": "auto_replay_nacks",
-            "type": "bool",
-            "kind": "scalar",
-            "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
-            "default": true
-          }
-        ]
-      },
-      "version": "0.0.1"
-    },
-    {
-      "name": "zmq4",
-      "type": "input",
-      "status": "stable",
-      "plugin": true,
-      "summary": "Consumes messages from a ZeroMQ socket.",
-      "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component.",
-      "categories": [
-        "Network"
-      ],
-      "config": {
-        "name": "",
-        "type": "object",
-        "kind": "scalar",
-        "children": [
-          {
-            "name": "urls",
-            "type": "string",
-            "kind": "array",
-            "description": "A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.",
-            "examples": [
-              [
-                "tcp://localhost:5555"
-              ]
-            ]
-          },
-          {
-            "name": "bind",
-            "type": "bool",
-            "kind": "scalar",
-            "description": "Whether to bind to the specified URLs (otherwise they are connected to).",
-            "default": false
-          },
-          {
-            "name": "socket_type",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The socket type to connect as.",
-            "options": [
-              "PULL",
-              "SUB"
-            ],
-            "linter": "\nlet options = {\n  \"pull\": true,\n  \"sub\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
-          },
-          {
-            "name": "sub_filters",
-            "type": "string",
-            "kind": "array",
-            "description": "A list of subscription topic filters to use when consuming from a SUB socket. Specifying a single sub_filter of `''` will subscribe to everything.",
-            "default": []
-          },
-          {
-            "name": "high_water_mark",
-            "type": "int",
-            "kind": "scalar",
-            "description": "The message high water mark to use.",
-            "is_advanced": true,
-            "default": 0
-          },
-          {
-            "name": "poll_timeout",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The poll timeout to use.",
-            "is_advanced": true,
-            "default": "5s"
-          }
-        ]
-      }
     }
   ],
   "outputs": [
@@ -23997,6 +23872,107 @@
               "amqp://localhost:5672/",
               "${! meta(\"target_address\") }"
             ]
+          },
+          {
+            "name": "message_properties_message_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the message-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true,
+            "examples": [
+              "${! uuid_v4() }",
+              "${! meta(\"amqp_message_id\") }"
+            ]
+          },
+          {
+            "name": "message_properties_correlation_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the correlation-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true,
+            "examples": [
+              "${! meta(\"amqp_correlation_id\") }"
+            ]
+          },
+          {
+            "name": "message_properties_subject",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the subject property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_reply_to",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the reply-to property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_group_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_group_sequence",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the group-sequence property on outgoing AMQP messages. Must be a valid uint32 value. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_reply_to_group_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the reply-to-group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_user_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the user-id property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_content_type",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the content-type property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true,
+            "examples": [
+              "application/json",
+              "text/plain; charset=utf-8"
+            ]
+          },
+          {
+            "name": "message_properties_content_encoding",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the content-encoding property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
           }
         ],
         "linter": "\nroot = if this.url.or(\"\") == \"\" && this.urls.or([]).length() == 0 {\n  \"field 'urls' must be set\"\n} else if this.target_address.or(\"\") == \"\" && !this.exists(\"message_properties_to\") {\n  \"when 'target_address' is empty, 'message_properties_to' must be set to specify per-message destinations\"\n}\n"
@@ -31208,7 +31184,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Write data to Apache Iceberg tables via REST catalog.",
-      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\nCurrently only version 2 of the Iceberg specification is supported. Any pre-existing version 1 tables will be upgraded to version 2 automatically.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
       "categories": [
         "Services"
       ],
@@ -44526,6 +44502,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Executes an arbitrary SQL query for each message.",
+      "description": "When multiple queries are configured, all messages within a batch are executed in a single database transaction. Single-query configurations execute each message individually without a transaction, preserving per-message error granularity. When consuming from Kafka, messages are automatically ordered by partition within the transaction, allowing `max_in_flight` > 1 to parallelize across partitions while preserving consume order within each partition. Messages without `kafka_partition` metadata default to partition 0.",
       "categories": [
         "Services"
       ],
@@ -44539,6 +44516,11 @@
           "title": "Dynamically Creating Tables (PostgreSQL)",
           "summary": "Here we dynamically create output tables transactionally with inserting a record into the newly created table.",
           "config": "\noutput:\n  processors:\n    - mapping: |\n        root = this\n        # Prevent SQL injection when using unsafe_dynamic_query\n        meta table_name = \"\\\"\" + metadata(\"table_name\").replace_all(\"\\\"\", \"\\\"\\\"\") + \"\\\"\"\n  sql_raw:\n    driver: postgres\n    dsn: postgres://localhost/postgres\n    unsafe_dynamic_query: true\n    queries:\n      - query: |\n          CREATE TABLE IF NOT EXISTS ${!metadata(\"table_name\")} (id varchar primary key, document jsonb);\n      - query: |\n          INSERT INTO ${!metadata(\"table_name\")} (id, document) VALUES ($1, $2)\n          ON CONFLICT (id) DO UPDATE SET document = EXCLUDED.document;\n        args_mapping: |\n          root = [ this.id, this.document.string() ]\n\n"
+        },
+        {
+          "title": "Conditional CDC Queries (PostgreSQL)",
+          "summary": "Route messages to different SQL operations based on message metadata. Tombstone messages trigger a DELETE, while all other messages perform an upsert. All operations within a batch execute in a single transaction, ordered by Kafka partition.",
+          "config": "\noutput:\n  sql_raw:\n    driver: postgres\n    dsn: postgres://localhost/postgres\n    max_in_flight: 8\n    batching:\n      count: 100\n      period: 100ms\n    queries:\n      - when: 'root = meta(\"kafka_tombstone_message\") == \"true\"'\n        query: 'DELETE FROM users WHERE id = $1'\n        args_mapping: 'root = [this.id]'\n      - query: |\n          INSERT INTO users (id, name, updated_at)\n          VALUES ($1, $2, $3)\n          ON CONFLICT (id) DO UPDATE SET\n            name = EXCLUDED.name,\n            updated_at = EXCLUDED.updated_at\n        args_mapping: 'root = [this.id, this.name, this.updated_at]'\n"
         }
       ],
       "config": {
@@ -44633,6 +44615,18 @@
                 "examples": [
                   "root = [ this.cat.meow, this.doc.woofs[0] ]",
                   "root = [ meta(\"user.id\") ]"
+                ]
+              },
+              {
+                "name": "when",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that, when set, is evaluated for each message to determine whether this query should be executed. The mapping should return a boolean value. The first query in the list whose `when` condition evaluates to `true` (or that has no `when` condition) is the one that executes. This enables conditional query routing based on message content or metadata without requiring `unsafe_dynamic_query`.",
+                "is_optional": true,
+                "bloblang": true,
+                "examples": [
+                  "root = meta(\"kafka_tombstone_message\") == \"true\"",
+                  "root = this.operation == \"delete\""
                 ]
               }
             ]
@@ -44800,7 +44794,7 @@
             ]
           }
         ],
-        "linter": "root = match {\n        !this.exists(\"queries\") && !this.exists(\"query\") => [ \"either `query` or `queries` is required\" ],\n    }"
+        "linter": "root = if this.exists(\"queries\") && this.queries.length() > 1 && this.queries.any(q -> q.exists(\"when\")) {\n        this.queries.map_each(q -> if q.exists(\"when\") { \"has_when\" } else { \"no_when\" }).fold({\"idx\": 0, \"errs\": []}, item -> {\n            \"idx\": item.tally.idx + 1,\n            \"errs\": if item.value == \"no_when\" && item.tally.idx < this.queries.length() - 1 {\n                item.tally.errs.append(\"query at index %d has no `when` condition and will always match, making subsequent queries unreachable\".format(item.tally.idx))\n            } else {\n                item.tally.errs\n            },\n        }).errs\n    } else { [] }"
       },
       "version": "3.65.0"
     },
@@ -45311,69 +45305,6 @@
                 "default": {}
               }
             ]
-          }
-        ]
-      }
-    },
-    {
-      "name": "zmq4",
-      "type": "output",
-      "status": "stable",
-      "plugin": true,
-      "summary": "Writes messages to a ZeroMQ socket.",
-      "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component.",
-      "categories": [
-        "Network"
-      ],
-      "config": {
-        "name": "",
-        "type": "object",
-        "kind": "scalar",
-        "children": [
-          {
-            "name": "urls",
-            "type": "string",
-            "kind": "array",
-            "description": "A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.",
-            "examples": [
-              [
-                "tcp://localhost:5556"
-              ]
-            ]
-          },
-          {
-            "name": "bind",
-            "type": "bool",
-            "kind": "scalar",
-            "description": "Whether to bind to the specified URLs (otherwise they are connected to).",
-            "default": true
-          },
-          {
-            "name": "socket_type",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The socket type to connect as.",
-            "options": [
-              "PUSH",
-              "PUB"
-            ],
-            "linter": "\nlet options = {\n  \"push\": true,\n  \"pub\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
-          },
-          {
-            "name": "high_water_mark",
-            "type": "int",
-            "kind": "scalar",
-            "description": "The message high water mark to use.",
-            "is_advanced": true,
-            "default": 0
-          },
-          {
-            "name": "poll_timeout",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The poll timeout to use.",
-            "is_advanced": true,
-            "default": "5s"
           }
         ]
       }
@@ -54656,7 +54587,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Automatically decodes and validates messages with schemas from a Confluent Schema Registry service.",
-      "description": "\nDecodes messages automatically from a schema stored within a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by extracting a schema ID from the message and obtaining the associated schema from the registry. If a message fails to match against the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and Json schemas are supported, all are capable of expanding from schema references as of v4.22.0.\n\n== Avro JSON format\n\nThis processor creates documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when decoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `{\"string\": \"a\"}`; and\n- a `Foo` instance as `{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead create documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting the field <<avro_raw_json, `avro_raw_json`>> to `true`.\n\n== Protobuf format\n\nThis processor decodes protobuf messages to JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n== Metadata\n\nThis processor also adds the following metadata to each outgoing message:\n\nschema_id: the ID of the schema in the schema registry that was associated with the message.\n",
+      "description": "\nDecodes messages automatically from a schema stored within a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by extracting a schema ID from the message and obtaining the associated schema from the registry. If a message fails to match against the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and Json schemas are supported, all are capable of expanding from schema references as of v4.22.0.\n\n== Avro JSON format\n\nThis processor creates documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when decoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `{\"string\": \"a\"}`; and\n- a `Foo` instance as `{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead create documents in standard/raw JSON format by setting the field <<avro_raw_json, `avro_raw_json`>> to `true`.\n\n== Protobuf format\n\nThis processor decodes protobuf messages to JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n== Metadata\n\nThis processor also adds the following metadata to each outgoing message:\n\nschema_id: the ID of the schema in the schema registry that was associated with the message.\n",
       "categories": [
         "Parsing",
         "Integration"
@@ -54670,7 +54601,7 @@
             "name": "avro_raw_json",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether Avro messages should be decoded into normal JSON (\"json that meets the expectations of regular internet json\") rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. If `true` the schema returned from the subject should be decoded as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard json^] instead of as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[avro json^]. There is a https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in goavro^], the https://github.com/linkedin/goavro[underlining library used for avro serialization^], that explains in more detail the difference between the standard json and avro json.",
+            "description": "Whether Avro messages should be decoded into normal JSON (\"json that meets the expectations of regular internet json\") rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. When true, union values are unwrapped (bare values instead of {\"type\": value} wrappers).",
             "is_advanced": true,
             "is_deprecated": true,
             "default": false
@@ -55064,7 +54995,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Automatically encodes and validates messages with schemas from a Confluent Schema Registry service.",
-      "description": "\nEncodes messages automatically from schemas obtained from a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by polling the service for the latest schema version for target subjects.\n\nAlternatively, when `schema_metadata` is set, the processor reads a schema in benthos common schema format from message metadata (as produced by CDC inputs such as `postgresql`, `mysql_cdc`, and `microsoft_sql_server_cdc`), converts it to the target `format` (Avro or JSON Schema), registers it with the schema registry, and encodes the message. This is useful when the schema is not pre-registered in the registry and instead travels with the data.\n\nIf a message fails to encode under the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and JSON Schema formats are supported. In registry-pull mode all three are auto-detected from the registry. In metadata mode Avro and JSON Schema are supported, with the target format selected via the `format` field. Schema references are supported in registry-pull mode as of v4.22.0.\n\n== Avro JSON format\n\nBy default this processor expects documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when encoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `\\{\"string\": \"a\"}`; and\n- a `Foo` instance as `\\{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead consume documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting `avro.raw_json` to `true`. This is strongly recommended when using `schema_metadata` mode, as CDC sources emit standard JSON rather than Avro JSON.\n\nNOTE: The top-level `avro_raw_json` field is deprecated in favor of `avro.raw_json`.\n\n=== Known issues\n\nImportant! There is an outstanding issue in the https://github.com/linkedin/goavro[avro serializing library^] that Redpanda Connect uses which means it https://github.com/linkedin/goavro/issues/252[doesn't encode logical types correctly^]. It's still possible to encode logical types that are in-line with the spec if `avro.raw_json` is set to true, though now of course non-logical types will not be in-line with the spec.\n\n== Protobuf format\n\nThis processor encodes protobuf messages either from any format parsed within Redpanda Connect (encoded as JSON by default), or from raw JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n=== Multiple message support\n\nWhen a target subject presents a protobuf schema that contains multiple messages it becomes ambiguous which message definition a given input data should be encoded against. In such scenarios Redpanda Connect will attempt to encode the data against each of them and select the first to successfully match against the data, this process currently *ignores all nested message definitions*. In order to speed up this exhaustive search the last known successful message will be attempted first for each subsequent input.\n\nWe will be considering alternative approaches in future so please https://redpanda.com/slack[get in touch^] with thoughts and feedback.\n",
+      "description": "\nEncodes messages automatically from schemas obtained from a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by polling the service for the latest schema version for target subjects.\n\nAlternatively, when `schema_metadata` is set, the processor reads a schema in benthos common schema format from message metadata (as produced by CDC inputs such as `postgresql`, `mysql_cdc`, and `microsoft_sql_server_cdc`), converts it to the target `format` (Avro or JSON Schema), registers it with the schema registry, and encodes the message. This is useful when the schema is not pre-registered in the registry and instead travels with the data.\n\nIf a message fails to encode under the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and JSON Schema formats are supported. In registry-pull mode all three are auto-detected from the registry. In metadata mode Avro and JSON Schema are supported, with the target format selected via the `format` field. Schema references are supported in registry-pull mode as of v4.22.0.\n\n== Avro JSON format\n\nBy default this processor expects documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when encoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `\\{\"string\": \"a\"}`; and\n- a `Foo` instance as `\\{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead consume documents in standard/raw JSON format by setting `avro.raw_json` to `true`. This is strongly recommended when using `schema_metadata` mode, as CDC sources emit standard JSON rather than Avro JSON.\n\nNOTE: The top-level `avro_raw_json` field is deprecated in favor of `avro.raw_json`.\n\n== Protobuf format\n\nThis processor encodes protobuf messages either from any format parsed within Redpanda Connect (encoded as JSON by default), or from raw JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n=== Multiple message support\n\nWhen a target subject presents a protobuf schema that contains multiple messages it becomes ambiguous which message definition a given input data should be encoded against. In such scenarios Redpanda Connect will attempt to encode the data against each of them and select the first to successfully match against the data, this process currently *ignores all nested message definitions*. In order to speed up this exhaustive search the last known successful message will be attempted first for each subsequent input.\n\nWe will be considering alternative approaches in future so please https://redpanda.com/slack[get in touch^] with thoughts and feedback.\n",
       "categories": [
         "Parsing",
         "Integration"
@@ -56989,174 +56920,6 @@
           }
         ]
       }
-    },
-    {
-      "name": "ffi",
-      "type": "processor",
-      "status": "stable",
-      "plugin": true,
-      "summary": "Invoke a function within a shared library as a processing step.",
-      "description": "The `ffi` processor allows you to dynamically load shared libraries (.so, .dylib, or .dll files) and invoke their functions as a processing step. This enables integration with external C/C++ libraries without requiring custom Go code or rebuilding Redpanda Connect.\n\nThe processor uses `dlopen` (or platform equivalent) to load the specified library at runtime, looks up the function by name, and invokes it with arguments provided through Bloblang mapping. Function signatures are defined using the `signature` field, specifying parameter and return types.\n\nResults are returned as an array, where the first element is the return value (if not void), followed by any output parameters in their declaration order.",
-      "categories": null,
-      "examples": [
-        {
-          "title": "Call a libc function",
-          "summary": "This is an example of loading libc.so and calling a function on linux.",
-          "config": "\npipeline:\n  processors:\n    - ffi:\n        library_path: libc.6.so\n        function_name: memcmp\n        args_mapping: 'root = [\"foo\", \"bar\", 3]'\n        signature:\n          return:\n            type: int32\n          parameters:\n            - type: byte*\n            - type: byte*\n            - type: int64\n"
-        }
-      ],
-      "config": {
-        "name": "",
-        "type": "object",
-        "kind": "scalar",
-        "children": [
-          {
-            "name": "library_path",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The path to the shared library (.so, .dylib or .dll) file to load dynamically.",
-            "examples": [
-              "libbar.6.so",
-              "libfoo.dylib"
-            ]
-          },
-          {
-            "name": "function_name",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The name of the function to load from the shared library.",
-            "examples": [
-              "MyExternCFunction"
-            ]
-          },
-          {
-            "name": "args_mapping",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The bloblang expression that returns an array of arguments to pass into the foreign function.",
-            "bloblang": true,
-            "examples": [
-              "root = [42, now().ts_unix_nano(), content()]"
-            ]
-          },
-          {
-            "name": "signature",
-            "type": "object",
-            "kind": "scalar",
-            "description": "The signature of the function.",
-            "children": [
-              {
-                "name": "return",
-                "type": "object",
-                "kind": "scalar",
-                "description": "The configuration for the function's result.",
-                "children": [
-                  {
-                    "name": "type",
-                    "type": "string",
-                    "kind": "scalar",
-                    "description": "The data type of function's return value",
-                    "annotated_options": [
-                      [
-                        "int32",
-                        "A 32 bit signed integer is returned"
-                      ],
-                      [
-                        "int64",
-                        "A 64 bit signed integer is returned"
-                      ],
-                      [
-                        "void",
-                        "The function returns nothing"
-                      ]
-                    ],
-                    "linter": "\nlet options = {\n  \"int32\": true,\n  \"int64\": true,\n  \"void\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
-                  }
-                ]
-              },
-              {
-                "name": "parameters",
-                "type": "object",
-                "kind": "array",
-                "description": "The parameters of the function.",
-                "children": [
-                  {
-                    "name": "type",
-                    "type": "string",
-                    "kind": "scalar",
-                    "description": "The data type of the parameter.",
-                    "annotated_options": [
-                      [
-                        "byte*",
-                        "A pointer to a byte array is provided as an argument. Note this byte array cannot be referenced once the function returns. `args_mapping` must return a byte array or string type for this argument, and the parameter in C for this should be `void*`."
-                      ],
-                      [
-                        "int32",
-                        "A 32 bit signed integer is provided as an argument"
-                      ],
-                      [
-                        "int64",
-                        "A 64 bit signed integer is provided as an argument"
-                      ]
-                    ],
-                    "linter": "\nlet options = {\n  \"byte*\": true,\n  \"int32\": true,\n  \"int64\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
-                  },
-                  {
-                    "name": "out",
-                    "type": "bool",
-                    "kind": "scalar",
-                    "description": "If the parameter provided is an 'out' parameter, meaning if the function mutates the value, and the resulting value should be returned. This is only valid for pointer types.",
-                    "default": false
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "name": "a2a_message",
-      "type": "processor",
-      "status": "stable",
-      "plugin": true,
-      "summary": "Sends messages to an A2A (Agent-to-Agent) protocol agent and returns the response.",
-      "description": "\nThis processor enables Redpanda Connect pipelines to communicate with A2A protocol agents. Currently only JSON-RPC transport is supported.\n\nThe processor sends a message to the agent and polls for task completion. The agent's response\nis returned as the processor output.\n\nFor more information about the A2A protocol, see https://a2a-protocol.org/latest/specification",
-      "categories": [
-        "AI"
-      ],
-      "config": {
-        "name": "",
-        "type": "object",
-        "kind": "scalar",
-        "children": [
-          {
-            "name": "agent_card_url",
-            "type": "string",
-            "kind": "scalar",
-            "description": "URL for the A2A agent card. Can be either a base URL (e.g., `https://example.com`) or a full path to the agent card (e.g., `https://example.com/.well-known/agent.json`). If no path is provided, defaults to `/.well-known/agent.json`. Authentication uses OAuth2 from environment variables.",
-            "scrubber": "\nlet pass = this.parse_url().user.password.or(\"\")\nroot = if $pass != \"\" && !$pass.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n}\n"
-          },
-          {
-            "name": "prompt",
-            "type": "string",
-            "kind": "scalar",
-            "description": "The user prompt to send to the agent. By default, the processor submits the entire payload as a string.",
-            "is_optional": true,
-            "interpolated": true
-          },
-          {
-            "name": "final_message_only",
-            "type": "bool",
-            "kind": "scalar",
-            "description": "If true, returns only the text from the final agent message (concatenated from all text parts). If false, returns the complete Message or Task object as structured data with full history, artifacts, and metadata.\n\nExample with final_message_only: true (default):\n```\nHere is the answer to your question...\n```\n\nExample with final_message_only: false:\n```json\n{\n  \"id\": \"task-123\",\n  \"contextId\": \"ctx-456\",\n  \"status\": {\n    \"state\": \"completed\"\n  },\n  \"history\": [\n    {\"role\": \"user\", \"parts\": [{\"text\": \"Your question\"}]},\n    {\"role\": \"agent\", \"parts\": [{\"text\": \"Here is the answer to your question...\"}]}\n  ],\n  \"artifacts\": []\n}\n```\n",
-            "is_advanced": true,
-            "default": true
-          }
-        ]
-      },
-      "version": "4.40.0",
-      "reason": "cloud-only"
     }
   ],
   "rate-limits": [
@@ -59439,7 +59202,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Consume a stream of Avro OCF datum.",
-      "description": "\n== Avro JSON format\n\nThis scanner yields documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when decoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `{\"string\": \"a\"}`; and\n- a `Foo` instance as `{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead create documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting the field <<avro_raw_json,`avro_raw_json`>> to `true`.\n\nThis scanner also emits the canonical Avro schema as `@avro_schema` metadata, along with the schema's fingerprint available via `@avro_schema_fingerprint`.\n",
+      "description": "\n== Avro JSON format\n\nThis scanner yields documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when decoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `{\"string\": \"a\"}`; and\n- a `Foo` instance as `{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead create documents in standard/raw JSON format by setting the field <<avro_raw_json,`avro_raw_json`>> to `true`.\n\nThis scanner also emits the canonical Avro schema as `@avro_schema` metadata, along with the schema's fingerprint available via `@avro_schema_fingerprint`.\n",
       "categories": null,
       "config": {
         "name": "",
@@ -59450,7 +59213,7 @@
             "name": "raw_json",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether messages should be decoded into normal JSON (\"json that meets the expectations of regular internet json\") rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. If `true` the schema returned from the subject should be decoded as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard json^] instead of as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[avro json^]. There is a https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in goavro^], the https://github.com/linkedin/goavro[underlining library used for avro serialization^], that explains in more detail the difference between the standard json and avro json.",
+            "description": "Whether messages should be decoded into normal JSON rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. When true, union values are unwrapped (bare values instead of {\"type\": value} wrappers).",
             "is_advanced": true,
             "default": false
           }
@@ -72837,6 +72600,5 @@
       ],
       "impure": false
     }
-  ],
-  "rate_limits": []
+  ]
 }

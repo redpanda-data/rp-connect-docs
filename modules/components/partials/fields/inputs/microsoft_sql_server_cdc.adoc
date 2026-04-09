@@ -127,6 +127,18 @@ A xref:components:caches/about.adoc[cache resource] to store the current Log Seq
 
 *Type*: `string`
 
+=== `checkpoint_cache_connection_string`
+
+An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, the checkpoint cache table is created on this remote server instead of the source database. If `checkpoint_cache` is also set, that takes precedence.
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+checkpoint_cache_connection_string: sqlserver://username:password@remotehost/instance?param1=value&param2=value
+----
+
 === `checkpoint_cache_key`
 
 The key to use to store the snapshot position in `checkpoint_cache`. An alternative key can be provided if multiple CDC inputs share the same cache.

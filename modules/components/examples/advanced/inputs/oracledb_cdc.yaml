@@ -2,6 +2,8 @@ inputs:
   label: ""
   oracledb_cdc:
     connection_string: "" # No default (required)
+    wallet_path: "" # No default (optional)
+    wallet_password: "" # No default (optional)
     stream_snapshot: false
     max_parallel_snapshot_tables: 1
     snapshot_max_batch_size: 1000
