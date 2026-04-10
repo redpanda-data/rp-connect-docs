@@ -28,7 +28,7 @@ root.new_nums = this.nums.filter(num -> num > 10)
 # Out: {"new_nums":[11,17]}
 ----
 
-==== On objects
+=== On objects
 
 When filtering objects, the query receives a context with `key` and `value` fields for each entry:
 
