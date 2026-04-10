@@ -20,7 +20,7 @@ Expands a nested field into multiple documents.
 
 == Examples
 
-==== On arrays
+=== On arrays
 
 When exploding an array, each element becomes a separate document with the array element replacing the original field:
 
@@ -32,7 +32,7 @@ root = this.explode("value")
 # Out: [{"id":1,"value":"foo"},{"id":1,"value":"bar"},{"id":1,"value":"baz"}]
 ----
 
-==== On objects
+=== On objects
 
 When exploding an object, the output keys match the nested object's keys, with values being the full document where the target field is replaced by each nested value:
 
