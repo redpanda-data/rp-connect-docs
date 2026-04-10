@@ -9,6 +9,114 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.87.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.87.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|checkpoint_cache_connection_string
+|An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, the checkpoint cache table is created on this remote server instead of the source database.
+|*Inputs:*
+
+* xref:components:inputs/microsoft_sql_server_cdc.adoc#checkpoint_cache_connection_string[microsoft_sql_server_cdc]
+
+
+|wallet_path
+|Path to the Oracle Wallet directory. When set, SSL is enabled automatically.
+|*Inputs:*
+
+* xref:components:inputs/oracledb_cdc.adoc#wallet_path[oracledb_cdc]
+
+
+|wallet_password
+|Password for the `ewallet.p12` PKCS#12 wallet file. Only required when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.
+|*Inputs:*
+
+* xref:components:inputs/oracledb_cdc.adoc#wallet_password[oracledb_cdc]
+
+
+|message_properties_message_id
+|Set the message-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_message_id[amqp_1]
+
+
+|message_properties_correlation_id
+|Set the correlation-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_correlation_id[amqp_1]
+
+
+|message_properties_subject
+|Set the subject property on outgoing AMQP messages. This field supports Bloblang interpolation.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_subject[amqp_1]
+
+
+|message_properties_reply_to
+|Set the reply-to property on outgoing AMQP messages. This field supports Bloblang interpolation.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_reply_to[amqp_1]
+
+
+|message_properties_group_id
+|Set the group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_group_id[amqp_1]
+
+
+|message_properties_group_sequence
+|Set the group-sequence property on outgoing AMQP messages. Must be a valid uint32 value.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_group_sequence[amqp_1]
+
+
+|message_properties_reply_to_group_id
+|Set the reply-to-group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_reply_to_group_id[amqp_1]
+
+
+|message_properties_user_id
+|Set the user-id property on outgoing AMQP messages. This field supports Bloblang interpolation.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_user_id[amqp_1]
+
+
+|message_properties_content_type
+|Set the content-type property on outgoing AMQP messages. This field supports Bloblang interpolation.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_content_type[amqp_1]
+
+
+|message_properties_content_encoding
+|Set the content-encoding property on outgoing AMQP messages. This field supports Bloblang interpolation.
+|*Outputs:*
+
+* xref:components:outputs/amqp_1.adoc#message_properties_content_encoding[amqp_1]
+
+
+|===
+
+
 == Version 4.86.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.86.0[See the full release notes^].

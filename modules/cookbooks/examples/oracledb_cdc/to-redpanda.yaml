@@ -1,0 +1,100 @@
+# tag::config[]
+input:
+  oracledb_cdc:
+    connection_string: ${ORACLE_CONNECTION_STRING}
+    include:
+      - "MY_SCHEMA\\.ORDERS"
+      - "MY_SCHEMA\\.CUSTOMERS"
+
+pipeline:
+  processors:
+    # Create a composite key from the primary key fields
+    - mapping: |
+        meta kafka_key = this.ID.string()
+
+        # Add CDC metadata as message headers
+        meta operation = meta("operation")
+        meta table = meta("table_name")
+        meta scn = meta("scn")
+
+output:
+  redpanda:
+    seed_brokers: ["${REDPANDA_BROKERS}"]
+    topic: 'oracle-cdc-${! meta("table_name").lowercase() }'
+    max_in_flight: 10
+    compression: snappy
+    batching:
+      count: 100
+      period: 100ms
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Transform and key INSERT event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+      REDPANDA_BROKERS: localhost:9092
+    input_batch:
+      - content: |
+          {"ID": 123, "customer_name": "Alice", "total": 99.99}
+        metadata:
+          operation: insert
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234567"
+    output_batches:
+      - - json_contains:
+            ID: 123
+            customer_name: "Alice"
+            total: 99.99
+          metadata_equals:
+            kafka_key: "123"
+            operation: insert
+            table: ORDERS
+            scn: "1234567"
+
+  - name: Transform and key UPDATE event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+      REDPANDA_BROKERS: localhost:9092
+    input_batch:
+      - content: |
+          {"ID": 456, "status": "shipped"}
+        metadata:
+          operation: update
+          table_name: CUSTOMERS
+          database_schema: MY_SCHEMA
+          scn: "1234568"
+    output_batches:
+      - - json_contains:
+            ID: 456
+            status: "shipped"
+          metadata_equals:
+            kafka_key: "456"
+            operation: update
+            table: CUSTOMERS
+            scn: "1234568"
+
+  - name: Transform DELETE event with key
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+      REDPANDA_BROKERS: localhost:9092
+    input_batch:
+      - content: |
+          {"ID": 789}
+        metadata:
+          operation: delete
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234569"
+    output_batches:
+      - - json_contains:
+            ID: 789
+          metadata_equals:
+            kafka_key: "789"
+            operation: delete
+            table: ORDERS
+# end::tests[]

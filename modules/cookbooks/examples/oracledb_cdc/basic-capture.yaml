@@ -1,0 +1,110 @@
+# tag::config[]
+input:
+  oracledb_cdc:
+    connection_string: ${ORACLE_CONNECTION_STRING}
+    include:
+      - "MY_SCHEMA\\.ORDERS"
+      - "MY_SCHEMA\\.CUSTOMERS"
+    exclude:
+      - "MY_SCHEMA\\..*_TEMP"
+
+pipeline:
+  processors:
+    # Extract the change event details
+    - mapping: |
+        root = this
+        root.metadata.operation = meta("operation")
+        root.metadata.table = meta("table_name")
+        root.metadata.schema = meta("database_schema")
+        root.metadata.scn = meta("scn")
+        root.metadata.timestamp = now()
+
+output:
+  stdout:
+    codec: lines
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Transform INSERT event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+    input_batch:
+      - content: |
+          {"id": 123, "customer_name": "Alice", "total": 99.99, "status": "pending"}
+        metadata:
+          operation: insert
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234567"
+    output_batches:
+      - - json_contains:
+            id: 123
+            customer_name: "Alice"
+            total: 99.99
+            status: "pending"
+            metadata:
+              operation: insert
+              table: ORDERS
+              schema: MY_SCHEMA
+              scn: "1234567"
+
+  - name: Transform UPDATE event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+    input_batch:
+      - content: |
+          {"id": 123, "customer_name": "Alice Smith", "total": 99.99, "status": "shipped"}
+        metadata:
+          operation: update
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234568"
+    output_batches:
+      - - json_contains:
+            id: 123
+            status: "shipped"
+            metadata:
+              operation: update
+              table: ORDERS
+
+  - name: Transform DELETE event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+    input_batch:
+      - content: |
+          {"id": 456}
+        metadata:
+          operation: delete
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234569"
+    output_batches:
+      - - json_contains:
+            id: 456
+            metadata:
+              operation: delete
+              table: ORDERS
+
+  - name: Transform snapshot READ event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+    input_batch:
+      - content: |
+          {"id": 789, "customer_name": "Bob", "total": 149.99, "status": "completed"}
+        metadata:
+          operation: read
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234560"
+    output_batches:
+      - - json_contains:
+            id: 789
+            metadata:
+              operation: read
+              table: ORDERS
+# end::tests[]

@@ -349,6 +349,22 @@ The query to execute. The style of placeholder to use depends on the driver, som
 
 *Type*: `string`
 
+=== `queries[].when`
+
+An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that, when set, is evaluated for each message to determine whether to execute this query. The mapping should return a boolean value. The first query in the list whose `when` condition evaluates to `true` (or that has no `when` condition) is executed. This enables conditional query routing based on message content or metadata without requiring `unsafe_dynamic_query`.
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+when: root = meta("kafka_tombstone_message") == "true"
+
+# ---
+
+when: root = this.operation == "delete"
+----
+
 === `query`
 
 The query to execute. 

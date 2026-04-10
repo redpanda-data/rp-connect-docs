@@ -81,7 +81,7 @@ This field is equivalent to the Java `heartbeat.interval.ms` setting and accepts
 
 === `instance_id`
 
-When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. 
+When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group's static membership, which can prevent unnecessary rebalances during reconnections. 
 
 When you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.
 

@@ -1,0 +1,105 @@
+# tag::config[]
+input:
+  oracledb_cdc:
+    connection_string: ${ORACLE_CONNECTION_STRING}
+    include:
+      - "MY_SCHEMA\\.ORDERS"
+
+pipeline:
+  processors:
+    # Add routing metadata
+    - mapping: |
+        root = this
+        root.event_type = meta("operation")
+        root.table = meta("table_name")
+
+output:
+  switch:
+    cases:
+      # Route INSERT events
+      - check: this.event_type == "insert"
+        output:
+          redpanda:
+            seed_brokers: ["${REDPANDA_BROKERS}"]
+            topic: orders-inserts
+
+      # Route UPDATE events
+      - check: this.event_type == "update"
+        output:
+          redpanda:
+            seed_brokers: ["${REDPANDA_BROKERS}"]
+            topic: orders-updates
+
+      # Route DELETE events
+      - check: this.event_type == "delete"
+        output:
+          redpanda:
+            seed_brokers: ["${REDPANDA_BROKERS}"]
+            topic: orders-deletes
+
+      # Fallback for snapshot reads
+      - output:
+          drop: {}
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Transform INSERT event for routing
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+      REDPANDA_BROKERS: localhost:9092
+    input_batch:
+      - content: |
+          {"id": 123, "status": "pending"}
+        metadata:
+          operation: insert
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234567"
+    output_batches:
+      - - json_contains:
+            id: 123
+            status: "pending"
+            event_type: insert
+            table: ORDERS
+
+  - name: Transform UPDATE event for routing
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+      REDPANDA_BROKERS: localhost:9092
+    input_batch:
+      - content: |
+          {"id": 456, "status": "shipped"}
+        metadata:
+          operation: update
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234568"
+    output_batches:
+      - - json_contains:
+            id: 456
+            status: "shipped"
+            event_type: update
+            table: ORDERS
+
+  - name: Transform DELETE event for routing
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+      REDPANDA_BROKERS: localhost:9092
+    input_batch:
+      - content: |
+          {"id": 789}
+        metadata:
+          operation: delete
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234569"
+    output_batches:
+      - - json_contains:
+            id: 789
+            event_type: delete
+            table: ORDERS
+# end::tests[]
