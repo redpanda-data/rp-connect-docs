@@ -21,41 +21,43 @@ services:
 
   # Redpanda for Kafka output testing
   redpanda:
-    image: docker.redpanda.com/redpandadata/redpanda:latest
+    image: redpandadata/redpanda:v24.3.1
     container_name: redpanda-cdc-test
+    ports:
+      - "9092:9092"
+      - "8081:8081"
     command:
       - redpanda
       - start
-      - --smp
-      - '1'
-      - --reserve-memory
-      - 0M
+      - --smp=1
+      - --memory=512M
       - --overprovisioned
-      - --node-id
-      - '0'
-      - --kafka-addr
-      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
-      - --advertise-kafka-addr
-      - PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
-    ports:
-      - "9092:9092"
-      - "9644:9644"
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9092
     volumes:
       - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # LocalStack for S3 output testing
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack:3.8
     container_name: localstack-cdc-test
     ports:
       - "4566:4566"
     environment:
-      SERVICES: s3
-      DEFAULT_REGION: us-east-1
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
+      - SERVICES=s3
+      - DEBUG=0
     volumes:
       - localstack-data:/var/lib/localstack
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   oracle-data:
