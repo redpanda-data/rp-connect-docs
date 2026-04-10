@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Oracle Database XE for CDC input testing
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: oracle-cdc-test
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: TestPassword123
+      APP_USER: cdc_user
+      APP_USER_PASSWORD: CdcPassword123
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redpanda for Kafka output testing
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: redpanda-cdc-test
+    command:
+      - redpanda
+      - start
+      - --smp
+      - '1'
+      - --reserve-memory
+      - 0M
+      - --overprovisioned
+      - --node-id
+      - '0'
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+
+  # LocalStack for S3 output testing
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack-cdc-test
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3
+      DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    volumes:
+      - localstack-data:/var/lib/localstack
+
+volumes:
+  oracle-data:
+  redpanda-data:
+  localstack-data:

@@ -11025,7 +11025,7 @@
             "name": "instance_id",
             "type": "string",
             "kind": "scalar",
-            "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
+            "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group's static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
             "is_advanced": true,
             "default": ""
           },
@@ -11382,7 +11382,7 @@
             "name": "checkpoint_cache_connection_string",
             "type": "string",
             "kind": "scalar",
-            "description": "An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, the checkpoint cache table is created on this remote server instead of the source database. If `checkpoint_cache` is also set, that takes precedence.",
+            "description": "An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, this creates the checkpoint cache table on the remote server instead of the source database. If `checkpoint_cache` is also set, that takes precedence.",
             "is_optional": true,
             "examples": [
               "sqlserver://username:password@remotehost/instance?param1=value&param2=value"
@@ -14486,7 +14486,7 @@
                 "name": "instance_id",
                 "type": "string",
                 "kind": "scalar",
-                "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
+                "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group's static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
                 "is_advanced": true,
                 "default": ""
               },
@@ -14822,7 +14822,7 @@
             "name": "connection_string",
             "type": "string",
             "kind": "scalar",
-            "description": "The connection string of the Oracle database to connect to. Additional connection options can be supplied as URL query parameters, for example: `oracle://user:password@host:1522/service?WALLET=/opt/oracle/wallet&SSL=true`.",
+            "description": "The connection string of the Oracle database to connect to. You can supply additional connection options as URL query parameters, for example: `oracle://user:password@host:1522/service?WALLET=/opt/oracle/wallet&SSL=true`.",
             "examples": [
               "oracle://username:password@host:port/service_name",
               "oracle://user:password@host:1522/service?WALLET=/opt/oracle/wallet&SSL=true"
@@ -14832,7 +14832,7 @@
             "name": "wallet_path",
             "type": "string",
             "kind": "scalar",
-            "description": "Path to the Oracle Wallet directory. When set, SSL is enabled automatically. The directory must contain either `cwallet.sso` (auto-login, no password required) or `ewallet.p12` (requires `wallet_password`).",
+            "description": "Path to the Oracle Wallet directory. When set, this automatically enables SSL. The directory must contain either `cwallet.sso` (auto-login, does not require a password) or `ewallet.p12` (requires `wallet_password`).",
             "is_optional": true,
             "examples": [
               "/opt/oracle/wallet"
@@ -14842,7 +14842,7 @@
             "name": "wallet_password",
             "type": "string",
             "kind": "scalar",
-            "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only required when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.",
+            "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only use this when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.\n\ninclude::redpanda-connect:components:partial$secret_warning.adoc[]",
             "is_optional": true,
             "is_secret": true,
             "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
@@ -18959,7 +18959,7 @@
             "name": "instance_id",
             "type": "string",
             "kind": "scalar",
-            "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
+            "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group's static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
             "is_advanced": true,
             "default": ""
           },
@@ -19353,7 +19353,7 @@
             "name": "instance_id",
             "type": "string",
             "kind": "scalar",
-            "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
+            "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group's static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
             "is_advanced": true,
             "default": ""
           },
@@ -20097,7 +20097,7 @@
             "name": "instance_id",
             "type": "string",
             "kind": "scalar",
-            "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group’s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
+            "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group's static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID.",
             "is_advanced": true,
             "default": ""
           },
@@ -24234,7 +24234,7 @@
             "name": "message_properties_message_id",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the message-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.",
+            "description": "Set the message-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true,
@@ -24247,7 +24247,7 @@
             "name": "message_properties_correlation_id",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the correlation-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.",
+            "description": "Set the correlation-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true,
@@ -24259,7 +24259,7 @@
             "name": "message_properties_subject",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the subject property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "description": "Set the subject property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true
@@ -24268,7 +24268,7 @@
             "name": "message_properties_reply_to",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the reply-to property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "description": "Set the reply-to property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true
@@ -24277,7 +24277,7 @@
             "name": "message_properties_group_id",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "description": "Set the group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true
@@ -24286,7 +24286,7 @@
             "name": "message_properties_group_sequence",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the group-sequence property on outgoing AMQP messages. Must be a valid uint32 value. This field supports Bloblang interpolation.",
+            "description": "Set the group-sequence property on outgoing AMQP messages. Must be a valid uint32 value. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true
@@ -24295,7 +24295,7 @@
             "name": "message_properties_reply_to_group_id",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the reply-to-group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "description": "Set the reply-to-group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true
@@ -24304,7 +24304,7 @@
             "name": "message_properties_user_id",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the user-id property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "description": "Set the user-id property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true
@@ -24313,7 +24313,7 @@
             "name": "message_properties_content_type",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the content-type property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "description": "Set the content-type property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true,
@@ -24326,7 +24326,7 @@
             "name": "message_properties_content_encoding",
             "type": "string",
             "kind": "scalar",
-            "description": "Set the content-encoding property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "description": "Set the content-encoding property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "is_advanced": true,
             "is_optional": true,
             "interpolated": true
@@ -45130,7 +45130,7 @@
                 "name": "when",
                 "type": "string",
                 "kind": "scalar",
-                "description": "An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that, when set, is evaluated for each message to determine whether this query should be executed. The mapping should return a boolean value. The first query in the list whose `when` condition evaluates to `true` (or that has no `when` condition) is the one that executes. This enables conditional query routing based on message content or metadata without requiring `unsafe_dynamic_query`.",
+                "description": "An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that, when set, is evaluated for each message to determine whether to execute this query. The mapping should return a boolean value. The first query in the list whose `when` condition evaluates to `true` (or that has no `when` condition) is executed. This enables conditional query routing based on message content or metadata without requiring `unsafe_dynamic_query`.",
                 "is_optional": true,
                 "bloblang": true,
                 "examples": [
@@ -60188,7 +60188,7 @@
             "name": "raw_json",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether messages should be decoded into normal JSON rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. When true, union values are unwrapped (bare values instead of {\"type\": value} wrappers).",
+            "description": "Whether to decode messages into normal JSON rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. When true, this unwraps union values (bare values instead of {\"type\": value} wrappers).",
             "is_advanced": true,
             "default": false
           }

@@ -1,0 +1,95 @@
+# tag::config[]
+input:
+  oracledb_cdc:
+    connection_string: ${ORACLE_CONNECTION_STRING}
+    include:
+      - "MY_SCHEMA\\.ORDERS"
+
+pipeline:
+  processors:
+    - mapping: |
+        root = this
+        root.operation = meta("operation")
+        root.table = meta("table_name")
+        root.scn = meta("scn")
+        root.captured_at = now().ts_format("2006-01-02T15:04:05Z07:00")
+
+output:
+  aws_s3:
+    bucket: ${S3_BUCKET}
+    path: 'oracle-cdc/${! meta("table_name") }/${! timestamp_unix().ts_format("2006/01/02/15") }/${! uuid_v4() }.jsonl'
+    batching:
+      count: 1000
+      period: 5m
+      processors:
+        - archive:
+            format: json_array
+        - compress:
+            algorithm: gzip
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Add metadata for S3 archival
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+      S3_BUCKET: test-bucket
+    input_batch:
+      - content: |
+          {"id": 123, "customer_name": "Alice", "total": 99.99}
+        metadata:
+          operation: insert
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234567"
+    output_batches:
+      - - json_contains:
+            id: 123
+            customer_name: "Alice"
+            total: 99.99
+            operation: insert
+            table: ORDERS
+            scn: "1234567"
+
+  - name: Add metadata for UPDATE event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+      S3_BUCKET: test-bucket
+    input_batch:
+      - content: |
+          {"id": 456, "status": "shipped"}
+        metadata:
+          operation: update
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234568"
+    output_batches:
+      - - json_contains:
+            id: 456
+            status: "shipped"
+            operation: update
+            table: ORDERS
+            scn: "1234568"
+
+  - name: Add metadata for DELETE event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+      S3_BUCKET: test-bucket
+    input_batch:
+      - content: |
+          {"id": 789}
+        metadata:
+          operation: delete
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234569"
+    output_batches:
+      - - json_contains:
+            id: 789
+            operation: delete
+            table: ORDERS
+            scn: "1234569"
+# end::tests[]

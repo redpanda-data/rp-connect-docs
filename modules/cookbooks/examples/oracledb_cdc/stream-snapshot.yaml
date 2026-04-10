@@ -1,0 +1,97 @@
+# tag::config[]
+input:
+  oracledb_cdc:
+    connection_string: ${ORACLE_CONNECTION_STRING}
+    include:
+      - "MY_SCHEMA\\.ORDERS"
+    stream_snapshot: true
+    snapshot_max_batch_size: 5000
+    max_parallel_snapshot_tables: 2
+
+pipeline:
+  processors:
+    - mapping: |
+        root = this
+
+        # Tag snapshot vs CDC events
+        root.event_type = if meta("operation") == "read" {
+          "snapshot"
+        } else {
+          "cdc"
+        }
+
+output:
+  stdout:
+    codec: lines
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Tag snapshot READ event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+    input_batch:
+      - content: |
+          {"id": 123, "status": "pending"}
+        metadata:
+          operation: read
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234560"
+    output_batches:
+      - - json_contains:
+            id: 123
+            event_type: snapshot
+
+  - name: Tag CDC INSERT event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+    input_batch:
+      - content: |
+          {"id": 456, "status": "shipped"}
+        metadata:
+          operation: insert
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234567"
+    output_batches:
+      - - json_contains:
+            id: 456
+            event_type: cdc
+
+  - name: Tag CDC UPDATE event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+    input_batch:
+      - content: |
+          {"id": 789, "status": "completed"}
+        metadata:
+          operation: update
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234568"
+    output_batches:
+      - - json_contains:
+            id: 789
+            event_type: cdc
+
+  - name: Tag CDC DELETE event
+    target_processors: '/pipeline/processors/0'
+    environment:
+      ORACLE_CONNECTION_STRING: oracle://test:test@localhost:1521/test
+    input_batch:
+      - content: |
+          {"id": 999}
+        metadata:
+          operation: delete
+          table_name: ORDERS
+          database_schema: MY_SCHEMA
+          scn: "1234569"
+    output_batches:
+      - - json_contains:
+            id: 999
+            event_type: cdc
+# end::tests[]

@@ -129,7 +129,7 @@ A xref:components:caches/about.adoc[cache resource] to store the current Log Seq
 
 === `checkpoint_cache_connection_string`
 
-An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, the checkpoint cache table is created on this remote server instead of the source database. If `checkpoint_cache` is also set, that takes precedence.
+An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, this creates the checkpoint cache table on the remote server instead of the source database. If `checkpoint_cache` is also set, that takes precedence.
 
 *Type*: `string`
 

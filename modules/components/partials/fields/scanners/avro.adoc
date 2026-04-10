@@ -4,7 +4,7 @@
 
 === `raw_json`
 
-Whether messages should be decoded into normal JSON rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. When true, union values are unwrapped (bare values instead of {"type": value} wrappers).
+Whether to decode messages into normal JSON rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. When true, this unwraps union values (bare values instead of {"type": value} wrappers).
 
 *Type*: `bool`
 

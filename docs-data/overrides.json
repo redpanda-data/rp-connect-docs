@@ -121,7 +121,7 @@
       "description": "The initial period to wait between retry attempts. The retry interval increases for each failed attempt, up to the `backoff.max_interval` value. This field accepts Go duration format strings such as `100ms`, `1s`, or `5s`."
     },
     "instance_id": {
-      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group\u2019s static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
+      "description": "When you specify a <<consumer_group,`consumer_group`>>, assign a unique value to `instance_id` to define the group's static membership, which can prevent unnecessary rebalances during reconnections. \n\nWhen you assign an instance ID, the client does not automatically leave the consumer group when it disconnects. To remove the client, you must use an external admin command on behalf of the instance ID."
     },
     "jwt": {
       "description": "BETA: Configure JSON Web Token (JWT) authentication. This feature is in beta and may change in future releases. JWT tokens provide secure, stateless authentication between services."
@@ -1274,6 +1274,11 @@
             "$ref": "#/definitions/mssql_cdc_checkpoint_cache"
           },
           {
+            "name": "checkpoint_cache_connection_string",
+            "type": "string",
+            "description": "An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, this creates the checkpoint cache table on the remote server instead of the source database. If `checkpoint_cache` is also set, that takes precedence."
+          },
+          {
             "name": "checkpoint_key",
             "$ref": "#/definitions/mssql_cdc_checkpoint_key"
           },
@@ -1567,6 +1572,11 @@
       "config": {
         "children": [
           {
+            "name": "connection_string",
+            "type": "string",
+            "description": "The connection string of the Oracle database to connect to. You can supply additional connection options as URL query parameters, for example: `oracle://user:password@host:1522/service?WALLET=/opt/oracle/wallet&SSL=true`."
+          },
+          {
             "name": "checkpoint_cache",
             "description": "A xref:components:caches/about.adoc[cache resource] to use for storing the current System Change Number (SCN) that has been successfully delivered. This allows Redpanda Connect to continue from that SCN upon restart, rather than consume the entire state of OracleDB redo logs. If not set, the default Oracle-based cache is used. See `checkpoint_cache_table_name` for more information."
           },
@@ -1578,6 +1588,16 @@
                 "description": "Controls how LogMiner retrieves data dictionary information. `online_catalog` uses the current data dictionary for best performance but cannot capture DDL changes. Currently, only `online_catalog` is supported."
               }
             ]
+          },
+          {
+            "name": "wallet_path",
+            "type": "string",
+            "description": "Path to the Oracle Wallet directory. When set, this automatically enables SSL. The directory must contain either `cwallet.sso` (auto-login, does not require a password) or `ewallet.p12` (requires `wallet_password`)."
+          },
+          {
+            "name": "wallet_password",
+            "type": "string",
+            "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only use this when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.\n\ninclude::redpanda-connect:components:partial$secret_warning.adoc[]"
           }
         ]
       }
@@ -2833,6 +2853,56 @@
           {
             "name": "content_type",
             "description": "The content type of the message body.\n\nSet this field value to `string` to transfer each message as an AMQP string. Consider using the `string` option if you want to write UTF-8 string messages, such as JSON messages, to your data destination."
+          },
+          {
+            "name": "message_properties_message_id",
+            "type": "string",
+            "description": "Set the message-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "message_properties_correlation_id",
+            "type": "string",
+            "description": "Set the correlation-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "message_properties_subject",
+            "type": "string",
+            "description": "Set the subject property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "message_properties_reply_to",
+            "type": "string",
+            "description": "Set the reply-to property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "message_properties_group_id",
+            "type": "string",
+            "description": "Set the group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "message_properties_group_sequence",
+            "type": "string",
+            "description": "Set the group-sequence property on outgoing AMQP messages. Must be a valid uint32 value. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "message_properties_reply_to_group_id",
+            "type": "string",
+            "description": "Set the reply-to-group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "message_properties_user_id",
+            "type": "string",
+            "description": "Set the user-id property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "message_properties_content_type",
+            "type": "string",
+            "description": "Set the content-type property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "message_properties_content_encoding",
+            "type": "string",
+            "description": "Set the content-encoding property on outgoing AMQP messages. This field supports Bloblang interpolation.\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
           }
         ]
       }
@@ -6006,7 +6076,14 @@
           },
           {
             "name": "queries",
-            "description": "A list of database statements to run in addition to your main <<query, `query`>>. If you specify multiple queries, they are executed within a single transaction. For more information, see <<Examples, Examples>>."
+            "description": "A list of database statements to run in addition to your main <<query, `query`>>. If you specify multiple queries, they are executed within a single transaction. For more information, see <<Examples, Examples>>.",
+            "children": [
+              {
+                "name": "when",
+                "type": "string",
+                "description": "An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that, when set, is evaluated for each message to determine whether to execute this query. The mapping should return a boolean value. The first query in the list whose `when` condition evaluates to `true` (or that has no `when` condition) is executed. This enables conditional query routing based on message content or metadata without requiring `unsafe_dynamic_query`."
+              }
+            ]
           },
           {
             "name": "max_in_flight",
@@ -8260,6 +8337,20 @@
                 "description": "The sampling ratio as a decimal between 0 and 1. For example, `0.1` samples 10% of traces, `0.01` samples 1%. Lower ratios reduce trace volume and overhead. For high-throughput production systems, start with 0.01-0.1 and adjust based on your needs."
               }
             ]
+          }
+        ]
+      }
+    }
+  ],
+  "scanners": [
+    {
+      "name": "avro",
+      "config": {
+        "children": [
+          {
+            "name": "raw_json",
+            "type": "bool",
+            "description": "Whether to decode messages into normal JSON rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. When true, this unwraps union values (bare values instead of {\"type\": value} wrappers)."
           }
         ]
       }
