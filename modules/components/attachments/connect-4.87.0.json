@@ -1413,7 +1413,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "none",
@@ -1428,7 +1430,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sqlite",
@@ -1473,7 +1477,9 @@
             "is_optional": true
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "system_window",
@@ -1554,7 +1560,9 @@
           }
         ]
       },
-      "version": "3.53.0"
+      "version": "3.53.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     }
   ],
   "caches": [
@@ -1805,7 +1813,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_s3",
@@ -2033,7 +2043,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "couchbase",
@@ -2144,7 +2156,9 @@
           }
         ]
       },
-      "version": "4.12.0"
+      "version": "4.12.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "file",
@@ -2166,7 +2180,9 @@
             "description": "The directory within which to store items."
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "gcp_cloud_storage",
@@ -2204,7 +2220,9 @@
             "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "lru",
@@ -2290,7 +2308,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "memcached",
@@ -2370,7 +2390,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "memory",
@@ -2422,7 +2444,9 @@
             "default": 1
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "mongodb",
@@ -2497,7 +2521,9 @@
           }
         ]
       },
-      "version": "3.43.0"
+      "version": "3.43.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "multilevel",
@@ -2517,7 +2543,9 @@
         "name": "",
         "type": "string",
         "kind": "array"
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nats_kv",
@@ -2799,7 +2827,9 @@
           }
         ]
       },
-      "version": "4.27.0"
+      "version": "4.27.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "noop",
@@ -2814,7 +2844,9 @@
         "kind": "scalar",
         "default": {}
       },
-      "version": "4.27.0"
+      "version": "4.27.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis",
@@ -3068,7 +3100,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redpanda",
@@ -3586,7 +3620,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "ristretto",
@@ -3666,7 +3702,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sql",
@@ -3821,7 +3859,9 @@
           }
         ]
       },
-      "version": "4.26.0"
+      "version": "4.26.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "ttlru",
@@ -3882,7 +3922,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     }
   ],
   "inputs": [
@@ -4185,7 +4227,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "amqp_1",
@@ -4464,7 +4508,9 @@
           }
         ],
         "linter": "\nroot = if this.url.or(\"\") == \"\" && this.urls.or([]).length() == 0 {\n  \"field 'urls' must be set\"\n}\n"
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "aws_cloudwatch_logs",
@@ -4722,7 +4768,9 @@
         ],
         "linter": "\nroot = if this.log_stream_names.or([]).length() > 0 && this.exists(\"log_stream_prefix\") {\n  \"cannot specify both log_stream_names and log_stream_prefix\"\n}\n"
       },
-      "version": "4.81.0"
+      "version": "4.81.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_dynamodb_cdc",
@@ -5071,7 +5119,9 @@
           }
         ]
       },
-      "version": "4.79.0"
+      "version": "4.79.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_kinesis",
@@ -5587,7 +5637,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_s3",
@@ -5963,7 +6015,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_sqs",
@@ -6182,7 +6236,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_blob_storage",
@@ -6381,7 +6437,9 @@
         ],
         "linter": "root = if this.storage_connection_string != \"\" && !this.storage_connection_string.contains(\"AccountName=\")  && !this.storage_connection_string.contains(\"UseDevelopmentStorage=true;\") && this.storage_account == \"\" { [ \"storage_account must be set if storage_connection_string does not contain the \\\"AccountName\\\" parameter\" ] }"
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_cosmosdb",
@@ -6511,7 +6569,9 @@
         ],
         "linter": "root = []\nlet hasEndpoint = this.endpoint.or(\"\") != \"\"\nlet hasConnectionString = this.connection_string.or(\"\") != \"\"\n\nroot.\"-\" = if !$hasEndpoint && !$hasConnectionString {\n  \"Either `endpoint` or `connection_string` must be set.\"\n}\n"
       },
-      "version": "v4.25.0"
+      "version": "v4.25.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_queue_storage",
@@ -6596,7 +6656,9 @@
         ],
         "linter": "root = if this.storage_connection_string != \"\" && !this.storage_connection_string.contains(\"AccountName=\")  && !this.storage_connection_string.contains(\"UseDevelopmentStorage=true;\") && this.storage_account == \"\" { [ \"storage_account must be set if storage_connection_string does not contain the \\\"AccountName\\\" parameter\" ] }"
       },
-      "version": "3.42.0"
+      "version": "3.42.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_table_storage",
@@ -6684,7 +6746,9 @@
         ],
         "linter": "root = if this.storage_connection_string != \"\" && !this.storage_connection_string.contains(\"AccountName=\")  && !this.storage_connection_string.contains(\"UseDevelopmentStorage=true;\") && this.storage_account == \"\" { [ \"storage_account must be set if storage_connection_string does not contain the \\\"AccountName\\\" parameter\" ] }"
       },
-      "version": "4.10.0"
+      "version": "4.10.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "batched",
@@ -6801,7 +6865,9 @@
           }
         ]
       },
-      "version": "4.11.0"
+      "version": "4.11.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "beanstalkd",
@@ -6828,7 +6894,9 @@
           }
         ]
       },
-      "version": "4.7.0"
+      "version": "4.7.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "broker",
@@ -6952,7 +7020,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cassandra",
@@ -7296,7 +7366,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "cockroachdb_changefeed",
@@ -7484,7 +7556,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "csv",
@@ -7561,7 +7635,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "discord",
@@ -7636,7 +7712,9 @@
             "default": "An optional rate limit resource to restrict API requests with."
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "dynamic",
@@ -7668,7 +7746,9 @@
             "default": ""
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "file",
@@ -7812,7 +7892,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "gateway",
@@ -7942,7 +8024,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "gcp_bigquery_select",
@@ -8056,7 +8140,9 @@
           }
         ]
       },
-      "version": "3.63.0"
+      "version": "3.63.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "gcp_cloud_storage",
@@ -8204,7 +8290,9 @@
           }
         ]
       },
-      "version": "3.43.0"
+      "version": "3.43.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "gcp_pubsub",
@@ -8301,7 +8389,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "gcp_spanner_cdc",
@@ -8514,7 +8604,9 @@
           }
         ]
       },
-      "version": "4.56.0"
+      "version": "4.56.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "generate",
@@ -8591,7 +8683,9 @@
           }
         ]
       },
-      "version": "3.40.0"
+      "version": "3.40.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "git",
@@ -8773,7 +8867,9 @@
           }
         ]
       },
-      "version": "4.51.0"
+      "version": "4.51.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "hdfs",
@@ -8813,7 +8909,9 @@
             "description": "The directory to consume from."
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "http_client",
@@ -9559,7 +9657,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "http_server",
@@ -9796,7 +9896,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "inproc",
@@ -9812,7 +9914,9 @@
         "type": "string",
         "kind": "scalar",
         "default": ""
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "kafka",
@@ -10343,7 +10447,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "kafka_franz",
@@ -11183,7 +11289,9 @@
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\nlet has_topics = this.topics.length() > 0\nlet has_regexp_topics_include = this.regexp_topics_include.length() > 0 \nlet is_regex_mode = this.regexp_topics || $has_regexp_topics_include\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  if !$has_topics && !$has_regexp_topics_include {\n    \"either topics or regexp_topics_include must be specified\"\n  },\n  if $has_topics && $has_regexp_topics_include {\n    \"cannot specify both topics and regexp_topics_include, use one or the other\"\n  },\n  if this.regexp_topics_exclude.length() > 0 && !$is_regex_mode {\n    \"regexp_topics_exclude can only be used when regexp_topics is set to true or regexp_topics_include is specified\"\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
       },
-      "version": "3.61.0"
+      "version": "3.61.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "microsoft_sql_server_cdc",
@@ -11407,7 +11515,9 @@
           }
         ]
       },
-      "version": "0.0.1"
+      "version": "0.0.1",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "mongodb",
@@ -11559,7 +11669,9 @@
           }
         ]
       },
-      "version": "3.64.0"
+      "version": "3.64.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "mongodb_cdc",
@@ -11733,7 +11845,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "mqtt",
@@ -12031,7 +12145,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "mysql_cdc",
@@ -12455,7 +12571,9 @@
           }
         ]
       },
-      "version": "4.45.0"
+      "version": "4.45.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nanomsg",
@@ -12521,7 +12639,9 @@
             "default": "5s"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "nats",
@@ -12860,7 +12980,9 @@
             "version": "4.23.0"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nats_jetstream",
@@ -13243,7 +13365,9 @@
         ],
         "linter": "root = match {\n\t\t\tthis.exists(\"queue\") && this.queue != \"\" && this.exists(\"durable\") && this.durable != \"\" => [ \"both 'queue' and 'durable' can't be set simultaneously\" ],\n\t\t\t}"
       },
-      "version": "3.46.0"
+      "version": "3.46.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nats_kv",
@@ -13569,7 +13693,9 @@
           }
         ]
       },
-      "version": "4.12.0"
+      "version": "4.12.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nats_stream",
@@ -13920,7 +14046,9 @@
             "version": "4.23.0"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "nsq",
@@ -14113,7 +14241,9 @@
             "default": 5
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "ockam_kafka",
@@ -14669,7 +14799,9 @@
             "default": []
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "oracledb_cdc",
@@ -14950,7 +15082,9 @@
           }
         ]
       },
-      "version": "4.83.0"
+      "version": "4.83.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "otlp_grpc",
@@ -15475,7 +15609,9 @@
           }
         ]
       },
-      "version": "4.78.0"
+      "version": "4.78.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "otlp_http",
@@ -16016,7 +16152,9 @@
           }
         ]
       },
-      "version": "4.78.0"
+      "version": "4.78.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "parquet",
@@ -16061,7 +16199,9 @@
           }
         ]
       },
-      "version": "4.8.0"
+      "version": "4.8.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "pg_stream",
@@ -16546,7 +16686,9 @@
           }
         ]
       },
-      "version": "4.39.0"
+      "version": "4.39.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "postgres_cdc",
@@ -17031,7 +17173,9 @@
           }
         ]
       },
-      "version": "4.39.0"
+      "version": "4.39.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "pulsar",
@@ -17215,7 +17359,9 @@
           }
         ]
       },
-      "version": "3.43.0"
+      "version": "3.43.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "read_until",
@@ -17280,7 +17426,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis_list",
@@ -17520,7 +17668,9 @@
             "linter": "\nlet options = {\n  \"blpop\": true,\n  \"brpop\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis_pubsub",
@@ -17737,7 +17887,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis_scan",
@@ -17956,7 +18108,9 @@
           }
         ]
       },
-      "version": "4.27.0"
+      "version": "4.27.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis_streams",
@@ -18226,7 +18380,9 @@
             "default": "1s"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redpanda",
@@ -19105,7 +19261,9 @@
           }
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\nlet has_topics = this.topics.length() > 0\nlet has_regexp_topics_include = this.regexp_topics_include.length() > 0 \nlet is_regex_mode = this.regexp_topics || $has_regexp_topics_include\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  if !$has_topics && !$has_regexp_topics_include {\n    \"either topics or regexp_topics_include must be specified\"\n  },\n  if $has_topics && $has_regexp_topics_include {\n    \"cannot specify both topics and regexp_topics_include, use one or the other\"\n  },\n  if this.regexp_topics_exclude.length() > 0 && !$is_regex_mode {\n    \"regexp_topics_exclude can only be used when regexp_topics is set to true or regexp_topics_include is specified\"\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redpanda_common",
@@ -19361,7 +19519,9 @@
           }
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\nlet has_topics = this.topics.length() > 0\nlet has_regexp_topics_include = this.regexp_topics_include.length() > 0 \nlet is_regex_mode = this.regexp_topics || $has_regexp_topics_include\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  if !$has_topics && !$has_regexp_topics_include {\n    \"either topics or regexp_topics_include must be specified\"\n  },\n  if $has_topics && $has_regexp_topics_include {\n    \"cannot specify both topics and regexp_topics_include, use one or the other\"\n  },\n  if this.regexp_topics_exclude.length() > 0 && !$is_regex_mode {\n    \"regexp_topics_exclude can only be used when regexp_topics is set to true or regexp_topics_include is specified\"\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redpanda_migrator",
@@ -20392,7 +20552,9 @@
         ],
         "linter": "\nlet has_topic_partitions = this.topics.any(t -> t.contains(\":\"))\nlet has_topics = this.topics.length() > 0\nlet has_regexp_topics_include = this.regexp_topics_include.length() > 0 \nlet is_regex_mode = this.regexp_topics || $has_regexp_topics_include\n\nroot = [\n  if $has_topic_partitions {\n    if this.consumer_group.or(\"\") != \"\" {\n      \"this input does not support both a consumer group and explicit topic partitions\"\n    } else if this.regexp_topics {\n      \"this input does not support both regular expression topics and explicit topic partitions\"\n    }\n  } else {\n    if this.consumer_group.or(\"\") == \"\" {\n      \"a consumer group is mandatory when not using explicit topic partitions\"\n    }\n  },\n  if !$has_topics && !$has_regexp_topics_include {\n    \"either topics or regexp_topics_include must be specified\"\n  },\n  if $has_topics && $has_regexp_topics_include {\n    \"cannot specify both topics and regexp_topics_include, use one or the other\"\n  },\n  if this.regexp_topics_exclude.length() > 0 && !$is_regex_mode {\n    \"regexp_topics_exclude can only be used when regexp_topics is set to true or regexp_topics_include is specified\"\n  },\n  # We don't have any way to distinguish between start_from_oldest set explicitly to true and not set at all, so we\n  # assume users will be OK if start_offset overwrites it silently\n  if this.start_from_oldest == false && this.start_offset == \"earliest\" {\n    \"start_from_oldest cannot be set to false when start_offset is set to earliest\"\n  }\n]\n"
       },
-      "version": "4.67.0"
+      "version": "4.67.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "resource",
@@ -20409,7 +20571,9 @@
         "type": "string",
         "kind": "scalar",
         "default": ""
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "schema_registry",
@@ -20742,7 +20906,9 @@
           }
         ]
       },
-      "version": "4.32.2"
+      "version": "4.32.2",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sequence",
@@ -20839,7 +21005,9 @@
             "description": "An array of inputs to read from sequentially."
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sftp",
@@ -21109,7 +21277,9 @@
           }
         ]
       },
-      "version": "3.39.0"
+      "version": "3.39.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "slack",
@@ -21152,7 +21322,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "slack_users",
@@ -21188,7 +21360,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "socket",
@@ -21472,7 +21646,9 @@
             "version": "4.25.0"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "socket_server",
@@ -21713,7 +21889,9 @@
             "version": "4.25.0"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "spicedb_watch",
@@ -21910,7 +22088,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "splunk",
@@ -22094,7 +22274,9 @@
           }
         ]
       },
-      "version": "4.30.0"
+      "version": "4.30.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sql_raw",
@@ -22245,7 +22427,9 @@
           }
         ]
       },
-      "version": "4.10.0"
+      "version": "4.10.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sql_select",
@@ -22438,7 +22622,9 @@
           }
         ]
       },
-      "version": "3.59.0"
+      "version": "3.59.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "stdin",
@@ -22560,7 +22746,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "subprocess",
@@ -22622,7 +22810,9 @@
             "default": 65536
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "timeplus",
@@ -22707,7 +22897,9 @@
             "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "twitter_search",
@@ -22787,7 +22979,9 @@
             "description": "An API secret for OAuth 2.0 authentication. It is recommended that you populate this field using xref:configuration:interpolation.adoc[environment variables]."
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "websocket",
@@ -23149,7 +23343,168 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
+    },
+    {
+      "name": "tigerbeetle_cdc",
+      "type": "input",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Enables TigerBeetle CDC streaming for Redpanda Connect.",
+      "description": "Listens to a TigerBeetle cluster and creates a message for each change.\n\nEach message is a JSON object like:\n\n```json\n{\n  \"timestamp\": \"1745328372758695656\",\n  \"type\": \"single_phase\",\n  \"ledger\": 2,\n  \"transfer\": {\n    \"id\": \"9082709\",\n    \"amount\": \"3794\",\n    \"pending_id\": \"0\",\n    \"user_data_128\": \"79248595801719937611592367840129079151\",\n    \"user_data_64\": \"13615171707598273871\",\n    \"user_data_32\": 3229992513,\n    \"timeout\": 0,\n    \"code\": 20295,\n    \"flags\": 0,\n    \"timestamp\": \"1745328372758695656\"\n  },\n  \"debit_account\": {\n    \"id\": \"3750\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8463768\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8861179\",\n    \"user_data_128\": \"118966247877720884212341541320399553321\",\n    \"user_data_64\": \"526432537153007844\",\n    \"user_data_32\": 4157247332,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103398016\"\n  },\n  \"credit_account\": {\n    \"id\": \"6765\",\n    \"debits_pending\": \"0\",\n    \"debits_posted\": \"8669204\",\n    \"credits_pending\": \"0\",\n    \"credits_posted\": \"8637251\",\n    \"user_data_128\": \"43670023860556310170878798978091998141\",\n    \"user_data_64\": \"12485093662256535374\",\n    \"user_data_32\": 1924162092,\n    \"code\": 1,\n    \"flags\": 0,\n    \"timestamp\": \"1745328270103401031\"\n  }\n}\n```\n\nFor more information refer to https://docs.tigerbeetle.com/operating/cdc/\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- event_type: One of \"single_phase\", \"two_phase_pending\", \"two_phase_posted\", \"two_phase_voided\", or \"two_phase_expired\".\n- ledger: The ledger code.\n- transfer_code: The transfer code.\n- debit_account_code: The debit account code.\n- credit_account_code: The credit account code.\n- timestamp: The unique event timestamp with nanosecond resolution.\n- timestamp_ms: The event timestamp with millisecond resolution.\n\n== Guarantees\n\nThis input guarantees _at-least-once semantics_, and makes a best effort to prevent\nduplicate messages. However, during crash recovery, it may replay unacknowledged\nmessages that could have been already delivered to consumers.\n\nIt is the consumer’s responsibility to perform idempotency checks when processing messages.\n\n== Upgrading\n\nThe TigerBeetle client version must not be newer than the cluster version, as it will fail\nwith an error message if so.\n\nRequires TigerBeetle cluster version 0.16.57 or greater.",
+      "categories": [
+        "Services"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "cluster_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The TigerBeetle unique 128-bit cluster ID.",
+            "linter": "root = if !this.re_match(\"^[0-9]+$\") {\n\t\t\t\t\t\t[ \"field 'cluster_id' must be a valid integer\" ]\n\t\t\t\t\t}"
+          },
+          {
+            "name": "addresses",
+            "type": "string",
+            "kind": "array",
+            "description": "A list of IP addresses of all the TigerBeetle replicas in the cluster. The order of addresses must correspond to the order of replicas.",
+            "linter": "root = if this.length() == 0 {\n\t\t\t\t \t\t[ \"field 'addresses' must contain at least one address\" ]\n\t\t\t\t\t}"
+          },
+          {
+            "name": "progress_cache",
+            "type": "string",
+            "kind": "scalar",
+            "description": "A https://docs.redpanda.com/redpanda-connect/components/caches/about[cache resource^] used to track progress by storing the last acknowledged timestamp.\nThis allows Redpanda Connect to resume from the latest delivered event upon restart."
+          },
+          {
+            "name": "rate_limit",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional https://docs.redpanda.com/redpanda-connect/components/rate_limits/about/[rate limit^] to throttle the number of **requests** made to TigerBeetle.",
+            "default": ""
+          },
+          {
+            "name": "event_count_max",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of events fetched from TigerBeetle per **request**.\nMust be greater than zero.",
+            "default": 2730,
+            "linter": "root = if this <= 0 {\n\t\t\t\t\t\t[ \"field 'event_count_max' must be greater than 0\" ]\n\t\t\t\t\t}"
+          },
+          {
+            "name": "idle_interval_ms",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The time interval in milliseconds to wait before querying again when the last request returned no events.\nMust be greater than zero.",
+            "default": 1000,
+            "linter": "root = if this <= 0 {\n\t\t\t\t\t\t[ \"field 'idle_interval_ms' must be greater than 0\" ]\n\t\t\t\t\t}"
+          },
+          {
+            "name": "timestamp_initial",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The initial timestamp to start extracting events from. If not defined, all events since the beginning will be included.\nIgnored if a more recent timestamp has already been acknowledged.\nThis is a TigerBeetle timestamp with nanosecond precision.",
+            "default": "",
+            "linter": "root = if this.length() > 0 && !this.re_match(\"^[0-9]+$\") {\n\t\t\t\t\t\t[ \"field 'timestamp_initial' must be a valid integer\" ]\n\t\t\t\t\t}"
+          },
+          {
+            "name": "timeout_seconds",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The timeout in seconds, for querying the TigerBeetle cluster.",
+            "default": 15,
+            "linter": "root = if this <= 0 {\n\t\t\t\t\t\t[ \"field 'timeout_seconds' must be greater than 0\" ]\n\t\t\t\t\t}"
+          },
+          {
+            "name": "auto_replay_nacks",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
+            "default": true
+          }
+        ]
+      },
+      "version": "0.0.1",
+      "requiresCgo": true,
+      "cloudSupported": false
+    },
+    {
+      "name": "zmq4",
+      "type": "input",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Consumes messages from a ZeroMQ socket.",
+      "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component.",
+      "categories": [
+        "Network"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "urls",
+            "type": "string",
+            "kind": "array",
+            "description": "A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.",
+            "examples": [
+              [
+                "tcp://localhost:5555"
+              ]
+            ]
+          },
+          {
+            "name": "bind",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether to bind to the specified URLs (otherwise they are connected to).",
+            "default": false
+          },
+          {
+            "name": "socket_type",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The socket type to connect as.",
+            "options": [
+              "PULL",
+              "SUB"
+            ],
+            "linter": "\nlet options = {\n  \"pull\": true,\n  \"sub\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "sub_filters",
+            "type": "string",
+            "kind": "array",
+            "description": "A list of subscription topic filters to use when consuming from a SUB socket. Specifying a single sub_filter of `''` will subscribe to everything.",
+            "default": []
+          },
+          {
+            "name": "high_water_mark",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The message high water mark to use.",
+            "is_advanced": true,
+            "default": 0
+          },
+          {
+            "name": "poll_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The poll timeout to use.",
+            "is_advanced": true,
+            "default": "5s"
+          }
+        ]
+      },
+      "requiresCgo": true,
+      "cloudSupported": false
     }
   ],
   "outputs": [
@@ -23537,7 +23892,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "amqp_1",
@@ -23976,7 +24333,9 @@
           }
         ],
         "linter": "\nroot = if this.url.or(\"\") == \"\" && this.urls.or([]).length() == 0 {\n  \"field 'urls' must be set\"\n} else if this.target_address.or(\"\") == \"\" && !this.exists(\"message_properties_to\") {\n  \"when 'target_address' is empty, 'message_properties_to' must be set to specify per-message destinations\"\n}\n"
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "aws_dynamodb",
@@ -24335,7 +24694,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_kinesis",
@@ -24666,7 +25027,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_kinesis_firehose",
@@ -24977,7 +25340,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_s3",
@@ -25427,7 +25792,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_sns",
@@ -25656,7 +26023,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_sqs",
@@ -26016,7 +26385,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_blob_storage",
@@ -26124,7 +26495,9 @@
         ],
         "linter": "root = if this.storage_connection_string != \"\" && !this.storage_connection_string.contains(\"AccountName=\")  && !this.storage_connection_string.contains(\"UseDevelopmentStorage=true;\") && this.storage_account == \"\" { [ \"storage_account must be set if storage_connection_string does not contain the \\\"AccountName\\\" parameter\" ] }"
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_cosmosdb",
@@ -26450,7 +26823,9 @@
         ],
         "linter": "root = []\nlet hasEndpoint = this.endpoint.or(\"\") != \"\"\nlet hasConnectionString = this.connection_string.or(\"\") != \"\"\n\nroot.\"-\" = if !$hasEndpoint && !$hasConnectionString {\n  \"Either `endpoint` or `connection_string` must be set.\"\n}\n\nlet hasItemID = this.item_id.or(\"\") != \"\"\nlet hasPatchOperations = this.patch_operations.length().or(0) > 0\nlet hasPatchCondition = this.patch_condition.or(\"\") != \"\"\n\nroot.\"-\" = if !$hasItemID && (this.operation == \"Replace\" || this.operation == \"Delete\" || this.operation == \"Read\" || this.operation == \"Patch\") {\n  \"The `item_id` field must be set for Replace, Delete, Read and Patch operations.\"\n}\n\nroot.\"-\" = if this.operation == \"Patch\" && !$hasPatchOperations {\n  \"At least one `patch_operations` must be set when `operation: Patch`.\"\n}\n\nroot.\"-\" = if $hasPatchCondition && (!$hasPatchOperations || this.operation != \"Patch\") {\n  \"The `patch_condition`  field only applies to `Patch` operations and it requires one or more `patch_operations`.\"\n}\n\nroot.\"-\" = if this.operation == \"Patch\" && this.patch_operations.any(o -> o.operation != \"Remove\" && o.value_map.or(\"\") == \"\") {\n  \"The `patch_operations` `value_map` field must be set when `operation` is not `Remove`.\"\n}\n\nroot.\"-\" = if this.operation == \"Patch\" && this.patch_operations.any(o -> o.operation == \"Remove\" && o.value_map.or(\"\") != \"\") {\n  \"The `patch_operations` `value_map` field must not be set when `operation` is `Remove`.\"\n}\n"
       },
-      "version": "v4.25.0"
+      "version": "v4.25.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_data_lake_gen2",
@@ -26529,7 +26904,9 @@
         ],
         "linter": "root = if this.storage_connection_string != \"\" && !this.storage_connection_string.contains(\"AccountName=\")  && !this.storage_connection_string.contains(\"UseDevelopmentStorage=true;\") && this.storage_account == \"\" { [ \"storage_account must be set if storage_connection_string does not contain the \\\"AccountName\\\" parameter\" ] }"
       },
-      "version": "4.38.0"
+      "version": "4.38.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_queue_storage",
@@ -26698,7 +27075,9 @@
         ],
         "linter": "root = if this.storage_connection_string != \"\" && !this.storage_connection_string.contains(\"AccountName=\")  && !this.storage_connection_string.contains(\"UseDevelopmentStorage=true;\") && this.storage_account == \"\" { [ \"storage_account must be set if storage_connection_string does not contain the \\\"AccountName\\\" parameter\" ] }"
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_table_storage",
@@ -26939,7 +27318,9 @@
         ],
         "linter": "root = if this.storage_connection_string != \"\" && !this.storage_connection_string.contains(\"AccountName=\")  && !this.storage_connection_string.contains(\"UseDevelopmentStorage=true;\") && this.storage_account == \"\" { [ \"storage_account must be set if storage_connection_string does not contain the \\\"AccountName\\\" parameter\" ] }"
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "beanstalkd",
@@ -26973,7 +27354,9 @@
           }
         ]
       },
-      "version": "4.7.0"
+      "version": "4.7.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "broker",
@@ -27114,7 +27497,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cache",
@@ -27173,7 +27558,9 @@
             "default": 64
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cassandra",
@@ -27650,7 +28037,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "couchbase",
@@ -27908,7 +28297,9 @@
         ],
         "linter": "root = if ((this.operation == \"insert\" || this.operation == \"replace\" || this.operation == \"upsert\") && !this.exists(\"content\")) { [ \"content must be set for insert, replace and upsert operations.\" ] }"
       },
-      "version": "4.37.0"
+      "version": "4.37.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "cyborgdb",
@@ -28113,7 +28504,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cypher",
@@ -28442,7 +28835,9 @@
           }
         ]
       },
-      "version": "4.37.0"
+      "version": "4.37.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "discord",
@@ -28480,7 +28875,9 @@
             "default": "An optional rate limit resource to restrict API requests with."
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "drop",
@@ -28496,7 +28893,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "drop_on",
@@ -28566,7 +28965,9 @@
             "description": "A child output to wrap with this drop mechanism."
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "dynamic",
@@ -28599,7 +29000,9 @@
             "default": ""
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "elasticsearch_v8",
@@ -28970,7 +29373,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "elasticsearch_v9",
@@ -29342,6 +29747,8 @@
           }
         ]
       },
+      "cloudSupported": false,
+      "requiresCgo": false,
       "version": "4.77.0"
     },
     {
@@ -29360,7 +29767,9 @@
         "kind": "array",
         "default": []
       },
-      "version": "3.58.0"
+      "version": "3.58.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "file",
@@ -29422,7 +29831,9 @@
             "version": "3.33.0"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "gcp_bigquery",
@@ -29706,7 +30117,9 @@
           }
         ]
       },
-      "version": "3.55.0"
+      "version": "3.55.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "gcp_cloud_storage",
@@ -29907,7 +30320,9 @@
           }
         ]
       },
-      "version": "3.43.0"
+      "version": "3.43.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "gcp_pubsub",
@@ -30164,7 +30579,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "hdfs",
@@ -30312,7 +30729,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "http_client",
@@ -31071,7 +31490,9 @@
             "version": "3.63.0"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "http_server",
@@ -31176,7 +31597,9 @@
             "version": "3.63.0"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "iceberg",
@@ -31886,7 +32309,9 @@
           }
         ]
       },
-      "version": "4.80.0"
+      "version": "4.80.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "inproc",
@@ -31902,7 +32327,9 @@
         "type": "string",
         "kind": "scalar",
         "default": ""
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "kafka",
@@ -32533,7 +32960,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "kafka_franz",
@@ -33331,7 +33760,9 @@
         ],
         "linter": "root = match {\n  this.partitioner == \"manual\" && this.partition.or(\"\") == \"\" => \"a partition must be specified when the partitioner is set to manual\"\n  this.partitioner != \"manual\" && this.partition.or(\"\") != \"\" => \"a partition cannot be specified unless the partitioner is set to manual\"\n  this.timestamp.or(\"\") != \"\" && this.timestamp_ms.or(\"\") != \"\" => \"both timestamp and timestamp_ms cannot be specified simultaneously\"\n}"
       },
-      "version": "3.61.0"
+      "version": "3.61.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "mongodb",
@@ -33628,7 +34059,9 @@
           }
         ]
       },
-      "version": "3.43.0"
+      "version": "3.43.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "mqtt",
@@ -33947,7 +34380,9 @@
             "default": 64
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nanomsg",
@@ -34005,7 +34440,9 @@
             "default": 64
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "nats",
@@ -34365,7 +34802,9 @@
             "version": "4.23.0"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nats_jetstream",
@@ -34729,7 +35168,9 @@
           }
         ]
       },
-      "version": "3.46.0"
+      "version": "3.46.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nats_kv",
@@ -35030,7 +35471,9 @@
           }
         ]
       },
-      "version": "4.12.0"
+      "version": "4.12.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nats_stream",
@@ -35342,7 +35785,9 @@
             "version": "4.23.0"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "nsq",
@@ -35517,7 +35962,9 @@
             "default": 64
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "ockam_kafka",
@@ -36033,7 +36480,9 @@
             "default": []
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "opensearch",
@@ -36538,7 +36987,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "otlp_grpc",
@@ -36781,7 +37232,9 @@
           }
         ]
       },
-      "version": "4.78.0"
+      "version": "4.78.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "otlp_http",
@@ -37187,7 +37640,9 @@
           }
         ]
       },
-      "version": "4.78.0"
+      "version": "4.78.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "pinecone",
@@ -37374,7 +37829,9 @@
           }
         ]
       },
-      "version": "4.31.0"
+      "version": "4.31.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "pulsar",
@@ -37540,7 +37997,9 @@
           }
         ]
       },
-      "version": "3.43.0"
+      "version": "3.43.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "pusher",
@@ -37705,7 +38164,9 @@
           }
         ]
       },
-      "version": "4.3.0"
+      "version": "4.3.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "qdrant",
@@ -38018,7 +38479,9 @@
           }
         ]
       },
-      "version": "4.33.0"
+      "version": "4.33.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "questdb",
@@ -38387,7 +38850,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis_hash",
@@ -38625,7 +39090,9 @@
             "default": 64
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis_list",
@@ -38948,7 +39415,9 @@
             "linter": "\nlet options = {\n  \"rpush\": true,\n  \"lpush\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis_pubsub",
@@ -39251,7 +39720,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis_streams",
@@ -39597,7 +40068,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redpanda",
@@ -40410,7 +40883,9 @@
           }
         ],
         "linter": "root = match {\n  this.partitioner == \"manual\" && this.partition.or(\"\") == \"\" => \"a partition must be specified when the partitioner is set to manual\"\n  this.partitioner != \"manual\" && this.partition.or(\"\") != \"\" => \"a partition cannot be specified unless the partitioner is set to manual\"\n  this.timestamp.or(\"\") != \"\" && this.timestamp_ms.or(\"\") != \"\" => \"both timestamp and timestamp_ms cannot be specified simultaneously\"\n}"
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redpanda_common",
@@ -40623,7 +41098,9 @@
           }
         ],
         "linter": "root = match {\n  this.partitioner == \"manual\" && this.partition.or(\"\") == \"\" => \"a partition must be specified when the partitioner is set to manual\"\n  this.partitioner != \"manual\" && this.partition.or(\"\") != \"\" => \"a partition cannot be specified unless the partitioner is set to manual\"\n  this.timestamp.or(\"\") != \"\" && this.timestamp_ms.or(\"\") != \"\" => \"both timestamp and timestamp_ms cannot be specified simultaneously\"\n}"
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redpanda_migrator",
@@ -41774,7 +42251,9 @@
         ],
         "linter": "\nroot = [\n  if this.key.or(\"\") != \"\" {\n    \"key field is not supported by migrator, setting it could break consumer group migration\"\n  },\n  if this.partitioner.or(\"\") != \"\" {\n    \"partitioner field is not supported by migrator, setting it could break consumer group migration\"\n  },\n  if this.partition.or(\"\") != \"\" {\n    \"partition field is not supported by migrator, setting it could break consumer group migration\"\n  },\n  if this.timestamp.or(\"\") != \"\" {\n    \"timestamp field is not supported by migrator, setting it could break consumer group migration\"\n  },\n  if this.timestamp_ms.or(\"\") != \"\" {\n    \"timestamp_ms field is not supported by migrator, setting it could break consumer group migration\"\n  }\n]\n"
       },
-      "version": "4.67.0"
+      "version": "4.67.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "reject",
@@ -41798,7 +42277,9 @@
         "type": "string",
         "kind": "scalar",
         "default": ""
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "reject_errored",
@@ -41826,7 +42307,9 @@
         "name": "",
         "type": "output",
         "kind": "scalar"
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "resource",
@@ -41843,7 +42326,9 @@
         "type": "string",
         "kind": "scalar",
         "default": ""
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "retry",
@@ -41908,7 +42393,9 @@
             "description": "A child output."
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "salesforce_sink",
@@ -42048,7 +42535,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "schema_registry",
@@ -42423,7 +42912,9 @@
           }
         ]
       },
-      "version": "4.32.2"
+      "version": "4.32.2",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sftp",
@@ -42564,7 +43055,9 @@
           }
         ]
       },
-      "version": "3.39.0"
+      "version": "3.39.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "slack_post",
@@ -42652,7 +43145,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "slack_reaction",
@@ -42714,7 +43209,9 @@
             "default": 64
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "snowflake_put",
@@ -43065,7 +43562,9 @@
         ],
         "linter": "root = match {\n  (!this.exists(\"password\") || this.password == \"\") && (!this.exists(\"private_key\") || this.private_key == \"\") && (!this.exists(\"private_key_file\") || this.private_key_file == \"\") => [ \"either `password` or `private_key` or `private_key_file` must be set\" ],\n  this.exists(\"password\") && this.password != \"\" && (this.exists(\"private_key\") && this.private_key != \"\" || this.exists(\"private_key_file\") && this.private_key_file != \"\") => [ \"only one of `password`, `private_key` and `private_key_file` can be set\" ],\n  this.exists(\"snowpipe\") && this.snowpipe != \"\" && !((this.exists(\"private_key\") && this.private_key != \"\") || (this.exists(\"private_key_file\") && this.private_key_file != \"\")) => [ \"either `private_key` or `private_key_file` must be set when using `snowpipe`\" ],\n}"
       },
-      "version": "4.0.0"
+      "version": "4.0.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "snowflake_streaming",
@@ -43507,7 +44006,9 @@
         ],
         "linter": "root = match {\n  this.exists(\"channel_prefix\") && this.exists(\"channel_name\") => [ \"both `channel_prefix` and `channel_name` can't be set simultaneously\" ],\n}"
       },
-      "version": "4.39.0"
+      "version": "4.39.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "socket",
@@ -43706,7 +44207,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "splunk_hec",
@@ -44041,7 +44544,9 @@
           }
         ]
       },
-      "version": "4.30.0"
+      "version": "4.30.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sql",
@@ -44207,7 +44712,9 @@
           }
         ]
       },
-      "version": "3.65.0"
+      "version": "3.65.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "sql_insert",
@@ -44494,7 +45001,9 @@
           }
         ]
       },
-      "version": "3.59.0"
+      "version": "3.59.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sql_raw",
@@ -44796,7 +45305,9 @@
         ],
         "linter": "root = if this.exists(\"queries\") && this.queries.length() > 1 && this.queries.any(q -> q.exists(\"when\")) {\n        this.queries.map_each(q -> if q.exists(\"when\") { \"has_when\" } else { \"no_when\" }).fold({\"idx\": 0, \"errs\": []}, item -> {\n            \"idx\": item.tally.idx + 1,\n            \"errs\": if item.value == \"no_when\" && item.tally.idx < this.queries.length() - 1 {\n                item.tally.errs.append(\"query at index %d has no `when` condition and will always match, making subsequent queries unreachable\".format(item.tally.idx))\n            } else {\n                item.tally.errs\n            },\n        }).errs\n    } else { [] }"
       },
-      "version": "3.65.0"
+      "version": "3.65.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "stdout",
@@ -44844,7 +45355,9 @@
             "version": "3.46.0"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "subprocess",
@@ -44886,7 +45399,9 @@
             "linter": "\nlet options = {\n  \"lines\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "switch",
@@ -44988,7 +45503,9 @@
           }
         ],
         "linter": "if this.exists(\"retry_until_success\") && this.retry_until_success {\n  if this.cases.or([]).any(oconf -> oconf.output.type.or(\"\") == \"reject\" || oconf.output.reject.type() == \"string\" ) {\n    \"a 'switch' output with a 'reject' case output must have the field 'switch.retry_until_success' set to 'false', otherwise the 'reject' child output will result in infinite retries\"\n  }\n}"
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sync_response",
@@ -45005,7 +45522,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "websocket",
@@ -45307,7 +45826,74 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
+    },
+    {
+      "name": "zmq4",
+      "type": "output",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Writes messages to a ZeroMQ socket.",
+      "description": "\nBy default Redpanda Connect does not build with components that require linking to external libraries. If you wish to build Redpanda Connect locally with this component then set the build tag `x_benthos_extra`:\n\n```bash\n# With go\ngo install -tags \"x_benthos_extra\" github.com/redpanda-data/benthos/v4/cmd/benthos@latest\n\n# Using make\nmake TAGS=x_benthos_extra\n```\n\nThere is a specific docker tag postfix `-cgo` for C builds containing this component.",
+      "categories": [
+        "Network"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "urls",
+            "type": "string",
+            "kind": "array",
+            "description": "A list of URLs to connect to. If an item of the list contains commas it will be expanded into multiple URLs.",
+            "examples": [
+              [
+                "tcp://localhost:5556"
+              ]
+            ]
+          },
+          {
+            "name": "bind",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether to bind to the specified URLs (otherwise they are connected to).",
+            "default": true
+          },
+          {
+            "name": "socket_type",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The socket type to connect as.",
+            "options": [
+              "PUSH",
+              "PUB"
+            ],
+            "linter": "\nlet options = {\n  \"push\": true,\n  \"pub\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "high_water_mark",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The message high water mark to use.",
+            "is_advanced": true,
+            "default": 0
+          },
+          {
+            "name": "poll_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The poll timeout to use.",
+            "is_advanced": true,
+            "default": "5s"
+          }
+        ]
+      },
+      "requiresCgo": true,
+      "cloudSupported": false
     }
   ],
   "processors": [
@@ -45380,7 +45966,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "avro",
@@ -45440,7 +46028,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "awk",
@@ -45489,7 +46079,9 @@
             "description": "An AWK program to execute"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "aws_bedrock_chat",
@@ -45712,7 +46304,9 @@
           }
         ]
       },
-      "version": "4.34.0"
+      "version": "4.34.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_bedrock_embeddings",
@@ -45902,7 +46496,9 @@
           }
         ]
       },
-      "version": "4.37.0"
+      "version": "4.37.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_dynamodb_partiql",
@@ -46095,7 +46691,9 @@
           }
         ]
       },
-      "version": "3.48.0"
+      "version": "3.48.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "aws_lambda",
@@ -46303,7 +46901,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "azure_cosmosdb",
@@ -46537,7 +47137,9 @@
         ],
         "linter": "root = []\nlet hasEndpoint = this.endpoint.or(\"\") != \"\"\nlet hasConnectionString = this.connection_string.or(\"\") != \"\"\n\nroot.\"-\" = if !$hasEndpoint && !$hasConnectionString {\n  \"Either `endpoint` or `connection_string` must be set.\"\n}\n\nlet hasItemID = this.item_id.or(\"\") != \"\"\nlet hasPatchOperations = this.patch_operations.length().or(0) > 0\nlet hasPatchCondition = this.patch_condition.or(\"\") != \"\"\n\nroot.\"-\" = if !$hasItemID && (this.operation == \"Replace\" || this.operation == \"Delete\" || this.operation == \"Read\" || this.operation == \"Patch\") {\n  \"The `item_id` field must be set for Replace, Delete, Read and Patch operations.\"\n}\n\nroot.\"-\" = if this.operation == \"Patch\" && !$hasPatchOperations {\n  \"At least one `patch_operations` must be set when `operation: Patch`.\"\n}\n\nroot.\"-\" = if $hasPatchCondition && (!$hasPatchOperations || this.operation != \"Patch\") {\n  \"The `patch_condition`  field only applies to `Patch` operations and it requires one or more `patch_operations`.\"\n}\n\nroot.\"-\" = if this.operation == \"Patch\" && this.patch_operations.any(o -> o.operation != \"Remove\" && o.value_map.or(\"\") == \"\") {\n  \"The `patch_operations` `value_map` field must be set when `operation` is not `Remove`.\"\n}\n\nroot.\"-\" = if this.operation == \"Patch\" && this.patch_operations.any(o -> o.operation == \"Remove\" && o.value_map.or(\"\") != \"\") {\n  \"The `patch_operations` `value_map` field must not be set when `operation` is `Remove`.\"\n}\n"
       },
-      "version": "v4.25.0"
+      "version": "v4.25.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "benchmark",
@@ -46569,7 +47171,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "bloblang",
@@ -46601,7 +47205,9 @@
         "kind": "scalar",
         "default": "",
         "bloblang": true
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "bounds_check",
@@ -46648,7 +47254,9 @@
             "default": 1
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "branch",
@@ -46721,7 +47329,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cache",
@@ -46807,7 +47417,9 @@
             "version": "3.33.0"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cached",
@@ -46882,7 +47494,9 @@
           }
         ]
       },
-      "version": "4.3.0"
+      "version": "4.3.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "catch",
@@ -46899,7 +47513,9 @@
         "type": "processor",
         "kind": "array",
         "default": []
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cohere_chat",
@@ -47411,7 +48027,9 @@
         ],
         "linter": "\n      root = match {\n        this.exists(\"json_schema\") && this.exists(\"schema_registry\") => [\"cannot set both `json_schema` and `schema_registry`\"]\n        this.response_format == \"json_schema\" && !this.exists(\"json_schema\") && !this.exists(\"schema_registry\") => [\"schema must be specified using either `json_schema` or `schema_registry`\"]\n      }\n    "
       },
-      "version": "4.37.0"
+      "version": "4.37.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cohere_embeddings",
@@ -47505,7 +48123,9 @@
           }
         ]
       },
-      "version": "4.37.0"
+      "version": "4.37.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cohere_rerank",
@@ -47584,7 +48204,9 @@
           }
         ]
       },
-      "version": "4.37.0"
+      "version": "4.37.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "command",
@@ -47638,7 +48260,9 @@
           }
         ]
       },
-      "version": "4.21.0"
+      "version": "4.21.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "compress",
@@ -47677,7 +48301,9 @@
             "default": -1
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "couchbase",
@@ -47840,7 +48466,9 @@
         ],
         "linter": "root = if ((this.operation == \"insert\" || this.operation == \"replace\" || this.operation == \"upsert\") && !this.exists(\"content\")) { [ \"content must be set for insert, replace and upsert operations.\" ] }"
       },
-      "version": "4.11.0"
+      "version": "4.11.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "crash",
@@ -47856,7 +48484,9 @@
         "type": "string",
         "kind": "scalar",
         "interpolated": true
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "decompress",
@@ -47888,7 +48518,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "dedupe",
@@ -47937,7 +48569,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "for_each",
@@ -47954,7 +48588,9 @@
         "type": "processor",
         "kind": "array",
         "default": []
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "gcp_bigquery_select",
@@ -48052,7 +48688,9 @@
           }
         ]
       },
-      "version": "3.64.0"
+      "version": "3.64.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "gcp_vertex_ai_chat",
@@ -48299,7 +48937,9 @@
           }
         ]
       },
-      "version": "4.34.0"
+      "version": "4.34.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "gcp_vertex_ai_embeddings",
@@ -48403,7 +49043,9 @@
           }
         ]
       },
-      "version": "4.37.0"
+      "version": "4.37.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "google_drive_download",
@@ -48486,7 +49128,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "google_drive_list_labels",
@@ -48513,7 +49157,9 @@
             "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "google_drive_search",
@@ -48589,7 +49235,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "grok",
@@ -48659,7 +49307,9 @@
             "default": true
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "group_by",
@@ -48703,7 +49353,9 @@
             "default": []
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "group_by_value",
@@ -48733,7 +49385,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "http",
@@ -49350,7 +50004,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "insert_part",
@@ -49383,7 +50039,9 @@
             "interpolated": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "javascript",
@@ -49437,7 +50095,9 @@
         ],
         "linter": "\nlet codeLen = (this.code | \"\").length()\nlet fileLen = (this.file | \"\").length()\nroot = if $codeLen == 0 && $fileLen == 0 {\n  \"either the code or file field must be specified\"\n} else if $codeLen > 0 && $fileLen > 0 {\n  \"cannot specify both the code and file fields\"\n}"
       },
-      "version": "4.14.0"
+      "version": "4.14.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "jira",
@@ -49976,7 +50636,9 @@
           }
         ]
       },
-      "version": "4.68.0"
+      "version": "4.68.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "jmespath",
@@ -50007,7 +50669,9 @@
             "description": "The JMESPath query to apply to messages."
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "jq",
@@ -50054,7 +50718,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "json_schema",
@@ -50087,7 +50753,9 @@
             "is_optional": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "log",
@@ -50147,7 +50815,9 @@
             "interpolated": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "mapping",
@@ -50178,7 +50848,9 @@
         "kind": "scalar",
         "bloblang": true
       },
-      "version": "4.5.0"
+      "version": "4.5.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "metric",
@@ -50250,7 +50922,9 @@
             "interpolated": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "mongodb",
@@ -50468,7 +51142,9 @@
           }
         ]
       },
-      "version": "3.43.0"
+      "version": "3.43.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "msgpack",
@@ -50503,7 +51179,9 @@
           }
         ]
       },
-      "version": "3.59.0"
+      "version": "3.59.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "mutation",
@@ -50534,7 +51212,9 @@
         "kind": "scalar",
         "bloblang": true
       },
-      "version": "4.5.0"
+      "version": "4.5.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nats_kv",
@@ -50898,7 +51578,9 @@
         ],
         "linter": "root = match {\n      [\"get_revision\", \"update\"].contains(this.operation) && !this.exists(\"revision\") => [ \"'revision' must be set when operation is '\" + this.operation + \"'\" ],\n      ![\"get_revision\", \"update\"].contains(this.operation) && this.exists(\"revision\") => [ \"'revision' cannot be set when operation is '\" + this.operation + \"'\" ],\n    }"
       },
-      "version": "4.12.0"
+      "version": "4.12.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "nats_request_reply",
@@ -51259,7 +51941,9 @@
           }
         ]
       },
-      "version": "4.27.0"
+      "version": "4.27.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "noop",
@@ -51273,7 +51957,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "ollama_chat",
@@ -51613,7 +52299,9 @@
           }
         ]
       },
-      "version": "4.32.0"
+      "version": "4.32.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "ollama_embeddings",
@@ -51745,7 +52433,9 @@
           }
         ]
       },
-      "version": "4.32.0"
+      "version": "4.32.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "ollama_moderation",
@@ -51882,7 +52572,9 @@
           }
         ]
       },
-      "version": "4.42.0"
+      "version": "4.42.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "openai_chat_completion",
@@ -52462,7 +53154,9 @@
         ],
         "linter": "\n      root = match {\n        this.exists(\"json_schema\") && this.exists(\"schema_registry\") => [\"cannot set both `json_schema` and `schema_registry`\"]\n        this.response_format == \"json_schema\" && !this.exists(\"json_schema\") && !this.exists(\"schema_registry\") => [\"schema must be specified using either `json_schema` or `schema_registry`\"]\n      }\n    "
       },
-      "version": "4.32.0"
+      "version": "4.32.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "openai_embeddings",
@@ -52534,7 +53228,9 @@
           }
         ]
       },
-      "version": "4.32.0"
+      "version": "4.32.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "openai_image_generation",
@@ -52627,7 +53323,9 @@
           }
         ]
       },
-      "version": "4.32.0"
+      "version": "4.32.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "openai_speech",
@@ -52711,7 +53409,9 @@
           }
         ]
       },
-      "version": "4.32.0"
+      "version": "4.32.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "openai_transcription",
@@ -52785,7 +53485,9 @@
           }
         ]
       },
-      "version": "4.32.0"
+      "version": "4.32.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "openai_translation",
@@ -52845,7 +53547,9 @@
           }
         ]
       },
-      "version": "4.32.0"
+      "version": "4.32.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "parallel",
@@ -52876,7 +53580,9 @@
             "description": "A list of child processors to apply."
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "parquet",
@@ -52948,7 +53654,9 @@
         ],
         "linter": "\nroot = if this.operator == \"from_json\" && (this.schema | this.schema_file | \"\") == \"\" {\n\t\"a schema or schema_file must be specified when the operator is set to from_json\"\n}"
       },
-      "version": "3.62.0"
+      "version": "3.62.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "parquet_decode",
@@ -53003,7 +53711,9 @@
           }
         ]
       },
-      "version": "4.4.0"
+      "version": "4.4.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "parquet_encode",
@@ -53137,7 +53847,9 @@
         ],
         "linter": "root = if this.schema.or([]).length() == 0 && this.schema_metadata.or(\"\") == \"\" { \"either a schema or schema_metadata must be specified\" }"
       },
-      "version": "4.4.0"
+      "version": "4.4.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "parse_log",
@@ -53204,7 +53916,9 @@
             "is_deprecated": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "processors",
@@ -53228,7 +53942,9 @@
         "type": "processor",
         "kind": "array",
         "default": []
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "protobuf",
@@ -53355,7 +54071,9 @@
           }
         ],
         "linter": "\nroot = match {\nthis.import_paths.type() == \"unknown\" && this.bsr.length() == 0 => [ \"at least one of `import_paths`and `bsr` must be set\" ],\nthis.import_paths.type() == \"array\" && this.import_paths.length() > 0 && this.bsr.length() > 0 => [ \"both `import_paths` and `bsr` can't be set simultaneously\" ],\n}"
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "qdrant",
@@ -53587,7 +54305,9 @@
             "default": 10
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "rate_limit",
@@ -53610,7 +54330,9 @@
             "description": "The target xref:components:rate_limits/about.adoc[`rate_limit` resource]."
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis",
@@ -53898,7 +54620,9 @@
           }
         ],
         "linter": "root = match {\n  this.exists(\"operator\") == this.exists(\"command\") => [ \"one of 'operator' (old style) or 'command' (new style) fields must be specified\" ]\n  this.exists(\"args_mapping\") && this.exists(\"operator\") => [ \"field args_mapping is invalid with an operator set\" ],\n}"
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redis_script",
@@ -54150,7 +54874,9 @@
           }
         ]
       },
-      "version": "4.11.0"
+      "version": "4.11.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redpanda_data_transform",
@@ -54305,7 +55031,9 @@
           }
         ]
       },
-      "version": "4.31.0"
+      "version": "4.31.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "resource",
@@ -54322,7 +55050,9 @@
         "type": "string",
         "kind": "scalar",
         "default": ""
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "retry",
@@ -54410,7 +55140,9 @@
           }
         ]
       },
-      "version": "4.27.0"
+      "version": "4.27.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "salesforce",
@@ -54579,7 +55311,9 @@
             "default": []
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "schema_registry_decode",
@@ -54987,7 +55721,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "schema_registry_encode",
@@ -55368,7 +56104,9 @@
           }
         ]
       },
-      "version": "3.58.0"
+      "version": "3.58.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "select_parts",
@@ -55393,7 +56131,9 @@
             "default": []
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sentry_capture",
@@ -55515,7 +56255,9 @@
           }
         ]
       },
-      "version": "4.16.0"
+      "version": "4.16.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "slack_thread",
@@ -55551,7 +56293,9 @@
             "interpolated": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sleep",
@@ -55575,7 +56319,9 @@
             "interpolated": true
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "split",
@@ -55607,7 +56353,9 @@
             "default": 0
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sql",
@@ -55689,7 +56437,9 @@
           }
         ]
       },
-      "version": "3.65.0"
+      "version": "3.65.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "sql_insert",
@@ -55878,7 +56628,9 @@
           }
         ]
       },
-      "version": "3.59.0"
+      "version": "3.59.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sql_raw",
@@ -56084,7 +56836,9 @@
         ],
         "linter": "root = match {\n        !this.exists(\"queries\") && !this.exists(\"query\") => [ \"either `query` or `queries` is required\" ],\n    }"
       },
-      "version": "3.65.0"
+      "version": "3.65.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sql_select",
@@ -56271,7 +57025,9 @@
           }
         ]
       },
-      "version": "3.59.0"
+      "version": "3.59.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "string_split",
@@ -56310,7 +57066,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "subprocess",
@@ -56384,7 +57142,9 @@
             "linter": "\nlet options = {\n  \"lines\": true,\n  \"length_prefixed_uint32_be\": true,\n  \"netstring\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "switch",
@@ -56445,7 +57205,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "sync_response",
@@ -56462,7 +57224,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "text_chunker",
@@ -56597,7 +57361,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "try",
@@ -56614,7 +57380,9 @@
         "type": "processor",
         "kind": "array",
         "default": []
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "unarchive",
@@ -56677,7 +57445,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "wasm",
@@ -56709,7 +57479,9 @@
           }
         ]
       },
-      "version": "4.11.0"
+      "version": "4.11.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "while",
@@ -56760,7 +57532,9 @@
             "description": "A list of child processors to execute on each loop."
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "workflow",
@@ -56883,7 +57657,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "xml",
@@ -56919,7 +57695,182 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
+    },
+    {
+      "name": "ffi",
+      "type": "processor",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Invoke a function within a shared library as a processing step.",
+      "description": "The `ffi` processor allows you to dynamically load shared libraries (.so, .dylib, or .dll files) and invoke their functions as a processing step. This enables integration with external C/C++ libraries without requiring custom Go code or rebuilding Redpanda Connect.\n\nThe processor uses `dlopen` (or platform equivalent) to load the specified library at runtime, looks up the function by name, and invokes it with arguments provided through Bloblang mapping. Function signatures are defined using the `signature` field, specifying parameter and return types.\n\nResults are returned as an array, where the first element is the return value (if not void), followed by any output parameters in their declaration order.",
+      "categories": null,
+      "examples": [
+        {
+          "title": "Call a libc function",
+          "summary": "This is an example of loading libc.so and calling a function on linux.",
+          "config": "\npipeline:\n  processors:\n    - ffi:\n        library_path: libc.6.so\n        function_name: memcmp\n        args_mapping: 'root = [\"foo\", \"bar\", 3]'\n        signature:\n          return:\n            type: int32\n          parameters:\n            - type: byte*\n            - type: byte*\n            - type: int64\n"
+        }
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "library_path",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The path to the shared library (.so, .dylib or .dll) file to load dynamically.",
+            "examples": [
+              "libbar.6.so",
+              "libfoo.dylib"
+            ]
+          },
+          {
+            "name": "function_name",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The name of the function to load from the shared library.",
+            "examples": [
+              "MyExternCFunction"
+            ]
+          },
+          {
+            "name": "args_mapping",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The bloblang expression that returns an array of arguments to pass into the foreign function.",
+            "bloblang": true,
+            "examples": [
+              "root = [42, now().ts_unix_nano(), content()]"
+            ]
+          },
+          {
+            "name": "signature",
+            "type": "object",
+            "kind": "scalar",
+            "description": "The signature of the function.",
+            "children": [
+              {
+                "name": "return",
+                "type": "object",
+                "kind": "scalar",
+                "description": "The configuration for the function's result.",
+                "children": [
+                  {
+                    "name": "type",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The data type of function's return value",
+                    "annotated_options": [
+                      [
+                        "int32",
+                        "A 32 bit signed integer is returned"
+                      ],
+                      [
+                        "int64",
+                        "A 64 bit signed integer is returned"
+                      ],
+                      [
+                        "void",
+                        "The function returns nothing"
+                      ]
+                    ],
+                    "linter": "\nlet options = {\n  \"int32\": true,\n  \"int64\": true,\n  \"void\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                  }
+                ]
+              },
+              {
+                "name": "parameters",
+                "type": "object",
+                "kind": "array",
+                "description": "The parameters of the function.",
+                "children": [
+                  {
+                    "name": "type",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The data type of the parameter.",
+                    "annotated_options": [
+                      [
+                        "byte*",
+                        "A pointer to a byte array is provided as an argument. Note this byte array cannot be referenced once the function returns. `args_mapping` must return a byte array or string type for this argument, and the parameter in C for this should be `void*`."
+                      ],
+                      [
+                        "int32",
+                        "A 32 bit signed integer is provided as an argument"
+                      ],
+                      [
+                        "int64",
+                        "A 64 bit signed integer is provided as an argument"
+                      ]
+                    ],
+                    "linter": "\nlet options = {\n  \"byte*\": true,\n  \"int32\": true,\n  \"int64\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+                  },
+                  {
+                    "name": "out",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "If the parameter provided is an 'out' parameter, meaning if the function mutates the value, and the resulting value should be returned. This is only valid for pointer types.",
+                    "default": false
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "requiresCgo": true,
+      "cloudSupported": false
+    },
+    {
+      "name": "a2a_message",
+      "type": "processor",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Sends messages to an A2A (Agent-to-Agent) protocol agent and returns the response.",
+      "description": "\nThis processor enables Redpanda Connect pipelines to communicate with A2A protocol agents. Currently only JSON-RPC transport is supported.\n\nThe processor sends a message to the agent and polls for task completion. The agent's response\nis returned as the processor output.\n\nFor more information about the A2A protocol, see https://a2a-protocol.org/latest/specification",
+      "categories": [
+        "AI"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "agent_card_url",
+            "type": "string",
+            "kind": "scalar",
+            "description": "URL for the A2A agent card. Can be either a base URL (e.g., `https://example.com`) or a full path to the agent card (e.g., `https://example.com/.well-known/agent.json`). If no path is provided, defaults to `/.well-known/agent.json`. Authentication uses OAuth2 from environment variables.",
+            "scrubber": "\nlet pass = this.parse_url().user.password.or(\"\")\nroot = if $pass != \"\" && !$pass.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n}\n"
+          },
+          {
+            "name": "prompt",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The user prompt to send to the agent. By default, the processor submits the entire payload as a string.",
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "final_message_only",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "If true, returns only the text from the final agent message (concatenated from all text parts). If false, returns the complete Message or Task object as structured data with full history, artifacts, and metadata.\n\nExample with final_message_only: true (default):\n```\nHere is the answer to your question...\n```\n\nExample with final_message_only: false:\n```json\n{\n  \"id\": \"task-123\",\n  \"contextId\": \"ctx-456\",\n  \"status\": {\n    \"state\": \"completed\"\n  },\n  \"history\": [\n    {\"role\": \"user\", \"parts\": [{\"text\": \"Your question\"}]},\n    {\"role\": \"agent\", \"parts\": [{\"text\": \"Here is the answer to your question...\"}]}\n  ],\n  \"artifacts\": []\n}\n```\n",
+            "is_advanced": true,
+            "default": true
+          }
+        ]
+      },
+      "version": "4.40.0",
+      "reason": "cloud-only",
+      "cloudSupported": true,
+      "requiresCgo": false,
+      "cloudOnly": true
     }
   ],
   "rate-limits": [
@@ -57345,7 +58296,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "influxdb",
@@ -57616,7 +58569,9 @@
           }
         ]
       },
-      "version": "3.36.0"
+      "version": "3.36.0",
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "json_api",
@@ -57631,7 +58586,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "logger",
@@ -57661,7 +58618,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "none",
@@ -57675,7 +58634,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "prometheus",
@@ -57841,7 +58802,9 @@
             "default": ""
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "statsd",
@@ -57896,7 +58859,9 @@
             ]
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     }
   ],
   "tracers": [
@@ -57945,7 +58910,9 @@
           }
         ]
       },
-      "version": "4.2.0"
+      "version": "4.2.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "jaeger",
@@ -58018,7 +58985,9 @@
             "is_optional": true
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "none",
@@ -58032,7 +59001,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "open_telemetry_collector",
@@ -58157,7 +59128,9 @@
             "version": "4.25.0"
           }
         ]
-      }
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
     },
     {
       "name": "redpanda",
@@ -59175,6 +60148,8 @@
           }
         ]
       },
+      "cloudSupported": true,
+      "requiresCgo": false,
       "description": "\nThe Redpanda tracer exports distributed tracing data to a Redpanda topic, enabling you to monitor and debug your Redpanda Connect pipelines. Traces are exported in OpenTelemetry format as JSON, allowing integration with observability platforms like Jaeger, Grafana Tempo, or custom trace consumers.\n\nThis tracer automatically captures trace spans as messages flow through your pipeline, recording timing information, component metadata, and error details. Use this to:\n\n- **Track message flow** through complex pipelines with multiple processors\n- **Identify performance bottlenecks** by analyzing span durations\n- **Debug failures** by examining trace context and error details\n- **Monitor pipeline health** across distributed Redpanda Connect instances\n- **Correlate activity** across multiple services using trace IDs\n\nThe tracer writes to a dedicated Redpanda topic (default: `otel-traces`) that can be consumed by trace analysis tools. Configure sampling to control trace volume in high-throughput environments.",
       "examples": [
         {
@@ -59218,7 +60193,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "chunker",
@@ -59239,7 +60216,9 @@
             "description": "The size of each chunk in bytes."
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "csv",
@@ -59283,7 +60262,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "decompress",
@@ -59313,7 +60294,9 @@
             }
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "json_array",
@@ -59327,7 +60310,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "json_documents",
@@ -59342,7 +60327,9 @@
         "kind": "scalar",
         "default": {}
       },
-      "version": "4.27.0"
+      "version": "4.27.0",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "lines",
@@ -59378,7 +60365,9 @@
             "default": false
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "re_match",
@@ -59409,7 +60398,9 @@
             "default": 65536
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "skip_bom",
@@ -59433,7 +60424,9 @@
             }
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "switch",
@@ -59469,7 +60462,9 @@
             "description": "The scanner to activate if this candidate passes."
           }
         ]
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "tar",
@@ -59484,7 +60479,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "to_the_end",
@@ -59499,7 +60496,9 @@
         "type": "object",
         "kind": "scalar",
         "default": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     }
   ],
   "bloblang-functions": [
@@ -72600,5 +73599,6 @@
       ],
       "impure": false
     }
-  ]
+  ],
+  "rate_limits": []
 }
