@@ -2,41 +2,7 @@
 
 Example pipelines for capturing change data from Oracle Database using LogMiner.
 
-== Quick start
-
-. Start the test environment:
-+
-[,bash]
-----
-docker compose up -d oracle
-----
-
-. Create test data:
-+
-[,bash]
-----
-./setup-test-data.sh
-----
-
-. Run an example:
-+
-[,bash]
-----
-ORACLE_CONNECTION_STRING=oracle://cdc_user:CdcPassword123@localhost:1521/FREEPDB1 \
-  rpk connect run basic-capture.yaml
-----
-
-. Make changes to see CDC in action:
-+
-[,bash]
-----
-docker exec -it oracle-cdc-test sqlplus my_schema/MySchemaPassword123@localhost:1521/FREEPDB1 <<EOF
-INSERT INTO ORDERS (ID, CUSTOMER_NAME, TOTAL, STATUS) VALUES (4, 'David', 199.99, 'pending');
-UPDATE ORDERS SET STATUS = 'shipped' WHERE ID = 1;
-COMMIT;
-EXIT;
-EOF
-----
+NOTE: The `oracledb_cdc` connector requires a Redpanda Enterprise Edition license. These examples include unit tests that validate transformation logic without requiring a running Oracle instance or license.
 
 == Examples
 
@@ -63,28 +29,6 @@ EOF
 |Route different event types to different topics
 |===
 
-== Test services
-
-The `docker-compose.yaml` includes optional services for testing outputs:
-
-* *oracle* (port 1521) - Oracle Database Free Edition for CDC input
-* *redpanda* (port 9092) - Kafka-compatible broker for Redpanda outputs
-* *localstack* (port 4566) - S3-compatible storage for S3 outputs
-
-Start all services:
-
-[,bash]
-----
-docker compose up -d
-----
-
-Start only Oracle:
-
-[,bash]
-----
-docker compose up -d oracle
-----
-
 == Run unit tests
 
 The YAML files include embedded tests that validate the transformation logic:
@@ -94,80 +38,23 @@ The YAML files include embedded tests that validate the transformation logic:
 rpk connect test *.yaml
 ----
 
-This tests the processor logic without requiring a running Oracle instance.
+This tests the processor logic without requiring a running Oracle instance or Redpanda Enterprise license.
 
-== Environment variables
+== Testing with a real Oracle database
 
-The examples use these environment variables:
+If you have a Redpanda Enterprise license and want to test against a real Oracle database:
 
+. Set up Oracle with supplemental logging enabled
+. Create a CDC user with LogMiner permissions
+. Configure the connection string and run:
++
 [,bash]
 ----
-export ORACLE_CONNECTION_STRING=oracle://cdc_user:CdcPassword123@localhost:1521/FREEPDB1
+export ORACLE_CONNECTION_STRING=oracle://cdc_user:password@localhost:1521/FREEPDB1
 export REDPANDA_BROKERS=localhost:9092
 export S3_BUCKET=test-bucket
+
+rpk connect run basic-capture.yaml
 ----
 
-== Oracle CDC prerequisites
-
-The `setup-test-data.sh` script configures:
-
-* Supplemental logging at database and table level
-* CDC user with LogMiner permissions
-* `rpcn` schema for checkpoint storage
-* Test tables with sample data
-
-To manually connect to Oracle:
-
-[,bash]
-----
-docker exec -it oracle-cdc-test sqlplus system/TestPassword123@localhost:1521/FREEPDB1
-----
-
-== Troubleshooting
-
-=== Oracle not starting
-
-Check logs:
-
-[,bash]
-----
-docker logs oracle-cdc-test
-----
-
-The Oracle container can take 1-2 minutes to fully initialize on first start.
-
-=== Connection refused
-
-Ensure Oracle is healthy:
-
-[,bash]
-----
-docker exec oracle-cdc-test healthcheck.sh
-----
-
-=== No CDC events
-
-Verify supplemental logging is enabled:
-
-[,sql]
-----
-SELECT SUPPLEMENTAL_LOG_DATA_MIN FROM V$DATABASE;
-----
-
-Check table-level logging:
-
-[,sql]
-----
-SELECT LOG_GROUP_NAME, TABLE_NAME
-FROM DBA_LOG_GROUPS
-WHERE OWNER = 'MY_SCHEMA';
-----
-
-== Cleanup
-
-[,bash]
-----
-docker compose down -v
-----
-
-The `-v` flag removes volumes, deleting all database data.
+For Oracle CDC setup requirements, see the xref:components:inputs/oracledb_cdc.adoc[oracledb_cdc input documentation].
