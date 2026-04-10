@@ -16,8 +16,9 @@ pipeline:
         base_url: "${JIRA_BASE_URL}"
         username: "${JIRA_USERNAME}"
         api_token: "${JIRA_API_TOKEN}"
-        max_retries: 3
-        request_timeout: 30s
+        backoff:
+          max_retries: 3
+        timeout: 30s
 
     # Log each issue before dropping
     - log:
