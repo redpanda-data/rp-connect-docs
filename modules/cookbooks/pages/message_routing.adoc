@@ -212,10 +212,11 @@ output:
           addresses: ["kafka:9092"]
           topic: events
 
-      - elasticsearch:
+      - elasticsearch_v8:
           urls: ["http://localhost:9200"]
           index: events
           id: ${!json("id")}
+          action: index
 
       - http_client:
           url: https://metrics.example.com/ingest
