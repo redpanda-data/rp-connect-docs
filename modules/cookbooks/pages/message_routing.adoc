@@ -289,7 +289,7 @@ pipeline:
   processors:
     - mapping: |
         root = if this.debug { deleted() }
-    - other_processor: {}  # Doesn't process debug messages
+    - log: {}  # Doesn't process debug messages
 
 output:
   kafka:
@@ -306,7 +306,7 @@ pipeline:
   processors:
     - mapping: |
         root.enriched = true
-    - other_processor: {}  # Processes all messages
+    - log: {}  # Processes all messages
 
 output:
   switch:
