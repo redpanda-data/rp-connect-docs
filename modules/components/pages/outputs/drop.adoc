@@ -1,8 +1,14 @@
 = drop
 // tag::single-source[]
+:description: Drop output reference for silently discarding messages in Redpanda Connect pipelines.
 :type: output
 :status: stable
 :categories: ["Utility"]
+:page-topic-type: reference
+:personas: streaming_developer, app_developer
+:learning-objective-1: Look up drop output syntax and configuration
+:learning-objective-2: Find examples of drop in conditional routing
+:learning-objective-3: Identify use cases for drop output in pipelines
 
 // © 2024 Redpanda Data Inc.
 
@@ -10,10 +16,90 @@
 component_type_dropdown::[]
 
 
-Drops all messages.
+Silently discards all messages without error or side effects.
 
-```yml
+The `drop` output is a utility component that drops messages from the glossterm:pipeline[]. Unlike filtering or conditional processors that modify or route messages, `drop` consumes messages and does nothing with them. This is useful for:
+
+- *Testing and debugging*: Measure input throughput without output bottlenecks
+- *Conditional workflows*: Discard messages that don't meet certain criteria
+- *Dead letter queue patterns*: Provide a final fallback when all other outputs fail
+- *Development*: Temporarily disable output while testing pipeline logic
+
+Use this reference to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+[,yaml]
+----
 include::components:example$common/outputs/drop.yaml[]
-```
+----
+
+== Performance
+
+The `drop` output has minimal overhead and immediately acknowledges messages. This makes it ideal for performance testing, as it removes output processing time from measurements.
+
+== Examples
+
+=== Conditional filtering
+
+Use `drop` with the xref:components:outputs/switch.adoc[`switch`] output to conditionally discard messages:
+
+[,yaml]
+----
+output:
+  switch:
+    cases:
+      - check: this.type == "error"
+        output:
+          label: error_sink
+          kafka:
+            addresses: ["kafka:9092"]
+            topic: errors
+      - check: this.type == "debug"
+        output:
+          label: drop_debug
+          drop: {}  # Don't process debug messages in production
+      - output:
+          label: main_sink
+          kafka:
+            addresses: ["kafka:9092"]
+            topic: events
+----
+
+=== Dead letter queue pattern
+
+Use `drop` as a last resort in a xref:components:outputs/fallback.adoc[`fallback`] chain:
+
+[,yaml]
+----
+output:
+  fallback:
+    - kafka:
+        addresses: ["kafka:9092"]
+        topic: primary_topic
+        max_in_flight: 1
+    - kafka:
+        addresses: ["kafka:9092"]
+        topic: dlq_topic
+    - drop: {}  # Last resort: drop if both outputs fail
+----
+
+=== Testing input throughput
+
+Measure how fast your input can consume data without output bottlenecks:
+
+[,yaml]
+----
+input:
+  kafka:
+    addresses: ["kafka:9092"]
+    topics: ["test"]
+output:
+  drop: {}  # Measure input consumption speed without output overhead
+----
+
+For more patterns on message routing, filtering, and when to use `drop` vs. other approaches, see the xref:cookbooks:message_routing.adoc[Message Routing Patterns] cookbook.
 
 // end::single-source[]
