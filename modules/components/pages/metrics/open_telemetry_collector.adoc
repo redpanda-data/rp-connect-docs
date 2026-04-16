@@ -1,0 +1,41 @@
+= open_telemetry_collector
+// tag::single-source[]
+:type: metrics
+
+:categories: []
+:description: Send metrics to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].
+
+component_type_dropdown::[]
+
+Send metrics to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].
+
+
+// TODO: Missing description. Add a description in the overrides file or source data.
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/metricss/open_telemetry_collector.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/metricss/open_telemetry_collector.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/metricss/open_telemetry_collector.adoc[]
+
+
+
+// end::single-source[]

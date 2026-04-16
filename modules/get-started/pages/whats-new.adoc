@@ -10,6 +10,50 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.88.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.88.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:outputs/arc.adoc[arc]
+|Outputs
+|stable
+|com/Basekick-Labs/arc[Arc^] columnar analytical database using its high-performance MessagePack ingestion endpoint.
+
+|xref:components:metrics/open_telemetry_collector.adoc[open_telemetry_collector]
+|Metrics
+|stable
+|// TODO: Add description
+
+|===
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|pdb_name
+|The name of the pluggable database (PDB) to monitor. When connecting to a CDB root, LogMiner output is scoped to this PDB via SRC_CON_NAME filtering and catalog queries use ALTER SESSION SET CONTAINER to switch context.
+|*Inputs:*
+
+* xref:components:inputs/oracledb_cdc.adoc#pdb_name[oracledb_cdc]
+
+
+|===
+
+
 == Version 4.87.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.87.0[See the full release notes^].
