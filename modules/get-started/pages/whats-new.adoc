@@ -14,6 +14,7 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
 == Version 4.88.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.88.0[See the full release notes^].
@@ -34,7 +35,7 @@ This release adds the following new components:
 |xref:components:metrics/open_telemetry_collector.adoc[open_telemetry_collector]
 |Metrics
 |stable
-|// TODO: Add description
+|Exports Redpanda Connect metrics to one or more OpenTelemetry Collector endpoints over HTTP or gRPC for aggregation and onward export.
 
 |===
 
