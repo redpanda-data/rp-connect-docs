@@ -10,7 +10,11 @@ component_type_dropdown::[]
 Send metrics to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].
 
 
-// TODO: Missing description. Add a description in the overrides file or source data.
+
+Exports Redpanda Connect metrics to one or more OpenTelemetry Collector endpoints over HTTP or gRPC for aggregation and onward export.
+
+Metrics are encoded using the OpenTelemetry Metrics protocol and can be sent to any collector endpoint that supports OTLP.
+
 
 [tabs]
 ======

@@ -59294,6 +59294,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Send metrics to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].",
+      "description": "\nExports Redpanda Connect metrics to one or more OpenTelemetry Collector endpoints over HTTP or gRPC for aggregation and onward export.\n\nMetrics are encoded using the OpenTelemetry Metrics protocol and can be sent to any collector endpoint that supports OTLP.\n",
       "categories": null,
       "config": {
         "name": "",
@@ -59379,7 +59380,7 @@
             "name": "tags",
             "type": "string",
             "kind": "map",
-            "description": "A map of tags to add to all exported spans and metrics.",
+            "description": "A map of tags to add to all exported metrics.",
             "is_advanced": true,
             "default": {}
           }
@@ -59846,7 +59847,7 @@
             "name": "tags",
             "type": "string",
             "kind": "map",
-            "description": "A map of tags to add to all exported spans and metrics.",
+            "description": "A map of tags to add to all exported spans.",
             "is_advanced": true,
             "default": {}
           },
