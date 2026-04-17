@@ -1,10 +1,11 @@
 = Message Routing Patterns
+// tag::single-source[]
 :description: Learn how to route, filter, and discard messages in Redpanda Connect pipelines.
 :page-topic-type: cookbook
 :personas: streaming_developer, app_developer
-:learning-objective-1: Find reusable patterns for message routing and filtering
-:learning-objective-2: Look up conditional routing patterns using switch and broker outputs
-:learning-objective-3: Identify dead letter queue patterns with fallback outputs
+:learning-objective-1: Implement message routing and filtering patterns in pipelines
+:learning-objective-2: Configure conditional routing using switch and broker outputs
+:learning-objective-3: Build dead letter queue patterns with fallback outputs
 
 This cookbook demonstrates common patterns for routing and filtering messages in Redpanda Connect glossterm:pipeline[,pipelines].
 
@@ -16,7 +17,7 @@ Use this cookbook to:
 
 == Discarding messages
 
-There are two primary ways to discard messages in Redpanda Connect: using the xref:components:outputs/drop.adoc[`drop` output] or the xref:guides:bloblang/walkthrough.adoc#deleting-messages[`deleted()`] function in a xref:components:processors/mapping.adoc[`mapping` processor].
+There are two primary ways to discard messages in Redpanda Connect: using the xref:components:outputs/drop.adoc[`drop` output] or the xref:guides:bloblang/walkthrough.adoc#deletions[`deleted()`] function in a xref:components:processors/mapping.adoc[`mapping` processor].
 
 === Using `deleted()` in mapping
 
@@ -112,7 +113,7 @@ output:
           drop: {}  # Don't store debug logs in production
 ----
 
-Each output can be labeled for monitoring and observability.
+You can label each output for monitoring and observability.
 
 == Error handling with fallback
 
@@ -193,10 +194,11 @@ output:
 ----
 
 This configuration:
-1. Tries to write to Kafka with batching
-2. Falls back to an HTTP service with retries
-3. Falls back to a DLQ topic
-4. Ultimately drops messages if all else fails
+
+. Tries to write to Kafka with batching
+. Falls back to an HTTP service with retries
+. Falls back to a DLQ topic
+. Ultimately drops messages if all else fails
 
 == Routing with broker
 
@@ -326,7 +328,7 @@ output:
 - **`broker`**: Sends to multiple outputs in parallel
 - **`fallback`**: Tries outputs sequentially until one succeeds
 
-Choose based on your delivery requirements and performance needs.
+Choose between these output types based on whether you need single-destination routing (`switch`), multi-destination fan-out (`broker`), or fallback behavior (`fallback`).
 
 == Testing and debugging
 
@@ -354,3 +356,4 @@ This reveals the maximum speed your input can consume data, isolated from output
 - xref:components:outputs/broker.adoc[broker output] - Fan-out patterns reference
 - xref:components:outputs/drop.adoc[drop output] - Drop output reference
 - xref:components:processors/mapping.adoc[mapping processor] - Bloblang mapping reference
+// end::single-source[]
