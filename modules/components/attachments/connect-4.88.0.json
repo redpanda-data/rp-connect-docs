@@ -14985,7 +14985,7 @@
             "name": "pdb_name",
             "type": "string",
             "kind": "scalar",
-            "description": "The name of the pluggable database (PDB) to monitor. When connecting to a CDB root, LogMiner output is scoped to this PDB via SRC_CON_NAME filtering and catalog queries use ALTER SESSION SET CONTAINER to switch context. Requires GRANT SET CONTAINER TO <user> CONTAINER=ALL.",
+            "description": "The name of the pluggable database (PDB) to monitor. When connecting to a CDB root, LogMiner output is scoped to this PDB via SRC_CON_NAME filtering and catalog queries use ALTER SESSION SET CONTAINER to switch context. Requires `GRANT SET CONTAINER TO &lt;user&gt; CONTAINER=ALL`.",
             "is_optional": true
           },
           {
