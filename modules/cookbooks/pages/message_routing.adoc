@@ -324,11 +324,11 @@ output:
 
 === Output parallelism
 
+Choose between these output types based on whether you need single-destination routing, multi-destination fan-out, or fallback behavior:
+
 - **`switch`**: Sends to one output (sequential evaluation)
 - **`broker`**: Sends to multiple outputs in parallel
 - **`fallback`**: Tries outputs sequentially until one succeeds
-
-Choose between these output types based on whether you need single-destination routing (`switch`), multi-destination fan-out (`broker`), or fallback behavior (`fallback`).
 
 == Testing and debugging
 
