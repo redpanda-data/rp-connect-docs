@@ -1,6 +1,6 @@
 {
-  "version": "4.86.0",
-  "date": "2026-04-02T16:03:59Z",
+  "version": "4.88.0",
+  "date": "2026-04-16T17:23:13Z",
   "config": [
     {
       "name": "http",
@@ -11368,6 +11368,16 @@
             ]
           },
           {
+            "name": "checkpoint_cache_connection_string",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, the checkpoint cache table is created on this remote server instead of the source database. If `checkpoint_cache` is also set, that takes precedence.",
+            "is_optional": true,
+            "examples": [
+              "sqlserver://username:password@remotehost/instance?param1=value&param2=value"
+            ]
+          },
+          {
             "name": "checkpoint_cache_key",
             "type": "string",
             "kind": "scalar",
@@ -14775,7 +14785,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Enables Change Data Capture by consuming from OracleDB.",
-      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
+      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
       "categories": [
         "Services"
       ],
@@ -14788,10 +14798,30 @@
             "name": "connection_string",
             "type": "string",
             "kind": "scalar",
-            "description": "The connection string of the Oracle database to connect to.",
+            "description": "The connection string of the Oracle database to connect to. Additional connection options can be supplied as URL query parameters, for example: `oracle://user:password@host:1522/service?WALLET=/opt/oracle/wallet&SSL=true`.",
             "examples": [
-              "oracle://username:password@host:port/service_name"
+              "oracle://username:password@host:port/service_name",
+              "oracle://user:password@host:1522/service?WALLET=/opt/oracle/wallet&SSL=true"
             ]
+          },
+          {
+            "name": "wallet_path",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Path to the Oracle Wallet directory. When set, SSL is enabled automatically. The directory must contain either `cwallet.sso` (auto-login, no password required) or `ewallet.p12` (requires `wallet_password`).",
+            "is_optional": true,
+            "examples": [
+              "/opt/oracle/wallet"
+            ]
+          },
+          {
+            "name": "wallet_password",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only required when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.",
+            "is_optional": true,
+            "is_secret": true,
+            "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
           },
           {
             "name": "stream_snapshot",
@@ -14926,6 +14956,13 @@
             "kind": "scalar",
             "description": "The maximum number of messages that can be processed at a given time. Increasing this limit enables parallel processing and batching at the output level. Any given System Change Number (SCN) will not be acknowledged unless all messages under that offset are delivered in order to preserve at least once delivery guarantees.",
             "default": 1024
+          },
+          {
+            "name": "pdb_name",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The name of the pluggable database (PDB) to monitor. When connecting to a CDB root, LogMiner output is scoped to this PDB via SRC_CON_NAME filtering and catalog queries use ALTER SESSION SET CONTAINER to switch context. Requires `GRANT SET CONTAINER TO &lt;user&gt; CONTAINER=ALL`.",
+            "is_optional": true
           },
           {
             "name": "auto_replay_nacks",
@@ -24175,11 +24212,808 @@
               "amqp://localhost:5672/",
               "${! meta(\"target_address\") }"
             ]
+          },
+          {
+            "name": "message_properties_message_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the message-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true,
+            "examples": [
+              "${! uuid_v4() }",
+              "${! meta(\"amqp_message_id\") }"
+            ]
+          },
+          {
+            "name": "message_properties_correlation_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the correlation-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true,
+            "examples": [
+              "${! meta(\"amqp_correlation_id\") }"
+            ]
+          },
+          {
+            "name": "message_properties_subject",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the subject property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_reply_to",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the reply-to property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_group_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_group_sequence",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the group-sequence property on outgoing AMQP messages. Must be a valid uint32 value. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_reply_to_group_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the reply-to-group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_user_id",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the user-id property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "message_properties_content_type",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the content-type property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true,
+            "examples": [
+              "application/json",
+              "text/plain; charset=utf-8"
+            ]
+          },
+          {
+            "name": "message_properties_content_encoding",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Set the content-encoding property on outgoing AMQP messages. This field supports Bloblang interpolation.",
+            "is_advanced": true,
+            "is_optional": true,
+            "interpolated": true
           }
         ],
         "linter": "\nroot = if this.url.or(\"\") == \"\" && this.urls.or([]).length() == 0 {\n  \"field 'urls' must be set\"\n} else if this.target_address.or(\"\") == \"\" && !this.exists(\"message_properties_to\") {\n  \"when 'target_address' is empty, 'message_properties_to' must be set to specify per-message destinations\"\n}\n"
       },
       "cloudSupported": false,
+      "requiresCgo": false
+    },
+    {
+      "name": "arc",
+      "type": "output",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Writes data to an Arc database via the msgpack ingestion endpoint.",
+      "description": "\nThis output sends data to an https://github.com/Basekick-Labs/arc[Arc^] columnar analytical database using its high-performance MessagePack ingestion endpoint.\n\nArc supports two payload formats:\n\n- *columnar* (default): Transposes batched messages into column arrays. This is the recommended format, offering significantly faster ingestion.\n- *row*: Sends each message as an individual row record with fields and optional tags.\n\nData is encoded as MessagePack and optionally compressed with zstd (recommended) or gzip before being sent to the Arc endpoint.\n\nNOTE: In columnar mode, all messages within a single batch must have the same set of fields. Arc validates that all column arrays have equal length and rejects batches with mismatched columns. Schema evolution across separate batches is fully supported. Use row format if messages within a batch have varying schemas.\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "categories": [
+        "Services"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "base_url",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Base URL of the target service (e.g., https://api.example.com). TLS is enabled automatically for https URLs."
+          },
+          {
+            "name": "timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "HTTP request timeout.",
+            "default": "5s"
+          },
+          {
+            "name": "tls",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Custom TLS settings can be used to override system defaults.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether custom TLS settings are enabled.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "skip_cert_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to skip server side certificate verification.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "enable_renegotiation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "is_advanced": true,
+                "default": false,
+                "version": "3.45.0"
+              },
+              {
+                "name": "root_cas",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "examples": [
+                  "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                ],
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "root_cas_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "default": "",
+                "examples": [
+                  "./root_cas.pem"
+                ]
+              },
+              {
+                "name": "client_certs",
+                "type": "object",
+                "kind": "array",
+                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "is_advanced": true,
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "cert": "foo",
+                      "key": "bar"
+                    }
+                  ],
+                  [
+                    {
+                      "cert_file": "./example.pem",
+                      "key_file": "./example.key"
+                    }
+                  ]
+                ],
+                "children": [
+                  {
+                    "name": "cert",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate key to use.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "cert_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate key to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "foo",
+                      "${KEY_PASSWORD}"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "proxy_url",
+            "type": "string",
+            "kind": "scalar",
+            "description": "HTTP proxy URL. Empty string disables proxying.",
+            "is_advanced": true,
+            "default": ""
+          },
+          {
+            "name": "disable_http2",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Disable HTTP/2 and force HTTP/1.1.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
+            "name": "tps_limit",
+            "type": "float",
+            "kind": "scalar",
+            "description": "Rate limit in requests per second. 0 disables rate limiting.",
+            "is_advanced": true,
+            "default": 0
+          },
+          {
+            "name": "tps_burst",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Maximum burst size for rate limiting.",
+            "is_advanced": true,
+            "default": 1
+          },
+          {
+            "name": "backoff",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Adaptive backoff configuration for 429 (Too Many Requests) responses. Always active.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "initial_interval",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Initial interval between retries on 429 responses.",
+                "is_advanced": true,
+                "default": "1s"
+              },
+              {
+                "name": "max_interval",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum interval between retries on 429 responses.",
+                "is_advanced": true,
+                "default": "30s"
+              },
+              {
+                "name": "max_retries",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum number of retries on 429 responses.",
+                "is_advanced": true,
+                "default": 3
+              }
+            ]
+          },
+          {
+            "name": "tcp",
+            "type": "object",
+            "kind": "scalar",
+            "description": "TCP socket configuration.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "connect_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum amount of time a dial will wait for a connect to complete. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              },
+              {
+                "name": "keep_alive",
+                "type": "object",
+                "kind": "scalar",
+                "description": "TCP keep-alive probe configuration.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "idle",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "interval",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration between keep-alive probes. Zero defaults to 15s.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "count",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.",
+                    "is_advanced": true,
+                    "default": 9
+                  }
+                ]
+              },
+              {
+                "name": "tcp_user_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              }
+            ]
+          },
+          {
+            "name": "http",
+            "type": "object",
+            "kind": "scalar",
+            "description": "HTTP transport settings controlling connection pooling, timeouts, and HTTP/2.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "max_idle_conns",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum total number of idle (keep-alive) connections across all hosts. 0 means unlimited.",
+                "is_advanced": true,
+                "default": 100
+              },
+              {
+                "name": "max_idle_conns_per_host",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum idle connections to keep per host. 0 (the default) uses GOMAXPROCS+1.",
+                "is_advanced": true,
+                "default": 0
+              },
+              {
+                "name": "max_conns_per_host",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum total connections (active + idle) per host. 0 means unlimited.",
+                "is_advanced": true,
+                "default": 64
+              },
+              {
+                "name": "idle_conn_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "How long an idle connection remains in the pool before being closed. 0 disables the timeout.",
+                "is_advanced": true,
+                "default": "1m30s"
+              },
+              {
+                "name": "tls_handshake_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for a TLS handshake to complete. 0 disables the timeout.",
+                "is_advanced": true,
+                "default": "10s"
+              },
+              {
+                "name": "expect_continue_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for a server's 100-continue response before sending the body. 0 means the body is sent immediately.",
+                "is_advanced": true,
+                "default": "1s"
+              },
+              {
+                "name": "response_header_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for response headers after writing the full request. 0 disables the timeout.",
+                "is_advanced": true,
+                "default": "0s"
+              },
+              {
+                "name": "disable_keep_alives",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Disable HTTP keep-alive connections; each request uses a new connection.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "disable_compression",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Disable automatic decompression of gzip responses.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "max_response_header_bytes",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum bytes of response headers to allow.",
+                "is_advanced": true,
+                "default": 1048576
+              },
+              {
+                "name": "max_response_body_bytes",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum bytes of response body the client will read. The response body is wrapped with a limit reader; reads beyond this cap return EOF. 0 disables the limit.",
+                "is_advanced": true,
+                "default": 10485760
+              },
+              {
+                "name": "write_buffer_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Size in bytes of the per-connection write buffer.",
+                "is_advanced": true,
+                "default": 4096
+              },
+              {
+                "name": "read_buffer_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Size in bytes of the per-connection read buffer.",
+                "is_advanced": true,
+                "default": 4096
+              },
+              {
+                "name": "h2",
+                "type": "object",
+                "kind": "scalar",
+                "description": "HTTP/2-specific transport settings. Only applied when HTTP/2 is enabled.",
+                "is_advanced": true,
+                "children": [
+                  {
+                    "name": "strict_max_concurrent_requests",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "When true, new requests block when a connection's concurrency limit is reached instead of opening a new connection.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "max_decoder_header_table_size",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Upper limit in bytes for the HPACK header table used to decode headers from the peer. Must be less than 4 MiB.",
+                    "is_advanced": true,
+                    "default": 4096
+                  },
+                  {
+                    "name": "max_encoder_header_table_size",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Upper limit in bytes for the HPACK header table used to encode headers sent to the peer. Must be less than 4 MiB.",
+                    "is_advanced": true,
+                    "default": 4096
+                  },
+                  {
+                    "name": "max_read_frame_size",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Largest HTTP/2 frame this endpoint will read. Valid range: 16 KiB to 16 MiB.",
+                    "is_advanced": true,
+                    "default": 16384
+                  },
+                  {
+                    "name": "max_receive_buffer_per_connection",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Maximum flow-control window size in bytes for data received on a connection. Must be at least 64 KiB and less than 4 MiB.",
+                    "is_advanced": true,
+                    "default": 1048576
+                  },
+                  {
+                    "name": "max_receive_buffer_per_stream",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Maximum flow-control window size in bytes for data received on a single stream. Must be less than 4 MiB.",
+                    "is_advanced": true,
+                    "default": 1048576
+                  },
+                  {
+                    "name": "send_ping_timeout",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Idle timeout after which a PING frame is sent to verify connection health. 0 disables health checks.",
+                    "is_advanced": true,
+                    "default": "0s"
+                  },
+                  {
+                    "name": "ping_timeout",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Timeout waiting for a PING response before closing the connection.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "write_byte_timeout",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Timeout for writing data to a connection. The timer resets whenever bytes are written. 0 disables the timeout.",
+                    "is_advanced": true,
+                    "default": "0s"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "access_log_level",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Log level for HTTP request/response logging. Empty disables logging.",
+            "is_advanced": true,
+            "default": "",
+            "options": [
+              "",
+              "TRACE",
+              "DEBUG",
+              "INFO",
+              "WARN",
+              "ERROR"
+            ],
+            "linter": "\nlet options = {\n  \"\": true,\n  \"trace\": true,\n  \"debug\": true,\n  \"info\": true,\n  \"warn\": true,\n  \"error\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "access_log_body_limit",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Maximum bytes of request/response body to include in logs. 0 to skip body logging.",
+            "is_advanced": true,
+            "default": 0
+          },
+          {
+            "name": "token",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Bearer token for authentication.",
+            "is_optional": true,
+            "is_secret": true,
+            "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+          },
+          {
+            "name": "database",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The target database name.",
+            "default": "default"
+          },
+          {
+            "name": "measurement",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The measurement (table) name. Supports interpolation functions.",
+            "interpolated": true,
+            "examples": [
+              "cpu_metrics",
+              "${!metadata(\"measurement\")}",
+              "${!json(\"type\")}"
+            ]
+          },
+          {
+            "name": "format",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The payload format. `columnar` transposes batch messages into column arrays for best performance. `row` sends each message as an individual record.",
+            "default": "columnar",
+            "options": [
+              "columnar",
+              "row"
+            ],
+            "linter": "\nlet options = {\n  \"columnar\": true,\n  \"row\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "timestamp_field",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The field name within each message containing the timestamp. If empty, the current time is used. Supports Unix timestamps and RFC3339 strings.",
+            "is_advanced": true,
+            "is_optional": true,
+            "default": ""
+          },
+          {
+            "name": "timestamp_unit",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The unit of a numeric timestamp field. `auto` detects the unit based on magnitude. Ignored when `timestamp_field` is empty.",
+            "is_advanced": true,
+            "default": "auto",
+            "options": [
+              "us",
+              "ms",
+              "s",
+              "ns",
+              "auto"
+            ],
+            "linter": "\nlet options = {\n  \"us\": true,\n  \"ms\": true,\n  \"s\": true,\n  \"ns\": true,\n  \"auto\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "tags_mapping",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional Bloblang mapping to extract tags from each message. Only used in `row` format. The result must be a `map[string]string`.",
+            "is_optional": true,
+            "bloblang": true,
+            "examples": [
+              "root = {\"host\": this.hostname, \"region\": this.region}"
+            ]
+          },
+          {
+            "name": "compression",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Compression algorithm for the request body. `zstd` is recommended for best decompression performance in Arc.",
+            "default": "zstd",
+            "options": [
+              "zstd",
+              "gzip",
+              "none"
+            ],
+            "linter": "\nlet options = {\n  \"zstd\": true,\n  \"gzip\": true,\n  \"none\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "max_in_flight",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "default": 64
+          },
+          {
+            "name": "batching",
+            "type": "object",
+            "kind": "",
+            "description": "\nAllows you to configure a xref:configuration:batching.adoc[batching policy].",
+            "examples": [
+              {
+                "byte_size": 5000,
+                "count": 0,
+                "period": "1s"
+              },
+              {
+                "count": 10,
+                "period": "1s"
+              },
+              {
+                "check": "this.contains(\"END BATCH\")",
+                "count": 0,
+                "period": "1m"
+              }
+            ],
+            "children": [
+              {
+                "name": "count",
+                "type": "int",
+                "kind": "scalar",
+                "description": "A number of messages at which the batch should be flushed. If `0` disables count based batching.",
+                "default": 0
+              },
+              {
+                "name": "byte_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "An amount of bytes at which the batch should be flushed. If `0` disables size based batching.",
+                "default": 0
+              },
+              {
+                "name": "period",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A period in which an incomplete batch should be flushed regardless of its size.",
+                "default": "",
+                "examples": [
+                  "1s",
+                  "1m",
+                  "500ms"
+                ]
+              },
+              {
+                "name": "check",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.",
+                "default": "",
+                "bloblang": true,
+                "examples": [
+                  "this.type == \"end_of_transaction\""
+                ]
+              },
+              {
+                "name": "processors",
+                "type": "processor",
+                "kind": "array",
+                "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  [
+                    {
+                      "archive": {
+                        "format": "concatenate"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "lines"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "json_array"
+                      }
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "version": "4.88.0",
+      "cloudSupported": true,
       "requiresCgo": false
     },
     {
@@ -31440,7 +32274,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Write data to Apache Iceberg tables via REST catalog.",
-      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\nCurrently only version 2 of the Iceberg specification is supported. Any pre-existing version 1 tables will be upgraded to version 2 automatically.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
       "categories": [
         "Services"
       ],
@@ -44830,6 +45664,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Executes an arbitrary SQL query for each message.",
+      "description": "When multiple queries are configured, all messages within a batch are executed in a single database transaction. Single-query configurations execute each message individually without a transaction, preserving per-message error granularity. When consuming from Kafka, messages are automatically ordered by partition within the transaction, allowing `max_in_flight` > 1 to parallelize across partitions while preserving consume order within each partition. Messages without `kafka_partition` metadata default to partition 0.",
       "categories": [
         "Services"
       ],
@@ -44843,6 +45678,11 @@
           "title": "Dynamically Creating Tables (PostgreSQL)",
           "summary": "Here we dynamically create output tables transactionally with inserting a record into the newly created table.",
           "config": "\noutput:\n  processors:\n    - mapping: |\n        root = this\n        # Prevent SQL injection when using unsafe_dynamic_query\n        meta table_name = \"\\\"\" + metadata(\"table_name\").replace_all(\"\\\"\", \"\\\"\\\"\") + \"\\\"\"\n  sql_raw:\n    driver: postgres\n    dsn: postgres://localhost/postgres\n    unsafe_dynamic_query: true\n    queries:\n      - query: |\n          CREATE TABLE IF NOT EXISTS ${!metadata(\"table_name\")} (id varchar primary key, document jsonb);\n      - query: |\n          INSERT INTO ${!metadata(\"table_name\")} (id, document) VALUES ($1, $2)\n          ON CONFLICT (id) DO UPDATE SET document = EXCLUDED.document;\n        args_mapping: |\n          root = [ this.id, this.document.string() ]\n\n"
+        },
+        {
+          "title": "Conditional CDC Queries (PostgreSQL)",
+          "summary": "Route messages to different SQL operations based on message metadata. Tombstone messages trigger a DELETE, while all other messages perform an upsert. All operations within a batch execute in a single transaction, ordered by Kafka partition.",
+          "config": "\noutput:\n  sql_raw:\n    driver: postgres\n    dsn: postgres://localhost/postgres\n    max_in_flight: 8\n    batching:\n      count: 100\n      period: 100ms\n    queries:\n      - when: 'root = meta(\"kafka_tombstone_message\") == \"true\"'\n        query: 'DELETE FROM users WHERE id = $1'\n        args_mapping: 'root = [this.id]'\n      - query: |\n          INSERT INTO users (id, name, updated_at)\n          VALUES ($1, $2, $3)\n          ON CONFLICT (id) DO UPDATE SET\n            name = EXCLUDED.name,\n            updated_at = EXCLUDED.updated_at\n        args_mapping: 'root = [this.id, this.name, this.updated_at]'\n"
         }
       ],
       "config": {
@@ -44918,7 +45758,7 @@
             "name": "queries",
             "type": "object",
             "kind": "array",
-            "description": "A list of statements to run in addition to `query`. When specifying multiple statements, they are all executed within a transaction.",
+            "description": "A list of query statements. When a `when` condition is specified on entries, the first query whose condition evaluates to `true` (or that has no condition) is executed for each message. When no `when` conditions are present, all queries execute for each message within a transaction. When specifying multiple statements without conditions, they are all executed within a transaction.",
             "is_optional": true,
             "children": [
               {
@@ -44938,6 +45778,18 @@
                   "root = [ this.cat.meow, this.doc.woofs[0] ]",
                   "root = [ meta(\"user.id\") ]"
                 ]
+              },
+              {
+                "name": "when",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional xref:guides:bloblang/about.adoc[Bloblang mapping] that, when set, is evaluated for each message to determine whether this query should be executed. The mapping should return a boolean value. The first query in the list whose `when` condition evaluates to `true` (or that has no `when` condition) is the one that executes. This enables conditional query routing based on message content or metadata without requiring `unsafe_dynamic_query`.",
+                "is_optional": true,
+                "bloblang": true,
+                "examples": [
+                  "root = meta(\"kafka_tombstone_message\") == \"true\"",
+                  "root = this.operation == \"delete\""
+                ]
               }
             ]
           },
@@ -44945,7 +45797,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of statements to execute in parallel.",
+            "description": "The maximum number of batches to be sending in parallel at any given time.",
             "default": 64
           },
           {
@@ -45104,7 +45956,7 @@
             ]
           }
         ],
-        "linter": "root = match {\n        !this.exists(\"queries\") && !this.exists(\"query\") => [ \"either `query` or `queries` is required\" ],\n    }"
+        "linter": "root = if this.exists(\"queries\") && this.queries.length() > 1 && this.queries.any(q -> q.exists(\"when\")) {\n        this.queries.map_each(q -> if q.exists(\"when\") { \"has_when\" } else { \"no_when\" }).fold({\"idx\": 0, \"errs\": []}, item -> {\n            \"idx\": item.tally.idx + 1,\n            \"errs\": if item.value == \"no_when\" && item.tally.idx < this.queries.length() - 1 {\n                item.tally.errs.append(\"query at index %d has no `when` condition and will always match, making subsequent queries unreachable\".format(item.tally.idx))\n            } else {\n                item.tally.errs\n            },\n        }).errs\n    } else { [] }"
       },
       "version": "3.65.0",
       "cloudSupported": true,
@@ -55120,7 +55972,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Automatically decodes and validates messages with schemas from a Confluent Schema Registry service.",
-      "description": "\nDecodes messages automatically from a schema stored within a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by extracting a schema ID from the message and obtaining the associated schema from the registry. If a message fails to match against the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and Json schemas are supported, all are capable of expanding from schema references as of v4.22.0.\n\n== Avro JSON format\n\nThis processor creates documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when decoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `{\"string\": \"a\"}`; and\n- a `Foo` instance as `{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead create documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting the field <<avro_raw_json, `avro_raw_json`>> to `true`.\n\n== Protobuf format\n\nThis processor decodes protobuf messages to JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n== Metadata\n\nThis processor also adds the following metadata to each outgoing message:\n\nschema_id: the ID of the schema in the schema registry that was associated with the message.\n",
+      "description": "\nDecodes messages automatically from a schema stored within a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by extracting a schema ID from the message and obtaining the associated schema from the registry. If a message fails to match against the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and Json schemas are supported, all are capable of expanding from schema references as of v4.22.0.\n\n== Avro JSON format\n\nThis processor creates documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when decoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `{\"string\": \"a\"}`; and\n- a `Foo` instance as `{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead create documents in standard/raw JSON format by setting the field <<avro_raw_json, `avro_raw_json`>> to `true`.\n\n== Protobuf format\n\nThis processor decodes protobuf messages to JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n== Metadata\n\nThis processor also adds the following metadata to each outgoing message:\n\nschema_id: the ID of the schema in the schema registry that was associated with the message.\n",
       "categories": [
         "Parsing",
         "Integration"
@@ -55134,7 +55986,7 @@
             "name": "avro_raw_json",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether Avro messages should be decoded into normal JSON (\"json that meets the expectations of regular internet json\") rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. If `true` the schema returned from the subject should be decoded as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard json^] instead of as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[avro json^]. There is a https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in goavro^], the https://github.com/linkedin/goavro[underlining library used for avro serialization^], that explains in more detail the difference between the standard json and avro json.",
+            "description": "Whether Avro messages should be decoded into normal JSON (\"json that meets the expectations of regular internet json\") rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. When true, union values are unwrapped (bare values instead of {\"type\": value} wrappers).",
             "is_advanced": true,
             "is_deprecated": true,
             "default": false
@@ -55530,7 +56382,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Automatically encodes and validates messages with schemas from a Confluent Schema Registry service.",
-      "description": "\nEncodes messages automatically from schemas obtained from a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by polling the service for the latest schema version for target subjects.\n\nAlternatively, when `schema_metadata` is set, the processor reads a schema in benthos common schema format from message metadata (as produced by CDC inputs such as `postgresql`, `mysql_cdc`, and `microsoft_sql_server_cdc`), converts it to the target `format` (Avro or JSON Schema), registers it with the schema registry, and encodes the message. This is useful when the schema is not pre-registered in the registry and instead travels with the data.\n\nIf a message fails to encode under the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and JSON Schema formats are supported. In registry-pull mode all three are auto-detected from the registry. In metadata mode Avro and JSON Schema are supported, with the target format selected via the `format` field. Schema references are supported in registry-pull mode as of v4.22.0.\n\n== Avro JSON format\n\nBy default this processor expects documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when encoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `\\{\"string\": \"a\"}`; and\n- a `Foo` instance as `\\{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead consume documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting `avro.raw_json` to `true`. This is strongly recommended when using `schema_metadata` mode, as CDC sources emit standard JSON rather than Avro JSON.\n\nNOTE: The top-level `avro_raw_json` field is deprecated in favor of `avro.raw_json`.\n\n=== Known issues\n\nImportant! There is an outstanding issue in the https://github.com/linkedin/goavro[avro serializing library^] that Redpanda Connect uses which means it https://github.com/linkedin/goavro/issues/252[doesn't encode logical types correctly^]. It's still possible to encode logical types that are in-line with the spec if `avro.raw_json` is set to true, though now of course non-logical types will not be in-line with the spec.\n\n== Protobuf format\n\nThis processor encodes protobuf messages either from any format parsed within Redpanda Connect (encoded as JSON by default), or from raw JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n=== Multiple message support\n\nWhen a target subject presents a protobuf schema that contains multiple messages it becomes ambiguous which message definition a given input data should be encoded against. In such scenarios Redpanda Connect will attempt to encode the data against each of them and select the first to successfully match against the data, this process currently *ignores all nested message definitions*. In order to speed up this exhaustive search the last known successful message will be attempted first for each subsequent input.\n\nWe will be considering alternative approaches in future so please https://redpanda.com/slack[get in touch^] with thoughts and feedback.\n",
+      "description": "\nEncodes messages automatically from schemas obtained from a https://docs.confluent.io/platform/current/schema-registry/index.html[Confluent Schema Registry service^] by polling the service for the latest schema version for target subjects.\n\nAlternatively, when `schema_metadata` is set, the processor reads a schema in benthos common schema format from message metadata (as produced by CDC inputs such as `postgresql`, `mysql_cdc`, and `microsoft_sql_server_cdc`), converts it to the target `format` (Avro or JSON Schema), registers it with the schema registry, and encodes the message. This is useful when the schema is not pre-registered in the registry and instead travels with the data.\n\nIf a message fails to encode under the schema then it will remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].\n\nAvro, Protobuf and JSON Schema formats are supported. In registry-pull mode all three are auto-detected from the registry. In metadata mode Avro and JSON Schema are supported, with the target format selected via the `format` field. Schema references are supported in registry-pull mode as of v4.22.0.\n\n== Avro JSON format\n\nBy default this processor expects documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when encoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `\\{\"string\": \"a\"}`; and\n- a `Foo` instance as `\\{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead consume documents in standard/raw JSON format by setting `avro.raw_json` to `true`. This is strongly recommended when using `schema_metadata` mode, as CDC sources emit standard JSON rather than Avro JSON.\n\nNOTE: The top-level `avro_raw_json` field is deprecated in favor of `avro.raw_json`.\n\n== Protobuf format\n\nThis processor encodes protobuf messages either from any format parsed within Redpanda Connect (encoded as JSON by default), or from raw JSON documents, you can read more about JSON mapping of protobuf messages here: https://developers.google.com/protocol-buffers/docs/proto3#json\n\n=== Multiple message support\n\nWhen a target subject presents a protobuf schema that contains multiple messages it becomes ambiguous which message definition a given input data should be encoded against. In such scenarios Redpanda Connect will attempt to encode the data against each of them and select the first to successfully match against the data, this process currently *ignores all nested message definitions*. In order to speed up this exhaustive search the last known successful message will be attempted first for each subsequent input.\n\nWe will be considering alternative approaches in future so please https://redpanda.com/slack[get in touch^] with thoughts and feedback.\n",
       "categories": [
         "Parsing",
         "Integration"
@@ -58437,6 +59289,107 @@
       "requiresCgo": false
     },
     {
+      "name": "open_telemetry_collector",
+      "type": "metrics",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Send metrics to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].",
+      "description": "\nExports Redpanda Connect metrics to one or more OpenTelemetry Collector endpoints over HTTP or gRPC for aggregation and onward export.\n\nMetrics are encoded using the OpenTelemetry Metrics protocol and can be sent to any collector endpoint that supports OTLP.\n",
+      "categories": null,
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "service",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The name of the service in metrics.",
+            "default": "benthos"
+          },
+          {
+            "name": "http",
+            "type": "object",
+            "kind": "array",
+            "description": "A list of http collectors.",
+            "children": [
+              {
+                "name": "address",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The endpoint of a collector to send events to.",
+                "is_optional": true,
+                "examples": [
+                  "localhost:4318"
+                ]
+              },
+              {
+                "name": "url",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The URL of a collector to send events to.",
+                "is_deprecated": true,
+                "default": "localhost:4318"
+              },
+              {
+                "name": "secure",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Connect to the collector over HTTPS",
+                "default": false
+              }
+            ]
+          },
+          {
+            "name": "grpc",
+            "type": "object",
+            "kind": "array",
+            "description": "A list of grpc collectors.",
+            "children": [
+              {
+                "name": "address",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The endpoint of a collector to send events to.",
+                "is_optional": true,
+                "examples": [
+                  "localhost:4317"
+                ],
+                "scrubber": "\nlet pass = this.parse_url().user.password.or(\"\")\nroot = if $pass != \"\" && !$pass.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n}\n"
+              },
+              {
+                "name": "url",
+                "type": "string",
+                "kind": "scalar",
+                "description": "The URL of a collector to send events to.",
+                "is_deprecated": true,
+                "default": "localhost:4317",
+                "scrubber": "\nlet pass = this.parse_url().user.password.or(\"\")\nroot = if $pass != \"\" && !$pass.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n}\n"
+              },
+              {
+                "name": "secure",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Connect to the collector with client transport security",
+                "default": false
+              }
+            ]
+          },
+          {
+            "name": "tags",
+            "type": "string",
+            "kind": "map",
+            "description": "A map of tags to add to all exported metrics.",
+            "is_advanced": true,
+            "default": {}
+          }
+        ]
+      },
+      "cloudSupported": false,
+      "requiresCgo": false
+    },
+    {
       "name": "prometheus",
       "type": "metrics",
       "status": "stable",
@@ -58832,7 +59785,7 @@
                 "name": "address",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The endpoint of a collector to send tracing events to.",
+                "description": "The endpoint of a collector to send events to.",
                 "is_optional": true,
                 "examples": [
                   "localhost:4318"
@@ -58842,7 +59795,7 @@
                 "name": "url",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The URL of a collector to send tracing events to.",
+                "description": "The URL of a collector to send events to.",
                 "is_deprecated": true,
                 "default": "localhost:4318"
               },
@@ -58865,7 +59818,7 @@
                 "name": "address",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The endpoint of a collector to send tracing events to.",
+                "description": "The endpoint of a collector to send events to.",
                 "is_optional": true,
                 "examples": [
                   "localhost:4317"
@@ -58876,7 +59829,7 @@
                 "name": "url",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The URL of a collector to send tracing events to.",
+                "description": "The URL of a collector to send events to.",
                 "is_deprecated": true,
                 "default": "localhost:4317",
                 "scrubber": "\nlet pass = this.parse_url().user.password.or(\"\")\nroot = if $pass != \"\" && !$pass.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n}\n"
@@ -58894,7 +59847,7 @@
             "name": "tags",
             "type": "string",
             "kind": "map",
-            "description": "A map of tags to add to all tracing spans.",
+            "description": "A map of tags to add to all exported spans.",
             "is_advanced": true,
             "default": {}
           },
@@ -59957,7 +60910,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Consume a stream of Avro OCF datum.",
-      "description": "\n== Avro JSON format\n\nThis scanner yields documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when decoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `{\"string\": \"a\"}`; and\n- a `Foo` instance as `{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead create documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting the field <<avro_raw_json,`avro_raw_json`>> to `true`.\n\nThis scanner also emits the canonical Avro schema as `@avro_schema` metadata, along with the schema's fingerprint available via `@avro_schema_fingerprint`.\n",
+      "description": "\n== Avro JSON format\n\nThis scanner yields documents formatted as https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^] when decoding with Avro schemas. In this format the value of a union is encoded in JSON as follows:\n\n- if its type is `null`, then it is encoded as a JSON `null`;\n- otherwise it is encoded as a JSON object with one name/value pair whose name is the type's name and whose value is the recursively encoded value. For Avro's named types (record, fixed or enum) the user-specified name is used, for other types the type name is used.\n\nFor example, the union schema `[\"null\",\"string\",\"Foo\"]`, where `Foo` is a record name, would encode:\n\n- `null` as `null`;\n- the string `\"a\"` as `{\"string\": \"a\"}`; and\n- a `Foo` instance as `{\"Foo\": {...}}`, where `{...}` indicates the JSON encoding of a `Foo` instance.\n\nHowever, it is possible to instead create documents in standard/raw JSON format by setting the field <<avro_raw_json,`avro_raw_json`>> to `true`.\n\nThis scanner also emits the canonical Avro schema as `@avro_schema` metadata, along with the schema's fingerprint available via `@avro_schema_fingerprint`.\n",
       "categories": null,
       "config": {
         "name": "",
@@ -59968,7 +60921,7 @@
             "name": "raw_json",
             "type": "bool",
             "kind": "scalar",
-            "description": "Whether messages should be decoded into normal JSON (\"json that meets the expectations of regular internet json\") rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. If `true` the schema returned from the subject should be decoded as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard json^] instead of as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[avro json^]. There is a https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in goavro^], the https://github.com/linkedin/goavro[underlining library used for avro serialization^], that explains in more detail the difference between the standard json and avro json.",
+            "description": "Whether messages should be decoded into normal JSON rather than https://avro.apache.org/docs/current/specification/_print/#json-encoding[Avro JSON^]. When true, union values are unwrapped (bare values instead of {\"type\": value} wrappers).",
             "is_advanced": true,
             "default": false
           }

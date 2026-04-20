@@ -1,0 +1,9 @@
+metrics:
+  open_telemetry_collector:
+    service: benthos
+    http:
+      - address: localhost:4318
+        secure: false
+    grpc:
+      - address: localhost:4317
+        secure: false

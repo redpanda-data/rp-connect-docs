@@ -278,6 +278,12 @@ Specifies a number of tables that will be processed in parallel during the snaps
 
 *Default*: `1`
 
+=== `pdb_name`
+
+The name of the pluggable database (PDB) to monitor. When connecting to a CDB root, LogMiner output is scoped to this PDB via SRC_CON_NAME filtering and catalog queries use ALTER SESSION SET CONTAINER to switch context. Requires GRANT SET CONTAINER TO <user> CONTAINER=ALL.
+
+*Type*: `string`
+
 === `snapshot_max_batch_size`
 
 The maximum number of rows to be streamed in a single batch when taking a snapshot.

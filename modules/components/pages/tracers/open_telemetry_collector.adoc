@@ -1,16 +1,16 @@
 = open_telemetry_collector
 // tag::single-source[]
 :type: tracer
-:status: experimental
 
-// © 2024 Redpanda Data Inc.
-
+:categories: []
+:description: Send tracing events to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].
 
 component_type_dropdown::[]
 
-
 Send tracing events to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].
 
+
+// TODO: Missing description. Add a description in the overrides file or source data.
 
 [tabs]
 ======
@@ -35,5 +35,7 @@ include::components:example$advanced/tracers/open_telemetry_collector.yaml[]
 ======
 
 include::redpanda-connect:components:partial$fields/tracers/open_telemetry_collector.adoc[]
+
+
 
 // end::single-source[]

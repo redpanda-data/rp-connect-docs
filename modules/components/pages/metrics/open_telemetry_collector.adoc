@@ -1,0 +1,81 @@
+= open_telemetry_collector
+// tag::single-source[]
+:type: metrics
+:page-commercial-names: OpenTelemetry
+:categories: []
+:description: Send metrics to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].
+
+component_type_dropdown::[]
+
+Send metrics to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].
+
+
+
+Exports Redpanda Connect metrics to one or more OpenTelemetry Collector endpoints over HTTP or gRPC for aggregation and onward export.
+
+Metrics are encoded using the OpenTelemetry Metrics protocol and can be sent to any collector endpoint that supports OTLP.
+
+You can configure multiple collector endpoints (both HTTP and gRPC simultaneously). All configured endpoints will receive the same metrics data. This is useful for redundancy or sending metrics to multiple observability platforms.
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/metrics/open_telemetry_collector.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/metrics/open_telemetry_collector.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/metrics/open_telemetry_collector.adoc[]
+
+== Usage
+
+The most common setup uses a local OpenTelemetry Collector running as a sidecar or daemon, which then forwards metrics to your observability backend:
+
+```yaml
+metrics:
+  open_telemetry_collector:
+    service: my-service-name
+    grpc:
+      - address: localhost:4317
+```
+
+For production deployments with remote collectors, enable TLS:
+
+```yaml
+metrics:
+  open_telemetry_collector:
+    service: my-service-name
+    grpc:
+      - address: otel-collector.example.com:4317
+        secure: true
+```
+
+Use the `tags` field to add labels to all exported metrics for filtering and grouping in your observability platform:
+
+```yaml
+metrics:
+  open_telemetry_collector:
+    service: my-service-name
+    grpc:
+      - address: localhost:4317
+    tags:
+      environment: production
+      cluster: kafka-01
+```
+
+
+// end::single-source[]

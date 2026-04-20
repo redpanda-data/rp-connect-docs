@@ -1,13 +1,13 @@
 {
   "comparison": {
-    "oldVersion": "4.86.0",
-    "newVersion": "4.87.0",
-    "timestamp": "2026-04-10T19:07:59.675Z"
+    "oldVersion": "4.87.0",
+    "newVersion": "4.88.0",
+    "timestamp": "2026-04-17T11:58:02.300Z"
   },
   "summary": {
     "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 13,
+    "newFields": 1,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
@@ -25,69 +25,9 @@
     "removedComponents": [],
     "newFields": [
       {
-        "component": "inputs:microsoft_sql_server_cdc",
-        "field": "checkpoint_cache_connection_string",
-        "description": "An optional connection string for a remote Microsoft SQL Server to use for the checkpoint cache. When set, the checkpoint cache table is created on this remote server instead of the source database. If `checkpoint_cache` is also set, that takes precedence."
-      },
-      {
         "component": "inputs:oracledb_cdc",
-        "field": "wallet_path",
-        "description": "Path to the Oracle Wallet directory. When set, SSL is enabled automatically. The directory must contain either `cwallet.sso` (auto-login, no password required) or `ewallet.p12` (requires `wallet_password`)."
-      },
-      {
-        "component": "inputs:oracledb_cdc",
-        "field": "wallet_password",
-        "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only required when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_message_id",
-        "description": "Set the message-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_correlation_id",
-        "description": "Set the correlation-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_subject",
-        "description": "Set the subject property on outgoing AMQP messages. This field supports Bloblang interpolation."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_reply_to",
-        "description": "Set the reply-to property on outgoing AMQP messages. This field supports Bloblang interpolation."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_group_id",
-        "description": "Set the group-id property on outgoing AMQP messages. This field supports Bloblang interpolation."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_group_sequence",
-        "description": "Set the group-sequence property on outgoing AMQP messages. Must be a valid uint32 value. This field supports Bloblang interpolation."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_reply_to_group_id",
-        "description": "Set the reply-to-group-id property on outgoing AMQP messages. This field supports Bloblang interpolation."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_user_id",
-        "description": "Set the user-id property on outgoing AMQP messages. This field supports Bloblang interpolation."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_content_type",
-        "description": "Set the content-type property on outgoing AMQP messages. This field supports Bloblang interpolation."
-      },
-      {
-        "component": "outputs:amqp_1",
-        "field": "message_properties_content_encoding",
-        "description": "Set the content-encoding property on outgoing AMQP messages. This field supports Bloblang interpolation."
+        "field": "pdb_name",
+        "description": "The name of the pluggable database (PDB) to monitor. When connecting to a CDB root, LogMiner output is scoped to this PDB via SRC_CON_NAME filtering and catalog queries use ALTER SESSION SET CONTAINER to switch context. Requires GRANT SET CONTAINER TO <user> CONTAINER=ALL."
       }
     ],
     "removedFields": [],
@@ -104,13 +44,13 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.87.0",
-      "cloud": "4.87.0",
-      "cgo": "4.87.0"
+      "oss": "4.88.0",
+      "cloud": "4.88.0",
+      "cgo": "4.88.0"
     },
     "current": {
-      "cloudSupported": 479,
-      "selfHostedOnly": 81,
+      "cloudSupported": 480,
+      "selfHostedOnly": 82,
       "cgoOnly": 0
     },
     "changes": {},
@@ -579,6 +519,11 @@
         {
           "type": "outputs",
           "name": "amqp_0_9",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "arc",
           "status": "stable"
         },
         {
@@ -2877,6 +2822,11 @@
           "type": "metrics",
           "name": "logger",
           "status": "beta"
+        },
+        {
+          "type": "metrics",
+          "name": "open_telemetry_collector",
+          "status": "stable"
         },
         {
           "type": "metrics",
