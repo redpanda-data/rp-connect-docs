@@ -44,7 +44,7 @@ endif::[]
 * Return partial results if full processing takes too long.
 
 ifdef::env-cloud[]
-For patterns that handle timeout failures gracefully, see xref:ai-agents:mcp/remote/tool-patterns.adoc#error-handling[error handling patterns].
+For patterns that handle timeout failures gracefully, see xref:redpanda-adp:mcp/remote/tool-patterns.adoc#error-handling[error handling patterns].
 endif::[]
 ifndef::env-cloud[]
 For patterns that handle timeout failures gracefully, see xref:ai-agents:mcp-server/tool-patterns.adoc#error-handling[error handling patterns].
