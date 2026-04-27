@@ -15,6 +15,30 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.89.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.89.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|default_timestamp_unit
+|The precision used when encoding TIMESTAMP logical types.
+|*Processors:*
+
+* xref:components:processors/parquet_encode.adoc#default_timestamp_unit[parquet_encode]
+
+
+|===
+
+
 == Version 4.88.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.88.0[See the full release notes^].

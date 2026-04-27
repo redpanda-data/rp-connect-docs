@@ -1,8 +1,8 @@
 {
   "comparison": {
-    "oldVersion": "4.87.0",
-    "newVersion": "4.88.0",
-    "timestamp": "2026-04-17T11:58:02.300Z"
+    "oldVersion": "4.88.0",
+    "newVersion": "4.89.0",
+    "timestamp": "2026-04-23T16:42:07.496Z"
   },
   "summary": {
     "newComponents": 0,
@@ -12,7 +12,7 @@
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
     "changedDefaults": 0,
-    "platformTransitions": 0,
+    "platformTransitions": 2,
     "newBloblangMethods": 0,
     "removedBloblangMethods": 0,
     "newBloblangFunctions": 0,
@@ -25,16 +25,52 @@
     "removedComponents": [],
     "newFields": [
       {
-        "component": "inputs:oracledb_cdc",
-        "field": "pdb_name",
-        "description": "The name of the pluggable database (PDB) to monitor. When connecting to a CDB root, LogMiner output is scoped to this PDB via SRC_CON_NAME filtering and catalog queries use ALTER SESSION SET CONTAINER to switch context. Requires GRANT SET CONTAINER TO <user> CONTAINER=ALL."
+        "component": "processors:parquet_encode",
+        "field": "default_timestamp_unit",
+        "introducedIn": "4.89.0",
+        "description": "The precision used when encoding TIMESTAMP logical types. The default `NANOSECOND` matches historical behaviour, but `TIMESTAMP(NANOS)` is not readable by Apache Spark (Databricks), AWS Athena or DuckDB; set this to `MICROSECOND` (or `MILLISECOND`) when writing Parquet files intended for consumption by those engines."
       }
     ],
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
     "changedDefaults": [],
-    "platformTransitions": [],
+    "platformTransitions": [
+      {
+        "name": "salesforce_sink",
+        "type": "outputs",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "salesforce",
+        "type": "processors",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      }
+    ],
     "newBloblangMethods": [],
     "removedBloblangMethods": [],
     "newBloblangFunctions": [],
@@ -44,16 +80,63 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.88.0",
-      "cloud": "4.88.0",
-      "cgo": "4.88.0"
+      "oss": "4.89.0",
+      "cloud": "4.89.0",
+      "cgo": "4.89.0"
     },
     "current": {
-      "cloudSupported": 480,
-      "selfHostedOnly": 82,
-      "cgoOnly": 0
+      "cloudSupported": 481,
+      "selfHostedOnly": 76,
+      "cgoOnly": 4
     },
-    "changes": {},
+    "changes": {
+      "cloud": {
+        "added": [
+          {
+            "type": "outputs",
+            "name": "salesforce_sink",
+            "status": "stable"
+          },
+          {
+            "type": "processors",
+            "name": "salesforce",
+            "status": "stable"
+          }
+        ],
+        "removed": [
+          {
+            "type": "processors",
+            "name": "a2a_message",
+            "status": "stable"
+          }
+        ]
+      },
+      "cgo": {
+        "newCgoOnly": [
+          {
+            "type": "inputs",
+            "name": "tigerbeetle_cdc",
+            "status": "stable"
+          },
+          {
+            "type": "inputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "outputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "processors",
+            "name": "ffi",
+            "status": "stable"
+          }
+        ],
+        "removedCgoOnly": []
+      }
+    },
     "details": {
       "cloudSupported": [
         {
@@ -768,6 +851,11 @@
         },
         {
           "type": "outputs",
+          "name": "salesforce_sink",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
           "name": "schema_registry",
           "status": "stable"
         },
@@ -1123,6 +1211,11 @@
         },
         {
           "type": "processors",
+          "name": "salesforce",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
           "name": "schema_registry_decode",
           "status": "stable"
         },
@@ -1209,11 +1302,6 @@
         {
           "type": "processors",
           "name": "xml",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -2579,16 +2667,6 @@
           "status": "stable"
         },
         {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "stable"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2675,11 +2753,6 @@
         },
         {
           "type": "outputs",
-          "name": "salesforce_sink",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
           "name": "socket",
           "status": "stable"
         },
@@ -2701,11 +2774,6 @@
         {
           "type": "outputs",
           "name": "websocket",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "zmq4",
           "status": "stable"
         },
         {
@@ -2775,11 +2843,6 @@
         },
         {
           "type": "processors",
-          "name": "salesforce",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
           "name": "sentry_capture",
           "status": "stable"
         },
@@ -2796,11 +2859,6 @@
         {
           "type": "processors",
           "name": "wasm",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
           "status": "stable"
         },
         {
@@ -2869,8 +2927,35 @@
           "status": "stable"
         }
       ],
-      "cloudOnly": [],
-      "cgoOnly": []
+      "cloudOnly": [
+        {
+          "type": "processors",
+          "name": "a2a_message",
+          "status": "stable"
+        }
+      ],
+      "cgoOnly": [
+        {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "ffi",
+          "status": "stable"
+        }
+      ]
     }
   }
 }

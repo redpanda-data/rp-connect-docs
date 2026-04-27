@@ -26,6 +26,20 @@ endif::[]
 
 *Options*: `DELTA_LENGTH_BYTE_ARRAY`, `PLAIN`
 
+=== `default_timestamp_unit`
+
+The precision used when encoding TIMESTAMP logical types. The default `NANOSECOND` matches historical behaviour, but `TIMESTAMP(NANOS)` is not readable by Apache Spark (Databricks), AWS Athena or DuckDB; set this to `MICROSECOND` (or `MILLISECOND`) when writing Parquet files intended for consumption by those engines.
+
+ifndef::env-cloud[]
+Requires version 4.89.0 or later.
+endif::[]
+
+*Type*: `string`
+
+*Default*: `NANOSECOND`
+
+*Options*: `NANOSECOND`, `MICROSECOND`, `MILLISECOND`
+
 === `schema[]`
 
 Parquet schema.
