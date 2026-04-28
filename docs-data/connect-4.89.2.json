@@ -1,6 +1,6 @@
 {
-  "version": "4.88.0",
-  "date": "2026-04-16T17:23:13Z",
+  "version": "4.89.2",
+  "date": "2026-04-28T20:42:08Z",
   "config": [
     {
       "name": "http",
@@ -14785,7 +14785,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Enables Change Data Capture by consuming from OracleDB.",
-      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
+      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- transaction_id: The Oracle transaction ID in `USN.SLOT.SEQ` format, identifying the transaction that produced the change. Not present on snapshot (`read`) messages.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- commit_ts_ms: The timestamp of the transaction commit, expressed as milliseconds since the Unix epoch. Not present on snapshot (`read`) messages.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
       "categories": [
         "Services"
       ],
@@ -14961,7 +14961,7 @@
             "name": "pdb_name",
             "type": "string",
             "kind": "scalar",
-            "description": "The name of the pluggable database (PDB) to monitor. When connecting to a CDB root, LogMiner output is scoped to this PDB via SRC_CON_NAME filtering and catalog queries use ALTER SESSION SET CONTAINER to switch context. Requires `GRANT SET CONTAINER TO &lt;user&gt; CONTAINER=ALL`.",
+            "description": "The name of the pluggable database (PDB) to monitor. When connecting to a CDB root, LogMiner output is scoped to this PDB via SRC_CON_NAME filtering and catalog queries use ALTER SESSION SET CONTAINER to switch context. Requires GRANT SET CONTAINER TO <user> CONTAINER=ALL.",
             "is_optional": true
           },
           {
@@ -43192,7 +43192,7 @@
           }
         ]
       },
-      "cloudSupported": false,
+      "cloudSupported": true,
       "requiresCgo": false
     },
     {
@@ -54494,6 +54494,21 @@
             ],
             "version": "4.11.0",
             "linter": "\nlet options = {\n  \"delta_length_byte_array\": true,\n  \"plain\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "default_timestamp_unit",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The precision used when encoding TIMESTAMP logical types. The default `NANOSECOND` matches historical behaviour, but `TIMESTAMP(NANOS)` is not readable by Apache Spark (Databricks), AWS Athena or DuckDB; set this to `MICROSECOND` (or `MILLISECOND`) when writing Parquet files intended for consumption by those engines.",
+            "is_advanced": true,
+            "default": "NANOSECOND",
+            "options": [
+              "NANOSECOND",
+              "MICROSECOND",
+              "MILLISECOND"
+            ],
+            "version": "4.89.0",
+            "linter": "\nlet options = {\n  \"nanosecond\": true,\n  \"microsecond\": true,\n  \"millisecond\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
         ],
         "linter": "root = if this.schema.or([]).length() == 0 && this.schema_metadata.or(\"\") == \"\" { \"either a schema or schema_metadata must be specified\" }"
@@ -55963,7 +55978,7 @@
           }
         ]
       },
-      "cloudSupported": false,
+      "cloudSupported": true,
       "requiresCgo": false
     },
     {
@@ -59294,7 +59309,6 @@
       "status": "stable",
       "plugin": true,
       "summary": "Send metrics to an https://opentelemetry.io/docs/collector/[Open Telemetry collector^].",
-      "description": "\nExports Redpanda Connect metrics to one or more OpenTelemetry Collector endpoints over HTTP or gRPC for aggregation and onward export.\n\nMetrics are encoded using the OpenTelemetry Metrics protocol and can be sent to any collector endpoint that supports OTLP.\n",
       "categories": null,
       "config": {
         "name": "",
@@ -59380,7 +59394,7 @@
             "name": "tags",
             "type": "string",
             "kind": "map",
-            "description": "A map of tags to add to all exported metrics.",
+            "description": "A map of tags to add to all exported spans and metrics.",
             "is_advanced": true,
             "default": {}
           }
@@ -59847,7 +59861,7 @@
             "name": "tags",
             "type": "string",
             "kind": "map",
-            "description": "A map of tags to add to all exported spans.",
+            "description": "A map of tags to add to all exported spans and metrics.",
             "is_advanced": true,
             "default": {}
           },
