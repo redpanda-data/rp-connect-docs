@@ -82,6 +82,17 @@ This release adds support for the following new fields:
 |===
 
 
+=== Deprecations and removals
+
+The MCP (Model Context Protocol) server feature in Redpanda Connect has been deprecated and removed. This includes:
+
+- All MCP server documentation
+- The following CLI commands:
+** `rpk connect mcp-server`
+** `rpk connect mcp-server init`
+** `rpk connect mcp-server lint`
+
+
 == Version 4.87.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.87.0[See the full release notes^].
@@ -1257,7 +1268,6 @@ For instructions, see:
 === Model Context Protocol (MCP) server
 
 You can now build and run an MCP server directly in Redpanda Connect. The MCP server lets you expose your Redpanda Connect configurations as AI-consumable HTTP endpoints, making them discoverable and callable by AI clients such as Claude Code and other compatible agents.
-To get started, see xref:ai-agents:mcp-server/quickstart.adoc[].
 
 == Version 4.64.0
 
