@@ -58,15 +58,15 @@ This release adds support for the following new fields:
 |===
 
 
-=== CLI deprecations
+=== Deprecations and removals
 
-The following CLI commands have been deprecated and removed:
+The MCP (Model Context Protocol) server feature in Redpanda Connect has been deprecated and removed. This includes:
 
-- `rpk connect mcp-server` - Start an MCP server for Redpanda Connect configurations
-- `rpk connect mcp-server init` - Initialize an MCP server configuration
-- `rpk connect mcp-server lint` - Lint an MCP server configuration
-
-These commands were part of the Remote MCP feature, which has been deprecated.
+- All MCP server documentation
+- The following CLI commands:
+** `rpk connect mcp-server`
+** `rpk connect mcp-server init`
+** `rpk connect mcp-server lint`
 
 
 == Version 4.87.0
