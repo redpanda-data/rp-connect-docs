@@ -16,6 +16,42 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+
+
+== Version 4.89.3
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.89.3[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|case_sensitive_columns
+|Controls how message field names are matched against table column names, and how column references in the partition spec are resolved.
+|*Outputs:*
+
+* xref:components:outputs/iceberg.adoc#case_sensitive_columns[iceberg]
+
+
+|===
+
+
+== Version 4.89.2
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.89.2[See the full release notes^].
+
+
+== Version 4.89.1
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.89.1[See the full release notes^].
+
+
 == Version 4.89.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.89.0[See the full release notes^].

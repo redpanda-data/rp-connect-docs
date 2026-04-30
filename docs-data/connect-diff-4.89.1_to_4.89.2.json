@@ -1,18 +1,18 @@
 {
   "comparison": {
-    "oldVersion": "4.88.0",
-    "newVersion": "4.89.0",
-    "timestamp": "2026-04-23T16:42:07.496Z"
+    "oldVersion": "4.89.1",
+    "newVersion": "4.89.2",
+    "timestamp": "2026-04-30T16:12:04.348Z"
   },
   "summary": {
     "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 1,
+    "newFields": 0,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
     "changedDefaults": 0,
-    "platformTransitions": 2,
+    "platformTransitions": 0,
     "newBloblangMethods": 0,
     "removedBloblangMethods": 0,
     "newBloblangFunctions": 0,
@@ -23,54 +23,12 @@
   "details": {
     "newComponents": [],
     "removedComponents": [],
-    "newFields": [
-      {
-        "component": "processors:parquet_encode",
-        "field": "default_timestamp_unit",
-        "introducedIn": "4.89.0",
-        "description": "The precision used when encoding TIMESTAMP logical types. The default `NANOSECOND` matches historical behaviour, but `TIMESTAMP(NANOS)` is not readable by Apache Spark (Databricks), AWS Athena or DuckDB; set this to `MICROSECOND` (or `MILLISECOND`) when writing Parquet files intended for consumption by those engines."
-      }
-    ],
+    "newFields": [],
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
     "changedDefaults": [],
-    "platformTransitions": [
-      {
-        "name": "salesforce_sink",
-        "type": "outputs",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "salesforce",
-        "type": "processors",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      }
-    ],
+    "platformTransitions": [],
     "newBloblangMethods": [],
     "removedBloblangMethods": [],
     "newBloblangFunctions": [],
@@ -80,63 +38,16 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.89.0",
-      "cloud": "4.89.0",
-      "cgo": "4.89.0"
+      "oss": "4.89.2",
+      "cloud": "4.89.2",
+      "cgo": "4.89.2"
     },
     "current": {
       "cloudSupported": 481,
       "selfHostedOnly": 76,
       "cgoOnly": 4
     },
-    "changes": {
-      "cloud": {
-        "added": [
-          {
-            "type": "outputs",
-            "name": "salesforce_sink",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "salesforce",
-            "status": "stable"
-          }
-        ],
-        "removed": [
-          {
-            "type": "processors",
-            "name": "a2a_message",
-            "status": "stable"
-          }
-        ]
-      },
-      "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "stable"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "ffi",
-            "status": "stable"
-          }
-        ],
-        "removedCgoOnly": []
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
