@@ -1,6 +1,6 @@
 {
-  "version": "4.89.0",
-  "date": "2026-04-23T16:20:40Z",
+  "version": "4.90.1",
+  "date": "2026-05-01T11:31:27Z",
   "config": [
     {
       "name": "http",
@@ -12237,6 +12237,14 @@
             "type": "bool",
             "kind": "scalar",
             "description": "When set to `true`, this input streams a snapshot of all existing data in the source database before streaming data changes. To use this setting, all database tables that you want to replicate _must_ have a primary key."
+          },
+          {
+            "name": "max_parallel_snapshot_tables",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Specifies the number of tables that will be snapshotted in parallel.",
+            "default": 1,
+            "linter": "root = if this < 1 { [ \"max_parallel_snapshot_tables must be at least 1\" ] }"
           },
           {
             "name": "auto_replay_nacks",
@@ -30825,6 +30833,225 @@
       "requiresCgo": false
     },
     {
+      "name": "gcp_bigquery_write_api",
+      "type": "output",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Streams data into BigQuery using the Storage Write API.",
+      "description": "\nWrites messages to a BigQuery table using the Storage Write API.\nThis provides higher throughput and lower latency than the legacy streaming API or load jobs.\n\nMessages can be formatted as JSON (default) or raw protobuf bytes.\nWhen using JSON format the component automatically fetches the table schema and converts each message to the corresponding proto representation.\n\nWARNING: The proto3 JSON mapping encodes int64 and uint64 values as strings.\nJSON messages with integer fields must use string values (e.g. `\"age\": \"30\"` not `\"age\": 30`).\nOtherwise the write will fail with an unmarshalling error.\n\nWhen batching is enabled the table name is resolved from the first message in each batch.\nAll messages in the same batch are written to that table.\n",
+      "categories": [
+        "GCP",
+        "Services"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "project",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The GCP project ID. If empty, the project is auto-detected from the environment.",
+            "default": ""
+          },
+          {
+            "name": "dataset",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The BigQuery dataset ID."
+          },
+          {
+            "name": "table",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The BigQuery table ID. Supports interpolation functions. When batching, resolved from the first message in each batch.",
+            "interpolated": true
+          },
+          {
+            "name": "message_format",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The format of input messages. Use 'json' to have the component convert JSON to proto automatically. Use 'protobuf' to supply raw proto-encoded bytes.",
+            "default": "json",
+            "options": [
+              "json",
+              "protobuf"
+            ],
+            "linter": "\nlet options = {\n  \"json\": true,\n  \"protobuf\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "max_in_flight",
+            "type": "int",
+            "kind": "scalar",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "default": 64
+          },
+          {
+            "name": "batching",
+            "type": "object",
+            "kind": "",
+            "description": "\nAllows you to configure a xref:configuration:batching.adoc[batching policy].",
+            "examples": [
+              {
+                "byte_size": 5000,
+                "count": 0,
+                "period": "1s"
+              },
+              {
+                "count": 10,
+                "period": "1s"
+              },
+              {
+                "check": "this.contains(\"END BATCH\")",
+                "count": 0,
+                "period": "1m"
+              }
+            ],
+            "children": [
+              {
+                "name": "count",
+                "type": "int",
+                "kind": "scalar",
+                "description": "A number of messages at which the batch should be flushed. If `0` disables count based batching.",
+                "default": 0
+              },
+              {
+                "name": "byte_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "An amount of bytes at which the batch should be flushed. If `0` disables size based batching.",
+                "default": 0
+              },
+              {
+                "name": "period",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A period in which an incomplete batch should be flushed regardless of its size.",
+                "default": "",
+                "examples": [
+                  "1s",
+                  "1m",
+                  "500ms"
+                ]
+              },
+              {
+                "name": "check",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.",
+                "default": "",
+                "bloblang": true,
+                "examples": [
+                  "this.type == \"end_of_transaction\""
+                ]
+              },
+              {
+                "name": "processors",
+                "type": "processor",
+                "kind": "array",
+                "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  [
+                    {
+                      "archive": {
+                        "format": "concatenate"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "lines"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "json_array"
+                      }
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "name": "credentials_json",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional JSON string containing GCP credentials. If empty, credentials are loaded from the environment.",
+            "is_secret": true,
+            "default": "",
+            "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+          },
+          {
+            "name": "target_principal",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Service account email to impersonate. When set, the output obtains tokens acting as this service account. Requires the caller to have roles/iam.serviceAccountTokenCreator on the target.",
+            "is_advanced": true,
+            "default": ""
+          },
+          {
+            "name": "delegates",
+            "type": "string",
+            "kind": "array",
+            "description": "Optional delegation chain for chained service account impersonation. Each service account must be granted roles/iam.serviceAccountTokenCreator on the next in the chain.",
+            "is_advanced": true,
+            "default": []
+          },
+          {
+            "name": "stream_idle_timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "How long a cached stream can remain unused before being closed. Relevant when the table field uses interpolation to route to many tables.",
+            "is_advanced": true,
+            "default": "5m"
+          },
+          {
+            "name": "stream_sweep_interval",
+            "type": "string",
+            "kind": "scalar",
+            "description": "How often to check for idle streams to close.",
+            "is_advanced": true,
+            "default": "1m"
+          },
+          {
+            "name": "endpoint",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Optional endpoint overrides for the BigQuery and Storage Write API clients.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "http",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Override the BigQuery HTTP endpoint. Useful for local emulators.",
+                "is_advanced": true,
+                "default": ""
+              },
+              {
+                "name": "grpc",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Override the BigQuery Storage gRPC endpoint. Useful for local emulators.",
+                "is_advanced": true,
+                "default": ""
+              }
+            ]
+          }
+        ]
+      },
+      "version": "4.90.0",
+      "cloudSupported": true,
+      "requiresCgo": false
+    },
+    {
       "name": "gcp_cloud_storage",
       "type": "output",
       "status": "stable",
@@ -32609,6 +32836,14 @@
             ]
           },
           {
+            "name": "case_sensitive_columns",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Controls how message field names are matched against table column names, and how column references in the partition spec are resolved. When `true` (the default), names must match exactly. When `false`, matching is case-insensitive — set this when your downstream catalog or query engine treats column names as case-insensitive (the iceberg specification's recommended convention) so that, for example, a message keyed `\"COLUMN\"` lands in an existing `column` rather than triggering schema evolution. Ambiguous case-only duplicates in the input are rejected.",
+            "is_advanced": true,
+            "default": true
+          },
+          {
             "name": "storage",
             "type": "object",
             "kind": "scalar",
@@ -32861,7 +33096,7 @@
                 "name": "schema_metadata",
                 "type": "string",
                 "kind": "scalar",
-                "description": "The name of a message metadata field containing a schema definition. When set, the schema is used to determine column types during schema evolution and table creation instead of inferring types from values. The schema must be in the standard common schema format (the same format used by the `parquet_encode` processor's `schema_metadata` field). For batches of messages, the first message's schema is used.",
+                "description": "The name of a message metadata field containing a schema definition. When set, the schema is used to determine column types during schema evolution and table creation instead of inferring types from values. The schema must be in the standard common schema format (the same format used by the `parquet_encode` processor's `schema_metadata` field). For batches of messages, the first message's schema is used. Record presence drives schema shape: fields declared in the schema metadata that are absent from the record are not added to the table, while the metadata controls column ordering, naming, and types for fields that are present. In case-insensitive mode, top-level column names use the metadata's casing — record keys are matched by case-folding and the metadata's name is what lands in the table.",
                 "is_advanced": true,
                 "is_optional": true,
                 "default": ""
@@ -59453,7 +59688,7 @@
           }
         ]
       },
-      "cloudSupported": false,
+      "cloudSupported": true,
       "requiresCgo": false
     },
     {
@@ -59947,7 +60182,7 @@
           }
         ]
       },
-      "cloudSupported": false,
+      "cloudSupported": true,
       "requiresCgo": false
     },
     {
