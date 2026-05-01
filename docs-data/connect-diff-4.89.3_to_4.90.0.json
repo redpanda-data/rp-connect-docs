@@ -1,18 +1,18 @@
 {
   "comparison": {
-    "oldVersion": "4.88.0",
-    "newVersion": "4.89.0",
-    "timestamp": "2026-04-23T16:42:07.496Z"
+    "oldVersion": "4.89.3",
+    "newVersion": "4.90.0",
+    "timestamp": "2026-05-01T16:17:23.646Z"
   },
   "summary": {
-    "newComponents": 0,
+    "newComponents": 1,
     "removedComponents": 0,
     "newFields": 1,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
     "changedDefaults": 0,
-    "platformTransitions": 2,
+    "platformTransitions": 0,
     "newBloblangMethods": 0,
     "removedBloblangMethods": 0,
     "newBloblangFunctions": 0,
@@ -21,56 +21,31 @@
     "deprecatedBloblangFunctions": 0
   },
   "details": {
-    "newComponents": [],
+    "newComponents": [
+      {
+        "name": "gcp_bigquery_write_api",
+        "type": "outputs",
+        "status": "stable",
+        "version": "4.90.0",
+        "description": "\nWrites messages to a BigQuery table using the Storage Write API.\nThis provides higher throughput and lower latency than the legacy streaming API or load jobs.\n\nMessages can be formatted as JSON (default) or raw protobuf bytes.\nWhen using JSON format the component automatically fetches the table schema and converts each message to the corresponding proto representation.\n\nWARNING: The proto3 JSON mapping encodes int64 and uint64 values as strings.\nJSON messages with integer fields must use string values (e.g. `\"age\": \"30\"` not `\"age\": 30`).\nOtherwise the write will fail with an unmarshalling error.\n\nWhen batching is enabled the table name is resolved from the first message in each batch.\nAll messages in the same batch are written to that table.\n",
+        "requiresCgo": false,
+        "cloudOnly": false,
+        "cloudSupported": false
+      }
+    ],
     "removedComponents": [],
     "newFields": [
       {
-        "component": "processors:parquet_encode",
-        "field": "default_timestamp_unit",
-        "introducedIn": "4.89.0",
-        "description": "The precision used when encoding TIMESTAMP logical types. The default `NANOSECOND` matches historical behaviour, but `TIMESTAMP(NANOS)` is not readable by Apache Spark (Databricks), AWS Athena or DuckDB; set this to `MICROSECOND` (or `MILLISECOND`) when writing Parquet files intended for consumption by those engines."
+        "component": "inputs:mysql_cdc",
+        "field": "max_parallel_snapshot_tables",
+        "description": "Specifies the number of tables that will be snapshotted in parallel."
       }
     ],
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
     "changedDefaults": [],
-    "platformTransitions": [
-      {
-        "name": "salesforce_sink",
-        "type": "outputs",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "salesforce",
-        "type": "processors",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      }
-    ],
+    "platformTransitions": [],
     "newBloblangMethods": [],
     "removedBloblangMethods": [],
     "newBloblangFunctions": [],
@@ -80,63 +55,16 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.89.0",
-      "cloud": "4.89.0",
-      "cgo": "4.89.0"
+      "oss": "4.90.0",
+      "cloud": "4.90.0",
+      "cgo": "4.90.0"
     },
     "current": {
-      "cloudSupported": 481,
-      "selfHostedOnly": 76,
+      "cloudSupported": 484,
+      "selfHostedOnly": 74,
       "cgoOnly": 4
     },
-    "changes": {
-      "cloud": {
-        "added": [
-          {
-            "type": "outputs",
-            "name": "salesforce_sink",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "salesforce",
-            "status": "stable"
-          }
-        ],
-        "removed": [
-          {
-            "type": "processors",
-            "name": "a2a_message",
-            "status": "stable"
-          }
-        ]
-      },
-      "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "stable"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "ffi",
-            "status": "stable"
-          }
-        ],
-        "removedCgoOnly": []
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -702,6 +630,11 @@
         {
           "type": "outputs",
           "name": "gcp_bigquery",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "gcp_bigquery_write_api",
           "status": "stable"
         },
         {
@@ -1321,6 +1254,11 @@
         },
         {
           "type": "metrics",
+          "name": "open_telemetry_collector",
+          "status": "stable"
+        },
+        {
+          "type": "metrics",
           "name": "prometheus",
           "status": "stable"
         },
@@ -1332,6 +1270,11 @@
         {
           "type": "tracers",
           "name": "none",
+          "status": "stable"
+        },
+        {
+          "type": "tracers",
+          "name": "open_telemetry_collector",
           "status": "stable"
         },
         {
@@ -2883,22 +2826,12 @@
         },
         {
           "type": "metrics",
-          "name": "open_telemetry_collector",
-          "status": "stable"
-        },
-        {
-          "type": "metrics",
           "name": "statsd",
           "status": "stable"
         },
         {
           "type": "tracers",
           "name": "jaeger",
-          "status": "stable"
-        },
-        {
-          "type": "tracers",
-          "name": "open_telemetry_collector",
           "status": "stable"
         },
         {

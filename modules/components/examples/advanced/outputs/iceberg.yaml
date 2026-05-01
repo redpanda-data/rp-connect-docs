@@ -34,6 +34,7 @@ outputs:
       tls_skip_verify: false
     namespace: "" # No default (required)
     table: "" # No default (required)
+    case_sensitive_columns: true
     storage:
       aws_s3:
         bucket: "" # No default (required)
