@@ -87,8 +87,8 @@
     "elasticsearch_index": {
       "description": "The Elasticsearch index where messages are published. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
     },
-    "elasticsearch_max_in_flight": {
-      "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput."
+    "max_in_flight_batched": {
+      "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
     },
     "elasticsearch_retry_on_conflict": {
       "description": "The number of times to retry an update operation when a version conflict occurs."
@@ -2927,6 +2927,10 @@
           {
             "name": "tcp",
             "$ref": "#/definitions/tcp"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -2991,6 +2995,10 @@
           {
             "name": "tcp",
             "$ref": "#/definitions/tcp"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3011,6 +3019,10 @@
           {
             "name": "tcp",
             "$ref": "#/definitions/tcp"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3088,6 +3100,10 @@
                 "$ref": "#/definitions/count"
               }
             ]
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3147,6 +3163,10 @@
           {
             "name": "tcp",
             "$ref": "#/definitions/tcp"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3185,6 +3205,10 @@
           {
             "name": "item_id",
             "description": "ID of item to replace or delete. Only used by the Replace and Delete operations\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3235,6 +3259,10 @@
           {
             "name": "ttl",
             "description": "The TTL of each individual message as a duration string. Defaults to 0, meaning no retention period is set\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3262,6 +3290,10 @@
           {
             "name": "transaction_type",
             "description": "Type of transaction operation.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3324,6 +3356,10 @@
             "name": "exponential_reconnection",
             "description": "Configure exponential backoff for reconnection attempts to DOWN nodes. When enabled, this replaces the driver's default constant reconnection policy with an exponential backoff strategy that gradually increases the delay between reconnection attempts. This reduces connection storm scenarios during widespread outages while ensuring eventual recovery.",
             "version": "4.66.0"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3374,7 +3410,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this value to improve throughput."
+            "description": "The maximum number of messages to have in flight at a given time. Increase this value to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "batching",
@@ -3444,6 +3480,10 @@
           {
             "name": "metadata_mapping",
             "$ref": "#/definitions/cyborgdb_metadata_mapping"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3536,7 +3576,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of message batches to have in flight at a given time. Increase this value to improve throughput."
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this value to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           }
         ]
       }
@@ -3620,7 +3660,7 @@
           },
           {
             "name": "max_in_flight",
-            "$ref": "#/definitions/elasticsearch_max_in_flight"
+            "$ref": "#/definitions/max_in_flight_batched"
           },
           {
             "name": "tls",
@@ -3726,7 +3766,7 @@
           },
           {
             "name": "max_in_flight",
-            "$ref": "#/definitions/elasticsearch_max_in_flight"
+            "$ref": "#/definitions/max_in_flight_batched"
           },
           {
             "name": "batching",
@@ -3831,7 +3871,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of message batches to have in flight at a given time. Increase this value to improve throughput."
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this value to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "create_disposition",
@@ -3931,6 +3971,10 @@
           {
             "name": "credentials_json",
             "$ref": "#/definitions/credentials_json"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3950,6 +3994,10 @@
           {
             "name": "ordering_key",
             "description": "The ordering key to use for publishing messages.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3965,6 +4013,10 @@
           {
             "name": "path",
             "description": "The path to upload messages as. Use interpolation functions to generate unique file paths.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -3994,6 +4046,10 @@
                 "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\\{prefix}\\{namespace}/{table}`."
               }
             ]
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -4216,6 +4272,10 @@
           {
             "name": "timestamp_ms",
             "description": "Set a timestamp (in milliseconds) for each message (optional). When left empty, the current timestamp is used.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -4250,7 +4310,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of batches to send in parallel at any given time."
+            "description": "The maximum number of batches to send in parallel at any given time.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "timeout",
@@ -4390,7 +4450,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput."
+            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "batching",
@@ -4667,7 +4727,7 @@
               },
               {
                 "name": "max_in_flight",
-                "description": "The maximum number of message batches to send in parallel at any given time."
+                "description": "The maximum number of message batches to send in parallel at any given time.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
               },
               {
                 "name": "timeout",
@@ -4797,6 +4857,10 @@
           {
             "name": "routing",
             "description": "The routing key to use for the document.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -4816,6 +4880,10 @@
           {
             "name": "id",
             "description": "The ID for the index entry in Pinecone.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -4842,6 +4910,10 @@
           {
             "name": "channel",
             "description": "Pusher channel to publish to. Interpolation functions can also be used\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -4857,6 +4929,10 @@
           {
             "name": "collection_name",
             "description": "The name of the collection in Qdrant.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -4867,7 +4943,7 @@
         "children": [
           {
             "name": "max_in_flight",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this value to improve throughput."
+            "description": "The maximum number of messages to have in flight at a given time. Increase this value to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "batching",
@@ -5005,6 +5081,10 @@
           {
             "name": "key",
             "description": "The key for each message, function interpolations can be optionally used to create a unique key per message.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -5016,6 +5096,10 @@
           {
             "name": "channel",
             "description": "The channel to publish messages to.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -5027,6 +5111,10 @@
           {
             "name": "stream",
             "description": "The stream to add messages to.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -5110,7 +5198,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus."
+            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "idempotent_write",
@@ -5161,7 +5249,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus."
+            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "batching",
@@ -5267,7 +5355,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of batches to send in parallel at any given time. Increase this value to improve throughput during migration.\n\nFor optimal performance, set this to match the total number of partitions being migrated. Setting it higher than the partition count provides no additional benefit, as each partition can only have one in-flight batch at a time.\n\nExample: If migrating 100 partitions, set `max_in_flight: 100` for maximum throughput."
+            "description": "The maximum number of batches to send in parallel at any given time. Increase this value to improve throughput during migration.\n\nFor optimal performance, set this to match the total number of partitions being migrated. Setting it higher than the partition count provides no additional benefit, as each partition can only have one in-flight batch at a time.\n\nExample: If migrating 100 partitions, set `max_in_flight: 100` for maximum throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "offset_header",
@@ -5496,7 +5584,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "Maximum number of batches to send concurrently. Increasing this value improves real-time write throughput."
+            "description": "Maximum number of batches to send concurrently. Increasing this value improves real-time write throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "max_retries",
@@ -5887,6 +5975,10 @@
           {
             "name": "snowpipe",
             "description": "An optional Snowpipe name. Use the `<snowpipe>` part from `<database>.<schema>.<snowpipe>`.\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -5999,7 +6091,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus."
+            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           },
           {
             "name": "channel_prefix",
@@ -6045,6 +6137,10 @@
           {
             "name": "query",
             "description": "The query to execute. The style of placeholder to use depends on the driver, some drivers require question marks (`?`) whereas others expect incrementing dollar signs (`$1`, `$2`, and so on) or colons (`:1`, `:2` and so on). The style to use is outlined in this table:\n\ninclude::components:partial$query_table.adoc[]"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -6055,6 +6151,10 @@
         "children": [
           {
             "name": "dsn"
+          },
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
           }
         ]
       }
@@ -6087,7 +6187,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of database statements to execute in parallel."
+            "description": "The maximum number of database statements to execute in parallel.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance."
           }
         ]
       }
@@ -6188,7 +6288,59 @@
     },
     {
       "name": "zmq4",
-      "summary": "Writes messages to a ZeroMQ socket."
+      "summary": "Writes messages to a ZeroMQ socket.",
+      "config": {
+        "children": [
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
+          }
+        ]
+      }
+    },
+    {
+      "name": "arc",
+      "config": {
+        "children": [
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
+          }
+        ]
+      }
+    },
+    {
+      "name": "otlp_grpc",
+      "config": {
+        "children": [
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
+          }
+        ]
+      }
+    },
+    {
+      "name": "otlp_http",
+      "config": {
+        "children": [
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
+          }
+        ]
+      }
+    },
+    {
+      "name": "splunk_hec",
+      "config": {
+        "children": [
+          {
+            "name": "max_in_flight",
+            "$ref": "#/definitions/max_in_flight_batched"
+          }
+        ]
+      }
     }
   ],
   "processors": [

@@ -191,6 +191,8 @@ master: mymaster
 
 The maximum number of messages to have in flight at a given time. Increase this to improve throughput.
 
+NOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.
+
 *Type*: `int`
 
 *Default*: `64`
