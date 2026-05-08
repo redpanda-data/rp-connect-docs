@@ -271,13 +271,13 @@ Provide a list of explicit metadata key prefixes to be excluded when adding meta
 
 === `object_canned_acl`
 
-The object canned ACL value.
+The object canned ACL value. Leave empty to omit the ACL from upload requests, which is required for buckets that have ACLs disabled (the AWS default since 2023).
 
 *Type*: `string`
 
-*Default*: `private`
+*Default*: `""`
 
-*Options*: `private`, `public-read`, `public-read-write`, `authenticated-read`, `aws-exec-read`, `bucket-owner-read`, `bucket-owner-full-control`
+*Options*: ``, `private`, `public-read`, `public-read-write`, `authenticated-read`, `aws-exec-read`, `bucket-owner-read`, `bucket-owner-full-control`
 
 === `path`
 

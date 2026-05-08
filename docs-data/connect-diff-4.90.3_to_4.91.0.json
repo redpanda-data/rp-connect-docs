@@ -1,13 +1,13 @@
 {
   "comparison": {
-    "oldVersion": "4.89.3",
-    "newVersion": "4.90.0",
-    "timestamp": "2026-05-01T16:17:23.646Z"
+    "oldVersion": "4.90.3",
+    "newVersion": "4.91.0",
+    "timestamp": "2026-05-08T11:27:32.723Z"
   },
   "summary": {
-    "newComponents": 1,
+    "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 1,
+    "newFields": 0,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
@@ -21,26 +21,9 @@
     "deprecatedBloblangFunctions": 0
   },
   "details": {
-    "newComponents": [
-      {
-        "name": "gcp_bigquery_write_api",
-        "type": "outputs",
-        "status": "stable",
-        "version": "4.90.0",
-        "description": "\nWrites messages to a BigQuery table using the Storage Write API.\nThis provides higher throughput and lower latency than the legacy streaming API or load jobs.\n\nMessages can be formatted as JSON (default) or raw protobuf bytes.\nWhen using JSON format the component automatically fetches the table schema and converts each message to the corresponding proto representation.\n\nWARNING: The proto3 JSON mapping encodes int64 and uint64 values as strings.\nJSON messages with integer fields must use string values (e.g. `\"age\": \"30\"` not `\"age\": 30`).\nOtherwise the write will fail with an unmarshalling error.\n\nWhen batching is enabled the table name is resolved from the first message in each batch.\nAll messages in the same batch are written to that table.\n",
-        "requiresCgo": false,
-        "cloudOnly": false,
-        "cloudSupported": false
-      }
-    ],
+    "newComponents": [],
     "removedComponents": [],
-    "newFields": [
-      {
-        "component": "inputs:mysql_cdc",
-        "field": "max_parallel_snapshot_tables",
-        "description": "Specifies the number of tables that will be snapshotted in parallel."
-      }
-    ],
+    "newFields": [],
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
@@ -55,16 +38,25 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.90.0",
-      "cloud": "4.90.0",
-      "cgo": "4.90.0"
+      "oss": "4.91.0",
+      "cloud": "4.91.0",
+      "cgo": "4.91.0"
     },
     "current": {
-      "cloudSupported": 484,
+      "cloudSupported": 486,
       "selfHostedOnly": 74,
       "cgoOnly": 4
     },
-    "changes": {},
+    "changes": {
+      "cloud": {
+        "added": [],
+        "removed": []
+      },
+      "cgo": {
+        "newCgoOnly": [],
+        "removedCgoOnly": []
+      }
+    },
     "details": {
       "cloudSupported": [
         {
@@ -475,6 +467,21 @@
         {
           "type": "inputs",
           "name": "resource",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "salesforce",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "salesforce_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "salesforce_graphql",
           "status": "stable"
         },
         {
@@ -1141,11 +1148,6 @@
           "type": "processors",
           "name": "retry",
           "status": "beta"
-        },
-        {
-          "type": "processors",
-          "name": "salesforce",
-          "status": "stable"
         },
         {
           "type": "processors",

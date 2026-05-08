@@ -20,43 +20,211 @@ api_version: v65.0
 api_version: v62.0
 ----
 
-=== `batch_period`
+=== `auto_replay_nacks`
 
-Maximum period to wait before flushing an incomplete batch.
+Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.
 
-*Type*: `string`
+*Type*: `bool`
 
-*Default*: `5s`
+*Default*: `true`
 
-=== `bulk_batch_size`
+=== `batching`
 
-Number of records per bulk job. Also controls the output batch size.
+
+Allows you to configure a xref:configuration:batching.adoc[batching policy].
+
+*Type*: `object`
+
+[source,yaml]
+----
+# Examples:
+batching:
+  byte_size: 5000
+  count: 0
+  period: 1s
+
+# ---
+
+batching:
+  count: 10
+  period: 1s
+
+# ---
+
+batching:
+  check: this.contains("END BATCH")
+  count: 0
+  period: 1m
+----
+
+=== `batching.byte_size`
+
+An amount of bytes at which the batch should be flushed. If `0` disables size based batching.
 
 *Type*: `int`
 
-*Default*: `1000`
+*Default*: `0`
 
-=== `bulk_poll_interval`
+=== `batching.check`
 
-How often to poll Salesforce for bulk job completion status.
+A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.
 
 *Type*: `string`
 
-*Default*: `5s`
+*Default*: `""`
+
+[source,yaml]
+----
+# Examples:
+check: this.type == "end_of_transaction"
+----
+
+=== `batching.count`
+
+A number of messages at which the batch should be flushed. If `0` disables count based batching.
+
+*Type*: `int`
+
+*Default*: `0`
+
+=== `batching.period`
+
+A period in which an incomplete batch should be flushed regardless of its size.
+
+*Type*: `string`
+
+*Default*: `""`
+
+[source,yaml]
+----
+# Examples:
+period: 1s
+
+# ---
+
+period: 1m
+
+# ---
+
+period: 500ms
+----
+
+=== `batching.processors[]`
+
+A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
+
+*Type*: `processor`
+
+[source,yaml]
+----
+# Examples:
+processors:
+  - archive:
+      format: concatenate
+
+
+# ---
+
+processors:
+  - archive:
+      format: lines
+
+
+# ---
+
+processors:
+  - archive:
+      format: json_array
+
+----
+
+=== `checkpoint_cache`
+
+Name of the cache resource used to persist snapshot cursor and per-topic replay IDs across restarts. The cache must be declared under the top-level `cache_resources` block. Choose a durable cache (Redis, Postgres, DynamoDB) for production; in-memory caches lose checkpoints on restart.
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+checkpoint_cache: persistent_cache
+----
+
+=== `checkpoint_cache_key`
+
+Key inside the checkpoint cache where this input's state is stored. Change when running multiple `salesforce_cdc` inputs against the same cache resource to avoid collisions.
+
+*Type*: `string`
+
+*Default*: `salesforce_cdc`
+
+=== `checkpoint_limit`
+
+Maximum number of unacknowledged batches in flight (per topic) before that topic pauses reading. Prevents unbounded memory growth when downstream components stall. Higher values increase throughput in steady state; lower values bound memory under backpressure.
+
+*Type*: `int`
+
+*Default*: `1024`
 
 === `client_id`
 
-Client ID for the Salesforce Connected App.
+Consumer Key of the Salesforce Connected App authorized for the OAuth Client Credentials flow. Create the Connected App under Setup → App Manager → New Connected App, enable OAuth settings, enable the Client Credentials Flow under `Flow Enablement`, then copy the Consumer Key from `Manage Consumer Details`.
 
 *Type*: `string`
 
 === `client_secret`
 
-Client secret for the Salesforce Connected App.
+Consumer Secret of the Salesforce Connected App, paired with `client_id`. Sensitive — prefer environment variable interpolation (`${SALESFORCE_CLIENT_SECRET}`) over inlining.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
+
+=== `grpc`
+
+gRPC transport tuning for the Pub/Sub API connection.
+
+*Type*: `object`
+
+=== `grpc.buffer_size`
+
+Size of the internal gRPC event receive buffer.
+
+*Type*: `int`
+
+*Default*: `1000`
+
+=== `grpc.reconnect_base_delay`
+
+Base delay for gRPC reconnection backoff.
+
+*Type*: `string`
+
+*Default*: `500ms`
+
+=== `grpc.reconnect_max_attempts`
+
+Maximum number of gRPC reconnection attempts. 0 means unlimited.
+
+*Type*: `int`
+
+*Default*: `0`
+
+=== `grpc.reconnect_max_delay`
+
+Maximum delay for gRPC reconnection backoff.
+
+*Type*: `string`
+
+*Default*: `30s`
+
+=== `grpc.shutdown_timeout`
+
+Timeout for graceful gRPC client shutdown.
+
+*Type*: `string`
+
+*Default*: `10s`
 
 === `http`
 
@@ -540,17 +708,9 @@ Rate limit in requests per second. 0 disables rate limiting.
 
 *Default*: `0`
 
-=== `max_concurrent_bulk_jobs`
+=== `max_parallel_snapshot_objects`
 
-Maximum number of bulk jobs polling concurrently in the background. Each in-flight job buffers its CSV payload in memory. Lower this value if memory usage is a concern.
-
-*Type*: `int`
-
-*Default*: `10`
-
-=== `max_in_flight`
-
-Maximum number of batches to send concurrently. Increasing this value improves real-time write throughput.
+Number of sObjects snapshotted concurrently during the REST snapshot phase. Each in-flight snapshot consumes one HTTP connection and Salesforce API call quota. Default 1 serializes the work — raise when snapshotting many sObjects and your API limits permit.
 
 *Type*: `int`
 
@@ -558,7 +718,7 @@ Maximum number of batches to send concurrently. Increasing this value improves r
 
 === `org_url`
 
-Salesforce instance base URL (for example, https://your-domain.salesforce.com).
+Salesforce instance base URL for your org, protocol included and no trailing slash. Used as the base for both the OAuth token endpoint and REST queries. Production orgs use `https://{my-domain}.my.salesforce.com`; sandboxes use `https://{my-domain}.sandbox.my.salesforce.com`. Legacy instance URLs (`https://na123.salesforce.com`) still work but My Domain URLs are strongly recommended by Salesforce.
 
 *Type*: `string`
 
@@ -572,54 +732,93 @@ org_url: https://acme.my.salesforce.com
 org_url: https://acme--staging.sandbox.my.salesforce.com
 ----
 
-=== `topic_mappings[]`
+=== `replay_preset`
 
-Per-topic Salesforce write configuration. Each entry maps a Kafka topic to an sObject and write settings.
+Initial replay position used per topic only on first run (when no checkpoint exists in the cache); ignored once a topic's replay ID has been written.
 
-*Type*: `object`
+- `latest`: Start from new events only; any changes between prior run and Connect are skipped.
+- `earliest`: Replay from the retention start (24h standard, 72h with enhanced retention). Use to recover missed events after outages.
 
-=== `topic_mappings[].all_or_none`
+*Type*: `string`
 
-Real-time only: rolls back the entire batch if any record fails.
+*Default*: `latest`
+
+*Options*: `latest`, `earliest`
+
+=== `snapshot_max_batch_size`
+
+Page size for the REST snapshot query — records per `/query` response. Must be between 200 and 2000 per Salesforce REST API limits. Larger pages reduce HTTP round trips; smaller pages reduce peak memory per fetch.
+
+*Type*: `int`
+
+*Default*: `2000`
+
+[source,yaml]
+----
+# Examples:
+snapshot_max_batch_size: 2000
+
+# ---
+
+snapshot_max_batch_size: 500
+----
+
+=== `stream_batch_size`
+
+Number of events requested per gRPC `Fetch` call, per topic. Higher values improve throughput at the cost of peak batch memory; lower values give steadier latency under load.
+
+*Type*: `int`
+
+*Default*: `100`
+
+[source,yaml]
+----
+# Examples:
+stream_batch_size: 100
+
+# ---
+
+stream_batch_size: 500
+----
+
+=== `stream_snapshot`
+
+When true (default), paginate a full REST snapshot of every CDC sObject in `topics` before opening any streaming subscription. When false, skip the snapshot and start streaming immediately. Platform Event topics (`/event/...`) are always skipped — they have no REST equivalent.
 
 *Type*: `bool`
 
-*Default*: `false`
+*Default*: `true`
 
-=== `topic_mappings[].external_id_field`
+=== `topics[]`
 
-External ID field name. Required for upsert operations.
+Pub/Sub topics to subscribe to. Each entry is one of: a bare sObject name (`Account` → `/data/AccountChangeEvent`), an explicit CDC channel (`/data/AccountChangeEvent`), the CDC firehose (`/data/ChangeEvents`), or a Platform Event topic (`/event/Order__e`, `/event/LoginEventStream`). Each topic gets its own gRPC subscription with an independent replay cursor.
 
-*Type*: `string`
+*Type*: `array`
 
-*Default*: `""`
+[source,yaml]
+----
+# Examples:
+topics:
+  - Account
+  - Contact
 
-=== `topic_mappings[].mode`
+# ---
 
-Write mode: `realtime` (sObject Collections API) or `bulk` (Bulk API 2.0).
+topics:
+  - /data/ChangeEvents
 
-*Type*: `string`
+# ---
 
-*Default*: `realtime`
+topics:
+  - Account
+  - /event/Order__e
 
-=== `topic_mappings[].operation`
+# ---
 
-Write operation: insert, update, upsert, or delete.
-
-*Type*: `string`
-
-*Default*: `upsert`
-
-=== `topic_mappings[].sobject`
-
-Salesforce sObject API name (for example, Account, Contact, MyObject__c).
-
-*Type*: `string`
-
-=== `topic_mappings[].topic`
-
-Kafka topic name to match against the message's `topic` field.
-
-*Type*: `string`
+topics:
+  - Opportunity
+  - MyCustom__c
+  - /event/Sync_Requested__e
+----
 
 

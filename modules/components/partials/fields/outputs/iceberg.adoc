@@ -413,6 +413,22 @@ namespace: analytics.events
 namespace: production
 ----
 
+=== `parquet`
+
+Parquet writer configuration.
+
+*Type*: `object`
+
+=== `parquet.string_encoding`
+
+The encoding to use for string and binary columns. Use `plain` for compatibility with readers that do not support `DELTA_LENGTH_BYTE_ARRAY` encoding, such as AWS Redshift Spectrum.
+
+*Type*: `string`
+
+*Default*: `delta_length_byte_array`
+
+*Options*: `plain`, `delta_length_byte_array`
+
 === `schema_evolution`
 
 Schema evolution configuration.

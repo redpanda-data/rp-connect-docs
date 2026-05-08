@@ -68,6 +68,8 @@ outputs:
       manifest_merge_enabled: true
       max_snapshot_age: 24h
       max_retries: 3
+    parquet:
+      string_encoding: delta_length_byte_array
     batching:
       count: 0
       byte_size: 0
