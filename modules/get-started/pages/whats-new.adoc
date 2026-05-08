@@ -53,6 +53,10 @@ To migrate from the removed `salesforce` processor, use the appropriate input co
 |xref:components:inputs/salesforce_graphql.adoc[salesforce_graphql] input
 |===
 
+== Version 4.90.1
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.90.1[See the full release notes^].
+
 == Version 4.90.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.90.0[See the full release notes^].
@@ -71,44 +75,6 @@ This release adds the following new component:
 |Writes messages to a BigQuery table using the Storage Write API. This provides higher throughput and lower latency than the legacy streaming API or load jobs.
 
 |===
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-== Version 4.90.1
-
-link:https://github.com/redpanda-data/connect/releases/tag/v4.90.1[See the full release notes^].
-
-
-== Version 4.90.0
-
-link:https://github.com/redpanda-data/connect/releases/tag/v4.90.0[See the full release notes^].
-
-=== Component updates
-
-This release adds the following new components:
-
-[cols="1m,1a,1a,3a"]
-|===
-|Component |Type |Status |Description
-
-|xref:components:outputs/gcp_bigquery_write_api.adoc[gcp_bigquery_write_api]
-|Outputs
-|stable
-|Writes messages to a BigQuery table using the Storage Write API.
-
-|===
-
 
 === New field support
 
