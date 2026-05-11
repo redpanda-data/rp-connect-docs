@@ -1,0 +1,59 @@
+= salesforce_graphql
+// tag::single-source[]
+:type: input
+:status: stable
+:categories: [Services]
+:page-commercial-names: Salesforce, Salesforce GraphQL
+:description: Executes a GraphQL query against the Salesforce UIAPI and emits one message per record.
+
+component_type_dropdown::[]
+
+Executes a GraphQL query against the Salesforce UIAPI (`POST /services/data/{api_version}/graphql`), walks the response tree, and emits one message per record. When records are exhausted the input shuts down, letting the pipeline terminate gracefully (or the next input in a xref:components:inputs/sequence.adoc[sequence] to take over).
+
+ifndef::env-cloud[]
+Introduced in version 4.90.3.
+endif::[]
+
+== When to use this input
+
+Use `salesforce_graphql` for:
+
+- Cross-object queries in a single request (parent + children + grandchildren).
+- Response shapes that already match your downstream schema.
+- Queries benefiting from GraphQL's field-level selection and nesting.
+- Adopting Salesforce's UIAPI / future-forward query surface.
+
+Use a different Salesforce input instead if:
+
+- You only need single-object SELECTs — use xref:components:inputs/salesforce.adoc[`salesforce`] (simpler, no GraphQL schema knowledge needed).
+- You need continuous change events — use xref:components:inputs/salesforce_cdc.adoc[`salesforce_cdc`].
+
+== Pagination
+
+When the query selects an `edges`/`pageInfo` connection, the input transparently paginates by injecting `after: "<cursor>"` into the query string between requests. The query must include `pageInfo { hasNextPage endCursor }` for pagination to terminate cleanly. Responses without an `edges` array are emitted as a single message and the input completes.
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/inputs/salesforce_graphql.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/salesforce_graphql.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/inputs/salesforce_graphql.adoc[]
+
+// end::single-source[]

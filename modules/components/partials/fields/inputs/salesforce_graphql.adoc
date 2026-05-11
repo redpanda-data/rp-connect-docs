@@ -20,39 +20,23 @@ api_version: v65.0
 api_version: v62.0
 ----
 
-=== `batch_period`
+=== `auto_replay_nacks`
 
-Maximum period to wait before flushing an incomplete batch.
+Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.
 
-*Type*: `string`
+*Type*: `bool`
 
-*Default*: `5s`
-
-=== `bulk_batch_size`
-
-Number of records per bulk job. Also controls the output batch size.
-
-*Type*: `int`
-
-*Default*: `1000`
-
-=== `bulk_poll_interval`
-
-How often to poll Salesforce for bulk job completion status.
-
-*Type*: `string`
-
-*Default*: `5s`
+*Default*: `true`
 
 === `client_id`
 
-Client ID for the Salesforce Connected App.
+Consumer Key of the Salesforce Connected App authorized for the OAuth Client Credentials flow. Create the Connected App under Setup → App Manager → New Connected App, enable OAuth settings, enable the Client Credentials Flow under `Flow Enablement`, then copy the Consumer Key from `Manage Consumer Details`.
 
 *Type*: `string`
 
 === `client_secret`
 
-Client secret for the Salesforce Connected App.
+Consumer Secret of the Salesforce Connected App, paired with `client_id`. Sensitive — prefer environment variable interpolation (`${SALESFORCE_CLIENT_SECRET}`) over inlining.
 
 include::redpanda-connect:components:partial$secret_warning.adoc[]
 
@@ -540,25 +524,9 @@ Rate limit in requests per second. 0 disables rate limiting.
 
 *Default*: `0`
 
-=== `max_concurrent_bulk_jobs`
-
-Maximum number of bulk jobs polling concurrently in the background. Each in-flight job buffers its CSV payload in memory. Lower this value if memory usage is a concern.
-
-*Type*: `int`
-
-*Default*: `10`
-
-=== `max_in_flight`
-
-Maximum number of batches to send concurrently. Increasing this value improves real-time write throughput.
-
-*Type*: `int`
-
-*Default*: `1`
-
 === `org_url`
 
-Salesforce instance base URL (for example, https://your-domain.salesforce.com).
+Salesforce instance base URL for your org, protocol included and no trailing slash. Used as the base for both the OAuth token endpoint and REST queries. Production orgs use `https://{my-domain}.my.salesforce.com`; sandboxes use `https://{my-domain}.sandbox.my.salesforce.com`. Legacy instance URLs (`https://na123.salesforce.com`) still work but My Domain URLs are strongly recommended by Salesforce.
 
 *Type*: `string`
 
@@ -572,54 +540,36 @@ org_url: https://acme.my.salesforce.com
 org_url: https://acme--staging.sandbox.my.salesforce.com
 ----
 
-=== `topic_mappings[]`
+=== `query`
 
-Per-topic Salesforce write configuration. Each entry maps a Kafka topic to an sObject and write settings.
-
-*Type*: `object`
-
-=== `topic_mappings[].all_or_none`
-
-Real-time only: rolls back the entire batch if any record fails.
-
-*Type*: `bool`
-
-*Default*: `false`
-
-=== `topic_mappings[].external_id_field`
-
-External ID field name. Required for upsert operations.
+The GraphQL query document as a single string. Must target the Salesforce UIAPI schema (`uiapi.query.*` or `uiapi.mutation.*`). Typically follows the UIAPI convention of nested `edges { node { field { value } } }`. Variables are referenced with `$name` and supplied via the `variables` field. For automatic pagination, include `pageInfo { hasNextPage endCursor }` in the relevant connection.
 
 *Type*: `string`
 
-*Default*: `""`
+[source,yaml]
+----
+# Examples:
+query: query Accounts { uiapi { query { Account { edges { node { Id { value } Name { value } } } pageInfo { hasNextPage endCursor } } } } }
 
-=== `topic_mappings[].mode`
+# ---
 
-Write mode: `realtime` (sObject Collections API) or `bulk` (Bulk API 2.0).
+query: query Accounts($first: Int) { uiapi { query { Account(first: $first) { edges { node { Id { value } Name { value } } } pageInfo { hasNextPage endCursor } } } } }
+----
 
-*Type*: `string`
+=== `variables`
 
-*Default*: `realtime`
-
-=== `topic_mappings[].operation`
-
-Write operation: insert, update, upsert, or delete.
-
-*Type*: `string`
-
-*Default*: `upsert`
-
-=== `topic_mappings[].sobject`
-
-Salesforce sObject API name (for example, Account, Contact, MyObject__c).
+Optional xref:guides:bloblang/about.adoc[Bloblang mapping] whose result must be an object whose keys are GraphQL variable names referenced by `query`. Values pass through as JSON in the request body's `variables` field. The mapping is evaluated once at startup with no message context — use `env()`, `now()`, `cache()`, or static literals.
 
 *Type*: `string`
 
-=== `topic_mappings[].topic`
+[source,yaml]
+----
+# Examples:
+variables: root = {"first": 100}
 
-Kafka topic name to match against the message's `topic` field.
+# ---
 
-*Type*: `string`
+variables: root = {"since": now().ts_format("2006-01-02T15:04:05Z"), "limit": 500}
+----
 
 

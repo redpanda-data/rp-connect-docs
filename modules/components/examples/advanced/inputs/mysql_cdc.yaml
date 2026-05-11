@@ -9,6 +9,7 @@ inputs:
     snapshot_max_batch_size: 1000
     max_reconnect_attempts: 10
     stream_snapshot: "" # No default (required)
+    max_parallel_snapshot_tables: 1
     auto_replay_nacks: true
     checkpoint_limit: 1024
     tls:

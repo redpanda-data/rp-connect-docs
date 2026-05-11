@@ -34,6 +34,7 @@ outputs:
       tls_skip_verify: false
     namespace: "" # No default (required)
     table: "" # No default (required)
+    case_sensitive_columns: true
     storage:
       aws_s3:
         bucket: "" # No default (required)
@@ -67,6 +68,8 @@ outputs:
       manifest_merge_enabled: true
       max_snapshot_age: 24h
       max_retries: 3
+    parquet:
+      string_encoding: delta_length_byte_array
     batching:
       count: 0
       byte_size: 0
