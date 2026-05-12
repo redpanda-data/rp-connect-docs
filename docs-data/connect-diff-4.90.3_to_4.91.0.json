@@ -2,7 +2,7 @@
   "comparison": {
     "oldVersion": "4.90.3",
     "newVersion": "4.91.0",
-    "timestamp": "2026-05-08T11:27:32.723Z"
+    "timestamp": "2026-05-12T22:18:23.470Z"
   },
   "summary": {
     "newComponents": 0,
@@ -11,39 +11,16 @@
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
-    "changedDefaults": 0,
-    "platformTransitions": 0,
-    "newBloblangMethods": 0,
-    "removedBloblangMethods": 0,
-    "newBloblangFunctions": 0,
-    "removedBloblangFunctions": 0,
-    "deprecatedBloblangMethods": 0,
-    "deprecatedBloblangFunctions": 0
+    "changedDefaults": 0
   },
   "details": {
-    "newComponents": [
-      {
-        "name": "gcp_bigquery_write_api",
-        "type": "output",
-        "status": "stable",
-        "version": "",
-        "description": "\nWrites messages to a BigQuery table using the Storage Write API.\nThis provides higher throughput and lower latency than the legacy streaming API or load jobs.\n\nMessages can be formatted as JSON (default) or raw protobuf bytes.\nWhen using JSON format the component automatically fetches the table schema and converts each message to the corresponding proto representation.\n\nWARNING: The proto3 JSON mapping encodes int64 and uint64 values as strings.\nJSON messages with integer fields must use string values (e.g. `\"age\": \"30\"` not `\"age\": 30`).\nOtherwise the write will fail with an unmarshalling error.\n\nWhen batching is enabled the table name is resolved from the first message in each batch.\nAll messages in the same batch are written to that table.\n",
-        "summary": "Streams data into BigQuery using the Storage Write API."
-      }
-    ],
+    "newComponents": [],
     "removedComponents": [],
     "newFields": [],
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
-    "changedDefaults": [],
-    "platformTransitions": [],
-    "newBloblangMethods": [],
-    "removedBloblangMethods": [],
-    "newBloblangFunctions": [],
-    "removedBloblangFunctions": [],
-    "deprecatedBloblangMethods": [],
-    "deprecatedBloblangFunctions": []
+    "changedDefaults": []
   },
   "binaryAnalysis": {
     "versions": {
@@ -53,18 +30,8 @@
     },
     "current": {
       "cloudSupported": 486,
-      "selfHostedOnly": 74,
-      "cgoOnly": 4
-    },
-    "changes": {
-      "cloud": {
-        "added": [],
-        "removed": []
-      },
-      "cgo": {
-        "newCgoOnly": [],
-        "removedCgoOnly": []
-      }
+      "selfHostedOnly": 78,
+      "cgoOnly": 0
     },
     "changes": {},
     "details": {
@@ -1247,11 +1214,6 @@
         {
           "type": "processors",
           "name": "xml",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -2899,18 +2861,12 @@
       ],
       "cloudOnly": [
         {
-          "type": "outputs",
-          "name": "gcp_bigquery_write_api",
+          "type": "processors",
+          "name": "a2a_message",
           "status": "stable"
         }
       ],
-      "cgoOnly": [
-        {
-          "type": "outputs",
-          "name": "gcp_bigquery_write_api",
-          "status": "stable"
-        }
-      ]
+      "cgoOnly": []
     }
   }
 }
