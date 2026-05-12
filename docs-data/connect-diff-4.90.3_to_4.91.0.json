@@ -2,7 +2,7 @@
   "comparison": {
     "oldVersion": "4.90.3",
     "newVersion": "4.91.0",
-    "timestamp": "2026-05-12T22:18:23.470Z"
+    "timestamp": "2026-05-12T22:26:07.417Z"
   },
   "summary": {
     "newComponents": 0,
@@ -11,7 +11,14 @@
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
-    "changedDefaults": 0
+    "changedDefaults": 0,
+    "platformTransitions": 0,
+    "newBloblangMethods": 0,
+    "removedBloblangMethods": 0,
+    "newBloblangFunctions": 0,
+    "removedBloblangFunctions": 0,
+    "deprecatedBloblangMethods": 0,
+    "deprecatedBloblangFunctions": 0
   },
   "details": {
     "newComponents": [],
@@ -20,7 +27,14 @@
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
-    "changedDefaults": []
+    "changedDefaults": [],
+    "platformTransitions": [],
+    "newBloblangMethods": [],
+    "removedBloblangMethods": [],
+    "newBloblangFunctions": [],
+    "removedBloblangFunctions": [],
+    "deprecatedBloblangMethods": [],
+    "deprecatedBloblangFunctions": []
   },
   "binaryAnalysis": {
     "versions": {
@@ -29,7 +43,7 @@
       "cgo": "4.91.0"
     },
     "current": {
-      "cloudSupported": 486,
+      "cloudSupported": 487,
       "selfHostedOnly": 78,
       "cgoOnly": 0
     },
@@ -1214,6 +1228,11 @@
         {
           "type": "processors",
           "name": "xml",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -2859,13 +2878,7 @@
           "status": "stable"
         }
       ],
-      "cloudOnly": [
-        {
-          "type": "processors",
-          "name": "a2a_message",
-          "status": "stable"
-        }
-      ],
+      "cloudOnly": [],
       "cgoOnly": []
     }
   }
