@@ -26978,7 +26978,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -27153,7 +27153,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -27486,7 +27486,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of parallel message batches to have in flight at any given time.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -27799,7 +27799,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -28266,7 +28266,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -28821,7 +28821,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of parallel message batches to have in flight at any given time.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -29560,7 +29560,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           }
         ],
@@ -29720,7 +29720,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of parallel message batches to have in flight at any given time.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -29955,7 +29955,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of parallel message batches to have in flight at any given time.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -30684,7 +30684,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -30942,7 +30942,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this value to improve throughput.",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this value to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -31063,7 +31063,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -31573,7 +31573,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of message batches to have in flight at a given time. Increase this value to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this value to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           }
         ]
@@ -31984,7 +31984,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -32357,7 +32357,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -32637,7 +32637,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of message batches to have in flight at a given time. Increase this value to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this value to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -33185,7 +33185,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -33348,7 +33348,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increasing this may improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -33595,7 +33595,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -35297,7 +35297,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 4
           }
         ]
@@ -35737,7 +35737,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -36558,7 +36558,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of batches to send in parallel at any given time.",
+            "description": "The maximum number of batches to send in parallel at any given time.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 10
           },
           {
@@ -36909,7 +36909,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput.",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -39131,7 +39131,7 @@
                 "name": "max_in_flight",
                 "type": "int",
                 "kind": "scalar",
-                "description": "The maximum number of message batches to send in parallel at any given time.",
+                "description": "The maximum number of message batches to send in parallel at any given time.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
                 "default": 10
               },
               {
@@ -39686,7 +39686,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -40220,7 +40220,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           }
         ]
@@ -40628,7 +40628,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           }
         ]
@@ -40656,7 +40656,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -41152,7 +41152,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of parallel message batches to have in flight at any given time.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 1
           }
         ]
@@ -41180,7 +41180,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -41495,7 +41495,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this value to improve throughput.",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this value to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -42298,7 +42298,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -42617,7 +42617,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -42950,7 +42950,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -43674,7 +43674,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 256
           },
           {
@@ -43994,7 +43994,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 10
           },
           {
@@ -45233,7 +45233,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of batches to send in parallel at any given time. Increase this value to improve throughput during migration.\n\nFor optimal performance, set this to match the total number of partitions being migrated. Setting it higher than the partition count provides no additional benefit, as each partition can only have one in-flight batch at a time.\n\nExample: If migrating 100 partitions, set `max_in_flight: 100` for maximum throughput.",
+            "description": "The maximum number of batches to send in parallel at any given time. Increase this value to improve throughput during migration.\n\nFor optimal performance, set this to match the total number of partitions being migrated. Setting it higher than the partition count provides no additional benefit, as each partition can only have one in-flight batch at a time.\n\nExample: If migrating 100 partitions, set `max_in_flight: 100` for maximum throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 10,
             "examples": [
               "64  # For a cluster with 64 partitions",
@@ -45469,7 +45469,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "Maximum number of batches to send concurrently. Increasing this value improves real-time write throughput.",
+            "description": "Maximum number of batches to send concurrently. Increasing this value improves real-time write throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 1
           },
           {
@@ -47033,7 +47033,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of parallel message batches to have in flight at any given time.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 1
           }
         ],
@@ -47361,7 +47361,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.",
+            "description": "The maximum number of messages to have in flight at a given time. Increase this number to improve throughput until performance plateaus.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 4
           },
           {
@@ -47889,7 +47889,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -48092,7 +48092,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of inserts to run in parallel.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -48318,7 +48318,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of inserts to run in parallel.",
+            "description": "The maximum number of message batches to have in flight at a given time. Increase this to improve throughput.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
@@ -48621,7 +48621,7 @@
             "name": "max_in_flight",
             "type": "int",
             "kind": "scalar",
-            "description": "The maximum number of database statements to execute in parallel.",
+            "description": "The maximum number of database statements to execute in parallel.\n\nNOTE: Set `max_in_flight: 1` when a `batching` block with `processors` is configured on this output. If a batching processor (for example `parquet_encode`, `archive`, or `compress`) errors at runtime, Redpanda Connect can write raw, unprocessed messages to the output instead of the encoded batch, producing corrupt downstream data (for example, a `.parquet` file containing raw JSON). Because the batching processor is single threaded, higher values do not improve performance.",
             "default": 64
           },
           {
