@@ -72,5 +72,5 @@ For more details about authentication using JWTs, see the https://docs.nats.io/u
 
 Send multiple messages in flight in parallel for improved performance. You can tune the number of in flight messages (or message batches) with the field `max_in_flight`.
 
-include::redpanda-connect:components:partial$fields/outputs/nats_stream.adoc[]
+include::connect:components:partial$fields/outputs/nats_stream.adoc[]
 

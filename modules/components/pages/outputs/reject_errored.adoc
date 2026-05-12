@@ -21,6 +21,6 @@ output:
 
 The routing of messages rejected by this output depends on the type of input it came from. For inputs that support propagating nacks upstream such as AMQP or NATS the message will be nacked. However, for inputs that are sequential such as files or Kafka the messages will simply be reprocessed from scratch.
 
-include::redpanda-connect:components:partial$examples/outputs/reject_errored.adoc[]
+include::connect:components:partial$examples/outputs/reject_errored.adoc[]
 
 // end::single-source[]

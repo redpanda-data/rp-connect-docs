@@ -61,6 +61,6 @@ In order to create a unique `key` value per item you should use function interpo
 
 This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.
 
-include::redpanda-connect:components:partial$fields/outputs/cache.adoc[]
+include::connect:components:partial$fields/outputs/cache.adoc[]
 
 // end::single-source[]

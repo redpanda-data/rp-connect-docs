@@ -40,6 +40,6 @@ include::components:example$advanced/caches/aws_s3.yaml[]
 
 It is not possible to atomically upload S3 objects exclusively when the target does not already exist, therefore this cache is not suitable for deduplication.
 
-include::redpanda-connect:components:partial$fields/caches/aws_s3.adoc[]
+include::connect:components:partial$fields/caches/aws_s3.adoc[]
 
 // end::single-source[]

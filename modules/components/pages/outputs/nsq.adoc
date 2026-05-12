@@ -41,5 +41,5 @@ The `topic` field can be dynamically set using function interpolations described
 
 This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.
 
-include::redpanda-connect:components:partial$fields/outputs/nsq.adoc[]
+include::connect:components:partial$fields/outputs/nsq.adoc[]
 

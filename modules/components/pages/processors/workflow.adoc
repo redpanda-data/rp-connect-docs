@@ -74,9 +74,9 @@ A --|          /--> E --|
 
 And imagine doing so knowing that the diagram is subject to change over time. Yikes! Instead, with a workflow we can either trust it to automatically resolve the DAG or express it manually as simply as `order: [ [ A ], [ B, C ], [ E ], [ D, F ] ]`, and the conditional logic for determining if a stage is executed is defined as part of the branch itself.
 
-include::redpanda-connect:components:partial$examples/processors/workflow.adoc[]
+include::connect:components:partial$examples/processors/workflow.adoc[]
 
-include::redpanda-connect:components:partial$fields/processors/workflow.adoc[]
+include::connect:components:partial$fields/processors/workflow.adoc[]
 
 == Structured metadata
 

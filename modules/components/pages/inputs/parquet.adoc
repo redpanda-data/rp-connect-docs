@@ -43,5 +43,5 @@ By default any BYTE_ARRAY or FIXED_LEN_BYTE_ARRAY value will be extracted as a b
 
 When a value extracted as a byte slice exists within a document which is later JSON serialized by default it will be base 64 encoded into strings, which is the default for arbitrary data fields. It is possible to convert these binary values to strings (or other data types) using Bloblang transformations such as `root.foo = this.foo.string()` or `root.foo = this.foo.encode("hex")`, etc.
 
-include::redpanda-connect:components:partial$fields/inputs/parquet.adoc[]
+include::connect:components:partial$fields/inputs/parquet.adoc[]
 

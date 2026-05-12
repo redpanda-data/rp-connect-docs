@@ -41,8 +41,8 @@ include::components:example$advanced/inputs/sql_raw.yaml[]
 
 When the rows from the query are exhausted, this input shuts down, allowing the pipeline to gracefully terminate or for the next input in a xref:components:inputs/sequence.adoc[sequence] to execute.
 
-include::redpanda-connect:components:partial$examples/inputs/sql_raw.adoc[]
+include::connect:components:partial$examples/inputs/sql_raw.adoc[]
 
-include::redpanda-connect:components:partial$fields/inputs/sql_raw.adoc[]
+include::connect:components:partial$fields/inputs/sql_raw.adoc[]
 
 // end::single-source[]

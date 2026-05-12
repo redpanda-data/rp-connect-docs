@@ -139,11 +139,11 @@ This input emits the following metrics:
 - `dynamodb_cdc_shards_tracked`: Total number of shards being tracked (gauge)
 - `dynamodb_cdc_shards_active`: Number of shards currently being read from (gauge)
 
-include::redpanda-connect:components:partial$fields/inputs/aws_dynamodb_cdc.adoc[]
+include::connect:components:partial$fields/inputs/aws_dynamodb_cdc.adoc[]
 
-include::redpanda-connect:components:partial$examples/inputs/aws_dynamodb_cdc.adoc[]
+include::connect:components:partial$examples/inputs/aws_dynamodb_cdc.adoc[]
 
 == Suggested reading
 
-For common patterns including filtering events, routing to Kafka or S3, and detecting changed fields, see the xref:redpanda-connect:cookbooks:dynamodb_cdc.adoc[DynamoDB CDC Patterns] cookbook.
+For common patterns including filtering events, routing to Kafka or S3, and detecting changed fields, see the xref:connect:cookbooks:dynamodb_cdc.adoc[DynamoDB CDC Patterns] cookbook.
 // end::single-source[]

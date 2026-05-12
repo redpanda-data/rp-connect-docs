@@ -14,7 +14,7 @@ The address to listen on for gRPC connections.
 
 Optional bearer token for authentication. When set, requests must include 'authorization: Bearer <token>' metadata.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -70,7 +70,7 @@ Whether to use basic authentication in requests.
 
 A password to authenticate with.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -174,7 +174,7 @@ A value used to gain access to the protected resources on behalf of the user.
 
 A secret provided in order to establish ownership of a given access token.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -192,7 +192,7 @@ A value used to identify the client to the service provider.
 
 A secret used to establish ownership of the consumer key.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -224,7 +224,7 @@ A value used to identify the client to the token provider.
 
 A secret used to establish ownership of the client key.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -330,7 +330,7 @@ The path of a certificate to use.
 
 A plain text certificate key to use.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -351,7 +351,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -391,7 +391,7 @@ Whether custom TLS settings are enabled.
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

@@ -108,7 +108,7 @@ An external ID to provide when assuming the specified role.
 
 The secret for the credentials being used.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -225,7 +225,7 @@ The SASL mechanism to use for authentication.
 
 The password to use for PLAIN or SCRAM-* authentication.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -389,7 +389,7 @@ The path to a file containing the certificate to use for TLS authentication. Mus
 
 Private key for mTLS client certificate as inline PEM data. Must correspond to the client certificate specified in the `cert` field. Use this field together with `cert` when providing certificate data inline rather than through files.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -409,7 +409,7 @@ The password to use for the private key (specified in the `key` or `key_file` fi
 
 The `pbeWithMD5AndDES-CBC` algorithm is obsolete and not supported for the PKCS#8 format. This algorithm does not authenticate the ciphertext, making it vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -450,7 +450,7 @@ Whether custom TLS settings are enabled.
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

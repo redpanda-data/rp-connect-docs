@@ -37,6 +37,6 @@ include::components:example$advanced/caches/ristretto.yaml[]
 
 This cache is more efficient and appropriate for high-volume use cases than the standard memory cache. However, the add command is non-atomic, and therefore this cache is not suitable for deduplication.
 
-include::redpanda-connect:components:partial$fields/caches/ristretto.adoc[]
+include::connect:components:partial$fields/caches/ristretto.adoc[]
 
 // end::single-source[]

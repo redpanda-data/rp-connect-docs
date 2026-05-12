@@ -46,5 +46,5 @@ This input will continue to listen to the changefeed until shutdown. A backfill 
 
 Note: You must have `SET CLUSTER SETTING kv.rangefeed.enabled = true;` on your CRDB cluster, for more information refer to https://www.cockroachlabs.com/docs/stable/changefeed-examples?filters=core[the official CockroachDB documentation^].
 
-include::redpanda-connect:components:partial$fields/inputs/cockroachdb_changefeed.adoc[]
+include::connect:components:partial$fields/inputs/cockroachdb_changefeed.adoc[]
 

@@ -35,5 +35,5 @@ include::components:example$advanced/outputs/file.yaml[]
 
 Messages can be written to different files by using xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions] in the path field. However, only one file is ever open at a given time, and therefore when the path changes the previously open file is closed.
 
-include::redpanda-connect:components:partial$fields/outputs/file.adoc[]
+include::connect:components:partial$fields/outputs/file.adoc[]
 

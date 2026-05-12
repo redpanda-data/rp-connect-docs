@@ -108,6 +108,6 @@ This input adds the following metadata fields to each message:
 
 You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation]. User-defined metadata is case insensitive in AWS, so keys are often received in capitalized form. To normalize them, map all metadata keys to lowercase or uppercase using a Bloblang mapping such as `meta = meta().map_each_key(key -> key.lowercase())`.
 
-include::redpanda-connect:components:partial$fields/inputs/aws_s3.adoc[]
+include::connect:components:partial$fields/inputs/aws_s3.adoc[]
 
 // end::single-source[]

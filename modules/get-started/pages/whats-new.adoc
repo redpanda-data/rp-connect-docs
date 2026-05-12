@@ -1,10 +1,10 @@
 = What's New in Redpanda Connect
 :description: Summary of new features in Redpanda Connect.
-:page-aliases: ROOT:whats_new_rpcn.adoc
+:page-aliases: streaming:whats_new_rpcn.adoc
 
 This topic includes new content added from version 4.29.0 onwards.
 
-For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:redpanda-cloud:get-started:whats-new-cloud.adoc[].
+For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:cloud-data-platform:get-started:whats-new-cloud.adoc[].
 
 
 
@@ -1636,7 +1636,7 @@ Highlights of this update include the beta release of two components for Self-Ma
 
 === Components for Cloud and Self-Managed Redpanda Connect (beta)
 
-- `ollama_moderation` processor (xref:components:processors/ollama_moderation.adoc[Self-Managed], xref:redpanda-cloud:develop:connect/components/processors/ollama_moderation.adoc[Cloud])
+- `ollama_moderation` processor (xref:components:processors/ollama_moderation.adoc[Self-Managed], xref:cloud-data-platform:develop:connect/components/processors/ollama_moderation.adoc[Cloud])
 - `redpanda_migrator_offsets` input (`Self-Managed`, `Cloud`)
 
 === Component updates
@@ -1892,7 +1892,7 @@ Redpanda Connect has new bundled <<redpanda-migrator-components-beta,Redpanda Mi
 
 You can now move workloads from any Apache Kafka system to Redpanda using the `redpanda_migrator_bundle` input and `output`. 
 
-For full details, see the Redpanda Migrator Cookbook for xref:cookbooks:redpanda_migrator.adoc[Self-Managed] and xref:redpanda-cloud:develop:connect/cookbooks/redpanda_migrator.adoc[Cloud].
+For full details, see the Redpanda Migrator Cookbook for xref:cookbooks:redpanda_migrator.adoc[Self-Managed] and xref:cloud-data-platform:develop:connect/cookbooks/redpanda_migrator.adoc[Cloud].
 
 === AI processors (beta)
 
@@ -1924,7 +1924,7 @@ You can now use the `replication_factor_override` and `replication_factor` field
 
 == Versions 4.35.1 to 4.35.3
 
-Redpanda Connect is now fully integrated with the Redpanda Cloud platform. This release adds Azure and GCP components to the growing list of available components. For a full list of components supported in Redpanda Cloud, see the xref:redpanda-cloud:develop:connect/components/catalog.adoc[Connector Catalog]. 
+Redpanda Connect is now fully integrated with the Redpanda Cloud platform. This release adds Azure and GCP components to the growing list of available components. For a full list of components supported in Redpanda Cloud, see the xref:cloud-data-platform:develop:connect/components/catalog.adoc[Connector Catalog]. 
 
 == Version 4.35.0
 
@@ -1934,7 +1934,7 @@ Redpanda Connect now includes beta versions of Redpanda Migrator components:
 * `redpanda_migrator_bundle` input and `output`
 * `redpanda_migrator_offsets` output
 
-For full details, see the Redpanda Migrator Cookbook for xref:cookbooks:redpanda_migrator.adoc[Self-Managed] and xref:redpanda-cloud:develop:connect/cookbooks/redpanda_migrator.adoc[Cloud].
+For full details, see the Redpanda Migrator Cookbook for xref:cookbooks:redpanda_migrator.adoc[Self-Managed] and xref:cloud-data-platform:develop:connect/cookbooks/redpanda_migrator.adoc[Cloud].
 
 
 === Component updates
