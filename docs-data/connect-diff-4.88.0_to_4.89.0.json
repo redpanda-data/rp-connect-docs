@@ -2,7 +2,7 @@
   "comparison": {
     "oldVersion": "4.88.0",
     "newVersion": "4.89.0",
-    "timestamp": "2026-04-23T16:42:07.496Z"
+    "timestamp": "2026-05-18T16:54:01.886Z"
   },
   "summary": {
     "newComponents": 0,
@@ -21,7 +21,40 @@
     "deprecatedBloblangFunctions": 0
   },
   "details": {
-    "newComponents": [],
+    "newComponents": [
+      {
+        "name": "salesforce",
+        "type": "input",
+        "status": "stable",
+        "version": "",
+        "description": "Runs a SOQL query against the Salesforce REST API, paginates through all result pages, and emits one message per record. When results are exhausted the input shuts down, letting the pipeline terminate gracefully (or the next input in a xref:components:inputs/sequence.adoc[sequence] to take over).\n\n== When to use this input\n\nUse `salesforce` for:\n\n- One-shot extracts (e.g. dump all Accounts into a warehouse).\n- Periodic full-table refreshes via a scheduled pipeline or xref:components:inputs/sequence.adoc[sequence].\n- Backfills and ad-hoc queries.\n- Warming up a downstream pipeline before switching to CDC.\n\nUse a different Salesforce input instead if:\n\n- You need continuous change events — use xref:components:inputs/salesforce_cdc.adoc[`salesforce_cdc`].\n- You need a GraphQL query (cross-object in one request) — use xref:components:inputs/salesforce_graphql.adoc[`salesforce_graphql`].\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `sobject`: The sObject API name (e.g. \"Account\").\n\n== Authentication\n\nUses the Salesforce OAuth 2.0 Client Credentials flow. Create a Connected App in Salesforce, enable OAuth settings and the Client Credentials Flow, then supply the Consumer Key as `client_id` and Consumer Secret as `client_secret`.\n",
+        "summary": "Executes a Salesforce SOQL query once and emits a message for each record."
+      },
+      {
+        "name": "salesforce_cdc",
+        "type": "input",
+        "status": "stable",
+        "version": "",
+        "description": "Subscribes to one or more Salesforce Pub/Sub topics in parallel and emits a message per event. Topics may be:\n\n- `/data/<sObject>ChangeEvent` — per-sObject CDC channel.\n- `/data/ChangeEvents` — CDC firehose (every CDC-enabled sObject).\n- `/event/<EventName>__e` — custom Platform Event.\n- `/event/<StandardEventName>` — standard Platform Event (e.g. `LoginEventStream`).\n- A bare sObject name (e.g. `Account`) is shorthand for `/data/AccountChangeEvent`.\n\nOptionally runs a REST snapshot for the CDC sObjects before opening the streaming subscriptions, so the pipeline sees the current state plus continuous changes. Per-topic replay state persists in a cache resource so each subscription resumes across restarts independently.\n\n== When to use this input\n\nUse `salesforce_cdc` for:\n\n- Continuous ingestion with both historical state (snapshot) and live changes (CDC).\n- Real-time custom or standard Platform Events.\n- Mixed CDC + Platform Event pipelines under a single component.\n\nUse a different Salesforce input instead if:\n\n- You only need a one-off extract or periodic SOQL query — use xref:components:inputs/salesforce.adoc[`salesforce`].\n- You need a GraphQL query (cross-object in one request) — use xref:components:inputs/salesforce_graphql.adoc[`salesforce_graphql`].\n\n== Metadata\n\nEvery emitted message has:\n\n- `topic`: The full Pub/Sub topic path (e.g. \"/event/Order__e\").\n- `replay_id`: The Pub/Sub replay ID in hex (streaming events only).\n\nCDC events also carry:\n\n- `operation`: \"read\" for snapshot rows; \"create\", \"update\", \"delete\", or \"undelete\" for CDC events.\n- `sobject`: The sObject API name (e.g. \"Account\").\n- `record_ids`: Comma-separated record IDs affected by the event (when present).\n\nPlatform Events also carry:\n\n- `event_uuid`: The Salesforce `EventUuid` extracted from the payload (the canonical dedup key), when present.\n\n== Authentication\n\nUses the Salesforce OAuth 2.0 Client Credentials flow. Create a Connected App in Salesforce, enable OAuth settings and the Client Credentials Flow, ensure Change Data Capture is enabled for the target sObjects (Setup → Change Data Capture), then supply the Consumer Key as `client_id` and Consumer Secret as `client_secret`.\n\n== Prerequisites\n\nEach `/data/...` topic requires Change Data Capture to be enabled for the corresponding sObject (Setup → Change Data Capture). Each `/event/...` topic requires the corresponding Platform Event to exist in Salesforce; standard events may require Event Monitoring licenses or specific permissions.\n",
+        "summary": "Streams Salesforce Change Data Capture (CDC) and Platform Events from the Pub/Sub gRPC API, optionally preceded by a REST snapshot of the configured sObjects."
+      },
+      {
+        "name": "salesforce_graphql",
+        "type": "input",
+        "status": "stable",
+        "version": "",
+        "description": "Executes a GraphQL query against the Salesforce UIAPI (`POST /services/data/{api_version}/graphql`), walks the response tree, and emits one message per record. When records are exhausted the input shuts down, letting the pipeline terminate gracefully (or the next input in a xref:components:inputs/sequence.adoc[sequence] to take over).\n\n== When to use this input\n\nUse `salesforce_graphql` for:\n\n- Cross-object queries in a single request (parent + children + grandchildren).\n- Response shapes that already match your downstream schema.\n- Queries benefiting from GraphQL's field-level selection and nesting.\n- Adopting Salesforce's UIAPI / future-forward query surface.\n\nUse a different Salesforce input instead if:\n\n- You only need single-object SELECTs — use xref:components:inputs/salesforce.adoc[`salesforce`] (simpler, no GraphQL schema knowledge needed).\n- You need continuous change events — use xref:components:inputs/salesforce_cdc.adoc[`salesforce_cdc`].\n\n== Pagination\n\nWhen the query selects an `edges`/`pageInfo` connection, the input transparently paginates by injecting `after: \"<cursor>\"` into the query string between requests. The query must include `pageInfo { hasNextPage endCursor }` for pagination to terminate cleanly. Responses without an `edges` array are emitted as a single message and the input completes.\n\n== Metadata\n\nThis input adds no Salesforce-specific metadata. GraphQL response shapes vary by query, so record identity and context travel in the message body.\n\n== Authentication\n\nUses the Salesforce OAuth 2.0 Client Credentials flow. Create a Connected App in Salesforce, enable OAuth settings and the Client Credentials Flow, grant the `api` OAuth scope, then supply the Consumer Key as `client_id` and Consumer Secret as `client_secret`. The Connected App must have access to the target UIAPI objects.\n",
+        "summary": "Executes a Salesforce GraphQL (UIAPI) query once and emits a message for each record."
+      },
+      {
+        "name": "gcp_bigquery_write_api",
+        "type": "output",
+        "status": "stable",
+        "version": "",
+        "description": "\nWrites messages to a BigQuery table using the Storage Write API.\nThis provides higher throughput and lower latency than the legacy streaming API or load jobs.\n\nMessages can be formatted as JSON (default) or raw protobuf bytes.\nWhen using JSON format the component automatically fetches the table schema and converts each message to the corresponding proto representation.\n\nWARNING: The proto3 JSON mapping encodes int64 and uint64 values as strings.\nJSON messages with integer fields must use string values (e.g. `\"age\": \"30\"` not `\"age\": 30`).\nOtherwise the write will fail with an unmarshalling error.\n\nWhen batching is enabled the table name is resolved from the first message in each batch.\nAll messages in the same batch are written to that table.\n",
+        "summary": "Streams data into BigQuery using the Storage Write API."
+      }
+    ],
     "removedComponents": [],
     "newFields": [
       {
@@ -81,62 +114,15 @@
   "binaryAnalysis": {
     "versions": {
       "oss": "4.89.0",
-      "cloud": "4.89.0",
-      "cgo": "4.89.0"
+      "cloud": "4.92.0",
+      "cgo": "4.92.0"
     },
     "current": {
-      "cloudSupported": 481,
-      "selfHostedOnly": 76,
+      "cloudSupported": 483,
+      "selfHostedOnly": 79,
       "cgoOnly": 4
     },
-    "changes": {
-      "cloud": {
-        "added": [
-          {
-            "type": "outputs",
-            "name": "salesforce_sink",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "salesforce",
-            "status": "stable"
-          }
-        ],
-        "removed": [
-          {
-            "type": "processors",
-            "name": "a2a_message",
-            "status": "stable"
-          }
-        ]
-      },
-      "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "stable"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "ffi",
-            "status": "stable"
-          }
-        ],
-        "removedCgoOnly": []
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -1211,11 +1197,6 @@
         },
         {
           "type": "processors",
-          "name": "salesforce",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
           "name": "schema_registry_decode",
           "status": "stable"
         },
@@ -1305,6 +1286,11 @@
           "status": "stable"
         },
         {
+          "type": "processors",
+          "name": "a2a_message",
+          "status": "stable"
+        },
+        {
           "type": "rate-limits",
           "name": "local",
           "status": "stable"
@@ -1321,6 +1307,11 @@
         },
         {
           "type": "metrics",
+          "name": "open_telemetry_collector",
+          "status": "stable"
+        },
+        {
+          "type": "metrics",
           "name": "prometheus",
           "status": "stable"
         },
@@ -1332,6 +1323,11 @@
         {
           "type": "tracers",
           "name": "none",
+          "status": "stable"
+        },
+        {
+          "type": "tracers",
+          "name": "open_telemetry_collector",
           "status": "stable"
         },
         {
@@ -2667,6 +2663,16 @@
           "status": "stable"
         },
         {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2777,6 +2783,11 @@
           "status": "stable"
         },
         {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -2843,6 +2854,11 @@
         },
         {
           "type": "processors",
+          "name": "salesforce",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
           "name": "sentry_capture",
           "status": "stable"
         },
@@ -2859,6 +2875,11 @@
         {
           "type": "processors",
           "name": "wasm",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "ffi",
           "status": "stable"
         },
         {
@@ -2883,22 +2904,12 @@
         },
         {
           "type": "metrics",
-          "name": "open_telemetry_collector",
-          "status": "stable"
-        },
-        {
-          "type": "metrics",
           "name": "statsd",
           "status": "stable"
         },
         {
           "type": "tracers",
           "name": "jaeger",
-          "status": "stable"
-        },
-        {
-          "type": "tracers",
-          "name": "open_telemetry_collector",
           "status": "stable"
         },
         {
@@ -2929,30 +2940,45 @@
       ],
       "cloudOnly": [
         {
-          "type": "processors",
-          "name": "a2a_message",
+          "type": "inputs",
+          "name": "salesforce",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "salesforce_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "salesforce_graphql",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "gcp_bigquery_write_api",
           "status": "stable"
         }
       ],
       "cgoOnly": [
         {
           "type": "inputs",
-          "name": "tigerbeetle_cdc",
+          "name": "salesforce",
           "status": "stable"
         },
         {
           "type": "inputs",
-          "name": "zmq4",
+          "name": "salesforce_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "salesforce_graphql",
           "status": "stable"
         },
         {
           "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
+          "name": "gcp_bigquery_write_api",
           "status": "stable"
         }
       ]

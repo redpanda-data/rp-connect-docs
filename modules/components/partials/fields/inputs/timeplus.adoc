@@ -6,7 +6,7 @@
 
 The API key for the Timeplus Enterprise REST API. You need to generate the key in the web console of Timeplus Enterprise (Cloud). This field is required if you are reading messages from Timeplus Enterprise (Cloud).
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -14,7 +14,7 @@ include::connect:components:partial$secret_warning.adoc[]
 
 The password for the Timeplus application server. This field is required if you are reading messages from Timeplus Enterprise (Self-Hosted) or `timeplusd`.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

@@ -20,7 +20,7 @@ Whether to use basic authentication in requests.
 
 A password to authenticate with.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -158,7 +158,7 @@ A value used to gain access to the protected resources on behalf of the user.
 
 A secret provided in order to establish ownership of a given access token.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -176,7 +176,7 @@ A value used to identify the client to the service provider.
 
 A secret used to establish ownership of the consumer key.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -208,7 +208,7 @@ A value used to identify the client to the token provider.
 
 A secret used to establish ownership of the client key.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

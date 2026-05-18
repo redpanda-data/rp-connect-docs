@@ -125,7 +125,7 @@ The path to a file containing the certificate to use for TLS authentication. Mus
 
 Private key for mTLS client certificate as inline PEM data. Must correspond to the client certificate specified in the `cert` field. Use this field together with `cert` when providing certificate data inline rather than through files.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -145,7 +145,7 @@ The password to use for the private key (specified in the `key` or `key_file` fi
 
 The `pbeWithMD5AndDES-CBC` algorithm is obsolete and not supported for the PKCS#8 format. This algorithm does not authenticate the ciphertext, making it vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -186,7 +186,7 @@ Whether to enable TLS for secure connections. Set to `true` to enable TLS encryp
 
 Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

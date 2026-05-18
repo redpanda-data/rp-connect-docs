@@ -174,7 +174,7 @@ An external ID to provide when assuming a role.
 
 The secret for the credentials being used.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -258,7 +258,7 @@ Maximum time to wait for acknowledgment of transmitted data before killing the c
 
 Static bearer token for authentication. For testing only, not recommended for production.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -278,7 +278,7 @@ OAuth2 client identifier.
 
 OAuth2 client secret.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -525,7 +525,7 @@ The AWS access key ID.
 
 The AWS secret access key.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -595,7 +595,7 @@ Custom endpoint for Azure-compatible storage.
 
 Azure storage access key for shared key authentication.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -615,7 +615,7 @@ storage_account: mystorageaccount
 
 Azure storage connection string. Use this or other auth methods, not both.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -623,7 +623,7 @@ include::connect:components:partial$secret_warning.adoc[]
 
 SAS token for authentication. Prefix with the container name followed by a dot if container-specific.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -655,7 +655,7 @@ Path to a GCP credentials JSON file.
 
 GCP credentials JSON content. Use this or `credentials_file`, not both.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

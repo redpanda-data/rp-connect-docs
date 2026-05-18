@@ -32,7 +32,7 @@ Whether to use basic authentication in requests.
 
 A password to authenticate with.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -479,7 +479,7 @@ The value used to gain access to the protected resources on behalf of the user.
 
 The secret that establishes ownership of the `oauth.access_token` in OAuth 1.0 authentication.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -497,7 +497,7 @@ A value used to identify the client to the service provider.
 
 The secret that establishes ownership of the consumer key in OAuth 1.0 authentication.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -529,7 +529,7 @@ A value used to identify the client to the token provider.
 
 The secret used to establish ownership of the client key.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -702,7 +702,7 @@ The path of a certificate to use.
 
 A plain text certificate key to use.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -723,7 +723,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -763,7 +763,7 @@ Whether custom TLS settings are enabled.
 
 Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
