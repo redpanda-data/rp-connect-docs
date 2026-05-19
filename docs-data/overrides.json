@@ -79,7 +79,7 @@
       "description": "Whether to use basic authentication in requests."
     },
     "elasticsearch_basic_auth_password": {
-      "description": "A password to authenticate with.\n\ninclude::redpanda-connect:components:partial$secret_warning.adoc[]"
+      "description": "A password to authenticate with.\n\ninclude::connect:components:partial$secret_warning.adoc[]"
     },
     "elasticsearch_basic_auth_username": {
       "description": "A username to authenticate as."
@@ -1597,7 +1597,7 @@
           {
             "name": "wallet_password",
             "type": "string",
-            "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only use this when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.\n\ninclude::redpanda-connect:components:partial$secret_warning.adoc[]"
+            "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only use this when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.\n\ninclude::connect:components:partial$secret_warning.adoc[]"
           }
         ]
       }
