@@ -1,3 +1,40 @@
 = Redpanda Connect Documentation
-:page-role: component-home-v2
-:description: Home page for the Redpanda Connect docs.
+:page-layout: component-home-v3
+:page-toclevels: -1
+:description: Build data pipelines with 200+ pre-built connectors, Bloblang transformations, CDC support, and AI integrations. Stream data between any source and destination.
+:page-hero-description: Build data pipelines with 200+ pre-built connectors, Bloblang transformations, CDC support, and AI integrations. Stream data between any source and destination.
+// Deploy section - Getting Started
+:page-deploy-title: Get started with Connect
+:page-deploy-1-title: Quick start with rpk
+:page-deploy-1-desc: Launch your first pipeline in minutes using rpk connect.
+:page-deploy-1-link: get-started:quickstarts/rpk.adoc
+:page-deploy-1-icon: lightning
+:page-deploy-2-title: Helm chart
+:page-deploy-2-desc: Deploy Connect pipelines on Kubernetes with Helm.
+:page-deploy-2-link: get-started:quickstarts/helm-chart.adoc
+:page-deploy-2-icon: kubernetes
+:page-deploy-3-title: Binary installation
+:page-deploy-3-desc: Install the prebuilt binary for production deployments.
+:page-deploy-3-link: install:prebuilt-binary.adoc
+:page-deploy-3-icon: package
+// Popular topics section
+:page-popular-title: Popular topics
+:page-popular-1-title: Connectors
+:page-popular-1-desc: Browse 200+ connectors for databases, APIs, cloud services, and more.
+:page-popular-1-link: components:inputs/about.adoc
+:page-popular-1-icon: plug-connected
+:page-popular-2-title: Bloblang
+:page-popular-2-desc: Transform data with a powerful mapping language built for streaming.
+:page-popular-2-link: guides:bloblang/about.adoc
+:page-popular-2-icon: sparkles
+:page-popular-3-title: Change Data Capture
+:page-popular-3-desc: Stream database changes in real-time from MySQL, PostgreSQL, and more.
+:page-popular-3-link: cookbooks:dynamodb_cdc.adoc
+:page-popular-3-icon: flow
+:page-popular-4-title: RAG & AI Pipelines
+:page-popular-4-desc: Build AI pipelines with embeddings, vector search, and LLM integrations.
+:page-popular-4-link: cookbooks:rag.adoc
+:page-popular-4-icon: sparkles
+// Labs section
+:page-labs-title: Labs for Connect
+:page-labs-link: https://redpanda.com/labs
