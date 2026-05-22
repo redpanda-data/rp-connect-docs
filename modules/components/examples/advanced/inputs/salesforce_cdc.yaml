@@ -1,16 +1,26 @@
-outputs:
+inputs:
   label: ""
-  salesforce_sink:
+  salesforce_cdc:
     org_url: "" # No default (required)
     client_id: "" # No default (required)
     client_secret: "" # No default (required)
     api_version: v65.0
-    bulk_batch_size: 1000
-    max_concurrent_bulk_jobs: 10
-    bulk_poll_interval: 5s
-    batch_period: 5s
-    max_in_flight: 1
-    topic_mappings: [] # No default (required)
+    topics: [] # No default (required)
+    stream_snapshot: true
+    replay_preset: latest
+    snapshot_max_batch_size: 2000
+    stream_batch_size: 100
+    max_parallel_snapshot_objects: 1
+    checkpoint_cache: "" # No default (required)
+    checkpoint_cache_key: salesforce_cdc
+    checkpoint_limit: 1024
+    auto_replay_nacks: true
+    grpc:
+      reconnect_base_delay: 500ms
+      reconnect_max_delay: 30s
+      reconnect_max_attempts: 0
+      shutdown_timeout: 10s
+      buffer_size: 1000
     http:
       timeout: 5s
       tls:
@@ -61,3 +71,9 @@ outputs:
           write_byte_timeout: 0s
       access_log_level: ""
       access_log_body_limit: 0
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
+      processors: [] # No default (optional)

@@ -20,43 +20,71 @@ api_version: v65.0
 api_version: v62.0
 ----
 
-=== `batch_period`
+=== `args_mapping`
 
-Maximum period to wait before flushing an incomplete batch.
-
-*Type*: `string`
-
-*Default*: `5s`
-
-=== `bulk_batch_size`
-
-Number of records per bulk job. Also controls the output batch size.
-
-*Type*: `int`
-
-*Default*: `1000`
-
-=== `bulk_poll_interval`
-
-How often to poll Salesforce for bulk job completion status.
+Optional xref:guides:bloblang/about.adoc[Bloblang mapping] whose result must be an array of values matching the count of `?` placeholders in `where`. Values are SOQL-escaped: strings become quoted literals, timestamps become ISO-8601, booleans and numbers pass through. The mapping is evaluated once at startup with no message context — use `now()`, `env()`, or `cache()`.
 
 *Type*: `string`
 
-*Default*: `5s`
+[source,yaml]
+----
+# Examples:
+args_mapping: root = [ (now() - "1h").ts_format("2006-01-02T15:04:05Z") ]
+
+# ---
+
+args_mapping: root = [ "Active", (now() - "24h").ts_format("2006-01-02T15:04:05Z") ]
+----
+
+=== `auto_replay_nacks`
+
+Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.
+
+*Type*: `bool`
+
+*Default*: `true`
 
 === `client_id`
 
-Client ID for the Salesforce Connected App.
+Consumer Key of the Salesforce Connected App authorized for the OAuth Client Credentials flow. Create the Connected App under Setup → App Manager → New Connected App, enable OAuth settings, enable the Client Credentials Flow under `Flow Enablement`, then copy the Consumer Key from `Manage Consumer Details`.
 
 *Type*: `string`
 
 === `client_secret`
 
-Client secret for the Salesforce Connected App.
+Consumer Secret of the Salesforce Connected App, paired with `client_id`. Sensitive — prefer environment variable interpolation (`${SALESFORCE_CLIENT_SECRET}`) over inlining.
 
-include::connect:components:partial$secret_warning.adoc[]
+include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
+
+=== `columns[]`
+
+Ordered list of field API names to retrieve. SOQL does not accept `*` — every field must be listed explicitly. Standard fields use their documented names; custom fields end with `__c`. Relationship fields traverse parents via dot notation (`Account.Name`, `Owner.Manager.Email`) up to 5 levels deep. Requesting a non-existent or non-queryable field fails at Connect time with a SOQL compile error.
+
+*Type*: `array`
+
+[source,yaml]
+----
+# Examples:
+columns:
+  - Id
+  - Name
+  - LastModifiedDate
+
+# ---
+
+columns:
+  - Id
+  - Account.Name
+  - Owner.Email
+
+# ---
+
+columns:
+  - Id
+  - MyCustom__c
+----
 
 === `http`
 
@@ -540,25 +568,29 @@ Rate limit in requests per second. 0 disables rate limiting.
 
 *Default*: `0`
 
-=== `max_concurrent_bulk_jobs`
+=== `object`
 
-Maximum number of bulk jobs polling concurrently in the background. Each in-flight job buffers its CSV payload in memory. Lower this value if memory usage is a concern.
+The sObject API name to SELECT from. Case-sensitive; uses the API name, not the display label. Standard objects use the noun (`Account`, `Opportunity`); custom objects end with `__c`; Big Objects end with `__b`; External Objects end with `__x`. Confirm the exact API name in Setup → Object Manager.
 
-*Type*: `int`
+*Type*: `string`
 
-*Default*: `10`
+[source,yaml]
+----
+# Examples:
+object: Account
 
-=== `max_in_flight`
+# ---
 
-Maximum number of batches to send concurrently. Increasing this value improves real-time write throughput.
+object: Contact
 
-*Type*: `int`
+# ---
 
-*Default*: `1`
+object: MyCustom__c
+----
 
 === `org_url`
 
-Salesforce instance base URL (for example, https://your-domain.salesforce.com).
+Salesforce instance base URL for your org, protocol included and no trailing slash. Used as the base for both the OAuth token endpoint and REST queries. Production orgs use `https://{my-domain}.my.salesforce.com`; sandboxes use `https://{my-domain}.sandbox.my.salesforce.com`. Legacy instance URLs (`https://na123.salesforce.com`) still work but My Domain URLs are strongly recommended by Salesforce.
 
 *Type*: `string`
 
@@ -572,54 +604,50 @@ org_url: https://acme.my.salesforce.com
 org_url: https://acme--staging.sandbox.my.salesforce.com
 ----
 
-=== `topic_mappings[]`
+=== `prefix`
 
-Per-topic Salesforce write configuration. Each entry maps a Kafka topic to an sObject and write settings.
-
-*Type*: `object`
-
-=== `topic_mappings[].all_or_none`
-
-Real-time only: rolls back the entire batch if any record fails.
-
-*Type*: `bool`
-
-*Default*: `false`
-
-=== `topic_mappings[].external_id_field`
-
-External ID field name. Required for upsert operations.
+Optional SOQL fragment inserted before the SELECT keyword. Rarely needed — provided for forward compatibility with future SOQL extensions or Bulk API framing.
 
 *Type*: `string`
 
-*Default*: `""`
+=== `suffix`
 
-=== `topic_mappings[].mode`
-
-Write mode: `realtime` (sObject Collections API) or `bulk` (Bulk API 2.0).
+Optional SOQL fragment appended after the WHERE clause. Typical uses: `ORDER BY` for deterministic pagination, `LIMIT` to cap result size, `FOR REFERENCE` / `FOR VIEW` to mark records for Chatter tracking.
 
 *Type*: `string`
 
-*Default*: `realtime`
+[source,yaml]
+----
+# Examples:
+suffix: ORDER BY LastModifiedDate DESC
 
-=== `topic_mappings[].operation`
+# ---
 
-Write operation: insert, update, upsert, or delete.
+suffix: ORDER BY Id LIMIT 1000
 
-*Type*: `string`
+# ---
 
-*Default*: `upsert`
+suffix: ORDER BY CreatedDate DESC LIMIT 10000
+----
 
-=== `topic_mappings[].sobject`
+=== `where`
 
-Salesforce sObject API name (for example, Account, Contact, MyObject__c).
-
-*Type*: `string`
-
-=== `topic_mappings[].topic`
-
-Kafka topic name to match against the message's `topic` field.
+Optional SOQL WHERE body, without the `WHERE` keyword. `?` placeholders are substituted client-side from `args_mapping` with SOQL literal escaping (quoted strings, ISO-8601 datetimes). Supports the full WHERE grammar: `AND`/`OR`/`NOT`, `LIKE`, `IN`, date literals (`TODAY`, `LAST_N_DAYS:7`), subqueries. Date/datetime comparisons require ISO-8601 with explicit timezone.
 
 *Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+where: LastModifiedDate > ?
+
+# ---
+
+where: Status__c = ? AND CreatedDate > ?
+
+# ---
+
+where: OwnerId IN (?, ?)
+----
 
 

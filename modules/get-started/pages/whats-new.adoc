@@ -6,14 +6,125 @@ This topic includes new content added from version 4.29.0 onwards.
 
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:cloud-data-platform:get-started:whats-new-cloud.adoc[].
 
+== Version 4.90.3
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.90.3[See the full release notes^].
+
+=== Salesforce connector refactoring
+
+The `salesforce` processor (introduced in xref:_version_4_85_0[version 4.85.0]) has been removed and replaced with dedicated input components that provide the same functionality with better separation of concerns. The xref:components:outputs/salesforce_sink.adoc[salesforce_sink] output remains available.
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:inputs/salesforce.adoc[salesforce]
+|Inputs
+|stable
+|Executes SOQL queries against Salesforce and returns the results as messages.
+
+|xref:components:inputs/salesforce_cdc.adoc[salesforce_cdc]
+|Inputs
+|stable
+|Captures change data from Salesforce objects using the Pub/Sub API.
+
+|xref:components:inputs/salesforce_graphql.adoc[salesforce_graphql]
+|Inputs
+|stable
+|Executes GraphQL queries against Salesforce and returns the results as messages.
+
+|===
+
+==== Migration guide
+
+To migrate from the removed `salesforce` processor, use the appropriate input component based on your use case:
+
+[cols="1,2"]
+|===
+|Previous processor feature |Replacement
+
+|SOQL queries
+|xref:components:inputs/salesforce.adoc[salesforce] input
+
+|Change Data Capture (CDC)
+|xref:components:inputs/salesforce_cdc.adoc[salesforce_cdc] input
+
+|GraphQL queries
+|xref:components:inputs/salesforce_graphql.adoc[salesforce_graphql] input
+|===
+
+== Version 4.90.1
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.90.1[See the full release notes^].
+
+== Version 4.90.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.90.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new component:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:outputs/gcp_bigquery_write_api.adoc[gcp_bigquery_write_api]
+|Outputs
+|stable
+|Writes messages to a BigQuery table using the Storage Write API. This provides higher throughput and lower latency than the legacy streaming API or load jobs.
+
+|===
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|max_parallel_snapshot_tables
+|Specifies the number of tables that will be snapshotted in parallel.
+|*Inputs:*
+
+* xref:components:inputs/mysql_cdc.adoc#max_parallel_snapshot_tables[mysql_cdc]
 
 
+|===
 
 
+== Version 4.89.3
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.89.3[See the full release notes^].
 
 
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|case_sensitive_columns
+|Controls how message field names are matched against table column names, and how column references in the partition spec are resolved.
+|*Outputs:*
+
+* xref:components:outputs/iceberg.adoc#case_sensitive_columns[iceberg]
 
 
+|===
+
+
+== Version 4.89.2
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.89.2[See the full release notes^].
+
+
+== Version 4.89.1
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.89.1[See the full release notes^].
 
 
 == Version 4.89.0

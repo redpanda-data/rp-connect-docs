@@ -1,0 +1,57 @@
+= gcp_bigquery_write_api
+// tag::single-source[]
+:type: output
+:support: enterprise
+:categories: [GCP, Services]
+:description: Streams data into BigQuery using the Storage Write API.
+
+component_type_dropdown::[]
+
+Streams data into BigQuery using the Storage Write API.
+
+ifndef::env-cloud[]
+Introduced in version 4.90.0.
+endif::[]
+
+
+Writes messages to a BigQuery table using the Storage Write API.
+This provides higher throughput and lower latency than the legacy streaming API or load jobs.
+
+Messages can be formatted as JSON (default) or raw protobuf bytes.
+When using JSON format the component automatically fetches the table schema and converts each message to the corresponding proto representation.
+
+WARNING: The proto3 JSON mapping encodes int64 and uint64 values as strings.
+JSON messages with integer fields must use string values (e.g. `"age": "30"` not `"age": 30`).
+Otherwise the write will fail with an unmarshalling error.
+
+When batching is enabled the table name is resolved from the first message in each batch.
+All messages in the same batch are written to that table.
+
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/outputs/gcp_bigquery_write_api.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/outputs/gcp_bigquery_write_api.yaml[]
+```
+
+--
+======
+
+include::redpanda-connect:components:partial$fields/outputs/gcp_bigquery_write_api.adoc[]
+
+
+
+// end::single-source[]

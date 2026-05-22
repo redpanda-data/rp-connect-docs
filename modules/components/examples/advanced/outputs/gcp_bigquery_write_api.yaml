@@ -1,0 +1,22 @@
+outputs:
+  label: ""
+  gcp_bigquery_write_api:
+    project: ""
+    dataset: "" # No default (required)
+    table: "" # No default (required)
+    message_format: json
+    max_in_flight: 64
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
+      processors: [] # No default (optional)
+    credentials_json: ""
+    target_principal: ""
+    delegates: []
+    stream_idle_timeout: 5m
+    stream_sweep_interval: 1m
+    endpoint:
+      http: ""
+      grpc: ""

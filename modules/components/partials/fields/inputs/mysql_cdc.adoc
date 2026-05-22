@@ -256,6 +256,14 @@ The type of MySQL database to connect to.
 
 |===
 
+=== `max_parallel_snapshot_tables`
+
+Specifies the number of tables that will be snapshotted in parallel.
+
+*Type*: `int`
+
+*Default*: `1`
+
 === `max_reconnect_attempts`
 
 The maximum number of attempts the MySQL driver will try to re-establish a broken connection before Connect attempts reconnection. A zero or negative number means infinite retry attempts.
