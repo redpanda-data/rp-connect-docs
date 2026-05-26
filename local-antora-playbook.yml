@@ -1,6 +1,6 @@
 site:
   title: Redpanda Docs
-  start_page: redpanda-connect:home:index.adoc
+  start_page: connect:home:index.adoc
   url: http://localhost:5002
   robots: disallow
 urls:
@@ -11,7 +11,7 @@ content:
     branches: HEAD
   - url: https://github.com/redpanda-data/docs-site
     branches: main
-    start_paths: [home]
+    start_paths: [home, data-platform, self-managed]
   - url: https://github.com/redpanda-data/documentation
     branches: [main, v/*, site-search, shared]
   - url: https://github.com/redpanda-data/redpanda-labs
@@ -35,6 +35,12 @@ asciidoc:
   - '@redpanda-data/docs-extensions-and-macros/macros/badge'
 antora:
   extensions:
+  # Conditional home page redirect when agentic-data-plane component doesn't exist
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/conditional-home-redirect'
+  # Unified navigation extension (config-driven)
+  # Components with page-navigation attribute use that config
+  # Components without page-navigation use standard Antora navigation
+  - require: '@redpanda-data/docs-extensions-and-macros/extensions/unified-navigation'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/generate-rp-connect-info'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/generate-rp-connect-categories'
   - require: '@redpanda-data/docs-extensions-and-macros/extensions/collect-bloblang-samples'
@@ -46,8 +52,8 @@ antora:
     data:
       replacements:
         - components:
-            - 'ROOT'
-            - 'redpanda-labs'
+            - 'streaming'
+            - 'labs'
           file_patterns:
             - '**/docker-compose.yaml'
             - '**/docker-compose.yml'
