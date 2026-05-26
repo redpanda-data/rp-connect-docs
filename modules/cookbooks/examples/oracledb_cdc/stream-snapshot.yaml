@@ -4,9 +4,9 @@ input:
     connection_string: ${ORACLE_CONNECTION_STRING}
     include:
       - "MY_SCHEMA\\.ORDERS"
-    stream_snapshot: true
-    snapshot_max_batch_size: 5000
-    max_parallel_snapshot_tables: 2
+    stream_snapshot: true # <1>
+    snapshot_max_batch_size: 5000 # <2>
+    max_parallel_snapshot_tables: 2 # <3>
 
 pipeline:
   processors:

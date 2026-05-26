@@ -290,6 +290,12 @@
     },
     "sf_max_retries": {
       "description": "Maximum number of retries on a 429 Too Many Requests error."
+    },
+    "sf_api_version": {
+      "description": "Salesforce REST API version to target, prefixed with `v`. Affects endpoint paths (`/services/data/\\{api_version\\}/...`) and available fields/objects. Must be supported by your org — check Setup → Company Information. Older versions may lack recent fields."
+    },
+    "sf_org_url_full": {
+      "description": "Your Salesforce org URL (for example, `https://\\{my-domain\\}.my.salesforce.com` for production or `https://\\{my-domain\\}.sandbox.my.salesforce.com` for sandbox)."
     }
   },
   "inputs": [
@@ -3974,6 +3980,10 @@
       "config": {
         "children": [
           {
+            "name": "table",
+            "description": "The destination Iceberg table name. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
             "name": "catalog",
             "children": [
               {
@@ -3991,7 +4001,7 @@
               },
               {
                 "name": "table_location",
-                "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\\{prefix}\\{namespace}/{table}`."
+                "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\\{prefix\\}\\{namespace\\}/\\{table\\}`."
               }
             ]
           }
@@ -5470,6 +5480,10 @@
       "name": "salesforce_sink",
       "config": {
         "children": [
+          {
+            "name": "api_version",
+            "$ref": "#/definitions/sf_api_version"
+          },
           {
             "name": "batch_period",
             "description": "Maximum period to wait before flushing an incomplete batch."
@@ -7703,6 +7717,10 @@
       "config": {
         "children": [
           {
+            "name": "api_version",
+            "$ref": "#/definitions/sf_api_version"
+          },
+          {
             "name": "cache_resource",
             "description": "Name of the cache resource used for checkpointing state (must be defined in `cache_resources`)."
           },
@@ -7789,6 +7807,28 @@
           {
             "name": "restapi_version",
             "$ref": "#/definitions/sf_restapi_version"
+          }
+        ]
+      }
+    },
+    {
+      "name": "salesforce_cdc",
+      "config": {
+        "children": [
+          {
+            "name": "api_version",
+            "$ref": "#/definitions/sf_api_version"
+          }
+        ]
+      }
+    },
+    {
+      "name": "salesforce_graphql",
+      "config": {
+        "children": [
+          {
+            "name": "api_version",
+            "$ref": "#/definitions/sf_api_version"
           }
         ]
       }

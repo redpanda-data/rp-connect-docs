@@ -17,15 +17,15 @@ pipeline:
 output:
   aws_s3:
     bucket: ${S3_BUCKET}
-    path: 'oracle-cdc/${! meta("table_name") }/${! timestamp_unix().ts_format("2006/01/02/15") }/${! uuid_v4() }.jsonl'
+    path: 'oracle-cdc/${! meta("table_name") }/${! timestamp_unix().ts_format("2006/01/02/15") }/${! uuid_v4() }.jsonl' # <1>
     batching:
       count: 1000
       period: 5m
       processors:
         - archive:
-            format: json_array
+            format: json_array # <2>
         - compress:
-            algorithm: gzip
+            algorithm: gzip # <3>
 # end::config[]
 
 # tag::tests[]

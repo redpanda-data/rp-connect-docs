@@ -20,7 +20,7 @@ pipeline:
 output:
   redpanda:
     seed_brokers: ["${REDPANDA_BROKERS}"]
-    topic: 'oracle-cdc-${! meta("table_name").lowercase() }'
+    topic: 'oracle-cdc-${! meta("table_name").lowercase() }' # <1>
     max_in_flight: 10
     compression: snappy
     batching:
