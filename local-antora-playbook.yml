@@ -1,6 +1,6 @@
 site:
   title: Redpanda Docs
-  start_page: redpanda-connect:home:index.adoc
+  start_page: connect:home:index.adoc
   url: http://localhost:5002
   robots: disallow
 urls:
@@ -52,8 +52,8 @@ antora:
     data:
       replacements:
         - components:
-            - 'ROOT'
-            - 'redpanda-labs'
+            - 'streaming'
+            - 'labs'
           file_patterns:
             - '**/docker-compose.yaml'
             - '**/docker-compose.yml'
