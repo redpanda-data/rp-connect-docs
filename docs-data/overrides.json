@@ -79,7 +79,7 @@
       "description": "Whether to use basic authentication in requests."
     },
     "elasticsearch_basic_auth_password": {
-      "description": "A password to authenticate with.\n\ninclude::redpanda-connect:components:partial$secret_warning.adoc[]"
+      "description": "A password to authenticate with.\n\ninclude::connect:components:partial$secret_warning.adoc[]"
     },
     "elasticsearch_basic_auth_username": {
       "description": "A username to authenticate as."
@@ -290,6 +290,12 @@
     },
     "sf_max_retries": {
       "description": "Maximum number of retries on a 429 Too Many Requests error."
+    },
+    "sf_api_version": {
+      "description": "Salesforce REST API version to target, prefixed with `v`. Affects endpoint paths (`/services/data/\\{api_version\\}/...`) and available fields/objects. Must be supported by your org — check Setup → Company Information. Older versions may lack recent fields."
+    },
+    "sf_org_url_full": {
+      "description": "Your Salesforce org URL (for example, `https://\\{my-domain\\}.my.salesforce.com` for production or `https://\\{my-domain\\}.sandbox.my.salesforce.com` for sandbox)."
     }
   },
   "inputs": [
@@ -618,7 +624,7 @@
     },
     {
       "name": "gateway",
-      "description": "The `gateway` input is a Cloud-only component that receives messages over HTTP and injects them into a running Redpanda Connect pipeline.\n\nIt's ideal for:\n- Receiving webhook events from third-party services\n- Accepting real-time telemetry or sensor data over HTTP\n- Building lightweight ingest endpoints for client apps\n\nFor on-premises or self-managed deployments, use the xref:redpanda-connect:components:inputs/http_server.adoc[`http_server`] input instead.\n\nThis component is fully managed and available in the following Redpanda Cloud deployment types:\n\n- **Serverless**\n- **Dedicated**\n- **Bring Your Own Cloud (BYOC)**\n\nWhen a pipeline with a `gateway` input is deployed, Redpanda Cloud provisions a secure URL that you can use to send HTTP requests. You can post raw payloads, JSON messages, or stream events in real time.\n\nAuthentication and access control are handled through standard Redpanda Cloud API tokens. For more information, see xref:redpanda-cloud:manage:api/cloud-api-authentication.adoc[].\n\nNetwork access:\n- On **public clusters** (Serverless and Dedicated), the gateway URL is accessible over the public internet.\n- On **private clusters** (BYOC), the gateway is accessible only from within your configured VPC.\n\n== Responses\n\nYou can return a response for each message received using xref:guides:sync_responses.adoc[synchronous responses]. When doing so, you can customize headers using the `sync_response.headers` field, which supports xref:configuration:interpolation.adoc#bloblang-queries[function interpolation] in the value based on the response message contents.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `http_server_user_agent`\n- `http_server_request_path`\n- `http_server_verb`\n- `http_server_remote_ip`\n- All headers (only first values are taken)\n- All query parameters\n- All path parameters\n- All cookies\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
+      "description": "The `gateway` input is a Cloud-only component that receives messages over HTTP and injects them into a running Redpanda Connect pipeline.\n\nIt's ideal for:\n- Receiving webhook events from third-party services\n- Accepting real-time telemetry or sensor data over HTTP\n- Building lightweight ingest endpoints for client apps\n\nFor on-premises or self-managed deployments, use the xref:redpanda-connect:components:inputs/http_server.adoc[`http_server`] input instead.\n\nThis component is fully managed and available in the following Redpanda Cloud deployment types:\n\n- **Serverless**\n- **Dedicated**\n- **Bring Your Own Cloud (BYOC)**\n\nWhen a pipeline with a `gateway` input is deployed, Redpanda Cloud provisions a secure URL that you can use to send HTTP requests. You can post raw payloads, JSON messages, or stream events in real time.\n\nAuthentication and access control are handled through standard Redpanda Cloud API tokens. For more information, see xref:cloud-data-platform:manage:api/cloud-api-authentication.adoc[].\n\nNetwork access:\n- On **public clusters** (Serverless and Dedicated), the gateway URL is accessible over the public internet.\n- On **private clusters** (BYOC), the gateway is accessible only from within your configured VPC.\n\n== Responses\n\nYou can return a response for each message received using xref:guides:sync_responses.adoc[synchronous responses]. When doing so, you can customize headers using the `sync_response.headers` field, which supports xref:configuration:interpolation.adoc#bloblang-queries[function interpolation] in the value based on the response message contents.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `http_server_user_agent`\n- `http_server_request_path`\n- `http_server_verb`\n- `http_server_remote_ip`\n- All headers (only first values are taken)\n- All query parameters\n- All path parameters\n- All cookies\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].",
       "config": {
         "children": [
           {
@@ -1597,7 +1603,7 @@
           {
             "name": "wallet_password",
             "type": "string",
-            "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only use this when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.\n\ninclude::redpanda-connect:components:partial$secret_warning.adoc[]"
+            "description": "Password for the `ewallet.p12` PKCS#12 wallet file. Only use this when the wallet directory contains `ewallet.p12` rather than `cwallet.sso`.\n\ninclude::connect:components:partial$secret_warning.adoc[]"
           }
         ]
       }
@@ -3974,6 +3980,10 @@
       "config": {
         "children": [
           {
+            "name": "table",
+            "description": "The destination Iceberg table name. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
+          },
+          {
             "name": "catalog",
             "children": [
               {
@@ -3991,7 +4001,7 @@
               },
               {
                 "name": "table_location",
-                "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\\{prefix}\\{namespace}/{table}`."
+                "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\\{prefix\\}\\{namespace\\}/\\{table\\}`."
               }
             ]
           }
@@ -5470,6 +5480,10 @@
       "name": "salesforce_sink",
       "config": {
         "children": [
+          {
+            "name": "api_version",
+            "$ref": "#/definitions/sf_api_version"
+          },
           {
             "name": "batch_period",
             "description": "Maximum period to wait before flushing an incomplete batch."
@@ -7703,6 +7717,10 @@
       "config": {
         "children": [
           {
+            "name": "api_version",
+            "$ref": "#/definitions/sf_api_version"
+          },
+          {
             "name": "cache_resource",
             "description": "Name of the cache resource used for checkpointing state (must be defined in `cache_resources`)."
           },
@@ -7789,6 +7807,28 @@
           {
             "name": "restapi_version",
             "$ref": "#/definitions/sf_restapi_version"
+          }
+        ]
+      }
+    },
+    {
+      "name": "salesforce_cdc",
+      "config": {
+        "children": [
+          {
+            "name": "api_version",
+            "$ref": "#/definitions/sf_api_version"
+          }
+        ]
+      }
+    },
+    {
+      "name": "salesforce_graphql",
+      "config": {
+        "children": [
+          {
+            "name": "api_version",
+            "$ref": "#/definitions/sf_api_version"
           }
         ]
       }
@@ -8043,7 +8083,7 @@
     {
       "name": "redpanda",
       "summary": "A Kafka cache implemented using the https://github.com/twmb/franz-go[Franz Kafka client library^].",
-      "description": "\nA cache that stores data in a Kafka topic.\n\nThis cache is useful for data that is written frequently and queried infrequently.\nReads from the cache require scanning the entire topic partition. If you expect frequent access, consider placing an in-memory caching layer in front of this one.\n\nBecause only the latest values are needed, configure compaction for topics used as caches so that reads are less expensive when topics are rescanned. See xref:ROOT:manage:cluster-maintenance/compaction-settings.adoc[].\n\nThe cache does not have any time-to-live (TTL) mechanism. Use the Kafka topic retention policies to manage TTL.\n",
+      "description": "\nA cache that stores data in a Kafka topic.\n\nThis cache is useful for data that is written frequently and queried infrequently.\nReads from the cache require scanning the entire topic partition. If you expect frequent access, consider placing an in-memory caching layer in front of this one.\n\nBecause only the latest values are needed, configure compaction for topics used as caches so that reads are less expensive when topics are rescanned. See xref:streaming:manage:cluster-maintenance/compaction-settings.adoc[].\n\nThe cache does not have any time-to-live (TTL) mechanism. Use the Kafka topic retention policies to manage TTL.\n",
       "config": {
         "children": [
           {

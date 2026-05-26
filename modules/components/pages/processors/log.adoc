@@ -44,6 +44,6 @@ pipeline:
           root.kafka_topic = meta("kafka_topic")
 ```
 
-include::redpanda-connect:components:partial$fields/processors/log.adoc[]
+include::connect:components:partial$fields/processors/log.adoc[]
 
 // end::single-source[]

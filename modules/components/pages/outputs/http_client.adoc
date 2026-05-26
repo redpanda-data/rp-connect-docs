@@ -126,6 +126,6 @@ For improved performance, this output sends:
 - Multiple messages in parallel. Adjust the `max_in_flight` field value to tune the maximum number of in-flight messages (or message batches).
 - Messages as batches. You can configure batches at both input and output level. For more information, see xref:configuration:batching.adoc[Message Batching].
 
-include::redpanda-connect:components:partial$fields/outputs/http_client.adoc[]
+include::connect:components:partial$fields/outputs/http_client.adoc[]
 
 // end::single-source[]

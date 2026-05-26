@@ -38,6 +38,6 @@ include::components:example$advanced/inputs/redis_streams.yaml[]
 
 Redis stream entries are key/value pairs, as such it is necessary to specify the key that contains the body of the message. All other keys/value pairs are saved as metadata fields.
 
-include::redpanda-connect:components:partial$fields/inputs/redis_streams.adoc[]
+include::connect:components:partial$fields/inputs/redis_streams.adoc[]
 
 // end::single-source[]

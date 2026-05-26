@@ -20,6 +20,6 @@ Prints each metric produced by Redpanda Connect as a log event (level `info` by 
 
 This metrics type is useful for debugging pipelines when you only have access to the logger output and not the service-wide server. Otherwise it's recommended that you use either the `prometheus` or `json_api` types.
 
-include::redpanda-connect:components:partial$fields/metrics/logger.adoc[]
+include::connect:components:partial$fields/metrics/logger.adoc[]
 
 // end::single-source[]

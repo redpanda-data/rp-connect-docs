@@ -355,7 +355,7 @@ offset_token: postgres-${!@lsn}
 
 The PEM-encoded private RSA key to use for authentication with Snowflake. You must specify a value for this field or the `private_key_file` field.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -369,7 +369,7 @@ A `.p8`, PEM-encoded file to load the private RSA key from. You must specify a v
 
 If the RSA key is encrypted, specify the RSA key passphrase.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

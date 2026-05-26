@@ -69,9 +69,9 @@ You can access these metadata fields using xref:configuration:interpolation.adoc
 
 CosmosDB limits the maximum batch size to 100 messages and the payload must not exceed 2MB (https://learn.microsoft.com/en-us/azure/cosmos-db/concepts-limits#per-request-limits[details here^]).
 
-include::redpanda-connect:components:partial$examples/processors/azure_cosmosdb.adoc[]
+include::connect:components:partial$examples/processors/azure_cosmosdb.adoc[]
 
-include::redpanda-connect:components:partial$fields/processors/azure_cosmosdb.adoc[]
+include::connect:components:partial$fields/processors/azure_cosmosdb.adoc[]
 
 == CosmosDB emulator
 

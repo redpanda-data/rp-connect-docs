@@ -120,6 +120,6 @@ The `gcp_bigquery` output benefits from sending multiple messages in parallel fo
 
 This output also sends messages as a batch for improved performance. Redpanda Connect can form batches at both the input and output level. For more information, see xref:configuration:batching.adoc[].
 
-include::redpanda-connect:components:partial$fields/outputs/gcp_bigquery.adoc[]
+include::connect:components:partial$fields/outputs/gcp_bigquery.adoc[]
 
 // end::single-source[]

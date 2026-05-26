@@ -1,4 +1,4 @@
-name: redpanda-connect
+name: connect
 title: Connect
 version: null
 start_page: home:index.adoc
@@ -6,13 +6,18 @@ nav:
   - modules/ROOT/nav.adoc
 asciidoc:
   attributes:
+    # AI suggestions for the chat drawer
+    ai-suggestion-1: How do I build a data pipeline with Connect?
+    ai-suggestion-2: Write Bloblang transformations for JSON data
+    ai-suggestion-3: Set up a Kafka to S3 pipeline
+    ai-suggestion-4: Debug failed messages in a pipeline
     toc-tools-title: Connect Tools
     toc-tools-links: '[{"text": "Bloblang Playground", "url": "guides:bloblang/playground.adoc", "icon": "terminal"}, {"text": "Claude AI Skills", "url": "https://github.com/redpanda-data/connect/blob/main/.claude-plugin/README.md", "icon": "layers", "external": true}]'
-    page-header-data:
+    component-metadata:
       title: "Connect"
-      section: "Data Platform"
-      description: "Build data pipelines with hundreds of prebuilt connectors."
-      color: "#54478C"
+      parent-component: "self-managed"
+      description: "Build streaming pipelines with hundreds of connectors."
+      color: "#A21CAF"
       order: 3
       icon: "plug-connected"
     project-github: redpanda-data/connect
@@ -28,7 +33,7 @@ asciidoc:
     page-home-primary-row:
       - title: Cloud
         description: Start using Redpanda Connect in Redpanda Cloud.
-        url: redpanda-cloud:develop:connect/connect-quickstart.adoc
+        url: cloud-data-platform:develop:connect/connect-quickstart.adoc
         link-text: Get started
       - title: Self Managed
         description: Deploy Redpanda Connect on your own hardware using a CLI.

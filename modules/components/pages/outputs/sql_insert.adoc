@@ -39,7 +39,7 @@ include::components:example$advanced/outputs/sql_insert.yaml[]
 --
 ======
 
-include::redpanda-connect:components:partial$examples/outputs/sql_insert.adoc[]
+include::connect:components:partial$examples/outputs/sql_insert.adoc[]
 
 == Dynamic SQL operations
 
@@ -72,6 +72,6 @@ output:
     args_mapping: root = [ this.id, this.value ]
 ----
 
-include::redpanda-connect:components:partial$fields/outputs/sql_insert.adoc[]
+include::connect:components:partial$fields/outputs/sql_insert.adoc[]
 
 // end::single-source[]

@@ -81,6 +81,6 @@ If you're seeing issues writing to or reading from Kafka with this component the
 
 Unfortunately this error message will appear for a wide range of connection problems even when the broker endpoint can be reached. Double check your authentication configuration and also ensure that you have <<tlsenabled, enabled TLS>> if applicable.
 
-include::redpanda-connect:components:partial$fields/inputs/kafka.adoc[]
+include::connect:components:partial$fields/inputs/kafka.adoc[]
 
 // end::single-source[]

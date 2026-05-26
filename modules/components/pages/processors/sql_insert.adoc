@@ -41,7 +41,7 @@ include::components:example$advanced/processors/sql_insert.yaml[]
 
 If the insert fails to execute then the message will still remain unchanged and the error can be caught using xref:configuration:error_handling.adoc[error handling methods].
 
-include::redpanda-connect:components:partial$examples/processors/sql_insert.adoc[]
+include::connect:components:partial$examples/processors/sql_insert.adoc[]
 
 == Dynamic SQL operations
 
@@ -49,6 +49,6 @@ The `table` and `columns` fields are static strings that do not support Bloblang
 
 CAUTION: Interpolating unsanitized values into a query can introduce SQL injection risks. Always validate or sanitize the interpolated value beforehand.
 
-include::redpanda-connect:components:partial$fields/processors/sql_insert.adoc[]
+include::connect:components:partial$fields/processors/sql_insert.adoc[]
 
 // end::single-source[]

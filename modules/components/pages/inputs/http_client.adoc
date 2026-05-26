@@ -70,6 +70,6 @@ TIP: If pagination requires more complex logic, consider using the xref:componen
 
 If you <<stream-enabled,enable streaming>>, Redpanda Connect consumes the body of the server response as a continuous stream of data, and breaks the stream down into smaller, logical messages using the <<stream-scanner,specified scanner>>. This functionality allows you to consume APIs that provide long-lived streamed data feeds, such as stock market feeds.
 
-include::redpanda-connect:components:partial$fields/inputs/http_client.adoc[]
+include::connect:components:partial$fields/inputs/http_client.adoc[]
 
 // end::single-source[]

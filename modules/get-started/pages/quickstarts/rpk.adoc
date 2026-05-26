@@ -6,7 +6,7 @@ This guide explains how to get started with Redpanda Connect using `rpk`, the Re
 
 == Install
 
-The `rpk` CLI allows you to create and manage data pipelines with Redpanda Connect as well as xref:ROOT:get-started:rpk-install.adoc[interact with Redpanda clusters].
+The `rpk` CLI allows you to create and manage data pipelines with Redpanda Connect as well as xref:streaming:get-started:rpk-install.adoc[interact with Redpanda clusters].
 
 NOTE: The `rpk` CLI also includes an `rpk connect` plugin, which manages installations and upgrades of Redpanda Connect. This plugin is automatically installed when you first run `rpk connect` commands, unless you run `rpk connect --version`, which prompts you to install the plugin.
 
@@ -18,7 +18,7 @@ If you want to use `rpk` to also communicate with a Redpanda cluster, ensure the
 
 === Linux
 
-include::ROOT:get-started:partial$install-rpk-linux.adoc[]
+include::streaming:get-started:partial$install-rpk-linux.adoc[]
 
 ==== FIPS compliance
 
@@ -108,7 +108,7 @@ sudo apt update
 
 === MacOS
 
-include::ROOT:get-started:partial$install-rpk-macos.adoc[]
+include::streaming:get-started:partial$install-rpk-macos.adoc[]
 
 === Docker
 

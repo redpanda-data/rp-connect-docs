@@ -41,6 +41,6 @@ This output type is useful whenever we wish to avoid reprocessing a message on t
 
 Rather than retrying the same output you may wish to retry the send using a different output target (a dead letter queue). In which case you should instead use the xref:components:outputs/fallback.adoc[`fallback`] output type.
 
-include::redpanda-connect:components:partial$fields/outputs/retry.adoc[]
+include::connect:components:partial$fields/outputs/retry.adoc[]
 
 // end::single-source[]

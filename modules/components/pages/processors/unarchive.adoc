@@ -26,6 +26,6 @@ When a message is unarchived the new messages replace the original message in th
 
 The metadata found on the messages handled by this processor will be copied into the resulting messages. For the unarchive formats that contain file information (tar, zip), a metadata field is also added to each message called `archive_filename` with the extracted filename.
 
-include::redpanda-connect:components:partial$fields/processors/unarchive.adoc[]
+include::connect:components:partial$fields/processors/unarchive.adoc[]
 
 // end::single-source[]

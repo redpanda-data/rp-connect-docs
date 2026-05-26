@@ -100,6 +100,6 @@ This input adds the following metadata fields to each message:
 - `collection`: The name of the collection from which the message originated.
 - `operation_time`: The time the data change was written to the https://www.mongodb.com/docs/manual/core/replica-set-oplog/[operations log (oplog)^] in the form of a Binary JSON (BSON) timestamp: `{"t": <unix seconds>, "i": <sequence number>}`.
 
-include::redpanda-connect:components:partial$fields/inputs/mongodb_cdc.adoc[]
+include::connect:components:partial$fields/inputs/mongodb_cdc.adoc[]
 
 // end::single-source[]

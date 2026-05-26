@@ -51,6 +51,6 @@ This input adds the following metadata fields to each message:
 
 Only one authentication method is required, `storage_connection_string` or `storage_account` and `storage_access_key`. If both are set then the `storage_connection_string` is given priority.
 
-include::redpanda-connect:components:partial$fields/inputs/azure_queue_storage.adoc[]
+include::connect:components:partial$fields/inputs/azure_queue_storage.adoc[]
 
 // end::single-source[]

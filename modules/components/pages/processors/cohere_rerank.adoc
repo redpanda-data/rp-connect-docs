@@ -30,8 +30,8 @@ cohere_rerank:
 
 - `relevance_scores`: An array of scores for each input document that indicates how relevant it is to the query. The scores are in the same order as the documents in the input. The higher the score, the more relevant the document.
 
-include::redpanda-connect:components:partial$examples/processors/cohere_rerank.adoc[]
+include::connect:components:partial$examples/processors/cohere_rerank.adoc[]
 
-include::redpanda-connect:components:partial$fields/processors/cohere_rerank.adoc[]
+include::connect:components:partial$fields/processors/cohere_rerank.adoc[]
 
 // end::single-source[]

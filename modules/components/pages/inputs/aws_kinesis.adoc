@@ -56,6 +56,6 @@ It's possible to configure Redpanda Connect to create the DynamoDB table require
 
 Use the `batching` fields to configure an optional xref:configuration:batching.adoc#batch-policy[batching policy]. Each stream shard will be batched separately in order to ensure that acknowledgements aren't contaminated.
 
-include::redpanda-connect:components:partial$fields/inputs/aws_kinesis.adoc[]
+include::connect:components:partial$fields/inputs/aws_kinesis.adoc[]
 
 // end::single-source[]

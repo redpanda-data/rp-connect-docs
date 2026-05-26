@@ -78,7 +78,7 @@ The path to the SFTP server's public key file, used for host key verification.
 
 The password to use for authentication. Used together with `username` for basic authentication or with encrypted private keys for secure access.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -88,7 +88,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 The private key used to authenticate with the SFTP server. This field provides an alternative to the <<credentials-private_key_file, `private_key_file`>>.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -102,7 +102,7 @@ The path to a private key file used to authenticate with the SFTP server. You ca
 
 A passphrase for private key.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

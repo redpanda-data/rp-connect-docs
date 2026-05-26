@@ -12,7 +12,7 @@ Optional configuration of NATS authentication parameters.
 
 Your NKey seed or private key for NATS authentication. NKeys provide secure, cryptographic authentication without passwords.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 ifndef::env-cloud[]
 Requires version 4.38.0 or later.
@@ -42,7 +42,7 @@ nkey_file: ./seed.nk
 
 An optional plain text password (given along with the corresponding user name).
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -50,7 +50,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 An optional plain text token.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -76,7 +76,7 @@ user_credentials_file: ./user.creds
 
 An optional plaintext user JWT to use along with the corresponding user NKey seed.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -84,7 +84,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 An optional plaintext user NKey seed to use along with the corresponding user JWT.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -230,7 +230,7 @@ The path of a certificate to use.
 
 A plain text certificate key to use.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -251,7 +251,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -291,7 +291,7 @@ Whether custom TLS settings are enabled.
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

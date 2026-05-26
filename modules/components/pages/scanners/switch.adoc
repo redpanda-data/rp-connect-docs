@@ -18,8 +18,8 @@ switch: [] # No default (required)
 
 This scanner outlines a list of potential child scanner candidates to be chosen, and for each source of data the first candidate to pass will be selected. A candidate without any conditions acts as a catch-all and will pass for every source, it is recommended to always have a catch-all scanner at the end of your list. If a given source of data does not pass a candidate an error is returned and the data is rejected.
 
-include::redpanda-connect:components:partial$fields/scanners/switch.adoc[]
+include::connect:components:partial$fields/scanners/switch.adoc[]
 
-include::redpanda-connect:components:partial$examples/scanners/switch.adoc[]
+include::connect:components:partial$examples/scanners/switch.adoc[]
 
 // end::single-source[]

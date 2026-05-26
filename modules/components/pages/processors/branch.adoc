@@ -35,8 +35,8 @@ If the `request_map` fails the child processors will not be executed. If the chi
 
 If the root of your request map is set to `deleted()` then the branch processors are skipped for the given message, this allows you to conditionally branch messages.
 
-include::redpanda-connect:components:partial$fields/processors/branch.adoc[]
+include::connect:components:partial$fields/processors/branch.adoc[]
 
-include::redpanda-connect:components:partial$examples/processors/branch.adoc[]
+include::connect:components:partial$examples/processors/branch.adoc[]
 
 // end::single-source[]
