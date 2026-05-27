@@ -5,7 +5,7 @@ outputs:
     dataset: "" # No default (required)
     table: "" # No default (required)
     message_format: json
-    max_in_flight: 64
+    max_in_flight: 4
     batching:
       count: 0
       byte_size: 0

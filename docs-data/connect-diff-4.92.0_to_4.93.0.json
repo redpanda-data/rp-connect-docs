@@ -1,0 +1,63 @@
+{
+  "comparison": {
+    "oldVersion": "4.92.0",
+    "newVersion": "4.93.0",
+    "timestamp": "2026-05-27T15:33:28.337Z"
+  },
+  "summary": {
+    "newComponents": 0,
+    "removedComponents": 0,
+    "newFields": 3,
+    "removedFields": 0,
+    "deprecatedComponents": 0,
+    "deprecatedFields": 0,
+    "changedDefaults": 1,
+    "platformTransitions": 0,
+    "newBloblangMethods": 0,
+    "removedBloblangMethods": 0,
+    "newBloblangFunctions": 0,
+    "removedBloblangFunctions": 0,
+    "deprecatedBloblangMethods": 0,
+    "deprecatedBloblangFunctions": 0
+  },
+  "details": {
+    "newComponents": [],
+    "removedComponents": [],
+    "newFields": [
+      {
+        "component": "outputs:gcp_bigquery_write_api",
+        "field": "max_cached_streams",
+        "description": "Soft cap on the number of cached streams. When the cache exceeds this size, the least-recently-used stream is evicted. Set to 0 for unlimited (rely on idle-timeout sweeping only). Relevant when the table field uses interpolation to route to many tables."
+      },
+      {
+        "component": "outputs:gcp_bigquery_write_api",
+        "field": "schema_resolve_timeout",
+        "description": "How long a single BigQuery table-metadata fetch can run before being aborted. Coalesced concurrent resolves share one fetch, so this bounds the time a wedged backend can stall every batch routing to the same table."
+      },
+      {
+        "component": "outputs:gcp_bigquery_write_api",
+        "field": "schema_evolution_timeout",
+        "description": "Total time budget for a single schema evolution attempt (Metadata + Update across all CAS retries on HTTP 412). Bounds how long the WriteBatch retry loop can be starved by a wedged backend."
+      }
+    ],
+    "removedFields": [],
+    "deprecatedComponents": [],
+    "deprecatedFields": [],
+    "changedDefaults": [
+      {
+        "component": "outputs:gcp_bigquery_write_api",
+        "field": "max_in_flight",
+        "oldDefault": 64,
+        "newDefault": 4,
+        "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput."
+      }
+    ],
+    "platformTransitions": [],
+    "newBloblangMethods": [],
+    "removedBloblangMethods": [],
+    "newBloblangFunctions": [],
+    "removedBloblangFunctions": [],
+    "deprecatedBloblangMethods": [],
+    "deprecatedBloblangFunctions": []
+  }
+}
