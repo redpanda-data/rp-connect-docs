@@ -4,7 +4,7 @@
 
 === `api_version`
 
-Salesforce REST API version to target, prefixed with `v`. Affects endpoint paths (`/services/data/\{api_version\}/...`) and available fields/objects. Must be supported by your org — check Setup → Company Information. Older versions may lack recent fields.
+Salesforce REST API version to target, prefixed with `v`. Affects endpoint paths (`/services/data/{api_version}/...`) and available fields/objects. Must be supported by your org — check Setup → Company Information. Older versions may lack recent fields.
 
 *Type*: `string`
 
@@ -526,7 +526,7 @@ Rate limit in requests per second. 0 disables rate limiting.
 
 === `org_url`
 
-Salesforce instance base URL for your org, protocol included and no trailing slash. Used as the base for both the OAuth token endpoint and REST queries. Production orgs use `https://\{my-domain\}.my.salesforce.com`; sandboxes use `https://\{my-domain\}.sandbox.my.salesforce.com`. Legacy instance URLs (`https://na123.salesforce.com`) still work but My Domain URLs are strongly recommended by Salesforce.
+Salesforce instance base URL for your org, protocol included and no trailing slash. Used as the base for both the OAuth token endpoint and REST queries. Production orgs use `https://{my-domain}.my.salesforce.com`; sandboxes use `https://{my-domain}.sandbox.my.salesforce.com`. Legacy instance URLs (`https://na123.salesforce.com`) still work but My Domain URLs are strongly recommended by Salesforce.
 
 *Type*: `string`
 

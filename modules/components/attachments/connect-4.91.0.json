@@ -34860,7 +34860,7 @@
             "name": "table",
             "type": "string",
             "kind": "scalar",
-            "description": "The Iceberg table name. Supports interpolation functions for dynamic table names.",
+            "description": "The destination Iceberg table name. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].",
             "interpolated": true,
             "examples": [
               "user_events",
@@ -35117,7 +35117,7 @@
                 "name": "table_location",
                 "type": "string",
                 "kind": "scalar",
-                "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\\{prefix}\\{namespace}/{table}`.",
+                "description": "A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\\{prefix\\}\\{namespace\\}/\\{table\\}`.",
                 "is_advanced": true,
                 "is_optional": true,
                 "examples": [
@@ -45430,7 +45430,7 @@
             "name": "api_version",
             "type": "string",
             "kind": "scalar",
-            "description": "Salesforce REST API version to target, prefixed with `v`. Affects endpoint paths (`/services/data/{api_version}/...`) and available fields/objects. Must be supported by your org — check Setup → Company Information. Older versions may lack recent fields.",
+            "description": "Salesforce REST API version to target, prefixed with `v`. Affects endpoint paths (`/services/data/\\{api_version\\}/...`) and available fields/objects. Must be supported by your org — check Setup → Company Information. Older versions may lack recent fields.",
             "default": "v65.0",
             "examples": [
               "v65.0",
