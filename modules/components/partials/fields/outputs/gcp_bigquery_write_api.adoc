@@ -158,13 +158,21 @@ Override the BigQuery HTTP endpoint. Useful for local emulators.
 
 *Default*: `""`
 
+=== `max_cached_streams`
+
+Soft cap on the number of cached streams. When the cache exceeds this size, the least-recently-used stream is evicted. Set to 0 for unlimited (rely on idle-timeout sweeping only). Relevant when the table field uses interpolation to route to many tables.
+
+*Type*: `int`
+
+*Default*: `1024`
+
 === `max_in_flight`
 
 The maximum number of messages to have in flight at a given time. Increase this to improve throughput.
 
 *Type*: `int`
 
-*Default*: `64`
+*Default*: `4`
 
 === `message_format`
 
@@ -183,6 +191,22 @@ The GCP project ID. If empty, the project is auto-detected from the environment.
 *Type*: `string`
 
 *Default*: `""`
+
+=== `schema_evolution_timeout`
+
+Total time budget for a single schema evolution attempt (Metadata + Update across all CAS retries on HTTP 412). Bounds how long the WriteBatch retry loop can be starved by a wedged backend.
+
+*Type*: `string`
+
+*Default*: `30s`
+
+=== `schema_resolve_timeout`
+
+How long a single BigQuery table-metadata fetch can run before being aborted. Coalesced concurrent resolves share one fetch, so this bounds the time a wedged backend can stall every batch routing to the same table.
+
+*Type*: `string`
+
+*Default*: `5s`
 
 === `stream_idle_timeout`
 

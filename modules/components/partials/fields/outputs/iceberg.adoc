@@ -499,7 +499,7 @@ The name of a message metadata field containing a schema definition. When set, t
 
 === `schema_evolution.table_location`
 
-A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\{prefix}\{namespace}/{table}`.
+A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\{prefix\}\{namespace\}/\{table\}`.
 
 *Type*: `string`
 
@@ -703,7 +703,7 @@ Custom endpoint for GCS-compatible storage.
 
 === `table`
 
-The Iceberg table name. Supports interpolation functions for dynamic table names.
+The destination Iceberg table name. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
