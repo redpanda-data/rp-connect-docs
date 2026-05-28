@@ -44,7 +44,7 @@ include::components:example$advanced/outputs/redpanda_migrator.yaml[]
 
 == Multiple migrator pairs
 
-Each migrator pair requires a unique `label`. Set the same label value on both the input and output within a pair.
+Each migrator pair requires a unique `label`. Set the same label value on both the input and output within a pair. Labels must match exactly; mismatched labels prevent the input and output from coordinating.
 
 == Performance tuning
 
@@ -96,7 +96,7 @@ On the paired xref:components:inputs/redpanda_migrator.adoc#performance-tuning[`
 
 Each migration component synchronizes on a different schedule:
 
-- *Topics*: Sync from source on startup and every 5 minutes by default, including empty source topics. Data flows as messages are read from the input. Configure the sync interval with `sync_topic_interval`, or set it to `0s` to create topics only when data flows.
+- *Topics*: Sync from source on startup and every 5 minutes by default, including source topics that have no current data (for example, after retention cleanup). Configure the sync interval with <<sync_topic_interval,`sync_topic_interval`>>, or set it to `0s` to disable periodic sync. When periodic sync is disabled, topics are still created on demand when the first message arrives.
 - *Schema Registry*: Syncs at startup, then periodically as configured.
 - *Consumer groups*: Sync in the background, filtered to the topics being migrated.
 
