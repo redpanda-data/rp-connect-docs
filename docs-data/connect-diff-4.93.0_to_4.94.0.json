@@ -1,17 +1,17 @@
 {
   "comparison": {
-    "oldVersion": "4.92.0",
-    "newVersion": "4.93.0",
-    "timestamp": "2026-05-27T15:53:30.969Z"
+    "oldVersion": "4.93.0",
+    "newVersion": "4.94.0",
+    "timestamp": "2026-05-28T22:02:24.173Z"
   },
   "summary": {
     "newComponents": 0,
-    "removedComponents": 1,
-    "newFields": 3,
+    "removedComponents": 0,
+    "newFields": 5,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
-    "changedDefaults": 1,
+    "changedDefaults": 0,
     "platformTransitions": 237,
     "newBloblangMethods": 0,
     "removedBloblangMethods": 0,
@@ -22,62 +22,53 @@
   },
   "details": {
     "newComponents": [],
-    "removedComponents": [
-      {
-        "name": "a2a_message",
-        "type": "processors",
-        "status": "stable",
-        "version": "4.40.0",
-        "description": "\nThis processor enables Redpanda Connect pipelines to communicate with A2A protocol agents. Currently only JSON-RPC transport is supported.\n\nThe processor sends a message to the agent and polls for task completion. The agent's response\nis returned as the processor output.\n\nFor more information about the A2A protocol, see https://a2a-protocol.org/latest/specification",
-        "requiresCgo": false,
-        "cloudOnly": true,
-        "cloudSupported": true
-      }
-    ],
+    "removedComponents": [],
     "newFields": [
       {
         "component": "outputs:gcp_bigquery_write_api",
-        "field": "max_cached_streams",
-        "description": "Soft cap on the number of cached streams. When the cache exceeds this size, the least-recently-used stream is evicted. Set to 0 for unlimited (rely on idle-timeout sweeping only). Relevant when the table field uses interpolation to route to many tables."
+        "field": "write_mode",
+        "description": "How the output writes to BigQuery. `default_stream` uses the multiplexed default stream (at-least-once, lowest latency). `pending_stream` allocates a per-batch pending stream that commits atomically, providing exactly-once semantics within a single committed batch."
       },
       {
         "component": "outputs:gcp_bigquery_write_api",
-        "field": "schema_resolve_timeout",
-        "description": "How long a single BigQuery table-metadata fetch can run before being aborted. Coalesced concurrent resolves share one fetch, so this bounds the time a wedged backend can stall every batch routing to the same table."
+        "field": "auto_create_table",
+        "description": "If true and the target table does not exist, the output creates it using the configured `schema`, `time_partitioning`, and `clustering`. AlreadyExists errors from concurrent creators are treated as success. When the table name is interpolated, every auto-created table receives the same schema and partition/clustering settings."
       },
       {
         "component": "outputs:gcp_bigquery_write_api",
-        "field": "schema_evolution_timeout",
-        "description": "Total time budget for a single schema evolution attempt (Metadata + Update across all CAS retries on HTTP 412). Bounds how long the WriteBatch retry loop can be starved by a wedged backend."
+        "field": "schema",
+        "description": "Column definitions used by `auto_create_table`. Required when `auto_create_table` is true."
+      },
+      {
+        "component": "outputs:gcp_bigquery_write_api",
+        "field": "time_partitioning",
+        "description": "Optional time-partitioning settings applied during `auto_create_table`. Setting `type` is the trigger — when omitted, the block is treated as absent."
+      },
+      {
+        "component": "outputs:gcp_bigquery_write_api",
+        "field": "clustering",
+        "description": "Optional clustering columns (up to 4) applied during `auto_create_table`. All names must appear in `schema`."
       }
     ],
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
-    "changedDefaults": [
-      {
-        "component": "outputs:gcp_bigquery_write_api",
-        "field": "max_in_flight",
-        "oldDefault": 64,
-        "newDefault": 4,
-        "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput."
-      }
-    ],
+    "changedDefaults": [],
     "platformTransitions": [
       {
         "name": "memory",
         "type": "buffers",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -85,16 +76,16 @@
         "name": "none",
         "type": "buffers",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -102,16 +93,16 @@
         "name": "system_window",
         "type": "buffers",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -119,16 +110,16 @@
         "name": "aws_dynamodb",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -136,16 +127,16 @@
         "name": "aws_s3",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -153,16 +144,16 @@
         "name": "gcp_cloud_storage",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -170,16 +161,16 @@
         "name": "lru",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -187,16 +178,16 @@
         "name": "memcached",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -204,16 +195,16 @@
         "name": "memory",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -221,16 +212,16 @@
         "name": "mongodb",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -238,16 +229,16 @@
         "name": "multilevel",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -255,16 +246,16 @@
         "name": "nats_kv",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -272,16 +263,16 @@
         "name": "noop",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -289,16 +280,16 @@
         "name": "redis",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -306,16 +297,16 @@
         "name": "redpanda",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -323,16 +314,16 @@
         "name": "ristretto",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -340,16 +331,16 @@
         "name": "sql",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -357,16 +348,16 @@
         "name": "ttlru",
         "type": "caches",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -374,16 +365,16 @@
         "name": "amqp_0_9",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -391,16 +382,16 @@
         "name": "aws_cloudwatch_logs",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -408,16 +399,16 @@
         "name": "aws_dynamodb_cdc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -425,16 +416,16 @@
         "name": "aws_kinesis",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -442,16 +433,16 @@
         "name": "aws_s3",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -459,16 +450,16 @@
         "name": "aws_sqs",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -476,16 +467,16 @@
         "name": "azure_blob_storage",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -493,16 +484,16 @@
         "name": "azure_cosmosdb",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -510,16 +501,16 @@
         "name": "azure_queue_storage",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -527,16 +518,16 @@
         "name": "azure_table_storage",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -544,16 +535,16 @@
         "name": "batched",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -561,16 +552,16 @@
         "name": "broker",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -578,16 +569,16 @@
         "name": "gateway",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -595,16 +586,16 @@
         "name": "gcp_bigquery_select",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -612,16 +603,16 @@
         "name": "gcp_cloud_storage",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -629,16 +620,16 @@
         "name": "gcp_pubsub",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -646,16 +637,16 @@
         "name": "gcp_spanner_cdc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -663,16 +654,16 @@
         "name": "generate",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -680,16 +671,16 @@
         "name": "git",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -697,16 +688,16 @@
         "name": "http_client",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -714,16 +705,16 @@
         "name": "http_server",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -731,16 +722,16 @@
         "name": "inproc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -748,16 +739,16 @@
         "name": "kafka",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -765,16 +756,16 @@
         "name": "kafka_franz",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -782,16 +773,16 @@
         "name": "microsoft_sql_server_cdc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -799,16 +790,16 @@
         "name": "mongodb",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -816,16 +807,16 @@
         "name": "mongodb_cdc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -833,16 +824,16 @@
         "name": "mqtt",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -850,16 +841,16 @@
         "name": "mysql_cdc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -867,16 +858,16 @@
         "name": "nats",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -884,16 +875,16 @@
         "name": "nats_jetstream",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -901,16 +892,16 @@
         "name": "nats_kv",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -918,16 +909,16 @@
         "name": "oracledb_cdc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -935,16 +926,16 @@
         "name": "otlp_grpc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -952,16 +943,16 @@
         "name": "otlp_http",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -969,16 +960,16 @@
         "name": "pg_stream",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -986,16 +977,16 @@
         "name": "postgres_cdc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1003,16 +994,16 @@
         "name": "read_until",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1020,16 +1011,16 @@
         "name": "redis_list",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1037,16 +1028,16 @@
         "name": "redis_pubsub",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1054,16 +1045,16 @@
         "name": "redis_scan",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1071,16 +1062,16 @@
         "name": "redis_streams",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1088,16 +1079,16 @@
         "name": "redpanda",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1105,16 +1096,16 @@
         "name": "redpanda_common",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1122,16 +1113,16 @@
         "name": "redpanda_migrator",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1139,16 +1130,16 @@
         "name": "resource",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1156,16 +1147,16 @@
         "name": "salesforce",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1173,16 +1164,16 @@
         "name": "salesforce_cdc",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1190,16 +1181,16 @@
         "name": "salesforce_graphql",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1207,16 +1198,16 @@
         "name": "schema_registry",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1224,16 +1215,16 @@
         "name": "sequence",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1241,16 +1232,16 @@
         "name": "sftp",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1258,16 +1249,16 @@
         "name": "slack",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1275,16 +1266,16 @@
         "name": "slack_users",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1292,16 +1283,16 @@
         "name": "spicedb_watch",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1309,16 +1300,16 @@
         "name": "splunk",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1326,16 +1317,16 @@
         "name": "sql_raw",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1343,16 +1334,16 @@
         "name": "sql_select",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1360,16 +1351,16 @@
         "name": "timeplus",
         "type": "inputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1377,16 +1368,16 @@
         "name": "amqp_0_9",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1394,16 +1385,16 @@
         "name": "arc",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1411,16 +1402,16 @@
         "name": "aws_dynamodb",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1428,16 +1419,16 @@
         "name": "aws_kinesis",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1445,16 +1436,16 @@
         "name": "aws_kinesis_firehose",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1462,16 +1453,16 @@
         "name": "aws_s3",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1479,16 +1470,16 @@
         "name": "aws_sns",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1496,16 +1487,16 @@
         "name": "aws_sqs",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1513,16 +1504,16 @@
         "name": "azure_blob_storage",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1530,16 +1521,16 @@
         "name": "azure_cosmosdb",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1547,16 +1538,16 @@
         "name": "azure_data_lake_gen2",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1564,16 +1555,16 @@
         "name": "azure_queue_storage",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1581,16 +1572,16 @@
         "name": "azure_table_storage",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1598,16 +1589,16 @@
         "name": "broker",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1615,16 +1606,16 @@
         "name": "cache",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1632,16 +1623,16 @@
         "name": "cyborgdb",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1649,16 +1640,16 @@
         "name": "drop",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1666,16 +1657,16 @@
         "name": "drop_on",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1683,16 +1674,16 @@
         "name": "elasticsearch_v8",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1700,16 +1691,16 @@
         "name": "fallback",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1717,16 +1708,16 @@
         "name": "gcp_bigquery",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1734,16 +1725,16 @@
         "name": "gcp_bigquery_write_api",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1751,16 +1742,16 @@
         "name": "gcp_cloud_storage",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1768,16 +1759,16 @@
         "name": "gcp_pubsub",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1785,16 +1776,16 @@
         "name": "http_client",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1802,16 +1793,16 @@
         "name": "iceberg",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1819,16 +1810,16 @@
         "name": "inproc",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1836,16 +1827,16 @@
         "name": "kafka",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1853,16 +1844,16 @@
         "name": "kafka_franz",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1870,16 +1861,16 @@
         "name": "mongodb",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1887,16 +1878,16 @@
         "name": "mqtt",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1904,16 +1895,16 @@
         "name": "nats",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1921,16 +1912,16 @@
         "name": "nats_jetstream",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1938,16 +1929,16 @@
         "name": "nats_kv",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1955,16 +1946,16 @@
         "name": "opensearch",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1972,16 +1963,16 @@
         "name": "otlp_grpc",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -1989,16 +1980,16 @@
         "name": "otlp_http",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2006,16 +1997,16 @@
         "name": "pinecone",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2023,16 +2014,16 @@
         "name": "qdrant",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2040,16 +2031,16 @@
         "name": "questdb",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2057,16 +2048,16 @@
         "name": "redis_hash",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2074,16 +2065,16 @@
         "name": "redis_list",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2091,16 +2082,16 @@
         "name": "redis_pubsub",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2108,16 +2099,16 @@
         "name": "redis_streams",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2125,16 +2116,16 @@
         "name": "redpanda",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2142,16 +2133,16 @@
         "name": "redpanda_common",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2159,16 +2150,16 @@
         "name": "redpanda_migrator",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2176,16 +2167,16 @@
         "name": "reject",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2193,16 +2184,16 @@
         "name": "reject_errored",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2210,16 +2201,16 @@
         "name": "resource",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2227,16 +2218,16 @@
         "name": "retry",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2244,16 +2235,16 @@
         "name": "salesforce_sink",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2261,16 +2252,16 @@
         "name": "schema_registry",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2278,16 +2269,16 @@
         "name": "sftp",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2295,16 +2286,16 @@
         "name": "slack_post",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2312,16 +2303,16 @@
         "name": "slack_reaction",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2329,16 +2320,16 @@
         "name": "snowflake_put",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2346,16 +2337,16 @@
         "name": "snowflake_streaming",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2363,16 +2354,16 @@
         "name": "splunk_hec",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2380,16 +2371,16 @@
         "name": "sql_insert",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2397,16 +2388,16 @@
         "name": "sql_raw",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2414,16 +2405,16 @@
         "name": "switch",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2431,16 +2422,16 @@
         "name": "sync_response",
         "type": "outputs",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2448,16 +2439,16 @@
         "name": "archive",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2465,16 +2456,16 @@
         "name": "avro",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2482,16 +2473,16 @@
         "name": "aws_bedrock_chat",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2499,16 +2490,16 @@
         "name": "aws_bedrock_embeddings",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2516,16 +2507,16 @@
         "name": "aws_dynamodb_partiql",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2533,16 +2524,16 @@
         "name": "aws_lambda",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2550,16 +2541,16 @@
         "name": "azure_cosmosdb",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2567,16 +2558,16 @@
         "name": "benchmark",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2584,16 +2575,16 @@
         "name": "bloblang",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2601,16 +2592,16 @@
         "name": "bounds_check",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2618,16 +2609,16 @@
         "name": "branch",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2635,16 +2626,16 @@
         "name": "cache",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2652,16 +2643,16 @@
         "name": "cached",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2669,16 +2660,16 @@
         "name": "catch",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2686,16 +2677,16 @@
         "name": "cohere_chat",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2703,16 +2694,16 @@
         "name": "cohere_embeddings",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2720,16 +2711,16 @@
         "name": "cohere_rerank",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2737,16 +2728,16 @@
         "name": "compress",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2754,16 +2745,16 @@
         "name": "decompress",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2771,16 +2762,16 @@
         "name": "dedupe",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2788,16 +2779,16 @@
         "name": "for_each",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2805,16 +2796,16 @@
         "name": "gcp_bigquery_select",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2822,16 +2813,16 @@
         "name": "gcp_vertex_ai_chat",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2839,16 +2830,16 @@
         "name": "gcp_vertex_ai_embeddings",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2856,16 +2847,16 @@
         "name": "google_drive_download",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2873,16 +2864,16 @@
         "name": "google_drive_list_labels",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2890,16 +2881,16 @@
         "name": "google_drive_search",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2907,16 +2898,16 @@
         "name": "group_by",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2924,16 +2915,16 @@
         "name": "group_by_value",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2941,16 +2932,16 @@
         "name": "http",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2958,16 +2949,16 @@
         "name": "insert_part",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2975,16 +2966,16 @@
         "name": "jira",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -2992,16 +2983,16 @@
         "name": "jmespath",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3009,16 +3000,16 @@
         "name": "jq",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3026,16 +3017,16 @@
         "name": "json_schema",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3043,16 +3034,16 @@
         "name": "log",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3060,16 +3051,16 @@
         "name": "mapping",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3077,16 +3068,16 @@
         "name": "metric",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3094,16 +3085,16 @@
         "name": "mongodb",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3111,16 +3102,16 @@
         "name": "mutation",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3128,16 +3119,16 @@
         "name": "nats_kv",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3145,16 +3136,16 @@
         "name": "nats_request_reply",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3162,16 +3153,16 @@
         "name": "noop",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3179,16 +3170,16 @@
         "name": "openai_chat_completion",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3196,16 +3187,16 @@
         "name": "openai_embeddings",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3213,16 +3204,16 @@
         "name": "openai_image_generation",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3230,16 +3221,16 @@
         "name": "openai_speech",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3247,16 +3238,16 @@
         "name": "openai_transcription",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3264,16 +3255,16 @@
         "name": "openai_translation",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3281,16 +3272,16 @@
         "name": "parallel",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3298,16 +3289,16 @@
         "name": "parquet_decode",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3315,16 +3306,16 @@
         "name": "parquet_encode",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3332,16 +3323,16 @@
         "name": "parse_log",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3349,16 +3340,16 @@
         "name": "processors",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3366,16 +3357,16 @@
         "name": "qdrant",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3383,16 +3374,16 @@
         "name": "rate_limit",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3400,16 +3391,16 @@
         "name": "redis",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3417,16 +3408,16 @@
         "name": "redis_script",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3434,16 +3425,16 @@
         "name": "resource",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3451,16 +3442,16 @@
         "name": "retry",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3468,16 +3459,16 @@
         "name": "schema_registry_decode",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3485,16 +3476,16 @@
         "name": "schema_registry_encode",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3502,16 +3493,16 @@
         "name": "select_parts",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3519,16 +3510,16 @@
         "name": "slack_thread",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3536,16 +3527,16 @@
         "name": "sleep",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3553,16 +3544,16 @@
         "name": "split",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3570,16 +3561,16 @@
         "name": "sql_insert",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3587,16 +3578,16 @@
         "name": "sql_raw",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3604,16 +3595,16 @@
         "name": "sql_select",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3621,16 +3612,16 @@
         "name": "string_split",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3638,16 +3629,16 @@
         "name": "switch",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3655,16 +3646,16 @@
         "name": "sync_response",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3672,16 +3663,16 @@
         "name": "text_chunker",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3689,16 +3680,16 @@
         "name": "try",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3706,16 +3697,16 @@
         "name": "unarchive",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3723,16 +3714,16 @@
         "name": "while",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3740,16 +3731,16 @@
         "name": "workflow",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3757,16 +3748,16 @@
         "name": "xml",
         "type": "processors",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3774,16 +3765,16 @@
         "name": "none",
         "type": "metrics",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3791,16 +3782,16 @@
         "name": "open_telemetry_collector",
         "type": "metrics",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3808,16 +3799,16 @@
         "name": "prometheus",
         "type": "metrics",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3825,16 +3816,16 @@
         "name": "gcp_cloudtrace",
         "type": "tracers",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3842,16 +3833,16 @@
         "name": "none",
         "type": "tracers",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3859,16 +3850,16 @@
         "name": "open_telemetry_collector",
         "type": "tracers",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3876,16 +3867,16 @@
         "name": "redpanda",
         "type": "tracers",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3893,16 +3884,16 @@
         "name": "avro",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3910,16 +3901,16 @@
         "name": "chunker",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3927,16 +3918,16 @@
         "name": "csv",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3944,16 +3935,16 @@
         "name": "decompress",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3961,16 +3952,16 @@
         "name": "json_array",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3978,16 +3969,16 @@
         "name": "json_documents",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -3995,16 +3986,16 @@
         "name": "lines",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -4012,16 +4003,16 @@
         "name": "re_match",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -4029,16 +4020,16 @@
         "name": "skip_bom",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -4046,16 +4037,16 @@
         "name": "switch",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -4063,16 +4054,16 @@
         "name": "tar",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       },
@@ -4080,16 +4071,16 @@
         "name": "to_the_end",
         "type": "scanners",
         "transitions": [
-          "removed_cloud_support"
+          "added_cloud_support"
         ],
         "oldPlatform": {
           "requiresCgo": false,
-          "cloudSupported": true,
+          "cloudSupported": false,
           "cloudOnly": false
         },
         "newPlatform": {
           "requiresCgo": false,
-          "cloudSupported": false,
+          "cloudSupported": true,
           "cloudOnly": false
         }
       }
@@ -4103,16 +4094,25 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.93.0",
-      "cloud": "4.93.0",
-      "cgo": "4.93.0"
+      "oss": "4.94.0",
+      "cloud": "4.94.0",
+      "cgo": "4.94.0"
     },
     "current": {
       "cloudSupported": 486,
       "selfHostedOnly": 74,
       "cgoOnly": 4
     },
-    "changes": {},
+    "changes": {
+      "cloud": {
+        "added": [],
+        "removed": []
+      },
+      "cgo": {
+        "newCgoOnly": [],
+        "removedCgoOnly": []
+      }
+    },
     "details": {
       "cloudSupported": [
         {

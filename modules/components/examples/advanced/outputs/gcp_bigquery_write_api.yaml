@@ -5,6 +5,15 @@ outputs:
     dataset: "" # No default (required)
     table: "" # No default (required)
     message_format: json
+    write_mode: default_stream
+    auto_create_table: false
+    schema: []
+    time_partitioning:
+      type: "" # No default (optional)
+      field: ""
+      expiration: 0s
+      require_filter: false
+    clustering: []
     max_in_flight: 4
     batching:
       count: 0
