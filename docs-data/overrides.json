@@ -1592,6 +1592,10 @@
               {
                 "name": "strategy",
                 "description": "Controls how LogMiner retrieves data dictionary information. `online_catalog` uses the current data dictionary for best performance but cannot capture DDL changes. Currently, only `online_catalog` is supported."
+              },
+              {
+                "name": "transaction_cache",
+                "description": "A xref:components:caches/about.adoc[cache resource] to use for buffering in-flight transactions. When set, DML events are serialized and stored in the named cache rather than held in memory, reducing connector memory usage for workloads with large or long-running transactions. If not set, an in-memory buffer is used.\n\nEach in-flight transaction is stored as N+1 cache entries: one metadata key holding the transaction ID, start SCN, and event count; and one event key per DML event. A transaction with 1000 events occupies 1001 cache entries. Each AddEvent call writes exactly two keys regardless of how many events the transaction has already accumulated.\n\nThis cache is designed for low-latency stores with cheap per-operation cost. Redis and Memcached are the recommended backends. The built-in `memory:{}` cache works but provides no durability across restarts. High-latency or per-request-cost stores such as S3 or DynamoDB are not recommended - a transaction with 1000 events generates approximately 3000 cache operations across its lifetime, and because LogMiner processes events on a single goroutine, per-call latency directly reduces throughput. A backend that causes timeouts or errors will also cause the mining cycle to restart from an earlier checkpoint SCN, which can result in duplicate event delivery."
               }
             ]
           },
@@ -3997,7 +4001,7 @@
             "children": [
               {
                 "name": "partition_spec",
-                "description": "A Bloblang expression to evaluate when a new table is created to determine the table's partition spec. The result of the mapping should be an iceberg partition spec in the same string format as the https://docs.redpanda.com/current/manage/iceberg/about-iceberg-topics/#use-custom-partitioning[^Redpanda Streaming Topic Property]"
+                "description": "A Bloblang expression to evaluate when a new table is created to determine the table's partition spec. The result of the mapping should be an Iceberg partition spec in the same string format as the Redpanda Streaming Topic Property (see Redpanda Core documentation for Iceberg topics).\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
               },
               {
                 "name": "table_location",
@@ -4192,6 +4196,15 @@
               {
                 "name": "headers",
                 "type": "object"
+              }
+            ]
+          },
+          {
+            "name": "schema_evolution",
+            "children": [
+              {
+                "name": "partition_spec",
+                "description": "A Bloblang expression to evaluate when a new table is created to determine the table's partition spec. The result of the mapping should be an Iceberg partition spec in the same string format as the Redpanda Streaming Topic Property (see Redpanda Core documentation for Iceberg topics).\n\nThis field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
               }
             ]
           }
