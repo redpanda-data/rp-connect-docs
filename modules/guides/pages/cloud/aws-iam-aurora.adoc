@@ -24,8 +24,9 @@ After reading this page, you will be able to:
 * Redpanda Connect deployed on AWS
 * An Aurora cluster (PostgreSQL or MySQL)
 * Permissions to create IAM roles and attach inline policies in both the Redpanda and Aurora AWS accounts
-* An IAM role associated with the Redpanda Connect pod (see <<Find the pipeline IAM role name>>)
+* An IAM role associated with the Redpanda Connect pod (see <<find-pipeline-iam-role-name,Find the pipeline IAM role name>>)
 
+[[find-pipeline-iam-role-name]]
 == Find the pipeline IAM role name
 
 For Redpanda Cloud BYOC deployments, the pipeline role is pre-created in the AWS account where your cluster is deployed and follows this naming convention:
@@ -38,6 +39,7 @@ CAUTION: Do not modify the existing policies attached to this role. Redpanda man
 
 For self-managed deployments, use the IAM role associated with your Redpanda Connect pod or EC2 instance.
 
+[[find-aurora-cluster-resource-id]]
 == Find the Aurora cluster resource ID
 
 The policy for RDS IAM authentication requires the Aurora cluster resource ID (not the cluster identifier). Run the following command to retrieve the resource ID:
@@ -52,6 +54,7 @@ aws rds describe-db-clusters \
 
 The resource ID has the format `cluster-<alphanumeric-string>`.
 
+[[create-database-connect-role]]
 == Create the database connect role
 
 In the AWS account where Aurora is hosted, create an IAM role with the following permission policy:
@@ -75,7 +78,7 @@ Replace the following placeholders:
 
 * `<region>`: The AWS region of the Aurora cluster
 * `<db-account-id>`: The AWS account ID that hosts Aurora
-* `<resource-id>`: The cluster resource ID from <<Find the Aurora cluster resource ID>>
+* `<resource-id>`: The cluster resource ID from <<find-aurora-cluster-resource-id,Find the Aurora cluster resource ID>>
 * `<iam-db-user>`: The database user configured for IAM authentication
 
 === Trust policy
@@ -102,7 +105,7 @@ Attach the following trust policy to the role to allow the Redpanda pipeline rol
 Replace the following placeholders:
 
 * `<rp-account-id>`: The AWS account ID where the Redpanda Connect pipeline role lives
-* `<pipeline-role-name>`: The pipeline role name from <<Find the pipeline IAM role name>>
+* `<pipeline-role-name>`: The pipeline role name from <<find-pipeline-iam-role-name,Find the pipeline IAM role name>>
 
 NOTE: The database connect role must be owned by the same AWS account as the Aurora instance. For cross-account setups, create this role in the Aurora account, not the Redpanda account.
 
@@ -139,9 +142,10 @@ aws iam tag-role \
   --profile <db-account-aws-profile>
 ----
 
+[[grant-pipeline-cross-account-access]]
 == Grant the pipeline role cross-account access
 
-In the AWS account where the Redpanda Connect pipeline role lives, add an inline policy to the pipeline role (identified in <<Find the pipeline IAM role name>>) to allow it to assume your database connect role:
+In the AWS account where the Redpanda Connect pipeline role lives, add an inline policy to the pipeline role (identified in <<find-pipeline-iam-role-name,Find the pipeline IAM role name>>) to allow it to assume your database connect role:
 
 .inline-policy.json
 [source,json]
@@ -208,7 +212,7 @@ curl -s -X GET "https://api.cloud.redpanda.com/v1/clusters/${RP_CLUSTER_ID}" \
 
 == Configure the pipeline
 
-In your Redpanda Connect pipeline YAML, set the `aws.roles` field to the ARN of the database connect role created in <<Create the database connect role>>.
+In your Redpanda Connect pipeline YAML, set the `aws.roles` field to the ARN of the database connect role created in <<create-database-connect-role,Create the database connect role>>.
 
 This configuration applies to the `postgres_cdc`, `pg_stream`, and `mysql_cdc` inputs.
 
@@ -253,7 +257,7 @@ These errors appear in Redpanda Connect pipeline logs. Monitor logs using `+rpk 
 The inline assume-role policy is missing from the Redpanda Connect pipeline role, or the tag condition is not met.
 
 . Verify that the database connect role has the `redpanda_scope_redpanda_connect: true` tag.
-. Attach the inline policy as described in <<Grant the pipeline role cross-account access>>.
+. Attach the inline policy as described in <<grant-pipeline-cross-account-access,Grant the pipeline role cross-account access>>.
 
 The error clears automatically after the policy is in place. Monitor pipeline logs to confirm:
 
