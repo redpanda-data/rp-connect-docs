@@ -8076,7 +8076,14 @@
     {
       "name": "ffi",
       "summary": "Invoke functions from shared libraries using Foreign Function Interface (FFI).",
-      "description": "The `ffi` processor allows you to dynamically load shared libraries (.so, .dylib, or .dll files) and invoke their functions as a processing step. This enables integration with external C/C++ libraries without requiring custom Go code or rebuilding Redpanda Connect.\n\nThe processor uses `dlopen` (or platform equivalent) to load the specified library at runtime, looks up the function by name, and invokes it with arguments provided through Bloblang mapping. Function signatures are defined using the `signature` field, specifying parameter and return types.\n\nResults are returned as an array, where the first element is the return value (if not void), followed by any output parameters in their declaration order."
+      "description": "The `ffi` processor allows you to dynamically load shared libraries (.so, .dylib, or .dll files) and invoke their functions as a processing step. This enables integration with external C/C++ libraries without requiring custom Go code or rebuilding Redpanda Connect.\n\nThe processor uses `dlopen` (or platform equivalent) to load the specified library at runtime, looks up the function by name, and invokes it with arguments provided through Bloblang mapping. Function signatures are defined using the `signature` field, specifying parameter and return types.\n\nResults are returned as an array, where the first element is the return value (if not void), followed by any output parameters in their declaration order.",
+      "examples": [
+        {
+          "title": "Call a libc function",
+          "summary": "This is an example of loading libc.so.6 and calling a function on Linux.",
+          "config": "\npipeline:\n  processors:\n    - ffi:\n        library_path: libc.so.6\n        function_name: memcmp\n        args_mapping: 'root = [\"foo\", \"bar\", 3]'\n        signature:\n          return:\n            type: int32\n          parameters:\n            - type: byte*\n            - type: byte*\n            - type: int64\n"
+        }
+      ]
     }
   ],
   "caches": [
