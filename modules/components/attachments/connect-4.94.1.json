@@ -61532,8 +61532,8 @@
       "examples": [
         {
           "title": "Call a libc function",
-          "summary": "This is an example of loading libc.so and calling a function on linux.",
-          "config": "\npipeline:\n  processors:\n    - ffi:\n        library_path: libc.6.so\n        function_name: memcmp\n        args_mapping: 'root = [\"foo\", \"bar\", 3]'\n        signature:\n          return:\n            type: int32\n          parameters:\n            - type: byte*\n            - type: byte*\n            - type: int64\n"
+          "summary": "This is an example of loading libc.so.6 and calling a function on Linux.",
+          "config": "\npipeline:\n  processors:\n    - ffi:\n        library_path: libc.so.6\n        function_name: memcmp\n        args_mapping: 'root = [\"foo\", \"bar\", 3]'\n        signature:\n          return:\n            type: int32\n          parameters:\n            - type: byte*\n            - type: byte*\n            - type: int64\n"
         }
       ],
       "config": {
