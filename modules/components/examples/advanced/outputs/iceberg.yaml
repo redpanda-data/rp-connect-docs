@@ -64,6 +64,7 @@ outputs:
       table_location: "" # No default (optional)
       schema_metadata: ""
       new_column_type_mapping: "" # No default (optional)
+      require_schema_metadata: false
     commit:
       manifest_merge_enabled: true
       max_snapshot_age: 24h
