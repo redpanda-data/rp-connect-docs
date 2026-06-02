@@ -19,6 +19,7 @@ After reading this page, you will be able to:
 * [ ] {learning-objective-2}
 * [ ] {learning-objective-3}
 
+[[prerequisites]]
 == Prerequisites
 
 * Redpanda Connect deployed on AWS
@@ -81,6 +82,7 @@ Replace the following placeholders:
 * `<resource-id>`: The cluster resource ID from <<find-aurora-cluster-resource-id,Find the Aurora cluster resource ID>>
 * `<iam-db-user>`: The database user configured for IAM authentication
 
+[[trust-policy]]
 === Trust policy
 
 Attach the following trust policy to the role to allow the Redpanda pipeline role to assume it:
@@ -109,6 +111,7 @@ Replace the following placeholders:
 
 NOTE: The database connect role must be owned by the same AWS account as the Aurora instance. For cross-account setups, create this role in the Aurora account, not the Redpanda account.
 
+[[required-tag]]
 === Required tag
 
 The database connect role must have the following tag. Without it, the pipeline role cannot assume the database role.
@@ -119,6 +122,7 @@ The database connect role must have the following tag. Without it, the pipeline 
 |`redpanda_scope_redpanda_connect` |`true`
 |===
 
+[[create-the-role]]
 === Create the role
 
 Run the following AWS CLI commands to create the role and apply the permission policy and tag:
@@ -188,6 +192,7 @@ aws iam get-role-policy \
   --profile <redpanda-aws-profile>
 ----
 
+[[configure-the-network]]
 == Configure the network
 
 The Aurora security group must allow inbound traffic from your Redpanda Connect cluster's outbound IP addresses on the database port (5432 for PostgreSQL, 3306 for MySQL).
@@ -210,6 +215,7 @@ curl -s -X GET "https://api.cloud.redpanda.com/v1/clusters/${RP_CLUSTER_ID}" \
   | jq .cluster.nat_gateways
 ----
 
+[[configure-the-pipeline]]
 == Configure the pipeline
 
 In your Redpanda Connect pipeline YAML, set the `aws.roles` field to the ARN of the database connect role created in <<create-database-connect-role,Create the database connect role>>.
@@ -248,10 +254,12 @@ input:
 
 The `aws.roles` field accepts an array of role ARNs, which are assumed in sequence. This supports chaining multiple role assumptions for more complex cross-account setups.
 
+[[troubleshooting]]
 == Troubleshooting
 
 These errors appear in Redpanda Connect pipeline logs. Monitor logs using `+rpk topic consume __redpanda.connect.logs+`.
 
+[[err-sts-assumerole]]
 === `is not authorized to perform: sts:AssumeRole`
 
 The inline assume-role policy is missing from the Redpanda Connect pipeline role, or the tag condition is not met.
@@ -268,6 +276,7 @@ rpk topic consume __redpanda.connect.logs --offset end | grep '<pipeline-id>'
 
 Look for a message like `postgres_cdc input go active` or `mysql_cdc input go active` to confirm successful authentication.
 
+[[next-steps]]
 == Next steps
 
 * xref:components:inputs/postgres_cdc.adoc[`postgres_cdc` input]
