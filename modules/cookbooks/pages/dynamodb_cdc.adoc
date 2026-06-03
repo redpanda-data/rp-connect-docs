@@ -160,7 +160,8 @@ The DynamoDB CDC input automatically manages checkpoints in a separate DynamoDB 
 ----
 input:
   aws_dynamodb_cdc:
-    table: orders
+    tables:
+      - orders
     checkpoint_table: cdc-checkpoints <1>
     checkpoint_limit: 500 <2>
     start_from: trim_horizon <3>
@@ -179,7 +180,8 @@ Optimize throughput and latency with these settings:
 ----
 input:
   aws_dynamodb_cdc:
-    table: orders
+    tables:
+      - orders
     batch_size: 1000 <1>
     poll_interval: 100ms <2>
     max_tracked_shards: 10000 <3>
