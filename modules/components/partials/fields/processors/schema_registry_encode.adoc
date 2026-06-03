@@ -2,35 +2,33 @@
 
 == Fields
 
-=== `avro_raw_json`
+=== `avro`
 
-Whether Avro messages should be parsed as normal JSON (JSON that meets the expectations of regular internet JSON) rather than https://avro.apache.org/docs/current/specification/[Avro JSON^]. 
+Configuration for Avro encoding.
 
-If set to `false`, the schema returned from the subject is parsed as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodec[Avro JSON^].
+*Type*: `object`
 
-For example, the union schema `["null","string","Transaction"]`, where `Transaction` is a record name, would be decoded as:
+=== `avro.namespace`
 
-- A `null` as a JSON `null`
-- The string `"a"` as `{"string": "a"}`
-- A `Transaction` instance as `{"Transaction": {...}}`, where `{...}` indicates the JSON encoding of a `Transaction` instance.
+The Avro namespace for the root record type when encoding from a common schema (schema_metadata mode).
 
-If set to `true`, the schema returned from the subject is parsed as https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard JSON^].
+*Type*: `string`
 
-For example, the same union schema `["null","string","Transaction"]` is decoded as:
+*Default*: `""`
 
-- A `null` as JSON `null`
-- The string `"a"` as `"a"`
-- A `Transaction` instance as `{...}`, where `{...}` indicates the JSON encoding of a `Transaction` instance.
+=== `avro.raw_json`
 
-For more details on the difference between standard JSON and Avro JSON, see the https://github.com/linkedin/goavro/blob/5ec5a5ee7ec82e16e6e2b438d610e1cab2588393/union.go#L224-L249[comment in Goavro^] and the https://github.com/linkedin/goavro[underlying library used for Avro serialization^].
-
-ifndef::env-cloud[]
-Requires version 3.59.0 or later.
-endif::[]
+Whether messages encoded in Avro format should be parsed as normal JSON rather than Avro JSON. Overrides the deprecated top-level `avro_raw_json` when set.
 
 *Type*: `bool`
 
-*Default*: `false`
+=== `avro.record_name`
+
+The name to use for the root Avro record type when encoding from a common schema (schema_metadata mode). If empty, derived from the subject.
+
+*Type*: `string`
+
+*Default*: `""`
 
 === `basic_auth`
 
@@ -54,7 +52,7 @@ Whether to use basic authentication in requests.
 
 A password to authenticate with.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -67,6 +65,14 @@ A username to authenticate as.
 *Type*: `string`
 
 *Default*: `""`
+
+=== `format`
+
+The encoding format to use when converting a common schema from metadata. Required when `schema_metadata` is set.
+
+*Type*: `string`
+
+*Options*: `avro`, `json_schema`
 
 === `jwt`
 
@@ -120,6 +126,14 @@ The cryptographic algorithm used to sign the JWT token. Supported algorithms inc
 
 *Default*: `""`
 
+=== `normalize`
+
+Whether to normalize the schema before registering with the schema registry (schema_metadata mode only).
+
+*Type*: `bool`
+
+*Default*: `true`
+
 === `oauth`
 
 Configure OAuth version 1.0 authentication for secure API access.
@@ -142,7 +156,7 @@ A value used to gain access to the protected resources on behalf of the user.
 
 A secret provided in order to establish ownership of a given access token.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -160,7 +174,7 @@ A value used to identify the client to the service provider.
 
 A secret used to establish ownership of the consumer key.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -191,6 +205,14 @@ refresh_period: 60s
 
 refresh_period: 1h
 ----
+
+=== `schema_metadata`
+
+When set, the processor reads a schema in benthos common schema format from this metadata key on each message, converts it to the format specified by `format`, registers it with the schema registry under the configured subject, and encodes the message. When empty (the default), the processor pulls the latest schema from the registry instead.
+
+*Type*: `string`
+
+*Default*: `""`
 
 === `subject`
 
@@ -259,7 +281,7 @@ The path of a certificate to use.
 
 A plain text certificate key to use.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -280,7 +302,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -312,7 +334,7 @@ endif::[]
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

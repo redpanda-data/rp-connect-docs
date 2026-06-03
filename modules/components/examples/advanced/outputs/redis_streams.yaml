@@ -4,6 +4,7 @@ outputs:
     url: "" # No default (required)
     kind: simple
     master: ""
+    client_name: redpanda-connect
     tls:
       enabled: false
       skip_cert_verify: false
@@ -12,6 +13,7 @@ outputs:
       root_cas_file: ""
       client_certs: []
     stream: "" # No default (required)
+    id: *
     body_key: body
     max_length: 0
     max_in_flight: 64

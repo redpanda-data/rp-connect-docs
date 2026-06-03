@@ -26,8 +26,8 @@ Sometimes inputs close themselves. For example, when the `file` input type reach
 
 A metadata key `benthos_read_until` containing the value `final` is added to the first part of the message that triggers the input to stop.
 
-include::redpanda-connect:components:partial$fields/inputs/read_until.adoc[]
+include::connect:components:partial$fields/inputs/read_until.adoc[]
 
-include::redpanda-connect:components:partial$examples/inputs/read_until.adoc[]
+include::connect:components:partial$examples/inputs/read_until.adoc[]
 
 // end::single-source[]

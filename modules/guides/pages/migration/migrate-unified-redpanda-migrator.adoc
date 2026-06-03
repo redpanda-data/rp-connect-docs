@@ -13,7 +13,7 @@ The unified migrator consolidates all migration logic into a single input/output
 
 |===
 | **Available in** | Redpanda Connect 4.67.5+
-| **Legacy status** | Legacy migrators deprecated in 4.67.5
+| **Legacy status** | Deprecated in 4.67.5, removed in 4.85.0
 | **Compatibility** | Not backward-compatible
 | **Configuration model** | One `input` and one `output`, paired by label
 | **Primary control** | All migration logic resides in the output component

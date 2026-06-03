@@ -29,8 +29,8 @@ cached:
 
 The format of the data when stored within the cache is a custom and versioned schema chosen to balance performance and storage space. It is therefore not possible to point this processor to a cache that is pre-populated with data that this processor has not created itself.
 
-include::redpanda-connect:components:partial$examples/processors/cached.adoc[]
+include::connect:components:partial$examples/processors/cached.adoc[]
 
-include::redpanda-connect:components:partial$fields/processors/cached.adoc[]
+include::connect:components:partial$fields/processors/cached.adoc[]
 
 // end::single-source[]

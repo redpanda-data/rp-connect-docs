@@ -20,9 +20,9 @@ switch: [] # No default (required)
 
 For each switch case a xref:guides:bloblang/about.adoc[Bloblang query] is checked and, if the result is true (or the check is empty) the child processors are executed on the message.
 
-include::redpanda-connect:components:partial$fields/processors/switch.adoc[]
+include::connect:components:partial$fields/processors/switch.adoc[]
 
-include::redpanda-connect:components:partial$examples/processors/switch.adoc[]
+include::connect:components:partial$examples/processors/switch.adoc[]
 
 == Batching
 

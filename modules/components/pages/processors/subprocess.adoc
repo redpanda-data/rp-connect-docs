@@ -55,5 +55,5 @@ It is required that subprocesses flush their stdout and stderr pipes for each li
 
 If a message contains line breaks each line of the message is piped to the subprocess and flushed, and a response is expected from the subprocess before another line is fed in.
 
-include::redpanda-connect:components:partial$fields/processors/subprocess.adoc[]
+include::connect:components:partial$fields/processors/subprocess.adoc[]
 

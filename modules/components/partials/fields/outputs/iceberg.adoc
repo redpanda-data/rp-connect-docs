@@ -112,6 +112,14 @@ processors:
 
 ----
 
+=== `case_sensitive_columns`
+
+Controls how message field names are matched against table column names, and how column references in the partition spec are resolved. When `true` (the default), names must match exactly. When `false`, matching is case-insensitive — set this when your downstream catalog or query engine treats column names as case-insensitive (the iceberg specification's recommended convention) so that, for example, a message keyed `"COLUMN"` lands in an existing `column` rather than triggering schema evolution. Ambiguous case-only duplicates in the input are rejected.
+
+*Type*: `bool`
+
+*Default*: `true`
+
 === `catalog`
 
 REST catalog configuration.
@@ -126,21 +134,75 @@ Authentication configuration for the REST catalog. Only one authentication metho
 
 === `catalog.auth.aws_sigv4`
 
-AWS SigV4 authentication (for AWS Glue Data Catalog or API Gateway). Uses the same credentials as the storage configuration.
+AWS SigV4 authentication (for AWS Glue Data Catalog or API Gateway).
 
 *Type*: `object`
 
-=== `catalog.auth.aws_sigv4.region`
+=== `catalog.auth.aws_sigv4.credentials`
 
-AWS region for SigV4 signing. If not specified, uses the region from AWS credentials.
+Optional manual configuration of AWS credentials to use. More information can be found in xref:guides:cloud/aws.adoc[].
+
+*Type*: `object`
+
+=== `catalog.auth.aws_sigv4.credentials.from_ec2_role`
+
+Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].
+
+ifndef::env-cloud[]
+Requires version 4.2.0 or later.
+endif::[]
+
+*Type*: `bool`
+
+=== `catalog.auth.aws_sigv4.credentials.id`
+
+The ID of credentials to use.
 
 *Type*: `string`
 
-[source,yaml]
-----
-# Examples:
-region: us-east-1
-----
+=== `catalog.auth.aws_sigv4.credentials.profile`
+
+A profile from `~/.aws/credentials` to use.
+
+*Type*: `string`
+
+=== `catalog.auth.aws_sigv4.credentials.role`
+
+A role ARN to assume.
+
+*Type*: `string`
+
+=== `catalog.auth.aws_sigv4.credentials.role_external_id`
+
+An external ID to provide when assuming a role.
+
+*Type*: `string`
+
+=== `catalog.auth.aws_sigv4.credentials.secret`
+
+The secret for the credentials being used.
+
+include::connect:components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+=== `catalog.auth.aws_sigv4.credentials.token`
+
+The token for the credentials being used, required when using short term credentials.
+
+*Type*: `string`
+
+=== `catalog.auth.aws_sigv4.endpoint`
+
+Allows you to specify a custom endpoint for the AWS API.
+
+*Type*: `string`
+
+=== `catalog.auth.aws_sigv4.region`
+
+The AWS region to target.
+
+*Type*: `string`
 
 === `catalog.auth.aws_sigv4.service`
 
@@ -148,11 +210,63 @@ AWS service name for SigV4 signing.
 
 *Type*: `string`
 
+=== `catalog.auth.aws_sigv4.tcp`
+
+TCP socket configuration.
+
+*Type*: `object`
+
+=== `catalog.auth.aws_sigv4.tcp.connect_timeout`
+
+Maximum amount of time a dial will wait for a connect to complete. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `catalog.auth.aws_sigv4.tcp.keep_alive`
+
+TCP keep-alive probe configuration.
+
+*Type*: `object`
+
+=== `catalog.auth.aws_sigv4.tcp.keep_alive.count`
+
+Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
+
+*Type*: `int`
+
+*Default*: `9`
+
+=== `catalog.auth.aws_sigv4.tcp.keep_alive.idle`
+
+Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `catalog.auth.aws_sigv4.tcp.keep_alive.interval`
+
+Duration between keep-alive probes. Zero defaults to 15s.
+
+*Type*: `string`
+
+*Default*: `15s`
+
+=== `catalog.auth.aws_sigv4.tcp.tcp_user_timeout`
+
+Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
+
+*Type*: `string`
+
+*Default*: `0s`
+
 === `catalog.auth.bearer`
 
 Static bearer token for authentication. For testing only, not recommended for production.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -172,7 +286,7 @@ OAuth2 client identifier.
 
 OAuth2 client secret.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -299,6 +413,22 @@ namespace: analytics.events
 namespace: production
 ----
 
+=== `parquet`
+
+Parquet writer configuration.
+
+*Type*: `object`
+
+=== `parquet.string_encoding`
+
+The encoding to use for string and binary columns. Use `plain` for compatibility with readers that do not support `DELTA_LENGTH_BYTE_ARRAY` encoding, such as AWS Redshift Spectrum.
+
+*Type*: `string`
+
+*Default*: `delta_length_byte_array`
+
+*Options*: `plain`, `delta_length_byte_array`
+
 === `schema_evolution`
 
 Schema evolution configuration.
@@ -313,9 +443,15 @@ Enable automatic schema evolution. When enabled, new columns will be automatical
 
 *Default*: `false`
 
+=== `schema_evolution.new_column_type_mapping`
+
+An optional Bloblang mapping to customize column types during schema evolution. This mapping is executed for each new column and can override the inferred or schema-metadata-derived type. The mapping receives an object with fields `name` (column name), `path` (dot-separated path), `value` (sample value), `inferred_type` (the type that would be used without this mapping), `message` (the full message body), `namespace`, and `table`. It must return a string with a valid Iceberg type name: `boolean`, `int`, `long`, `float`, `double`, `string`, `binary`, `date`, `time`, `timestamp`, `timestamptz`, `uuid`, `decimal(p,s)`, or `fixed[n]`.
+
+*Type*: `string`
+
 === `schema_evolution.partition_spec`
 
-A Bloblang expression to evaluate when a new table is created to determine the table's partition spec. The result of the mapping should be an iceberg partition spec in the same string format as the https://docs.redpanda.com/current/manage/iceberg/about-iceberg-topics/#use-custom-partitioning[^Redpanda Streaming Topic Property]
+A Bloblang expression to evaluate when a new table is created to determine the table's partition spec. The result of the mapping should be an Iceberg partition spec in the same string format as the Redpanda Streaming Topic Property (see Redpanda Core documentation for Iceberg topics).
 
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
@@ -353,9 +489,25 @@ partition_spec: (day(my_ts_col), bucket(4, nested.col))
 partition_spec: (day(my_ts_col), void(`non.nested column.with.dots`), identity(nested.column))
 ----
 
+=== `schema_evolution.require_schema_metadata`
+
+When `true`, writing a numeric value into a `timestamp`, `timestamptz`, `date`, or `time` column without `schema_metadata` registered for that column is a hard error. The default `false` permits a fallback path that interprets bare numeric timestamps as Unix seconds and bare numeric times as already-microseconds — convenient, but silently wrong if upstream produced milliseconds. Enable this when you cannot guarantee the upstream attaches schema metadata and want to fail loudly rather than corrupt dates by ~50,000 years. No effect on time-typed columns receiving `time.Time`/`time.Duration` Go values, which carry their own unit unambiguously, and no effect on non-time columns. Requires `schema_metadata` to be set.
+
+*Type*: `bool`
+
+*Default*: `false`
+
+=== `schema_evolution.schema_metadata`
+
+The name of a message metadata field containing a schema definition. When set, the schema is used to determine column types during schema evolution and table creation instead of inferring types from values. The schema must be in the standard common schema format (the same format used by the `parquet_encode` processor's `schema_metadata` field). For batches of messages, the first message's schema is used. Record presence drives schema shape: fields declared in the schema metadata that are absent from the record are not added to the table, while the metadata controls column ordering, naming, and types for fields that are present. In case-insensitive mode, top-level column names use the metadata's casing — record keys are matched by case-folding and the metadata's name is what lands in the table.
+
+*Type*: `string`
+
+*Default*: `""`
+
 === `schema_evolution.table_location`
 
-A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\{prefix}\{namespace}/{table}`.
+A prefix used as the location for new tables when the catalog does not automatically assign one. For example, AWS Glue requires explicit table locations. When set, table locations are derived as `\{prefix\}\{namespace\}/\{table\}`.
 
 *Type*: `string`
 
@@ -391,55 +543,27 @@ bucket: my-iceberg-data
 
 === `storage.aws_s3.credentials`
 
-Optional manual configuration of AWS credentials to use. More information can be found in xref:guides:cloud/aws.adoc[].
+Static AWS credentials for S3 access. When not specified, credentials are loaded from the default AWS credential chain.
 
 *Type*: `object`
 
-=== `storage.aws_s3.credentials.from_ec2_role`
-
-Use the credentials of a host EC2 machine configured to assume https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html[an IAM role associated with the instance^].
-
-ifndef::env-cloud[]
-Requires version 4.2.0 or later.
-endif::[]
-
-*Type*: `bool`
-
 === `storage.aws_s3.credentials.id`
 
-The ID of credentials to use.
-
-*Type*: `string`
-
-=== `storage.aws_s3.credentials.profile`
-
-A profile from `~/.aws/credentials` to use.
-
-*Type*: `string`
-
-=== `storage.aws_s3.credentials.role`
-
-A role ARN to assume.
-
-*Type*: `string`
-
-=== `storage.aws_s3.credentials.role_external_id`
-
-An external ID to provide when assuming a role.
+The AWS access key ID.
 
 *Type*: `string`
 
 === `storage.aws_s3.credentials.secret`
 
-The secret for the credentials being used.
+The AWS secret access key.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
 === `storage.aws_s3.credentials.token`
 
-The token for the credentials being used, required when using short term credentials.
+The AWS session token, required when using short term credentials.
 
 *Type*: `string`
 
@@ -454,12 +578,6 @@ Custom endpoint for S3-compatible storage (e.g., MinIO).
 # Examples:
 endpoint: http://localhost:9000
 ----
-
-=== `storage.aws_s3.endpoint`
-
-Allows you to specify a custom endpoint for the AWS API.
-
-*Type*: `string`
 
 === `storage.aws_s3.force_path_style_urls`
 
@@ -480,64 +598,6 @@ The AWS region.
 # Examples:
 region: us-west-2
 ----
-
-=== `storage.aws_s3.region`
-
-The AWS region to target.
-
-*Type*: `string`
-
-=== `storage.aws_s3.tcp`
-
-TCP socket configuration.
-
-*Type*: `object`
-
-=== `storage.aws_s3.tcp.connect_timeout`
-
-Maximum amount of time a dial will wait for a connect to complete. Zero disables.
-
-*Type*: `string`
-
-*Default*: `0s`
-
-=== `storage.aws_s3.tcp.keep_alive`
-
-TCP keep-alive probe configuration.
-
-*Type*: `object`
-
-=== `storage.aws_s3.tcp.keep_alive.count`
-
-Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.
-
-*Type*: `int`
-
-*Default*: `9`
-
-=== `storage.aws_s3.tcp.keep_alive.idle`
-
-Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.
-
-*Type*: `string`
-
-*Default*: `15s`
-
-=== `storage.aws_s3.tcp.keep_alive.interval`
-
-Duration between keep-alive probes. Zero defaults to 15s.
-
-*Type*: `string`
-
-*Default*: `15s`
-
-=== `storage.aws_s3.tcp.tcp_user_timeout`
-
-Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.
-
-*Type*: `string`
-
-*Default*: `0s`
 
 === `storage.azure_blob_storage`
 
@@ -567,7 +627,7 @@ Custom endpoint for Azure-compatible storage.
 
 Azure storage access key for shared key authentication.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -587,7 +647,7 @@ storage_account: mystorageaccount
 
 Azure storage connection string. Use this or other auth methods, not both.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -595,7 +655,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 SAS token for authentication. Prefix with the container name followed by a dot if container-specific.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -627,7 +687,7 @@ Path to a GCP credentials JSON file.
 
 GCP credentials JSON content. Use this or `credentials_file`, not both.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -651,7 +711,7 @@ Custom endpoint for GCS-compatible storage.
 
 === `table`
 
-The Iceberg table name. Supports interpolation functions for dynamic table names.
+The destination Iceberg table name. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 

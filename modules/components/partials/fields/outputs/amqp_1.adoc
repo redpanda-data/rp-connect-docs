@@ -28,9 +28,109 @@ The maximum number of messages to have in flight at a given time. Increase this 
 
 *Default*: `64`
 
+=== `message_properties_content_encoding`
+
+Set the content-encoding property on outgoing AMQP messages. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+=== `message_properties_content_type`
+
+Set the content-type property on outgoing AMQP messages. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+message_properties_content_type: application/json
+
+# ---
+
+message_properties_content_type: text/plain; charset=utf-8
+----
+
+=== `message_properties_correlation_id`
+
+Set the correlation-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+message_properties_correlation_id: ${! meta("amqp_correlation_id") }
+----
+
+=== `message_properties_group_id`
+
+Set the group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+=== `message_properties_group_sequence`
+
+Set the group-sequence property on outgoing AMQP messages. Must be a valid uint32 value. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+=== `message_properties_message_id`
+
+Set the message-id property on outgoing AMQP messages. The value is auto-detected as UUID, uint64, or string. Purely numeric values are sent as uint64 on the wire. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+message_properties_message_id: ${! uuid_v4() }
+
+# ---
+
+message_properties_message_id: ${! meta("amqp_message_id") }
+----
+
+=== `message_properties_reply_to`
+
+Set the reply-to property on outgoing AMQP messages. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+=== `message_properties_reply_to_group_id`
+
+Set the reply-to-group-id property on outgoing AMQP messages. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+=== `message_properties_subject`
+
+Set the subject property on outgoing AMQP messages. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
 === `message_properties_to`
 
-The field specifies the node that is the intended destination of the message, which may differ from the node currently receiving the transfer.
+The field specifies the node that is the intended destination of the message, which may differ from the node currently receiving the transfer. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
 
@@ -38,7 +138,19 @@ The field specifies the node that is the intended destination of the message, wh
 ----
 # Examples:
 message_properties_to: amqp://localhost:5672/
+
+# ---
+
+message_properties_to: ${! meta("target_address") }
 ----
+
+=== `message_properties_user_id`
+
+Set the user-id property on outgoing AMQP messages. This field supports Bloblang interpolation.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
 
 === `metadata`
 
@@ -95,7 +207,7 @@ The SASL authentication mechanism to use.
 
 A SASL plain text password. It is recommended that you use environment variables to populate this field.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -123,9 +235,11 @@ user: ${USER}
 
 === `target_address`
 
-The target address to write to.
+The target address to write to. When left empty, the output uses the Anonymous Terminus pattern where the destination is specified per-message using `message_properties_to`.
 
 *Type*: `string`
+
+*Default*: `""`
 
 [source,yaml]
 ----
@@ -139,6 +253,10 @@ target_address: queue:/bar
 # ---
 
 target_address: topic:/baz
+
+# ---
+
+target_address: 
 ----
 
 === `target_capabilities[]`
@@ -215,7 +333,7 @@ The path of a certificate to use.
 
 A plain text certificate key to use.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -236,7 +354,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -276,7 +394,7 @@ Whether custom TLS settings are enabled.
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

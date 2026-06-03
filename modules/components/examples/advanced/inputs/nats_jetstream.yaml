@@ -8,6 +8,7 @@ inputs:
     durable: "" # No default (optional)
     stream: "" # No default (optional)
     bind: "" # No default (optional)
+    create_stream: false
     deliver: all
     ack_wait: 30s
     max_ack_pending: 1024
@@ -25,4 +26,7 @@ inputs:
       user_credentials_file: "" # No default (optional)
       user_jwt: "" # No default (optional)
       user_nkey_seed: "" # No default (optional)
+      user: "" # No default (optional)
+      password: "" # No default (optional)
+      token: "" # No default (optional)
     extract_tracing_map: "" # No default (optional)

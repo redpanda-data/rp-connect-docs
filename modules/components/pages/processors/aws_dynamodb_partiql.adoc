@@ -41,8 +41,8 @@ include::components:example$advanced/processors/aws_dynamodb_partiql.yaml[]
 
 Both writes or reads are supported, when the query is a read the contents of the message will be replaced with the result. This processor is more efficient when messages are pre-batched as the whole batch will be executed in a single call.
 
-include::redpanda-connect:components:partial$examples/processors/aws_dynamodb_partiql.adoc[]
+include::connect:components:partial$examples/processors/aws_dynamodb_partiql.adoc[]
 
-include::redpanda-connect:components:partial$fields/processors/aws_dynamodb_partiql.adoc[]
+include::connect:components:partial$fields/processors/aws_dynamodb_partiql.adoc[]
 
 // end::single-source[]

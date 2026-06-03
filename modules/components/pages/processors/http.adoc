@@ -86,6 +86,6 @@ TIP: You can use the <<extract_headers, `extract_headers`>> field to define rule
 
 When all retry attempts for a message are exhausted, this processor cancels the attempt. By default, the failed message continues through the pipeline unchanged unless you configure other error-handling. For example, you might want to drop failed messages or route them to a dead letter queue. For more information, see xref:configuration:error_handling.adoc[Error Handling].
 
-include::redpanda-connect:components:partial$fields/processors/http.adoc[]
+include::connect:components:partial$fields/processors/http.adoc[]
 
 // end::single-source[]

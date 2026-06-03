@@ -1,7 +1,7 @@
 # tag::config[]
 input:
   aws_dynamodb_cdc:
-    table: ${DYNAMODB_TABLE}
+    tables: ["${DYNAMODB_TABLE}"]
     region: ${AWS_REGION}
     checkpoint_table: redpanda_dynamodb_checkpoints
     batch_size: 100

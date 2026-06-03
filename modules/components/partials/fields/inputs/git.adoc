@@ -18,7 +18,7 @@ Allows you to specify basic authentication.
 
 A password to authenticate with.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -42,7 +42,7 @@ Allows you to specify SSH key authentication.
 
 The passphrase for your SSH private key.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -52,7 +52,7 @@ include::redpanda-connect:components:partial$secret_warning.adoc[]
 
 Your private SSH key. When using encrypted keys, you must also set a value for <<auth-ssh_key-passphrase, `private_key_passphrase`>>.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -76,7 +76,7 @@ Allows you to specify token-based authentication.
 
 The token value to use for token-based authentication.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

@@ -78,8 +78,8 @@ output:
 
 By default Redpanda Connect will use a shared credentials file when connecting to AWS services. It's also possible to set them explicitly at the component level, allowing you to transfer data across accounts. You can find out more in xref:guides:cloud/aws.adoc[].
 
-include::redpanda-connect:components:partial$examples/processors/aws_lambda.adoc[]
+include::connect:components:partial$examples/processors/aws_lambda.adoc[]
 
-include::redpanda-connect:components:partial$fields/processors/aws_lambda.adoc[]
+include::connect:components:partial$fields/processors/aws_lambda.adoc[]
 
 // end::single-source[]

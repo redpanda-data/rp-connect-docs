@@ -18,7 +18,7 @@ pipeline:
 
 === Full configuration with tuning
 
-Complete configuration with pagination, timeout, and retry settings
+Complete configuration with pagination and timeout settings
 
 [source,yaml]
 ----
@@ -29,8 +29,7 @@ pipeline:
         username: "${JIRA_USERNAME}"
         api_token: "${JIRA_API_TOKEN}"
         max_results_per_page: 200
-        request_timeout: "30s"
-        max_retries: 50
+        timeout: "30s"
 ----
 
 

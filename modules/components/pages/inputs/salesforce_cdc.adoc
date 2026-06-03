@@ -1,0 +1,62 @@
+= salesforce_cdc
+// tag::single-source[]
+:type: input
+:status: stable
+:categories: [Services]
+:page-commercial-names: Salesforce, Salesforce CDC
+:description: Subscribes to one or more Salesforce Pub/Sub topics in parallel and emits a message per event.
+
+component_type_dropdown::[]
+
+Subscribes to one or more Salesforce Pub/Sub topics in parallel and emits a message per event. Topics may be:
+
+- `/data/<sObject>ChangeEvent` — per-sObject CDC channel.
+- `/data/ChangeEvents` — CDC firehose (every CDC-enabled sObject).
+- `/event/<EventName>__e` — custom Platform Event.
+- `/event/<StandardEventName>` — standard Platform Event (e.g. `LoginEventStream`).
+- A bare sObject name (e.g. `Account`) is shorthand for `/data/AccountChangeEvent`.
+
+ifndef::env-cloud[]
+Introduced in version 4.90.3.
+endif::[]
+
+Optionally runs a REST snapshot for the CDC sObjects before opening the streaming subscriptions, so the pipeline sees the current state plus continuous changes. Per-topic replay state persists in a cache resource so each subscription resumes across restarts independently.
+
+== When to use this input
+
+Use `salesforce_cdc` for:
+
+- Continuous ingestion with both historical state (snapshot) and live changes (CDC).
+- Real-time custom or standard Platform Events.
+- Mixed CDC + Platform Event pipelines under a single component.
+
+Use a different Salesforce input instead if:
+
+- You only need a one-off extract or periodic SOQL query — use xref:components:inputs/salesforce.adoc[`salesforce`].
+- You need a GraphQL query (cross-object in one request) — use xref:components:inputs/salesforce_graphql.adoc[`salesforce_graphql`].
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/inputs/salesforce_cdc.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/salesforce_cdc.yaml[]
+```
+
+--
+======
+
+include::connect:components:partial$fields/inputs/salesforce_cdc.adoc[]
+
+// end::single-source[]

@@ -9,7 +9,6 @@ outputs:
     cache_control: ""
     content_disposition: ""
     content_language: ""
-    content_md5: ""
     website_redirect_location: ""
     metadata:
       exclude_prefixes: []
@@ -20,7 +19,7 @@ outputs:
     force_path_style_urls: false
     max_in_flight: 64
     timeout: 5s
-    object_canned_acl: private
+    object_canned_acl: ""
     batching:
       count: 0
       byte_size: 0

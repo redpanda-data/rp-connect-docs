@@ -2,6 +2,29 @@
 
 == Fields
 
+=== `acks`
+
+The number of acknowledgements the leader broker must receive from ISR brokers before responding to the produce request. When `idempotent_write` is enabled this must be set to `all`.
+
+*Type*: `string`
+
+*Default*: `all`
+
+[cols="1m,2a"]
+|===
+|Option |Summary
+
+|all
+|Wait for all in-sync replicas to acknowledge (acks=-1). Required when idempotent_write is enabled.
+
+|leader
+|Wait for the leader broker to acknowledge (acks=1). Messages are lost if the leader fails before replication.
+
+|none
+|Do not wait for any acknowledgement (acks=0). Highest throughput but messages may be lost.
+
+|===
+
 === `allow_auto_topic_creation`
 
 Whether to automatically create the trace topic if it doesn't exist. If false, the topic must be created manually before starting the tracer.
@@ -86,6 +109,40 @@ Enable idempotent writes to prevent duplicate trace messages in case of retries.
 
 *Default*: `true`
 
+=== `max_buffered_bytes`
+
+The maximum number of bytes the client will buffer in memory before blocking. When this limit is reached, `Produce()` calls will block until buffered records are delivered. Set to `0` to disable the byte-level limit (only `max_buffered_records` applies). This limit is checked after `max_buffered_records`.
+
+*Type*: `string`
+
+*Default*: `0`
+
+[source,yaml]
+----
+# Examples:
+max_buffered_bytes: 256MB
+
+# ---
+
+max_buffered_bytes: 50mib
+----
+
+=== `max_buffered_records`
+
+The maximum number of records the client will buffer in memory before blocking. When this limit is reached, `Produce()` calls will block until buffered records are delivered and space frees up. Increase this value for high-throughput pipelines to avoid back-pressure stalls.
+
+*Type*: `int`
+
+*Default*: `10000`
+
+=== `max_in_flight_requests`
+
+The maximum number of produce requests in flight per broker connection. When `idempotent_write` is enabled, this is capped at 5 by the Kafka protocol (and at 1 for Kafka < v1.0.0). When `idempotent_write` is disabled, higher values improve throughput by pipelining requests but may cause out-of-order delivery.
+
+*Type*: `int`
+
+*Default*: `1`
+
 === `max_message_bytes`
 
 The maximum size of individual trace messages. Traces exceeding this size will be truncated or dropped.
@@ -135,6 +192,22 @@ Override the default partitioner for trace messages. By default, traces are dist
 |Round-robin's messages through all available partitions. This algorithm has lower throughput and causes higher CPU load on brokers, but can be useful if you want to ensure an even distribution of records to partitions.
 
 |===
+
+=== `record_delivery_timeout`
+
+The maximum time a record can sit in the producer buffer before it is failed, roughly equivalent to Kafka's `delivery.timeout.ms`. This is evaluated before writing a request or after a produce response. When a record times out, all records in the same partition are also failed. Set to `0s` for no timeout (the default). With `idempotent_write` enabled, timeouts are only enforced when safe to do so without creating invalid sequence numbers.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `record_retries`
+
+The maximum number of times a record produce is retried on failure before the record is failed. When a record fails, all records buffered in the same partition are also failed to preserve gapless ordering. Set to `0` for unlimited retries (the default). With `idempotent_write` enabled, retries are only enforced when safe to do so without creating invalid sequence numbers.
+
+*Type*: `int`
+
+*Default*: `0`
 
 === `request_timeout_overhead`
 
@@ -244,7 +317,7 @@ An external ID to provide when assuming a role.
 
 The secret for the credentials being used.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -361,7 +434,7 @@ The SASL mechanism to use.
 
 A password to provide for PLAIN or SCRAM-* authentication.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -407,7 +480,7 @@ Whether to use basic authentication in requests.
 
 A password to authenticate with.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -487,7 +560,7 @@ A value used to gain access to the protected resources on behalf of the user.
 
 A secret provided in order to establish ownership of a given access token.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -505,7 +578,7 @@ A value used to identify the client to the service provider.
 
 A secret used to establish ownership of the consumer key.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -537,7 +610,7 @@ A value used to identify the client to the token provider.
 
 A secret used to establish ownership of the client key.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -555,10 +628,6 @@ Whether to use OAuth version 2 in requests.
 
 A list of optional endpoint parameters, values should be arrays of strings.
 
-ifndef::env-cloud[]
-Requires version 4.21.0 or later.
-endif::[]
-
 *Type*: `object`
 
 *Default*: `{}`
@@ -567,20 +636,15 @@ endif::[]
 ----
 # Examples:
 endpoint_params:
-  bar:
-    - woof
-  foo:
-    - meow
-    - quack
+  audience:
+    - https://example.com
+  resource:
+    - https://api.example.com
 ----
 
 === `schema_registry.oauth2.scopes[]`
 
 A list of optional requested permissions.
-
-ifndef::env-cloud[]
-Requires version 3.45.0 or later.
-endif::[]
 
 *Type*: `array`
 
@@ -644,7 +708,7 @@ The path of a certificate to use.
 
 A plain text certificate key to use.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -665,7 +729,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -697,7 +761,7 @@ endif::[]
 
 An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -906,7 +970,7 @@ The path of a certificate to use.
 
 A plain text certificate key to use.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -927,7 +991,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -968,7 +1032,7 @@ Whether to use TLS for the connection to the Redpanda cluster.
 
 Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

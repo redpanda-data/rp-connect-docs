@@ -162,14 +162,6 @@ The content language to set for each object. This field supports xref:configurat
 
 *Default*: `""`
 
-=== `content_md5`
-
-The https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html#checking-object-integrity-md5[content MD5^] to set for each object. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
-
-*Type*: `string`
-
-*Default*: `""`
-
 === `content_type`
 
 The content type to set for each object.
@@ -223,7 +215,7 @@ An external ID to provide when assuming a role.
 
 The secret for the credentials being used.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -279,13 +271,13 @@ Provide a list of explicit metadata key prefixes to be excluded when adding meta
 
 === `object_canned_acl`
 
-The object canned ACL value.
+The object canned ACL value. Leave empty to omit the ACL from upload requests, which is required for buckets that have ACLs disabled (the AWS default since 2023).
 
 *Type*: `string`
 
-*Default*: `private`
+*Default*: `""`
 
-*Options*: `private`, `public-read`, `public-read-write`, `authenticated-read`, `aws-exec-read`, `bucket-owner-read`, `bucket-owner-full-control`
+*Options*: ``, `private`, `public-read`, `public-read-write`, `authenticated-read`, `aws-exec-read`, `bucket-owner-read`, `bucket-owner-full-control`
 
 === `path`
 

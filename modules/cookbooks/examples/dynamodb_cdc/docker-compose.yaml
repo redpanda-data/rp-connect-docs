@@ -21,7 +21,7 @@ services:
   # Optional: Kafka for testing Kafka output examples
   redpanda:
     # Use a stable version for reproducible CI/CD tests
-    image: redpandadata/redpanda:v24.3.1
+    image: redpandadata/redpanda:v26.1.1
     container_name: redpanda
     ports:
       - "9092:9092"

@@ -1,0 +1,56 @@
+= salesforce
+:page-aliases: components:processors/salesforce.adoc
+// tag::single-source[]
+:type: input
+:status: stable
+:categories: [Services]
+:page-commercial-names: Salesforce
+:description: Runs a SOQL query against the Salesforce REST API, paginates through all result pages, and emits one message per record.
+
+component_type_dropdown::[]
+
+Runs a SOQL query against the Salesforce REST API, paginates through all result pages, and emits one message per record. When results are exhausted the input shuts down, letting the pipeline terminate gracefully (or the next input in a xref:components:inputs/sequence.adoc[sequence] to take over).
+
+ifndef::env-cloud[]
+Introduced in version 4.90.3.
+endif::[]
+
+== When to use this input
+
+Use `salesforce` for:
+
+- One-shot extracts (e.g. dump all Accounts into a warehouse).
+- Periodic full-table refreshes via a scheduled pipeline or xref:components:inputs/sequence.adoc[sequence].
+- Backfills and ad-hoc queries.
+- Warming up a downstream pipeline before switching to CDC.
+
+Use a different Salesforce input instead if:
+
+- You need continuous change events — use xref:components:inputs/salesforce_cdc.adoc[`salesforce_cdc`].
+- You need a GraphQL query (cross-object in one request) — use xref:components:inputs/salesforce_graphql.adoc[`salesforce_graphql`].
+
+[tabs]
+======
+Common::
++
+--
+
+```yml
+include::components:example$common/inputs/salesforce.yaml[]
+```
+
+--
+Advanced::
++
+--
+
+```yml
+include::components:example$advanced/inputs/salesforce.yaml[]
+```
+
+--
+======
+
+include::connect:components:partial$fields/inputs/salesforce.adoc[]
+
+// end::single-source[]

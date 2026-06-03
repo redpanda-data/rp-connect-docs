@@ -1,7 +1,7 @@
 = Custom Metrics
 :description: Learn how to emit custom metrics from messages.
 
-You can't build cool graphs without metrics, and xref:components:metrics/about.adoc[Redpanda Connect emits many]. However, occasionally you might want to also emit custom metrics that track data extracted from messages being processed. In this cookbook we'll explore how to achieve this by configuring Redpanda Connect to pull download stats from Github, DockerHub and Homebrew and emit them as gauges.
+You can't build graphs without metrics, and xref:components:metrics/about.adoc[Redpanda Connect emits many]. However, occasionally you might want to also emit custom metrics that track data extracted from messages being processed. In this cookbook we'll explore how to achieve this by configuring Redpanda Connect to pull download stats from Github, DockerHub and Homebrew and emit them as gauges.
 
 == The basics
 

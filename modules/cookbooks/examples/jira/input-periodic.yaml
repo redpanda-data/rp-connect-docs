@@ -14,8 +14,9 @@ pipeline:
         username: "${JIRA_USERNAME}"
         api_token: "${JIRA_API_TOKEN}"
         max_results_per_page: 50
-        request_timeout: 30s
-        max_retries: 10
+        timeout: 30s
+        backoff:
+          max_retries: 10
 
     # Transform each issue
     - mapping: |

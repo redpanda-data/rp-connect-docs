@@ -66,6 +66,6 @@ Ensure that your environment meets the following requirements:
 - This component is only available in cgo-enabled builds of Redpanda Connect (not in the Redpanda CLI or Docker image). You can either xref:install:prebuilt-binary.adoc[download a prebuilt cgo-enabled binary] or xref:install:build-from-source.adoc[build Redpanda Connect from source with cgo enabled].
 
 endif::[]
-include::redpanda-connect:components:partial$fields/inputs/aws_cloudwatch_logs.adoc[]
+include::connect:components:partial$fields/inputs/aws_cloudwatch_logs.adoc[]
 
 // end::single-source[]

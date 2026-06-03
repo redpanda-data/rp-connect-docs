@@ -45,8 +45,8 @@ Messages are not acknowledged at the input level until they have been added to t
 
 Messages that are logically batched at the point where they are added to the buffer will continue to be associated with that batch when they are consumed. This buffer is also more efficient when storing messages within batches, and therefore it is recommended to use batching at the input level in high-throughput use cases even if they are not required for processing.
 
-include::redpanda-connect:components:partial$fields/buffers/sqlite.adoc[]
+include::connect:components:partial$fields/buffers/sqlite.adoc[]
 
-nclude::redpanda-connect:components:partial$examples/buffers/sqlite.adoc[]
+nclude::connect:components:partial$examples/buffers/sqlite.adoc[]
 
 // end::single-source[]

@@ -2,6 +2,29 @@
 
 == Fields
 
+=== `acks`
+
+The number of acknowledgements the leader broker must receive from ISR brokers before responding to the produce request. When `idempotent_write` is enabled this must be set to `all`.
+
+*Type*: `string`
+
+*Default*: `all`
+
+[cols="1m,2a"]
+|===
+|Option |Summary
+
+|all
+|Wait for all in-sync replicas to acknowledge (acks=-1). Required when idempotent_write is enabled.
+
+|leader
+|Wait for the leader broker to acknowledge (acks=1). Messages are lost if the leader fails before replication.
+
+|none
+|Do not wait for any acknowledgement (acks=0). Highest throughput but messages may be lost.
+
+|===
+
 === `allow_auto_topic_creation`
 
 Enables topics to be auto created if they do not exist when fetching their metadata.
@@ -169,11 +192,57 @@ Enable the idempotent write producer option. This requires the `IDEMPOTENT_WRITE
 
 *Default*: `true`
 
+=== `inject_tracing_map`
+
+EXPERIMENTAL: A xref:guides:bloblang/about.adoc[Bloblang mapping] used to inject an object containing tracing propagation information into outbound messages. The specification of the injected fields will match the format used by the service wide tracer.
+
+ifndef::env-cloud[]
+Requires version 3.45.0 or later.
+endif::[]
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+inject_tracing_map: meta = @.merge(this)
+
+# ---
+
+inject_tracing_map: root.meta.span = this
+----
+
 === `key`
 
 An optional key to populate for each message. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
 *Type*: `string`
+
+=== `max_buffered_bytes`
+
+The maximum number of bytes the client will buffer in memory before blocking. When this limit is reached, `Produce()` calls will block until buffered records are delivered. Set to `0` to disable the byte-level limit (only `max_buffered_records` applies). This limit is checked after `max_buffered_records`.
+
+*Type*: `string`
+
+*Default*: `0`
+
+[source,yaml]
+----
+# Examples:
+max_buffered_bytes: 256MB
+
+# ---
+
+max_buffered_bytes: 50mib
+----
+
+=== `max_buffered_records`
+
+The maximum number of records the client will buffer in memory before blocking. When this limit is reached, `Produce()` calls will block until buffered records are delivered and space frees up. Increase this value for high-throughput pipelines to avoid back-pressure stalls.
+
+*Type*: `int`
+
+*Default*: `10000`
 
 === `max_in_flight`
 
@@ -182,6 +251,14 @@ The maximum number of messages to have in flight at a given time. Increase this 
 *Type*: `int`
 
 *Default*: `256`
+
+=== `max_in_flight_requests`
+
+The maximum number of produce requests in flight per broker connection. When `idempotent_write` is enabled, this is capped at 5 by the Kafka protocol (and at 1 for Kafka < v1.0.0). When `idempotent_write` is disabled, higher values improve throughput by pipelining requests but may cause out-of-order delivery.
+
+*Type*: `int`
+
+*Default*: `1`
 
 === `max_message_bytes`
 
@@ -302,6 +379,22 @@ Override the default murmur2 hashing partitioner.
 
 |===
 
+=== `record_delivery_timeout`
+
+The maximum time a record can sit in the producer buffer before it is failed, roughly equivalent to Kafka's `delivery.timeout.ms`. This is evaluated before writing a request or after a produce response. When a record times out, all records in the same partition are also failed. Set to `0s` for no timeout (the default). With `idempotent_write` enabled, timeouts are only enforced when safe to do so without creating invalid sequence numbers.
+
+*Type*: `string`
+
+*Default*: `0s`
+
+=== `record_retries`
+
+The maximum number of times a record produce is retried on failure before the record is failed. When a record fails, all records buffered in the same partition are also failed to preserve gapless ordering. Set to `0` for unlimited retries (the default). With `idempotent_write` enabled, retries are only enforced when safe to do so without creating invalid sequence numbers.
+
+*Type*: `int`
+
+*Default*: `0`
+
 === `request_timeout_overhead`
 
 Grants an additional buffer or overhead to requests that have timeout fields defined. This field is based on the behavior of Apache Kafka's `request.timeout.ms` parameter, but with the option to extend the timeout deadline.
@@ -376,7 +469,7 @@ An external ID to provide when assuming a role.
 
 The secret for the credentials being used.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -493,7 +586,7 @@ The SASL mechanism to use.
 
 A password to provide for PLAIN or SCRAM-* authentication.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -674,7 +767,7 @@ The path of a certificate to use.
 
 A plain text certificate key to use.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -695,7 +788,7 @@ A plain text password for when the private key is password encrypted in PKCS#1 o
 Because the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.
 
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -736,7 +829,7 @@ Whether custom TLS settings are enabled.
 
 Specify a root certificate authority to use (optional). This is a string that represents a certificate chain from the parent-trusted root certificate, through possible intermediate signing certificates, to the host certificate. Use either this field for inline certificate data or `root_cas_file` for file-based certificate loading.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

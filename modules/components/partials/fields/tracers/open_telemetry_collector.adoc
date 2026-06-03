@@ -10,7 +10,7 @@ A list of grpc collectors.
 
 === `grpc[].address`
 
-The endpoint of a collector to send tracing events to.
+The endpoint of a collector to send events to.
 
 *Type*: `string`
 
@@ -36,7 +36,7 @@ A list of http collectors.
 
 === `http[].address`
 
-The endpoint of a collector to send tracing events to.
+The endpoint of a collector to send events to.
 
 *Type*: `string`
 
@@ -98,7 +98,7 @@ The name of the service in traces.
 
 === `tags`
 
-A map of tags to add to all tracing spans.
+A map of tags to add to all exported spans and metrics.
 
 *Type*: `string`
 

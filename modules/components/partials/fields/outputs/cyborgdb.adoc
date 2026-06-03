@@ -6,7 +6,7 @@
 
 The API key for authenticating with the CyborgDB service. This key identifies your account and provides access to your CyborgDB indexes. Keep this key secure and avoid exposing it in logs or version control.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 
@@ -156,7 +156,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 The base64-encoded encryption key for the CyborgDB index. This key must be exactly 32 bytes when decoded from base64. All vector data is encrypted client-side using this key before transmission, ensuring complete data privacy. Store this key securely as it cannot be recovered if lost.
 
-include::redpanda-connect:components:partial$secret_warning.adoc[]
+include::connect:components:partial$secret_warning.adoc[]
 
 *Type*: `string`
 

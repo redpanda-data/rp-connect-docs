@@ -1,0 +1,60 @@
+= Oracle Database CDC Examples
+
+Example pipelines for capturing change data from Oracle Database using LogMiner.
+
+NOTE: The `oracledb_cdc` connector requires a Redpanda Enterprise Edition license. These examples include unit tests that validate transformation logic without requiring a running Oracle instance or license.
+
+== Examples
+
+[cols="1,2"]
+|===
+|File |Description
+
+|`basic-capture.yaml`
+|Capture CDC events and output with metadata
+
+|`filter-events.yaml`
+|Filter out DELETE events and add operation metadata
+
+|`stream-snapshot.yaml`
+|Capture both initial snapshot and ongoing changes
+
+|`to-redpanda.yaml`
+|Route CDC events to Redpanda with composite keys
+
+|`to-s3.yaml`
+|Archive CDC events to S3 with time partitioning
+
+|`route-by-event.yaml`
+|Route different event types to different topics
+|===
+
+== Run unit tests
+
+The YAML files include embedded tests that validate the transformation logic:
+
+[,bash]
+----
+rpk connect test *.yaml
+----
+
+This tests the processor logic without requiring a running Oracle instance or Redpanda Enterprise license.
+
+== Testing with a real Oracle database
+
+If you have a Redpanda Enterprise license and want to test against a real Oracle database:
+
+. Set up Oracle with supplemental logging enabled
+. Create a CDC user with LogMiner permissions
+. Configure the connection string and run:
++
+[,bash]
+----
+export ORACLE_CONNECTION_STRING=oracle://cdc_user:password@localhost:1521/FREEPDB1
+export REDPANDA_BROKERS=localhost:9092
+export S3_BUCKET=test-bucket
+
+rpk connect run basic-capture.yaml
+----
+
+For Oracle CDC setup requirements, see the xref:components:inputs/oracledb_cdc.adoc[oracledb_cdc input documentation].

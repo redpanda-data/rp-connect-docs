@@ -70,7 +70,7 @@ endif::[]
 
 == Batching and multiple-part messages
 
-All Redpanda Connect processors support multiple-part messages, which are synonymous with batches. This enables some cool xref:configuration:windowed_processing.adoc[windowed processing] capabilities.
+All Redpanda Connect processors support multiple-part messages, which are synonymous with batches. This enables xref:configuration:windowed_processing.adoc[windowed processing] capabilities.
 
 Many processors are able to perform their behaviors on specific parts of a message batch, or on all parts, and have a field `parts` for specifying an array of part indexes they should apply to. If the list of target parts is empty these processors will be applied to all message parts.
 

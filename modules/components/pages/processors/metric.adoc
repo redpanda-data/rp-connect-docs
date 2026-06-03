@@ -26,9 +26,9 @@ This processor works by evaluating an xref:configuration:interpolation.adoc#blob
 
 Custom metrics such as these are emitted along with Redpanda Connect internal metrics, where you can customize where metrics are sent, which metric names are emitted and rename them as/when appropriate. For more information see the xref:components:metrics/about.adoc[metrics docs].
 
-include::redpanda-connect:components:partial$fields/processors/metric.adoc[]
+include::connect:components:partial$fields/processors/metric.adoc[]
 
-include::redpanda-connect:components:partial$examples/processors/metric.adoc[]
+include::connect:components:partial$examples/processors/metric.adoc[]
 
 == Types
 

@@ -17,7 +17,7 @@ include::components:example$common/outputs/dynamic.yaml[]
 
 The broker pattern used is always `fan_out`, meaning each message will be delivered to each dynamic output.
 
-include::redpanda-connect:components:partial$fields/outputs/dynamic.adoc[]
+include::connect:components:partial$fields/outputs/dynamic.adoc[]
 
 == Endpoints
 

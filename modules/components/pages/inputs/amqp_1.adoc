@@ -63,5 +63,5 @@ By setting `read_header` to `true`, additional message header properties will be
 This input benefits from receiving multiple messages in flight in parallel for improved performance.
 You can tune the max number of in flight messages with the field `credit`.
 
-include::redpanda-connect:components:partial$fields/inputs/amqp_1.adoc[]
+include::connect:components:partial$fields/inputs/amqp_1.adoc[]
 

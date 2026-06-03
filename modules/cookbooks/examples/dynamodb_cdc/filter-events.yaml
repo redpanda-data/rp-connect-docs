@@ -1,7 +1,7 @@
 # tag::config[]
 input:
   aws_dynamodb_cdc:
-    table: ${DYNAMODB_TABLE}
+    tables: ["${DYNAMODB_TABLE}"]
     region: ${AWS_REGION}
     start_from: latest
 

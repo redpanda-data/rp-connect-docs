@@ -64,7 +64,7 @@ jobs:
     needs: unit-tests  # Only run if unit tests pass
     strategy:
       matrix:
-        category: [dynamodb_cdc]
+        category: [dynamodb_cdc, oracledb_cdc]
       fail-fast: false
 
     steps:

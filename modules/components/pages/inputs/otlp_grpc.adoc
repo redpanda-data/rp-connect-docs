@@ -94,6 +94,6 @@ export OTEL_EXPORTER_OTLP_HEADERS="authorization=Bearer your-token-here"
 
 An optional rate limit resource can be specified to throttle incoming requests. When the rate limit is breached, requests will receive a ResourceExhausted gRPC status code.
 
-include::redpanda-connect:components:partial$fields/inputs/otlp_grpc.adoc[]
+include::connect:components:partial$fields/inputs/otlp_grpc.adoc[]
 
 // end::single-source[]

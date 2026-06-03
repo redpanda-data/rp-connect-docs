@@ -522,7 +522,7 @@ endif::[]
 
 == Check the status of migrated topics
 
-You can use the Redpanda xref:ROOT:get-started:rpk/index.adoc[`rpk` CLI tool] to check which topics and ACLs have been migrated to the `destination` cluster. You can quickly xref:ROOT:get-started:rpk-install.adoc[install `rpk`] if you don't already have it.
+You can use the Redpanda xref:streaming:get-started:rpk/index.adoc[`rpk` CLI tool] to check which topics and ACLs have been migrated to the `destination` cluster. You can quickly xref:streaming:get-started:rpk-install.adoc[install `rpk`] if you don't already have it.
 
 NOTE: For now, users require manual migration. However, this step is not required for the current demo. Similarly, roles are specific to Redpanda and, for now, also require manual migration if the `source` cluster is based on Redpanda.
 
@@ -586,7 +586,7 @@ endif::[]
 ifdef::env-cloud[]
 To monitor the migration progress, use the Redpanda Cloud OpenMetrics endpoint, which exposes all Redpanda and connector metrics for your cluster. You can integrate this endpoint with Prometheus, Datadog, or other observability platforms.
 
-For step-by-step instructions on configuring monitoring and connecting your observability tool, see xref:redpanda-cloud:manage:monitor-cloud.adoc[Monitor Redpanda Cloud].
+For step-by-step instructions on configuring monitoring and connecting your observability tool, see xref:cloud-data-platform:manage:monitor-cloud.adoc[Monitor Redpanda Cloud].
 
 After ingesting the metrics, search for the `input_redpanda_migrator_lag` metric in your monitoring tool and filter by `topic` and `partition` as needed to track migration lag for each topic and partition.
 endif::[]
