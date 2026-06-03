@@ -99,9 +99,8 @@ include::cookbooks:example$mysql_cdc/filter-events.yaml[tag=config]
 
 This pattern:
 
-- Filters to only `insert` and `update` operations, dropping `delete` events
+- Filters to only `insert` operations, dropping `update`, `delete`, and snapshot `read` events
 - Transforms the event to a simplified format with a timestamp
-
 == Route to Redpanda
 
 Stream MySQL changes to Redpanda for real-time processing:
