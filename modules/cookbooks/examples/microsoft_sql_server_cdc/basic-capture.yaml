@@ -11,7 +11,7 @@ pipeline:
     - mapping: |
         root.operation = meta("operation")
         root.schema = meta("database_schema")
-        root.schema = meta("database_schema")
+        root.table = meta("table")
         root.lsn = meta("lsn")
         root.data = this
         root.timestamp = now()

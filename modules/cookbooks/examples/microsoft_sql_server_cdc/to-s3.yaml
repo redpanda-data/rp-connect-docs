@@ -18,7 +18,7 @@ pipeline:
 output:
   aws_s3:
     bucket: ${S3_BUCKET}
-      cdc/${! meta("database_schema") }/${! meta("table") }/${! timestamp_unix().format_timestamp("2006/01/02/15") }/${! uuid_v4() }.ndjson
+    path: >-
       cdc/${! meta("database_schema") }/${! meta("table") }/${! timestamp_unix().format_timestamp("2006/01/02/15") }/${! uuid_v4() }.ndjson
     batching:
       count: 1000
