@@ -8,6 +8,64 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+
+== Version 4.94.1
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.94.1[See the full release notes^].
+
+
+== Version 4.94.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.94.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|write_mode
+|How the output writes to BigQuery.
+|*Outputs:*
+
+* xref:components:outputs/gcp_bigquery_write_api.adoc#write_mode[gcp_bigquery_write_api]
+
+
+|auto_create_table
+|If true and the target table does not exist, the output creates it using the configured `schema`, `time_partitioning`, and `clustering`. AlreadyExists errors from concurrent creators are treated as success.
+|*Outputs:*
+
+* xref:components:outputs/gcp_bigquery_write_api.adoc#auto_create_table[gcp_bigquery_write_api]
+
+
+|schema
+|Column definitions used by `auto_create_table`.
+|*Outputs:*
+
+* xref:components:outputs/gcp_bigquery_write_api.adoc#schema[gcp_bigquery_write_api]
+
+
+|time_partitioning
+|Optional time-partitioning settings applied during `auto_create_table`.
+|*Outputs:*
+
+* xref:components:outputs/gcp_bigquery_write_api.adoc#time_partitioning[gcp_bigquery_write_api]
+
+
+|clustering
+|Optional clustering columns (up to 4) applied during `auto_create_table`.
+|*Outputs:*
+
+* xref:components:outputs/gcp_bigquery_write_api.adoc#clustering[gcp_bigquery_write_api]
+
+
+|===
+
+
 == Version 4.93.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.93.0[See the full release notes^].
