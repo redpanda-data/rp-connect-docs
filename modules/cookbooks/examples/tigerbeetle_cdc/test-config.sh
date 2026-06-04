@@ -14,7 +14,8 @@ export S3_BUCKET="${S3_BUCKET:-test-bucket}"
 export REDIS_URL="${REDIS_URL:-redis://localhost:6379}"
 
 # =============================================================================
-# Skip lint: tigerbeetle_cdc requires a cgo-enabled binary and is not
-# recognized by the standard rpk connect linter.
+# Skip the connector test: tigerbeetle_cdc requires a cgo-enabled binary
+# and is not recognized by the standard rpk binary. Both `rpk connect lint`
+# and `rpk connect test` skip these configs.
 # =============================================================================
-SKIP_LINT=true
+SKIP_CONNECT_TEST=true
