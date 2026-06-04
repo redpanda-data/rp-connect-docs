@@ -93,7 +93,7 @@ include::cookbooks:example$mongodb_cdc/filter-events.yaml[tag=config]
 
 This pattern:
 
-- Filters to only `create`, `update`, and `replace` operations, dropping `delete` and `read` events
+- Filters to only `insert`, `update`, and `replace` operations, dropping `delete` and `read` events
 - Transforms the event to a simplified format with a timestamp
 
 == Route to Redpanda
@@ -137,7 +137,7 @@ include::cookbooks:example$mongodb_cdc/route-by-event.yaml[tag=config]
 
 This pattern:
 
-- Routes `create` events to one Redpanda topic and all other change events to another
+- Routes `insert` events to one Redpanda topic and all other change events to another
 - Supports specialized downstream consumers per operation type
 
 == Configure replication mode

@@ -11,7 +11,7 @@ input:
 output:
   switch:
     cases:
-      - check: meta("operation") == "create"
+      - check: meta("operation") == "insert"
         output:
           redpanda:
             seed_brokers:
