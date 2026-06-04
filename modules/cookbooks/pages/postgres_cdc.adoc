@@ -178,6 +178,8 @@ SHOW wal_level;
 ALTER ROLE your_user WITH REPLICATION;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO your_user;
 ----
++
+NOTE: `ALTER ROLE ... WITH REPLICATION` requires superuser privileges. Run this statement as a superuser, or have a database administrator run it on your behalf.
 
 . Check that `slot_name` is unique and not already in use:
 +
