@@ -11,12 +11,12 @@ output:
     cases:
       - check: meta("mod_type") == "INSERT"
         output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
               - ${REDPANDA_BROKERS}
             topic: spanner.inserts
       - output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
               - ${REDPANDA_BROKERS}
             topic: spanner.changes

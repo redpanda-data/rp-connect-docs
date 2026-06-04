@@ -13,13 +13,13 @@ output:
     cases:
       - check: meta("event_type") == "single_phase"
         output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
               - ${REDPANDA_BROKERS}
             topic: tigerbeetle.single_phase
       - check: meta("event_type") == "two_phase_posted"
         output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
               - ${REDPANDA_BROKERS}
             topic: tigerbeetle.two_phase

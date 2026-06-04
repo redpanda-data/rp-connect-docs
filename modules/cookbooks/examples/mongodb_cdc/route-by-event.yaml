@@ -13,12 +13,12 @@ output:
     cases:
       - check: meta("operation") == "create"
         output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
               - ${REDPANDA_BROKERS}
             topic: mongodb.orders.inserts
       - output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
               - ${REDPANDA_BROKERS}
             topic: mongodb.orders.changes

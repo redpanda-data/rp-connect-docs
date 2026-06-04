@@ -14,7 +14,7 @@ pipeline:
         meta topic = "transfers." + meta("ledger")
 
 output:
-  kafka_franz:
+  redpanda:
     seed_brokers:
       - ${REDPANDA_BROKERS}
     topic: ${! meta("topic") }

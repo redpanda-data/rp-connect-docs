@@ -12,12 +12,12 @@ output:
     cases:
       - check: meta("operation") == "insert"
         output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
               - ${REDPANDA_BROKERS}
             topic: mysql.orders.inserts
       - output:
-          kafka_franz:
+          redpanda:
             seed_brokers:
               - ${REDPANDA_BROKERS}
             topic: mysql.orders.changes

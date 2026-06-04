@@ -12,7 +12,7 @@ pipeline:
         meta topic = meta("table_name")
 
 output:
-  kafka_franz:
+  redpanda:
     seed_brokers:
       - ${REDPANDA_BROKERS}
     topic: ${! meta("topic") }
