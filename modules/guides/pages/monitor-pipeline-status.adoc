@@ -1,0 +1,154 @@
+= Monitor Pipeline Status
+:description: Learn how to monitor Redpanda Connect pipeline health using status events, including setting up alerts and troubleshooting common issues.
+
+include::components:partial$enterprise_component_note.adoc[]
+
+Redpanda Connect can emit real-time status events to a Kafka topic as pipelines start, run, and stop. Status events enable you to monitor pipeline health, detect connection failures, and troubleshoot issues.
+
+For status event type definitions and message format, see xref:components:redpanda/about.adoc#status_topic[`status_topic` configuration reference].
+
+== Before you begin
+
+* Configure the xref:components:redpanda/about.adoc[`redpanda` service] with `status_topic` enabled
+* Ensure you have a valid Redpanda Community License (RCL) - status reporting is an enterprise feature
+* Have access to consume from the status topic
+
+== Consume status events
+
+Use `rpk` to consume status events in real-time:
+
+```bash
+rpk topic consume __redpanda.connect.status --format json
+```
+
+Or use any Kafka consumer configured to read from the status topic.
+
+== Monitor pipeline lifecycle
+
+Status events follow this lifecycle:
+
+. *Startup*: `TYPE_INITIALIZING` - Pipeline parsed configuration and is starting
+. *Running*: `TYPE_CONNECTION_HEALTHY` - Heartbeat every 30 seconds when connections are healthy
+. *Errors*: `TYPE_CONNECTION_ERROR` - One or more connections have failed (heartbeat every 30 seconds)
+. *Shutdown*: `TYPE_EXITING` - Pipeline is stopping (gracefully or due to error)
+
+== Set up monitoring alerts
+
+Configure alerts based on these patterns:
+
+=== Startup tracking
+
+Alert if `TYPE_INITIALIZING` is not followed by `TYPE_CONNECTION_HEALTHY` within 60 seconds. This indicates the pipeline failed to establish connections during startup.
+
+Example alert condition:
+```
+last_event_type = "TYPE_INITIALIZING"
+AND time_since_last_event > 60 seconds
+AND no TYPE_CONNECTION_HEALTHY received
+```
+
+=== Health monitoring
+
+Alert if no `TYPE_CONNECTION_HEALTHY` received for a `pipeline_id` for more than 60 seconds. Since heartbeats occur every 30 seconds, missing two consecutive heartbeats indicates the pipeline may have crashed without sending `TYPE_EXITING`.
+
+Example alert condition:
+```
+last_event_type = "TYPE_CONNECTION_HEALTHY"
+AND time_since_last_event > 60 seconds
+```
+
+=== Error detection
+
+Alert on any `TYPE_CONNECTION_ERROR` events. These indicate connection failures to inputs, outputs, or other external systems.
+
+Use the event fields to identify failures:
+
+* `connection_errors[].path` - The configuration path of the failing connector (e.g., `input.kafka_franz`)
+* `connection_errors[].label` - Custom label if assigned to the connector
+* `connection_errors[].message` - Error message describing the failure
+
+Example alert condition:
+```
+event_type = "TYPE_CONNECTION_ERROR"
+```
+
+=== Shutdown tracking
+
+Alert on `TYPE_EXITING` events that include an `exit_error.message` field. This indicates unexpected shutdown due to an error rather than graceful termination.
+
+Example alert condition:
+```
+event_type = "TYPE_EXITING"
+AND exit_error.message IS NOT NULL
+```
+
+== Example monitoring query
+
+For a log aggregation system (Splunk, Elasticsearch, etc.):
+
+```
+source="__redpanda.connect.status"
+| where type="TYPE_CONNECTION_ERROR" OR (type="TYPE_EXITING" AND exit_error.message IS NOT NULL)
+| stats count by pipeline_id, type, connection_errors[0].path
+```
+
+This query identifies pipelines with connection errors or unexpected shutdowns.
+
+== Troubleshoot status events
+
+=== Status events not appearing
+
+If you've configured `status_topic` but don't see events:
+
+. *Check license*: Status reporting requires a valid Redpanda Community License (RCL)
++
+* Verify license is installed and valid
+* Check logs for license validation errors
+
+. *Verify topic creation*: Ensure the status topic exists and has proper permissions
++
+* Create the topic manually if it doesn't exist:
++
+```bash
+rpk topic create __redpanda.connect.status --partitions 1 --replicas 3
+```
+* Verify Connect instance has write permissions to the topic
+
+. *Check broker connectivity*: Ensure Connect can reach the Kafka brokers
++
+* Verify `seed_brokers` configuration is correct
+* Check network connectivity and firewall rules
+
+. *Review configuration*: Verify `status_topic` is set and not empty string
++
+```yaml
+redpanda:
+  seed_brokers: ["localhost:9092"]
+  pipeline_id: my-pipeline
+  status_topic: __redpanda.connect.status  # Must be non-empty
+```
+
+=== Connection errors not resolving
+
+If you see persistent `TYPE_CONNECTION_ERROR` events:
+
+. Check the `connection_errors[].path` to identify the failing connector
+. Review configuration for that specific connector (input or output)
+. Verify the external system (database, API, etc.) is accessible
+. Check connector-specific authentication and credentials
+. Review Connect logs for detailed error messages from the connector
+
+=== Missing heartbeats
+
+If heartbeats (`TYPE_CONNECTION_HEALTHY`) stop but no `TYPE_EXITING` was sent:
+
+. The pipeline process likely crashed or was killed (SIGKILL)
+. Check system logs for out-of-memory errors or other system issues
+. Check container orchestrator logs (Kubernetes pod events, etc.)
+. Review resource limits and adjust if necessary
+
+== Related topics
+
+* xref:components:redpanda/about.adoc#status_topic[`status_topic` configuration reference]
+* xref:guides:monitoring.adoc[Monitoring with metrics and health checks]
+* xref:components:logger/about.adoc[Logger configuration]

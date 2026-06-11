@@ -491,7 +491,9 @@ The logging level of logs sent to Redpanda.
 
 === `status_topic`
 
-The topic that status updates are sent to. For full details of the schema for status updates, see the https://github.com/redpanda-data/connect/blob/main/internal/protoconnect/status.pb.go[object specification^].
+The topic that status updates are sent to. When configured, Redpanda Connect emits status events to this internal topic as pipelines start, run, and stop.
+
+include::components:partial$enterprise_component_note.adoc[]
 
 *Type*: `string`
 
@@ -502,6 +504,103 @@ The topic that status updates are sent to. For full details of the schema for st
 
 status_topic: __redpanda.connect.status
 ```
+
+For monitoring and troubleshooting guidance, see xref:guides:monitor-pipeline-status.adoc[].
+
+==== Status Event Types
+
+Status events are emitted during the pipeline lifecycle. All events include `pipeline_id`, `instance_id`, and `timestamp` fields.
+
+*TYPE_INITIALIZING* (value: 1)
+
+Emitted when a pipeline instance has successfully parsed its configuration and is attempting to start. This is the first event sent after pipeline startup.
+
+Example:
+```json
+{
+  "type": "TYPE_INITIALIZING",
+  "pipeline_id": "my-pipeline",
+  "instance_id": "abc123xyz",
+  "timestamp": 1717890000
+}
+```
+
+*TYPE_CONNECTION_HEALTHY* (value: 2)
+
+Emitted every 30 seconds (heartbeat) when all pipeline connections (inputs and outputs) are active and functioning normally.
+
+Example:
+```json
+{
+  "type": "TYPE_CONNECTION_HEALTHY",
+  "pipeline_id": "my-pipeline",
+  "instance_id": "abc123xyz",
+  "timestamp": 1717890030
+}
+```
+
+*TYPE_CONNECTION_ERROR* (value: 3)
+
+Emitted every 30 seconds (during the same heartbeat cycle) when one or more connections are inactive or experiencing errors. The event includes detailed error information for each failing connection:
+
+* `path`: The configuration path of the connector (see xref:configuration:field_paths.adoc[field paths])
+* `label`: Optional label assigned to the connector
+* `message`: The error message describing the connection failure
+
+Example:
+```json
+{
+  "type": "TYPE_CONNECTION_ERROR",
+  "pipeline_id": "my-pipeline",
+  "instance_id": "abc123xyz",
+  "timestamp": 1717890060,
+  "connection_errors": [
+    {
+      "path": "input.kafka_franz",
+      "label": "primary-input",
+      "message": "kafka: connection refused"
+    }
+  ]
+}
+```
+
+*TYPE_EXITING* (value: 4)
+
+Emitted when a pipeline instance is shutting down, either gracefully or due to an error. If shutdown was caused by an error, the event includes an `exit_error` object with the error message.
+
+Example (graceful shutdown):
+```json
+{
+  "type": "TYPE_EXITING",
+  "pipeline_id": "my-pipeline",
+  "instance_id": "abc123xyz",
+  "timestamp": 1717890090
+}
+```
+
+Example (error shutdown):
+```json
+{
+  "type": "TYPE_EXITING",
+  "pipeline_id": "my-pipeline",
+  "instance_id": "abc123xyz",
+  "timestamp": 1717890090,
+  "exit_error": {
+    "message": "failed to process message: invalid format"
+  }
+}
+```
+
+==== Message Format
+
+Status events are written to the configured topic as Protocol Buffer JSON messages:
+
+* *Topic*: The value specified in `status_topic`
+* *Key*: The `pipeline_id` value (enables tracking all events for a specific pipeline)
+* *Value*: JSON-encoded status event
+* *Encoding*: Protocol Buffer JSON (protojson)
+
+For the full protobuf schema specification, see the https://github.com/redpanda-data/connect/blob/main/proto/redpanda/api/connect/v1alpha1/status.proto[status.proto definition^].
 
 === `partitioner`
 
