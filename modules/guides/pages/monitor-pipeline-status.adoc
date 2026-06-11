@@ -1,6 +1,8 @@
 = Monitor Pipeline Status
 :description: Learn how to monitor Redpanda Connect pipeline health using status events, including setting up alerts and troubleshooting common issues.
-:page-objectives: Consume status events from a Kafka topic | Configure alerts for pipeline failures and connection errors | Troubleshoot common status reporting issues
+:learning-objective-1: Consume status events from a Kafka topic
+:learning-objective-2: Configure alerts for pipeline failures and connection errors
+:learning-objective-3: Troubleshoot common status reporting issues
 
 include::components:partial$enterprise_component_note.adoc[]
 
@@ -8,10 +10,10 @@ Monitor your Redpanda Connect pipelines in real-time by consuming status events.
 
 For status event type definitions and message format, see xref:components:redpanda/about.adoc#status_topic[`status_topic` configuration reference].
 
-== Before you begin
+== Prerequisites
 
 * Configure the xref:components:redpanda/about.adoc[`redpanda` service] with `status_topic` enabled
-* Ensure you have a valid Redpanda Community License (RCL) - status reporting is an enterprise feature
+* Ensure you have a valid Enterprise Edition license - status reporting is an enterprise feature
 * Have access to consume from the status topic
 
 == Consume status events
@@ -28,10 +30,22 @@ Or use any Kafka consumer configured to read from the status topic.
 
 Status events follow this lifecycle:
 
-. *Startup*: `TYPE_INITIALIZING` - Pipeline parsed configuration and is starting
-. *Running*: `TYPE_CONNECTION_HEALTHY` - Heartbeat every 30 seconds when connections are healthy
-. *Errors*: `TYPE_CONNECTION_ERROR` - One or more connections have failed (heartbeat every 30 seconds)
-. *Shutdown*: `TYPE_EXITING` - Pipeline is stopping (gracefully or due to error)
+[cols="1,2"]
+|===
+| Event type | Description
+
+| *Startup*: `TYPE_INITIALIZING`
+| Pipeline parsed configuration and is starting
+
+| *Running*: `TYPE_CONNECTION_HEALTHY`
+| Heartbeat every 30 seconds when connections are healthy
+
+| *Errors*: `TYPE_CONNECTION_ERROR`
+| One or more connections have failed (heartbeat every 30 seconds)
+
+| *Shutdown*: `TYPE_EXITING`
+| Pipeline is stopping (gracefully or due to error)
+|===
 
 == Set up monitoring alerts
 
@@ -101,7 +115,7 @@ This query identifies pipelines with connection errors or unexpected shutdowns.
 
 If you've configured `status_topic` but don't see events:
 
-. *Check license*: Status reporting requires a valid Redpanda Community License (RCL)
+. *Check license*: Status reporting requires a valid Enterprise Edition license
 +
 * Verify license is installed and valid
 * Check logs for license validation errors
@@ -148,7 +162,7 @@ If heartbeats (`TYPE_CONNECTION_HEALTHY`) stop but no `TYPE_EXITING` was sent:
 . Check container orchestrator logs (Kubernetes pod events, etc.)
 . Review resource limits and adjust if necessary
 
-== Related topics
+== Suggested reading
 
 * xref:components:redpanda/about.adoc#status_topic[`status_topic` configuration reference]
 * xref:guides:monitoring.adoc[Monitoring with metrics and health checks]
