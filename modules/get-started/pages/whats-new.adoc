@@ -11,6 +11,79 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.96.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.96.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:outputs/doris_stream_load.adoc[doris_stream_load]
+|Outputs
+|beta
+|Each output batch is encoded into a single Doris Stream Load request. The sink first contacts FE and follows the Stream Load redirect to BE before uploading the batch body.
+
+|===
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|change_type
+|Bloblang expression resolving to the `_CHANGE_TYPE` pseudo-column value for each row.
+|*Outputs:*
+
+* xref:components:outputs/gcp_bigquery_write_api.adoc#change_type[gcp_bigquery_write_api]
+
+
+|change_sequence_number
+|Optional Bloblang expression resolving to the `_CHANGE_SEQUENCE_NUMBER` pseudo-column value.
+|*Outputs:*
+
+* xref:components:outputs/gcp_bigquery_write_api.adoc#change_sequence_number[gcp_bigquery_write_api]
+
+
+|primary_keys
+|Optional list of primary-key column names.
+|*Outputs:*
+
+* xref:components:outputs/gcp_bigquery_write_api.adoc#primary_keys[gcp_bigquery_write_api]
+
+
+|===
+
+
+=== Default value changes
+
+This release includes the following default value changes:
+
+[cols="1m,1,1,3,2a"]
+|===
+|Field |Old default |New default |Description |Affected components
+
+|schema_resolve_timeout
+|5s
+|15s
+|How long a single BigQuery table-metadata fetch can run before being aborted. Coalesced concurrent resolves share one fetch, so this bounds the time a wedged backend can stall every batch routing to the same table.
+|*Outputs:*
+
+* xref:components:outputs/gcp_bigquery_write_api.adoc#schema_resolve_timeout[gcp_bigquery_write_api]
+
+
+|===
+
+
 == Version 4.95.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.95.0[See the full release notes^].
