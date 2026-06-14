@@ -493,8 +493,6 @@ The logging level of logs sent to Redpanda.
 
 The topic that status updates are sent to. When configured, Redpanda Connect emits status events to this internal topic as pipelines start, run, and stop.
 
-include::components:partial$enterprise_component_note.adoc[]
-
 *Type*: `string`
 
 *Default*: `""`
@@ -507,7 +505,7 @@ status_topic: __redpanda.connect.status
 
 For monitoring and troubleshooting guidance, see xref:guides:monitor-pipeline-status.adoc[].
 
-==== Status Event Types
+==== Status event types
 
 Status events are emitted during the pipeline lifecycle. All events include `pipeline_id`, `instance_id`, and `timestamp` fields.
 
@@ -591,7 +589,7 @@ Example (error shutdown):
 }
 ```
 
-==== Message Format
+==== Message format
 
 Status events are written to the configured topic as Protocol Buffer JSON messages:
 
