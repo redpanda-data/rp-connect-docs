@@ -1,0 +1,163 @@
+= Stream data to BigQuery with the Storage Write API
+// tag::single-source[]
+:description: Configure Redpanda Connect to stream, upsert, and delete data in BigQuery using the Storage Write API.
+:page-categories: Streaming, Integration, GCP
+:page-topic-type: cookbook
+:personas: streaming_developer, data_engineer
+:learning-objective-1: Find patterns for streaming JSON into BigQuery
+:learning-objective-2: Look up CDC upsert and delete patterns for BigQuery
+:learning-objective-3: Identify auto-create, multi-table routing, and throughput-tuning patterns
+
+The xref:components:outputs/gcp_bigquery_write_api.adoc[`gcp_bigquery_write_api` output] streams messages into BigQuery using the https://cloud.google.com/bigquery/docs/write-api[Storage Write API^], which offers higher throughput and lower latency than the legacy streaming API or load jobs. This cookbook provides reusable patterns for streaming inserts, change data capture (CDC) upserts and deletes, automatic table creation, multi-table routing, and throughput tuning.
+
+Use this cookbook to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+== Prerequisites
+
+Before using these patterns, ensure you have the following configured:
+
+=== Redpanda CLI
+
+ifndef::env-cloud[]
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:get-started:quickstarts/rpk.adoc[] for installation instructions.
+endif::[]
+ifdef::env-cloud[]
+Install the Redpanda CLI (`rpk`) to run Redpanda Connect. See xref:manage:rpk/rpk-install.adoc[] for installation instructions.
+endif::[]
+
+=== Enterprise license
+
+The `gcp_bigquery_write_api` output is an enterprise component. To use it, you need a Redpanda Connect Enterprise license. See xref:get-started:licensing.adoc[].
+
+=== BigQuery dataset and permissions
+
+You need a Google Cloud project with a BigQuery dataset, and a service account with permission to write to (and, for the auto-create pattern, create) tables in that dataset. The BigQuery Data Editor (`roles/bigquery.dataEditor`) role covers both.
+
+The output loads credentials from the standard https://cloud.google.com/docs/authentication/application-default-credentials[Application Default Credentials^] chain. You can also supply a service account key directly with the xref:components:outputs/gcp_bigquery_write_api.adoc#credentials_json[`credentials_json`] field.
+
+=== Environment variables
+
+The examples in this cookbook use environment variables to keep configuration separate from credentials.
+
+[,bash]
+----
+export GCP_PROJECT=my-project <1>
+export BQ_DATASET=analytics <2>
+export BQ_TABLE=events <3>
+export REDPANDA_BROKERS=localhost:9092 <4>
+export SOURCE_TOPIC=events <5>
+----
+<1> The Google Cloud project ID that owns the dataset.
+<2> The BigQuery dataset that holds the destination tables.
+<3> The destination table for single-table examples.
+<4> The Redpanda broker addresses for the source topic.
+<5> The Redpanda topic to consume from.
+
+== Stream JSON to BigQuery
+
+The simplest pattern consumes JSON messages from a Redpanda topic and streams them into a single table using the default stream, which provides at-least-once delivery with the lowest latency:
+
+[source,yaml]
+----
+include::cookbooks:example$gcp_bigquery_write_api/basic-stream.yaml[tag=config]
+----
+
+[WARNING]
+====
+The proto3 JSON mapping encodes `int64` and `uint64` values as strings. When a message maps to an `INTEGER` (`INT64`) column, the JSON field must use a string value, for example `"age": "30"` rather than `"age": 30`. Otherwise the write fails with an unmarshalling error.
+====
+
+For the full list of message formats and connection options, see the xref:components:outputs/gcp_bigquery_write_api.adoc[connector reference].
+
+== Guarantee exactly-once delivery per batch
+
+To commit each batch atomically with exactly-once semantics, set xref:components:outputs/gcp_bigquery_write_api.adoc#write_mode[`write_mode`] to `pending_stream`. Each batch is written to a per-batch pending stream that commits as a single unit:
+
+[source,yaml]
+----
+include::cookbooks:example$gcp_bigquery_write_api/exactly-once.yaml[tag=config]
+----
+
+Exactly-once applies within a single committed batch. Tune batch size to balance latency against commit overhead. See xref:configuration:batching.adoc[].
+
+== Create the destination table automatically
+
+Set xref:components:outputs/gcp_bigquery_write_api.adoc#auto_create_table[`auto_create_table`] to `true` to have Redpanda Connect create the table if it does not exist, using the supplied xref:components:outputs/gcp_bigquery_write_api.adoc#schema[`schema`]. You can also define partitioning and clustering for the new table:
+
+[source,yaml]
+----
+include::cookbooks:example$gcp_bigquery_write_api/auto-create-table.yaml[tag=config]
+----
+
+Each schema column accepts a `name`, `type`, and optional `mode` (`NULLABLE`, `REQUIRED`, or `REPEATED`). Partitioning and clustering apply only when the table is created.
+
+== Apply CDC upserts
+
+To keep a BigQuery table in sync with a changing source, use change data capture (CDC) upserts. Set xref:components:outputs/gcp_bigquery_write_api.adoc#write_mode[`write_mode`] to `upsert`, declare the xref:components:outputs/gcp_bigquery_write_api.adoc#primary_keys[`primary_keys`], and provide a xref:components:outputs/gcp_bigquery_write_api.adoc#change_type[`change_type`] expression. BigQuery injects the `_CHANGE_TYPE` pseudo-column for each row:
+
+[source,yaml]
+----
+include::cookbooks:example$gcp_bigquery_write_api/cdc-upsert.yaml[tag=config]
+----
+
+In `upsert` mode, `change_type` must resolve to `UPSERT` for every row. The target table must have a primary key: when `auto_create_table` is `true`, `primary_keys` defines it; for a pre-existing table, the output falls back to the `PRIMARY KEY` declared on the table. Up to 16 columns are supported, and composite keys are matched in the order listed.
+
+NOTE: CDC modes write through the default stream, as required by BigQuery, so they provide at-least-once delivery rather than the per-batch exactly-once semantics of `pending_stream`.
+
+== Handle inserts, updates, and deletes
+
+To propagate deletes as well as upserts, set xref:components:outputs/gcp_bigquery_write_api.adoc#write_mode[`write_mode`] to `upsert_delete` and resolve `change_type` to either `UPSERT` or `DELETE` per row (case-insensitive). The following example derives the change type from a source operation field in a `mapping` processor, stores it in metadata, and references it from the output. It also uses xref:components:outputs/gcp_bigquery_write_api.adoc#change_sequence_number[`change_sequence_number`] to control ordering when rows for the same key can arrive out of order:
+
+[source,yaml]
+----
+include::cookbooks:example$gcp_bigquery_write_api/cdc-upsert-delete.yaml[tag=config]
+----
+
+When `change_sequence_number` is unset, BigQuery resolves ordering by arrival time. Set it from a monotonic source value (such as a log sequence number) so that a late-arriving older change cannot overwrite a newer one.
+
+== Route to multiple tables
+
+The xref:components:outputs/gcp_bigquery_write_api.adoc#table[`table`] field supports interpolation, so you can route messages to different tables based on their content or metadata. The table name is resolved from the first message in each batch, so batch by the routing key to keep each batch single-table:
+
+[source,yaml]
+----
+include::cookbooks:example$gcp_bigquery_write_api/multi-table-routing.yaml[tag=config]
+----
+
+When routing across many tables, raise xref:components:outputs/gcp_bigquery_write_api.adoc#max_cached_streams[`max_cached_streams`] so the output can keep a write stream open per active table.
+
+== Tune batching and throughput
+
+Throughput depends on batch size and the number of concurrent in-flight requests. Increase xref:components:outputs/gcp_bigquery_write_api.adoc#max_in_flight[`max_in_flight`] to send more batches in parallel, and size batches with a xref:configuration:batching.adoc[batching policy]:
+
+[source,yaml]
+----
+include::cookbooks:example$gcp_bigquery_write_api/tune-throughput.yaml[tag=config]
+----
+
+== Troubleshoot
+
+=== Writes fail with an unmarshalling error
+
+BigQuery rejects integer fields supplied as JSON numbers. Ensure `int64` and `uint64` values are encoded as strings, for example `"count": "42"`. Use a xref:components:processors/mapping.adoc[`mapping` processor] to convert numeric fields to strings before the output if your source emits them as numbers.
+
+=== Schema resolution times out
+
+The output fetches table metadata before writing. If you route to many tables or a backend is slow, increase xref:components:outputs/gcp_bigquery_write_api.adoc#schema_resolve_timeout[`schema_resolve_timeout`] (default `15s`). On the `auto_create_table` path this budget also covers table creation, so allow extra headroom.
+
+=== CDC writes are rejected
+
+For `upsert` and `upsert_delete` modes, confirm the target table has a primary key and that `change_type` resolves to a valid value (`UPSERT`, or `DELETE` for `upsert_delete`). Rows that resolve to an invalid change type are rejected by BigQuery.
+
+== Suggested reading
+
+- xref:components:outputs/gcp_bigquery_write_api.adoc[`gcp_bigquery_write_api` output reference]
+- xref:configuration:batching.adoc[Batching]
+- xref:guides:bloblang/about.adoc[Bloblang]
+- https://cloud.google.com/bigquery/docs/change-data-capture[BigQuery change data capture^]
+
+// end::single-source[]

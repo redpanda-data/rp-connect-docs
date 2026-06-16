@@ -1,0 +1,40 @@
+# tag::config[]
+input:
+  kafka_franz:
+    seed_brokers: ["${REDPANDA_BROKERS}"]
+    topics: ["${SOURCE_TOPIC}"]
+    consumer_group: bigquery_sink
+
+pipeline:
+  processors:
+    # BigQuery's proto3 JSON mapping encodes int64/uint64 as strings, so
+    # convert integer columns to strings before writing.
+    - mapping: |
+        root = this
+        root.id = this.id.string()
+
+output:
+  gcp_bigquery_write_api:
+    project: ${GCP_PROJECT}
+    dataset: ${BQ_DATASET}
+    table: ${BQ_TABLE}
+    message_format: json
+    write_mode: default_stream
+    batching:
+      count: 1000
+      period: 5s
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Convert integer id to string
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          id: 30
+          name: "Alice"
+    output_batches:
+      - - json_contains:
+            id: "30"
+            name: "Alice"
+# end::tests[]

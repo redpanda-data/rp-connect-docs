@@ -1,0 +1,52 @@
+= BigQuery Storage Write API Examples
+
+Example pipelines for streaming and upserting data into BigQuery with the xref:components:outputs/gcp_bigquery_write_api.adoc[`gcp_bigquery_write_api` output]. These back the patterns in the xref:cookbooks:gcp_bigquery_write_api.adoc[Stream data to BigQuery] cookbook.
+
+== Files
+
+[cols="1,2"]
+|===
+|File |Pattern
+
+|`basic-stream.yaml`
+|Stream JSON into a single table using the default stream.
+
+|`exactly-once.yaml`
+|Commit each batch atomically with `pending_stream`.
+
+|`auto-create-table.yaml`
+|Create the destination table from a schema with partitioning and clustering.
+
+|`cdc-upsert.yaml`
+|Apply CDC upserts with `write_mode: upsert` and `primary_keys`.
+
+|`cdc-upsert-delete.yaml`
+|Handle inserts, updates, and deletes with `write_mode: upsert_delete`.
+
+|`multi-table-routing.yaml`
+|Route messages to different tables with `table` interpolation.
+
+|`tune-throughput.yaml`
+|Tune batching and `max_in_flight` for throughput.
+|===
+
+== Running the tests
+
+Each pipeline includes inline unit tests that exercise its `mapping` processor with mock inputs and outputs. They run with `rpk connect test` and contact no external services.
+
+[,bash]
+----
+# Run the unit tests for this cookbook
+../test-examples.sh --unit-only gcp_bigquery_write_api
+----
+
+You can also run a single file directly:
+
+[,bash]
+----
+rpk connect test cdc-upsert-delete.yaml
+----
+
+NOTE: The CDC examples use `write_mode: upsert` and `upsert_delete`, which were added in Redpanda Connect 4.96.0. Linting and testing them requires `rpk` with a bundled Connect version of 4.96.0 or later.
+
+No integration (smoke) tests are provided: the `gcp_bigquery_write_api` output requires a real Google Cloud project and BigQuery dataset, which cannot be emulated locally.

@@ -1,0 +1,43 @@
+# tag::config[]
+input:
+  kafka_franz:
+    seed_brokers: ["${REDPANDA_BROKERS}"]
+    topics: ["${SOURCE_TOPIC}"]
+    consumer_group: bigquery_sink
+
+pipeline:
+  processors:
+    # Stringify the integer id for BigQuery's proto3 JSON mapping.
+    - mapping: |
+        root = this
+        root.id = this.id.string()
+
+output:
+  gcp_bigquery_write_api:
+    project: ${GCP_PROJECT}
+    dataset: ${BQ_DATASET}
+    table: ${BQ_TABLE}
+    message_format: json
+    write_mode: default_stream
+    # Send more batches concurrently for higher throughput.
+    max_in_flight: 16
+    # Larger batches reduce per-request overhead at the cost of latency.
+    batching:
+      count: 10000
+      byte_size: 5000000
+      period: 10s
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Stringify integer id
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          id: 12345
+          name: "metric"
+    output_batches:
+      - - json_contains:
+            id: "12345"
+            name: "metric"
+# end::tests[]

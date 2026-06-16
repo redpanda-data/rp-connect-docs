@@ -1,0 +1,57 @@
+# tag::config[]
+input:
+  kafka_franz:
+    seed_brokers: ["${REDPANDA_BROKERS}"]
+    topics: ["${SOURCE_TOPIC}"]
+    consumer_group: bigquery_sink
+
+pipeline:
+  processors:
+    # Shape each message to match the table schema. The id column is INTEGER,
+    # so send it as a string for BigQuery's proto3 JSON mapping.
+    - mapping: |
+        root.id = this.id.string()
+        root.name = this.name
+        root.created_at = this.created_at
+
+output:
+  gcp_bigquery_write_api:
+    project: ${GCP_PROJECT}
+    dataset: ${BQ_DATASET}
+    table: ${BQ_TABLE}
+    message_format: json
+    auto_create_table: true
+    schema:
+      - name: id
+        type: INTEGER
+        mode: REQUIRED
+      - name: name
+        type: STRING
+      - name: created_at
+        type: TIMESTAMP
+        mode: REQUIRED
+    time_partitioning:
+      type: DAY
+      field: created_at
+    clustering:
+      - id
+    batching:
+      count: 1000
+      period: 5s
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Shape message for the table schema
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          id: 42
+          name: "widget"
+          created_at: "2026-01-01T00:00:00Z"
+    output_batches:
+      - - json_contains:
+            id: "42"
+            name: "widget"
+            created_at: "2026-01-01T00:00:00Z"
+# end::tests[]
