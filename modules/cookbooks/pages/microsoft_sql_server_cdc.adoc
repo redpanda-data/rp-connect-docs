@@ -147,8 +147,8 @@ This pattern:
 
 The `microsoft_sql_server_cdc` input supports two replication modes controlled by the `stream_snapshot` field:
 
-`stream_snapshot: true`:: Captures a full snapshot of existing table data before streaming live changes. Use this when you need a complete initial load.
-`stream_snapshot: false`:: Skips the snapshot and streams only changes from the current LSN position. Use this when you only need new changes going forward.
+- `stream_snapshot: true`: Captures a full snapshot of existing table data before streaming live changes. Use this when you need a complete initial load.
+- `stream_snapshot: false`: Skips the snapshot and streams only changes from the current LSN position. Use this when you only need new changes going forward.
 
 [,yaml]
 ----

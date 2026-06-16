@@ -87,7 +87,7 @@ Each event contains a full snapshot of the transfer and both the debit and credi
 
 == Filter CDC events
 
-Filter events to process only settled transfers — `single_phase` (immediate) and `two_phase_posted` (completed two-phase) — using the `event_type` metadata field:
+Filter events to process only settled transfers (`single_phase` for immediate and `two_phase_posted` for completed two-phase) using the `event_type` metadata field:
 
 [,yaml]
 ----

@@ -53,8 +53,8 @@ For more information, see the https://cloud.google.com/spanner/docs/change-strea
 
 The `gcp_spanner_cdc` input supports two authentication methods:
 
-Application Default Credentials (ADC):: The recommended approach for GCP-native environments (Cloud Run, GKE, Compute Engine). No configuration needed when running with a service account attached to the instance.
-Service account key:: Set the `credentials_json` field to a base64-encoded service account key JSON file. Use this approach when running outside GCP or when ADC is not available:
+- *Application Default Credentials (ADC)*: The recommended approach for GCP-native environments (Cloud Run, GKE, Compute Engine). No configuration needed when running with a service account attached to the instance.
+- *Service account key*: Set the `credentials_json` field to a base64-encoded service account key JSON file. Use this approach when running outside GCP or when ADC is not available:
 +
 [,bash]
 ----
