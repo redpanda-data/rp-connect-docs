@@ -43,7 +43,7 @@ sudo dnf upgrade
 +
 [,bash]
 ----
-curl -1sLf 'https://dl.redpanda.com/nzc4ZYQK3WRGd9sy/redpanda/cfg/setup/bash.rpm.sh' | \
+curl -1sLf 'https://linux.pkg.redpanda.com/setup-redpanda.rpm.sh' | \
 sudo -E bash
 ----
 . Install Redpanda packages for FIPS compliance.
@@ -81,7 +81,7 @@ sudo apt upgrade
 +
 [,bash]
 ----
-curl -1sLf 'https://dl.redpanda.com/nzc4ZYQK3WRGd9sy/redpanda/cfg/setup/bash.deb.sh' | sudo -E bash 
+curl -1sLf 'https://linux.pkg.redpanda.com/setup-redpanda.deb.sh' | sudo -E bash 
 ----
 . Install Redpanda packages for FIPS compliance.
 +
