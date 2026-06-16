@@ -1,6 +1,6 @@
 {
-  "version": "4.96.0",
-  "date": "2026-06-11T20:31:48Z",
+  "version": "4.96.2",
+  "date": "2026-06-16T14:31:02Z",
   "config": [
     {
       "name": "http",
@@ -14860,7 +14860,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Enables Change Data Capture by consuming from OracleDB.",
-      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- transaction_id: The Oracle transaction ID in `USN.SLOT.SEQ` format, identifying the transaction that produced the change. Not present on snapshot (`read`) messages.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- commit_ts_ms: The timestamp of the transaction commit, expressed as milliseconds since the Unix epoch. Not present on snapshot (`read`) messages.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
+      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- transaction_id: The Oracle transaction ID in `USN.SLOT.SEQ` format, identifying the transaction that produced the change. Not present on snapshot (`read`) messages.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- commit_ts_ms: The timestamp of the transaction commit, expressed as milliseconds since the Unix epoch. Sourced from `V$LOGMNR_CONTENTS.TIMESTAMP` on the COMMIT redo record — this is Oracle's wall-clock time when the commit was written to the redo log, not a dedicated commit-timestamp column. Not present on snapshot (`read`) messages.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
       "categories": [
         "Services"
       ],
@@ -32204,6 +32204,11 @@
           "config": "\ninput:\n  aws_s3:\n    bucket: \"my-cool-bucket\"\n    prefix: \"bug-facts/\"\n    scanner:\n      to_the_end: {}\noutput:\n  elasticsearch_v8:\n    urls: ['http://localhost:9200']\n    index: \"cool-bug-facts\"\n    action: \"index\"\n    id: ${! meta(\"s3_key\") }\n"
         },
         {
+          "title": "Authenticating with an API key",
+          "summary": "Set the `api_key` field to authenticate requests with an Elasticsearch API key. If `api_key` is set, it supersedes the `basic_auth` configuration.",
+          "config": "\noutput:\n  elasticsearch_v8:\n    urls: ['https://localhost:9200']\n    index: \"things\"\n    action: \"index\"\n    id: ${! json(\"id\") }\n    api_key: \"${ELASTICSEARCH_API_KEY}\"\n"
+        },
+        {
           "title": "Create Documents",
           "summary": "When using the `create` action, a new document will be created if the document ID does not already exist. If the document ID already exists, the operation will fail.",
           "config": "\noutput:\n  elasticsearch_v8:\n    urls: [localhost:9200]\n    index: foo\n    id: ${! json(\"id\") }\n    action: create\n"
@@ -32418,6 +32423,15 @@
             "default": 64
           },
           {
+            "name": "api_key",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An API key to authenticate with. If set, it supersedes basic authentication.",
+            "is_secret": true,
+            "default": "",
+            "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+          },
+          {
             "name": "basic_auth",
             "type": "object",
             "kind": "scalar",
@@ -32575,6 +32589,11 @@
           "title": "Indexing documents from S3",
           "summary": "Here we read messages from a AWS S3 bucket and write them to an Elasticsearch index using the S3 key as the ID for the Elasticsearch document.",
           "config": "\ninput:\n  aws_s3:\n    bucket: \"my-cool-bucket\"\n    prefix: \"bug-facts/\"\n    scanner:\n      to_the_end: {}\noutput:\n  elasticsearch_v9:\n    urls: ['http://localhost:9200']\n    index: \"cool-bug-facts\"\n    action: \"index\"\n    id: ${! meta(\"s3_key\") }\n"
+        },
+        {
+          "title": "Authenticating with an API key",
+          "summary": "Set the `api_key` field to authenticate requests with an Elasticsearch API key. If `api_key` is set, it supersedes the `basic_auth` configuration.",
+          "config": "\noutput:\n  elasticsearch_v9:\n    urls: ['https://localhost:9200']\n    index: \"things\"\n    action: \"index\"\n    id: ${! json(\"id\") }\n    api_key: \"${ELASTICSEARCH_API_KEY}\"\n"
         },
         {
           "title": "Create Documents",
@@ -32789,6 +32808,15 @@
             "kind": "scalar",
             "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
             "default": 64
+          },
+          {
+            "name": "api_key",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An API key to authenticate with. If set, it supersedes basic authentication.",
+            "is_secret": true,
+            "default": "",
+            "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
           },
           {
             "name": "basic_auth",

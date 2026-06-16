@@ -10,6 +10,16 @@ For more information on how the `update` action works, see <<example-pipelines, 
 
 *Type*: `string`
 
+=== `api_key`
+
+An API key to authenticate with. If set, it supersedes basic authentication.
+
+include::connect:components:partial$secret_warning.adoc[]
+
+*Type*: `string`
+
+*Default*: `""`
+
 === `basic_auth`
 
 Configure basic authentication credentials for connecting to Elasticsearch. When enabled, these credentials are sent with each request to authenticate with the cluster.
