@@ -1,0 +1,70 @@
+# tag::config[]
+input:
+  kafka_franz:
+    seed_brokers: ["${REDPANDA_BROKERS}"]
+    topics: ["${SOURCE_TOPIC}"]
+    consumer_group: bigquery_sink
+
+pipeline:
+  processors:
+    # Derive the CDC change type and sequence number from the source event.
+    # This example assumes a Debezium-style envelope with an "op" field
+    # ("c"/"u" for upsert, "d" for delete), the row in "after", and a log
+    # sequence number in "lsn".
+    - mapping: |
+        root = this.after
+        root.id = this.after.id.string()
+        meta change_type = if this.op == "d" { "DELETE" } else { "UPSERT" }
+        meta change_seq = this.lsn.string()
+
+output:
+  gcp_bigquery_write_api:
+    project: ${GCP_PROJECT}
+    dataset: ${BQ_DATASET}
+    table: ${BQ_TABLE}
+    message_format: json
+    write_mode: upsert_delete
+    primary_keys:
+      - id
+    change_type: '${! metadata("change_type") }'
+    # Order changes by a monotonic sequence number so a late-arriving older
+    # change cannot overwrite a newer row.
+    change_sequence_number: '${! metadata("change_seq") }'
+    batching:
+      count: 1000
+      period: 5s
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Insert resolves to UPSERT
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          op: "c"
+          lsn: 100
+          after:
+            id: 1
+            name: "Alice"
+    output_batches:
+      - - json_contains:
+            id: "1"
+            name: "Alice"
+          metadata_equals:
+            change_type: "UPSERT"
+            change_seq: "100"
+
+  - name: Delete resolves to DELETE
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          op: "d"
+          lsn: 101
+          after:
+            id: 2
+            name: "Bob"
+    output_batches:
+      - - metadata_equals:
+            change_type: "DELETE"
+            change_seq: "101"
+# end::tests[]

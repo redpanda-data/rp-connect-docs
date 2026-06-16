@@ -1,0 +1,44 @@
+# tag::config[]
+input:
+  kafka_franz:
+    seed_brokers: ["${REDPANDA_BROKERS}"]
+    topics: ["${SOURCE_TOPIC}"]
+    consumer_group: bigquery_sink
+
+pipeline:
+  processors:
+    # Stringify the integer id for BigQuery's proto3 JSON mapping.
+    - mapping: |
+        root = this
+        root.id = this.id.string()
+    # Split each incoming batch into single-table batches keyed by event_type.
+    # The output resolves the table from the first message in each batch, so
+    # every batch must contain rows for one table only.
+    - group_by_value:
+        value: '${! json("event_type") }'
+
+output:
+  gcp_bigquery_write_api:
+    project: ${GCP_PROJECT}
+    dataset: ${BQ_DATASET}
+    table: '${! json("event_type") }'
+    message_format: json
+    # No batching block here: this preserves the single-table batches produced
+    # by group_by_value. Adding an output batching policy would re-mix tables.
+    max_in_flight: 8
+    max_cached_streams: 1024
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Stringify id before routing
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          id: 9
+          event_type: "clicks"
+    output_batches:
+      - - json_contains:
+            id: "9"
+            event_type: "clicks"
+# end::tests[]

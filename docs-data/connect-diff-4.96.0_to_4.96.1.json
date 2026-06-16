@@ -1,8 +1,8 @@
 {
   "comparison": {
-    "oldVersion": "4.94.1",
-    "newVersion": "4.95.0",
-    "timestamp": "2026-06-04T21:44:29.937Z"
+    "oldVersion": "4.96.0",
+    "newVersion": "4.96.1",
+    "timestamp": "2026-06-16T09:58:16.343Z"
   },
   "summary": {
     "newComponents": 0,
@@ -38,52 +38,16 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.95.0",
-      "cloud": "4.95.0",
-      "cgo": "4.95.0"
+      "oss": "4.96.1",
+      "cloud": "4.96.1",
+      "cgo": "4.96.1"
     },
     "current": {
-      "cloudSupported": 486,
-      "selfHostedOnly": 74,
-      "cgoOnly": 4
+      "cloudSupported": 487,
+      "selfHostedOnly": 79,
+      "cgoOnly": 0
     },
-    "changes": {
-      "cloud": {
-        "added": [],
-        "removed": [
-          {
-            "type": "processors",
-            "name": "a2a_message",
-            "status": "stable"
-          }
-        ]
-      },
-      "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "stable"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "ffi",
-            "status": "stable"
-          }
-        ],
-        "removedCgoOnly": []
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -1264,6 +1228,11 @@
         {
           "type": "processors",
           "name": "xml",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -2639,6 +2608,16 @@
           "status": "stable"
         },
         {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2667,6 +2646,11 @@
           "type": "outputs",
           "name": "discord",
           "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "doris_stream_load",
+          "status": "beta"
         },
         {
           "type": "outputs",
@@ -2746,6 +2730,11 @@
         {
           "type": "outputs",
           "name": "websocket",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "zmq4",
           "status": "stable"
         },
         {
@@ -2834,6 +2823,11 @@
           "status": "stable"
         },
         {
+          "type": "processors",
+          "name": "ffi",
+          "status": "stable"
+        },
+        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2889,35 +2883,8 @@
           "status": "stable"
         }
       ],
-      "cloudOnly": [
-        {
-          "type": "processors",
-          "name": "a2a_message",
-          "status": "stable"
-        }
-      ],
-      "cgoOnly": [
-        {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "stable"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
-          "status": "stable"
-        }
-      ]
+      "cloudOnly": [],
+      "cgoOnly": []
     }
   }
 }
