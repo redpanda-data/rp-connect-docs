@@ -13,6 +13,31 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.96.2
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.96.2[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|api_key
+|An API key to authenticate with. If set, it supersedes basic authentication.
+|*Outputs:*
+
+* xref:components:outputs/elasticsearch_v8.adoc#api_key[elasticsearch_v8]
+* xref:components:outputs/elasticsearch_v9.adoc#api_key[elasticsearch_v9]
+
+
+|===
+
+
 == Version 4.96.1
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.96.1[See the full release notes^].
