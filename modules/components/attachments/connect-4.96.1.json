@@ -31711,7 +31711,7 @@
       "status": "beta",
       "plugin": true,
       "summary": "Writes batches of messages into Apache Doris using Stream Load.",
-      "description": "Each output batch is encoded into a single Doris Stream Load request. The sink first contacts FE and follows the Stream Load redirect to BE before uploading the batch body. The batch is only acknowledged when Doris reports success.\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "description": "Writes batches of messages into Apache Doris using Stream Load.\n\nEach output batch is encoded into a single Doris Stream Load request. The output first contacts a Doris frontend (FE) node and follows the Stream Load redirect to a backend (BE) node before uploading the batch body. A batch is only acknowledged when Doris reports success.",
       "categories": [
         "Services"
       ],
@@ -32081,7 +32081,7 @@
         ],
         "linter": "\nroot = []\nif this.format == \"json\" {\n  if this.read_json_by_line == true && this.strip_outer_array == true {\n    root = root.append(\"read_json_by_line and strip_outer_array cannot both be true\")\n  }\n  if this.read_json_by_line == false && this.strip_outer_array == false {\n    root = root.append(\"json format requires either read_json_by_line or strip_outer_array to be true\")\n  }\n}\nif this.format == \"csv\" {\n  if this.column_separator == \"\" {\n    root = root.append(\"column_separator cannot be empty when format=csv\")\n  }\n  if this.line_delimiter == \"\" {\n    root = root.append(\"line_delimiter cannot be empty when format=csv\")\n  }\n}\nif (this.url.or(\"\").string() == \"\" && this.fe_urls.length() == 0) {\n  root = root.append(\"either url or fe_urls must be configured\")\n}\nif this.partitions.length() > 0 && this.temporary_partitions.length() > 0 {\n  root = root.append(\"partitions and temporary_partitions cannot both be set\")\n}\nif this.max_filter_ratio < 0 || this.max_filter_ratio > 1 {\n  root = root.append(\"max_filter_ratio must be between 0 and 1\")\n}\nif this.group_commit != \"\" && this.group_commit != \"sync_mode\" && this.group_commit != \"async_mode\" && this.group_commit != \"off_mode\" {\n  root = root.append(\"group_commit must be one of sync_mode, async_mode, off_mode\")\n}\n"
       },
-      "version": "4.86.0",
+      "version": "4.96.0",
       "cloudSupported": false,
       "requiresCgo": false
     },
