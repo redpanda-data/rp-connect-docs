@@ -5,6 +5,9 @@ outputs:
     dataset: "" # No default (required)
     table: "" # No default (required)
     message_format: json
+    change_type: "" # No default (optional)
+    change_sequence_number: "" # No default (optional)
+    primary_keys: [] # No default (optional)
     max_in_flight: 4
     batching:
       count: 0

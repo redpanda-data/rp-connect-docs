@@ -1,13 +1,13 @@
 {
   "comparison": {
-    "oldVersion": "4.94.0",
-    "newVersion": "4.94.1",
-    "timestamp": "2026-06-03T18:41:41.511Z"
+    "oldVersion": "4.96.1",
+    "newVersion": "4.96.2",
+    "timestamp": "2026-06-16T14:50:49.259Z"
   },
   "summary": {
     "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 0,
+    "newFields": 2,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
@@ -23,7 +23,18 @@
   "details": {
     "newComponents": [],
     "removedComponents": [],
-    "newFields": [],
+    "newFields": [
+      {
+        "component": "outputs:elasticsearch_v8",
+        "field": "api_key",
+        "description": "An API key to authenticate with. If set, it supersedes basic authentication."
+      },
+      {
+        "component": "outputs:elasticsearch_v9",
+        "field": "api_key",
+        "description": "An API key to authenticate with. If set, it supersedes basic authentication."
+      }
+    ],
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
@@ -38,16 +49,52 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.94.1",
-      "cloud": "4.94.1",
-      "cgo": "4.94.1"
+      "oss": "4.96.2",
+      "cloud": "4.96.2",
+      "cgo": "4.96.2"
     },
     "current": {
-      "cloudSupported": 487,
-      "selfHostedOnly": 78,
-      "cgoOnly": 0
+      "cloudSupported": 486,
+      "selfHostedOnly": 75,
+      "cgoOnly": 4
     },
-    "changes": {},
+    "changes": {
+      "cloud": {
+        "added": [],
+        "removed": [
+          {
+            "type": "processors",
+            "name": "a2a_message",
+            "status": "stable"
+          }
+        ]
+      },
+      "cgo": {
+        "newCgoOnly": [
+          {
+            "type": "inputs",
+            "name": "tigerbeetle_cdc",
+            "status": "stable"
+          },
+          {
+            "type": "inputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "outputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "processors",
+            "name": "ffi",
+            "status": "stable"
+          }
+        ],
+        "removedCgoOnly": []
+      }
+    },
     "details": {
       "cloudSupported": [
         {
@@ -1228,11 +1275,6 @@
         {
           "type": "processors",
           "name": "xml",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -2608,16 +2650,6 @@
           "status": "stable"
         },
         {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "stable"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2646,6 +2678,11 @@
           "type": "outputs",
           "name": "discord",
           "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "doris_stream_load",
+          "status": "beta"
         },
         {
           "type": "outputs",
@@ -2725,11 +2762,6 @@
         {
           "type": "outputs",
           "name": "websocket",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "zmq4",
           "status": "stable"
         },
         {
@@ -2818,11 +2850,6 @@
           "status": "stable"
         },
         {
-          "type": "processors",
-          "name": "ffi",
-          "status": "stable"
-        },
-        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2878,8 +2905,35 @@
           "status": "stable"
         }
       ],
-      "cloudOnly": [],
-      "cgoOnly": []
+      "cloudOnly": [
+        {
+          "type": "processors",
+          "name": "a2a_message",
+          "status": "stable"
+        }
+      ],
+      "cgoOnly": [
+        {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "ffi",
+          "status": "stable"
+        }
+      ]
     }
   }
 }

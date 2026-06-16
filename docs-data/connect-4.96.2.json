@@ -1,6 +1,6 @@
 {
-  "version": "4.94.1",
-  "date": "2026-05-29T16:43:00Z",
+  "version": "4.96.2",
+  "date": "2026-06-16T14:31:02Z",
   "config": [
     {
       "name": "http",
@@ -14860,7 +14860,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Enables Change Data Capture by consuming from OracleDB.",
-      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- transaction_id: The Oracle transaction ID in `USN.SLOT.SEQ` format, identifying the transaction that produced the change. Not present on snapshot (`read`) messages.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- commit_ts_ms: The timestamp of the transaction commit, expressed as milliseconds since the Unix epoch. Not present on snapshot (`read`) messages.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
+      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- transaction_id: The Oracle transaction ID in `USN.SLOT.SEQ` format, identifying the transaction that produced the change. Not present on snapshot (`read`) messages.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- commit_ts_ms: The timestamp of the transaction commit, expressed as milliseconds since the Unix epoch. Sourced from `V$LOGMNR_CONTENTS.TIMESTAMP` on the COMMIT redo record — this is Oracle's wall-clock time when the commit was written to the redo log, not a dedicated commit-timestamp column. Not present on snapshot (`read`) messages.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
       "categories": [
         "Services"
       ],
@@ -31673,6 +31673,386 @@
       "requiresCgo": false
     },
     {
+      "name": "doris_stream_load",
+      "type": "output",
+      "status": "beta",
+      "plugin": true,
+      "summary": "Writes batches of messages into Apache Doris using Stream Load.",
+      "description": "Each output batch is encoded into a single Doris Stream Load request. The sink first contacts FE and follows the Stream Load redirect to BE before uploading the batch body. The batch is only acknowledged when Doris reports success.\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "categories": [
+        "Services"
+      ],
+      "examples": [
+        {
+          "title": "JSON lines from stdin",
+          "summary": "Read newline-delimited JSON messages and write them into Doris using one Stream Load request per batch.",
+          "config": "\ninput:\n  stdin:\n    scanner:\n      lines: {}\n\noutput:\n  doris_stream_load:\n    url: http://127.0.0.1:8030\n    database: test_db\n    table: events\n    username: root\n    password: secret\n    format: json\n    read_json_by_line: true\n    columns: [id, name, ts]\n"
+        }
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "url",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Backward-compatible single Doris FE HTTP URL, for example http://fe_host:8030. When fe_urls is provided it takes precedence.",
+            "is_advanced": true,
+            "is_optional": true,
+            "examples": [
+              "http://127.0.0.1:8030"
+            ]
+          },
+          {
+            "name": "fe_urls",
+            "type": "string",
+            "kind": "array",
+            "description": "A list of Doris FE HTTP URLs. The sink will try these FE endpoints in order with per-request failover, and the starting FE is rotated across requests.",
+            "is_optional": true,
+            "default": [],
+            "examples": [
+              [
+                "http://fe1:8030",
+                "http://fe2:8030"
+              ]
+            ]
+          },
+          {
+            "name": "database",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Target Doris database.",
+            "examples": [
+              "test_db"
+            ]
+          },
+          {
+            "name": "table",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Target Doris table.",
+            "examples": [
+              "events"
+            ]
+          },
+          {
+            "name": "username",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Doris username.",
+            "examples": [
+              "root"
+            ]
+          },
+          {
+            "name": "password",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Doris password.",
+            "is_secret": true,
+            "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+          },
+          {
+            "name": "query_port",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Doris FE MySQL query port, used by ConnectionTest to verify that the target database and table exist. Set to 0 to disable query-port checks.",
+            "is_advanced": true,
+            "default": 9030
+          },
+          {
+            "name": "format",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Body format sent to Doris Stream Load.",
+            "default": "json",
+            "options": [
+              "json",
+              "csv"
+            ],
+            "linter": "\nlet options = {\n  \"json\": true,\n  \"csv\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "read_json_by_line",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Encode a JSON batch as newline-delimited JSON and set the Doris header read_json_by_line=true.",
+            "default": true
+          },
+          {
+            "name": "strip_outer_array",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Encode a JSON batch as a single JSON array and set the Doris header strip_outer_array=true.",
+            "default": false
+          },
+          {
+            "name": "jsonpaths",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Optional Doris jsonpaths header value.",
+            "is_advanced": true,
+            "is_optional": true,
+            "default": ""
+          },
+          {
+            "name": "json_root",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Optional Doris json_root header value.",
+            "is_advanced": true,
+            "is_optional": true,
+            "default": ""
+          },
+          {
+            "name": "columns",
+            "type": "string",
+            "kind": "array",
+            "description": "Optional Doris columns header. When set the values are joined with commas.",
+            "is_optional": true,
+            "default": []
+          },
+          {
+            "name": "where",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Optional Doris where header for filtering imported rows.",
+            "is_advanced": true,
+            "is_optional": true,
+            "default": ""
+          },
+          {
+            "name": "column_separator",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Column separator used for csv format.",
+            "is_advanced": true,
+            "default": ","
+          },
+          {
+            "name": "line_delimiter",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Line delimiter used for csv batches.",
+            "is_advanced": true,
+            "default": "\n"
+          },
+          {
+            "name": "group_commit",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Optional Doris group_commit mode. Valid values are sync_mode, async_mode, and off_mode. When omitted Doris uses the server default behavior.",
+            "is_advanced": true,
+            "is_optional": true,
+            "default": ""
+          },
+          {
+            "name": "max_filter_ratio",
+            "type": "float",
+            "kind": "scalar",
+            "description": "Optional Doris max_filter_ratio header value.",
+            "is_advanced": true,
+            "is_optional": true,
+            "default": 0
+          },
+          {
+            "name": "partitions",
+            "type": "string",
+            "kind": "array",
+            "description": "Optional Doris partitions header. Values are joined with commas.",
+            "is_advanced": true,
+            "is_optional": true,
+            "default": []
+          },
+          {
+            "name": "temporary_partitions",
+            "type": "string",
+            "kind": "array",
+            "description": "Optional Doris temporary_partitions header. Values are joined with commas.",
+            "is_advanced": true,
+            "is_optional": true,
+            "default": []
+          },
+          {
+            "name": "skip_lines",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Optional Doris skip_lines header.",
+            "is_advanced": true,
+            "is_optional": true,
+            "default": 0
+          },
+          {
+            "name": "empty_field_as_null",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether Doris should treat empty input fields as NULL.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
+            "name": "trim_double_quotes",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether Doris should trim double quotes in CSV/text imports.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
+            "name": "num_as_string",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether Doris should treat JSON numbers as strings.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
+            "name": "fuzzy_parse",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether Doris should enable fuzzy_parse for JSON inputs.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
+            "name": "label_prefix",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Prefix used when generating Doris labels.",
+            "default": "redpanda_connect"
+          },
+          {
+            "name": "headers",
+            "type": "string",
+            "kind": "map",
+            "description": "Optional additional static Stream Load headers. Reserved Doris headers configured by this component take precedence.",
+            "is_advanced": true,
+            "default": {}
+          },
+          {
+            "name": "strict_mode",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether to set Doris strict_mode=true.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
+            "name": "timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Timeout for each Doris HTTP request.",
+            "default": "30s"
+          },
+          {
+            "name": "max_in_flight",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Maximum number of parallel in-flight Doris Stream Load requests.",
+            "default": 8
+          },
+          {
+            "name": "batching",
+            "type": "object",
+            "kind": "",
+            "description": "\nAllows you to configure a xref:configuration:batching.adoc[batching policy].",
+            "examples": [
+              {
+                "byte_size": 5000,
+                "count": 0,
+                "period": "1s"
+              },
+              {
+                "count": 10,
+                "period": "1s"
+              },
+              {
+                "check": "this.contains(\"END BATCH\")",
+                "count": 0,
+                "period": "1m"
+              }
+            ],
+            "children": [
+              {
+                "name": "count",
+                "type": "int",
+                "kind": "scalar",
+                "description": "A number of messages at which the batch should be flushed. If `0` disables count based batching.",
+                "default": 0
+              },
+              {
+                "name": "byte_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "An amount of bytes at which the batch should be flushed. If `0` disables size based batching.",
+                "default": 0
+              },
+              {
+                "name": "period",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A period in which an incomplete batch should be flushed regardless of its size.",
+                "default": "",
+                "examples": [
+                  "1s",
+                  "1m",
+                  "500ms"
+                ]
+              },
+              {
+                "name": "check",
+                "type": "string",
+                "kind": "scalar",
+                "description": "A xref:guides:bloblang/about.adoc[Bloblang query] that should return a boolean value indicating whether a message should end a batch.",
+                "default": "",
+                "bloblang": true,
+                "examples": [
+                  "this.type == \"end_of_transaction\""
+                ]
+              },
+              {
+                "name": "processors",
+                "type": "processor",
+                "kind": "array",
+                "description": "A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.",
+                "is_advanced": true,
+                "is_optional": true,
+                "examples": [
+                  [
+                    {
+                      "archive": {
+                        "format": "concatenate"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "lines"
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "archive": {
+                        "format": "json_array"
+                      }
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "linter": "\nroot = []\nif this.format == \"json\" {\n  if this.read_json_by_line == true && this.strip_outer_array == true {\n    root = root.append(\"read_json_by_line and strip_outer_array cannot both be true\")\n  }\n  if this.read_json_by_line == false && this.strip_outer_array == false {\n    root = root.append(\"json format requires either read_json_by_line or strip_outer_array to be true\")\n  }\n}\nif this.format == \"csv\" {\n  if this.column_separator == \"\" {\n    root = root.append(\"column_separator cannot be empty when format=csv\")\n  }\n  if this.line_delimiter == \"\" {\n    root = root.append(\"line_delimiter cannot be empty when format=csv\")\n  }\n}\nif (this.url.or(\"\").string() == \"\" && this.fe_urls.length() == 0) {\n  root = root.append(\"either url or fe_urls must be configured\")\n}\nif this.partitions.length() > 0 && this.temporary_partitions.length() > 0 {\n  root = root.append(\"partitions and temporary_partitions cannot both be set\")\n}\nif this.max_filter_ratio < 0 || this.max_filter_ratio > 1 {\n  root = root.append(\"max_filter_ratio must be between 0 and 1\")\n}\nif this.group_commit != \"\" && this.group_commit != \"sync_mode\" && this.group_commit != \"async_mode\" && this.group_commit != \"off_mode\" {\n  root = root.append(\"group_commit must be one of sync_mode, async_mode, off_mode\")\n}\n"
+      },
+      "version": "4.86.0",
+      "cloudSupported": false,
+      "requiresCgo": false
+    },
+    {
       "name": "drop",
       "type": "output",
       "status": "stable",
@@ -31822,6 +32202,11 @@
           "title": "Indexing documents from S3",
           "summary": "Here we read messages from a AWS S3 bucket and write them to an Elasticsearch index using the S3 key as the ID for the Elasticsearch document.",
           "config": "\ninput:\n  aws_s3:\n    bucket: \"my-cool-bucket\"\n    prefix: \"bug-facts/\"\n    scanner:\n      to_the_end: {}\noutput:\n  elasticsearch_v8:\n    urls: ['http://localhost:9200']\n    index: \"cool-bug-facts\"\n    action: \"index\"\n    id: ${! meta(\"s3_key\") }\n"
+        },
+        {
+          "title": "Authenticating with an API key",
+          "summary": "Set the `api_key` field to authenticate requests with an Elasticsearch API key. If `api_key` is set, it supersedes the `basic_auth` configuration.",
+          "config": "\noutput:\n  elasticsearch_v8:\n    urls: ['https://localhost:9200']\n    index: \"things\"\n    action: \"index\"\n    id: ${! json(\"id\") }\n    api_key: \"${ELASTICSEARCH_API_KEY}\"\n"
         },
         {
           "title": "Create Documents",
@@ -32038,6 +32423,15 @@
             "default": 64
           },
           {
+            "name": "api_key",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An API key to authenticate with. If set, it supersedes basic authentication.",
+            "is_secret": true,
+            "default": "",
+            "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+          },
+          {
             "name": "basic_auth",
             "type": "object",
             "kind": "scalar",
@@ -32195,6 +32589,11 @@
           "title": "Indexing documents from S3",
           "summary": "Here we read messages from a AWS S3 bucket and write them to an Elasticsearch index using the S3 key as the ID for the Elasticsearch document.",
           "config": "\ninput:\n  aws_s3:\n    bucket: \"my-cool-bucket\"\n    prefix: \"bug-facts/\"\n    scanner:\n      to_the_end: {}\noutput:\n  elasticsearch_v9:\n    urls: ['http://localhost:9200']\n    index: \"cool-bug-facts\"\n    action: \"index\"\n    id: ${! meta(\"s3_key\") }\n"
+        },
+        {
+          "title": "Authenticating with an API key",
+          "summary": "Set the `api_key` field to authenticate requests with an Elasticsearch API key. If `api_key` is set, it supersedes the `basic_auth` configuration.",
+          "config": "\noutput:\n  elasticsearch_v9:\n    urls: ['https://localhost:9200']\n    index: \"things\"\n    action: \"index\"\n    id: ${! json(\"id\") }\n    api_key: \"${ELASTICSEARCH_API_KEY}\"\n"
         },
         {
           "title": "Create Documents",
@@ -32409,6 +32808,15 @@
             "kind": "scalar",
             "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
             "default": 64
+          },
+          {
+            "name": "api_key",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An API key to authenticate with. If set, it supersedes basic authentication.",
+            "is_secret": true,
+            "default": "",
+            "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
           },
           {
             "name": "basic_auth",
@@ -32919,7 +33327,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Streams data into BigQuery using the Storage Write API.",
-      "description": "\nWrites messages to a BigQuery table using the Storage Write API.\nThis provides higher throughput and lower latency than the legacy streaming API or load jobs.\n\nMessages can be formatted as JSON (default) or raw protobuf bytes.\nWhen using JSON format the component automatically fetches the table schema and converts each message to the corresponding proto representation.\n\nWARNING: protojson encodes int64 and uint64 values as strings, bytes as base64-encoded strings, and timestamps as RFC 3339 strings.\nJSON messages must follow these conventions (e.g. `\"age\": \"30\"`, `\"data\": \"aGVsbG8=\"`, `\"created_at\": \"2026-01-02T15:04:05Z\"`); otherwise the write will fail with an unmarshalling error.\n\nWhen batching is enabled the table name is resolved from the first message in each batch.\nAll messages in the same batch are written to that table.\n\nThe interpolated table name is sanitized for BigQuery: dots, hyphens, slashes and whitespace are replaced with underscores, non-ASCII-alphanumeric characters are stripped, leading digits are prefixed with `_`, and the result is truncated to 1024 characters.\nA name that sanitizes to the empty string is rejected as a permanent error.\n\n== Write modes\n\nThe `write_mode` field selects between two write paths:\n\n- `default_stream` (default): the multiplexed default stream. Lowest latency, at-least-once semantics.\n- `pending_stream`: a fresh pending stream is allocated per batch; rows are written with sequential offsets, the stream is finalized, then atomically committed. Provides exactly-once semantics within a single committed batch.\n\n== Auto-create\n\nWhen `auto_create_table` is true, the output creates missing tables on the fly using the configured `schema`, `time_partitioning`, and `clustering`. `AlreadyExists` errors from concurrent creators are treated as success. When the table name is interpolated, every auto-created table receives the same configuration.\n\n== Exactly-once caveat\n\nThe exactly-once guarantee of `pending_stream` is \"exactly-once within a stream\". If a BatchCommitWriteStreams RPC succeeds but its response is lost to a network failure, benthos retries the batch through a new pending stream and the data lands twice. This is a fundamental limitation of the BigQuery Storage Write API exactly-once contract and applies to every implementation.\n",
+      "description": "\nWrites messages to a BigQuery table using the Storage Write API.\nThis provides higher throughput and lower latency than the legacy streaming API or load jobs.\n\nMessages can be formatted as JSON (default) or raw protobuf bytes.\nWhen using JSON format the component automatically fetches the table schema and converts each message to the corresponding proto representation.\n\nWARNING: protojson encodes int64 and uint64 values as strings, bytes as base64-encoded strings, and timestamps as RFC 3339 strings.\nJSON messages must follow these conventions (e.g. `\"age\": \"30\"`, `\"data\": \"aGVsbG8=\"`, `\"created_at\": \"2026-01-02T15:04:05Z\"`); otherwise the write will fail with an unmarshalling error.\n\nWhen batching is enabled the table name is resolved from the first message in each batch.\nAll messages in the same batch are written to that table.\n\nThe interpolated table name is sanitized for BigQuery: dots, hyphens, slashes and whitespace are replaced with underscores, non-ASCII-alphanumeric characters are stripped, leading digits are prefixed with `_`, and the result is truncated to 1024 characters.\nA name that sanitizes to the empty string is rejected as a permanent error.\n\n== Write modes\n\nThe `write_mode` field selects between two write paths:\n\n- `default_stream` (default): the multiplexed default stream. Lowest latency, at-least-once semantics.\n- `pending_stream`: a fresh pending stream is allocated per batch; rows are written with sequential offsets, the stream is finalized, then atomically committed. Provides exactly-once semantics within a single committed batch.\n\n== Auto-create\n\nWhen `auto_create_table` is true, the output creates missing tables on the fly using the configured `schema`, `time_partitioning`, and `clustering`. `AlreadyExists` errors from concurrent creators are treated as success. When the table name is interpolated, every auto-created table receives the same configuration.\n\n== Exactly-once caveat\n\nThe exactly-once guarantee of `pending_stream` is \"exactly-once within a stream\". If a BatchCommitWriteStreams RPC succeeds but its response is lost to a network failure, benthos retries the batch through a new pending stream and the data lands twice. This is a fundamental limitation of the BigQuery Storage Write API exactly-once contract and applies to every implementation.\n\n== CDC migration\n\nWhen migrating from the load-jobs based `gcp_bigquery` output to CDC mode, see the xref:outputs/bigquery_cdc_migration.adoc[CDC migration guide].\n",
       "categories": [
         "GCP",
         "Services"
@@ -32965,14 +33373,39 @@
             "name": "write_mode",
             "type": "string",
             "kind": "scalar",
-            "description": "How the output writes to BigQuery. `default_stream` uses the multiplexed default stream (at-least-once, lowest latency). `pending_stream` allocates a per-batch pending stream that commits atomically, providing exactly-once semantics within a single committed batch.",
+            "description": "How the output writes to BigQuery. `default_stream` uses the multiplexed default stream (at-least-once, lowest latency). `pending_stream` allocates a per-batch pending stream that commits atomically, providing exactly-once semantics within a single committed batch. `upsert` writes UPSERT-only rows to a BigQuery CDC-enabled table; the target table must have a PRIMARY KEY. `upsert_delete` allows both UPSERT and DELETE rows. Both CDC modes use the default stream as required by BigQuery.",
             "is_advanced": true,
             "default": "default_stream",
             "options": [
               "default_stream",
-              "pending_stream"
+              "pending_stream",
+              "upsert",
+              "upsert_delete"
             ],
-            "linter": "\nlet options = {\n  \"default_stream\": true,\n  \"pending_stream\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+            "linter": "\nlet options = {\n  \"default_stream\": true,\n  \"pending_stream\": true,\n  \"upsert\": true,\n  \"upsert_delete\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "change_type",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Bloblang expression resolving to the `_CHANGE_TYPE` pseudo-column value for each row. Must resolve to `UPSERT` or `DELETE` (case-insensitive). Required when `write_mode` is `upsert` or `upsert_delete`. Example: `${! metadata(\"operation\") }`.",
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "change_sequence_number",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Optional Bloblang expression resolving to the `_CHANGE_SEQUENCE_NUMBER` pseudo-column value. Format: 1 to 4 sections of 1 to 16 hexadecimal characters each, separated by `/`. Example: `${! metadata(\"scn\") }` or `${! \"0/0/0/0\" }`. When unset, BigQuery resolves ordering by arrival time.",
+            "is_optional": true,
+            "interpolated": true
+          },
+          {
+            "name": "primary_keys",
+            "type": "string",
+            "kind": "array",
+            "description": "Optional list of primary-key column names. Required when `auto_create_table` is true and `write_mode` is `upsert` or `upsert_delete`. When the target table is pre-existing, the connector falls back to the PRIMARY KEY declared on the table. Up to 16 columns; composite keys are supported in the same order they are listed.",
+            "is_optional": true
           },
           {
             "name": "auto_create_table",
@@ -33231,9 +33664,9 @@
             "name": "schema_resolve_timeout",
             "type": "string",
             "kind": "scalar",
-            "description": "How long a single BigQuery table-metadata fetch can run before being aborted. Coalesced concurrent resolves share one fetch, so this bounds the time a wedged backend can stall every batch routing to the same table.",
+            "description": "How long a single BigQuery table-metadata fetch can run before being aborted. Coalesced concurrent resolves share one fetch, so this bounds the time a wedged backend can stall every batch routing to the same table. On the auto_create_table path the budget covers Metadata→Create→Metadata, so it needs to absorb transient backend slowness on top of the metadata fetch itself.",
             "is_advanced": true,
-            "default": "5s"
+            "default": "15s"
           },
           {
             "name": "schema_evolution_timeout",

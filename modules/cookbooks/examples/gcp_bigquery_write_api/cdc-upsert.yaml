@@ -1,0 +1,51 @@
+# tag::config[]
+input:
+  kafka_franz:
+    seed_brokers: ["${REDPANDA_BROKERS}"]
+    topics: ["${SOURCE_TOPIC}"]
+    consumer_group: bigquery_sink
+
+pipeline:
+  processors:
+    # Stringify the integer primary key for BigQuery's proto3 JSON mapping.
+    - mapping: |
+        root = this
+        root.id = this.id.string()
+
+output:
+  gcp_bigquery_write_api:
+    project: ${GCP_PROJECT}
+    dataset: ${BQ_DATASET}
+    table: ${BQ_TABLE}
+    message_format: json
+    write_mode: upsert
+    primary_keys:
+      - id
+    change_type: '${! "UPSERT" }'
+    auto_create_table: true
+    schema:
+      - name: id
+        type: INTEGER
+        mode: REQUIRED
+      - name: name
+        type: STRING
+      - name: updated_at
+        type: TIMESTAMP
+    batching:
+      count: 1000
+      period: 5s
+# end::config[]
+
+# tag::tests[]
+tests:
+  - name: Stringify the primary key
+    target_processors: '/pipeline/processors/0'
+    input_batch:
+      - json_content:
+          id: 100
+          name: "updated-name"
+    output_batches:
+      - - json_contains:
+            id: "100"
+            name: "updated-name"
+# end::tests[]
