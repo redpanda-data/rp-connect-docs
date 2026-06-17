@@ -1,0 +1,34 @@
+# tag::config[]
+input:
+  tigerbeetle_cdc:
+    cluster_id: ${TB_CLUSTER_ID}
+    addresses:
+      - ${TB_REPLICA_1}
+      - ${TB_REPLICA_2}
+      - ${TB_REPLICA_3}
+    progress_cache: redis_cache
+
+pipeline:
+  processors:
+    - mapping: |
+        root = if meta("event_type") != "single_phase" && meta("event_type") != "two_phase_posted" {
+          deleted()
+        }
+    - mapping: |
+        root.event_type = meta("event_type")
+        root.ledger = meta("ledger")
+        root.transfer_id = this.transfer.id
+        root.amount = this.transfer.amount
+        root.debit_account_id = this.debit_account.id
+        root.credit_account_id = this.credit_account.id
+        root.timestamp_ms = meta("timestamp_ms")
+
+output:
+  stdout:
+    codec: lines
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]

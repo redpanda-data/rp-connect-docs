@@ -2722,6 +2722,11 @@
   ],
   "outputs": [
     {
+      "name": "doris_stream_load",
+      "version": "4.96.0",
+      "description": "Writes batches of messages into Apache Doris using Stream Load.\n\nEach output batch is encoded into a single Doris Stream Load request. The output first contacts a Doris frontend (FE) node and follows the Stream Load redirect to a backend (BE) node before uploading the batch body. A batch is only acknowledged when Doris reports success."
+    },
+    {
       "name": "amqp_0_9",
       "config": {
         "children": [

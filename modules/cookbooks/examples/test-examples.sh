@@ -118,6 +118,7 @@ load_test_config() {
   TEST_ENV_VARS=""
   TEST_OVERRIDES=""
   TEST_TIMEOUT=20
+  SKIP_CONNECT_TEST=false
 
   # Define default reset function (no-op)
   reset_between_tests() { :; }
@@ -158,7 +159,13 @@ run_unit_tests() {
     TOTAL_TESTS=$((TOTAL_TESTS + 1))
     local basename=$(basename "$config_file")
 
-    # Lint the config
+    # Skip both lint and test for cgo-only connectors not recognized by the standard rpk binary
+    if [[ "$SKIP_CONNECT_TEST" == "true" ]]; then
+      log_skip "$basename - skipped (cgo connector not supported by standard rpk binary)"
+      SKIPPED_TESTS=$((SKIPPED_TESTS + 1))
+      TOTAL_TESTS=$((TOTAL_TESTS - 1))
+      continue
+    fi
     if ! rpk connect lint --skip-env-var-check "$config_file" > /dev/null 2>&1; then
       log_error "$basename - lint failed"
       rpk connect lint --skip-env-var-check "$config_file" 2>&1 | head -3

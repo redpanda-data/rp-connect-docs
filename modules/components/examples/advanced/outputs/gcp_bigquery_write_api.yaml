@@ -6,6 +6,9 @@ outputs:
     table: "" # No default (required)
     message_format: json
     write_mode: default_stream
+    change_type: "" # No default (optional)
+    change_sequence_number: "" # No default (optional)
+    primary_keys: [] # No default (optional)
     auto_create_table: false
     schema: []
     time_partitioning:
@@ -27,7 +30,7 @@ outputs:
     stream_idle_timeout: 5m
     stream_sweep_interval: 1m
     max_cached_streams: 1024
-    schema_resolve_timeout: 5s
+    schema_resolve_timeout: 15s
     schema_evolution_timeout: 30s
     endpoint:
       http: ""

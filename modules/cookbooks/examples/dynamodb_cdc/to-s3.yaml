@@ -30,6 +30,7 @@ output:
     bucket: ${S3_BUCKET}
     path: dynamodb-cdc/${DYNAMODB_TABLE}/${! @s3_path }/${! uuid_v4() }.json
     region: ${AWS_REGION}
+    object_canned_acl: private
     batching:
       count: 1000
       period: 1m

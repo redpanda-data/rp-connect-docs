@@ -1,5 +1,5 @@
 = Monitor Pipeline Status
-:description: Learn how to monitor Redpanda Connect pipeline health using status events, including setting up alerts and troubleshooting common issues.
+:description: Monitor Redpanda Connect pipeline health using status events, set up alerts for connection failures, and troubleshoot common issues.
 :learning-objective-1: Consume status events from a Kafka topic
 :learning-objective-2: Configure alerts for pipeline failures and connection errors
 :learning-objective-3: Troubleshoot common status reporting issues
@@ -7,6 +7,12 @@
 include::components:partial$enterprise_component_note.adoc[]
 
 Monitor your Redpanda Connect pipelines in real-time by consuming status events. Status events help you detect connection failures, track pipeline health, and troubleshoot issues before they impact data processing.
+
+After reading this page, you will be able to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
 
 For status event type definitions and message format, see xref:components:redpanda/about.adoc#status_topic[`status_topic` configuration reference].
 
