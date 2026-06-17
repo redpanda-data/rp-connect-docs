@@ -1,0 +1,92 @@
+= Change Data Capture (CDC)
+:description: Capture database changes in real time and stream them to Redpanda topics using native CDC inputs.
+:page-topic-type: concept
+:learning-objective-1: Describe how CDC inputs capture database changes in real time
+:learning-objective-2: Compare Redpanda Connect CDC with Kafka Connect approaches
+:learning-objective-3: Identify which CDC input to use for your database
+
+Redpanda Connect captures row-level changes from databases in real time and streams them to Redpanda glossterm:topic[,topics]. CDC inputs connect directly to database transaction logs or change streams, transforming each change into a glossterm:message[] that downstream applications can process immediately.
+
+After reading this page, you will be able to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+== Common use cases
+
+CDC enables real-time data integration patterns:
+
+* Sync data between databases and data warehouses continuously, eliminating batch ETL delays
+* Build event-driven microservices that react to data changes within milliseconds
+* Replicate data across regions automatically for disaster recovery
+* Feed real-time analytics pipelines from operational databases without impacting performance
+* Keep search indexes synchronized with primary data stores without polling
+
+== CDC inputs in Redpanda Connect
+
+Redpanda Connect CDC inputs use declarative YAML configuration and integrate with xref:guides:bloblang/about.adoc[Bloblang transformations] for data manipulation. This approach eliminates the need for a separate Kafka Connect cluster and provides built-in xref:configuration:interpolation.adoc#bloblang-queries[schema handling].
+
+[cols="1,1,1"]
+|===
+| Feature | Redpanda Connect CDC | Kafka Connect
+
+| Configuration
+| Declarative YAML
+| JSON + REST API
+
+| Transformations
+| Native xref:guides:bloblang/about.adoc[Bloblang]
+| SMTs (Single Message Transforms)
+
+| Schema evolution
+| Built-in Schema Registry support
+| Requires additional configuration
+
+| Deployment
+| Single binary, managed in Redpanda Cloud
+| Separate cluster required
+|===
+
+For managed Redpanda Cloud deployments, CDC glossterm:pipeline[,pipelines] run as fully managed services. For self-hosted deployments, configure CDC inputs using xref:configuration:about.adoc[Redpanda Connect configuration files].
+
+== Supported databases
+
+Redpanda Connect provides CDC inputs for relational databases, NoSQL databases, and cloud services.
+
+=== Relational databases
+
+* xref:components:inputs/postgres_cdc.adoc[PostgreSQL CDC] - Logical replication using replication slots
+* xref:components:inputs/mysql_cdc.adoc[MySQL CDC] - Binary log CDC with GTID support
+* xref:components:inputs/oracledb_cdc.adoc[Oracle CDC] - LogMiner-based CDC for Oracle databases
+* xref:components:inputs/microsoft_sql_server_cdc.adoc[SQL Server CDC] - SQL Server change tracking
+
+=== NoSQL databases
+
+* xref:components:inputs/mongodb_cdc.adoc[MongoDB CDC] - Change streams for replica sets and sharded clusters
+* xref:components:inputs/aws_dynamodb_cdc.adoc[DynamoDB CDC] - DynamoDB Streams for real-time table changes
+
+=== Cloud services
+
+* xref:components:inputs/gcp_spanner_cdc.adoc[Google Cloud Spanner CDC] - Spanner change streams
+* xref:components:inputs/salesforce_cdc.adoc[Salesforce CDC] - Pub/Sub API for Salesforce object changes
+* xref:components:inputs/tigerbeetle_cdc.adoc[TigerBeetle CDC] - TigerBeetle accounting database change streams
+
+== Example patterns and configurations
+
+The following cookbooks demonstrate real-world CDC patterns with complete pipeline configurations.
+
+=== Oracle CDC pipeline
+
+See xref:cookbooks:oracledb_cdc.adoc[Oracle CDC patterns] for complete examples of filtering, transforming, and routing Oracle database changes.
+
+=== DynamoDB CDC pipeline
+
+See xref:cookbooks:dynamodb_cdc.adoc[DynamoDB CDC patterns] for patterns that stream DynamoDB table changes to Redpanda.
+
+== Suggested reading
+
+* xref:guides:bloblang/about.adoc[Transform CDC messages with Bloblang]
+* xref:components:outputs/redpanda.adoc[Configure the Redpanda output]
+* xref:configuration:error_handling.adoc[Handle CDC pipeline failures]
+* xref:guides:delivery_semantics.adoc[Understand message delivery guarantees]
