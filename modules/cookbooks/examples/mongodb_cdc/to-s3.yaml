@@ -1,0 +1,35 @@
+# tag::config[]
+input:
+  mongodb_cdc:
+    url: ${MONGODB_URL}
+    database: ${MONGODB_DB}
+    collections:
+      - orders
+    checkpoint_cache: redis_cache
+    stream_snapshot: true
+
+pipeline:
+  processors:
+    - mapping: |
+        root.operation = meta("operation")
+        root.collection = meta("collection")
+        root.data = this
+        root.timestamp = now()
+
+output:
+  aws_s3:
+    bucket: ${S3_BUCKET}
+    path: >-
+      cdc/${! meta("collection") }/${! timestamp_unix().format_timestamp("2006/01/02/15") }/${! uuid_v4() }.ndjson
+    batching:
+      count: 1000
+      period: 5m
+      processors:
+        - archive:
+            format: lines
+
+cache_resources:
+  - label: redis_cache
+    redis:
+      url: ${REDIS_URL}
+# end::config[]

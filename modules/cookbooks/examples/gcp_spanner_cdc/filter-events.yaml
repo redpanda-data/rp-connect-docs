@@ -1,0 +1,23 @@
+# tag::config[]
+input:
+  gcp_spanner_cdc:
+    project_id: ${GCP_PROJECT_ID}
+    instance_id: ${GCP_INSTANCE_ID}
+    database_id: ${GCP_DATABASE_ID}
+    stream_id: ${GCP_STREAM_ID}
+    allowed_mod_types:
+      - INSERT
+      - UPDATE
+
+pipeline:
+  processors:
+    - mapping: |
+        root.mod_type = meta("mod_type")
+        root.table_name = meta("table_name")
+        root.commit_timestamp = meta("commit_timestamp")
+        root.new_values = this.new_values
+
+output:
+  stdout:
+    codec: lines
+# end::config[]
