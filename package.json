@@ -4,7 +4,9 @@
   "description": "The Antora playbook project for Redpanda documentation.",
   "license": "ISC",
   "scripts": {
+    "clean": "rm -rf docs .cache",
     "build": "antora --to-dir docs --fetch local-antora-playbook.yml --stacktrace",
+    "build:clean": "npm run clean && npm run build",
     "start": "cross-env-shell LIVERELOAD=true npx gulp",
     "serve": "wds --node-resolve --open / --watch --root-dir docs",
     "test-mcp-examples": "cd modules/ai-agents/examples && ./test-all.sh",
