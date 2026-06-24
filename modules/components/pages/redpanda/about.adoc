@@ -8,7 +8,7 @@ include::components:partial$enterprise_component_note.adoc[]
 The Redpanda Connect configuration service allows you to:
 
 - Configure Redpanda cluster credentials in a single configuration block, which is referenced by multiple components in data pipeline. For more information, see the <<pipeline-example,Pipeline example>>.
-- Send logs and status updates to topics on a Redpanda cluster, in addition to the xref:components:logger/about.adoc[default logger].
+- Send logs and status updates to topics on a Redpanda cluster, in addition to the xref:connect:components:logger/about.adoc[default logger].
 
 The `redpanda` namespace contains the configuration of this service.
 
@@ -368,7 +368,7 @@ Specify a custom endpoint for the AWS API.
 
 === `sasl[].aws.credentials`
 
-Manually configure the AWS credentials to use (optional). For more information, see the xref:guides:cloud/aws.adoc[Amazon Web Services guide].
+Manually configure the AWS credentials to use (optional). For more information, see the xref:connect:guides:cloud/aws.adoc[Amazon Web Services guide].
 
 *Type*: `object`
 
@@ -503,7 +503,7 @@ The topic that status updates are sent to. When configured, Redpanda Connect emi
 status_topic: __redpanda.connect.status
 ```
 
-For monitoring and troubleshooting guidance, see xref:guides:monitor-pipeline-status.adoc[].
+For monitoring and troubleshooting guidance, see xref:connect:guides:monitor-pipeline-status.adoc[].
 
 ==== Status event types
 
@@ -541,7 +541,7 @@ Example:
 
 Emitted every 30 seconds (during the same heartbeat cycle) when one or more connections are inactive or experiencing errors. The event includes detailed error information for each failing connection:
 
-* `path`: The configuration path of the connector (see xref:configuration:field_paths.adoc[field paths])
+* `path`: The configuration path of the connector (see xref:connect:configuration:field_paths.adoc[field paths])
 * `label`: Optional label assigned to the connector
 * `message`: The error message describing the connection failure
 
