@@ -51,6 +51,7 @@ For capabilities, guarantees, scheduling, and examples, see the output documenta
 * Must be paired with a `redpanda_migrator` output in the same pipeline.
 * Requires access to a source Kafka or Redpanda cluster.
 * Consumer group configuration is recommended for partition balancing.
+* When the source cluster enforces ACLs, a consumer ACL alone is not enough for the source principal: it needs at minimum topic `READ` *and* `DESCRIBE_CONFIGS`, plus consumer group and cluster permissions. A `READ` ACL grants `DESCRIBE` but not `DESCRIBE_CONFIGS`, so the migrator consumes messages but fails to create topics with `TOPIC_AUTHORIZATION_FAILED`. See xref:cookbooks:redpanda_migrator.adoc#required-permissions[Required permissions].
 
 == Multiple migrator pairs
 When using multiple migrator pairs in a single pipeline, coordination is based on the `label` field. The label of the input and output must match exactly for correct pairing. If labels do not match, migration fails for that pair.

@@ -365,6 +365,104 @@ endif::[]
 
 At this point, the `source` cluster has some data in both `foo` and `bar` topics, and the consumer prints the messages it reads from these topics to `stdout`.
 
+[#required-permissions]
+== Required permissions
+
+This cookbook authenticates as a superuser for simplicity. In production, when the source and destination clusters enforce authorization (ACLs), a basic consumer or producer ACL is not sufficient for Redpanda Migrator. The migrator authenticates to the source cluster with the credentials in the `redpanda_migrator` input, and to the destination cluster with the credentials in the `redpanda_migrator` output, so grant ACLs to each principal as follows.
+
+[IMPORTANT]
+====
+To recreate each topic on the destination with matching settings, Redpanda Migrator reads the source topic's configuration with a `DescribeConfigs` request, which requires the `DESCRIBE_CONFIGS` operation on the topic.
+
+A consumer ACL (`READ`) implicitly grants `DESCRIBE`, but it does *not* grant `DESCRIBE_CONFIGS`. If the source principal has only `READ`, the migrator consumes messages successfully but fails to create topics, logging an error such as:
+
+[,text]
+----
+level=error msg="Failed to send message to redpanda_migrator: creating records: sync topics:
+create topic <topic>: get topic details <topic>: TOPIC_AUTHORIZATION_FAILED:
+Not authorized to access topics: [Topic authorization failed.]"
+----
+
+Despite the `create topic` wording, this failure is the `DescribeConfigs` read against the *source* cluster, not the topic creation on the destination.
+====
+
+=== Source cluster
+
+Grant the source principal (the `redpanda_migrator` input credentials) these ACLs:
+
+[cols="1,1,2"]
+|===
+| Resource | Operations | Purpose
+
+| Topic (migrated topics)
+| `READ`, `DESCRIBE_CONFIGS`
+| Consume records (`READ`, which also grants `DESCRIBE` for metadata and offsets) and read topic configurations to replicate them (`DESCRIBE_CONFIGS`).
+
+| Group (the input's `consumer_group`)
+| `READ`
+| Join the migrator's own consumer group and track progress.
+
+| Group (migrated groups)
+| `DESCRIBE`
+| Read source consumer group offsets. Required when consumer group migration is enabled (`consumer_groups.enabled`, the default).
+
+| Cluster
+| `DESCRIBE`
+| List source consumer groups. Also required to read source ACLs when `sync_topic_acls` is enabled on the output.
+|===
+
+For example, to grant the least-privilege source ACLs to `User:migrator` with `rpk`:
+
+[,bash]
+----
+# Consume records and read topic configs (READ also grants DESCRIBE; DESCRIBE_CONFIGS does not come with READ)
+rpk security acl create --allow-principal User:migrator \
+  --operation read,describe_configs \
+  --topic <migrated-topics>
+
+# READ on the migrator's own consumer group
+rpk security acl create --allow-principal User:migrator \
+  --operation read \
+  --group <migrator-consumer-group>
+
+# DESCRIBE on the groups being migrated (omit if consumer_groups.enabled is false)
+rpk security acl create --allow-principal User:migrator \
+  --operation describe \
+  --group <migrated-groups>
+
+# List consumer groups (and describe ACLs if sync_topic_acls is enabled)
+rpk security acl create --allow-principal User:migrator \
+  --operation describe \
+  --cluster
+----
+
+=== Destination cluster
+
+Grant the destination principal (the `redpanda_migrator` output credentials) these ACLs:
+
+[cols="1,1,2"]
+|===
+| Resource | Operations | Purpose
+
+| Topic (migrated topics)
+| `CREATE`, `WRITE`, `ALTER`, `DESCRIBE_CONFIGS`
+| Create topics (`CREATE` and `DESCRIBE_CONFIGS`), produce migrated records (`WRITE`), and add partitions to match the source (`ALTER`). These operations also grant `DESCRIBE`.
+
+| Cluster
+| `CREATE`
+| Allow creating destination topics whose names are not known in advance. Use instead of per-topic `CREATE`.
+
+| Group (migrated groups)
+| `READ`
+| Commit translated consumer group offsets. Required when consumer group migration is enabled (`consumer_groups.enabled`, the default).
+
+| Cluster
+| `ALTER`
+| Create migrated ACLs on the destination. Required only when `sync_topic_acls` is enabled.
+|===
+
+TIP: Run `rpk security acl --help-operations` to see which ACL operation each Kafka request requires.
+
 == Configure and start Redpanda Migrator
 
 The unified Redpanda Migrator does the following:
