@@ -42,6 +42,16 @@ include::components:example$advanced/outputs/redpanda_migrator.yaml[]
 ======
 
 
+== Requirements
+
+When the destination cluster enforces ACLs, the destination principal needs permission to create topics and add partitions, not only to produce records. Grant these ACLs at minimum:
+
+* Topic `CREATE`, `WRITE`, `ALTER`, and `DESCRIBE_CONFIGS`. Cluster `CREATE` also authorizes topic creation.
+* When consumer group migration is enabled, consumer group `READ`.
+* When `sync_topic_acls` is enabled, cluster `ALTER`.
+
+For the source-principal ACLs and full details, see xref:cookbooks:redpanda_migrator.adoc#required-permissions[Required permissions].
+
 == Multiple migrator pairs
 
 Each migrator pair requires a unique `label`. Set the same label value on both the input and output within a pair. Labels must match exactly; mismatched labels prevent the input and output from coordinating.
