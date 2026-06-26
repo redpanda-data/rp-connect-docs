@@ -15,6 +15,63 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+
+== Version 4.98.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.98.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:configs/error_handling.adoc[error_handling]
+|Config
+|object
+|Configures engine-wide error handling behaviour.
+
+|xref:components:processors/try_catch.adoc[try_catch]
+|Processors
+|beta
+|adoc[`catch`] processors into a single block with an explicit recovery path.
+
+|===
+
+
+== Version 4.97.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.97.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|input_type
+|Specifies the type of input passed to the model. Required by Cohere embedding models; ignored by Amazon Titan models.
+|*Processors:*
+
+* xref:components:processors/aws_bedrock_embeddings.adoc#input_type[aws_bedrock_embeddings]
+
+
+|json
+|Configuration for how to decode schemas that are of type JSON.
+|*Processors:*
+
+* xref:components:processors/schema_registry_decode.adoc#json[schema_registry_decode]
+
+
+|===
+
+
 == Version 4.96.3
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.96.3[See the full release notes^].
