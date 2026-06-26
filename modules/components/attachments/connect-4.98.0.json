@@ -1,6 +1,6 @@
 {
-  "version": "4.96.3",
-  "date": "2026-06-17T18:39:29Z",
+  "version": "4.98.0",
+  "date": "2026-06-26T08:38:05Z",
   "config": [
     {
       "name": "http",
@@ -375,6 +375,23 @@
       "kind": "scalar",
       "description": "The maximum period of time to wait for a clean shutdown. If this time is exceeded Redpanda Connect will forcefully close.",
       "default": "20s"
+    },
+    {
+      "name": "error_handling",
+      "type": "object",
+      "kind": "scalar",
+      "description": "Configures engine-wide error handling behaviour.",
+      "is_advanced": true,
+      "children": [
+        {
+          "name": "strict",
+          "type": "bool",
+          "kind": "scalar",
+          "description": "When enabled, a processing error is terminal for the affected message: it skips the remaining processors in its pipeline and is rejected (nacked) at the output rather than written. To recover from an expected error, wrap the fallible step within a `try_catch` processor (or a `retry` processor for transient failures); a standalone `catch` does not recover messages under this mode, as the failed message short-circuits past it. This setting will become the default and only behaviour in the next major version.",
+          "is_advanced": true,
+          "default": false
+        }
+      ]
     },
     {
       "name": "tests",
@@ -14884,7 +14901,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Enables Change Data Capture by consuming from OracleDB.",
-      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- transaction_id: The Oracle transaction ID in `USN.SLOT.SEQ` format, identifying the transaction that produced the change. Not present on snapshot (`read`) messages.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- commit_ts_ms: The timestamp of the transaction commit, expressed as milliseconds since the Unix epoch. Sourced from `V$LOGMNR_CONTENTS.TIMESTAMP` on the COMMIT redo record — this is Oracle's wall-clock time when the commit was written to the redo log, not a dedicated commit-timestamp column. Not present on snapshot (`read`) messages.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
+      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: The System Change Number in Oracle. Messages published as part of a snapshot will contain Oracle's current SCN captured at time of snapshot.\n- transaction_id: The Oracle transaction ID in `USN.SLOT.SEQ` format, identifying the transaction that produced the change. Not present on snapshot (`read`) messages.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- commit_ts_ms: The timestamp of the transaction commit, expressed as milliseconds since the Unix epoch. Sourced from `V$LOGMNR_CONTENTS.TIMESTAMP` on the COMMIT redo record — this is Oracle's wall-clock time when the commit was written to the redo log, not a dedicated commit-timestamp column. Not present on snapshot (`read`) messages.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
       "categories": [
         "Services"
       ],
@@ -14958,6 +14975,20 @@
                 "kind": "scalar",
                 "description": "The SCN range to mine per cycle. Each cycle reads changes between the current SCN and current SCN + scn_window_size. Smaller values mean more frequent queries with lower memory usage but higher overhead; larger values reduce query frequency and improve throughput at the cost of higher memory usage per cycle.",
                 "default": 20000
+              },
+              {
+                "name": "min_scn_window_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "The minimum SCN gap required before starting a new LogMiner session. When the gap between the connector's current position and the database's current SCN is smaller than this value, the mining cycle is skipped and the connector backs off instead. This prevents excessive LogMiner start/stop cycles on low-traffic databases where Oracle background activity advances the SCN without producing relevant events. Set to 0 to disable.",
+                "default": 1000
+              },
+              {
+                "name": "max_scn_window_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "The maximum SCN range that can be mined in a single cycle. The window starts at scn_window_size and grows by scn_window_size each cycle that ends at the cap (backlog present), up to this limit. It shrinks by the same step each cycle that catches up to the database. This allows the connector to automatically mine larger windows during heavy backlog and smaller windows during steady state.",
+                "default": 100000
               },
               {
                 "name": "backoff_interval",
@@ -33054,12 +33085,12 @@
                 "Append each message to the output stream without any delimiter or special encoding."
               ],
               [
-                "lines",
-                "Append each message to the output stream followed by a line break."
-              ],
-              [
                 "delim:x",
                 "Append each message to the output stream followed by a custom delimiter."
+              ],
+              [
+                "lines",
+                "Append each message to the output stream followed by a line break."
               ]
             ],
             "version": "3.33.0"
@@ -50895,7 +50926,8 @@
               "amazon.titan-embed-text-v1",
               "amazon.titan-embed-text-v2:0",
               "cohere.embed-english-v3",
-              "cohere.embed-multilingual-v3"
+              "cohere.embed-multilingual-v3",
+              "cohere.embed-v4:0"
             ]
           },
           {
@@ -50904,6 +50936,32 @@
             "kind": "scalar",
             "description": "The prompt you want to generate a vector embedding for. The processor submits the entire payload as a string.",
             "is_optional": true
+          },
+          {
+            "name": "input_type",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Specifies the type of input passed to the model. Required by Cohere embedding models; ignored by Amazon Titan models.",
+            "is_optional": true,
+            "annotated_options": [
+              [
+                "classification",
+                "Used for embeddings passed through a text classifier."
+              ],
+              [
+                "clustering",
+                "Used for the embeddings run through a clustering algorithm."
+              ],
+              [
+                "search_document",
+                "Used for embeddings stored in a vector database for search use-cases."
+              ],
+              [
+                "search_query",
+                "Used for embeddings of search queries run against a vector DB to find relevant documents."
+              ]
+            ],
+            "linter": "\nlet options = {\n  \"classification\": true,\n  \"clustering\": true,\n  \"search_document\": true,\n  \"search_query\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
         ]
       },
@@ -51915,7 +51973,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Applies a list of child processors _only_ when a previous processing step has failed.",
-      "description": "\nBehaves similarly to the xref:components:processors/for_each.adoc[`for_each`] processor, where a list of child processors are applied to individual messages of a batch. However, processors are only applied to messages that failed a processing step prior to the catch.\n\nFor example, with the following config:\n\n```yaml\npipeline:\n  processors:\n    - resource: foo\n    - catch:\n      - resource: bar\n      - resource: baz\n```\n\nIf the processor `foo` fails for a particular message, that message will be fed into the processors `bar` and `baz`. Messages that do not fail for the processor `foo` will skip these processors.\n\nWhen messages leave the catch block their fail flags are cleared. This processor is useful for when it's possible to recover failed messages, or when special actions (such as logging/metrics) are required before dropping them.\n\nMore information about error handling can be found in xref:configuration:error_handling.adoc[].",
+      "description": "\nBehaves similarly to the xref:components:processors/for_each.adoc[`for_each`] processor, where a list of child processors are applied to individual messages of a batch. However, processors are only applied to messages that failed a processing step prior to the catch.\n\nFor example, with the following config:\n\n```yaml\npipeline:\n  processors:\n    - resource: foo\n    - catch:\n      - resource: bar\n      - resource: baz\n```\n\nIf the processor `foo` fails for a particular message, that message will be fed into the processors `bar` and `baz`. Messages that do not fail for the processor `foo` will skip these processors.\n\nWhen messages leave the catch block their fail flags are cleared. This processor is useful for when it's possible to recover failed messages, or when special actions (such as logging/metrics) are required before dropping them.\n\nNOTE: When strict error handling (`error_handling.strict`) is enabled this processor does not recover anything, as a failed message short-circuits past it rather than reaching it. Use the xref:components:processors/try_catch.adoc[`try_catch`] processor instead, which contains both the fallible step and its recovery.\n\nMore information about error handling can be found in xref:configuration:error_handling.adoc[].",
       "categories": [
         "Composition"
       ],
@@ -59687,6 +59745,22 @@
             ]
           },
           {
+            "name": "json",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Configuration for how to decode schemas that are of type JSON.",
+            "children": [
+              {
+                "name": "coerce_data",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether decoded values should be coerced to match the types declared in the JSON Schema. By default JSON Schema decoding only validates the message and leaves it untouched, which means numbers are later interpreted as floating point (`double`) and date-time values as strings. When set to `true` the decoder rebuilds the message so that values match the schema: `integer` fields become 64-bit integers, `number` fields stay floating point, `string` fields with `format: date-time` become timestamps, and any `default` values declared in the schema are applied to absent fields. This is useful for downstream components that infer their schema from the decoded values, such as the `iceberg` outputs, which will then create `bigint` columns for integer fields rather than `double`. Note that, unlike the default behaviour, this is no longer a read-only operation: the message contents are transformed. Because coercion is stricter than validation, a message that passes validation may still fail coercion (for example an integer that overflows a 64-bit value, or a `date-time` string that is not valid RFC 3339), in which case the error can be caught using xref:configuration:error_handling.adoc[error handling methods].",
+                "default": false,
+                "version": "4.97.0"
+              }
+            ]
+          },
+          {
             "name": "cache_duration",
             "type": "string",
             "kind": "scalar",
@@ -60436,7 +60510,7 @@
             "name": "extras",
             "type": "string",
             "kind": "scalar",
-            "description": "A mapping that must evaluate to an object. If this mapping produces a value, then it is set on a sentry event as extras.",
+            "description": "A mapping that must evaluate to an object. If this mapping produces a value, then it is attached to the sentry event as a context named `extras`. (Prior to v4.x this populated the event's deprecated Additional Data section, which the upstream sentry-go SDK removed.)",
             "is_optional": true,
             "bloblang": true,
             "examples": [
@@ -61635,6 +61709,47 @@
         "type": "processor",
         "kind": "array",
         "default": []
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
+    },
+    {
+      "name": "try_catch",
+      "type": "processor",
+      "status": "beta",
+      "plugin": true,
+      "summary": "Executes a list of child `processors` on each message and, if any of them fail, executes a separate list of `catch` processors to recover from or react to the error.",
+      "description": "\nThis processor combines the behaviour of the xref:components:processors/try.adoc[`try`] and xref:components:processors/catch.adoc[`catch`] processors into a single block with an explicit recovery path. Because it contains both the fallible step and its recovery within a single processor, it is the recommended way to handle expected errors when strict error handling (`error_handling.strict`) is enabled.\n\nEach message of a batch is processed individually. The `processors` field is executed with \"try\" semantics: as soon as a processor fails for a given message the remaining `processors` are skipped for that message.\n\nAny message that failed is then routed to the `catch` processors. Before they run, the failure is moved off the message: it is stored as a structured object in a metadata field (see `error_metadata`, `error` by default) and the message's failure flag is **cleared**. The error is therefore available to recovery logic as an ordinary variable rather than as a message property. The object contains:\n\n- `what`: the error message.\n- `name`: the name of the component that failed (when known).\n- `label`: the label of the component that failed (when set).\n- `path`: the dot-path of the component that failed (when known).\n\nSo a recovery mapping reads the failure with, for example, `@error.what` (equivalent to `meta(\"error\").what`). Because the flag is cleared, the `catch` processors run under the normal error semantics — including strict — so a _new_ failure raised while recovering is treated as a fresh error and is not silently tolerated.\n\nNote that because the failure flag is cleared before the `catch` processors run, the xref:guides:bloblang/functions.adoc#error[`error`] and `error_source_*` functions do not report the original failure within the `catch` block; use the metadata object instead. An empty or omitted `catch` simply records the error in metadata and clears the flag (the failure is swallowed).\n\n```yaml\npipeline:\n  processors:\n    - try_catch:\n        processors:\n          - resource: foo\n          - resource: bar\n        catch:\n          - mutation: 'root = \"failed to process: \" + @error.what'\n```\n\nIn the example above, if either `foo` or `bar` fails for a message then the `mutation` is applied to that message, replacing its contents with a description of the error (read from the metadata object), and the message continues downstream without a failure flag.\n\nMore information about error handling can be found in xref:configuration:error_handling.adoc[].",
+      "categories": [
+        "Composition"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "processors",
+            "type": "processor",
+            "kind": "array",
+            "description": "A list of processors to execute on each message. If a processor fails for a given message the remaining processors in this list are skipped for that message, and the message is routed to the `catch` processors.",
+            "default": []
+          },
+          {
+            "name": "catch",
+            "type": "processor",
+            "kind": "array",
+            "description": "A list of processors to execute on each message that failed one of the `processors` above. The message is no longer flagged as failed when these run; the error is available as an object in the metadata field named by `error_metadata` (e.g. `@error.what`). When omitted or empty the error is recorded in metadata and the flag is cleared (the failure is swallowed).",
+            "default": []
+          },
+          {
+            "name": "error_metadata",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The metadata key under which the caught error is stored, as an object with a `what` field (the error message) plus `name`, `label` and `path` fields describing the component that failed, before the `catch` processors are executed.",
+            "default": "error"
+          }
+        ]
       },
       "cloudSupported": true,
       "requiresCgo": false

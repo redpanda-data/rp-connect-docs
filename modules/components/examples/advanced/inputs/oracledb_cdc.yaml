@@ -9,6 +9,8 @@ inputs:
     snapshot_max_batch_size: 1000
     logminer:
       scn_window_size: 20000
+      min_scn_window_size: 1000
+      max_scn_window_size: 100000
       backoff_interval: 5s
       mining_interval: 300ms
       strategy: online_catalog
