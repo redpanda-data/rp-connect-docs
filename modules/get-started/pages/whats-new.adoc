@@ -7,16 +7,6 @@ This topic includes new content added from version 4.29.0 onwards.
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:cloud-data-platform:get-started:whats-new-cloud.adoc[].
 
 
-
-
-
-
-
-
-
-
-
-
 == Version 4.98.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.98.0[See the full release notes^].
@@ -29,15 +19,15 @@ This release adds the following new components:
 |===
 |Component |Type |Status |Description
 
-|xref:components:configs/error_handling.adoc[error_handling]
+|xref:configuration:error_handling.adoc[error_handling]
 |Config
-|object
-|Configures engine-wide error handling behaviour.
+|stable
+|Configures engine-wide error handling behavior.
 
 |xref:components:processors/try_catch.adoc[try_catch]
 |Processors
 |beta
-|adoc[`catch`] processors into a single block with an explicit recovery path.
+|Combines the behavior of the `try` and `catch` processors into a single block with an explicit recovery path.
 
 |===
 
