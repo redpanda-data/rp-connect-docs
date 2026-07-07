@@ -1,7 +1,7 @@
 = Error Handling
 // tag::single-source[]
 
-Redpanda Connect supports a range of xref:components:processors/about.adoc[processors], such as `http` and `aws_lambda`, that may fail when retry attempts are exhausted. When a processor fails, the message data continues through the pipeline mostly unchanged, except for the addition of a metadata flag, which you can use for handling errors.
+Redpanda Connect supports a range of xref:components:processors/about.adoc[processors], such as `http` and `aws_lambda`, that may fail when retry attempts are exhausted. By default, when a processor fails, the message data continues through the pipeline mostly unchanged, except for the addition of a metadata flag, which you can use for handling errors. To make processing errors terminal instead, see <<strict-error-handling>>.
 
 ifndef::env-cloud[]
 This topic explains some common error-handling patterns, including dropping messages, recovering them with more processing, and routing them to a dead-letter queue. It also shows how to combine these approaches, where appropriate, and provides a method for <<logging-fatal-errors, trapping unhandled errors>>.
@@ -9,6 +9,33 @@ endif::[]
 ifdef::env-cloud[]
 This topic explains some common error-handling patterns, including dropping messages, recovering them with more processing, and routing them to a dead-letter queue. It also shows how to combine these approaches, where appropriate.
 endif::[]
+
+[#strict-error-handling]
+== Strict error handling
+
+To make processing errors terminal instead of relying on error flags, enable strict error handling with the top-level `error_handling` configuration block:
+
+[source,yaml]
+----
+error_handling:
+  strict: true
+----
+
+When `error_handling.strict` is enabled:
+
+- A processing error is terminal for the affected message. The message skips the remaining processors in its pipeline.
+- The failed message is rejected (nacked) at the output rather than written.
+- A standalone `catch` processor does not recover failed messages, because a failed message short-circuits past it.
+
+To recover from an expected error under strict mode, wrap the fallible step and its recovery logic in a xref:components:processors/try_catch.adoc[`try_catch` processor]. To retry transient failures until they succeed, use a xref:components:processors/retry.adoc[`retry` processor].
+
+ifndef::env-cloud[]
+Strict error handling requires Redpanda Connect 4.98.0 or later.
+endif::[]
+
+NOTE: Strict error handling will become the default and only behavior in the next major version of Redpanda Connect.
+
+The rest of this topic describes error-handling patterns for the default behavior.
 
 == Abandon on failure
 
