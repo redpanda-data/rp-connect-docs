@@ -7,12 +7,59 @@ This topic includes new content added from version 4.29.0 onwards.
 For a full list of product updates, and details of updates prior to version 4.29.0, see the https://github.com/redpanda-data/connect/blob/main/CHANGELOG.md[Redpanda Connect changelog^]. For new Cloud-specific features, see xref:cloud-data-platform:get-started:whats-new-cloud.adoc[].
 
 
+== Version 4.98.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.98.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:configuration:error_handling.adoc[error_handling]
+|Config
+|stable
+|Configures engine-wide error handling behavior.
+
+|xref:components:processors/try_catch.adoc[try_catch]
+|Processors
+|beta
+|Combines the behavior of the `try` and `catch` processors into a single block with an explicit recovery path.
+
+|===
 
 
+== Version 4.97.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.97.0[See the full release notes^].
 
 
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|input_type
+|Specifies the type of input passed to the model. Required by Cohere embedding models; ignored by Amazon Titan models.
+|*Processors:*
+
+* xref:components:processors/aws_bedrock_embeddings.adoc#input_type[aws_bedrock_embeddings]
 
 
+|json
+|Configuration for how to decode schemas that are of type JSON.
+|*Processors:*
+
+* xref:components:processors/schema_registry_decode.adoc#json[schema_registry_decode]
+
+
+|===
 
 
 == Version 4.96.3

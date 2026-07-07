@@ -1,11 +1,11 @@
 {
   "comparison": {
-    "oldVersion": "4.96.2",
-    "newVersion": "4.96.3",
-    "timestamp": "2026-06-17T19:00:12.814Z"
+    "oldVersion": "4.97.0",
+    "newVersion": "4.98.0",
+    "timestamp": "2026-06-26T08:58:15.060Z"
   },
   "summary": {
-    "newComponents": 0,
+    "newComponents": 2,
     "removedComponents": 0,
     "newFields": 0,
     "removedFields": 0,
@@ -21,7 +21,28 @@
     "deprecatedBloblangFunctions": 0
   },
   "details": {
-    "newComponents": [],
+    "newComponents": [
+      {
+        "name": "error_handling",
+        "type": "config",
+        "status": "object",
+        "version": "",
+        "description": "Configures engine-wide error handling behaviour.",
+        "requiresCgo": false,
+        "cloudOnly": false,
+        "cloudSupported": false
+      },
+      {
+        "name": "try_catch",
+        "type": "processors",
+        "status": "beta",
+        "version": "",
+        "description": "\nThis processor combines the behaviour of the xref:components:processors/try.adoc[`try`] and xref:components:processors/catch.adoc[`catch`] processors into a single block with an explicit recovery path. Because it contains both the fallible step and its recovery within a single processor, it is the recommended way to handle expected errors when strict error handling (`error_handling.strict`) is enabled.\n\nEach message of a batch is processed individually. The `processors` field is executed with \"try\" semantics: as soon as a processor fails for a given message the remaining `processors` are skipped for that message.\n\nAny message that failed is then routed to the `catch` processors. Before they run, the failure is moved off the message: it is stored as a structured object in a metadata field (see `error_metadata`, `error` by default) and the message's failure flag is **cleared**. The error is therefore available to recovery logic as an ordinary variable rather than as a message property. The object contains:\n\n- `what`: the error message.\n- `name`: the name of the component that failed (when known).\n- `label`: the label of the component that failed (when set).\n- `path`: the dot-path of the component that failed (when known).\n\nSo a recovery mapping reads the failure with, for example, `@error.what` (equivalent to `meta(\"error\").what`). Because the flag is cleared, the `catch` processors run under the normal error semantics — including strict — so a _new_ failure raised while recovering is treated as a fresh error and is not silently tolerated.\n\nNote that because the failure flag is cleared before the `catch` processors run, the xref:guides:bloblang/functions.adoc#error[`error`] and `error_source_*` functions do not report the original failure within the `catch` block; use the metadata object instead. An empty or omitted `catch` simply records the error in metadata and clears the flag (the failure is swallowed).\n\n```yaml\npipeline:\n  processors:\n    - try_catch:\n        processors:\n          - resource: foo\n          - resource: bar\n        catch:\n          - mutation: 'root = \"failed to process: \" + @error.what'\n```\n\nIn the example above, if either `foo` or `bar` fails for a message then the `mutation` is applied to that message, replacing its contents with a description of the error (read from the metadata object), and the message continues downstream without a failure flag.\n\nMore information about error handling can be found in xref:configuration:error_handling.adoc[].",
+        "requiresCgo": false,
+        "cloudOnly": false,
+        "cloudSupported": true
+      }
+    ],
     "removedComponents": [],
     "newFields": [],
     "removedFields": [],
@@ -38,49 +59,33 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.96.3",
-      "cloud": "4.96.3",
-      "cgo": "4.96.3"
+      "oss": "4.98.0",
+      "cloud": "4.98.0",
+      "cgo": "4.98.0"
     },
     "current": {
-      "cloudSupported": 486,
+      "cloudSupported": 488,
       "selfHostedOnly": 75,
       "cgoOnly": 4
     },
     "changes": {
       "cloud": {
-        "added": [],
-        "removed": [
+        "added": [
           {
-            "type": "processors",
-            "name": "a2a_message",
-            "status": "stable"
-          }
-        ]
-      },
-      "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "stable"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
+            "type": "config",
+            "name": "error_handling",
+            "status": "object"
           },
           {
             "type": "processors",
-            "name": "ffi",
-            "status": "stable"
+            "name": "try_catch",
+            "status": "beta"
           }
         ],
+        "removed": []
+      },
+      "cgo": {
+        "newCgoOnly": [],
         "removedCgoOnly": []
       }
     },
@@ -160,6 +165,11 @@
           "type": "config",
           "name": "shutdown_timeout",
           "status": "string"
+        },
+        {
+          "type": "config",
+          "name": "error_handling",
+          "status": "object"
         },
         {
           "type": "config",
@@ -1245,6 +1255,11 @@
           "type": "processors",
           "name": "try",
           "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "try_catch",
+          "status": "beta"
         },
         {
           "type": "processors",

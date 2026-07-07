@@ -1,6 +1,6 @@
 {
-  "version": "4.96.3",
-  "date": "2026-06-17T18:39:29Z",
+  "version": "4.97.0",
+  "date": "2026-06-18T21:56:48Z",
   "config": [
     {
       "name": "http",
@@ -14934,6 +14934,20 @@
                 "kind": "scalar",
                 "description": "The SCN range to mine per cycle. Each cycle reads changes between the current SCN and current SCN + scn_window_size. Smaller values mean more frequent queries with lower memory usage but higher overhead; larger values reduce query frequency and improve throughput at the cost of higher memory usage per cycle.",
                 "default": 20000
+              },
+              {
+                "name": "min_scn_window_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "The minimum SCN gap required before starting a new LogMiner session. When the gap between the connector's current position and the database's current SCN is smaller than this value, the mining cycle is skipped and the connector backs off instead. This prevents excessive LogMiner start/stop cycles on low-traffic databases where Oracle background activity advances the SCN without producing relevant events. Set to 0 to disable.",
+                "default": 1000
+              },
+              {
+                "name": "max_scn_window_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "The maximum SCN range that can be mined in a single cycle. The window starts at scn_window_size and grows by scn_window_size each cycle that ends at the cap (backlog present), up to this limit. It shrinks by the same step each cycle that catches up to the database. This allows the connector to automatically mine larger windows during heavy backlog and smaller windows during steady state.",
+                "default": 100000
               },
               {
                 "name": "backoff_interval",
@@ -50845,7 +50859,8 @@
               "amazon.titan-embed-text-v1",
               "amazon.titan-embed-text-v2:0",
               "cohere.embed-english-v3",
-              "cohere.embed-multilingual-v3"
+              "cohere.embed-multilingual-v3",
+              "cohere.embed-v4:0"
             ]
           },
           {
@@ -50854,6 +50869,32 @@
             "kind": "scalar",
             "description": "The prompt you want to generate a response for. By default, the processor submits the entire payload as a string.",
             "is_optional": true
+          },
+          {
+            "name": "input_type",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Specifies the type of input passed to the model. Required by Cohere embedding models; ignored by Amazon Titan models.",
+            "is_optional": true,
+            "annotated_options": [
+              [
+                "classification",
+                "Used for embeddings passed through a text classifier."
+              ],
+              [
+                "clustering",
+                "Used for the embeddings run through a clustering algorithm."
+              ],
+              [
+                "search_document",
+                "Used for embeddings stored in a vector database for search use-cases."
+              ],
+              [
+                "search_query",
+                "Used for embeddings of search queries run against a vector DB to find relevant documents."
+              ]
+            ],
+            "linter": "\nlet options = {\n  \"classification\": true,\n  \"clustering\": true,\n  \"search_document\": true,\n  \"search_query\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
         ]
       },
@@ -59631,6 +59672,22 @@
                 "kind": "scalar",
                 "description": "If messages should be serialized to JSON bytes. If false then the message is kept in decoded form, which means that 64 bit integers are not converted to strings and types for bytes and google.protobuf.Timestamp are preserved (as they are not serialized to JSON strings).",
                 "default": true
+              }
+            ]
+          },
+          {
+            "name": "json",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Configuration for how to decode schemas that are of type JSON.",
+            "children": [
+              {
+                "name": "coerce_data",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether decoded values should be coerced to match the types declared in the JSON Schema. By default JSON Schema decoding only validates the message and leaves it untouched, which means numbers are later interpreted as floating point (`double`) and date-time values as strings. When set to `true` the decoder rebuilds the message so that values match the schema: `integer` fields become 64-bit integers, `number` fields stay floating point, `string` fields with `format: date-time` become timestamps, and any `default` values declared in the schema are applied to absent fields. This is useful for downstream components that infer their schema from the decoded values, such as the `iceberg` outputs, which will then create `bigint` columns for integer fields rather than `double`. Note that, unlike the default behaviour, this is no longer a read-only operation: the message contents are transformed. Because coercion is stricter than validation, a message that passes validation may still fail coercion (for example an integer that overflows a 64-bit value, or a `date-time` string that is not valid RFC 3339), in which case the error can be caught using xref:configuration:error_handling.adoc[error handling methods].",
+                "default": false,
+                "version": "4.97.0"
               }
             ]
           },
