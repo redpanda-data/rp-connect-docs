@@ -1,16 +1,16 @@
 {
   "comparison": {
-    "oldVersion": "4.97.0",
-    "newVersion": "4.98.0",
-    "timestamp": "2026-06-26T08:58:15.060Z"
+    "oldVersion": "4.98.0",
+    "newVersion": "4.99.0",
+    "timestamp": "2026-07-09T16:33:44.026Z"
   },
   "summary": {
-    "newComponents": 2,
+    "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 0,
+    "newFields": 5,
     "removedFields": 0,
     "deprecatedComponents": 0,
-    "deprecatedFields": 0,
+    "deprecatedFields": 1,
     "changedDefaults": 0,
     "platformTransitions": 0,
     "newBloblangMethods": 0,
@@ -21,33 +21,45 @@
     "deprecatedBloblangFunctions": 0
   },
   "details": {
-    "newComponents": [
+    "newComponents": [],
+    "removedComponents": [],
+    "newFields": [
       {
-        "name": "error_handling",
-        "type": "config",
-        "status": "object",
-        "version": "",
-        "description": "Configures engine-wide error handling behaviour.",
-        "requiresCgo": false,
-        "cloudOnly": false,
-        "cloudSupported": false
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "global_table",
+        "description": "Provision the checkpoint table as a DynamoDB Global Table (v2) so checkpoints replicate across regions. Requires `global_table_replicas`. When the table is auto-created it is created as a global table; when it already exists, its replicas are reconciled (missing regions are added via `UpdateTable`). The existing table must have been created in global mode (`TableId` hash key) — enabling this against a pre-existing non-global checkpoint table fails fast with a clear error."
       },
       {
-        "name": "try_catch",
-        "type": "processors",
-        "status": "beta",
-        "version": "",
-        "description": "\nThis processor combines the behaviour of the xref:components:processors/try.adoc[`try`] and xref:components:processors/catch.adoc[`catch`] processors into a single block with an explicit recovery path. Because it contains both the fallible step and its recovery within a single processor, it is the recommended way to handle expected errors when strict error handling (`error_handling.strict`) is enabled.\n\nEach message of a batch is processed individually. The `processors` field is executed with \"try\" semantics: as soon as a processor fails for a given message the remaining `processors` are skipped for that message.\n\nAny message that failed is then routed to the `catch` processors. Before they run, the failure is moved off the message: it is stored as a structured object in a metadata field (see `error_metadata`, `error` by default) and the message's failure flag is **cleared**. The error is therefore available to recovery logic as an ordinary variable rather than as a message property. The object contains:\n\n- `what`: the error message.\n- `name`: the name of the component that failed (when known).\n- `label`: the label of the component that failed (when set).\n- `path`: the dot-path of the component that failed (when known).\n\nSo a recovery mapping reads the failure with, for example, `@error.what` (equivalent to `meta(\"error\").what`). Because the flag is cleared, the `catch` processors run under the normal error semantics — including strict — so a _new_ failure raised while recovering is treated as a fresh error and is not silently tolerated.\n\nNote that because the failure flag is cleared before the `catch` processors run, the xref:guides:bloblang/functions.adoc#error[`error`] and `error_source_*` functions do not report the original failure within the `catch` block; use the metadata object instead. An empty or omitted `catch` simply records the error in metadata and clears the flag (the failure is swallowed).\n\n```yaml\npipeline:\n  processors:\n    - try_catch:\n        processors:\n          - resource: foo\n          - resource: bar\n        catch:\n          - mutation: 'root = \"failed to process: \" + @error.what'\n```\n\nIn the example above, if either `foo` or `bar` fails for a message then the `mutation` is applied to that message, replacing its contents with a description of the error (read from the metadata object), and the message continues downstream without a failure flag.\n\nMore information about error handling can be found in xref:configuration:error_handling.adoc[].",
-        "requiresCgo": false,
-        "cloudOnly": false,
-        "cloudSupported": true
+        "component": "inputs:aws_dynamodb_cdc",
+        "field": "global_table_replicas",
+        "description": "Regions other than this pipeline's own region to replicate the checkpoint table to. The pipeline's own region is always included. Required when `global_table` is true. Applied both when the checkpoint table is created and, for an existing global table, when reconciling replicas (missing regions are added; this list is not used to remove regions)."
+      },
+      {
+        "component": "inputs:oracledb_cdc",
+        "field": "snapshot_mode",
+        "introducedIn": "4.99.0",
+        "description": "Controls snapshot behaviour. `none` (default) skips snapshotting and starts streaming from the current SCN. `snapshot_only` performs a full snapshot, persists the SCN checkpoint, then stops without streaming. `snapshot_and_stream` performs a full snapshot then transitions to streaming."
+      },
+      {
+        "component": "outputs:iceberg",
+        "field": "row_operation",
+        "description": "The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data — e.g. a change-data-capture stream's operation field. Defaults to `insert`, preserving the original append-only behaviour.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full semantics, the format-version-2 upgrade, batching behaviour, and important caveats."
+      },
+      {
+        "component": "outputs:iceberg",
+        "field": "identifier_fields",
+        "description": "The columns forming the row identity (the Iceberg identifier fields / equality-delete key) used by `upsert` and `delete`. Required when `row_operation` can evaluate to `upsert` or `delete`, and must reference existing table columns of a primitive, non-floating-point type.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full constraints, including the temporal-type and partitioning rules and when the requirement is enforced."
       }
     ],
-    "removedComponents": [],
-    "newFields": [],
     "removedFields": [],
     "deprecatedComponents": [],
-    "deprecatedFields": [],
+    "deprecatedFields": [
+      {
+        "component": "inputs:oracledb_cdc",
+        "field": "stream_snapshot",
+        "description": "If set to true, the connector will query all the existing data as a part of snapshot process. Otherwise, it will start from the current System Change Number position."
+      }
+    ],
     "changedDefaults": [],
     "platformTransitions": [],
     "newBloblangMethods": [],
@@ -59,9 +71,9 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.98.0",
-      "cloud": "4.98.0",
-      "cgo": "4.98.0"
+      "oss": "4.99.0",
+      "cloud": "4.99.0",
+      "cgo": "4.99.0"
     },
     "current": {
       "cloudSupported": 488,
@@ -70,18 +82,7 @@
     },
     "changes": {
       "cloud": {
-        "added": [
-          {
-            "type": "config",
-            "name": "error_handling",
-            "status": "object"
-          },
-          {
-            "type": "processors",
-            "name": "try_catch",
-            "status": "beta"
-          }
-        ],
+        "added": [],
         "removed": []
       },
       "cgo": {
