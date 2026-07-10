@@ -15,7 +15,7 @@ Introduced in version 4.83.0.
 endif::[]
 
 Streams changes from an Oracle database for Change Data Capture (CDC).
-Additionally, if `stream_snapshot` is set to true, existing data in the database is also streamed.
+Use the `snapshot_mode` field to control whether existing data is captured in an initial snapshot before streaming changes.
 
 [tabs]
 ======

@@ -36,14 +36,14 @@ This release adds support for the following new fields:
 
 
 |snapshot_mode
-|Controls snapshot behaviour.
+|Controls snapshot behavior.
 |*Inputs:*
 
 * xref:components:inputs/oracledb_cdc.adoc#snapshot_mode[oracledb_cdc]
 
 
 |row_operation
-|The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data — e.g. a change-data-capture stream's operation field.
+|The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data, such as a change-data-capture stream's operation field.
 |*Outputs:*
 
 * xref:components:outputs/iceberg.adoc#row_operation[iceberg]
@@ -68,10 +68,10 @@ The following fields are now deprecated:
 |Field |Description |Affected components
 
 |stream_snapshot
-|If set to true, the connector will query all the existing data as a part of snapshot process. Otherwise, it will start from the current System Change Number position.
+|Controls whether the connector snapshots existing data before streaming changes. Use `snapshot_mode` instead.
 |*Inputs:*
 
-* xref:components:inputs/oracledb_cdc.adoc#stream_snapshot[oracledb_cdc]
+* xref:components:inputs/oracledb_cdc.adoc#snapshot_mode[oracledb_cdc]
 
 
 |===

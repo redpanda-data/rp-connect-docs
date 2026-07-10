@@ -454,9 +454,9 @@ The encoding to use for string and binary columns. Use `plain` for compatibility
 
 === `row_operation`
 
-The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data — e.g. a change-data-capture stream's operation field. Defaults to `insert`, preserving the original append-only behaviour.
+The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data, such as a change-data-capture stream's operation field. Defaults to `insert`, preserving the original append-only behavior.
 
-See the <<row-level-operations,Row-level operations>> section above for the full semantics, the format-version-2 upgrade, batching behaviour, and important caveats.
+See the <<row-level-operations,Row-level operations>> section above for the full semantics, the format-version-2 upgrade, batching behavior, and important caveats.
 
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
