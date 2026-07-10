@@ -4952,7 +4952,7 @@
             "name": "global_table",
             "type": "bool",
             "kind": "scalar",
-            "description": "Provision the checkpoint table as a DynamoDB Global Table (v2) so checkpoints replicate across regions. Requires `global_table_replicas`. When the table is auto-created it is created as a global table; when it already exists, its replicas are reconciled (missing regions are added via `UpdateTable`). The existing table must have been created in global mode (`TableId` hash key) — enabling this against a pre-existing non-global checkpoint table fails fast with a clear error.",
+            "description": "Provision the checkpoint table as a DynamoDB Global Table (v2) so checkpoints replicate across regions. Requires `global_table_replicas`. When the table is auto-created it is created as a global table; when it already exists, its replicas are reconciled (missing regions are added via `UpdateTable`). The existing table must have been created in global mode (`TableId` hash key). Enabling this against a pre-existing non-global checkpoint table fails fast with a clear error.",
             "is_advanced": true,
             "default": false
           },
@@ -14970,7 +14970,7 @@
             "name": "snapshot_mode",
             "type": "string",
             "kind": "scalar",
-            "description": "Controls snapshot behaviour. `none` (default) skips snapshotting and starts streaming from the current SCN. `snapshot_only` performs a full snapshot, persists the SCN checkpoint, then stops without streaming. `snapshot_and_stream` performs a full snapshot then transitions to streaming.",
+            "description": "Controls snapshot behavior. `none` (default) skips snapshotting and starts streaming from the current SCN. `snapshot_only` performs a full snapshot, persists the SCN checkpoint, then stops without streaming. `snapshot_and_stream` performs a full snapshot then transitions to streaming.",
             "is_optional": true,
             "options": [
               "none",
@@ -35606,7 +35606,7 @@
             "name": "row_operation",
             "type": "string",
             "kind": "scalar",
-            "description": "The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data — e.g. a change-data-capture stream's operation field. Defaults to `insert`, preserving the original append-only behaviour.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full semantics, the format-version-2 upgrade, batching behaviour, and important caveats.",
+            "description": "The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data, such as a change-data-capture stream's operation field. Defaults to `insert`, preserving the original append-only behavior.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full semantics, the format-version-2 upgrade, batching behavior, and important caveats.",
             "is_advanced": true,
             "default": "insert",
             "interpolated": true,
