@@ -389,9 +389,13 @@ Maximum age of snapshots to retain for time-travel queries. Set to zero to disab
 
 === `identifier_fields[]`
 
-The columns forming the row identity (the Iceberg identifier fields / equality-delete key) used by `upsert` and `delete`. Required when `row_operation` can evaluate to `upsert` or `delete`, and must reference existing table columns of a primitive, non-floating-point type.
+The columns forming the row identity (the Iceberg identifier fields, or equality-delete key) used by `upsert` and `delete`. Required when `row_operation` can evaluate to `upsert` or `delete`, and must reference existing table columns of a primitive, non-floating-point type.
 
 See the <<row-level-operations,Row-level operations>> section above for the full constraints, including the temporal-type and partitioning rules and when the requirement is enforced.
+
+ifndef::env-cloud[]
+Requires version 4.99.0 or later.
+endif::[]
 
 *Type*: `array`
 
@@ -459,6 +463,10 @@ The row-level operation to apply for each message: `insert` (append), `upsert` (
 See the <<row-level-operations,Row-level operations>> section above for the full semantics, the format-version-2 upgrade, batching behavior, and important caveats.
 
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+ifndef::env-cloud[]
+Requires version 4.99.0 or later.
+endif::[]
 
 *Type*: `string`
 

@@ -4954,7 +4954,8 @@
             "kind": "scalar",
             "description": "Provision the checkpoint table as a DynamoDB Global Table (v2) so checkpoints replicate across regions. Requires `global_table_replicas`. When the table is auto-created it is created as a global table; when it already exists, its replicas are reconciled (missing regions are added by calling `UpdateTable`). The existing table must have been created in global mode (`TableId` hash key). Enabling this against a pre-existing non-global checkpoint table fails fast with a clear error.",
             "is_advanced": true,
-            "default": false
+            "default": false,
+            "version": "4.99.0"
           },
           {
             "name": "global_table_replicas",
@@ -4962,7 +4963,8 @@
             "kind": "array",
             "description": "Regions other than this pipeline's own region to replicate the checkpoint table to. The pipeline's own region is always included. Required when `global_table` is true. Applied both when the checkpoint table is created and, for an existing global table, when reconciling replicas (missing regions are added; this list is not used to remove regions).",
             "is_advanced": true,
-            "default": []
+            "default": [],
+            "version": "4.99.0"
           },
           {
             "name": "batch_size",
@@ -35614,13 +35616,14 @@
               "insert",
               "${! metadata(\"op\") }",
               "${! this.op == \"d\" ? \"delete\" : \"upsert\" }"
-            ]
+            ],
+            "version": "4.99.0"
           },
           {
             "name": "identifier_fields",
             "type": "string",
             "kind": "array",
-            "description": "The columns forming the row identity (the Iceberg identifier fields / equality-delete key) used by `upsert` and `delete`. Required when `row_operation` can evaluate to `upsert` or `delete`, and must reference existing table columns of a primitive, non-floating-point type.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full constraints, including the temporal-type and partitioning rules and when the requirement is enforced.",
+            "description": "The columns forming the row identity (the Iceberg identifier fields, or equality-delete key) used by `upsert` and `delete`. Required when `row_operation` can evaluate to `upsert` or `delete`, and must reference existing table columns of a primitive, non-floating-point type.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full constraints, including the temporal-type and partitioning rules and when the requirement is enforced.",
             "is_advanced": true,
             "default": [],
             "examples": [
@@ -35631,7 +35634,8 @@
                 "tenant_id",
                 "user_id"
               ]
-            ]
+            ],
+            "version": "4.99.0"
           },
           {
             "name": "storage",
