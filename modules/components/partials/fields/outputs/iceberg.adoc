@@ -387,6 +387,33 @@ Maximum age of snapshots to retain for time-travel queries. Set to zero to disab
 
 *Default*: `24h`
 
+=== `identifier_fields[]`
+
+The columns forming the row identity (the Iceberg identifier fields, or equality-delete key) used by `upsert` and `delete`. Required when `row_operation` can evaluate to `upsert` or `delete`, and must reference existing table columns of a primitive, non-floating-point type.
+
+See the <<row-level-operations,Row-level operations>> section above for the full constraints, including the temporal-type and partitioning rules and when the requirement is enforced.
+
+ifndef::env-cloud[]
+Requires version 4.99.0 or later.
+endif::[]
+
+*Type*: `array`
+
+*Default*: `[]`
+
+[source,yaml]
+----
+# Examples:
+identifier_fields:
+  - id
+
+# ---
+
+identifier_fields:
+  - tenant_id
+  - user_id
+----
+
 === `max_in_flight`
 
 The maximum number of messages to have in flight at a given time. Increase this to improve throughput.
@@ -428,6 +455,36 @@ The encoding to use for string and binary columns. Use `plain` for compatibility
 *Default*: `delta_length_byte_array`
 
 *Options*: `plain`, `delta_length_byte_array`
+
+=== `row_operation`
+
+The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data, such as a change-data-capture stream's operation field. Defaults to `insert`, preserving the original append-only behavior.
+
+See the <<row-level-operations,Row-level operations>> section above for the full semantics, the format-version-2 upgrade, batching behavior, and important caveats.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+ifndef::env-cloud[]
+Requires version 4.99.0 or later.
+endif::[]
+
+*Type*: `string`
+
+*Default*: `insert`
+
+[source,yaml]
+----
+# Examples:
+row_operation: insert
+
+# ---
+
+row_operation: ${! metadata("op") }
+
+# ---
+
+row_operation: ${! this.op == "d" ? "delete" : "upsert" }
+----
 
 === `schema_evolution`
 

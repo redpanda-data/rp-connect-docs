@@ -106,6 +106,77 @@ object:struct
 array:list
 |===
 
+[#row-level-operations]
+== Row-level operations
+
+By default, this output is append-only: every message becomes a new row (`row_operation: insert`), and existing configurations are unaffected. Set `row_operation` to apply a per-message operation, with `identifier_fields` defining the row identity:
+
+* `insert`: Append the row. This is an unconditional append, and is not keyed or deduplicated.
+* `upsert`: Replace any existing rows matching `identifier_fields`, then append this row. This is equivalent to Iceberg's Flink UPSERT mode.
+* `delete`: Remove rows matching `identifier_fields`.
+
+`row_operation` supports interpolation, so the operation can be driven by the data itself, for example by mapping a change-data-capture stream's operation field. No CDC-specific format is assumed. The field is named `row_operation` to distinguish it from Iceberg's snapshot-level operation.
+
+`upsert` and `delete` require `identifier_fields` and use Iceberg merge-on-read equality deletes, which require table format version 2. A version-1 table is automatically upgraded to version 2 on the first `upsert` or `delete`. This upgrade is irreversible.
+
+=== Identifier fields
+
+`identifier_fields` must reference existing table columns of a primitive, non-floating-point type. A static `upsert` or `delete` is validated at startup. An interpolated `row_operation` is validated for each message at write time, so an empty `identifier_fields` is not caught until the first `upsert` or `delete` message arrives.
+
+Identifier columns of a temporal type (`timestamp`, `timestamptz`, `date`, `time`) must arrive as time values, not bare numbers. A numeric epoch is ambiguous as a delete key and is rejected at write time, so convert it to a timestamp upstream. If the table is partitioned, every partition source column must be one of the `identifier_fields`, because equality deletes are partition-scoped.
+
+When this output auto-creates a table through `schema_evolution`, the `identifier_fields` columns are created as required and registered as the table's Iceberg identifier-field-ids, so downstream engines and other writers see the primary key. As a result, a null or missing value in an identifier column is rejected on write, even for `insert`. Identifier columns must therefore be present at creation, either in the first message or declared through `schema_metadata`. Pre-existing tables are never modified.
+
+=== Batching and ordering
+
+Within a single batch, the last `upsert` or `delete` for each `identifier_fields` key wins. Each batch containing an `upsert` or `delete` is committed as its own snapshot. These commits are never coalesced, which is required for correctness, so a high-throughput mutation workload produces one snapshot per batch. Size batches accordingly, and run regular table maintenance (snapshot expiry and compaction) to keep metadata manageable. Pure `insert`-only batches keep the original append fast path, which does coalesce commits.
+
+Ordering only holds within a batch. With more than one batch in flight, concurrent batches can commit out of order, so a stale `upsert` might overwrite a newer one for the same key. Set `max_in_flight: 1` for keyed (change-data-capture) workloads to preserve per-key order. This is enforced by config linting whenever `row_operation` is anything other than a static `insert`.
+
+[CAUTION]
+====
+`insert` is an unconditional append, and is not keyed or deduplicated. For keyed data, including change-data-capture, map create and read events to `upsert`, never `insert`. Mixing `insert` with `upsert` or `delete` on the same key in one batch produces duplicate rows.
+====
+
+=== Change-data-capture example
+
+Materialize a change-data-capture stream into an Iceberg table. The mapping derives the row operation from the source's operation field (here Debezium's `op`, where `c`, `r`, and `u` map to `upsert`, and `d` maps to `delete`) and selects the row image, while `identifier_fields` is the primary key:
+
+[source,yaml]
+----
+input:
+  redpanda:
+    seed_brokers: [ localhost:9092 ]
+    topics: [ dbserver.inventory.customers ]
+    consumer_group: iceberg_sink
+
+pipeline:
+  processors:
+    - mapping: |
+        meta op = match this.op {
+          "d" => "delete",
+          _   => "upsert",
+        }
+        # Debezium puts the row image in 'after', or 'before' for deletes.
+        root = this.after | this.before
+
+output:
+  iceberg:
+    catalog:
+      url: http://localhost:8181/api/catalog
+    namespace: inventory
+    table: customers
+    row_operation: ${! metadata("op") }
+    identifier_fields: [ id ]
+    # Keyed writes must stay ordered. A single batch in flight prevents
+    # concurrent batches from committing a stale update over a newer one.
+    max_in_flight: 1
+    storage:
+      aws_s3:
+        bucket: my-iceberg-data
+        region: us-east-1
+----
+
 include::connect:components:partial$fields/outputs/iceberg.adoc[]
 
 // end::single-source[]
