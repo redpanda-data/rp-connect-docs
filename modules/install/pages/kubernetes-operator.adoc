@@ -1,0 +1,223 @@
+= Run Pipelines with the Redpanda Operator
+:description: Deploy and manage Redpanda Connect pipelines declaratively on Kubernetes using the Pipeline resource and the Redpanda Operator.
+
+// DRAFT (DOC-2275): Based on redpanda-data/redpanda-operator#1677 (unmerged, head 847e46e).
+// A review panel has 12 open Blocker/Major findings against this PR. Areas marked
+// with TODO below are expected to change before merge. Validate on kind against
+// the released operator before publishing.
+
+Manage Redpanda Connect pipelines as Kubernetes resources. You define each pipeline in a `Pipeline` custom resource, and the Redpanda Operator deploys it, validates its configuration, rolls it on every change, and reports its health in the resource status.
+
+Use the Pipeline resource when you already run the xref:streaming:deploy:redpanda/kubernetes/k-production-deployment.adoc[Redpanda Operator] and want pipelines managed through the same declarative, GitOps-friendly workflow as your Topic and User resources. To run Redpanda Connect on Kubernetes without the operator, see xref:install:helm-chart.adoc[].
+
+NOTE: This feature requires an Enterprise Edition license and Redpanda Operator <operator-version> or later.
+// TODO(DOC-2275): Set the real minimum operator version when the feature ships.
+
+== How it works
+
+For each `Pipeline` resource, the operator creates:
+
+* A ConfigMap holding your pipeline configuration, mounted into the pod at `/config`.
+* A Deployment that first lints the configuration in an init container (`redpanda-connect lint`), then runs it (`redpanda-connect run`).
+* Optionally, a PodDisruptionBudget and a Prometheus PodMonitor.
+
+Every change to the pipeline configuration rolls the Deployment automatically: the operator stamps a checksum of the configuration onto the pod template, and the Deployment uses the `Recreate` strategy, so old pods stop before new ones start. Expect a brief interruption on every configuration change.
+
+If the operator restarts or loses access to a referenced cluster or Secret, running pipelines keep running. The operator reports the problem in the resource status and stops applying updates, but it never tears down a workload except when you delete the Pipeline resource.
+
+== Prerequisites
+
+* A Kubernetes cluster with the Redpanda Operator <operator-version> or later installed.
+* An xref:get-started:licensing.adoc[Enterprise Edition license] stored in a Secret in the operator's namespace.
+* To connect pipelines to a Redpanda cluster by reference, the Redpanda and User CRDs installed in the cluster.
+
+== Enable the Pipeline controller
+
+The Pipeline controller ships inside the Redpanda Operator Helm chart and is disabled by default. Enable it with `connectController.enabled=true` and reference your license Secret:
+
+[,bash]
+----
+helm upgrade --install redpanda-operator redpanda/operator \
+  --namespace <namespace> --create-namespace \
+  --set connectController.enabled=true \
+  --set crds.enabled=true \
+  --set enterprise.licenseSecretRef.name=redpanda-license \
+  --set enterprise.licenseSecretRef.key=license
+----
+
+The license applies at the operator level, not per pipeline. Without a valid license, new Pipeline resources report `Ready=False` with reason `LicenseInvalid` and no workload is created. Existing workloads keep running but stop receiving updates.
+
+Optional chart settings:
+
+* `connectController.image.repository` and `connectController.image.tag`: override the default Redpanda Connect image for all pipelines. A per-pipeline `spec.image` takes precedence over this chart default.
+* `connectController.monitoring.enabled`: create a Prometheus PodMonitor for each pipeline. Requires the Prometheus Operator CRDs.
+// TODO(DOC-2275): PodMonitor watch registration is currently broken in production (panel finding 9). Re-verify before publishing.
+
+== Create a pipeline
+
+Define the pipeline configuration inline in `spec.configYaml`. This example generates a message every five seconds and writes it to stdout:
+
+.`demo-pipeline.yaml`
+[,yaml]
+----
+apiVersion: cluster.redpanda.com/v1alpha2
+kind: Pipeline
+metadata:
+  name: demo-pipeline
+spec:
+  configYaml: |
+    input:
+      generate:
+        mapping: 'root.message = "hello world"'
+        interval: "5s"
+    output:
+      stdout: {}
+  replicas: 1
+----
+
+[,bash]
+----
+kubectl apply -f demo-pipeline.yaml --namespace <namespace>
+kubectl get pipeline demo-pipeline --namespace <namespace>
+----
+
+Within about 20 seconds, the pipeline reports `Ready=True` and `Phase=Running`:
+
+[.no-copy]
+----
+NAME            READY   PHASE     REPLICAS   AVAILABLE   AGE
+demo-pipeline   True    Running   1          1           25s
+----
+
+The `lint` init container validates the configuration before the pipeline starts. If the configuration is invalid, the resource reports `ConfigValid=False` and the pod does not start the main container.
+
+To mount additional files alongside the main configuration, such as Bloblang mapping files, add them to `spec.configFiles`. Each entry becomes a file in `/config`. The key `connect.yaml` is reserved for the main configuration.
+
+== Connect to a Redpanda cluster
+
+Reference a Redpanda resource in the same namespace with `spec.cluster.clusterRef`, and the operator injects the cluster's seed brokers, TLS, and SASL settings into your configuration:
+
+[,yaml]
+----
+apiVersion: cluster.redpanda.com/v1alpha2
+kind: Pipeline
+metadata:
+  name: producer-pipeline
+spec:
+  cluster:
+    clusterRef:
+      name: redpanda
+  userRef:
+    name: pipeline-user
+  configYaml: |
+    input:
+      generate:
+        interval: "1s"
+        mapping: 'root.message = "hello from pipeline"'
+    output:
+      redpanda:
+        topic: "pipeline-produce-test"
+  replicas: 1
+----
+
+The operator merges connection details into any `input.redpanda` and `output.redpanda` blocks, and also renders a top-level `redpanda` client block so that `redpanda_common` components work without inline credentials. Keys you set explicitly in `configYaml` always win, which lets a pipeline read from the referenced cluster and write to a different one.
+
+// TODO(DOC-2275): clusterRef TLS resolution and cross-namespace clusterRef have open Blocker/Major findings (panel findings 2-5). Re-verify the injected TLS behavior and whether namespace is supported before publishing.
+
+`userRef` points at a User resource in the same namespace. The operator projects the user's credentials into the pod as environment variables and wires them into the rendered configuration. The operator does not create the User resource or its ACLs; manage those separately.
+
+CAUTION: If you set `clusterRef` without `userRef`, the pipeline authenticates as the cluster's bootstrap superuser. Create a dedicated User resource with scoped ACLs for production pipelines.
+
+Alternatively, connect to any cluster, including one outside Kubernetes, with `spec.cluster.staticConfiguration`, which accepts explicit `kafka`, `admin`, and `schemaRegistry` connection settings.
+
+== Provide secrets
+
+Reference secrets by name with `spec.valueSources`, then interpolate them in the configuration with standard xref:configuration:secrets.adoc[`${NAME}` interpolation]. Each entry projects exactly one environment variable into the pod from an inline value, a ConfigMap key, a Secret key, or an External Secrets Operator-managed Secret:
+
+[,yaml]
+----
+spec:
+  valueSources:
+    - name: API_KEY
+      source:
+        secretKeyRef:
+          name: my-secret
+          key: api-key
+  configYaml: |
+    ...
+        api_key: "${API_KEY}"
+----
+
+NOTE: Rotating a referenced Secret's value does not roll the pipeline pod. Trigger a rollout by making any change to `spec.configYaml`, or restart the Deployment.
+
+== Spread pipelines across zones
+
+List the availability zones in `spec.zones` and the operator generates both a required node affinity and a topology spread constraint (`maxSkew: 1`) on the `topology.kubernetes.io/zone` label:
+
+[,yaml]
+----
+spec:
+  replicas: 3
+  zones: ["us-east-1a", "us-east-1b", "us-east-1c"]
+----
+
+For full control, set `spec.affinity` or `spec.topologySpreadConstraints` yourself. Explicit `topologySpreadConstraints` replace the generated ones, and explicit affinity is combined with the generated zone affinity. `spec.tolerations` and `spec.nodeSelector` are also available.
+
+== Manage the pipeline lifecycle
+
+Pause and resume::
+Set `spec.paused: true` to scale the pipeline to zero while keeping its definition and status. Set it back to `false` to resume.
++
+[,bash]
+----
+kubectl patch pipeline demo-pipeline --type merge -p '{"spec":{"paused":true}}'
+----
+
+Scale::
+Set `spec.replicas`. To protect multi-replica pipelines during node maintenance, set `spec.budget.maxUnavailable` to create a PodDisruptionBudget.
+
+Update::
+Edit the Pipeline resource and apply it. Configuration changes roll the Deployment with a brief interruption; changes to fields such as `resources` or `image` update the Deployment in place.
+
+Delete::
+`kubectl delete pipeline <name>` removes the Deployment, ConfigMap, and all other resources the operator created for the pipeline. Deletion is finalizer-gated, so it completes only while the Pipeline controller is running.
+
+== Monitor pipelines
+
+Each pipeline pod exposes Prometheus metrics and a readiness endpoint on port 4195 (`/metrics` and `/ready`). With `connectController.monitoring.enabled=true`, the operator creates a PodMonitor per pipeline for automatic discovery by the Prometheus Operator.
+
+Check pipeline health from the resource status:
+
+[,bash]
+----
+kubectl get pipeline --namespace <namespace>
+kubectl describe pipeline <name> --namespace <namespace>
+----
+
+The status conditions report configuration validity (`ConfigValid`), cluster resolution (`ClusterRef`), and credential resolution (`UserRef`) separately, so you can see which dependency is failing.
+
+== Pipeline resource reference
+
+Key `spec` fields:
+
+[cols="1m,1,3"]
+|===
+|Field |Default |Description
+
+|configYaml |Required |The pipeline configuration, inline. The only way to supply the pipeline definition.
+|configFiles |None |Additional files to mount in `/config`. The key `connect.yaml` is reserved.
+|replicas |1 |Number of pipeline pods.
+|image |Redpanda Connect image bundled with the operator |Per-pipeline image override.
+|paused |false |Scale to zero without deleting the pipeline.
+|resources |256Mi memory, 100m CPU requests; no limits |Standard Kubernetes resource requirements.
+|serviceAccountName |Namespace default |Service account for the pipeline pods, for IRSA or Workload Identity. The operator does not create it.
+|cluster.clusterRef |None |Name of a Redpanda resource to connect to.
+|cluster.staticConfiguration |None |Explicit connection settings for any cluster.
+|userRef |None |Name of a User resource for SASL credentials. Requires `clusterRef`.
+|valueSources |None |Named environment variables from Secrets, ConfigMaps, or inline values.
+|zones |None |Availability zones to spread pods across.
+|budget.maxUnavailable |No PDB |Creates a PodDisruptionBudget.
+|annotations, tolerations, nodeSelector, affinity, topologySpreadConstraints |None |Standard scheduling and metadata controls.
+|===
+
+// TODO(DOC-2275): Link to a generated CRD property reference once the CRD is in a released operator and the docs automation covers it.
