@@ -1,18 +1,18 @@
 {
   "comparison": {
-    "oldVersion": "4.98.0",
-    "newVersion": "4.99.0",
-    "timestamp": "2026-07-10T15:18:08.503Z"
+    "oldVersion": "4.99.0",
+    "newVersion": "4.100.0",
+    "timestamp": "2026-07-17T16:07:14.456Z"
   },
   "summary": {
-    "newComponents": 0,
+    "newComponents": 1,
     "removedComponents": 0,
-    "newFields": 5,
+    "newFields": 0,
     "removedFields": 0,
-    "deprecatedComponents": 0,
-    "deprecatedFields": 1,
+    "deprecatedComponents": 1,
+    "deprecatedFields": 0,
     "changedDefaults": 0,
-    "platformTransitions": 0,
+    "platformTransitions": 19,
     "newBloblangMethods": 0,
     "removedBloblangMethods": 0,
     "newBloblangFunctions": 0,
@@ -24,53 +24,354 @@
     "newComponents": [
       {
         "name": "jira",
-        "type": "input",
+        "type": "inputs",
         "status": "stable",
-        "version": "",
+        "version": "4.96.0",
         "description": "Periodically queries Jira's REST API using a JQL filter and emits one message per resource. The cursor (max issue `updated` timestamp, plus the set of issue versions already emitted at the boundary) is persisted via the configured cache resource after every fully-acknowledged page, so progress survives restarts — including mid-backfill — and boundary issues are not re-emitted on every poll.\n\nAuthentication uses API token (email + token) basic auth. The `backoff` settings govern the adaptive backoff applied to 429 responses; retries of 502/503/504 responses use a fixed three-attempt policy.\n\nEach message body is the raw JSON of the resource. Metadata fields:\n\n- `jira_id` - issue key (issues) / comment ID / changelog history ID\n- `jira_issue_key` - parent issue key (omitted for resource=issues)\n- `jira_project` - project key\n- `jira_updated` - RFC 3339 timestamp of the resource\n- `jira_event_type` - \"issue\" / \"comment\" / \"changelog\"\n- `jira_self` - Jira API URL of the resource\n\nLimitations (v1): OAuth and the worklogs resource are not yet supported. For resource=comments and resource=changelog, only the first page of child resources (up to ~50 comments or ~100 changelog entries per issue update) is emitted; a WARN is logged when truncation is detected. Use a downstream Jira processor to fetch the full child set if your issues exceed this limit.",
-        "summary": "Streams Jira issues, comments, or changelog entries via JQL with incremental polling."
+        "requiresCgo": false,
+        "cloudOnly": false,
+        "cloudSupported": true
       }
     ],
     "removedComponents": [],
-    "newFields": [
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "global_table",
-        "description": "Provision the checkpoint table as a DynamoDB Global Table (v2) so checkpoints replicate across regions. Requires `global_table_replicas`. When the table is auto-created it is created as a global table; when it already exists, its replicas are reconciled (missing regions are added via `UpdateTable`). The existing table must have been created in global mode (`TableId` hash key) — enabling this against a pre-existing non-global checkpoint table fails fast with a clear error."
-      },
-      {
-        "component": "inputs:aws_dynamodb_cdc",
-        "field": "global_table_replicas",
-        "description": "Regions other than this pipeline's own region to replicate the checkpoint table to. The pipeline's own region is always included. Required when `global_table` is true. Applied both when the checkpoint table is created and, for an existing global table, when reconciling replicas (missing regions are added; this list is not used to remove regions)."
-      },
-      {
-        "component": "inputs:oracledb_cdc",
-        "field": "snapshot_mode",
-        "introducedIn": "4.99.0",
-        "description": "Controls snapshot behaviour. `none` (default) skips snapshotting and starts streaming from the current SCN. `snapshot_only` performs a full snapshot, persists the SCN checkpoint, then stops without streaming. `snapshot_and_stream` performs a full snapshot then transitions to streaming."
-      },
-      {
-        "component": "outputs:iceberg",
-        "field": "row_operation",
-        "description": "The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data — e.g. a change-data-capture stream's operation field. Defaults to `insert`, preserving the original append-only behaviour.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full semantics, the format-version-2 upgrade, batching behaviour, and important caveats."
-      },
-      {
-        "component": "outputs:iceberg",
-        "field": "identifier_fields",
-        "description": "The columns forming the row identity (the Iceberg identifier fields / equality-delete key) used by `upsert` and `delete`. Required when `row_operation` can evaluate to `upsert` or `delete`, and must reference existing table columns of a primitive, non-floating-point type.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full constraints, including the temporal-type and partitioning rules and when the requirement is enforced."
-      }
-    ],
+    "newFields": [],
     "removedFields": [],
-    "deprecatedComponents": [],
-    "deprecatedFields": [
+    "deprecatedComponents": [
       {
-        "component": "inputs:oracledb_cdc",
-        "field": "stream_snapshot",
-        "description": "If set to true, the connector will query all the existing data as a part of snapshot process. Otherwise, it will start from the current System Change Number position."
+        "name": "jira",
+        "type": "processors",
+        "status": "deprecated",
+        "version": "4.68.0",
+        "description": "Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.\n\nThis processor is deprecated in favour of the `jira` input, which streams issues, comments, and changelog entries with cursor-based incremental polling. The processor remains available for enrichment and lookup style operations.\n\nSupports querying the following Jira resources:\n- Issues (JQL queries)\n- Issue transitions\n- Users\n- Roles\n- Project versions\n- Project categories\n- Project types\n- Projects\n\nThe processor authenticates using basic authentication with username and API token. Input messages should contain valid Jira queries in JSON format."
       }
     ],
+    "deprecatedFields": [],
     "changedDefaults": [],
-    "platformTransitions": [],
+    "platformTransitions": [
+      {
+        "name": "http",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "input",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "buffer",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "pipeline",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "output",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "input_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "processor_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "output_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "cache_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "rate_limit_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "logger",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "metrics",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "tracer",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "shutdown_delay",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "shutdown_timeout",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "error_handling",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "tests",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "parallel",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "redpanda",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      }
+    ],
     "newBloblangMethods": [],
     "removedBloblangMethods": [],
     "newBloblangFunctions": [],
@@ -80,16 +381,64 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.99.0",
+      "oss": "4.100.0",
       "cloud": "4.100.0",
       "cgo": "4.100.0"
     },
     "current": {
       "cloudSupported": 489,
-      "selfHostedOnly": 79,
-      "cgoOnly": 1
+      "selfHostedOnly": 75,
+      "cgoOnly": 4
     },
-    "changes": {},
+    "changes": {
+      "cloud": {
+        "added": [
+          {
+            "type": "inputs",
+            "name": "jira",
+            "status": "stable"
+          }
+        ],
+        "removed": [
+          {
+            "type": "processors",
+            "name": "a2a_message",
+            "status": "stable"
+          }
+        ]
+      },
+      "cgo": {
+        "newCgoOnly": [
+          {
+            "type": "inputs",
+            "name": "tigerbeetle_cdc",
+            "status": "stable"
+          },
+          {
+            "type": "inputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "outputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "processors",
+            "name": "ffi",
+            "status": "stable"
+          }
+        ],
+        "removedCgoOnly": [
+          {
+            "type": "inputs",
+            "name": "jira",
+            "status": "stable"
+          }
+        ]
+      }
+    },
     "details": {
       "cloudSupported": [
         {
@@ -385,6 +734,11 @@
         {
           "type": "inputs",
           "name": "inproc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "jira",
           "status": "stable"
         },
         {
@@ -1045,7 +1399,7 @@
         {
           "type": "processors",
           "name": "jira",
-          "status": "stable"
+          "status": "deprecated"
         },
         {
           "type": "processors",
@@ -1280,11 +1634,6 @@
         {
           "type": "processors",
           "name": "xml",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -2660,16 +3009,6 @@
           "status": "stable"
         },
         {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "stable"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2785,11 +3124,6 @@
           "status": "stable"
         },
         {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -2875,11 +3209,6 @@
           "status": "stable"
         },
         {
-          "type": "processors",
-          "name": "ffi",
-          "status": "stable"
-        },
-        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2937,15 +3266,30 @@
       ],
       "cloudOnly": [
         {
-          "type": "inputs",
-          "name": "jira",
+          "type": "processors",
+          "name": "a2a_message",
           "status": "stable"
         }
       ],
       "cgoOnly": [
         {
           "type": "inputs",
-          "name": "jira",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "ffi",
           "status": "stable"
         }
       ]
