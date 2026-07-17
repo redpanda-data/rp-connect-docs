@@ -1,0 +1,114 @@
+= Tune the Iceberg output for throughput
+:description: Configure the Redpanda Connect Iceberg output for high write throughput using two tested recipes that trade message ordering for throughput.
+:page-topic-type: how-to
+:personas: streaming_developer, data_engineer
+:learning-objective-1: Configure an order-preserving Iceberg sink that sustains high throughput
+:learning-objective-2: Configure an unordered Iceberg sink for maximum throughput
+:learning-objective-3: Choose the recipe that matches your ordering and throughput requirements
+
+Tune the xref:components:outputs/iceberg.adoc[`iceberg` output] for high write throughput to Apache Iceberg tables. Use these two tested recipes to choose the right trade-off between preserving message ordering and maximizing throughput.
+
+After reading this page, you will be able to:
+
+* [ ] {learning-objective-1}
+* [ ] {learning-objective-2}
+* [ ] {learning-objective-3}
+
+Both recipes target roughly 10,000 rows or 10 seconds per commit, whichever comes first. This keeps commit sizes large enough to amortize the cost of each Iceberg snapshot while bounding commit latency.
+
+== Prerequisites
+
+* A configured Iceberg REST catalog and storage backend. See xref:components:outputs/iceberg.adoc[the `iceberg` output reference] for catalog and storage options.
+* Familiarity with xref:configuration:batching.adoc[message batching], xref:components:buffers/about.adoc[buffers], and the `max_in_flight` field.
+
+[CAUTION]
+====
+These recipes tune *append-only* sinks, where every message becomes a new row. They use a high `max_in_flight` to commit batches concurrently. Do not apply them to keyed change-data-capture workloads that use `row_operation` with `upsert` or `delete`. Keyed workloads require `max_in_flight: 1` to preserve per-key order. For more detail, see xref:components:outputs/iceberg.adoc#row-level-operations[Row-level operations].
+====
+
+== Recipe A: preserve message ordering
+
+Use this recipe when you must preserve the order of messages across partitions, for example when downstream consumers depend on a consistent global sequence.
+
+A single merged input stream preserves cross-partition order because Redpanda Connect processes messages sequentially, not in parallel, per partition. To keep that ordered stream fast, decouple the input from the commit-bound output and batch at the output level:
+
+* A xref:components:buffers/memory.adoc[`memory` buffer] absorbs input bursts so the fast input never blocks on commit latency. Size the buffer to your throughput multiplied by the commit interval.
+* Output-level `batching` feeds the Iceberg commit coalescer, so `max_in_flight` can dispatch concurrent writers. Without output batching, a single buffered stream starves the committer. In smoke tests at 1 vCPU, adding output batching raised throughput from 0.8 to 12.7 MB/s.
+
+[,yaml]
+----
+# Configure catalog, storage, namespace, and table as usual.
+buffer:
+  memory:
+    limit: 524288000        # 500 MiB: size to throughput x commit interval
+    batch_policy:
+      count: 10000
+      period: 10s
+output:
+  iceberg:
+    max_in_flight: 16
+    batching:
+      count: 10000
+      period: 10s
+    commit:
+      max_snapshot_age: 24h
+----
+
+== Recipe B: maximize throughput
+
+Use this recipe when ordering across partitions is not required, which is typical for append-only Iceberg sinks. This recipe reaches the highest throughput ceiling.
+
+Recipe B removes the buffer and parallelizes at the input instead. The xref:components:inputs/redpanda.adoc[`redpanda` input]'s `unordered_processing` runs per-partition streams that batch in the read-ahead fetch buffer, feeding many concurrent commits to the coalescer. A higher `max_in_flight` of `32` lets those commits overlap. This configuration trades cross-partition ordering for higher throughput.
+
+[,yaml]
+----
+input:
+  redpanda:
+    # Configure seed_brokers, topics, and consumer_group as usual.
+    unordered_processing:
+      enabled: true
+      checkpoint_limit: 1024
+      batching:
+        count: 10000
+        period: 10s
+output:
+  iceberg:
+    max_in_flight: 32
+----
+
+== Compare recipe throughput
+
+The following table shows mean write throughput in MB/s for each recipe as vCPUs scale. Results were measured on an Amazon Web Services (AWS) `c8g.4xlarge` instance against a roughly 178 GB dataset, using an AWS Glue REST catalog with Amazon S3 storage.
+
+[cols="1,1,1",options="header"]
+|===
+| vCPU | Recipe A (ordered) | Recipe B (unordered)
+
+| 1 | 15.9 | 38.3
+| 2 | 69.1 | 64.1
+| 4 | 114.2 | 98.6
+| 8 | 109.2 | 122.4
+|===
+
+When CPU is constrained, Recipe B's per-partition parallelism gives a clear advantage. Recipe A scales strongly up to 4 vCPUs and then plateaus, while Recipe B continues to climb as more vCPUs become available.
+
+Your results depend on your catalog, storage backend, message size, and partition count. Use these numbers as a starting point and benchmark against your own workload.
+
+== Choose a recipe
+
+[cols="1,1",options="header"]
+|===
+| Requirement | Recipe
+
+| Ordering across partitions is not required (typical for Iceberg)
+| Recipe B: maximize throughput
+
+| Ordering across partitions is required
+| Recipe A: preserve message ordering
+|===
+
+== Next steps
+
+* xref:guides:performance_tuning.adoc[Performance tuning]
+* xref:configuration:batching.adoc[Message batching]
+* xref:components:outputs/iceberg.adoc[iceberg output reference]

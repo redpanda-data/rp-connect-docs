@@ -73,6 +73,8 @@ Therefore, it's still important to have an output that can keep up with the flow
 
 For example, if your input usually produces 10 msgs/s, but occasionally spikes to 100 msgs/s, and your output can handle up to 50 msgs/s, it might be possible to configure a buffer large enough to store spikes in their entirety. As long as the average flow of messages from the input remains below 50 msgs/s then your service should be able to continue indefinitely without ever blocking the input source.
 
+TIP: For a worked example that combines in-flight messages, batching, and buffers, see xref:guides:iceberg-output-tuning.adoc[Tune the Iceberg output for throughput].
+
 == Maximising CPU utilization
 
 Some xref:components:processors/about.adoc[processors] within Redpanda Connect are relatively heavy on your CPU, and can potentially become the bottleneck of a service. In these circumstances it is worth configuring Redpanda Connect so that your processors are running on each available core of your machine without contention.

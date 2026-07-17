@@ -23,22 +23,15 @@ This output is well suited for migrating fanout pipelines from Kafka Connect to 
 * Schema evolution (automatic column addition)
 * Transaction retry logic for concurrent writes
 
-ifndef::env-cloud[]
-== Requirements
-
-Ensure that your environment meets the following requirements:
-
-- This component is only available in cgo-enabled builds of Redpanda Connect (not in the Redpanda CLI or Docker image).
-+
-You can either xref:install:prebuilt-binary.adoc[download a prebuilt cgo-enabled binary] or xref:install:build-from-source.adoc[build Redpanda Connect from source with cgo enabled].
-
-endif::[]
-
 == Performance
 
 This output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.
 
 This output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].
+
+ifndef::env-cloud[]
+For tested configurations that tune this output for high throughput, including the trade-off between preserving message ordering and maximizing throughput, see xref:guides:iceberg-output-tuning.adoc[Tune the Iceberg output for throughput].
+endif::[]
 
 [tabs]
 ======
