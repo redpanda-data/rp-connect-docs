@@ -1,10 +1,12 @@
 = Run Pipelines with the Redpanda Operator
 :description: Deploy and manage Redpanda Connect pipelines declaratively on Kubernetes using the Pipeline resource and the Redpanda Operator.
 
-// DRAFT (DOC-2275): Based on redpanda-data/redpanda-operator#1677 (unmerged, head 847e46e).
-// A review panel has 12 open Blocker/Major findings against this PR. Areas marked
-// with TODO below are expected to change before merge. Validate on kind against
-// the released operator before publishing.
+// DRAFT (DOC-2275): Based on redpanda-data/redpanda-operator#1677 (unmerged, head b861c263).
+// Validated end-to-end on kind v1.28 (2026-07-17) with the operator built from that head:
+// install, lint, lifecycle, valueSources, config rollout, and clusterRef+TLS all behave
+// as documented. Known blocker: the generated Pipeline CRD currently exceeds the
+// Kubernetes CEL validation-cost budget and cannot be installed unpatched (reported on
+// the eng PR). Re-validate against the released operator before publishing.
 
 Manage Redpanda Connect pipelines as Kubernetes resources. You define each pipeline in a `Pipeline` custom resource, and the Redpanda Operator deploys it, validates its configuration, rolls it on every change, and reports its health in the resource status.
 
@@ -51,7 +53,7 @@ Optional chart settings:
 
 * `connectController.image.repository` and `connectController.image.tag`: override the default Redpanda Connect image for all pipelines. A per-pipeline `spec.image` takes precedence over this chart default.
 * `connectController.monitoring.enabled`: create a Prometheus PodMonitor for each pipeline. Requires the Prometheus Operator CRDs.
-// TODO(DOC-2275): PodMonitor watch registration is currently broken in production (panel finding 9). Re-verify before publishing.
+// TODO(DOC-2275): PodMonitor watch bug was fixed at head b861c263 but not re-verified here (no Prometheus Operator on the test cluster). Verify monitoring against the released operator.
 
 == Create a pipeline
 
@@ -122,13 +124,31 @@ spec:
 
 The operator merges connection details into any `input.redpanda` and `output.redpanda` blocks, and also renders a top-level `redpanda` client block so that `redpanda_common` components work without inline credentials. Keys you set explicitly in `configYaml` always win, which lets a pipeline read from the referenced cluster and write to a different one.
 
-// TODO(DOC-2275): clusterRef TLS resolution and cross-namespace clusterRef have open Blocker/Major findings (panel findings 2-5). Re-verify the injected TLS behavior and whether namespace is supported before publishing.
+The referenced Redpanda resource must be in the same namespace as the Pipeline. Cross-namespace references are rejected.
 
 `userRef` points at a User resource in the same namespace. The operator projects the user's credentials into the pod as environment variables and wires them into the rendered configuration. The operator does not create the User resource or its ACLs; manage those separately.
 
 CAUTION: If you set `clusterRef` without `userRef`, the pipeline authenticates as the cluster's bootstrap superuser. Create a dedicated User resource with scoped ACLs for production pipelines.
 
-Alternatively, connect to any cluster, including one outside Kubernetes, with `spec.cluster.staticConfiguration`, which accepts explicit `kafka`, `admin`, and `schemaRegistry` connection settings.
+Create the destination topic before the pipeline starts producing. Redpanda clusters deployed with the operator do not create topics automatically by default, and a pipeline producing to a missing topic reports `Running` while every send fails. For example, create the topic with a Topic resource:
+
+[,yaml]
+----
+apiVersion: cluster.redpanda.com/v1alpha2
+kind: Topic
+metadata:
+  name: pipeline-produce-test
+spec:
+  cluster:
+    clusterRef:
+      name: redpanda
+  partitions: 1
+  replicationFactor: 1
+----
+
+NOTE: `Phase: Running` means the pipeline process is up, not that messages are being delivered. To diagnose delivery problems, check the pipeline logs with `kubectl logs deployment/<pipeline-name> -c connect` or monitor the pipeline metrics.
+
+Alternatively, connect to any cluster, including one outside Kubernetes, with `spec.cluster.staticConfiguration`, which accepts explicit `kafka`, `admin`, and `schemaRegistry` connection settings. Setting `tls.enabled: false` in the static configuration disables TLS.
 
 == Provide secrets
 
