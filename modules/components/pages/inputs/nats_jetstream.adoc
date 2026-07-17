@@ -43,25 +43,4 @@ include::components:example$advanced/inputs/nats_jetstream.yaml[]
 
 When a stream being consumed is mirrored in a different JetStream domain, the stream cannot be resolved from the subject name alone. You must specify the stream name as well as the subject (if applicable).
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-```text
-- nats_subject
-- nats_sequence_stream
-- nats_sequence_consumer
-- nats_num_delivered
-- nats_num_pending
-- nats_domain
-- nats_timestamp_unix_nano
-```
-
-You can access these metadata fields using
-xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
-
-include::components:partial$nats_intro.adoc[]
-
-include::connect:components:partial$fields/inputs/nats_jetstream.adoc[]
-
-// end::single-source[]
+include::connect:components:partial$metadata/inputs/nats_jetstream.adoc[]

@@ -54,13 +54,7 @@ Each OTLP export request is unbatched into individual messages:
 
 Messages are encoded in Redpanda OTEL v1 protobuf format.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-* `signal_type` - The signal type: "trace", "log", or "metric"
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+include::connect:components:partial$metadata/inputs/otlp_grpc.adoc[]
 
 == Authentication
 

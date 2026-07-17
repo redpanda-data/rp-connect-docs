@@ -54,15 +54,7 @@ You can use one of the following authentication mechanisms:
 - Set the `connection_string` field
 
 
-== Metadata
-
-This component adds the following metadata fields to each message:
-```
-- activity_id
-- request_charge
-```
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+include::connect:components:partial$metadata/processors/azure_cosmosdb.adoc[]
 
 
 == Batching

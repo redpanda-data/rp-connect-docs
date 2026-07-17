@@ -92,14 +92,4 @@ NOTE: If the pipeline restarts during this process, Redpanda Connect must start 
 
 If you set the <<stream_snapshot,`stream_snapshot` field>> to `false`, Redpanda Connect connects to your MongoDB database and starts processing data changes from the latest oplog position. If the pipeline restarts, Redpanda Connect resumes processing updates from the last oplog position written to the <<checkpoint_cache,`checkpoint_cache`>>.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- `operation`: The type of data change that generated the message: `read`, `create`, `update`, `replace`, `delete`, `update`. A `read` operation occurs when the initial snapshot of the database is processed.
-- `collection`: The name of the collection from which the message originated.
-- `operation_time`: The time the data change was written to the https://www.mongodb.com/docs/manual/core/replica-set-oplog/[operations log (oplog)^] in the form of a Binary JSON (BSON) timestamp: `{"t": <unix seconds>, "i": <sequence number>}`.
-
-include::connect:components:partial$fields/inputs/mongodb_cdc.adoc[]
-
-// end::single-source[]
+include::connect:components:partial$metadata/inputs/mongodb_cdc.adoc[]

@@ -45,14 +45,7 @@ Tracking and persisting offsets through a durable name is also optional and work
 
 When a consumer closes its connection, it unsubscribes from the subject. When all consumers of a durable queue do this, the offsets are deleted from the NATS server. To avoid this, set the `unsubscribe_on_close` field to `false`, to prevent consumers from unsubscribing.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- nats_stream_subject
-- nats_stream_sequence
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+include::connect:components:partial$metadata/inputs/nats_stream.adoc[]
 
 
 == Authentication

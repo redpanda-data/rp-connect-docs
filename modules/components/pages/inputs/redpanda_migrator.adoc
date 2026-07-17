@@ -77,19 +77,7 @@ Setting `max_yield_batch_bytes` over 1MB is counter-productive unless you change
 == Metrics
 This input emits an `input_redpanda_migrator_lag` metric with `topic` and `partition` labels for each consumed topic. This metric records the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group. Monitor this metric to track migration progress and detect bottlenecks.
 
-== Metadata
-This input adds the following metadata fields to each message:
-
-- kafka_key
-- kafka_topic
-- kafka_partition
-- kafka_offset
-- kafka_lag
-- kafka_timestamp_ms
-- kafka_timestamp_unix
-- All record headers
-
-include::connect:components:partial$fields/inputs/redpanda_migrator.adoc[]
+include::connect:components:partial$metadata/inputs/redpanda_migrator.adoc[]
 
 == Troubleshooting
 

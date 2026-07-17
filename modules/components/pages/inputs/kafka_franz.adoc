@@ -49,21 +49,4 @@ When you specify a consumer group in your configuration, this input consumes one
 
 This input often out-performs the traditional `kafka` input and provides more useful logs and error messages.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-```text
-- kafka_key
-- kafka_topic
-- kafka_partition
-- kafka_offset
-- kafka_timestamp_ms
-- kafka_timestamp_unix
-- kafka_tombstone_message
-- All record headers
-```
-
-include::connect:components:partial$fields/inputs/kafka_franz.adoc[]
-
-// end::single-source[]
+include::connect:components:partial$metadata/inputs/kafka_franz.adoc[]

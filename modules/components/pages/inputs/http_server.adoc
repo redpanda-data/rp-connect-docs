@@ -79,39 +79,5 @@ You may specify an optional `ws_welcome_message`, which is a static payload to b
 
 It's also possible to specify a `ws_rate_limit_message`, which is a static payload to be sent to clients that have triggered the servers rate limit.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-```text
-- http_server_user_agent
-- http_server_request_path
-- http_server_verb
-- http_server_remote_ip
-- All headers (only first values are taken)
-- All query parameters
-- All path parameters
-- All cookies
-```
-
-If HTTPS is enabled, the following fields are added as well:
-```text
-- http_server_tls_version
-- http_server_tls_subject
-- http_server_tls_cipher_suite
-```
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
-
-=== Headers
-
-Request headers are available as metadata and use the HTTP header name with no additional prefix as a key. During processing, Redpanda Connect changes the format of the header name, as in the following example:
-```text
-x-api-key available as metadata("X-Api-Key")
-```
-
-include::connect:components:partial$examples/inputs/http_server.adoc[]
-
-include::connect:components:partial$fields/inputs/http_server.adoc[]
-// end::single-source[]
+include::connect:components:partial$metadata/inputs/http_server.adoc[]
 

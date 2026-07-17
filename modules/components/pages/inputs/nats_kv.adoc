@@ -38,21 +38,4 @@ include::components:example$advanced/inputs/nats_kv.yaml[]
 --
 ======
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-``` text
-- nats_kv_key
-- nats_kv_bucket
-- nats_kv_revision
-- nats_kv_delta
-- nats_kv_operation
-- nats_kv_created
-```
-
-include::components:partial$nats_intro.adoc[]
-
-include::connect:components:partial$fields/inputs/nats_kv.adoc[]
-
-// end::single-source[]
+include::connect:components:partial$metadata/inputs/nats_kv.adoc[]

@@ -23,9 +23,7 @@ branch:
 
 This is useful for preserving the original message contents when using processors that would otherwise replace the entire contents.
 
-== Metadata
-
-Metadata fields that are added to messages during branch processing will not be automatically copied into the resulting message. In order to do this you should explicitly declare in your `result_map` either a wholesale copy with `meta = metadata()`, or selective copies with `meta foo = metadata("bar")` and so on. It is also possible to reference the metadata of the origin message in the `result_map` using the xref:guides:bloblang/about.adoc#metadata[`@` operator].
+include::connect:components:partial$metadata/processors/branch.adoc[]
 
 == Error handling
 

@@ -35,9 +35,7 @@ include::components:example$advanced/outputs/amqp_1.yaml[]
 --
 ======
 
-== Metadata
-
-Message metadata is added to each AMQP message as string annotations. To control which metadata keys are added, use the `metadata` configuration field.
+include::connect:components:partial$metadata/outputs/amqp_1.adoc[]
 
 == Performance
 

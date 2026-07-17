@@ -21,12 +21,4 @@ csv:
   continue_on_error: false
 ```
 
-== Metadata
-
-This scanner adds the following metadata to each message:
-
-- `csv_row` The index of each row, beginning at 0.
-
-include::connect:components:partial$fields/scanners/csv.adoc[]
-
-// end::single-source[]
+include::connect:components:partial$metadata/scanners/csv.adoc[]

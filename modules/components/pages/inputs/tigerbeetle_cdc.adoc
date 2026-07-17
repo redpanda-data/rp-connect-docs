@@ -92,22 +92,7 @@ Before using the TigerBeetle CDC input, ensure that your environment meets the f
 You can either xref:install:prebuilt-binary.adoc[download a prebuilt cgo-enabled binary] or xref:install:build-from-source.adoc[build Redpanda Connect from source with cgo enabled].
 - Consumers must implement idempotency when processing messages to handle potential duplicates.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-[cols="1m,3a"]
-|===
-| Metadata Field        | Description
-
-| event_type            | One of `"single_phase"`, `"two_phase_pending"`, `"two_phase_posted"`, `"two_phase_voided"`, or `"two_phase_expired"`.
-| ledger                | The ledger code.
-| transfer_code         | The transfer code.
-| debit_account_code    | The debit account code.
-| credit_account_code   | The credit account code.
-| timestamp             | The unique event timestamp with nanosecond resolution.
-| timestamp_ms          | The event timestamp with millisecond resolution.
-|===
+include::connect:components:partial$metadata/inputs/tigerbeetle_cdc.adoc[]
 
 == Guarantees
 

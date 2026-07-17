@@ -16,15 +16,5 @@ Reads files from a HDFS directory, where each discrete file will be consumed as 
 include::components:example$common/inputs/hdfs.yaml[]
 ```
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- hdfs_name
-- hdfs_path
-
-You can access these metadata fields using
-xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
-
-include::connect:components:partial$fields/inputs/hdfs.adoc[]
+include::connect:components:partial$metadata/inputs/hdfs.adoc[]
 

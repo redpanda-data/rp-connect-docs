@@ -42,9 +42,7 @@ include::components:example$advanced/outputs/gcp_cloud_storage.yaml[]
 
 In order to have a different path for each object you should use function interpolations described in xref:configuration:interpolation.adoc#bloblang-queries[Bloblang queries], which are calculated per message of a batch.
 
-== Metadata
-
-Metadata fields on messages will be sent as headers, in order to mutate these values (or remove them) check out the xref:configuration:metadata.adoc[metadata docs].
+include::connect:components:partial$metadata/outputs/gcp_cloud_storage.adoc[]
 
 == Credentials
 

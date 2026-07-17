@@ -50,13 +50,4 @@ For example, the union schema `["null","string","Transaction"]`, where `Transact
 
 Alternatively, you can create documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting the field <<raw_json,`raw_json`>> to `true`.
 
-== Metadata
-
-This scanner emits the following metadata for each message:
-
-- The `@avro_schema` field: The canonical Avro schema.
-- The `@avro_schema_fingerprint` field: The schema ID or fingerprint.
-
-include::connect:components:partial$fields/scanners/avro.adoc[]
-
-// end::single-source[]
+include::connect:components:partial$metadata/scanners/avro.adoc[]

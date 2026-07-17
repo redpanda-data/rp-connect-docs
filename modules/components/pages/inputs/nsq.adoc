@@ -35,16 +35,5 @@ include::components:example$advanced/inputs/nsq.yaml[]
 --
 ======
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- nsq_attempts
-- nsq_id
-- nsq_nsqd_address
-- nsq_timestamp
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
-
-include::connect:components:partial$fields/inputs/nsq.adoc[]
+include::connect:components:partial$metadata/inputs/nsq.adoc[]
 

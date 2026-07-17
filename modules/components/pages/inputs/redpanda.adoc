@@ -90,20 +90,4 @@ You can break batches down further using the xref:components:processors/split.ad
 
 This input emits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic. The metric records the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- `kafka_key`
-- `kafka_topic`
-- `kafka_partition`
-- `kafka_offset`
-- `kafka_lag`
-- `kafka_timestamp_ms`
-- `kafka_timestamp_unix`
-- `kafka_tombstone_message`
-- All record headers
-
-include::connect:components:partial$fields/inputs/redpanda.adoc[]
-
-// end::single-source[]
+include::connect:components:partial$metadata/inputs/redpanda.adoc[]
