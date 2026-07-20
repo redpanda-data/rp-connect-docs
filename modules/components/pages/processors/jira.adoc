@@ -8,20 +8,11 @@
 
 component_type_dropdown::[]
 
-ifndef::env-cloud[]
 [WARNING]
-.Deprecated
+.Deprecated in 4.100.0
 ====
 This component is deprecated and will be removed in the next major version release. To stream Jira issues, comments, or changelog entries, use the xref:components:inputs/jira.adoc[`jira` input] instead.
 ====
-endif::[]
-ifdef::env-cloud[]
-[WARNING]
-.Deprecated
-====
-This component is deprecated and will be removed in the next major version release. To stream Jira issues, comments, or changelog entries, use the `jira` input instead.
-====
-endif::[]
 
 Queries Jira resources and returns structured data.
 
