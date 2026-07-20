@@ -60,6 +60,48 @@ The source DynamoDB table must have https://docs.aws.amazon.com/amazondynamodb/l
 
 Checkpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard.
 
+=== Share a checkpoint table across pipelines
+
+By default, checkpoints are keyed by stream and shard only, so multiple pipelines that read the same stream and share one `checkpoint_table` overwrite each other's positions, which causes skipped or duplicated events. This is common when several developers or environments test against the same table.
+
+Set `checkpoint_namespace` to give each pipeline its own isolated set of checkpoints within a shared table. Redpanda Connect prefixes the namespace to the checkpoint key, so pipelines with different namespaces never collide:
+
+[source,yaml]
+----
+# Alice's pipeline
+input:
+  aws_dynamodb_cdc:
+    tables: [ orders ]
+    region: us-east-1
+    checkpoint_table: shared_dynamodb_checkpoints
+    checkpoint_namespace: dev-alice
+    start_from: trim_horizon
+----
+
+[source,yaml]
+----
+# Bob's pipeline: same stream and checkpoint table, isolated by namespace
+input:
+  aws_dynamodb_cdc:
+    tables: [ orders ]
+    region: us-east-1
+    checkpoint_table: shared_dynamodb_checkpoints
+    checkpoint_namespace: dev-bob
+    start_from: trim_horizon
+----
+
+`checkpoint_namespace` requires Redpanda Connect 4.101.0 or later. It is backward-compatible: leaving it unset (the default) keeps the existing checkpoint keys unchanged, so existing deployments are unaffected. The value cannot contain a `#` character.
+
+[NOTE]
+====
+A namespace provides isolation, not coordination. Two pipelines that use the same `checkpoint_namespace` and `checkpoint_table` still overwrite each other's checkpoints. To run readers independently, give each one a distinct namespace.
+====
+
+[WARNING]
+====
+Changing or removing `checkpoint_namespace` on an existing pipeline changes its checkpoint key, so the pipeline finds no prior checkpoint and resumes from `start_from`. With `start_from: trim_horizon`, this replays the entire stream.
+====
+
 == Alternative components
 
 For better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.
