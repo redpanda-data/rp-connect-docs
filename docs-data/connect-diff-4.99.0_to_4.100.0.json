@@ -2,10 +2,10 @@
   "comparison": {
     "oldVersion": "4.99.0",
     "newVersion": "4.100.0",
-    "timestamp": "2026-07-17T16:07:14.456Z"
+    "timestamp": "2026-07-20T12:27:08.682Z"
   },
   "summary": {
-    "newComponents": 1,
+    "newComponents": 0,
     "removedComponents": 0,
     "newFields": 0,
     "removedFields": 0,
@@ -21,18 +21,7 @@
     "deprecatedBloblangFunctions": 0
   },
   "details": {
-    "newComponents": [
-      {
-        "name": "jira",
-        "type": "inputs",
-        "status": "stable",
-        "version": "4.96.0",
-        "description": "Periodically queries Jira's REST API using a JQL filter and emits one message per resource. The cursor (max issue `updated` timestamp, plus the set of issue versions already emitted at the boundary) is persisted via the configured cache resource after every fully-acknowledged page, so progress survives restarts — including mid-backfill — and boundary issues are not re-emitted on every poll.\n\nAuthentication uses API token (email + token) basic auth. The `backoff` settings govern the adaptive backoff applied to 429 responses; retries of 502/503/504 responses use a fixed three-attempt policy.\n\nEach message body is the raw JSON of the resource. Metadata fields:\n\n- `jira_id` - issue key (issues) / comment ID / changelog history ID\n- `jira_issue_key` - parent issue key (omitted for resource=issues)\n- `jira_project` - project key\n- `jira_updated` - RFC 3339 timestamp of the resource\n- `jira_event_type` - \"issue\" / \"comment\" / \"changelog\"\n- `jira_self` - Jira API URL of the resource\n\nLimitations (v1): OAuth and the worklogs resource are not yet supported. For resource=comments and resource=changelog, only the first page of child resources (up to ~50 comments or ~100 changelog entries per issue update) is emitted; a WARN is logged when truncation is detected. Use a downstream Jira processor to fetch the full child set if your issues exceed this limit.",
-        "requiresCgo": false,
-        "cloudOnly": false,
-        "cloudSupported": true
-      }
-    ],
+    "newComponents": [],
     "removedComponents": [],
     "newFields": [],
     "removedFields": [],
@@ -382,63 +371,15 @@
   "binaryAnalysis": {
     "versions": {
       "oss": "4.100.0",
-      "cloud": "4.100.0",
-      "cgo": "4.100.0"
+      "cloud": "4.101.0",
+      "cgo": "4.101.0"
     },
     "current": {
-      "cloudSupported": 489,
-      "selfHostedOnly": 75,
-      "cgoOnly": 4
+      "cloudSupported": 490,
+      "selfHostedOnly": 79,
+      "cgoOnly": 0
     },
-    "changes": {
-      "cloud": {
-        "added": [
-          {
-            "type": "inputs",
-            "name": "jira",
-            "status": "stable"
-          }
-        ],
-        "removed": [
-          {
-            "type": "processors",
-            "name": "a2a_message",
-            "status": "stable"
-          }
-        ]
-      },
-      "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "stable"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "ffi",
-            "status": "stable"
-          }
-        ],
-        "removedCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "jira",
-            "status": "stable"
-          }
-        ]
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -1634,6 +1575,11 @@
         {
           "type": "processors",
           "name": "xml",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -3009,6 +2955,16 @@
           "status": "stable"
         },
         {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -3124,6 +3080,11 @@
           "status": "stable"
         },
         {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -3209,6 +3170,11 @@
           "status": "stable"
         },
         {
+          "type": "processors",
+          "name": "ffi",
+          "status": "stable"
+        },
+        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -3264,35 +3230,8 @@
           "status": "stable"
         }
       ],
-      "cloudOnly": [
-        {
-          "type": "processors",
-          "name": "a2a_message",
-          "status": "stable"
-        }
-      ],
-      "cgoOnly": [
-        {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "stable"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
-          "status": "stable"
-        }
-      ]
+      "cloudOnly": [],
+      "cgoOnly": []
     }
   }
 }
