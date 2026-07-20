@@ -1,7 +1,9 @@
 = jira
 // tag::single-source[]
 :type: input
+:status: stable
 :support: certified
+:page-commercial-names: Jira, Atlassian Jira
 :categories: [Services]
 :description: Streams Jira issues, comments, or changelog entries via JQL with incremental polling.
 
@@ -26,7 +28,7 @@ Each message body is the raw JSON of the resource. Metadata fields:
 - `jira_event_type` - "issue" / "comment" / "changelog"
 - `jira_self` - Jira API URL of the resource
 
-Limitations (v1): OAuth and the worklogs resource are not yet supported. For resource=comments and resource=changelog, only the first page of child resources (up to ~50 comments or ~100 changelog entries per issue update) is emitted; a WARN is logged when truncation is detected. Use a downstream Jira processor to fetch the full child set if your issues exceed this limit.
+Limitations (v1): OAuth and the worklogs resource are not yet supported. For resource=comments and resource=changelog, only the first page of child resources (up to ~50 comments or ~100 changelog entries per issue update) is emitted; a WARN is logged when truncation is detected. To fetch the full child set for issues that exceed this limit, query the Jira REST API directly.
 
 [tabs]
 ======
