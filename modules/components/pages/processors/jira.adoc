@@ -1,12 +1,18 @@
 = jira
 // tag::single-source[]
 :type: processor
-:status: experimental
+:status: deprecated
 :categories: [Services]
 :page-categories: Streaming, Integration
 :description: Queries Jira resources and returns structured data.
 
 component_type_dropdown::[]
+
+[WARNING]
+.Deprecated in 4.100.0
+====
+This component is deprecated and will be removed in the next major version release. To stream Jira issues, comments, or changelog entries, use the xref:components:inputs/jira.adoc[`jira` input] instead.
+====
 
 Queries Jira resources and returns structured data.
 

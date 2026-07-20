@@ -8,6 +8,42 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.100.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.100.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:inputs/jira.adoc[jira]
+|Inputs
+|stable
+|Periodically queries Jira's REST API using a JQL filter and emits one message per resource.
+
+|===
+
+
+=== Deprecations
+
+The following components are now deprecated:
+
+[cols="1m,1a,3a"]
+|===
+|Component |Type |Description
+
+|xref:components:processors/jira.adoc[jira]
+|Processors
+|Executes Jira API queries based on input messages and returns structured results.
+
+|===
+
+
 == Version 4.99.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.99.0[See the full release notes^].
