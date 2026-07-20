@@ -18,6 +18,14 @@ Maximum number of unacknowledged messages before forcing a checkpoint update. Lo
 
 *Default*: `1000`
 
+=== `checkpoint_namespace`
+
+An optional namespace for checkpoints, allowing multiple independent pipelines (for example one per developer or environment) to share a single checkpoint table without overwriting each other's positions. Checkpoints written under one namespace are invisible to pipelines using a different namespace (or none), so changing this value causes the pipeline to restart from `start_from`. Must not contain `#`.
+
+*Type*: `string`
+
+*Default*: `""`
+
 === `checkpoint_table`
 
 DynamoDB table name for storing checkpoints. Will be created if it doesn't exist.
