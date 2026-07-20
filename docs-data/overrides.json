@@ -401,6 +401,11 @@
       "config": {
         "children": [
           {
+            "name": "checkpoint_namespace",
+            "description": "Isolates this pipeline's checkpoints within a shared `checkpoint_table` by prefixing the namespace to the checkpoint key. Use this so that multiple pipelines reading the same stream can share one checkpoint table without overwriting each other's positions, for example per-developer or per-environment test pipelines. Leave empty (the default) to keep the original checkpoint keys unchanged. A namespace isolates readers but does not coordinate them: pipelines that share the same namespace still collide. The value cannot contain a `#` character.",
+            "version": "4.101.0"
+          },
+          {
             "name": "snapshot_mode",
             "description": "`none`: Streams CDC events only (default). `snapshot_only`: Performs a one-time full table scan with no ongoing streaming. `snapshot_and_cdc`: Scans the entire table, then streams changes."
           },
