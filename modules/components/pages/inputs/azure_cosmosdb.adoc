@@ -53,8 +53,11 @@ You can use one of the following authentication mechanisms:
 - Set only the `endpoint` field to use https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#DefaultAzureCredential[DefaultAzureCredential^]
 - Set the `connection_string` field
 
-
 include::connect:components:partial$metadata/inputs/azure_cosmosdb.adoc[]
+
+include::connect:components:partial$examples/inputs/azure_cosmosdb.adoc[]
+
+include::connect:components:partial$fields/inputs/azure_cosmosdb.adoc[]
 
 == CosmosDB emulator
 

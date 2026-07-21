@@ -39,6 +39,10 @@ In order to avoid permanent loops any error associated with messages as they fir
 
 include::connect:components:partial$metadata/processors/retry.adoc[]
 
+include::connect:components:partial$examples/processors/retry.adoc[]
+
+include::connect:components:partial$fields/processors/retry.adoc[]
+
 == Batching
 
 When messages are batched the child processors of a retry are executed for each individual message in isolation, performed serially by default but in parallel when the field <<parallel, `parallel`>> is set to `true`. This is an intentional limitation of the retry processor and is done in order to ensure that errors are correctly associated with a given input message. Otherwise, the archiving, expansion, grouping, filtering and so on of the child processors could obfuscate this relationship.

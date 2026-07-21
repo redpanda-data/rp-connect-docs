@@ -33,6 +33,8 @@ If a non-zero error code is returned by the command then an error containing the
 
 If the command is successful but stderr is written to then a metadata field `command_stderr` is populated with its contents.
 
+include::connect:components:partial$metadata/processors/command.adoc[]
+
 include::connect:components:partial$fields/processors/command.adoc[]
 
 include::connect:components:partial$examples/processors/command.adoc[]

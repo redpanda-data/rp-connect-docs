@@ -91,3 +91,7 @@ You can break batches down further using the xref:components:processors/split.ad
 This input emits a `redpanda_lag` metric with `topic` and `partition` labels for each consumed topic. The metric records the number of produced messages that remain to be read from each topic/partition pair by the specified consumer group.
 
 include::connect:components:partial$metadata/inputs/redpanda.adoc[]
+
+include::connect:components:partial$fields/inputs/redpanda.adoc[]
+
+// end::single-source[]

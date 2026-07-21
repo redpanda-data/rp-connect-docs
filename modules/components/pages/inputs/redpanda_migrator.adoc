@@ -79,6 +79,8 @@ This input emits an `input_redpanda_migrator_lag` metric with `topic` and `parti
 
 include::connect:components:partial$metadata/inputs/redpanda_migrator.adoc[]
 
+include::connect:components:partial$fields/inputs/redpanda_migrator.adoc[]
+
 == Troubleshooting
 
 * Ensure the input and output `label` fields match exactly.

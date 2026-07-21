@@ -51,3 +51,7 @@ For example, the union schema `["null","string","Transaction"]`, where `Transact
 Alternatively, you can create documents in https://pkg.go.dev/github.com/linkedin/goavro/v2#NewCodecForStandardJSONFull[standard/raw JSON format^] by setting the field <<raw_json,`raw_json`>> to `true`.
 
 include::connect:components:partial$metadata/scanners/avro.adoc[]
+
+include::connect:components:partial$fields/scanners/avro.adoc[]
+
+// end::single-source[]
