@@ -25,7 +25,7 @@ CDC enables real-time data integration patterns:
 
 == CDC inputs in Redpanda Connect
 
-Redpanda Connect CDC inputs use declarative YAML configuration and integrate with xref:guides:bloblang/about.adoc[Bloblang transformations] for data manipulation. This approach eliminates the need for a separate Kafka Connect cluster and provides built-in xref:configuration:interpolation.adoc#bloblang-queries[schema handling].
+Redpanda Connect CDC inputs use declarative YAML configuration and integrate with xref:guides:bloblang/about.adoc[Bloblang transformations] for data manipulation. This approach eliminates the need for a separate Kafka Connect cluster, and handles schemas through built-in xref:components:processors/schema_registry_encode.adoc[schema registry processors].
 
 [cols="1,1,1"]
 |===
