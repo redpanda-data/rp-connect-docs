@@ -28,11 +28,11 @@ These recipes tune *append-only* sinks, where every message becomes a new row. T
 
 == Recipe A: preserve message ordering
 
-Use this recipe when you must preserve the order of messages across partitions, for example when downstream consumers depend on a consistent global sequence.
+Use this recipe when you want to process records as a single ordered stream, rather than in parallel per partition.
 
-A single merged input stream preserves cross-partition order because Redpanda Connect processes messages sequentially, not in parallel, per partition. To keep that ordered stream fast, decouple the input from the commit-bound output and batch at the output level:
+A single merged input stream preserves the processing order of records, because Redpanda Connect consumes the stream in order instead of parallelizing consumption per partition. To keep that ordered stream fast, decouple the input from the commit-bound output and batch at the output level:
 
-* A xref:components:buffers/memory.adoc[`memory` buffer] absorbs input bursts so the fast input never blocks on commit latency. Size the buffer to your throughput multiplied by the commit interval.
+* A xref:components:buffers/memory.adoc[`memory` buffer] absorbs short input bursts and commit stalls, decoupling the input from commit latency. The buffer is bounded (500 MiB in this recipe): if the input sustains a higher rate than the sink can commit, the buffer fills and applies backpressure to the input. Size the buffer to your throughput multiplied by the commit interval.
 * Output-level `batching` feeds the Iceberg commit coalescer, so `max_in_flight` can dispatch concurrent writers. Without output batching, a single buffered stream starves the committer. In smoke tests at 1 vCPU, adding output batching raised throughput from 0.8 to 12.7 MB/s.
 
 [,yaml]
@@ -54,11 +54,16 @@ output:
       max_snapshot_age: 24h
 ----
 
+[NOTE]
+====
+`max_in_flight: 16` lets the output commit batches concurrently for throughput. Because concurrent batches can commit in any order, the order in which rows become visible in the Iceberg table is not guaranteed to match the input order, even though the input stream itself is processed in order. If you need commits applied in strict order, set `max_in_flight: 1`, at the cost of throughput.
+====
+
 == Recipe B: maximize throughput
 
-Use this recipe when ordering across partitions is not required, which is typical for append-only Iceberg sinks. This recipe reaches the highest throughput ceiling.
+Use this recipe when preserving processing order is not required, which is typical for append-only Iceberg sinks. This recipe reaches the highest throughput ceiling.
 
-Recipe B removes the buffer and parallelizes at the input instead. The xref:components:inputs/redpanda.adoc[`redpanda` input]'s `unordered_processing` runs per-partition streams that batch in the read-ahead fetch buffer, feeding many concurrent commits to the coalescer. A higher `max_in_flight` of `32` lets those commits overlap. This configuration trades cross-partition ordering for higher throughput.
+Recipe B removes the buffer and parallelizes at the input instead. The xref:components:inputs/redpanda.adoc[`redpanda` input]'s `unordered_processing` processes each partition's records in parallel and batches them in the read-ahead fetch buffer, feeding many concurrent commits to the coalescer. A higher `max_in_flight` of `32` lets those commits overlap. This configuration trades ordered processing for higher throughput.
 
 [,yaml]
 ----
@@ -100,10 +105,10 @@ Your results depend on your catalog, storage backend, message size, and partitio
 |===
 | Requirement | Recipe
 
-| Ordering across partitions is not required (typical for Iceberg)
+| Ordered processing is not required (typical for append-only Iceberg sinks)
 | Recipe B: maximize throughput
 
-| Ordering across partitions is required
+| You want the stream processed in order
 | Recipe A: preserve message ordering
 |===
 
