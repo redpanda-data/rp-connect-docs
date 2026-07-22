@@ -1,18 +1,18 @@
 {
   "comparison": {
-    "oldVersion": "4.96.2",
-    "newVersion": "4.96.3",
-    "timestamp": "2026-06-17T19:00:12.814Z"
+    "oldVersion": "4.99.0",
+    "newVersion": "4.100.0",
+    "timestamp": "2026-07-20T12:27:08.682Z"
   },
   "summary": {
     "newComponents": 0,
     "removedComponents": 0,
     "newFields": 0,
     "removedFields": 0,
-    "deprecatedComponents": 0,
+    "deprecatedComponents": 1,
     "deprecatedFields": 0,
     "changedDefaults": 0,
-    "platformTransitions": 0,
+    "platformTransitions": 19,
     "newBloblangMethods": 0,
     "removedBloblangMethods": 0,
     "newBloblangFunctions": 0,
@@ -25,10 +25,342 @@
     "removedComponents": [],
     "newFields": [],
     "removedFields": [],
-    "deprecatedComponents": [],
+    "deprecatedComponents": [
+      {
+        "name": "jira",
+        "type": "processors",
+        "status": "deprecated",
+        "version": "4.68.0",
+        "description": "Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.\n\nThis processor is deprecated in favour of the `jira` input, which streams issues, comments, and changelog entries with cursor-based incremental polling. The processor remains available for enrichment and lookup style operations.\n\nSupports querying the following Jira resources:\n- Issues (JQL queries)\n- Issue transitions\n- Users\n- Roles\n- Project versions\n- Project categories\n- Project types\n- Projects\n\nThe processor authenticates using basic authentication with username and API token. Input messages should contain valid Jira queries in JSON format."
+      }
+    ],
     "deprecatedFields": [],
     "changedDefaults": [],
-    "platformTransitions": [],
+    "platformTransitions": [
+      {
+        "name": "http",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "input",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "buffer",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "pipeline",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "output",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "input_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "processor_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "output_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "cache_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "rate_limit_resources",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "logger",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "metrics",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "tracer",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "shutdown_delay",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "shutdown_timeout",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "error_handling",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "tests",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "parallel",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      },
+      {
+        "name": "redpanda",
+        "type": "config",
+        "transitions": [
+          "added_cloud_support"
+        ],
+        "oldPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": false,
+          "cloudOnly": false
+        },
+        "newPlatform": {
+          "requiresCgo": false,
+          "cloudSupported": true,
+          "cloudOnly": false
+        }
+      }
+    ],
     "newBloblangMethods": [],
     "removedBloblangMethods": [],
     "newBloblangFunctions": [],
@@ -38,52 +370,16 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.96.3",
-      "cloud": "4.96.3",
-      "cgo": "4.96.3"
+      "oss": "4.100.0",
+      "cloud": "4.101.0",
+      "cgo": "4.101.0"
     },
     "current": {
-      "cloudSupported": 486,
-      "selfHostedOnly": 75,
-      "cgoOnly": 4
+      "cloudSupported": 490,
+      "selfHostedOnly": 79,
+      "cgoOnly": 0
     },
-    "changes": {
-      "cloud": {
-        "added": [],
-        "removed": [
-          {
-            "type": "processors",
-            "name": "a2a_message",
-            "status": "stable"
-          }
-        ]
-      },
-      "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "stable"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "ffi",
-            "status": "stable"
-          }
-        ],
-        "removedCgoOnly": []
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -160,6 +456,11 @@
           "type": "config",
           "name": "shutdown_timeout",
           "status": "string"
+        },
+        {
+          "type": "config",
+          "name": "error_handling",
+          "status": "object"
         },
         {
           "type": "config",
@@ -374,6 +675,11 @@
         {
           "type": "inputs",
           "name": "inproc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "jira",
           "status": "stable"
         },
         {
@@ -1034,7 +1340,7 @@
         {
           "type": "processors",
           "name": "jira",
-          "status": "stable"
+          "status": "deprecated"
         },
         {
           "type": "processors",
@@ -1248,6 +1554,11 @@
         },
         {
           "type": "processors",
+          "name": "try_catch",
+          "status": "beta"
+        },
+        {
+          "type": "processors",
           "name": "unarchive",
           "status": "stable"
         },
@@ -1264,6 +1575,11 @@
         {
           "type": "processors",
           "name": "xml",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -2639,6 +2955,16 @@
           "status": "stable"
         },
         {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2754,6 +3080,11 @@
           "status": "stable"
         },
         {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -2839,6 +3170,11 @@
           "status": "stable"
         },
         {
+          "type": "processors",
+          "name": "ffi",
+          "status": "stable"
+        },
+        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2894,35 +3230,8 @@
           "status": "stable"
         }
       ],
-      "cloudOnly": [
-        {
-          "type": "processors",
-          "name": "a2a_message",
-          "status": "stable"
-        }
-      ],
-      "cgoOnly": [
-        {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "stable"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
-          "status": "stable"
-        }
-      ]
+      "cloudOnly": [],
+      "cgoOnly": []
     }
   }
 }

@@ -6,6 +6,8 @@ inputs:
     table_tag_filter: ""
     table_discovery_interval: 5m
     checkpoint_table: redpanda_dynamodb_checkpoints
+    global_table: false
+    global_table_replicas: []
     batch_size: 1000
     poll_interval: 1s
     start_from: trim_horizon

@@ -1,6 +1,6 @@
 {
-  "version": "4.96.2",
-  "date": "2026-06-16T14:31:02Z",
+  "version": "4.99.0",
+  "date": "2026-07-02T15:08:01Z",
   "config": [
     {
       "name": "http",
@@ -375,6 +375,23 @@
       "kind": "scalar",
       "description": "The maximum period of time to wait for a clean shutdown. If this time is exceeded Redpanda Connect will forcefully close.",
       "default": "20s"
+    },
+    {
+      "name": "error_handling",
+      "type": "object",
+      "kind": "scalar",
+      "description": "Configures engine-wide error handling behaviour.",
+      "is_advanced": true,
+      "children": [
+        {
+          "name": "strict",
+          "type": "bool",
+          "kind": "scalar",
+          "description": "When enabled, a processing error is terminal for the affected message: it skips the remaining processors in its pipeline and is rejected (nacked) at the output rather than written. To recover from an expected error, wrap the fallible step within a `try_catch` processor (or a `retry` processor for transient failures); a standalone `catch` does not recover messages under this mode, as the failed message short-circuits past it. This setting will become the default and only behaviour in the next major version.",
+          "is_advanced": true,
+          "default": false
+        }
+      ]
     },
     {
       "name": "tests",
@@ -4844,7 +4861,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Reads change data capture (CDC) events from DynamoDB Streams.",
-      "description": "\nConsumes records from DynamoDB Streams with automatic checkpointing and shard management.\n\nDynamoDB Streams capture item-level changes in DynamoDB tables. This input supports:\n\n- Automatic shard discovery and management\n- Checkpoint-based resumption after restarts\n- Concurrent processing of multiple shards\n- Optional initial snapshot of existing table data\n- Multi-table streaming with auto-discovery by tags or explicit table lists\n\n### Table Discovery Modes\n\nThis input supports three table discovery modes:\n\n- `single` (default) - Stream from a single table specified in the `tables` field\n- `tag` - Auto-discover and stream from multiple tables based on DynamoDB table tags. Use `table_tag_filter` to filter tables (e.g. `key:value`)\n- `includelist` - Stream from an explicit list of tables specified in the `tables` field\n\nWhen using `tag` or `includelist` mode, the connector will stream from all matching tables simultaneously. Each table maintains its own checkpoint state. Use `table_discovery_interval` to periodically rescan for new tables (useful for dynamically tagged tables).\n\n### Prerequisites\n\nThe source DynamoDB table(s) must have streams enabled. You can enable streams with one of these view types:\n\n- `KEYS_ONLY` - Only the key attributes of the modified item\n- `NEW_IMAGE` - The entire item as it appears after the modification\n- `OLD_IMAGE` - The entire item as it appeared before the modification\n- `NEW_AND_OLD_IMAGES` - Both the new and old item images\n\n### Snapshots\n\nWhen `snapshot_mode` is set to `snapshot_only` or `snapshot_and_cdc`, the input will first scan the entire table before (or instead of) streaming changes. This is useful for:\n\n- Building a replica or cache with all existing data\n- Syncing historical data to a data warehouse\n- Populating a search index with existing records\n\nWARNING: Snapshots use the DynamoDB Scan API which consumes read capacity units (RCUs). For large tables, this can be expensive and take considerable time. Use `snapshot_segments` and `snapshot_throttle` to control RCU consumption.\n\nNOTE: Snapshots use eventually consistent reads and do not provide point-in-time consistency. Records modified during the snapshot may appear in both the snapshot and CDC stream (with different values). Use `snapshot_deduplicate` to minimize duplicates.\n\n### Checkpointing\n\nCheckpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard. Snapshot progress is also checkpointed, allowing resumption mid-snapshot after failures.\n\n### Alternative\n\nFor better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.\n\n### Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `dynamodb_shard_id` - The shard ID from which the record was read (empty for snapshot records)\n- `dynamodb_sequence_number` - The sequence number of the record in the stream (empty for snapshot records)\n- `dynamodb_event_name` - The type of change: INSERT, MODIFY, REMOVE, or READ (for snapshot records)\n- `dynamodb_table` - The name of the DynamoDB table\n\n### Metrics\n\nThis input emits the following metrics:\n\n- `dynamodb_cdc_shards_tracked` - Total number of shards being tracked (gauge)\n- `dynamodb_cdc_shards_active` - Number of shards currently being read from (gauge)\n- `dynamodb_cdc_snapshot_state` - Snapshot state: 0=not_started, 1=in_progress, 2=complete (gauge)\n- `dynamodb_cdc_snapshot_records_read` - Total records read during snapshot (counter)\n- `dynamodb_cdc_snapshot_segments_active` - Number of active snapshot scan segments (gauge)\n- `dynamodb_cdc_snapshot_buffer_overflow` - Incremented when the deduplication buffer exceeds its size limit, disabling dedup (counter)\n- `dynamodb_cdc_snapshot_segment_duration` - Time taken by each snapshot scan segment to complete (timer)\n- `dynamodb_cdc_checkpoint_failures` - Number of failed checkpoint writes to the checkpoint table (counter)\n",
+      "description": "\nConsumes records from DynamoDB Streams with automatic checkpointing and shard management.\n\nDynamoDB Streams capture item-level changes in DynamoDB tables. This input supports:\n\n- Automatic shard discovery and management\n- Checkpoint-based resumption after restarts\n- Concurrent processing of multiple shards\n- Optional initial snapshot of existing table data\n- Multi-table streaming with auto-discovery by tags or explicit table lists\n\n### Table Discovery Modes\n\nThis input supports three table discovery modes:\n\n- `single` (default) - Stream from a single table specified in the `tables` field\n- `tag` - Auto-discover and stream from multiple tables based on DynamoDB table tags. Use `table_tag_filter` to filter tables (e.g. `key:value`)\n- `includelist` - Stream from an explicit list of tables specified in the `tables` field\n\nWhen using `tag` or `includelist` mode, the connector will stream from all matching tables simultaneously. Each table maintains its own checkpoint state. Use `table_discovery_interval` to periodically rescan for new tables (useful for dynamically tagged tables).\n\n### Prerequisites\n\nThe source DynamoDB table(s) must have streams enabled. You can enable streams with one of these view types:\n\n- `KEYS_ONLY` - Only the key attributes of the modified item\n- `NEW_IMAGE` - The entire item as it appears after the modification\n- `OLD_IMAGE` - The entire item as it appeared before the modification\n- `NEW_AND_OLD_IMAGES` - Both the new and old item images\n\n### Snapshots\n\nWhen `snapshot_mode` is set to `snapshot_only` or `snapshot_and_cdc`, the input will first scan the entire table before (or instead of) streaming changes. This is useful for:\n\n- Building a replica or cache with all existing data\n- Syncing historical data to a data warehouse\n- Populating a search index with existing records\n\nWARNING: Snapshots use the DynamoDB Scan API which consumes read capacity units (RCUs). For large tables, this can be expensive and take considerable time. Use `snapshot_segments` and `snapshot_throttle` to control RCU consumption.\n\nNOTE: Snapshots use eventually consistent reads and do not provide point-in-time consistency. Records modified during the snapshot may appear in both the snapshot and CDC stream (with different values). Use `snapshot_deduplicate` to minimize duplicates.\n\n### Checkpointing\n\nCheckpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard. Snapshot progress is also checkpointed, allowing resumption mid-snapshot after failures.\n\n### Alternative\n\nFor better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.\n\n### Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `dynamodb_shard_id` - The shard ID from which the record was read (empty for snapshot records)\n- `dynamodb_sequence_number` - The sequence number of the record in the stream (empty for snapshot records)\n- `dynamodb_approximate_creation_time` - RFC3339 approximate creation time of the stream record (empty for snapshot records)\n- `dynamodb_event_name` - The type of change: INSERT, MODIFY, REMOVE, or READ (for snapshot records)\n- `dynamodb_table` - The name of the DynamoDB table\n\n### Metrics\n\nThis input emits the following metrics:\n\n- `dynamodb_cdc_shards_tracked` - Total number of shards being tracked (gauge)\n- `dynamodb_cdc_shards_active` - Number of shards currently being read from (gauge)\n- `dynamodb_cdc_snapshot_state` - Snapshot state: 0=not_started, 1=in_progress, 2=complete (gauge)\n- `dynamodb_cdc_snapshot_records_read` - Total records read during snapshot (counter)\n- `dynamodb_cdc_snapshot_segments_active` - Number of active snapshot scan segments (gauge)\n- `dynamodb_cdc_snapshot_buffer_overflow` - Incremented when the deduplication buffer exceeds its size limit, disabling dedup (counter)\n- `dynamodb_cdc_snapshot_segment_duration` - Time taken by each snapshot scan segment to complete (timer)\n- `dynamodb_cdc_checkpoint_failures` - Number of failed checkpoint writes to the checkpoint table (counter)\n- `dynamodb_cdc_failover_skipped` - Records skipped during global-table failover replay because they predate the resumed cutoff (counter)\n\n### Global Table Checkpoints (multi-region failover)\n\nIn active/active or active/passive multi-region deployments, set `global_table: true` and list the other regions in `global_table_replicas` so the auto-created checkpoint table is provisioned as a DynamoDB Global Table (v2). Checkpoints then replicate across regions: a failed-over pipeline resumes near the last committed position instead of replaying the whole stream. Because each region's stream has its own sequence numbers, cross-region resume is time-based (at-least-once, replaying from the trim horizon up to the last replicated record time); same-region restarts still resume exactly. If the checkpoint table already exists, enabling `global_table` reconciles it towards the desired configuration: any missing replica regions are added via `UpdateTable`. The existing table must have been created in global mode (it must use a `TableId` hash key); pointing `global_table` at a pre-existing non-global checkpoint table fails fast with a clear error rather than mutating it.\n\nWhen `global_table` is enabled the principal additionally needs `dynamodb:CreateTable`, `dynamodb:UpdateTable`, `dynamodb:DescribeTable`, `dynamodb:DescribeLimits`, `iam:CreateServiceLinkedRole`, and create/describe permissions in each replica region.\n",
       "categories": [
         "Services",
         "AWS"
@@ -4929,6 +4946,22 @@
             "kind": "scalar",
             "description": "DynamoDB table name for storing checkpoints. Will be created if it doesn't exist.",
             "default": "redpanda_dynamodb_checkpoints"
+          },
+          {
+            "name": "global_table",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Provision the checkpoint table as a DynamoDB Global Table (v2) so checkpoints replicate across regions. Requires `global_table_replicas`. When the table is auto-created it is created as a global table; when it already exists, its replicas are reconciled (missing regions are added via `UpdateTable`). The existing table must have been created in global mode (`TableId` hash key) — enabling this against a pre-existing non-global checkpoint table fails fast with a clear error.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
+            "name": "global_table_replicas",
+            "type": "string",
+            "kind": "array",
+            "description": "Regions other than this pipeline's own region to replicate the checkpoint table to. The pipeline's own region is always included. Required when `global_table` is true. Applied both when the checkpoint table is created and, for an existing global table, when reconciling replicas (missing regions are added; this list is not used to remove regions).",
+            "is_advanced": true,
+            "default": []
           },
           {
             "name": "batch_size",
@@ -14860,7 +14893,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Enables Change Data Capture by consuming from OracleDB.",
-      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: the System Change Number in Oracle.\n- transaction_id: The Oracle transaction ID in `USN.SLOT.SEQ` format, identifying the transaction that produced the change. Not present on snapshot (`read`) messages.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- commit_ts_ms: The timestamp of the transaction commit, expressed as milliseconds since the Unix epoch. Sourced from `V$LOGMNR_CONTENTS.TIMESTAMP` on the COMMIT redo record — this is Oracle's wall-clock time when the commit was written to the redo log, not a dedicated commit-timestamp column. Not present on snapshot (`read`) messages.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
+      "description": "Streams changes from an Oracle database for Change Data Capture (CDC).\nAdditionally, if `stream_snapshot` is set to true, then the existing data in the database is also streamed too.\n\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n- database_schema: The database schema for the table where the message originates from.\n- table_name: Name of the table that the message originated from.\n- operation: Type of operation that generated the message: \"read\", \"delete\", \"insert\", or \"update\". \"read\" is from messages that are read in the initial snapshot phase.\n- scn: The System Change Number in Oracle. Messages published as part of a snapshot will contain Oracle's current SCN captured at time of snapshot.\n- transaction_id: The Oracle transaction ID in `USN.SLOT.SEQ` format, identifying the transaction that produced the change. Not present on snapshot (`read`) messages.\n- source_ts_ms: The timestamp of when Oracle wrote the change record into the redo log, expressed as milliseconds since the Unix epoch. This reflects the database server's wall-clock time at the moment the DML executed, not the transaction commit time.\n- commit_ts_ms: The timestamp of the transaction commit, expressed as milliseconds since the Unix epoch. Sourced from `V$LOGMNR_CONTENTS.TIMESTAMP` on the COMMIT redo record — this is Oracle's wall-clock time when the commit was written to the redo log, not a dedicated commit-timestamp column. For snapshot (`read`) messages, this reflects Oracle's `SYSTIMESTAMP` at the moment the snapshot SCN was captured, so all snapshot messages share the same value.\n- schema: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. When new columns are detected in CDC events, the schema is automatically refreshed from the Oracle catalog. Dropped columns are reflected after a connector restart.\n\n== Permissions\n\nWhen using the default Oracle based cache, the Connect user requires permission to create tables and stored procedures, and the rpcn  schema must already exist. Refer to `checkpoint_cache_table_name` for more information.\n\t\t",
       "categories": [
         "Services"
       ],
@@ -14903,10 +14936,25 @@
             "type": "bool",
             "kind": "scalar",
             "description": "If set to true, the connector will query all the existing data as a part of snapshot process. Otherwise, it will start from the current System Change Number position.",
+            "is_deprecated": true,
             "default": false,
             "examples": [
               true
             ]
+          },
+          {
+            "name": "snapshot_mode",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Controls snapshot behaviour. `none` (default) skips snapshotting and starts streaming from the current SCN. `snapshot_only` performs a full snapshot, persists the SCN checkpoint, then stops without streaming. `snapshot_and_stream` performs a full snapshot then transitions to streaming.",
+            "is_optional": true,
+            "options": [
+              "none",
+              "snapshot_only",
+              "snapshot_and_stream"
+            ],
+            "version": "4.99.0",
+            "linter": "\nlet options = {\n  \"none\": true,\n  \"snapshot_only\": true,\n  \"snapshot_and_stream\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           },
           {
             "name": "max_parallel_snapshot_tables",
@@ -14934,6 +14982,20 @@
                 "kind": "scalar",
                 "description": "The SCN range to mine per cycle. Each cycle reads changes between the current SCN and current SCN + scn_window_size. Smaller values mean more frequent queries with lower memory usage but higher overhead; larger values reduce query frequency and improve throughput at the cost of higher memory usage per cycle.",
                 "default": 20000
+              },
+              {
+                "name": "min_scn_window_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "The minimum SCN gap required before starting a new LogMiner session. When the gap between the connector's current position and the database's current SCN is smaller than this value, the mining cycle is skipped and the connector backs off instead. This prevents excessive LogMiner start/stop cycles on low-traffic databases where Oracle background activity advances the SCN without producing relevant events. Set to 0 to disable.",
+                "default": 1000
+              },
+              {
+                "name": "max_scn_window_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "The maximum SCN range that can be mined in a single cycle. The window starts at scn_window_size and grows by scn_window_size each cycle that ends at the cap (backlog present), up to this limit. It shrinks by the same step each cycle that catches up to the database. This allows the connector to automatically mine larger windows during heavy backlog and smaller windows during steady state.",
+                "default": 100000
               },
               {
                 "name": "backoff_interval",
@@ -32048,7 +32110,7 @@
         ],
         "linter": "\nroot = []\nif this.format == \"json\" {\n  if this.read_json_by_line == true && this.strip_outer_array == true {\n    root = root.append(\"read_json_by_line and strip_outer_array cannot both be true\")\n  }\n  if this.read_json_by_line == false && this.strip_outer_array == false {\n    root = root.append(\"json format requires either read_json_by_line or strip_outer_array to be true\")\n  }\n}\nif this.format == \"csv\" {\n  if this.column_separator == \"\" {\n    root = root.append(\"column_separator cannot be empty when format=csv\")\n  }\n  if this.line_delimiter == \"\" {\n    root = root.append(\"line_delimiter cannot be empty when format=csv\")\n  }\n}\nif (this.url.or(\"\").string() == \"\" && this.fe_urls.length() == 0) {\n  root = root.append(\"either url or fe_urls must be configured\")\n}\nif this.partitions.length() > 0 && this.temporary_partitions.length() > 0 {\n  root = root.append(\"partitions and temporary_partitions cannot both be set\")\n}\nif this.max_filter_ratio < 0 || this.max_filter_ratio > 1 {\n  root = root.append(\"max_filter_ratio must be between 0 and 1\")\n}\nif this.group_commit != \"\" && this.group_commit != \"sync_mode\" && this.group_commit != \"async_mode\" && this.group_commit != \"off_mode\" {\n  root = root.append(\"group_commit must be one of sync_mode, async_mode, off_mode\")\n}\n"
       },
-      "version": "4.86.0",
+      "version": "4.96.0",
       "cloudSupported": false,
       "requiresCgo": false
     },
@@ -33020,12 +33082,12 @@
                 "Append each message to the output stream without any delimiter or special encoding."
               ],
               [
-                "lines",
-                "Append each message to the output stream followed by a line break."
-              ],
-              [
                 "delim:x",
                 "Append each message to the output stream followed by a custom delimiter."
+              ],
+              [
+                "lines",
+                "Append each message to the output stream followed by a line break."
               ]
             ],
             "version": "3.33.0"
@@ -33404,7 +33466,7 @@
             "name": "primary_keys",
             "type": "string",
             "kind": "array",
-            "description": "Optional list of primary-key column names. Required when `auto_create_table` is true and `write_mode` is `upsert` or `upsert_delete`. When the target table is pre-existing, the connector falls back to the PRIMARY KEY declared on the table. Up to 16 columns; composite keys are supported in the same order they are listed.",
+            "description": "Optional list of primary-key column names. Required when `auto_create_table` is true and `write_mode` is `upsert` or `upsert_delete`. A pre-existing table must already declare its PRIMARY KEY — this field cannot add one; when both are set they must match exactly (same columns, same order). Up to 16 columns; composite keys are supported in the same order they are listed.",
             "is_optional": true
           },
           {
@@ -35191,9 +35253,16 @@
       "status": "stable",
       "plugin": true,
       "summary": "Write data to Apache Iceberg tables via REST catalog.",
-      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\nCurrently only version 2 of the Iceberg specification is supported. Any pre-existing version 1 tables will be upgraded to version 2 automatically.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\nCurrently only version 2 of the Iceberg specification is supported. Any pre-existing version 1 tables will be upgraded to version 2 automatically.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n== Row-level operations\n\nBy default this output is append-only — every message becomes a new row (`row_operation: insert`), and existing configurations are unaffected. Set `row_operation` to apply a per-message operation, with `identifier_fields` defining the row identity:\n\n* `insert` — append the row. This is an unconditional append: it is *not* keyed or de-duplicated.\n* `upsert` — replace any existing rows matching `identifier_fields`, then append this row (equivalent to Iceberg's Flink UPSERT mode).\n* `delete` — remove rows matching `identifier_fields`.\n\n`row_operation` supports interpolation, so the operation can be driven by the data itself — for example by mapping a change-data-capture stream's operation field — but no CDC-specific format is assumed (see the change-data-capture example below). It is named `row_operation` to distinguish it from Iceberg's snapshot-level operation.\n\n`upsert` and `delete` require `identifier_fields` and use Iceberg merge-on-read equality deletes, which require table format version 2. A version-1 table is automatically upgraded to version 2 on the first `upsert`/`delete`; *this upgrade is irreversible*.\n\n*Identifier fields.* `identifier_fields` must reference existing table columns of a primitive, non-floating-point type. A static `upsert`/`delete` is validated at startup; an interpolated `row_operation` is validated per message at write time, so an empty `identifier_fields` is not caught until the first `upsert`/`delete` message arrives. Identifier columns of a temporal type (`timestamp`, `timestamptz`, `date`, `time`) must arrive as time values, not bare numbers — a numeric epoch is ambiguous as a delete key and is rejected at write time; convert it to a timestamp upstream. If the table is partitioned, every partition source column must be one of the `identifier_fields`, since equality deletes are partition-scoped.\n\nWhen this output auto-creates a table (via `schema_evolution`), the `identifier_fields` columns are created as *required* and registered as the table's Iceberg identifier-field-ids, so downstream engines and other writers see the primary key. A consequence is that a null or missing value in an identifier column is rejected on write, even for `insert`. Identifier columns must therefore be present at creation — in the first message or declared via `schema_metadata`. Pre-existing tables are never modified.\n\n*Batching and ordering.* Within a single batch the last `upsert`/`delete` per `identifier_fields` key wins. Each batch containing an `upsert`/`delete` is committed as its own snapshot (these commits are never coalesced, which is required for correctness), so a high-throughput mutation workload produces one snapshot per batch. Size batches accordingly and run regular table maintenance (snapshot expiry and compaction) to keep metadata manageable. Pure `insert`-only batches keep the original append fast path, which does coalesce commits.\n\nOrdering only holds *within* a batch. With more than one batch in flight, concurrent batches can commit out of order, so a stale `upsert` may overwrite a newer one for the same key. Set `max_in_flight: 1` for keyed (change-data-capture) workloads to preserve per-key order — this is enforced by config linting whenever `row_operation` is anything other than a static `insert`.\n\n[CAUTION]\n====\n`insert` is an unconditional append and is *not* keyed or de-duplicated. For keyed data (including change-data-capture), map create/read events to `upsert`, never `insert` — mixing `insert` with `upsert`/`delete` on the same key in one batch produces duplicate rows.\n====\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
       "categories": [
         "Services"
+      ],
+      "examples": [
+        {
+          "title": "Change-data-capture upsert/delete",
+          "summary": "Materialize a change-data-capture stream into an Iceberg table. A mapping derives the row operation from the source's operation field (here Debezium's `op`: `c`reate / `r`ead / `u`pdate map to `upsert`, `d`elete maps to `delete`) and selects the row image, while `identifier_fields` is the primary key. Note that creates map to `upsert`, never `insert`, so re-delivered or snapshot rows do not duplicate.",
+          "config": "\ninput:\n  redpanda:\n    seed_brokers: [ localhost:9092 ]\n    topics: [ dbserver.inventory.customers ]\n    consumer_group: iceberg_sink\n\npipeline:\n  processors:\n    - mapping: |\n        meta op = match this.op {\n          \"d\" => \"delete\",\n          _   => \"upsert\",\n        }\n        # Debezium puts the row image in 'after' (or 'before' for deletes).\n        root = this.after | this.before\n\noutput:\n  iceberg:\n    catalog:\n      url: http://localhost:8181/api/catalog\n    namespace: inventory\n    table: customers\n    row_operation: ${! metadata(\"op\") }\n    identifier_fields: [ id ]\n    # Keyed writes must stay ordered: a single batch in flight prevents\n    # concurrent batches from committing a stale update over a newer one.\n    max_in_flight: 1\n    storage:\n      aws_s3:\n        bucket: my-iceberg-data\n        region: us-east-1\n"
+        }
       ],
       "config": {
         "name": "",
@@ -35496,6 +35565,37 @@
             "description": "Controls how message field names are matched against table column names, and how column references in the partition spec are resolved. When `true` (the default), names must match exactly. When `false`, matching is case-insensitive — set this when your downstream catalog or query engine treats column names as case-insensitive (the iceberg specification's recommended convention) so that, for example, a message keyed `\"COLUMN\"` lands in an existing `column` rather than triggering schema evolution. Ambiguous case-only duplicates in the input are rejected.",
             "is_advanced": true,
             "default": true
+          },
+          {
+            "name": "row_operation",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data — e.g. a change-data-capture stream's operation field. Defaults to `insert`, preserving the original append-only behaviour.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full semantics, the format-version-2 upgrade, batching behaviour, and important caveats.",
+            "is_advanced": true,
+            "default": "insert",
+            "interpolated": true,
+            "examples": [
+              "insert",
+              "${! metadata(\"op\") }",
+              "${! this.op == \"d\" ? \"delete\" : \"upsert\" }"
+            ]
+          },
+          {
+            "name": "identifier_fields",
+            "type": "string",
+            "kind": "array",
+            "description": "The columns forming the row identity (the Iceberg identifier fields / equality-delete key) used by `upsert` and `delete`. Required when `row_operation` can evaluate to `upsert` or `delete`, and must reference existing table columns of a primitive, non-floating-point type.\n\nSee the <<row-level-operations,Row-level operations>> section above for the full constraints, including the temporal-type and partitioning rules and when the requirement is enforced.",
+            "is_advanced": true,
+            "default": [],
+            "examples": [
+              [
+                "id"
+              ],
+              [
+                "tenant_id",
+                "user_id"
+              ]
+            ]
           },
           {
             "name": "storage",
@@ -35930,7 +36030,8 @@
             "description": "The maximum number of messages to have in flight at a given time. Increase this to improve throughput.",
             "default": 4
           }
-        ]
+        ],
+        "linter": "root = if this.row_operation.or(\"insert\") != \"insert\" && this.max_in_flight.or(4) > 1 {\n  [ \"row_operation can resolve to upsert/delete, which rely on per-key write ordering; with max_in_flight > 1 concurrent batches may commit out of order and corrupt the last-writer-wins result. Set max_in_flight: 1 for keyed (change-data-capture) workloads, or use a static row_operation: insert for append-only writes.\" ]\n}"
       },
       "version": "4.80.0",
       "cloudSupported": true,
@@ -50845,7 +50946,8 @@
               "amazon.titan-embed-text-v1",
               "amazon.titan-embed-text-v2:0",
               "cohere.embed-english-v3",
-              "cohere.embed-multilingual-v3"
+              "cohere.embed-multilingual-v3",
+              "cohere.embed-v4:0"
             ]
           },
           {
@@ -50854,6 +50956,32 @@
             "kind": "scalar",
             "description": "The prompt you want to generate a response for. By default, the processor submits the entire payload as a string.",
             "is_optional": true
+          },
+          {
+            "name": "input_type",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Specifies the type of input passed to the model. Required by Cohere embedding models; ignored by Amazon Titan models.",
+            "is_optional": true,
+            "annotated_options": [
+              [
+                "classification",
+                "Used for embeddings passed through a text classifier."
+              ],
+              [
+                "clustering",
+                "Used for the embeddings run through a clustering algorithm."
+              ],
+              [
+                "search_document",
+                "Used for embeddings stored in a vector database for search use-cases."
+              ],
+              [
+                "search_query",
+                "Used for embeddings of search queries run against a vector DB to find relevant documents."
+              ]
+            ],
+            "linter": "\nlet options = {\n  \"classification\": true,\n  \"clustering\": true,\n  \"search_document\": true,\n  \"search_query\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
           }
         ]
       },
@@ -51865,7 +51993,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Applies a list of child processors _only_ when a previous processing step has failed.",
-      "description": "\nBehaves similarly to the xref:components:processors/for_each.adoc[`for_each`] processor, where a list of child processors are applied to individual messages of a batch. However, processors are only applied to messages that failed a processing step prior to the catch.\n\nFor example, with the following config:\n\n```yaml\npipeline:\n  processors:\n    - resource: foo\n    - catch:\n      - resource: bar\n      - resource: baz\n```\n\nIf the processor `foo` fails for a particular message, that message will be fed into the processors `bar` and `baz`. Messages that do not fail for the processor `foo` will skip these processors.\n\nWhen messages leave the catch block their fail flags are cleared. This processor is useful for when it's possible to recover failed messages, or when special actions (such as logging/metrics) are required before dropping them.\n\nMore information about error handling can be found in xref:configuration:error_handling.adoc[].",
+      "description": "\nBehaves similarly to the xref:components:processors/for_each.adoc[`for_each`] processor, where a list of child processors are applied to individual messages of a batch. However, processors are only applied to messages that failed a processing step prior to the catch.\n\nFor example, with the following config:\n\n```yaml\npipeline:\n  processors:\n    - resource: foo\n    - catch:\n      - resource: bar\n      - resource: baz\n```\n\nIf the processor `foo` fails for a particular message, that message will be fed into the processors `bar` and `baz`. Messages that do not fail for the processor `foo` will skip these processors.\n\nWhen messages leave the catch block their fail flags are cleared. This processor is useful for when it's possible to recover failed messages, or when special actions (such as logging/metrics) are required before dropping them.\n\nNOTE: When strict error handling (`error_handling.strict`) is enabled this processor does not recover anything, as a failed message short-circuits past it rather than reaching it. Use the xref:components:processors/try_catch.adoc[`try_catch`] processor instead, which contains both the fallible step and its recovery.\n\nMore information about error handling can be found in xref:configuration:error_handling.adoc[].",
       "categories": [
         "Composition"
       ],
@@ -59635,6 +59763,22 @@
             ]
           },
           {
+            "name": "json",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Configuration for how to decode schemas that are of type JSON.",
+            "children": [
+              {
+                "name": "coerce_data",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether decoded values should be coerced to match the types declared in the JSON Schema. By default JSON Schema decoding only validates the message and leaves it untouched, which means numbers are later interpreted as floating point (`double`) and date-time values as strings. When set to `true` the decoder rebuilds the message so that values match the schema: `integer` fields become 64-bit integers, `number` fields stay floating point, `string` fields with `format: date-time` become timestamps, and any `default` values declared in the schema are applied to absent fields. This is useful for downstream components that infer their schema from the decoded values, such as the `iceberg` outputs, which will then create `bigint` columns for integer fields rather than `double`. Note that, unlike the default behaviour, this is no longer a read-only operation: the message contents are transformed. Because coercion is stricter than validation, a message that passes validation may still fail coercion (for example an integer that overflows a 64-bit value, or a `date-time` string that is not valid RFC 3339), in which case the error can be caught using xref:configuration:error_handling.adoc[error handling methods].",
+                "default": false,
+                "version": "4.97.0"
+              }
+            ]
+          },
+          {
             "name": "cache_duration",
             "type": "string",
             "kind": "scalar",
@@ -60384,7 +60528,7 @@
             "name": "extras",
             "type": "string",
             "kind": "scalar",
-            "description": "A mapping that must evaluate to an object. If this mapping produces a value, then it is set on a sentry event as extras.",
+            "description": "A mapping that must evaluate to an object. If this mapping produces a value, then it is attached to the sentry event as a context named `extras`. (Prior to v4.x this populated the event's deprecated Additional Data section, which the upstream sentry-go SDK removed.)",
             "is_optional": true,
             "bloblang": true,
             "examples": [
@@ -61582,6 +61726,47 @@
         "type": "processor",
         "kind": "array",
         "default": []
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
+    },
+    {
+      "name": "try_catch",
+      "type": "processor",
+      "status": "beta",
+      "plugin": true,
+      "summary": "Executes a list of child `processors` on each message and, if any of them fail, executes a separate list of `catch` processors to recover from or react to the error.",
+      "description": "\nThis processor combines the behaviour of the xref:components:processors/try.adoc[`try`] and xref:components:processors/catch.adoc[`catch`] processors into a single block with an explicit recovery path. Because it contains both the fallible step and its recovery within a single processor, it is the recommended way to handle expected errors when strict error handling (`error_handling.strict`) is enabled.\n\nEach message of a batch is processed individually. The `processors` field is executed with \"try\" semantics: as soon as a processor fails for a given message the remaining `processors` are skipped for that message.\n\nAny message that failed is then routed to the `catch` processors. Before they run, the failure is moved off the message: it is stored as a structured object in a metadata field (see `error_metadata`, `error` by default) and the message's failure flag is **cleared**. The error is therefore available to recovery logic as an ordinary variable rather than as a message property. The object contains:\n\n- `what`: the error message.\n- `name`: the name of the component that failed (when known).\n- `label`: the label of the component that failed (when set).\n- `path`: the dot-path of the component that failed (when known).\n\nSo a recovery mapping reads the failure with, for example, `@error.what` (equivalent to `meta(\"error\").what`). Because the flag is cleared, the `catch` processors run under the normal error semantics — including strict — so a _new_ failure raised while recovering is treated as a fresh error and is not silently tolerated.\n\nNote that because the failure flag is cleared before the `catch` processors run, the xref:guides:bloblang/functions.adoc#error[`error`] and `error_source_*` functions do not report the original failure within the `catch` block; use the metadata object instead. An empty or omitted `catch` simply records the error in metadata and clears the flag (the failure is swallowed).\n\n```yaml\npipeline:\n  processors:\n    - try_catch:\n        processors:\n          - resource: foo\n          - resource: bar\n        catch:\n          - mutation: 'root = \"failed to process: \" + @error.what'\n```\n\nIn the example above, if either `foo` or `bar` fails for a message then the `mutation` is applied to that message, replacing its contents with a description of the error (read from the metadata object), and the message continues downstream without a failure flag.\n\nMore information about error handling can be found in xref:configuration:error_handling.adoc[].",
+      "categories": [
+        "Composition"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "processors",
+            "type": "processor",
+            "kind": "array",
+            "description": "A list of processors to execute on each message. If a processor fails for a given message the remaining processors in this list are skipped for that message, and the message is routed to the `catch` processors.",
+            "default": []
+          },
+          {
+            "name": "catch",
+            "type": "processor",
+            "kind": "array",
+            "description": "A list of processors to execute on each message that failed one of the `processors` above. The message is no longer flagged as failed when these run; the error is available as an object in the metadata field named by `error_metadata` (e.g. `@error.what`). When omitted or empty the error is recorded in metadata and the flag is cleared (the failure is swallowed).",
+            "default": []
+          },
+          {
+            "name": "error_metadata",
+            "type": "string",
+            "kind": "scalar",
+            "description": "The metadata key under which the caught error is stored, as an object with a `what` field (the error message) plus `name`, `label` and `path` fields describing the component that failed, before the `catch` processors are executed.",
+            "default": "error"
+          }
+        ]
       },
       "cloudSupported": true,
       "requiresCgo": false

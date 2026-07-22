@@ -9,10 +9,163 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+== Version 4.100.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.100.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:components:inputs/jira.adoc[jira]
+|Inputs
+|stable
+|Periodically queries Jira's REST API using a JQL filter and emits one message per resource.
+
+|===
 
 
+=== Deprecations
+
+The following components are now deprecated:
+
+[cols="1m,1a,3a"]
+|===
+|Component |Type |Description
+
+|xref:components:processors/jira.adoc[jira]
+|Processors
+|Executes Jira API queries based on input messages and returns structured results.
+
+|===
 
 
+== Version 4.99.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.99.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|global_table
+|Provision the checkpoint table as a DynamoDB Global Table (v2) so checkpoints replicate across regions.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#global_table[aws_dynamodb_cdc]
+
+
+|global_table_replicas
+|Regions other than this pipeline's own region to replicate the checkpoint table to. The pipeline's own region is always included.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#global_table_replicas[aws_dynamodb_cdc]
+
+
+|snapshot_mode
+|Controls snapshot behavior.
+|*Inputs:*
+
+* xref:components:inputs/oracledb_cdc.adoc#snapshot_mode[oracledb_cdc]
+
+
+|row_operation
+|The row-level operation to apply for each message: `insert` (append), `upsert` (replace rows matching `identifier_fields`, then append), or `delete` (remove rows matching `identifier_fields`). Supports interpolation so the operation can be driven by the data, such as a change-data-capture stream's operation field.
+|*Outputs:*
+
+* xref:components:outputs/iceberg.adoc#row_operation[iceberg]
+
+
+|identifier_fields
+|The columns forming the row identity (the Iceberg identifier fields / equality-delete key) used by `upsert` and `delete`.
+|*Outputs:*
+
+* xref:components:outputs/iceberg.adoc#identifier_fields[iceberg]
+
+
+|===
+
+
+=== Deprecations
+
+The following fields are now deprecated:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|stream_snapshot
+|Controls whether the connector snapshots existing data before streaming changes. Use `snapshot_mode` instead.
+|*Inputs:*
+
+* xref:components:inputs/oracledb_cdc.adoc#snapshot_mode[oracledb_cdc]
+
+
+|===
+
+
+== Version 4.98.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.98.0[See the full release notes^].
+
+=== Component updates
+
+This release adds the following new components:
+
+[cols="1m,1a,1a,3a"]
+|===
+|Component |Type |Status |Description
+
+|xref:configuration:error_handling.adoc[error_handling]
+|Config
+|stable
+|Configures engine-wide error handling behavior.
+
+|xref:components:processors/try_catch.adoc[try_catch]
+|Processors
+|beta
+|Combines the behavior of the `try` and `catch` processors into a single block with an explicit recovery path.
+
+|===
+
+
+== Version 4.97.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.97.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|input_type
+|Specifies the type of input passed to the model. Required by Cohere embedding models; ignored by Amazon Titan models.
+|*Processors:*
+
+* xref:components:processors/aws_bedrock_embeddings.adoc#input_type[aws_bedrock_embeddings]
+
+
+|json
+|Configuration for how to decode schemas that are of type JSON.
+|*Processors:*
+
+* xref:components:processors/schema_registry_decode.adoc#json[schema_registry_decode]
+
+
+|===
 
 
 == Version 4.96.3
