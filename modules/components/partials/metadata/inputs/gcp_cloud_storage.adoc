@@ -4,15 +4,13 @@
 
 This input adds the following metadata fields to each message:
 
-```
-- gcs_key
-- gcs_bucket
-- gcs_last_modified
-- gcs_last_modified_unix
-- gcs_content_type
-- gcs_content_encoding
+- `gcs_key`
+- `gcs_bucket`
+- `gcs_last_modified`
+- `gcs_last_modified_unix`
+- `gcs_content_type`
+- `gcs_content_encoding`
 - All user defined metadata
-```
 
 You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
 

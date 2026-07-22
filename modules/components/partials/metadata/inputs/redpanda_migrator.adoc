@@ -3,13 +3,13 @@
 == Metadata
 This input adds the following metadata fields to each message:
 
-- kafka_key
-- kafka_topic
-- kafka_partition
-- kafka_offset
-- kafka_lag
-- kafka_timestamp_ms
-- kafka_timestamp_unix
+- `kafka_key`
+- `kafka_topic`
+- `kafka_partition`
+- `kafka_offset`
+- `kafka_lag`
+- `kafka_timestamp_ms`
+- `kafka_timestamp_unix`
 - All record headers
 
 include::connect:components:partial$fields/inputs/redpanda_migrator.adoc[]
