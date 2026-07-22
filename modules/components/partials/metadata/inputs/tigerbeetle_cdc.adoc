@@ -4,10 +4,10 @@
 
 This input adds the following metadata fields to each message:
 
-- event_type: One of "single_phase", "two_phase_pending", "two_phase_posted", "two_phase_voided", or "two_phase_expired".
-- ledger: The ledger code.
-- transfer_code: The transfer code.
-- debit_account_code: The debit account code.
-- credit_account_code: The credit account code.
-- timestamp: The unique event timestamp with nanosecond resolution.
-- timestamp_ms: The event timestamp with millisecond resolution.
+- `event_type`: One of "single_phase", "two_phase_pending", "two_phase_posted", "two_phase_voided", or "two_phase_expired".
+- `ledger`: The ledger code.
+- `transfer_code`: The transfer code.
+- `debit_account_code`: The debit account code.
+- `credit_account_code`: The credit account code.
+- `timestamp`: The unique event timestamp with nanosecond resolution.
+- `timestamp_ms`: The event timestamp with millisecond resolution.

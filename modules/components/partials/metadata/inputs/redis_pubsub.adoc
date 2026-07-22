@@ -4,7 +4,7 @@
 
 This input adds the following metadata fields to each message:
 
-- redis_pubsub_channel
-- redis_pubsub_pattern
+- `redis_pubsub_channel`
+- `redis_pubsub_pattern`
 
 You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].

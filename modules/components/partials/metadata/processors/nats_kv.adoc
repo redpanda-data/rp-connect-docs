@@ -5,24 +5,18 @@
 This processor adds the following metadata fields to each message, depending on the chosen `operation`:
 
 === get, get_revision
-``` text
-- nats_kv_key
-- nats_kv_bucket
-- nats_kv_revision
-- nats_kv_delta
-- nats_kv_operation
-- nats_kv_created
-```
+- `nats_kv_key`
+- `nats_kv_bucket`
+- `nats_kv_revision`
+- `nats_kv_delta`
+- `nats_kv_operation`
+- `nats_kv_created`
 
 === create, update, delete, purge
-``` text
-- nats_kv_key
-- nats_kv_bucket
-- nats_kv_revision
-- nats_kv_operation
-```
+- `nats_kv_key`
+- `nats_kv_bucket`
+- `nats_kv_revision`
+- `nats_kv_operation`
 
 === keys
-``` text
-- nats_kv_bucket
-```
+- `nats_kv_bucket`
