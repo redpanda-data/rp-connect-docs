@@ -46,7 +46,19 @@ IMPORTANT: This input provides at-least-once delivery. It tracks its position in
 
 By default, Redpanda Connect uses a shared credentials file when connecting to AWS services. You can also set credentials explicitly at the component level to transfer data across accounts. You can find out more in xref:guides:cloud/aws.adoc[AWS credentials].
 
-include::connect:components:partial$metadata/inputs/aws_cloudwatch_logs.adoc[]
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `cloudwatch_log_group`: The name of the log group.
+- `cloudwatch_log_stream`: The name of the log stream.
+- `cloudwatch_timestamp`: The timestamp of the log event (Unix milliseconds).
+- `cloudwatch_ingestion_time`: The ingestion timestamp (Unix milliseconds).
+- `cloudwatch_event_id`: The unique event ID.
+
+You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+
+ifndef::env-cloud[]
 == Requirements
 
 Ensure that your environment meets the following requirements:

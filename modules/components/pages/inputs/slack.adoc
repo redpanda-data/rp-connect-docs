@@ -23,7 +23,9 @@ include::components:example$common/inputs/slack.yaml[]
 
 See also: <<Examples, Examples>>
 
-include::connect:components:partial$metadata/inputs/slack.adoc[]
+== Metadata
+
+Each message emitted from this input has an `@type` metadata flag to indicate the event type, either `"events_api"`, `"interactions"`, or `"slash_commands"`.
 
 include::connect:components:partial$fields/inputs/slack.adoc[]
 

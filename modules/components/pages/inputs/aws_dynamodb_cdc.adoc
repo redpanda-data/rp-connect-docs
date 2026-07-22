@@ -123,7 +123,14 @@ pipeline:
         root.old_data = this.dynamodb.oldImage
 ----
 
-include::connect:components:partial$metadata/inputs/aws_dynamodb_cdc.adoc[]
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `dynamodb_shard_id`: The shard ID from which the record was read
+- `dynamodb_sequence_number`: The sequence number of the record in the stream
+- `dynamodb_event_name`: The type of change: INSERT, MODIFY, or REMOVE
+- `dynamodb_table`: The name of the DynamoDB table
 
 == Metrics
 
