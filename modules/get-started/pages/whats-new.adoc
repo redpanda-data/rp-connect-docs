@@ -9,6 +9,37 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.101.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.101.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|checkpoint_namespace
+|An optional namespace for checkpoints, allowing multiple independent pipelines (for example one per developer or environment) to share a single checkpoint table without overwriting each other's positions.
+|*Inputs:*
+
+* xref:components:inputs/aws_dynamodb_cdc.adoc#checkpoint_namespace[aws_dynamodb_cdc]
+
+
+|snapshot_filters
+|A map of fully-qualified table names (for example `SCHEMA.TABLE`) to SQL `SELECT` queries that override the default snapshot query for each table.
+|*Inputs:*
+
+* xref:components:inputs/oracledb_cdc.adoc#snapshot_filters[oracledb_cdc]
+
+
+|===
+
+
 == Version 4.100.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.100.0[See the full release notes^].

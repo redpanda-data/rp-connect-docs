@@ -3,5 +3,6 @@ inputs:
   aws_dynamodb_cdc:
     tables: []
     checkpoint_table: redpanda_dynamodb_checkpoints
+    checkpoint_namespace: ""
     start_from: trim_horizon
     snapshot_mode: none

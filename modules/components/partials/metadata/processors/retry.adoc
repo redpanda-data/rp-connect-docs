@@ -4,8 +4,10 @@
 
 This processor adds the following metadata fields to each message:
 
-- `retry_count` - The number of retry attempts.
-- `backoff_duration` - The total time (in nanoseconds) elapsed while performing retries.
+```text
+- retry_count - The number of retry attempts.
+- backoff_duration - The total time (in nanoseconds) elapsed while performing retries.
+```
 
 [CAUTION]
 .Batching

@@ -18,6 +18,7 @@ inputs:
       lob_enabled: true
       transaction_cache: "" # No default (optional)
       transaction_cache_key: oracledb_cdc
+    snapshot_filters: "" # No default (optional)
     include: [] # No default (required)
     exclude: [] # No default (optional)
     checkpoint_cache: "" # No default (optional)

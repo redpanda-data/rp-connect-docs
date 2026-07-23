@@ -318,6 +318,22 @@ The name of the pluggable database (PDB) to monitor. When connecting to a CDB ro
 
 *Type*: `string`
 
+=== `snapshot_filters`
+
+A map of fully-qualified table names (for example `SCHEMA.TABLE`) to SQL `SELECT` queries that override the default snapshot query for each table. Use this to filter or shape the rows captured during the initial snapshot.
+
+Each query must project every column of the table's primary key (all columns of a composite key), even if it otherwise selects only a subset of columns. During a snapshot, Redpanda Connect pages through a table's rows by filtering and sorting on the full primary key against the query's own result set. If a primary key column isn't projected, the snapshot fails part-way through, after the first batch of rows is read.
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+snapshot_filters:
+  TESTDB.PRODUCTS: SELECT * FROM TESTDB.PRODUCTS WHERE ID > 1000
+  TESTDB.USERS: SELECT * FROM TESTDB.USERS
+----
+
 === `snapshot_max_batch_size`
 
 The maximum number of rows to be streamed in a single batch when taking a snapshot.
