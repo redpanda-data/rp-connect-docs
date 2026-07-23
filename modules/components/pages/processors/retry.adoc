@@ -37,20 +37,7 @@ By default the retry backoff has a specified <<backoffmax_elapsed_time,`max_elap
 
 In order to avoid permanent loops any error associated with messages as they first enter a retry processor will be cleared.
 
-== Metadata
-
-This processor adds the following metadata fields to each message:
-
-```text
-- retry_count - The number of retry attempts.
-- backoff_duration - The total time elapsed while performing retries.
-```
-
-[CAUTION]
-.Batching
-====
-If you wish to wrap a batch-aware series of processors then take a look at the <<batching, batching section>>.
-====
+include::connect:components:partial$metadata/processors/retry.adoc[]
 
 include::connect:components:partial$examples/processors/retry.adoc[]
 

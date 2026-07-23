@@ -93,20 +93,7 @@ input:
 
 Find your account ID in the Cloudflare dashboard under *R2 > Overview > Account Details*. Generate API credentials under *R2 > Manage R2 API Tokens*.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- s3_key
-- s3_bucket
-- s3_last_modified_unix
-- s3_last_modified (RFC3339)
-- s3_content_type
-- s3_content_encoding
-- s3_version_id
-- All user defined metadata
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation]. User-defined metadata is case insensitive in AWS, so keys are often received in capitalized form. To normalize them, map all metadata keys to lowercase or uppercase using a Bloblang mapping such as `meta = meta().map_each_key(key -> key.lowercase())`.
+include::connect:components:partial$metadata/inputs/aws_s3.adoc[]
 
 include::connect:components:partial$fields/inputs/aws_s3.adoc[]
 

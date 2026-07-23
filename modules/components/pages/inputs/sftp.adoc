@@ -38,13 +38,7 @@ include::components:example$advanced/inputs/sftp.yaml[]
 --
 ======
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- sftp_path
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+include::connect:components:partial$metadata/inputs/sftp.adoc[]
 
 include::connect:components:partial$fields/inputs/sftp.adoc[]
 

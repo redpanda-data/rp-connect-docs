@@ -42,14 +42,7 @@ include::components:example$advanced/inputs/azure_table_storage.yaml[]
 
 Queries an Azure Storage Account Table, optionally with multiple filters.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- table_storage_name
-- row_num
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+include::connect:components:partial$metadata/inputs/azure_table_storage.adoc[]
 
 include::connect:components:partial$fields/inputs/azure_table_storage.adoc[]
 

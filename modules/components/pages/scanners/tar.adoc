@@ -16,10 +16,6 @@ Consume a tar archive file by file.
 tar: {}
 ```
 
-== Metadata
-
-This scanner adds the following metadata to each message:
-
-- `tar_name`
+include::connect:components:partial$metadata/scanners/tar.adoc[]
 
 // end::single-source[]

@@ -44,17 +44,7 @@ services. You can also set credentials explicitly at the component level,
 which allows you to transfer data across accounts. To find out more, see
 xref:guides:cloud/aws.adoc[].
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- sqs_message_id
-- sqs_receipt_handle
-- sqs_approximate_receive_count
-- All message attributes
-
-You can access these metadata fields using
-xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+include::connect:components:partial$metadata/inputs/aws_sqs.adoc[]
 
 include::connect:components:partial$fields/inputs/aws_sqs.adoc[]
 

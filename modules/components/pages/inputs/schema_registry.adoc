@@ -38,17 +38,7 @@ include::components:example$advanced/inputs/schema_registry.yaml[]
 --
 ======
 
-== Metadata
-
-The `schema_registry` input adds the following metadata fields to each message:
-
-```text
-- schema_registry_subject
-- schema_registry_version
-```
-
-You can access these metadata fields using
-xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+include::connect:components:partial$metadata/inputs/schema_registry.adoc[]
 
 
 

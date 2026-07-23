@@ -42,35 +42,7 @@ include::components:example$advanced/processors/nats_kv.yaml[]
 
 The NATS KV processor supports many KV operations using the <<operation>> field. Along with `get`, `put`, and `delete`, this processor supports atomic operations like `update` and `create`, as well as utility operations like `purge`, `history`, and `keys`.
 
-== Metadata
-
-This processor adds the following metadata fields to each message, depending on the chosen `operation`:
-
-=== get, get_revision
-``` text
-- nats_kv_key
-- nats_kv_bucket
-- nats_kv_revision
-- nats_kv_delta
-- nats_kv_operation
-- nats_kv_created
-```
-
-=== create, update, delete, purge
-
-``` text
-- nats_kv_key
-- nats_kv_bucket
-- nats_kv_revision
-- nats_kv_operation
-```
-
-=== keys
-``` text
-- nats_kv_bucket
-```
-
-include::components:partial$nats_intro.adoc[]
+include::connect:components:partial$metadata/processors/nats_kv.adoc[]
 
 include::connect:components:partial$fields/processors/nats_kv.adoc[]
 

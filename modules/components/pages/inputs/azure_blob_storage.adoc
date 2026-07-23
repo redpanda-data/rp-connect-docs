@@ -60,19 +60,7 @@ When downloading large files it's often necessary to process it in streamed part
 
 By default this input will consume all files found within the target container and will then gracefully terminate. This is referred to as a "batch" mode of operation. However, it's possible to instead configure a container as https://learn.microsoft.com/en-gb/azure/event-grid/event-schema-blob-storage[an Event Grid source^] and then use this as a <<targets_input, `targets_input`>>, in which case new files are consumed as they're uploaded and Redpanda Connect will continue listening for and downloading files as they arrive. This is referred to as a "streamed" mode of operation.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- blob_storage_key
-- blob_storage_container
-- blob_storage_last_modified
-- blob_storage_last_modified_unix
-- blob_storage_content_type
-- blob_storage_content_encoding
-- All user defined metadata
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+include::connect:components:partial$metadata/inputs/azure_blob_storage.adoc[]
 
 include::connect:components:partial$fields/inputs/azure_blob_storage.adoc[]
 

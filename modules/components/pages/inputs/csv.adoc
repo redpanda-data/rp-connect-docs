@@ -60,53 +60,7 @@ If, however, the field `parse_header_row` is set to `false` then arrays are prod
 ["second foo","second bar","second baz"]
 ```
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-```text
-- header
-- path
-- mod_time_unix
-- mod_time (RFC3339)
-```
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
-
-Note: The `header` field is only set when `parse_header_row` is `true`.
-
-=== Output CSV column order
-
-When xref:guides:bloblang/advanced.adoc#creating-csv[creating CSV] from Redpanda Connect messages, the columns must be sorted lexicographically to make the output deterministic. Alternatively, when using the `csv` input, one can leverage the `header` metadata field to retrieve the column order:
-
-```yaml
-input:
-  csv:
-    paths:
-      - ./foo.csv
-      - ./bar.csv
-    parse_header_row: true
-
-  processors:
-    - mapping: |
-        map escape_csv {
-          root = if this.re_match("[\"\n,]+") {
-            "\"" + this.replace_all("\"", "\"\"") + "\""
-          } else {
-            this
-          }
-        }
-
-        let header = if count(@path) == 1 {
-          @header.map_each(c -> c.apply("escape_csv")).join(",") + "\n"
-        } else { "" }
-
-        root = $header + @header.map_each(c -> this.get(c).string().apply("escape_csv")).join(",")
-
-output:
-  file:
-    path: ./output/${! @path.filepath_split().index(-1) }
-```
+include::connect:components:partial$metadata/inputs/csv.adoc[]
 
 include::connect:components:partial$fields/inputs/csv.adoc[]
 

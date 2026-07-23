@@ -44,6 +44,8 @@ In order to subscribe to channels using the `PSUBSCRIBE` command set the field `
 
 Use `\` to escape special characters if you want to match them verbatim.
 
+include::connect:components:partial$metadata/inputs/redis_pubsub.adoc[]
+
 include::connect:components:partial$fields/inputs/redis_pubsub.adoc[]
 
 // end::single-source[]

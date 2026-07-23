@@ -42,9 +42,7 @@ include::components:example$advanced/outputs/aws_s3.yaml[]
 
 To use a different path for each object, use xref:configuration:interpolation.adoc#bloblang-queries[function interpolation], which is evaluated for each message in a batch.
 
-== Metadata
-
-Redpanda Connect sends metadata fields as headers. To mutate or remove these values, see the xref:configuration:metadata.adoc[metadata docs].
+include::connect:components:partial$metadata/outputs/aws_s3.adoc[]
 
 == Tags
 

@@ -51,23 +51,7 @@ To enforce ordered processing of partition messages, set the <<checkpoint_limit,
 
 Batching messages before processing can be enabled using the <<batching,`batching`>> field, and this batching is performed per-partition such that messages of a batch will always originate from the same partition. This batching mechanism is capable of creating batches of greater size than the <<checkpoint_limit,`checkpoint_limit`>>, in which case the next batch will only be created upon delivery of the current one.
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-- kafka_key
-- kafka_topic
-- kafka_partition
-- kafka_offset
-- kafka_lag
-- kafka_timestamp_ms
-- kafka_timestamp_unix
-- kafka_tombstone_message
-- All existing message headers (version 0.11+)
-
-The field `kafka_lag` is the calculated difference between the high water mark offset of the partition at the time of ingestion and the current message offset.
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
+include::connect:components:partial$metadata/inputs/kafka.adoc[]
 
 == Ordering
 

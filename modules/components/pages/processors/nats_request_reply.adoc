@@ -38,23 +38,7 @@ include::components:example$advanced/processors/nats_request_reply.yaml[]
 --
 ======
 
-== Metadata
-
-This input adds the following metadata fields to each message:
-
-```text
-- nats_subject
-- nats_sequence_stream
-- nats_sequence_consumer
-- nats_num_delivered
-- nats_num_pending
-- nats_domain
-- nats_timestamp_unix_nano
-```
-
-You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
-
-include::components:partial$nats_intro.adoc[]
+include::connect:components:partial$metadata/processors/nats_request_reply.adoc[]
 
 include::connect:components:partial$fields/processors/nats_request_reply.adoc[]
 

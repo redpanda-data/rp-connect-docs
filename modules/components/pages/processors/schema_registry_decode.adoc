@@ -60,11 +60,7 @@ Alternatively, you can create documents in https://pkg.go.dev/github.com/linkedi
 
 This processor decodes Protobuf messages to JSON documents. For more information about the JSON mapping of Protobuf messages, see the https://developers.google.com/protocol-buffers/docs/proto3#json[Protocol Buffers documentation^].
 
-== Metadata
-
-This processor adds the following metadata to processed messages:
-
-- `schema_id`: The ID of the schema in the schema registry associated with the message.
+include::connect:components:partial$metadata/processors/schema_registry_decode.adoc[]
 
 include::connect:components:partial$fields/processors/schema_registry_decode.adoc[]
 
