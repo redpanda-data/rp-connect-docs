@@ -2,7 +2,7 @@
   "comparison": {
     "oldVersion": "4.100.0",
     "newVersion": "4.101.0",
-    "timestamp": "2026-07-20T16:08:02.551Z"
+    "timestamp": "2026-07-23T13:50:12.830Z"
   },
   "summary": {
     "newComponents": 0,
@@ -54,47 +54,11 @@
       "cgo": "4.101.0"
     },
     "current": {
-      "cloudSupported": 489,
-      "selfHostedOnly": 75,
-      "cgoOnly": 4
+      "cloudSupported": 490,
+      "selfHostedOnly": 79,
+      "cgoOnly": 0
     },
-    "changes": {
-      "cloud": {
-        "added": [],
-        "removed": [
-          {
-            "type": "processors",
-            "name": "a2a_message",
-            "status": "stable"
-          }
-        ]
-      },
-      "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "stable"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "ffi",
-            "status": "stable"
-          }
-        ],
-        "removedCgoOnly": []
-      }
-    },
+    "changes": {},
     "details": {
       "cloudSupported": [
         {
@@ -1290,6 +1254,11 @@
         {
           "type": "processors",
           "name": "xml",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -2665,6 +2634,16 @@
           "status": "stable"
         },
         {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2780,6 +2759,11 @@
           "status": "stable"
         },
         {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -2865,6 +2849,11 @@
           "status": "stable"
         },
         {
+          "type": "processors",
+          "name": "ffi",
+          "status": "stable"
+        },
+        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2920,35 +2909,8 @@
           "status": "stable"
         }
       ],
-      "cloudOnly": [
-        {
-          "type": "processors",
-          "name": "a2a_message",
-          "status": "stable"
-        }
-      ],
-      "cgoOnly": [
-        {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "stable"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "ffi",
-          "status": "stable"
-        }
-      ]
+      "cloudOnly": [],
+      "cgoOnly": []
     }
   }
 }
