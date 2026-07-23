@@ -31,7 +31,7 @@ This release adds support for the following new fields:
 
 
 |snapshot_filters
-|A map of fully-qualified table names (e.g. SCHEMA.TABLE) to SQL SELECT queries, used to override the default snapshot query per table.
+|A map of fully-qualified table names (for example `SCHEMA.TABLE`) to SQL `SELECT` queries that override the default snapshot query for each table.
 |*Inputs:*
 
 * xref:components:inputs/oracledb_cdc.adoc#snapshot_filters[oracledb_cdc]
