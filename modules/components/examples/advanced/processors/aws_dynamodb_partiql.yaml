@@ -3,6 +3,7 @@ processors:
   aws_dynamodb_partiql:
     query: "" # No default (required)
     unsafe_dynamic_query: false
+    use_batch: true
     args_mapping: ""
     region: "" # No default (optional)
     endpoint: "" # No default (optional)

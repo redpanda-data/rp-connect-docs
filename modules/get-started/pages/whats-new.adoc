@@ -10,6 +10,37 @@ For a full list of product updates, and details of updates prior to version 4.29
 
 
 
+
+== Version 4.102.0
+
+link:https://github.com/redpanda-data/connect/releases/tag/v4.102.0[See the full release notes^].
+
+
+=== New field support
+
+This release adds support for the following new fields:
+
+[cols="1m,3,2a"]
+|===
+|Field |Description |Affected components
+
+|headers
+|Custom headers to add to migrated records, keyed by header name with interpolated string values. Useful for injecting metadata such as processing timestamps or latency measurements that should surface as header values on the destination cluster.
+|*Outputs:*
+
+* xref:components:outputs/redpanda_migrator.adoc#headers[redpanda_migrator]
+
+
+|use_batch
+|Whether to execute all messages in a batch as a single `BatchExecuteStatement` call.
+|*Processors:*
+
+* xref:components:processors/aws_dynamodb_partiql.adoc#use_batch[aws_dynamodb_partiql]
+
+
+|===
+
+
 == Version 4.101.0
 
 link:https://github.com/redpanda-data/connect/releases/tag/v4.101.0[See the full release notes^].

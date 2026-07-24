@@ -167,6 +167,22 @@ Whether to only migrate Empty consumer groups. When false (default), all statuse
 
 *Default*: `false`
 
+=== `headers`
+
+Custom headers to add to migrated records, keyed by header name with interpolated string values. Useful for injecting metadata such as processing timestamps or latency measurements that should surface as header values on the destination cluster. A custom header name that collides with `provenance_header` or `offset_header` is ignored, so those migration-critical headers are always protected.
+
+This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
+
+*Type*: `string`
+
+[source,yaml]
+----
+# Examples:
+headers:
+  x-migration-latency-ms: ${! timestamp_unix_milli() - meta("kafka_timestamp_ms") }
+  x-migration-processed-at: ${! timestamp_unix_milli() }
+----
+
 === `idempotent_write`
 
 Enable the idempotent write producer option. This requires the `IDEMPOTENT_WRITE` permission on `CLUSTER`. Disable this option if the `IDEMPOTENT_WRITE` permission is unavailable.
