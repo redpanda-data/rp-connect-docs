@@ -3,7 +3,9 @@
 == Metadata
 
 This component adds the following metadata fields to each message:
-- `activity_id`
-- `request_charge`
+```
+- activity_id
+- request_charge
+```
 
 You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].

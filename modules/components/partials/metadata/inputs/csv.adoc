@@ -4,10 +4,12 @@
 
 This input adds the following metadata fields to each message:
 
-- `header`
-- `path`
-- `mod_time_unix`
-- `mod_time` (RFC3339)
+```text
+- header
+- path
+- mod_time_unix
+- mod_time (RFC3339)
+```
 
 You can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].
 
