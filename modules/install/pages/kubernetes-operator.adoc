@@ -9,7 +9,7 @@ NOTE: This feature is in beta and requires an Enterprise Edition license and Red
 With the Pipeline resource, the operator:
 
 * Injects broker addresses, TLS material, and SASL credentials for a referenced Redpanda cluster into the rendered configuration.
-* Projects secrets and other values into the pipeline Pod as environment variables for `${NAME}` interpolation.
+* Projects secrets and other values into the pipeline Pod as environment variables for `+${NAME}+` interpolation.
 * Implements the Kubernetes scale subresource, so `kubectl scale`, a HorizontalPodAutoscaler, or KEDA can drive the replica count, including on consumer group lag.
 * Exposes Prometheus metrics and, with monitoring enabled, renders a PodMonitor per pipeline.
 
