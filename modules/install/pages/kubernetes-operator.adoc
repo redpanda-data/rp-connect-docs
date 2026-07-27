@@ -46,7 +46,6 @@ Optional chart settings:
 
 * `connectController.image.repository` and `connectController.image.tag`: override the default Redpanda Connect image for all pipelines. A per-pipeline `spec.image` takes precedence over this chart default.
 * `connectController.monitoring.enabled`: create a Prometheus PodMonitor for each pipeline. Requires the Prometheus Operator CRDs.
-// TODO(DOC-2275): PodMonitor watch bug was fixed at head b861c263 but not re-verified here (no Prometheus Operator on the test cluster). Verify monitoring against the released operator.
 
 == Create a pipeline
 
@@ -389,4 +388,4 @@ Key `spec` fields:
 |annotations, tolerations, nodeSelector, affinity, topologySpreadConstraints |None |Standard scheduling and metadata controls.
 |===
 
-// TODO(DOC-2275): Link to a generated CRD property reference once the CRD is in a released operator and the docs automation covers it.
+For all Pipeline fields, see the xref:streaming:reference:k-crd.adoc#k8s-api-github-com-redpanda-data-redpanda-operator-operator-api-redpanda-v1alpha2-pipeline[Pipeline CRD reference].
