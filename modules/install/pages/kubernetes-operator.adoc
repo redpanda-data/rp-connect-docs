@@ -1,19 +1,12 @@
 = Run Pipelines with the Redpanda Operator
 :description: Deploy and manage Redpanda Connect pipelines declaratively on Kubernetes using the Pipeline resource and the Redpanda Operator.
-
-// DRAFT (DOC-2275): Based on redpanda-data/redpanda-operator#1677 (unmerged, head b861c263).
-// Validated end-to-end on kind v1.28 (2026-07-17) with the operator built from that head:
-// install, lint, lifecycle, valueSources, config rollout, and clusterRef+TLS all behave
-// as documented. Known blocker: the generated Pipeline CRD currently exceeds the
-// Kubernetes CEL validation-cost budget and cannot be installed unpatched (reported on
-// the eng PR). Re-validate against the released operator before publishing.
+:page-beta: true
 
 Manage Redpanda Connect pipelines as Kubernetes resources. You define each pipeline in a `Pipeline` custom resource, and the Redpanda Operator deploys it, validates its configuration, rolls it on every change, and reports its health in the resource status.
 
 Use the Pipeline resource when you already run the xref:streaming:deploy:redpanda/kubernetes/k-production-deployment.adoc[Redpanda Operator] and want pipelines managed through the same declarative, GitOps-friendly workflow as your Topic and User resources. To run Redpanda Connect on Kubernetes without the operator, see xref:install:helm-chart.adoc[].
 
-NOTE: This feature requires an Enterprise Edition license and Redpanda Operator <operator-version> or later.
-// TODO(DOC-2275): Set the real minimum operator version when the feature ships.
+NOTE: This feature is in beta and requires an Enterprise Edition license and Redpanda Operator 26.2 or later. Beta features are not recommended for production environments. To give feedback, reach out to the Redpanda team in https://redpanda.com/slack[Redpanda Community Slack^].
 
 == How it works
 
@@ -29,7 +22,7 @@ If the operator restarts or loses access to a referenced cluster or Secret, runn
 
 == Prerequisites
 
-* A Kubernetes cluster with the Redpanda Operator <operator-version> or later installed.
+* A Kubernetes cluster with the Redpanda Operator 26.2 or later installed.
 * An xref:get-started:licensing.adoc[Enterprise Edition license] stored in a Secret in the operator's namespace.
 * To connect pipelines to a Redpanda cluster by reference, the Redpanda and User CRDs installed in the cluster.
 
@@ -150,6 +143,52 @@ NOTE: `Phase: Running` means the pipeline process is up, not that messages are b
 
 Alternatively, connect to any cluster, including one outside Kubernetes, with `spec.cluster.staticConfiguration`, which accepts explicit `kafka`, `admin`, and `schemaRegistry` connection settings. Setting `tls.enabled: false` in the static configuration disables TLS.
 
+== Connect to an external cluster
+
+To target a cluster that isn't managed by a Redpanda resource in the same namespace, such as a Redpanda Cloud cluster, a self-managed deployment outside Kubernetes, or another Kafka-compatible cluster, replace `clusterRef` with `cluster.staticConfiguration` and declare the connection inline. The injection contract is identical to `clusterRef`. Only the source of the connection details differs.
+
+.`cross-region-mirror.yaml`
+[,yaml]
+----
+apiVersion: cluster.redpanda.com/v1alpha2
+kind: Pipeline
+metadata:
+  name: cross-region-mirror
+  namespace: <namespace>
+spec:
+  cluster:
+    staticConfiguration:
+      kafka:
+        brokers:
+          - kafka.us-east.example.com:9094
+        tls:
+          caCert:                      # Omit for publicly-issued certificates.
+            secretKeyRef:
+              name: external-kafka-ca
+              key: ca.crt
+        sasl:
+          mechanism: SCRAM-SHA-512     # PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512
+          username: pipeline-mirror-svc
+          password:
+            secretKeyRef:
+              name: external-kafka-creds
+              key: password
+  configYaml: |
+    input:
+      redpanda:
+        topics: [orders]
+    output:
+      redpanda:
+        topic: orders.mirrored
+----
+
+Note the following:
+
+* `staticConfiguration` and `userRef` are mutually exclusive: the static configuration carries its own SASL identity, so the API server rejects a Pipeline that sets both. `userRef` also requires `clusterRef`, because without a referenced cluster there is no cluster to authenticate against.
+* The CA certificate can come from a Secret (`secretKeyRef`) or a ConfigMap (`configMapKeyRef`). For mutual TLS listeners, additionally set `tls.cert` and `tls.key` to present a client certificate.
+* Setting any TLS certificate material enables TLS. `tls: {enabled: true}` alone requests TLS with publicly-issued certificates, and omitting the `tls` block connects without TLS.
+* The SASL password also accepts an `inline` value. Avoid inline passwords outside development: the value is stored in plain text in the Pipeline spec.
+
 == Provide secrets
 
 Reference secrets by name with `spec.valueSources`, then interpolate them in the configuration with standard xref:configuration:secrets.adoc[`${NAME}` interpolation]. Each entry projects exactly one environment variable into the pod from an inline value, a ConfigMap key, a Secret key, or an External Secrets Operator-managed Secret:
@@ -169,6 +208,78 @@ spec:
 ----
 
 NOTE: Rotating a referenced Secret's value does not roll the pipeline pod. Trigger a rollout by making any change to `spec.configYaml`, or restart the Deployment.
+
+== Give a pipeline a cloud IAM identity
+
+Some connectors call cloud APIs directly, for example to read from Amazon RDS with Identity and Access Management (IAM) database authentication, or to write to S3 without static keys. Set `spec.serviceAccountName` to run the pipeline Pod under a dedicated Kubernetes ServiceAccount whose cloud IAM trust is scoped to that one pipeline: IAM Roles for Service Accounts (IRSA) on EKS, Workload Identity on GKE, or Pod Identity on AKS. The operator does not create the ServiceAccount. Provision it, with its cloud IAM annotations, alongside your other infrastructure.
+
+The pipeline's cluster credentials (`cluster` and `userRef`) and its cloud identity (`serviceAccountName`) are independent trust boundaries: either can be set without the other.
+
+This example runs MySQL change data capture against an Amazon RDS database using IAM authentication, so no database password exists anywhere in the Pipeline, the Pod, or a Secret:
+
+. Create the ServiceAccount with the IAM role annotation. The IAM role's trust policy must be scoped to this exact ServiceAccount, and its policy must grant `rds-db:connect`:
++
+.`mysql-cdc-orders-sa.yaml`
+[,yaml]
+----
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mysql-cdc-orders-rds
+  namespace: <namespace>
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::<account-id>:role/mysql-cdc-orders-rds
+----
+
+. Create the Pipeline with `serviceAccountName` set:
++
+.`mysql-cdc-orders.yaml`
+[,yaml]
+----
+apiVersion: cluster.redpanda.com/v1alpha2
+kind: Pipeline
+metadata:
+  name: mysql-cdc-orders
+  namespace: <namespace>
+spec:
+  cluster:
+    clusterRef:
+      name: <cluster-name>
+  userRef:
+    name: mysql-cdc-orders-svc               # SASL identity for the Redpanda output
+  serviceAccountName: mysql-cdc-orders-rds   # Cloud IAM boundary for AWS calls
+  valueSources:
+    # No MYSQL_PASSWORD: IAM authentication supplies a short-lived token.
+    - name: MYSQL_HOST
+      source:
+        secretKeyRef:
+          name: mysql-cdc-creds
+          key: host
+    - name: MYSQL_USER
+      source:
+        secretKeyRef:
+          name: mysql-cdc-creds
+          key: username
+  configYaml: |
+    input:
+      mysql_cdc:
+        # Connect calls rds:GenerateDBAuthToken with the Pod's IAM role and
+        # uses the 15-minute token as the MySQL password.
+        dsn: "${MYSQL_USER}@tcp(${MYSQL_HOST}:3306)/shop?tls=skip-verify&allowCleartextPasswords=1"
+        aws:
+          enabled: true
+          region: us-east-2
+          endpoint: "${MYSQL_HOST}:3306"
+        stream_snapshot: true
+        tables: [orders]
+        flavor: mysql
+    output:
+      redpanda:
+        topic: mysql.shop.orders
+        key: '${! @table }'
+----
+
+The Pod assumes only the annotated role, through the projected ServiceAccount token. `userRef` still gates access to Redpanda, while the ServiceAccount gates access to AWS.
 
 == Spread pipelines across zones
 
@@ -215,6 +326,44 @@ kubectl describe pipeline <name> --namespace <namespace>
 ----
 
 The status conditions report configuration validity (`ConfigValid`), cluster resolution (`ClusterRef`), and credential resolution (`UserRef`) separately, so you can see which dependency is failing.
+
+== License behavior
+
+The Connect controller requires a valid Enterprise Edition license that includes the Redpanda Connect product to create or update pipeline workloads:
+
+* *No license, expired license, or a license without the Redpanda Connect product*: New Pipeline resources are reconciled but get no workload. The resource reports `License: False` in its status conditions and never reaches the `Running` phase. Pipelines that were already running keep processing data, but the operator stops applying spec updates to them until you configure a valid license.
+* *License restored*: Reconciliation resumes automatically. You do not need to recreate Pipeline resources.
+
+The operator mirrors the license into each pipeline's namespace as a Pipeline-owned Secret named `<pipeline-name>-license`, injected into the Pod as `REDPANDA_LICENSE`, so the Connect runtime's own license checks pass without configuring the license twice. Anyone with permission to read Secrets in a namespace that hosts pipelines can read the license, so scope namespace RBAC accordingly.
+
+For how licensing works across Redpanda products, see xref:streaming:get-started:licensing/overview.adoc[].
+
+== Troubleshoot
+
+Use this table to diagnose common failure conditions:
+
+[cols="1a,2a"]
+|===
+| Symptom | Cause and resolution
+
+| `License: False`
+| No valid license, or the license does not include the Redpanda Connect product. Configure `enterprise.licenseSecretRef` in the operator chart. See <<License behavior>>.
+
+| `ConfigValid: False`
+| The `lint` init container rejected the configuration. Run `kubectl logs <pod> -c lint` to see the lint error. The condition message carries a truncated copy.
+
+| `ClusterRef: False`
+| The referenced Redpanda resource doesn't exist in the pipeline's namespace, or its CRD isn't installed. A `clusterRef` cannot point to another namespace.
+
+| Pod stuck in `Init` or `ImagePullBackOff`
+| The cluster can't pull the Connect image or an `extraInitContainers` image. Check the image reference and pull secrets.
+
+| `redpanda_common` errors with `shared client not found`
+| The pipeline isn't bound to a cluster. Set `cluster.clusterRef` (with `userRef` for SASL clusters) so the operator renders the top-level `redpanda` block.
+
+| `Ready: False` with reason `NameConflict`
+| Another workload already owns an object with this pipeline's name, such as a ConfigMap or Deployment. Rename the pipeline or remove the conflicting object. The operator refuses to adopt objects it does not own.
+|===
 
 == Pipeline resource reference
 
