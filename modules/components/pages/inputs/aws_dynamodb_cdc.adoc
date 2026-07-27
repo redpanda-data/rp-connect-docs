@@ -99,7 +99,7 @@ A namespace provides isolation, not coordination. Two pipelines that use the sam
 
 [WARNING]
 ====
-Changing or removing `checkpoint_namespace` on an existing pipeline changes its checkpoint key, so the pipeline finds no prior checkpoint and resumes from `start_from`. With `start_from: trim_horizon`, this replays the entire stream.
+Changing or removing `checkpoint_namespace` makes the pipeline read checkpoints under the new key. If no checkpoints exist yet for that namespace, for example the first time you set it or when you switch to a namespace that has never been used, the pipeline has nothing to resume from and starts at `start_from` (with `start_from: trim_horizon`, this replays the entire stream). Switching back to a previously used namespace resumes from that namespace's last checkpoints.
 ====
 
 == Alternative components
