@@ -20,4 +20,21 @@ pipeline:
           ]
 ----
 
+=== Query a GSI for a single record
+
+The following example looks up a single record from the table footable using the global secondary index index_name, matching on the field bar. BatchExecuteStatement can't query a GSI, so use_batch is disabled:
+
+[source,yaml]
+----
+pipeline:
+  processors:
+    - aws_dynamodb_partiql:
+        query: "SELECT * FROM \"footable\".\"index_name\" WHERE bar = ?"
+        use_batch: false
+        args_mapping: |
+          root = [
+            { "S": this.bar },
+          ]
+----
+
 

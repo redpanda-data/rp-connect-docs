@@ -1,6 +1,6 @@
 {
-  "version": "4.99.0",
-  "date": "2026-07-02T15:08:01Z",
+  "version": "4.102.0",
+  "date": "2026-07-23T22:52:32Z",
   "config": [
     {
       "name": "http",
@@ -141,7 +141,9 @@
             }
           ]
         }
-      ]
+      ],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "input",
@@ -150,7 +152,9 @@
       "description": "An input to source messages from.",
       "default": {
         "stdin": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "buffer",
@@ -159,7 +163,9 @@
       "description": "An optional buffer to store messages during transit.",
       "default": {
         "none": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "pipeline",
@@ -181,7 +187,9 @@
           "description": "A list of processors to apply to messages.",
           "default": []
         }
-      ]
+      ],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "output",
@@ -190,7 +198,9 @@
       "description": "An output to sink messages to.",
       "default": {
         "stdout": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "input_resources",
@@ -198,7 +208,9 @@
       "kind": "array",
       "description": "A list of input resources, each must have a unique label.",
       "is_advanced": true,
-      "default": []
+      "default": [],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "processor_resources",
@@ -206,7 +218,9 @@
       "kind": "array",
       "description": "A list of processor resources, each must have a unique label.",
       "is_advanced": true,
-      "default": []
+      "default": [],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "output_resources",
@@ -214,7 +228,9 @@
       "kind": "array",
       "description": "A list of output resources, each must have a unique label.",
       "is_advanced": true,
-      "default": []
+      "default": [],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "cache_resources",
@@ -222,7 +238,9 @@
       "kind": "array",
       "description": "A list of cache resources, each must have a unique label.",
       "is_advanced": true,
-      "default": []
+      "default": [],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "rate_limit_resources",
@@ -230,7 +248,9 @@
       "kind": "array",
       "description": "A list of rate limit resources, each must have a unique label.",
       "is_advanced": true,
-      "default": []
+      "default": [],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "logger",
@@ -341,7 +361,9 @@
             }
           ]
         }
-      ]
+      ],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "metrics",
@@ -351,7 +373,9 @@
       "default": {
         "mapping": "",
         "prometheus": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "tracer",
@@ -360,21 +384,27 @@
       "description": "A mechanism for exporting traces.",
       "default": {
         "none": {}
-      }
+      },
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "shutdown_delay",
       "type": "string",
       "kind": "scalar",
       "description": "A period of time to wait for metrics and traces to be pulled or pushed from the process.",
-      "default": "0s"
+      "default": "0s",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "shutdown_timeout",
       "type": "string",
       "kind": "scalar",
       "description": "The maximum period of time to wait for a clean shutdown. If this time is exceeded Redpanda Connect will forcefully close.",
-      "default": "20s"
+      "default": "20s",
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "error_handling",
@@ -391,7 +421,9 @@
           "is_advanced": true,
           "default": false
         }
-      ]
+      ],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "tests",
@@ -679,7 +711,9 @@
             }
           ]
         }
-      ]
+      ],
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "parallel",
@@ -689,7 +723,9 @@
       "is_advanced": true,
       "is_deprecated": true,
       "is_optional": true,
-      "default": true
+      "default": true,
+      "cloudSupported": true,
+      "requiresCgo": false
     },
     {
       "name": "redpanda",
@@ -1387,7 +1423,9 @@
           "is_advanced": true,
           "default": "0s"
         }
-      ]
+      ],
+      "cloudSupported": true,
+      "requiresCgo": false
     }
   ],
   "buffers": [
@@ -4861,7 +4899,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Reads change data capture (CDC) events from DynamoDB Streams.",
-      "description": "\nConsumes records from DynamoDB Streams with automatic checkpointing and shard management.\n\nDynamoDB Streams capture item-level changes in DynamoDB tables. This input supports:\n\n- Automatic shard discovery and management\n- Checkpoint-based resumption after restarts\n- Concurrent processing of multiple shards\n- Optional initial snapshot of existing table data\n- Multi-table streaming with auto-discovery by tags or explicit table lists\n\n### Table Discovery Modes\n\nThis input supports three table discovery modes:\n\n- `single` (default) - Stream from a single table specified in the `tables` field\n- `tag` - Auto-discover and stream from multiple tables based on DynamoDB table tags. Use `table_tag_filter` to filter tables (e.g. `key:value`)\n- `includelist` - Stream from an explicit list of tables specified in the `tables` field\n\nWhen using `tag` or `includelist` mode, the connector will stream from all matching tables simultaneously. Each table maintains its own checkpoint state. Use `table_discovery_interval` to periodically rescan for new tables (useful for dynamically tagged tables).\n\n### Prerequisites\n\nThe source DynamoDB table(s) must have streams enabled. You can enable streams with one of these view types:\n\n- `KEYS_ONLY` - Only the key attributes of the modified item\n- `NEW_IMAGE` - The entire item as it appears after the modification\n- `OLD_IMAGE` - The entire item as it appeared before the modification\n- `NEW_AND_OLD_IMAGES` - Both the new and old item images\n\n### Snapshots\n\nWhen `snapshot_mode` is set to `snapshot_only` or `snapshot_and_cdc`, the input will first scan the entire table before (or instead of) streaming changes. This is useful for:\n\n- Building a replica or cache with all existing data\n- Syncing historical data to a data warehouse\n- Populating a search index with existing records\n\nWARNING: Snapshots use the DynamoDB Scan API which consumes read capacity units (RCUs). For large tables, this can be expensive and take considerable time. Use `snapshot_segments` and `snapshot_throttle` to control RCU consumption.\n\nNOTE: Snapshots use eventually consistent reads and do not provide point-in-time consistency. Records modified during the snapshot may appear in both the snapshot and CDC stream (with different values). Use `snapshot_deduplicate` to minimize duplicates.\n\n### Checkpointing\n\nCheckpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard. Snapshot progress is also checkpointed, allowing resumption mid-snapshot after failures.\n\n### Alternative\n\nFor better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.\n\n### Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `dynamodb_shard_id` - The shard ID from which the record was read (empty for snapshot records)\n- `dynamodb_sequence_number` - The sequence number of the record in the stream (empty for snapshot records)\n- `dynamodb_approximate_creation_time` - RFC3339 approximate creation time of the stream record (empty for snapshot records)\n- `dynamodb_event_name` - The type of change: INSERT, MODIFY, REMOVE, or READ (for snapshot records)\n- `dynamodb_table` - The name of the DynamoDB table\n\n### Metrics\n\nThis input emits the following metrics:\n\n- `dynamodb_cdc_shards_tracked` - Total number of shards being tracked (gauge)\n- `dynamodb_cdc_shards_active` - Number of shards currently being read from (gauge)\n- `dynamodb_cdc_snapshot_state` - Snapshot state: 0=not_started, 1=in_progress, 2=complete (gauge)\n- `dynamodb_cdc_snapshot_records_read` - Total records read during snapshot (counter)\n- `dynamodb_cdc_snapshot_segments_active` - Number of active snapshot scan segments (gauge)\n- `dynamodb_cdc_snapshot_buffer_overflow` - Incremented when the deduplication buffer exceeds its size limit, disabling dedup (counter)\n- `dynamodb_cdc_snapshot_segment_duration` - Time taken by each snapshot scan segment to complete (timer)\n- `dynamodb_cdc_checkpoint_failures` - Number of failed checkpoint writes to the checkpoint table (counter)\n- `dynamodb_cdc_failover_skipped` - Records skipped during global-table failover replay because they predate the resumed cutoff (counter)\n\n### Global Table Checkpoints (multi-region failover)\n\nIn active/active or active/passive multi-region deployments, set `global_table: true` and list the other regions in `global_table_replicas` so the auto-created checkpoint table is provisioned as a DynamoDB Global Table (v2). Checkpoints then replicate across regions: a failed-over pipeline resumes near the last committed position instead of replaying the whole stream. Because each region's stream has its own sequence numbers, cross-region resume is time-based (at-least-once, replaying from the trim horizon up to the last replicated record time); same-region restarts still resume exactly. If the checkpoint table already exists, enabling `global_table` reconciles it towards the desired configuration: any missing replica regions are added via `UpdateTable`. The existing table must have been created in global mode (it must use a `TableId` hash key); pointing `global_table` at a pre-existing non-global checkpoint table fails fast with a clear error rather than mutating it.\n\nWhen `global_table` is enabled the principal additionally needs `dynamodb:CreateTable`, `dynamodb:UpdateTable`, `dynamodb:DescribeTable`, `dynamodb:DescribeLimits`, `iam:CreateServiceLinkedRole`, and create/describe permissions in each replica region.\n",
+      "description": "\nConsumes records from DynamoDB Streams with automatic checkpointing and shard management.\n\nDynamoDB Streams capture item-level changes in DynamoDB tables. This input supports:\n\n- Automatic shard discovery and management\n- Checkpoint-based resumption after restarts\n- Concurrent processing of multiple shards\n- Optional initial snapshot of existing table data\n- Multi-table streaming with auto-discovery by tags or explicit table lists\n\n### Table Discovery Modes\n\nThis input supports three table discovery modes:\n\n- `single` (default) - Stream from a single table specified in the `tables` field\n- `tag` - Auto-discover and stream from multiple tables based on DynamoDB table tags. Use `table_tag_filter` to filter tables (e.g. `key:value`)\n- `includelist` - Stream from an explicit list of tables specified in the `tables` field\n\nWhen using `tag` or `includelist` mode, the connector will stream from all matching tables simultaneously. Each table maintains its own checkpoint state. Use `table_discovery_interval` to periodically rescan for new tables (useful for dynamically tagged tables).\n\n### Prerequisites\n\nThe source DynamoDB table(s) must have streams enabled. You can enable streams with one of these view types:\n\n- `KEYS_ONLY` - Only the key attributes of the modified item\n- `NEW_IMAGE` - The entire item as it appears after the modification\n- `OLD_IMAGE` - The entire item as it appeared before the modification\n- `NEW_AND_OLD_IMAGES` - Both the new and old item images\n\n### Snapshots\n\nWhen `snapshot_mode` is set to `snapshot_only` or `snapshot_and_cdc`, the input will first scan the entire table before (or instead of) streaming changes. This is useful for:\n\n- Building a replica or cache with all existing data\n- Syncing historical data to a data warehouse\n- Populating a search index with existing records\n\nWARNING: Snapshots use the DynamoDB Scan API which consumes read capacity units (RCUs). For large tables, this can be expensive and take considerable time. Use `snapshot_segments` and `snapshot_throttle` to control RCU consumption.\n\nNOTE: Snapshots use eventually consistent reads and do not provide point-in-time consistency. Records modified during the snapshot may appear in both the snapshot and CDC stream (with different values). Use `snapshot_deduplicate` to minimize duplicates.\n\n### Checkpointing\n\nCheckpoints are stored in a separate DynamoDB table (configured via `checkpoint_table`). This table is created automatically if it does not exist. On restart, the input resumes from the last checkpointed position for each shard. Snapshot progress is also checkpointed, allowing resumption mid-snapshot after failures.\n\nMultiple independent pipelines can share a single checkpoint table by giving each one a distinct `checkpoint_namespace` (for example one namespace per developer or environment). Namespaces isolate checkpoints from each other: a pipeline only sees checkpoints written under its own namespace, so changing (or removing) the namespace causes the pipeline to restart from `start_from`. Note that namespaces do not coordinate consumers — two pipelines sharing the *same* namespace will still overwrite each other's checkpoints.\n\n### Alternative\n\nFor better performance and longer retention (up to 1 year vs 24 hours), consider using Kinesis Data Streams for DynamoDB with the `aws_kinesis` input instead.\n\n### Metadata\n\nThis input adds the following metadata fields to each message:\n\n- `dynamodb_shard_id` - The shard ID from which the record was read (empty for snapshot records)\n- `dynamodb_sequence_number` - The sequence number of the record in the stream (empty for snapshot records)\n- `dynamodb_approximate_creation_time` - RFC3339 approximate creation time of the stream record (empty for snapshot records)\n- `dynamodb_event_name` - The type of change: INSERT, MODIFY, REMOVE, or READ (for snapshot records)\n- `dynamodb_table` - The name of the DynamoDB table\n\n### Metrics\n\nThis input emits the following metrics:\n\n- `dynamodb_cdc_shards_tracked` - Total number of shards being tracked (gauge)\n- `dynamodb_cdc_shards_active` - Number of shards currently being read from (gauge)\n- `dynamodb_cdc_snapshot_state` - Snapshot state: 0=not_started, 1=in_progress, 2=complete (gauge)\n- `dynamodb_cdc_snapshot_records_read` - Total records read during snapshot (counter)\n- `dynamodb_cdc_snapshot_segments_active` - Number of active snapshot scan segments (gauge)\n- `dynamodb_cdc_snapshot_buffer_overflow` - Incremented when the deduplication buffer exceeds its size limit, disabling dedup (counter)\n- `dynamodb_cdc_snapshot_segment_duration` - Time taken by each snapshot scan segment to complete (timer)\n- `dynamodb_cdc_checkpoint_failures` - Number of failed checkpoint writes to the checkpoint table (counter)\n- `dynamodb_cdc_failover_skipped` - Records skipped during global-table failover replay because they predate the resumed cutoff (counter)\n\n### Global Table Checkpoints (multi-region failover)\n\nIn active/active or active/passive multi-region deployments, set `global_table: true` and list the other regions in `global_table_replicas` so the auto-created checkpoint table is provisioned as a DynamoDB Global Table (v2). Checkpoints then replicate across regions: a failed-over pipeline resumes near the last committed position instead of replaying the whole stream. Because each region's stream has its own sequence numbers, cross-region resume is time-based (at-least-once, replaying from the trim horizon up to the last replicated record time); same-region restarts still resume exactly. If the checkpoint table already exists, enabling `global_table` reconciles it towards the desired configuration: any missing replica regions are added via `UpdateTable`. The existing table must have been created in global mode (it must use a `TableId` hash key); pointing `global_table` at a pre-existing non-global checkpoint table fails fast with a clear error rather than mutating it.\n\nWhen `global_table` is enabled the principal additionally needs `dynamodb:CreateTable`, `dynamodb:UpdateTable`, `dynamodb:DescribeTable`, `dynamodb:DescribeLimits`, `iam:CreateServiceLinkedRole`, and create/describe permissions in each replica region.\n",
       "categories": [
         "Services",
         "AWS"
@@ -4946,6 +4984,13 @@
             "kind": "scalar",
             "description": "DynamoDB table name for storing checkpoints. Will be created if it doesn't exist.",
             "default": "redpanda_dynamodb_checkpoints"
+          },
+          {
+            "name": "checkpoint_namespace",
+            "type": "string",
+            "kind": "scalar",
+            "description": "An optional namespace for checkpoints, allowing multiple independent pipelines (for example one per developer or environment) to share a single checkpoint table without overwriting each other's positions. Checkpoints written under one namespace are invisible to pipelines using a different namespace (or none), so changing this value causes the pipeline to restart from `start_from`. Must not contain `#`.",
+            "default": ""
           },
           {
             "name": "global_table",
@@ -8239,7 +8284,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Downloads objects within a Google Cloud Storage bucket, optionally filtered by a prefix.",
-      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```\n- gcs_key\n- gcs_bucket\n- gcs_last_modified\n- gcs_last_modified_unix\n- gcs_content_type\n- gcs_content_encoding\n- All user defined metadata\n```\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n=== Credentials\n\nBy default Redpanda Connect will use a shared credentials file when connecting to GCP services. You can find out more in xref:guides:cloud/gcp.adoc[].",
+      "description": "\n== Metadata\n\nThis input adds the following metadata fields to each message:\n\n```\n- gcs_key\n- gcs_bucket\n- gcs_last_modified\n- gcs_last_modified_unix\n- gcs_content_type\n- gcs_content_encoding\n- All user defined metadata\n```\n\nYou can access these metadata fields using xref:configuration:interpolation.adoc#bloblang-queries[function interpolation].\n\n== Credentials\n\nBy default Redpanda Connect will use a shared credentials file when connecting to GCP services. You can find out more in xref:guides:cloud/gcp.adoc[].",
       "categories": [
         "Services",
         "GCP"
@@ -10004,6 +10049,621 @@
         "kind": "scalar",
         "default": ""
       },
+      "cloudSupported": true,
+      "requiresCgo": false
+    },
+    {
+      "name": "jira",
+      "type": "input",
+      "status": "stable",
+      "plugin": true,
+      "summary": "Streams Jira issues, comments, or changelog entries via JQL with incremental polling.",
+      "description": "Periodically queries Jira's REST API using a JQL filter and emits one message per resource. The cursor (max issue `updated` timestamp, plus the set of issue versions already emitted at the boundary) is persisted via the configured cache resource after every fully-acknowledged page, so progress survives restarts — including mid-backfill — and boundary issues are not re-emitted on every poll.\n\nAuthentication uses API token (email + token) basic auth. The `backoff` settings govern the adaptive backoff applied to 429 responses; retries of 502/503/504 responses use a fixed three-attempt policy.\n\nEach message body is the raw JSON of the resource. Metadata fields:\n\n- `jira_id` - issue key (issues) / comment ID / changelog history ID\n- `jira_issue_key` - parent issue key (omitted for resource=issues)\n- `jira_project` - project key\n- `jira_updated` - RFC 3339 timestamp of the resource\n- `jira_event_type` - \"issue\" / \"comment\" / \"changelog\"\n- `jira_self` - Jira API URL of the resource\n\nLimitations (v1): OAuth and the worklogs resource are not yet supported. For resource=comments and resource=changelog, only the first page of child resources (up to ~50 comments or ~100 changelog entries per issue update) is emitted; a WARN is logged when truncation is detected. Use a downstream Jira processor to fetch the full child set if your issues exceed this limit.",
+      "categories": [
+        "Services"
+      ],
+      "config": {
+        "name": "",
+        "type": "object",
+        "kind": "scalar",
+        "children": [
+          {
+            "name": "auth",
+            "type": "object",
+            "kind": "scalar",
+            "description": "API token authentication.",
+            "children": [
+              {
+                "name": "email",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Email or username of the Jira account."
+              },
+              {
+                "name": "api_token",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Jira API token.",
+                "is_secret": true,
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              }
+            ]
+          },
+          {
+            "name": "resource",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Which Jira resource to emit.",
+            "default": "issues",
+            "options": [
+              "issues",
+              "comments",
+              "changelog"
+            ],
+            "linter": "\nlet options = {\n  \"issues\": true,\n  \"comments\": true,\n  \"changelog\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "jql",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Jira JQL filter. The input appends an `updated >= cursor` predicate and `ORDER BY updated ASC, key ASC`. Empty means all issues visible to the principal.",
+            "default": ""
+          },
+          {
+            "name": "fields",
+            "type": "string",
+            "kind": "array",
+            "description": "Jira `fields` query parameter - narrow this for throughput.",
+            "default": [
+              "*all"
+            ]
+          },
+          {
+            "name": "expand",
+            "type": "string",
+            "kind": "array",
+            "description": "Jira `expand` query parameter. The input automatically adds `changelog` when resource=changelog.",
+            "default": []
+          },
+          {
+            "name": "page_size",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Issues per Jira page (Jira max 100).",
+            "default": 50
+          },
+          {
+            "name": "poll_interval",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Time to wait between polls once the input has caught up. Minimum 10s.",
+            "default": "60s"
+          },
+          {
+            "name": "cursor",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Cursor checkpoint storage.",
+            "children": [
+              {
+                "name": "cache",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Name of a cache resource used to persist the cursor."
+              },
+              {
+                "name": "key",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Cache key. Defaults to `redpanda_connect_jira_input_<resource>`.",
+                "default": ""
+              },
+              {
+                "name": "overlap",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Widens `updated >= cursor - overlap` to absorb minute-boundary effects. Jira JQL's `updated` operator has minute precision, so this should be set to at least 1m to have an effect.",
+                "default": "60s"
+              }
+            ]
+          },
+          {
+            "name": "auto_replay_nacks",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether messages that are rejected (nacked) at the output level should be automatically replayed indefinitely, eventually resulting in back pressure if the cause of the rejections is persistent. If set to `false` these messages will instead be deleted. Disabling auto replays can greatly improve memory efficiency of high throughput streams as the original shape of the data can be discarded immediately upon consumption and mutation.",
+            "default": true
+          },
+          {
+            "name": "base_url",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Base URL of the target service (e.g., https://api.example.com). TLS is enabled automatically for https URLs."
+          },
+          {
+            "name": "timeout",
+            "type": "string",
+            "kind": "scalar",
+            "description": "HTTP request timeout.",
+            "default": "5s"
+          },
+          {
+            "name": "tls",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Custom TLS settings can be used to override system defaults.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "enabled",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether custom TLS settings are enabled.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "skip_cert_verify",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to skip server side certificate verification.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "enable_renegotiation",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Whether to allow the remote server to repeatedly request renegotiation. Enable this option if you're seeing the error message `local error: tls: no renegotiation`.",
+                "is_advanced": true,
+                "default": false,
+                "version": "3.45.0"
+              },
+              {
+                "name": "root_cas",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional root certificate authority to use. This is a string, representing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "is_secret": true,
+                "default": "",
+                "examples": [
+                  "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+                ],
+                "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+              },
+              {
+                "name": "root_cas_file",
+                "type": "string",
+                "kind": "scalar",
+                "description": "An optional path of a root certificate authority file to use. This is a file, often with a .pem extension, containing a certificate chain from the parent trusted root certificate, to possible intermediate signing certificates, to the host certificate.",
+                "is_advanced": true,
+                "default": "",
+                "examples": [
+                  "./root_cas.pem"
+                ]
+              },
+              {
+                "name": "client_certs",
+                "type": "object",
+                "kind": "array",
+                "description": "A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.",
+                "is_advanced": true,
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "cert": "foo",
+                      "key": "bar"
+                    }
+                  ],
+                  [
+                    {
+                      "cert_file": "./example.pem",
+                      "key_file": "./example.key"
+                    }
+                  ]
+                ],
+                "children": [
+                  {
+                    "name": "cert",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text certificate key to use.",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  },
+                  {
+                    "name": "cert_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "key_file",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "The path of a certificate key to use.",
+                    "is_advanced": true,
+                    "default": ""
+                  },
+                  {
+                    "name": "password",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "A plain text password for when the private key is password encrypted in PKCS#1 or PKCS#8 format. The obsolete `pbeWithMD5AndDES-CBC` algorithm is not supported for the PKCS#8 format.\n\nBecause the obsolete pbeWithMD5AndDES-CBC algorithm does not authenticate the ciphertext, it is vulnerable to padding oracle attacks that can let an attacker recover the plaintext.\n",
+                    "is_advanced": true,
+                    "is_secret": true,
+                    "default": "",
+                    "examples": [
+                      "foo",
+                      "${KEY_PASSWORD}"
+                    ],
+                    "scrubber": "root = if this != null && this != \"\" && !this.trim().re_match(\"\"\"^\\${[0-9A-Za-z_.]+(:((\\${[^}]+})|[^}])*)?}$\"\"\") {\n  \"!!!SECRET_SCRUBBED!!!\"\n} else if this == null { \"\" }"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "proxy_url",
+            "type": "string",
+            "kind": "scalar",
+            "description": "HTTP proxy URL. Empty string disables proxying.",
+            "is_advanced": true,
+            "default": ""
+          },
+          {
+            "name": "disable_http2",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Disable HTTP/2 and force HTTP/1.1.",
+            "is_advanced": true,
+            "default": false
+          },
+          {
+            "name": "tps_limit",
+            "type": "float",
+            "kind": "scalar",
+            "description": "Rate limit in requests per second. 0 disables rate limiting.",
+            "is_advanced": true,
+            "default": 0
+          },
+          {
+            "name": "tps_burst",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Maximum burst size for rate limiting.",
+            "is_advanced": true,
+            "default": 1
+          },
+          {
+            "name": "backoff",
+            "type": "object",
+            "kind": "scalar",
+            "description": "Adaptive backoff configuration for 429 (Too Many Requests) responses. Always active.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "initial_interval",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Initial interval between retries on 429 responses.",
+                "is_advanced": true,
+                "default": "1s"
+              },
+              {
+                "name": "max_interval",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum interval between retries on 429 responses.",
+                "is_advanced": true,
+                "default": "30s"
+              },
+              {
+                "name": "max_retries",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum number of retries on 429 responses.",
+                "is_advanced": true,
+                "default": 3
+              }
+            ]
+          },
+          {
+            "name": "tcp",
+            "type": "object",
+            "kind": "scalar",
+            "description": "TCP socket configuration.",
+            "is_advanced": true,
+            "is_optional": true,
+            "children": [
+              {
+                "name": "connect_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum amount of time a dial will wait for a connect to complete. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              },
+              {
+                "name": "keep_alive",
+                "type": "object",
+                "kind": "scalar",
+                "description": "TCP keep-alive probe configuration.",
+                "is_advanced": true,
+                "is_optional": true,
+                "children": [
+                  {
+                    "name": "idle",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration the connection must be idle before sending the first keep-alive probe. Zero defaults to 15s. Negative values disable keep-alive probes.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "interval",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Duration between keep-alive probes. Zero defaults to 15s.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "count",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Maximum unanswered keep-alive probes before dropping the connection. Zero defaults to 9.",
+                    "is_advanced": true,
+                    "default": 9
+                  }
+                ]
+              },
+              {
+                "name": "tcp_user_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for acknowledgment of transmitted data before killing the connection. Linux-only (kernel 2.6.37+), ignored on other platforms. When enabled, keep_alive.idle must be greater than this value per RFC 5482. Zero disables.",
+                "is_advanced": true,
+                "default": "0s"
+              }
+            ]
+          },
+          {
+            "name": "http",
+            "type": "object",
+            "kind": "scalar",
+            "description": "HTTP transport settings controlling connection pooling, timeouts, and HTTP/2.",
+            "is_advanced": true,
+            "children": [
+              {
+                "name": "max_idle_conns",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum total number of idle (keep-alive) connections across all hosts. 0 means unlimited.",
+                "is_advanced": true,
+                "default": 100
+              },
+              {
+                "name": "max_idle_conns_per_host",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum idle connections to keep per host. 0 (the default) uses GOMAXPROCS+1.",
+                "is_advanced": true,
+                "default": 0
+              },
+              {
+                "name": "max_conns_per_host",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum total connections (active + idle) per host. 0 means unlimited.",
+                "is_advanced": true,
+                "default": 64
+              },
+              {
+                "name": "idle_conn_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "How long an idle connection remains in the pool before being closed. 0 disables the timeout.",
+                "is_advanced": true,
+                "default": "1m30s"
+              },
+              {
+                "name": "tls_handshake_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for a TLS handshake to complete. 0 disables the timeout.",
+                "is_advanced": true,
+                "default": "10s"
+              },
+              {
+                "name": "expect_continue_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for a server's 100-continue response before sending the body. 0 means the body is sent immediately.",
+                "is_advanced": true,
+                "default": "1s"
+              },
+              {
+                "name": "response_header_timeout",
+                "type": "string",
+                "kind": "scalar",
+                "description": "Maximum time to wait for response headers after writing the full request. 0 disables the timeout.",
+                "is_advanced": true,
+                "default": "0s"
+              },
+              {
+                "name": "disable_keep_alives",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Disable HTTP keep-alive connections; each request uses a new connection.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "disable_compression",
+                "type": "bool",
+                "kind": "scalar",
+                "description": "Disable automatic decompression of gzip responses.",
+                "is_advanced": true,
+                "default": false
+              },
+              {
+                "name": "max_response_header_bytes",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum bytes of response headers to allow.",
+                "is_advanced": true,
+                "default": 1048576
+              },
+              {
+                "name": "max_response_body_bytes",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Maximum bytes of response body the client will read. The response body is wrapped with a limit reader; reads beyond this cap return EOF. 0 disables the limit.",
+                "is_advanced": true,
+                "default": 10485760
+              },
+              {
+                "name": "write_buffer_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Size in bytes of the per-connection write buffer.",
+                "is_advanced": true,
+                "default": 4096
+              },
+              {
+                "name": "read_buffer_size",
+                "type": "int",
+                "kind": "scalar",
+                "description": "Size in bytes of the per-connection read buffer.",
+                "is_advanced": true,
+                "default": 4096
+              },
+              {
+                "name": "h2",
+                "type": "object",
+                "kind": "scalar",
+                "description": "HTTP/2-specific transport settings. Only applied when HTTP/2 is enabled.",
+                "is_advanced": true,
+                "children": [
+                  {
+                    "name": "strict_max_concurrent_requests",
+                    "type": "bool",
+                    "kind": "scalar",
+                    "description": "When true, new requests block when a connection's concurrency limit is reached instead of opening a new connection.",
+                    "is_advanced": true,
+                    "default": false
+                  },
+                  {
+                    "name": "max_decoder_header_table_size",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Upper limit in bytes for the HPACK header table used to decode headers from the peer. Must be less than 4 MiB.",
+                    "is_advanced": true,
+                    "default": 4096
+                  },
+                  {
+                    "name": "max_encoder_header_table_size",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Upper limit in bytes for the HPACK header table used to encode headers sent to the peer. Must be less than 4 MiB.",
+                    "is_advanced": true,
+                    "default": 4096
+                  },
+                  {
+                    "name": "max_read_frame_size",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Largest HTTP/2 frame this endpoint will read. Valid range: 16 KiB to 16 MiB.",
+                    "is_advanced": true,
+                    "default": 16384
+                  },
+                  {
+                    "name": "max_receive_buffer_per_connection",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Maximum flow-control window size in bytes for data received on a connection. Must be at least 64 KiB and less than 4 MiB.",
+                    "is_advanced": true,
+                    "default": 1048576
+                  },
+                  {
+                    "name": "max_receive_buffer_per_stream",
+                    "type": "int",
+                    "kind": "scalar",
+                    "description": "Maximum flow-control window size in bytes for data received on a single stream. Must be less than 4 MiB.",
+                    "is_advanced": true,
+                    "default": 1048576
+                  },
+                  {
+                    "name": "send_ping_timeout",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Idle timeout after which a PING frame is sent to verify connection health. 0 disables health checks.",
+                    "is_advanced": true,
+                    "default": "0s"
+                  },
+                  {
+                    "name": "ping_timeout",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Timeout waiting for a PING response before closing the connection.",
+                    "is_advanced": true,
+                    "default": "15s"
+                  },
+                  {
+                    "name": "write_byte_timeout",
+                    "type": "string",
+                    "kind": "scalar",
+                    "description": "Timeout for writing data to a connection. The timer resets whenever bytes are written. 0 disables the timeout.",
+                    "is_advanced": true,
+                    "default": "0s"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "access_log_level",
+            "type": "string",
+            "kind": "scalar",
+            "description": "Log level for HTTP request/response logging. Empty disables logging.",
+            "is_advanced": true,
+            "default": "",
+            "options": [
+              "",
+              "TRACE",
+              "DEBUG",
+              "INFO",
+              "WARN",
+              "ERROR"
+            ],
+            "linter": "\nlet options = {\n  \"\": true,\n  \"trace\": true,\n  \"debug\": true,\n  \"info\": true,\n  \"warn\": true,\n  \"error\": true,\n}\n\nroot = if !$options.exists(this.string().lowercase()) {\n  {\"type\": 2, \"what\": \"value %v is not a valid option for this field\".format(this.string())}\n}\n"
+          },
+          {
+            "name": "access_log_body_limit",
+            "type": "int",
+            "kind": "scalar",
+            "description": "Maximum bytes of request/response body to include in logs. 0 to skip body logging.",
+            "is_advanced": true,
+            "default": 0
+          }
+        ]
+      },
+      "version": "4.96.0",
       "cloudSupported": true,
       "requiresCgo": false
     },
@@ -15054,6 +15714,19 @@
                 "description": "The key prefix used when storing transactions in `transaction_cache`. An alternative prefix must be set if multiple `oracledb_cdc` inputs share the same cache resource, since Oracle transaction IDs (USN.SLOT.SEQ) are only unique within a single Oracle instance and would otherwise collide.",
                 "is_optional": true,
                 "default": "oracledb_cdc"
+              }
+            ]
+          },
+          {
+            "name": "snapshot_filters",
+            "type": "string",
+            "kind": "map",
+            "description": "A map of fully-qualified table names (e.g. SCHEMA.TABLE) to SQL SELECT queries, used to override the default snapshot query per table.\n\nEach query must project every column of the table's primary key - all of them, for a composite key - even if it otherwise selects only a subset of columns. Snapshotting pages through a table's rows by filtering and sorting on its full primary key, against the query's own result set - if any primary key column isn't projected, this fails part-way through the snapshot, once the first batch of rows has been read.",
+            "is_optional": true,
+            "examples": [
+              {
+                "TESTDB.PRODUCTS": "SELECT * FROM TESTDB.PRODUCTS WHERE ID > 1000",
+                "TESTDB.USERS": "SELECT * FROM TESTDB.USERS"
               }
             ]
           },
@@ -35253,7 +35926,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "Write data to Apache Iceberg tables via REST catalog.",
-      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\nCurrently only version 2 of the Iceberg specification is supported. Any pre-existing version 1 tables will be upgraded to version 2 automatically.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/`) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n== Row-level operations\n\nBy default this output is append-only — every message becomes a new row (`row_operation: insert`), and existing configurations are unaffected. Set `row_operation` to apply a per-message operation, with `identifier_fields` defining the row identity:\n\n* `insert` — append the row. This is an unconditional append: it is *not* keyed or de-duplicated.\n* `upsert` — replace any existing rows matching `identifier_fields`, then append this row (equivalent to Iceberg's Flink UPSERT mode).\n* `delete` — remove rows matching `identifier_fields`.\n\n`row_operation` supports interpolation, so the operation can be driven by the data itself — for example by mapping a change-data-capture stream's operation field — but no CDC-specific format is assumed (see the change-data-capture example below). It is named `row_operation` to distinguish it from Iceberg's snapshot-level operation.\n\n`upsert` and `delete` require `identifier_fields` and use Iceberg merge-on-read equality deletes, which require table format version 2. A version-1 table is automatically upgraded to version 2 on the first `upsert`/`delete`; *this upgrade is irreversible*.\n\n*Identifier fields.* `identifier_fields` must reference existing table columns of a primitive, non-floating-point type. A static `upsert`/`delete` is validated at startup; an interpolated `row_operation` is validated per message at write time, so an empty `identifier_fields` is not caught until the first `upsert`/`delete` message arrives. Identifier columns of a temporal type (`timestamp`, `timestamptz`, `date`, `time`) must arrive as time values, not bare numbers — a numeric epoch is ambiguous as a delete key and is rejected at write time; convert it to a timestamp upstream. If the table is partitioned, every partition source column must be one of the `identifier_fields`, since equality deletes are partition-scoped.\n\nWhen this output auto-creates a table (via `schema_evolution`), the `identifier_fields` columns are created as *required* and registered as the table's Iceberg identifier-field-ids, so downstream engines and other writers see the primary key. A consequence is that a null or missing value in an identifier column is rejected on write, even for `insert`. Identifier columns must therefore be present at creation — in the first message or declared via `schema_metadata`. Pre-existing tables are never modified.\n\n*Batching and ordering.* Within a single batch the last `upsert`/`delete` per `identifier_fields` key wins. Each batch containing an `upsert`/`delete` is committed as its own snapshot (these commits are never coalesced, which is required for correctness), so a high-throughput mutation workload produces one snapshot per batch. Size batches accordingly and run regular table maintenance (snapshot expiry and compaction) to keep metadata manageable. Pure `insert`-only batches keep the original append fast path, which does coalesce commits.\n\nOrdering only holds *within* a batch. With more than one batch in flight, concurrent batches can commit out of order, so a stale `upsert` may overwrite a newer one for the same key. Set `max_in_flight: 1` for keyed (change-data-capture) workloads to preserve per-key order — this is enforced by config linting whenever `row_operation` is anything other than a static `insert`.\n\n[CAUTION]\n====\n`insert` is an unconditional append and is *not* keyed or de-duplicated. For keyed data (including change-data-capture), map create/read events to `upsert`, never `insert` — mixing `insert` with `upsert`/`delete` on the same key in one batch produces duplicate rows.\n====\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
+      "description": "\nWrite streaming data to Apache Iceberg tables using the REST catalog API. This output supports:\n\n* Multiple storage backends (S3, GCS, Azure)\n* Automatic table creation with schema detection\n* Partition transforms (year, month, day, hour, bucket, truncate)\n* Schema evolution (automatic column addition)\n* Transaction retry logic for concurrent writes\n\nThis output is designed to work with REST catalog implementations like Apache Polaris, AWS Glue Data Catalog, and the Databricks Unity Catalog.\n\nCurrently only version 2 of the Iceberg specification is supported. Any pre-existing version 1 tables will be upgraded to version 2 automatically.\n\n=== Apache Polaris\n\nTo use with https://polaris.apache.org[Apache Polaris^]:\n\n* Set `catalog.url` to the Polaris REST endpoint (e.g., `http://localhost:8181/api/catalog`).\n* Set `catalog.warehouse` to the catalog name configured in Polaris.\n* Configure `catalog.auth.oauth2` with client credentials granted access to the catalog.\n\n=== AWS Glue Data Catalog\n\nTo use with AWS Glue Data Catalog:\n\n* Set `catalog.url` to `https://glue.<region>.amazonaws.com/iceberg` (the REST client appends the API version automatically).\n* Set `catalog.warehouse` to your AWS account ID (the Glue catalog identifier).\n* Set `schema_evolution.table_location` to an S3 prefix (e.g., `s3://my-bucket/` — a trailing slash is optional) since Glue does not automatically assign table locations.\n* Configure `catalog.auth.aws_sigv4` with the appropriate region and set `service` to `glue`.\n* Configure `storage.aws_s3` with the same bucket and region.\n\n=== Azure Blob Storage (ADLS Gen2)\n\nTo use with Azure Data Lake Storage Gen2:\n\n* Configure `storage.azure_blob_storage` with your storage account name and container.\n* Authenticate using one of: `storage_access_key` (shared key), `storage_sas_token`, or `storage_connection_string`.\n* The storage account must have hierarchical namespace (HNS) enabled for ADLS Gen2 compatibility.\n\n[%header,format=dsv]\n|===\nBloblang type:Iceberg type\nstring:string\nbytes:binary\nbool:boolean\nnumber:double\ntimestamp:timestamp (with timezone)\nobject:struct\narray:list\n|===\n\n\n== Row-level operations\n\nBy default this output is append-only — every message becomes a new row (`row_operation: insert`), and existing configurations are unaffected. Set `row_operation` to apply a per-message operation, with `identifier_fields` defining the row identity:\n\n* `insert` — append the row. This is an unconditional append: it is *not* keyed or de-duplicated.\n* `upsert` — replace any existing rows matching `identifier_fields`, then append this row (equivalent to Iceberg's Flink UPSERT mode).\n* `delete` — remove rows matching `identifier_fields`.\n\n`row_operation` supports interpolation, so the operation can be driven by the data itself — for example by mapping a change-data-capture stream's operation field — but no CDC-specific format is assumed (see the change-data-capture example below). It is named `row_operation` to distinguish it from Iceberg's snapshot-level operation.\n\n`upsert` and `delete` require `identifier_fields` and use Iceberg merge-on-read equality deletes, which require table format version 2. A version-1 table is automatically upgraded to version 2 on the first `upsert`/`delete`; *this upgrade is irreversible*.\n\n*Identifier fields.* `identifier_fields` must reference existing table columns of a primitive, non-floating-point type. A static `upsert`/`delete` is validated at startup; an interpolated `row_operation` is validated per message at write time, so an empty `identifier_fields` is not caught until the first `upsert`/`delete` message arrives. Identifier columns of a temporal type (`timestamp`, `timestamptz`, `date`, `time`) must arrive as time values, not bare numbers — a numeric epoch is ambiguous as a delete key and is rejected at write time; convert it to a timestamp upstream. If the table is partitioned, every partition source column must be one of the `identifier_fields`, since equality deletes are partition-scoped.\n\nWhen this output auto-creates a table (via `schema_evolution`), the `identifier_fields` columns are created as *required* and registered as the table's Iceberg identifier-field-ids, so downstream engines and other writers see the primary key. A consequence is that a null or missing value in an identifier column is rejected on write, even for `insert`. Identifier columns must therefore be present at creation — in the first message or declared via `schema_metadata`. Pre-existing tables are never modified.\n\n*Batching and ordering.* Within a single batch the last `upsert`/`delete` per `identifier_fields` key wins. Each batch containing an `upsert`/`delete` is committed as its own snapshot (these commits are never coalesced, which is required for correctness), so a high-throughput mutation workload produces one snapshot per batch. Size batches accordingly and run regular table maintenance (snapshot expiry and compaction) to keep metadata manageable. Pure `insert`-only batches keep the original append fast path, which does coalesce commits.\n\nOrdering only holds *within* a batch. With more than one batch in flight, concurrent batches can commit out of order, so a stale `upsert` may overwrite a newer one for the same key. Set `max_in_flight: 1` for keyed (change-data-capture) workloads to preserve per-key order — this is enforced by config linting whenever `row_operation` is anything other than a static `insert`.\n\n[CAUTION]\n====\n`insert` is an unconditional append and is *not* keyed or de-duplicated. For keyed data (including change-data-capture), map create/read events to `upsert`, never `insert` — mixing `insert` with `upsert`/`delete` on the same key in one batch produces duplicate rows.\n====\n\n\n== Performance\n\nThis output benefits from sending multiple messages in flight in parallel for improved performance. You can tune the max number of in flight messages (or message batches) with the field `max_in_flight`.\n\nThis output benefits from sending messages as a batch for improved performance. Batches can be formed at both the input and output level. You can find out more xref:configuration:batching.adoc[in this doc].",
       "categories": [
         "Services"
       ],
@@ -45022,7 +45695,7 @@
       "status": "stable",
       "plugin": true,
       "summary": "A specialised Kafka producer for comprehensive data migration between Apache Kafka and Redpanda clusters.",
-      "description": "\nThe `redpanda_migrator` output performs all migration work.\nIt coordinates topics, schema registry, and consumer groups to migrate data from a source Kafka/Redpanda cluster to a destination cluster.\n\n**IMPORTANT:** This output requires a corresponding `redpanda_migrator` input in the same pipeline.\nEach pipeline must have both input and output components configured.\n\n**Multiple migrator pairs:** When using multiple migrator pairs in a single pipeline,\nthe mapping between input and output components is done based on the label field.\nThe label of the input and output must match exactly for proper coordination.\n\n**Performance tuning for high throughput:** For workloads with high message rates or large messages,\nadjust the following settings to optimize throughput:\n\nOn the paired input component:\n- `partition_buffer_bytes: 2MB` - increases per-partition buffer size\n- `max_yield_batch_bytes: 1MB` - allows larger batches to be yielded\n\nOn this output component:\n- `max_in_flight` - set to the total number of partitions being copied in parallel (up to all partitions in the cluster)\n\nWhat gets synchronised:\n\n- Topics\n  - Name resolution with interpolation (default: preserve source name)\n  - Automatic creation with mirrored partition counts\n  - Selectable replication factor (default: inherit from source)\n  - Copy of supported topic configuration keys (serverless-aware subset)\n  - Optional ACL replication with safe transforms:\n    - Excludes `ALLOW WRITE` entries\n    - Downgrades `ALLOW ALL` to `READ`\n    - Preserves resource pattern type and host filters\n\n- Schema Registry\n  - One-shot or periodic syncing\n  - Subject selection via include/exclude regex\n  - Subject renaming with interpolation\n  - Versions: `latest` or `all` (default: `all`)\n  - Optional include of soft-deleted subjects\n  - ID handling: translate IDs (create-or-reuse) or keep fixed IDs and versions\n  - Optional schema normalisation on create\n  - Optional per-subject compatibility propagation when explicitly set on source (global mode is not forced)\n  - Serverless note: schema metadata and rule sets are not copied in serverless mode\n\n- Consumer Groups\n  - Periodic syncing\n  - Group selection via include/exclude regex\n  - Only groups in `Empty` state are migrated (active groups are skipped)\n  - Timestamp-based offset translation (approximate) per partition using previous-record timestamp and `ListOffsetsAfterMilli`\n  - No rewind guarantee: destination offsets are never moved backwards\n  - Commit performed in parallel with per-group metrics\n  - Requires matching partition counts between source and destination topics\n\nHow it runs:\n\n- Topics: synced on demand. The first write triggers discovery and creation; subsequent writes create on first encounter per topic.\n- Schema Registry: one sync at connect, then triggered when topic record has unknown schema; optional background loop controlled by `schema_registry.interval`.\n- Consumer Groups: background loop controlled by `consumer_groups.interval` and filtered by the current topic mappings.\n\nGuarantees:\n\n- Topics are created with the intended partitioning and configured replication factor. Existing topics are respected; partition mismatches are logged and consumer group migration for mismatched topics is skipped.\n- Consumer group offsets are never rewound. Only translated forward positions are committed.\n- ACL replication excludes `ALLOW WRITE` operations and downgrades `ALLOW ALL` to `READ` to avoid unsafe grants.\n\nLimitations and requirements:\n\n- Destination Schema Registry must be in `READWRITE` or `IMPORT` mode.\n- Offset translation is best-effort: if the previous-offset timestamp cannot be read, or no destination offset exists after the timestamp, that partition is skipped.\n- Consumer group migration requires identical partition counts for source and destination topics.\n\nMetrics:\n\nThe component exposes comprehensive metrics for monitoring migration operations:\n\nTopic Migration Metrics:\n- `redpanda_migrator_topics_created_total` (counter): Total number of topics successfully created on the destination cluster\n- `redpanda_migrator_topic_create_errors_total` (counter): Total number of errors encountered when creating topics\n- `redpanda_migrator_topic_create_latency_ns` (timer): Latency in nanoseconds for topic creation operations\n\nSchema Registry Migration Metrics:\n- `redpanda_migrator_sr_schemas_created_total` (counter): Total number of schemas successfully created in the destination schema registry\n- `redpanda_migrator_sr_schema_create_errors_total` (counter): Total number of errors encountered when creating schemas\n- `redpanda_migrator_sr_schema_create_latency_ns` (timer): Latency in nanoseconds for schema creation operations\n- `redpanda_migrator_sr_compatibility_updates_total` (counter): Total number of compatibility level updates applied to subjects\n- `redpanda_migrator_sr_compatibility_update_errors_total` (counter): Total number of errors encountered when updating compatibility levels\n- `redpanda_migrator_sr_compatibility_update_latency_ns` (timer): Latency in nanoseconds for compatibility level update operations\n\nConsumer Group Migration Metrics (with group label):\n- `redpanda_migrator_cg_offsets_translated_total` (counter): Total number of offsets successfully translated per consumer group\n- `redpanda_migrator_cg_offset_translation_errors_total` (counter): Total number of errors encountered when translating offsets per consumer group\n- `redpanda_migrator_cg_offset_translation_latency_ns` (timer): Latency in nanoseconds for offset translation operations per consumer group\n- `redpanda_migrator_cg_offsets_committed_total` (counter): Total number of offsets successfully committed per consumer group\n- `redpanda_migrator_cg_offset_commit_errors_total` (counter): Total number of errors encountered when committing offsets per consumer group\n- `redpanda_migrator_cg_offset_commit_latency_ns` (timer): Latency in nanoseconds for offset commit operations per consumer group\n\nConsumer Lag Metrics (with topic and partition labels):\n- `redpanda_lag` (gauge): Current consumer lag in messages for each topic partition being consumed by the migrator input. This metric shows the difference between the high water mark and the current consumer position, providing visibility into how far behind the consumer is on each partition. The metric includes labels for topic name and partition number to enable per-partition monitoring.\n\nThis component must be paired with the `redpanda_migrator` input in the same pipeline.",
+      "description": "\nThe `redpanda_migrator` output performs all migration work.\nIt coordinates topics, schema registry, and consumer groups to migrate data from a source Kafka/Redpanda cluster to a destination cluster.\n\n**IMPORTANT:** This output requires a corresponding `redpanda_migrator` input in the same pipeline.\nEach pipeline must have both input and output components configured.\n\n**Multiple migrator pairs:** When using multiple migrator pairs in a single pipeline,\nthe mapping between input and output components is done based on the label field.\nThe label of the input and output must match exactly for proper coordination.\n\n**Performance tuning for high throughput:** For workloads with high message rates or large messages,\nadjust the following settings to optimize throughput:\n\nOn the paired input component:\n- `partition_buffer_bytes: 2MB` - increases per-partition buffer size\n- `max_yield_batch_bytes: 1MB` - allows larger batches to be yielded\n\nOn this output component:\n- `max_in_flight` - set to the total number of partitions being copied in parallel (up to all partitions in the cluster)\n\nWhat gets synchronised:\n\n- Topics\n  - Name resolution with interpolation (default: preserve source name)\n  - Automatic creation with mirrored partition counts\n  - Selectable replication factor (default: inherit from source)\n  - Copy of supported topic configuration keys (serverless-aware subset)\n  - Optional ACL replication with safe transforms:\n    - Excludes `ALLOW WRITE` entries\n    - Downgrades `ALLOW ALL` to `READ`\n    - Preserves resource pattern type and host filters\n\n- Schema Registry\n  - One-shot or periodic syncing\n  - Subject selection via include/exclude regex\n  - Subject renaming with interpolation\n  - Versions: `latest` or `all` (default: `all`)\n  - Optional include of soft-deleted subjects\n  - ID handling: translate IDs (create-or-reuse) or keep fixed IDs and versions\n  - Optional schema normalisation on create\n  - Optional per-subject compatibility propagation when explicitly set on source (global mode is not forced)\n  - Serverless note: schema metadata and rule sets are not copied in serverless mode\n\n- Consumer Groups\n  - Periodic syncing\n  - Group selection via include/exclude regex\n  - Only groups in `Empty` state are migrated (active groups are skipped)\n  - Timestamp-based offset translation (approximate) per partition using previous-record timestamp and `ListOffsetsAfterMilli`\n  - No rewind guarantee: destination offsets are never moved backwards\n  - Commit performed in parallel with per-group metrics\n  - Requires matching partition counts between source and destination topics\n\nHow it runs:\n\n- Topics: synced on demand. The first write triggers discovery and creation; subsequent writes create on first encounter per topic.\n- Schema Registry: one sync at connect, then periodic syncing via the background loop controlled by `schema_registry.interval` (set to `0s` to sync only once at connect). Schema IDs unknown at write time are not resynced on demand; they are handled per `schema_registry.strict`.\n- Consumer Groups: background loop controlled by `consumer_groups.interval` and filtered by the current topic mappings.\n\nGuarantees:\n\n- Topics are created with the intended partitioning and configured replication factor. Existing topics are respected; partition mismatches are logged and consumer group migration for mismatched topics is skipped.\n- Consumer group offsets are never rewound. Only translated forward positions are committed.\n- ACL replication excludes `ALLOW WRITE` operations and downgrades `ALLOW ALL` to `READ` to avoid unsafe grants.\n\nLimitations and requirements:\n\n- Destination Schema Registry must be in `READWRITE` or `IMPORT` mode.\n- Offset translation is best-effort: if the previous-offset timestamp cannot be read, or no destination offset exists after the timestamp, that partition is skipped.\n- Consumer group migration requires identical partition counts for source and destination topics.\n\nMetrics:\n\nThe component exposes comprehensive metrics for monitoring migration operations:\n\nTopic Migration Metrics:\n- `redpanda_migrator_topics_created_total` (counter): Total number of topics successfully created on the destination cluster\n- `redpanda_migrator_topic_create_errors_total` (counter): Total number of errors encountered when creating topics\n- `redpanda_migrator_topic_create_latency_ns` (timer): Latency in nanoseconds for topic creation operations\n\nSchema Registry Migration Metrics:\n- `redpanda_migrator_sr_schemas_created_total` (counter): Total number of schemas successfully created in the destination schema registry\n- `redpanda_migrator_sr_schema_create_errors_total` (counter): Total number of errors encountered when creating schemas\n- `redpanda_migrator_sr_schema_create_latency_ns` (timer): Latency in nanoseconds for schema creation operations\n- `redpanda_migrator_sr_compatibility_updates_total` (counter): Total number of compatibility level updates applied to subjects\n- `redpanda_migrator_sr_compatibility_update_errors_total` (counter): Total number of errors encountered when updating compatibility levels\n- `redpanda_migrator_sr_compatibility_update_latency_ns` (timer): Latency in nanoseconds for compatibility level update operations\n\nConsumer Group Migration Metrics (with group label):\n- `redpanda_migrator_cg_offsets_translated_total` (counter): Total number of offsets successfully translated per consumer group\n- `redpanda_migrator_cg_offset_translation_errors_total` (counter): Total number of errors encountered when translating offsets per consumer group\n- `redpanda_migrator_cg_offset_translation_latency_ns` (timer): Latency in nanoseconds for offset translation operations per consumer group\n- `redpanda_migrator_cg_offsets_committed_total` (counter): Total number of offsets successfully committed per consumer group\n- `redpanda_migrator_cg_offset_commit_errors_total` (counter): Total number of errors encountered when committing offsets per consumer group\n- `redpanda_migrator_cg_offset_commit_latency_ns` (timer): Latency in nanoseconds for offset commit operations per consumer group\n\nConsumer Lag Metrics (with topic and partition labels):\n- `redpanda_lag` (gauge): Current consumer lag in messages for each topic partition being consumed by the migrator input. This metric shows the difference between the high water mark and the current consumer position, providing visibility into how far behind the consumer is on each partition. The metric includes labels for topic name and partition number to enable per-partition monitoring.\n\nThis component must be paired with the `redpanda_migrator` input in the same pipeline.",
       "categories": [
         "Services"
       ],
@@ -46200,6 +46873,20 @@
             "description": "Enable serverless mode for Redpanda Cloud serverless clusters. This restricts topic configurations and schema features to those supported by serverless environments.",
             "is_advanced": true,
             "default": false
+          },
+          {
+            "name": "headers",
+            "type": "string",
+            "kind": "map",
+            "description": "Custom headers to add to migrated records, keyed by header name with interpolated string values. Useful for injecting metadata such as processing timestamps or latency measurements that should surface as header values on the destination cluster. A custom header name that collides with `provenance_header` or `offset_header` is ignored, so those migration-critical headers are always protected.",
+            "is_optional": true,
+            "interpolated": true,
+            "examples": [
+              {
+                "x-migration-latency-ms": "${! timestamp_unix_milli() - meta(\"kafka_timestamp_ms\") }",
+                "x-migration-processed-at": "${! timestamp_unix_milli() }"
+              }
+            ]
           },
           {
             "name": "provenance_header",
@@ -51004,6 +51691,11 @@
           "title": "Insert",
           "summary": "The following example inserts rows into the table footable with the columns foo, bar and baz populated with values extracted from messages:",
           "config": "\npipeline:\n  processors:\n    - aws_dynamodb_partiql:\n        query: \"INSERT INTO footable VALUE {'foo':'?','bar':'?','baz':'?'}\"\n        args_mapping: |\n          root = [\n            { \"S\": this.foo },\n            { \"S\": meta(\"kafka_topic\") },\n            { \"S\": this.document.content },\n          ]\n"
+        },
+        {
+          "title": "Query a GSI for a single record",
+          "summary": "The following example looks up a single record from the table footable using the global secondary index index_name, matching on the field bar. BatchExecuteStatement can't query a GSI, so use_batch is disabled:",
+          "config": "\npipeline:\n  processors:\n    - aws_dynamodb_partiql:\n        query: \"SELECT * FROM \\\"footable\\\".\\\"index_name\\\" WHERE bar = ?\"\n        use_batch: false\n        args_mapping: |\n          root = [\n            { \"S\": this.bar },\n          ]\n"
         }
       ],
       "config": {
@@ -51024,6 +51716,14 @@
             "description": "Whether to enable dynamic queries that support interpolation functions.",
             "is_advanced": true,
             "default": false
+          },
+          {
+            "name": "use_batch",
+            "type": "bool",
+            "kind": "scalar",
+            "description": "Whether to execute all messages in a batch as a single `BatchExecuteStatement` call. Set this to `false` to execute one `ExecuteStatement` call per message instead, which is required for PartiQL `SELECT` queries against a global secondary index (GSI) — `BatchExecuteStatement` does not support querying a GSI. Only the first result row is used when a query returns multiple items.",
+            "is_advanced": true,
+            "default": true
           },
           {
             "name": "args_mapping",
@@ -54591,10 +55291,10 @@
     {
       "name": "jira",
       "type": "processor",
-      "status": "stable",
+      "status": "deprecated",
       "plugin": true,
       "summary": "Queries Jira resources and returns structured data",
-      "description": "Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.\n\nSupports querying the following Jira resources:\n- Issues (JQL queries)\n- Issue transitions\n- Users\n- Roles\n- Project versions\n- Project categories\n- Project types\n- Projects\n\nThe processor authenticates using basic authentication with username and API token. Input messages should contain valid Jira queries in JSON format.",
+      "description": "Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.\n\nThis processor is deprecated in favour of the `jira` input, which streams issues, comments, and changelog entries with cursor-based incremental polling. The processor remains available for enrichment and lookup style operations.\n\nSupports querying the following Jira resources:\n- Issues (JQL queries)\n- Issue transitions\n- Users\n- Roles\n- Project versions\n- Project categories\n- Project types\n- Projects\n\nThe processor authenticates using basic authentication with username and API token. Input messages should contain valid Jira queries in JSON format.",
       "categories": [
         "Services"
       ],

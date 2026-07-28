@@ -49,4 +49,5 @@ outputs:
     topic: ${! @kafka_topic }
     topic_replication_factor: "" # No default (optional)
     sync_topic_acls: false
+    headers: "" # No default (optional)
     max_in_flight: 10

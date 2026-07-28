@@ -1,18 +1,18 @@
 {
   "comparison": {
-    "oldVersion": "4.99.0",
-    "newVersion": "4.100.0",
-    "timestamp": "2026-07-22T15:04:47.213Z"
+    "oldVersion": "4.101.0",
+    "newVersion": "4.102.0",
+    "timestamp": "2026-07-24T13:35:00.425Z"
   },
   "summary": {
     "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 0,
+    "newFields": 2,
     "removedFields": 0,
-    "deprecatedComponents": 1,
+    "deprecatedComponents": 0,
     "deprecatedFields": 0,
     "changedDefaults": 0,
-    "platformTransitions": 19,
+    "platformTransitions": 0,
     "newBloblangMethods": 0,
     "removedBloblangMethods": 0,
     "newBloblangFunctions": 0,
@@ -23,344 +23,23 @@
   "details": {
     "newComponents": [],
     "removedComponents": [],
-    "newFields": [],
-    "removedFields": [],
-    "deprecatedComponents": [
+    "newFields": [
       {
-        "name": "jira",
-        "type": "processors",
-        "status": "deprecated",
-        "version": "4.68.0",
-        "description": "Executes Jira API queries based on input messages and returns structured results. The processor handles pagination, retries, and field expansion automatically.\n\nThis processor is deprecated in favour of the `jira` input, which streams issues, comments, and changelog entries with cursor-based incremental polling. The processor remains available for enrichment and lookup style operations.\n\nSupports querying the following Jira resources:\n- Issues (JQL queries)\n- Issue transitions\n- Users\n- Roles\n- Project versions\n- Project categories\n- Project types\n- Projects\n\nThe processor authenticates using basic authentication with username and API token. Input messages should contain valid Jira queries in JSON format."
+        "component": "outputs:redpanda_migrator",
+        "field": "headers",
+        "description": "Custom headers to add to migrated records, keyed by header name with interpolated string values. Useful for injecting metadata such as processing timestamps or latency measurements that should surface as header values on the destination cluster. A custom header name that collides with `provenance_header` or `offset_header` is ignored, so those migration-critical headers are always protected."
+      },
+      {
+        "component": "processors:aws_dynamodb_partiql",
+        "field": "use_batch",
+        "description": "Whether to execute all messages in a batch as a single `BatchExecuteStatement` call. Set this to `false` to execute one `ExecuteStatement` call per message instead, which is required for PartiQL `SELECT` queries against a global secondary index (GSI) — `BatchExecuteStatement` does not support querying a GSI. Only the first result row is used when a query returns multiple items."
       }
     ],
+    "removedFields": [],
+    "deprecatedComponents": [],
     "deprecatedFields": [],
     "changedDefaults": [],
-    "platformTransitions": [
-      {
-        "name": "http",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "input",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "buffer",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "pipeline",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "output",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "input_resources",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "processor_resources",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "output_resources",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "cache_resources",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "rate_limit_resources",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "logger",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "metrics",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "tracer",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "shutdown_delay",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "shutdown_timeout",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "error_handling",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "tests",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "parallel",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      },
-      {
-        "name": "redpanda",
-        "type": "config",
-        "transitions": [
-          "added_cloud_support"
-        ],
-        "oldPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": false,
-          "cloudOnly": false
-        },
-        "newPlatform": {
-          "requiresCgo": false,
-          "cloudSupported": true,
-          "cloudOnly": false
-        }
-      }
-    ],
+    "platformTransitions": [],
     "newBloblangMethods": [],
     "removedBloblangMethods": [],
     "newBloblangFunctions": [],
@@ -370,9 +49,9 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.100.0",
-      "cloud": "4.101.0",
-      "cgo": "4.101.0"
+      "oss": "4.102.0",
+      "cloud": "4.102.0",
+      "cgo": "4.102.0"
     },
     "current": {
       "cloudSupported": 490,
