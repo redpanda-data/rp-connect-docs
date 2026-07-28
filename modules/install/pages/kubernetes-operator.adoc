@@ -6,7 +6,7 @@ Run Redpanda Connect pipelines as declaratively managed Kubernetes workloads. Yo
 
 NOTE: This feature is in beta and requires an Enterprise Edition license and Redpanda Operator 26.2 or later. Beta features are not recommended for production environments. To give feedback, reach out to the Redpanda team in https://redpanda.com/slack[Redpanda Community Slack^].
 
-There is no separate operator to install. The Connect controller is part of the Redpanda Operator, and you enable it with a single Helm setting (`connectController.enabled=true`) on your existing installation.
+You don't install a separate operator. The Connect controller is part of the Redpanda Operator, and you enable it with a single Helm setting (`connectController.enabled=true`) on your existing installation.
 
 With the Pipeline resource, the operator:
 
