@@ -83,6 +83,7 @@ outputs:
     sync_topic_interval: 5m
     sync_topic_acls: false
     serverless: false
+    headers: "" # No default (optional)
     provenance_header: redpanda-migrator-provenance
     offset_header: redpanda-migrator-offset
     max_in_flight: 10

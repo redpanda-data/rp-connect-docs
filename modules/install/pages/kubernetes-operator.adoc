@@ -1,0 +1,24 @@
+= Run Pipelines with the Redpanda Operator
+:description: Run Redpanda Connect pipelines declaratively on Kubernetes with the Redpanda Operator's Pipeline resource.
+:page-beta: true
+
+Run Redpanda Connect pipelines as declaratively managed Kubernetes workloads. You define each pipeline in a `Pipeline` custom resource, and the Redpanda Operator deploys it, validates its configuration before startup, rolls it on every change, and reports its health in the resource status.
+
+NOTE: This feature is in beta and requires an Enterprise Edition license and Redpanda Operator 26.2 or later. Beta features are not recommended for production environments. To give feedback, reach out to the Redpanda team in https://redpanda.com/slack[Redpanda Community Slack^].
+
+You don't install a separate operator. The Connect controller is part of the Redpanda Operator, and you enable it with a single Helm setting (`connectController.enabled=true`) on your existing installation.
+
+With the Pipeline resource, the operator:
+
+* Injects broker addresses, TLS material, and SASL credentials for a referenced Redpanda cluster into the rendered configuration.
+* Projects secrets and other values into the pipeline Pod as environment variables for `+${NAME}+` interpolation.
+* Implements the Kubernetes scale subresource, so `kubectl scale`, a HorizontalPodAutoscaler, or KEDA can drive the replica count, including on consumer group lag.
+* Exposes Prometheus metrics and, with monitoring enabled, renders a PodMonitor per pipeline.
+
+The complete guides live in the Redpanda Self-Managed documentation:
+
+* xref:streaming:manage:kubernetes/k-connect-pipelines.adoc[Run Redpanda Connect Pipelines in Kubernetes]: enable the Connect controller, deploy pipelines, connect them to clusters, target external clusters, inject secrets and cloud IAM identities, customize the workload, monitor, and troubleshoot.
+* xref:streaming:manage:kubernetes/k-autoscale-connect-pipelines.adoc[Autoscale Redpanda Connect Pipelines]: step-by-step HPA and KEDA autoscaling.
+* xref:streaming:reference:k-crd.adoc#k8s-api-github-com-redpanda-data-redpanda-operator-operator-api-redpanda-v1alpha2-pipeline[Pipeline CRD reference]: all Pipeline fields.
+
+To run Redpanda Connect on Kubernetes without the operator, see xref:install:helm-chart.adoc[].

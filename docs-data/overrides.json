@@ -1597,6 +1597,10 @@
       "config": {
         "children": [
           {
+            "name": "snapshot_filters",
+            "description": "A map of fully-qualified table names (for example `SCHEMA.TABLE`) to SQL `SELECT` queries that override the default snapshot query for each table. Use this to filter or shape the rows captured during the initial snapshot.\n\nEach query must project every column of the table's primary key (all columns of a composite key), even if it otherwise selects only a subset of columns. During a snapshot, Redpanda Connect pages through a table's rows by filtering and sorting on the full primary key against the query's own result set. If a primary key column isn't projected, the snapshot fails part-way through, after the first batch of rows is read."
+          },
+          {
             "name": "connection_string",
             "type": "string",
             "description": "The connection string of the Oracle database to connect to. You can supply additional connection options as URL query parameters, for example: `oracle://user:password@host:1522/service?WALLET=/opt/oracle/wallet&SSL=true`."
@@ -6257,6 +6261,17 @@
     }
   ],
   "processors": [
+    {
+      "name": "aws_dynamodb_partiql",
+      "config": {
+        "children": [
+          {
+            "name": "use_batch",
+            "description": "Whether to execute all messages in a batch as a single `BatchExecuteStatement` call. Set this to `false` to execute one `ExecuteStatement` call per message instead, which is required for PartiQL `SELECT` queries against a global secondary index (GSI), because `BatchExecuteStatement` does not support querying a GSI. Only the first result row is used when a query returns multiple items."
+          }
+        ]
+      }
+    },
     {
       "name": "archive",
       "config": {
