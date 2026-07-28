@@ -90,7 +90,7 @@ input:
     start_from: trim_horizon
 ----
 
-`checkpoint_namespace` requires Redpanda Connect 4.101.0 or later. It is backward-compatible: leaving it unset (the default) keeps the existing checkpoint keys unchanged, so existing deployments are unaffected. The value cannot contain a `#` character.
+The `checkpoint_namespace` field requires Redpanda Connect 4.101.0 or later. It is backward compatible: leaving it unset (the default) keeps the existing checkpoint keys unchanged, so existing deployments are unaffected. The value cannot contain a `#` character.
 
 [NOTE]
 ====
