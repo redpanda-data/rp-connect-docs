@@ -1,0 +1,219 @@
+= sap_hana
+// tag::single-source[]
+:type: input
+:status: experimental
+:page-commercial-names: SAP HANA, HANA
+:categories: [Services]
+:description: Streams rows from SAP HANA tables using bulk, incrementing, timestamp, or custom-query polling.
+
+// DRAFT: This connector is not yet released. It is implemented in
+// redpanda-data/connect PR #4462 and is not on `main`. Do not merge until that
+// PR ships. When it does, the auto-docs pipeline generates the fields and
+// example partials for this component, and the hand-authored "Configuration
+// fields" table and inline examples below should be replaced with the standard
+// generated includes (see the TODO markers).
+
+// TODO: Uncomment when sap_hana is added to the upstream info.csv in redpanda-data/connect (see connect#4462)
+// component_type_dropdown::[]
+
+Stream rows from an SAP HANA database into a Redpanda Connect pipeline. Read a table once in bulk, poll for new rows using an incrementing or timestamp high-water mark, or run a custom query.
+
+[NOTE]
+====
+This is an Enterprise feature that requires an Enterprise license. It is available in self-managed Redpanda Connect only and is not currently available in Redpanda Cloud.
+====
+
+To write data back to SAP HANA, use the xref:components:outputs/sql_insert.adoc[`sql_insert`] or xref:components:outputs/sql_raw.adoc[`sql_raw`] output with `driver: hana`.
+
+== Reading modes
+
+The `mode` field selects how this input reads from SAP HANA:
+
+[cols="1m,4a",options="header"]
+|===
+| Mode | Behavior
+
+| bulk
+| Reads every row from `table` once, emits one message per row, then stops. This is the default.
+
+| incrementing
+| Polls `table` every `poll_interval` and emits only rows whose `incrementing_column` value is greater than the highest value seen so far. Use a strictly increasing column with no duplicates, such as a `BIGINT` auto-increment key.
+
+| timestamp
+| Polls `table` and emits rows whose `timestamp_column` is newer than the last poll. Rows newer than `NOW()` minus `timestamp_delay` are held back to absorb clock skew.
+
+| timestamp+incrementing
+| Combines a `timestamp_column` high-water mark with an `incrementing_column` tie-breaker, so rows that share a timestamp are not skipped or duplicated.
+
+| query
+| Runs the SQL statement in `query` and emits one message per result row. Schema metadata is not emitted in this mode.
+|===
+
+To keep the high-water mark across restarts in `incrementing`, `timestamp`, and `timestamp+incrementing` modes, set `checkpoint_cache` to the label of a xref:components:caches/about.adoc[cache resource].
+
+== Examples
+
+=== Bulk read
+
+[source,yaml]
+----
+input:
+  sap_hana:
+    dsn: "hdb://myuser:mypassword@hana-host:39017"
+    schema_name: SALES
+    table: ORDERS
+    mode: bulk
+    fetch_size: 512
+----
+
+=== Incrementing with a durable checkpoint
+
+[source,yaml]
+----
+input:
+  sap_hana:
+    dsn: "hdb://myuser:mypassword@hana-host:39017"
+    schema_name: SALES
+    table: ORDERS
+    mode: incrementing
+    incrementing_column: ORDER_ID
+    poll_interval: 30s
+    checkpoint_cache: hana_hwm
+    checkpoint_cache_key: sap_hana_orders_hwm
+
+cache_resources:
+  - label: hana_hwm
+    redis:
+      url: redis://localhost:6379
+----
+
+=== Timestamp and incrementing
+
+Use a datetime column as the high-water mark, with an incrementing column to break ties between rows that share a timestamp:
+
+[source,yaml]
+----
+input:
+  sap_hana:
+    dsn: "hdb://myuser:mypassword@hana-host:39017"
+    schema_name: SALES
+    table: ORDERS
+    mode: timestamp+incrementing
+    timestamp_column: UPDATED_AT
+    incrementing_column: ORDER_ID
+    timestamp_delay: 5s
+    poll_interval: 30s
+    checkpoint_cache: hana_hwm
+----
+
+=== Custom query
+
+[source,yaml]
+----
+input:
+  sap_hana:
+    dsn: "hdb://myuser:mypassword@hana-host:39017"
+    mode: query
+    query: |
+      SELECT ORDER_ID, CUSTOMER_ID, STATUS
+      FROM SALES.ORDERS
+      WHERE STATUS = 'PENDING'
+----
+
+=== Automatic Avro registration
+
+When `schema_name` is set, each message carries a `schema` metadata field derived from the table definition. Chain xref:components:processors/schema_registry_encode.adoc[`schema_registry_encode`] to register that schema and encode messages to Avro without hardcoding a schema in your configuration:
+
+[source,yaml]
+----
+input:
+  sap_hana:
+    dsn: "hdb://myuser:mypassword@hana-host:39017"
+    schema_name: SALES
+    table: ORDERS
+    mode: incrementing
+    incrementing_column: ORDER_ID
+
+pipeline:
+  processors:
+    - schema_registry_encode:
+        url: http://schema-registry:8081
+        subject: orders-value
+        avro_raw_json: false
+----
+
+== Metadata
+
+This input adds the following metadata fields to each message:
+
+- `sap_hana_schema`: The schema of the source table.
+- `sap_hana_table`: The name of the source table.
+- `schema`: The table schema, for use with schema-aware downstream processors such as `schema_registry_encode`. Emitted only when `schema_name` is set, and not in `query` mode. When new columns are detected, the schema is automatically refreshed from the SAP HANA catalog. Dropped columns are not detected.
+- `primary_key_columns`: A JSON array of the table's primary key columns. Emitted when schema metadata is available and the table has a primary key.
+- `database_schema`: The plain schema name of the source table.
+- `table_name`: The plain name of the source table.
+
+== Permissions
+
+The configured user needs `SELECT` permission on the source table. To emit `schema` metadata (by setting `schema_name`), the user also needs read access to the `SYS.TABLE_COLUMNS`, `SYS.INDEX_COLUMNS`, and `SYS.INDEXES` system views so the input can detect columns and primary keys.
+
+// TODO: When the connector ships, replace the hand-authored "Configuration fields"
+// section below with the generated field reference partial for the sap_hana input
+// (partial$fields/inputs/sap_hana.adoc), which the auto-docs pipeline produces.
+
+== Configuration fields
+
+[cols="1m,1m,1m,4a",options="header"]
+|===
+| Field | Type | Default | Description
+
+| dsn | string | |
+Data source name for the SAP HANA connection, in the form `hdb://user:password@host:port`. Required.
+
+| schema_name | string | |
+The SAP HANA schema to read from. Set this to enable `schema` metadata sourced from the SAP HANA catalog.
+
+| table | string | |
+The table to read from. Required in `bulk`, `incrementing`, `timestamp`, and `timestamp+incrementing` modes.
+
+| mode | string | `bulk` |
+How to read from the table: `bulk`, `incrementing`, `timestamp`, `timestamp+incrementing`, or `query`. See <<Reading modes>>.
+
+| query | string | |
+The SQL statement to run. Required when `mode` is `query`.
+
+| incrementing_column | string | |
+A strictly increasing column used as the high-water mark. Required when `mode` is `incrementing` or `timestamp+incrementing`.
+
+| incrementing_initial_value | string | `""` |
+The initial high-water mark. When empty, all existing rows are emitted on the first poll.
+
+| timestamp_column | string | |
+A `TIMESTAMP` or `LONGDATE` column used as the high-water mark. Required when `mode` is `timestamp` or `timestamp+incrementing`.
+
+| timestamp_initial_value | string | `""` |
+The initial timestamp high-water mark, in RFC 3339 format.
+
+| timestamp_delay | duration | `5s` |
+How far behind `NOW()` to hold the timestamp high-water mark, to absorb clock skew between Connect and SAP HANA.
+
+| poll_interval | duration | `60s` |
+How long to wait between polls in `incrementing`, `timestamp`, and `timestamp+incrementing` modes.
+
+| fetch_size | int | `128` |
+The number of rows to fetch per round-trip.
+
+| numeric_mapping | string | `none` |
+How to map `DECIMAL`/`NUMERIC` values: `none` emits a canonical decimal string; `best_fit` emits an `int64` when the scale is 0 and the value fits.
+
+| max_retries | int | `3` |
+The maximum number of retries for a failed query. Set to `0` to disable retries.
+
+| checkpoint_cache | string | |
+The label of a cache resource used to persist the high-water mark across restarts.
+
+| checkpoint_cache_key | string | `sap_hana_hwm` |
+The cache key under which the high-water mark is stored.
+|===
+
+// end::single-source[]

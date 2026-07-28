@@ -41,6 +41,35 @@ include::components:example$advanced/outputs/sql_raw.yaml[]
 
 For some scenarios where you might use this output, see <<Examples, Examples>>.
 
+ifndef::env-cloud[]
+== SAP HANA
+
+Set `driver: hana` to write to SAP HANA using a `hdb://user:password@host:port` DSN. SAP HANA support is an Enterprise feature and is available in self-managed Redpanda Connect only.
+
+SAP HANA uses `UPSERT ... WITH PRIMARY KEY` for insert-or-update semantics, rather than the `ON CONFLICT` syntax used by PostgreSQL:
+
+[source,yaml]
+----
+output:
+  sql_raw:
+    driver: hana
+    dsn: "hdb://myuser:mypassword@hana-host:39017"
+    query: >
+      UPSERT ORDERS (ORDER_ID, CUSTOMER_ID, STATUS, UPDATED_AT)
+      VALUES (?, ?, ?, ?)
+      WITH PRIMARY KEY
+    args_mapping: |
+      root = [
+        this.order_id,
+        this.customer_id,
+        this.status,
+        this.updated_at,
+      ]
+----
+
+To read from SAP HANA, use the xref:components:inputs/sap_hana.adoc[`sap_hana` input].
+endif::[]
+
 include::connect:components:partial$fields/outputs/sql_raw.adoc[]
 
 include::connect:components:partial$examples/outputs/sql_raw.adoc[]
