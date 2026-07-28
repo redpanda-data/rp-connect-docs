@@ -309,7 +309,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "description": "A list of URLs to connect to. This input attempts to connect to each URL in the list, in order, until a successful connection is established. It then continues to use that URL until the connection is closed.\n\nIf an item in the list contains commas, it is split into multiple URLs."
           },
           {
@@ -341,7 +340,6 @@
           },
           {
             "name": "nack_reject_patterns",
-            "type": "array",
             "description": "A list of regular expression patterns to match against errors in messages that Redpanda Connect fails to deliver. When a message has an error that matches a pattern, it is dropped or delivered to a dead-letter queue (if a queue has been configured).\n\nBy default, failed messages are negatively acknowledged (nacked) and requeued."
           },
           {
@@ -780,12 +778,10 @@
           },
           {
             "name": "include_patterns",
-            "type": "array",
             "description": "A list of file patterns to read from. For example, you could read content from only Markdown and YAML files: `'**/*.md', 'configs/*.yaml'`. \n\nThe following patterns are supported:\n\n- Glob patterns: `*`, `/**/`, `?`\n- Character ranges: `[a-z]`. Escape any character with a special meaning using a backslash.\n\nIf this field is left empty, all files are read from."
           },
           {
             "name": "exclude_patterns",
-            "type": "array",
             "description": "A list of file patterns to exclude. For example, you could choose not to read content from certain Git directories or image files: `'.git/**', '**/*.png'`. These patterns take precedence over `include_patterns`.\n\nThe following patterns are supported:\n\n- Glob patterns: `*`, `/**/`, `?`\n- Character ranges: `[a-z]`. Escape any character with a special meaning using a backslash."
           },
           {
@@ -1349,7 +1345,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "description": "A list of URLs to connect to. Use the format `scheme://host:port`, where:\n\n* `scheme` is one of the following: `tcp`, `ssl`, `ws`\n* `host` is the IP address or hostname\n* `port` is the port on which the MQTT broker accepts connections\n\nIf an item in the list contains commas, it is expanded into multiple URLs."
           }
         ]
@@ -1425,7 +1420,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -1467,7 +1461,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -1513,7 +1506,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -1551,7 +1543,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -2750,7 +2741,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "description": "A list of URLs to connect to. This input attempts to connect to each URL in the list, in order, until a successful connection is established. It then continues to use that URL until the connection is closed.\n\nIf an item in the list contains commas, it is split into multiple URLs."
           },
           {
@@ -2824,7 +2814,6 @@
             "children": [
               {
                 "name": "exclude_prefixes",
-                "type": "array",
                 "description": "Provide a list of explicit metadata key prefixes to exclude when adding metadata to sent messages."
               }
             ],
@@ -3624,7 +3613,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/elastic_urls"
           },
           {
@@ -3734,7 +3722,6 @@
           },
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/elastic_urls"
           },
           {
@@ -4478,7 +4465,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "description": "A list of URLs to connect to. Use the format `scheme://host:port`, where:\n\n* `scheme` is one of the following: `tcp`, `ssl`, `ws`\n* `host` is the IP address or hostname\n* `port` is the port on which the MQTT broker accepts connections\n\nIf an item in the list contains commas, it is expanded into multiple URLs."
           },
           {
@@ -4498,7 +4484,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -4544,7 +4529,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -4590,7 +4574,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -4632,7 +4615,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -4716,7 +4698,6 @@
                   },
                   {
                     "name": "include_patterns",
-                    "type": "array",
                     "description": "A list of explicit metadata key regular expression (re2) patterns to match against."
                   }
                 ]
@@ -7139,7 +7120,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -7185,7 +7165,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
