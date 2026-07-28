@@ -66,7 +66,7 @@ By default, checkpoints are keyed by stream and shard only, so multiple pipeline
 
 Set `checkpoint_namespace` to give each pipeline its own isolated set of checkpoints within a shared table. Redpanda Connect prefixes the namespace to the checkpoint key, so pipelines with different namespaces never collide:
 
-[source,yaml]
+[,yaml]
 ----
 # Alice's pipeline
 input:
@@ -78,7 +78,7 @@ input:
     start_from: trim_horizon
 ----
 
-[source,yaml]
+[,yaml]
 ----
 # Bob's pipeline: same stream and checkpoint table, isolated by namespace
 input:
@@ -99,7 +99,7 @@ A namespace provides isolation, not coordination. Two pipelines that use the sam
 
 [WARNING]
 ====
-Changing or removing `checkpoint_namespace` makes the pipeline read checkpoints under the new key. If no checkpoints exist yet for that namespace, for example the first time you set it or when you switch to a namespace that has never been used, the pipeline has nothing to resume from and starts at `start_from` (with `start_from: trim_horizon`, this replays the entire stream). Switching back to a previously used namespace resumes from that namespace's last checkpoints.
+Changing or removing `checkpoint_namespace` makes the pipeline read checkpoints under the new key. If no checkpoints exist yet for that namespace, for example the first time you set it or when you switch to a namespace that has never been used, the pipeline has nothing to resume from and starts at `start_from` (with `start_from: trim_horizon`, this replays all records still available in the stream's 24-hour retention window). Switching back to a previously used namespace resumes from that namespace's last checkpoints.
 ====
 
 == Alternative components
