@@ -309,7 +309,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "description": "A list of URLs to connect to. This input attempts to connect to each URL in the list, in order, until a successful connection is established. It then continues to use that URL until the connection is closed.\n\nIf an item in the list contains commas, it is split into multiple URLs."
           },
           {
@@ -322,7 +321,6 @@
               },
               {
                 "name": "arguments",
-                "type": "object",
                 "description": "Arguments for server-specific implementations of the queue (optional). You can use arguments to configure additional parameters for queue types that require them. For more information about available arguments, see the https://github.com/rabbitmq/amqp091-go/blob/b3d409fe92c34bea04d8123a136384c85e8dc431/types.go#L282-L362[RabbitMQ Client Library^].\n\n[cols=\"1,2,2\"]\n|===\n| Argument | Description | Accepted values\n\n| `x-queue-type`\n| Declares the type of queue.\n| Options: `classic` (default), `quorum`, `stream`, `drop-head`, `reject-publish`, and `reject-publish-dlx`.\n\n| `x-max-length`\n| The maximum number of messages in the queue.\n| A non-negative integer.\n\n| `x-max-length-bytes`\n| The maximum size of messages (in bytes) in the queue.\n| A non-negative integer.\n\n| `x-overflow`\n| Sets the queue's overflow behavior.\n| Options: `drop-head` (default), `reject-publish`, `reject-publish-dlx`.\n\n| `x-message-ttl`\n| The duration (in milliseconds) that messages remain in the queue before they expire and are discarded.\n| A string that represents the number of milliseconds. For example, `60000` retains messages for one minute.\n\n| `x-expires`\n| The duration after which the queue automatically expires.\n| A positive integer.\n\n| `x-max-age`\n| The duration (in configurable units) that streamed messages are retained on disk before they are discarded.\n| Options: `Y`, `M`, `D`, `h`, `m`, `s`. For example, `7D` retains messages for a week.\n\n| `x-stream-max-segment-size-bytes`\n| The maximum size (in bytes) of the segment files held on disk.\n| A positive integer. Default: `500000000` (approximately 500 MB).\n\n| `x-queue-version`\n| The version of the classic queue to use.\n| Options: `1` or `2`.\n\n| `x-consumer-timeout`\n| The duration (in milliseconds) that a consumer can remain idle before it is automatically canceled.\n| A positive integer that represents the number of milliseconds. For example, `60000` sets a timeout duration of one minute.\n\n| `x-single-active-consumer`\n| When set to `true`, a single consumer receives messages from the queue even when multiple consumers are subscribed to it.\n| A boolean.\n\n|==="
               }
             ]
@@ -341,7 +339,6 @@
           },
           {
             "name": "nack_reject_patterns",
-            "type": "array",
             "description": "A list of regular expression patterns to match against errors in messages that Redpanda Connect fails to deliver. When a message has an error that matches a pattern, it is dropped or delivered to a dead-letter queue (if a queue has been configured).\n\nBy default, failed messages are negatively acknowledged (nacked) and requeued."
           },
           {
@@ -785,12 +782,10 @@
           },
           {
             "name": "include_patterns",
-            "type": "array",
             "description": "A list of file patterns to read from. For example, you could read content from only Markdown and YAML files: `'**/*.md', 'configs/*.yaml'`. \n\nThe following patterns are supported:\n\n- Glob patterns: `*`, `/**/`, `?`\n- Character ranges: `[a-z]`. Escape any character with a special meaning using a backslash.\n\nIf this field is left empty, all files are read from."
           },
           {
             "name": "exclude_patterns",
-            "type": "array",
             "description": "A list of file patterns to exclude. For example, you could choose not to read content from certain Git directories or image files: `'.git/**', '**/*.png'`. These patterns take precedence over `include_patterns`.\n\nThe following patterns are supported:\n\n- Glob patterns: `*`, `/**/`, `?`\n- Character ranges: `[a-z]`. Escape any character with a special meaning using a backslash."
           },
           {
@@ -1354,7 +1349,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "description": "A list of URLs to connect to. Use the format `scheme://host:port`, where:\n\n* `scheme` is one of the following: `tcp`, `ssl`, `ws`\n* `host` is the IP address or hostname\n* `port` is the port on which the MQTT broker accepts connections\n\nIf an item in the list contains commas, it is expanded into multiple URLs."
           }
         ]
@@ -1430,7 +1424,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -1472,7 +1465,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -1518,7 +1510,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -1556,7 +1547,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -2759,7 +2749,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "description": "A list of URLs to connect to. This input attempts to connect to each URL in the list, in order, until a successful connection is established. It then continues to use that URL until the connection is closed.\n\nIf an item in the list contains commas, it is split into multiple URLs."
           },
           {
@@ -2833,7 +2822,6 @@
             "children": [
               {
                 "name": "exclude_prefixes",
-                "type": "array",
                 "description": "Provide a list of explicit metadata key prefixes to exclude when adding metadata to sent messages."
               }
             ],
@@ -3633,7 +3621,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/elastic_urls"
           },
           {
@@ -3743,7 +3730,6 @@
           },
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/elastic_urls"
           },
           {
@@ -4033,8 +4019,7 @@
             "name": "catalog",
             "children": [
               {
-                "name": "headers",
-                "type": "object"
+                "name": "headers"
               }
             ]
           },
@@ -4236,8 +4221,7 @@
             "name": "catalog",
             "children": [
               {
-                "name": "headers",
-                "type": "object"
+                "name": "headers"
               }
             ]
           },
@@ -4487,7 +4471,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "description": "A list of URLs to connect to. Use the format `scheme://host:port`, where:\n\n* `scheme` is one of the following: `tcp`, `ssl`, `ws`\n* `host` is the IP address or hostname\n* `port` is the port on which the MQTT broker accepts connections\n\nIf an item in the list contains commas, it is expanded into multiple URLs."
           },
           {
@@ -4507,7 +4490,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -4553,7 +4535,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -4599,7 +4580,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -4641,7 +4621,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -4725,7 +4704,6 @@
                   },
                   {
                     "name": "include_patterns",
-                    "type": "array",
                     "description": "A list of explicit metadata key regular expression (re2) patterns to match against."
                   }
                 ]
@@ -7159,7 +7137,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
@@ -7205,7 +7182,6 @@
         "children": [
           {
             "name": "urls",
-            "type": "array",
             "$ref": "#/definitions/urls"
           },
           {
