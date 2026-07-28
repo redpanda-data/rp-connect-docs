@@ -53,6 +53,8 @@ This makes `sql_raw` suitable for high-throughput sink pipelines, including CDC,
 
 Use the `queries` field to route each message to a different SQL statement based on its content or metadata, without a preprocessing `mapping` step or `unsafe_dynamic_query`. Set a `when` condition (a Bloblang expression) on each entry: the first query whose `when` evaluates to `true`, or the first query with no `when`, runs for that message.
 
+If none of your queries have a `when` condition, every query runs for each message within the same transaction. Because an unconditioned query always matches, Redpanda Connect lints against configuring one before later queries in the list.
+
 For example, route change-data-capture tombstones to a `DELETE` and everything else to an upsert:
 
 [,yaml]
