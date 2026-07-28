@@ -6147,7 +6147,7 @@
           },
           {
             "name": "max_in_flight",
-            "description": "The maximum number of database statements to execute in parallel."
+            "description": "The maximum number of database statements to run in parallel. When consuming from Redpanda or Kafka, messages are ordered by partition within each transaction, so you can raise this above `1` to parallelize writes across partitions while preserving consume order within each partition. This lets high-throughput and change-data-capture pipelines scale without setting `max_in_flight` to `1`. Messages without a `kafka_partition` metadata field are treated as partition `0`."
           }
         ]
       }

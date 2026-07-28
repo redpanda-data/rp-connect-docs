@@ -41,6 +41,43 @@ include::components:example$advanced/outputs/sql_raw.yaml[]
 
 For some scenarios where you might use this output, see <<Examples, Examples>>.
 
+== Batch execution and ordered writes
+
+Configure a `batching` policy to accumulate messages and write them together. When you set more than one query (see <<Conditional queries>>), all messages in a batch run in a single database transaction, which reduces round-trips to the database. A single-query configuration runs each message individually without a transaction, preserving per-message error granularity.
+
+When consuming from Redpanda or Kafka, this output orders messages by partition within the transaction. This lets you raise `max_in_flight` above `1` to parallelize writes across partitions while preserving consume order within each partition, so you can scale throughput without breaking change-data-capture ordering. Messages without a `kafka_partition` metadata field are treated as partition `0`.
+
+This makes `sql_raw` suitable for high-throughput sink pipelines, including CDC, that previously required `max_in_flight: 1` to stay ordered.
+
+== Conditional queries
+
+Use the `queries` field to route each message to a different SQL statement based on its content or metadata, without a preprocessing `mapping` step or `unsafe_dynamic_query`. Set a `when` condition (a Bloblang expression) on each entry: the first query whose `when` evaluates to `true`, or the first query with no `when`, runs for that message.
+
+For example, route change-data-capture tombstones to a `DELETE` and everything else to an upsert:
+
+[source,yaml]
+----
+output:
+  sql_raw:
+    driver: postgres
+    dsn: "${DSN}"
+    max_in_flight: 8
+    batching:
+      count: 100
+      period: 100ms
+    queries:
+      - when: 'meta("kafka_tombstone_message") == "true"'
+        query: 'DELETE FROM ${! meta("table") } WHERE id = $1'
+        args_mapping: 'root = [ meta("kafka_key").parse_json().id ]'
+      - query: |
+          INSERT INTO ${! meta("table") } (id, name, updated_at)
+          VALUES ($1, $2, $3)
+          ON CONFLICT (id) DO UPDATE SET
+            name = EXCLUDED.name,
+            updated_at = EXCLUDED.updated_at
+        args_mapping: 'root = [ this.id, this.name, this.updated_at ]'
+----
+
 include::connect:components:partial$fields/outputs/sql_raw.adoc[]
 
 include::connect:components:partial$examples/outputs/sql_raw.adoc[]
