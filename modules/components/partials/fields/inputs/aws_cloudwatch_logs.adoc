@@ -114,7 +114,7 @@ log_group_name: my-app-logs
 
 An optional list of log stream names to consume from. If not set, events from all streams in the log group will be consumed.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

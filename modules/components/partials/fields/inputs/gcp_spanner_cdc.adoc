@@ -6,7 +6,7 @@
 
 List of modification types to process. If not specified, all modification types are processed. Allowed values: INSERT, UPDATE, DELETE
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -114,7 +114,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, so any attempt to split it into smaller batches with these processors will be ignored.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----

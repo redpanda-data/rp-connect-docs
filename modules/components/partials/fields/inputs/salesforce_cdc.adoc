@@ -113,7 +113,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -554,7 +554,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -793,7 +793,7 @@ When true (default), paginate a full REST snapshot of every CDC sObject in `topi
 
 Pub/Sub topics to subscribe to. Each entry is one of: a bare sObject name (`Account` → `/data/AccountChangeEvent`), an explicit CDC channel (`/data/AccountChangeEvent`), the CDC firehose (`/data/ChangeEvents`), or a Platform Event topic (`/event/Order__e`, `/event/LoginEventStream`). Each topic gets its own gRPC subscription with an independent replay cursor.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

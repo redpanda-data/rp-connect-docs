@@ -95,7 +95,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -411,7 +411,7 @@ Determines how long beyond the next commit period a client will wait when steali
 
 One or more Kinesis data streams to consume from. Streams can either be specified by their name or full ARN. Shards of a stream are automatically balanced across consumers by coordinating through the provided DynamoDB table. Multiple comma separated streams can be listed in a single element. Shards are automatically distributed across consumers of a stream by coordinating through the provided DynamoDB table. Alternatively, it's possible to specify an explicit shard to consume from with a colon after the stream name, e.g. `foo:0` would consume the shard `0` of the stream `foo`.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

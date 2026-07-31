@@ -127,7 +127,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -273,7 +273,7 @@ ifndef::env-cloud[]
 Requires version 4.23.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

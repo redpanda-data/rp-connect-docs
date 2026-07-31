@@ -150,7 +150,7 @@ ifndef::env-cloud[]
 Requires version 4.10.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -199,7 +199,7 @@ init_statement: |-
 
 A list of database statements to run in addition to your main <<query, `query`>>. If you specify multiple queries, they are executed within a single transaction. For more information, see <<Examples, Examples>>.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 === `queries[].args_mapping`
 

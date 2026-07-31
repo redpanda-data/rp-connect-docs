@@ -100,7 +100,7 @@ Some cloud hosted instances of Redis (such as Azure Cache) might need some hand 
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 

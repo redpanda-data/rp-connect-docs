@@ -10,7 +10,7 @@ ifndef::env-cloud[]
 Requires version 3.38.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -26,7 +26,7 @@ An object of named xref:components:processors/branch.adoc[`branch` processors] t
 
 A list of processors to apply to mapped requests. When processing message batches the resulting batch must match the size and ordering of the input batch, therefore filtering, grouping should not be performed within these processors.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 === `branches.request_map`
 
@@ -109,7 +109,7 @@ A xref:configuration:field_paths.adoc[dot path] indicating where to store and re
 
 An explicit declaration of branch ordered tiers, which describes the order in which parallel tiers of branches should be executed. Branches should be identified by the name as they are configured in the field `branches`. It's also possible to specify branch processors configured <<resources, as a resource>>.
 
-*Type*: `string`
+*Type*: `array<array<string>>`
 
 *Default*: `[]`
 

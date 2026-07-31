@@ -62,7 +62,7 @@ Optional external ID for the role assumption. Only used with the `role` field. A
 
 Optional array of AWS IAM roles to assume for authentication. Roles can be assumed in sequence, enabling chaining for purposes such as cross-account access. Each role can optionally specify an external ID.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 === `aws.roles[].role`
 
@@ -179,7 +179,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -334,7 +334,7 @@ snapshot_batch_size: 10000
 
 === `stream_snapshot`
 
-When set to true, the plugin will first stream a snapshot of all existing data in the database before streaming changes. In order to use this the tables that are being snapshot MUST have a primary key set so that reading from the table can be parallelized.
+When set to true, the plugin will first stream a snapshot of all existing data in the database before streaming changes. In order to use this the tables that are being snapshot MUST have a primary key set so that reading from the table can be parallelized. Note that this has no effect if `tables` is left empty, since the snapshot is only planned for tables listed there.
 
 *Type*: `bool`
 
@@ -350,7 +350,9 @@ stream_snapshot: true
 
 A list of table names to include in the logical replication. Each table should be specified as a separate item.
 
-*Type*: `array`
+If left empty, the underlying PostgreSQL publication is created `FOR ALL TABLES`, which replicates every table in every schema of the database, ignoring `schema`. This also disables `stream_snapshot`, since the initial snapshot is only planned for tables listed here.
+
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -378,7 +380,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 

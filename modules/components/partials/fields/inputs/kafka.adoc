@@ -6,7 +6,7 @@
 
 A list of broker addresses to connect to. If an item of the list contains commas it will be expanded into multiple addresses.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -119,7 +119,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -397,7 +397,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -543,7 +543,7 @@ ifndef::env-cloud[]
 Requires version 3.33.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

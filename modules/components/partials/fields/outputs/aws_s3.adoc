@@ -86,7 +86,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -265,7 +265,7 @@ Specify criteria for which metadata values are attached to objects as headers.
 
 Provide a list of explicit metadata key prefixes to be excluded when adding metadata to sent messages.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -335,7 +335,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 Key/value pairs to store with the object as tags.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 

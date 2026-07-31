@@ -172,7 +172,7 @@ patch_condition: from c where not is_defined(c.blobfish)
 
 Patch operations to be performed when `operation: Patch` .
 
-*Type*: `object`
+*Type*: `array<object>`
 
 === `patch_operations[].operation`
 

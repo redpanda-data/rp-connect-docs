@@ -14,7 +14,7 @@ Set to `true` to automatically acknowledge messages as soon as they are consumed
 
 Passively declares the bindings of the target queue to make sure they exist and are configured correctly. If the bindings exist, then the passive declaration verifies that fields specified in this object match them.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 [source,yaml]
 ----
@@ -59,7 +59,7 @@ ifndef::env-cloud[]
 Requires version 3.64.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -206,7 +206,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -354,7 +354,7 @@ ifndef::env-cloud[]
 Requires version 3.58.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

@@ -91,7 +91,7 @@ Whether consumer group offset migration is enabled. When disabled, no consumer g
 
 Regular expressions for consumer groups to exclude from offset migration. Takes precedence over include patterns. Useful for excluding system or temporary groups.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -125,7 +125,7 @@ fetch_timeout: 10s    # Slower clusters
 
 Regular expressions for consumer groups to include in offset migration. If empty, all groups are included (unless excluded).
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -173,7 +173,7 @@ Custom headers to add to migrated records, keyed by header name with interpolate
 
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-*Type*: `string`
+*Type*: `object`
 
 [source,yaml]
 ----
@@ -353,7 +353,7 @@ Grants an additional buffer or overhead to requests that have timeout fields def
 
 Specify one or more methods of SASL authentication, which are tried in order. If the broker supports the first mechanism, all connections will use that mechanism. If the first mechanism fails, the client picks the first supported mechanism. Connections fail if the broker does not support any client mechanisms.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 [source,yaml]
 ----
@@ -493,7 +493,7 @@ Maximum time to wait for acknowledgment of transmitted data before killing the c
 
 Key/value pairs to add to OAUTHBEARER authentication requests.
 
-*Type*: `string`
+*Type*: `object`
 
 === `sasl[].mechanism`
 
@@ -604,7 +604,7 @@ Whether schema registry migration is enabled. When disabled, no schema operation
 
 Regular expressions for schema subjects to exclude from migration. Takes precedence over include patterns. Note: the migrator consumer group is always ignored.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -620,7 +620,7 @@ exclude: ["dev-.*", "local-.*"]
 
 Regular expressions for schema subjects to include in migration. If empty, all subjects are included (unless excluded). Note: the migrator consumer group is always ignored.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -820,7 +820,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -996,7 +996,7 @@ Which schema versions to migrate. 'latest' migrates only the current version, 'a
 
 A list of broker addresses to connect to. Use commas to separate multiple addresses in a single list item.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -1133,7 +1133,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 

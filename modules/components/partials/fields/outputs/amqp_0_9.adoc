@@ -50,7 +50,7 @@ Passively declares the <<exchange, target exchange>> to check whether an exchang
 
 Arguments for server-specific implementations of the exchange (optional). You can use arguments to configure additional parameters for exchange types that require them.
 
-*Type*: `string`
+*Type*: `object`
 
 [source,yaml]
 ----
@@ -145,7 +145,7 @@ Configure which metadata values are added to messages as headers. This allows yo
 
 Provide a list of explicit metadata key prefixes to exclude when adding metadata to sent messages.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -214,7 +214,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -370,7 +370,7 @@ ifndef::env-cloud[]
 Requires version 3.58.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

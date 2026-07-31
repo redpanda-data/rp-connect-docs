@@ -6,7 +6,7 @@
 
 A list of grpc collectors.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 === `grpc[].address`
 
@@ -32,7 +32,7 @@ Connect to the collector with client transport security
 
 A list of http collectors.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 === `http[].address`
 
@@ -66,7 +66,7 @@ The name of the service in metrics.
 
 A map of tags to add to all exported spans and metrics.
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 

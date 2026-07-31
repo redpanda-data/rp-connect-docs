@@ -255,7 +255,7 @@ ratio: 0.5
 
 Specify one or more methods or mechanisms of SASL authentication, which are attempted in order. If the broker supports the first SASL mechanism, all connections use it. If the first mechanism fails, the client picks the first supported mechanism. If the broker does not support any client mechanisms, all connections fail.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 [source,yaml]
 ----
@@ -395,7 +395,7 @@ Maximum time to wait for acknowledgment of transmitted data before killing the c
 
 Key/value pairs to add to OAUTHBEARER authentication requests.
 
-*Type*: `string`
+*Type*: `object`
 
 === `sasl[].mechanism`
 
@@ -646,7 +646,7 @@ endpoint_params:
 
 A list of optional requested permissions.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -668,7 +668,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -808,7 +808,7 @@ The base URL of the schema registry service.
 
 A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -840,7 +840,7 @@ The service name to identify this Redpanda Connect instance in traces. This appe
 
 Custom key-value tags to attach to all traces from this instance. Use tags to add metadata like environment (`production`, `staging`), region, version, or instance identifiers. Tags appear as resource attributes in OpenTelemetry traces.
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 
@@ -930,7 +930,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 

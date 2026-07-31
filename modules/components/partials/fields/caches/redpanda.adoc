@@ -46,7 +46,7 @@ Additional time to apply as overhead when calculating request deadlines. This bu
 
 Specify one or more SASL authentication methods. Each method is tried in the order specified. If the broker supports the first mechanism, outgoing client connections use that mechanism. If the first mechanism fails, the client will use the first supported mechanism. If the broker does not support any client mechanisms, connections will fail.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 [source,yaml]
 ----
@@ -186,7 +186,7 @@ Maximum time to wait for acknowledgment of transmitted data before killing the c
 
 Key/value pairs to add to OAUTHBEARER authentication requests.
 
-*Type*: `string`
+*Type*: `object`
 
 === `sasl[].mechanism`
 
@@ -251,7 +251,7 @@ The username to use for PLAIN or SCRAM-* authentication.
 
 A list of broker addresses to connect to. Items containing commas are expanded into multiple addresses.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -349,7 +349,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 

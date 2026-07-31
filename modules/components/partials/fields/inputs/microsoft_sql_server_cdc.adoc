@@ -96,7 +96,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, and therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -185,7 +185,7 @@ connection_string: sqlserver://username:password@host/instance?param1=value&para
 
 Regular expressions for tables to exclude from CDC streaming. Use this to filter out specific tables from the include patterns. Table names should follow the `schema.table` format. Exclude patterns are applied after include patterns, allowing you to include broad patterns while excluding specific tables.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -197,7 +197,7 @@ exclude: dbo.privatetable
 
 Regular expressions for tables to include in CDC streaming. Specify table names using the format `schema.table` (such as `dbo.orders`, `sales.customers`). Each pattern is treated as a regular expression, allowing wildcards and pattern matching. All specified tables must have CDC enabled in SQL Server.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

@@ -98,7 +98,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, and therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -192,7 +192,7 @@ The separator for fields in a CSV file. The output uses this value when reading 
 
 A list of values to use as the header for each batch of messages. If not specified, the first line of each message is used as the header.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -237,7 +237,7 @@ By default, this value is set to `false`, and records containing unknown values 
 
 A list of labels to add to the load job.
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 

@@ -259,7 +259,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -406,7 +406,7 @@ If specified, Redpanda Connect makes a best effort to sample deterministically. 
 
 Specify up to four sequences to stop the API from generating further tokens.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `system_prompt`
 
@@ -431,7 +431,7 @@ Redpanda recommends adding a value for this field or `top_p`, but not both.
 
 External tools that the model can invoke, such as functions, APIs, or web browsing. You can define a series of processors that describe these tools, enabling the model to use agent-like behavior to decide when and how to invoke them to enhance response generation.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -469,7 +469,7 @@ A description of this parameter.
 
 Specifies that this parameter is an enum and only these specific values should be used.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -483,7 +483,7 @@ The type of this parameter.
 
 The required parameters for this pipeline.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -491,7 +491,7 @@ The required parameters for this pipeline.
 
 The pipeline to execute when the LLM uses this tool.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 === `top_p`
 
