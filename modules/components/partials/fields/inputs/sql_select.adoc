@@ -26,7 +26,7 @@ Whether messages that are rejected (nacked) at the output level should be automa
 
 A list of columns to select.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -168,7 +168,7 @@ ifndef::env-cloud[]
 Requires version 4.10.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

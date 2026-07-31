@@ -62,7 +62,7 @@ include::connect:components:partial$secret_warning.adoc[]
 
 Ordered list of field API names to retrieve. SOQL does not accept `*` — every field must be listed explicitly. Standard fields use their documented names; custom fields end with `__c`. Relationship fields traverse parents via dot notation (`Account.Name`, `Owner.Manager.Email`) up to 5 levels deep. Requesting a non-existent or non-queryable field fails at Connect time with a SOQL compile error.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -414,7 +414,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 

@@ -103,7 +103,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -254,7 +254,7 @@ ifndef::env-cloud[]
 Requires version 4.10.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -301,7 +301,7 @@ init_statement: |-
 
 === `max_in_flight`
 
-The maximum number of database statements to execute in parallel.
+The maximum number of database statements to run in parallel. When consuming from Redpanda or Kafka, messages are ordered by partition within each transaction, so you can raise this above `1` to parallelize writes across partitions while preserving consume order within each partition. This lets high-throughput and change-data-capture pipelines scale without setting `max_in_flight` to `1`. Messages without a `kafka_partition` metadata field are treated as partition `0`.
 
 *Type*: `int`
 
@@ -311,7 +311,7 @@ The maximum number of database statements to execute in parallel.
 
 A list of database statements to run in addition to your main <<query, `query`>>. If you specify multiple queries, they are executed within a single transaction. For more information, see <<Examples, Examples>>.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 === `queries[].args_mapping`
 

@@ -152,7 +152,7 @@ Each pattern is a full regular expression evaluated against the complete topic n
 
 Example: `regexp_topics_exclude: ["^_", ".*-temp$", ".*-test.*"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `regexp_topics_include[]`
 
@@ -164,7 +164,7 @@ This field enables regex mode (replacing the deprecated `regexp_topics` boolean)
 
 Example: `regexp_topics_include: ["events_.*", "logs_.*"]` consumes from all topics starting with `events_` or `logs_`.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -191,7 +191,7 @@ Grants an additional buffer or overhead to requests that have timeout fields def
 
 Specify one or more methods of SASL authentication, which are tried in order. If the broker supports the first mechanism, all connections use that mechanism. If the first mechanism fails, the client picks the first supported mechanism. Connections fail if the broker does not support any client mechanisms.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 [source,yaml]
 ----
@@ -331,7 +331,7 @@ Maximum time to wait for acknowledgment of transmitted data before killing the c
 
 Key/value pairs to add to OAUTHBEARER authentication requests.
 
-*Type*: `string`
+*Type*: `object`
 
 === `sasl[].mechanism`
 
@@ -546,7 +546,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -704,7 +704,7 @@ url: https://schema-registry.example.com:8081
 
 A list of broker addresses to connect to in order. Use commas to separate multiple addresses in a single list item.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -833,7 +833,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -989,7 +989,7 @@ Alternatively, you can specify explicit partitions to consume by using a colon a
 
 It is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_offset` determines which offset to start from.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

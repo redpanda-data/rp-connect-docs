@@ -18,7 +18,7 @@ args_mapping: root = [ "article", now().ts_format("2006-01-02") ]
 
 A list of columns to query.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `credentials_json`
 
@@ -34,7 +34,7 @@ include::connect:components:partial$secret_warning.adoc[]
 
 A list of labels to add to the query job.
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 

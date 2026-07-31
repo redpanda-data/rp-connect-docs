@@ -124,7 +124,7 @@ Disable HTTP/2 and force HTTP/1.1.
 
 Jira `expand` query parameter. The input automatically adds `changelog` when resource=changelog.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -132,7 +132,7 @@ Jira `expand` query parameter. The input automatically adds `changelog` when res
 
 Jira `fields` query parameter - narrow this for throughput.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*:
 [source,yaml]
@@ -440,7 +440,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 

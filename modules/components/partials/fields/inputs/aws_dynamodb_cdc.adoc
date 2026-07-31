@@ -118,7 +118,7 @@ ifndef::env-cloud[]
 Requires version 4.99.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -234,7 +234,7 @@ Multi-tag filter in the format `key1:v1,v2;key2:v3,v4`. Matches tables where (ke
 
 List of table names to stream from. For single table mode, provide one table. For multi-table mode, provide multiple tables.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 

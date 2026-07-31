@@ -87,7 +87,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, and therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -136,7 +136,7 @@ Configure which metadata values are added to messages as headers. This allows yo
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -156,7 +156,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 

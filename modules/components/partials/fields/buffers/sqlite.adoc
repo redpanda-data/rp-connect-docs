@@ -12,12 +12,12 @@ The path of the database file, which will be created if it does not already exis
 
 An optional list of processors to apply to messages after they are consumed from the buffer. These processors are useful for undoing any compression, archiving, etc that may have been done by your `pre_processors`.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 === `pre_processors[]`
 
 An optional list of processors to apply to messages before they are stored within the buffer. These processors are useful for compressing, archiving or otherwise reducing the data in size before it's stored on disk.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 

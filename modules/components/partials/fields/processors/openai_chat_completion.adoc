@@ -298,7 +298,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -453,7 +453,7 @@ The OpenAI API endpoint to which the processor sends requests. Update the defaul
 
 Specify up to four stop sequences to use. When the model encounters a stop pattern, it stops generating text and returns the final response.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `system_prompt`
 
@@ -478,7 +478,7 @@ External tools the model can invoke, such as functions, APIs, or web browsing. Y
 
 NOTE: If you don't want to use external tools, enter an empty array `tools:[]`.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 === `tools[].description`
 
@@ -516,7 +516,7 @@ A description of this parameter.
 
 Specifies that this parameter is an enum and only these specific values should be used.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -530,7 +530,7 @@ The type of this parameter.
 
 The required parameters for this pipeline.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -538,7 +538,7 @@ The required parameters for this pipeline.
 
 The pipeline to execute when the LLM uses this tool.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 === `top_p`
 

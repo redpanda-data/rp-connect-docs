@@ -129,7 +129,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, and therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -437,7 +437,7 @@ For example: `{"value": 42.3, "name":"new_data_field", "message": {"existing_dat
 
 The output from the processors must be a valid message, which contains a string that specifies the column type for the new column in Snowflake. The metadata remains the same as in the original message that triggered the schema update.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----

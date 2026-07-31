@@ -1,13 +1,13 @@
 {
   "comparison": {
-    "oldVersion": "4.101.0",
-    "newVersion": "4.102.0",
-    "timestamp": "2026-07-24T13:35:00.425Z"
+    "oldVersion": "4.102.0",
+    "newVersion": "4.103.0",
+    "timestamp": "2026-07-31T09:09:52.571Z"
   },
   "summary": {
     "newComponents": 0,
     "removedComponents": 0,
-    "newFields": 2,
+    "newFields": 0,
     "removedFields": 0,
     "deprecatedComponents": 0,
     "deprecatedFields": 0,
@@ -23,18 +23,7 @@
   "details": {
     "newComponents": [],
     "removedComponents": [],
-    "newFields": [
-      {
-        "component": "outputs:redpanda_migrator",
-        "field": "headers",
-        "description": "Custom headers to add to migrated records, keyed by header name with interpolated string values. Useful for injecting metadata such as processing timestamps or latency measurements that should surface as header values on the destination cluster. A custom header name that collides with `provenance_header` or `offset_header` is ignored, so those migration-critical headers are always protected."
-      },
-      {
-        "component": "processors:aws_dynamodb_partiql",
-        "field": "use_batch",
-        "description": "Whether to execute all messages in a batch as a single `BatchExecuteStatement` call. Set this to `false` to execute one `ExecuteStatement` call per message instead, which is required for PartiQL `SELECT` queries against a global secondary index (GSI) — `BatchExecuteStatement` does not support querying a GSI. Only the first result row is used when a query returns multiple items."
-      }
-    ],
+    "newFields": [],
     "removedFields": [],
     "deprecatedComponents": [],
     "deprecatedFields": [],
@@ -49,16 +38,52 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.102.0",
-      "cloud": "4.102.0",
-      "cgo": "4.102.0"
+      "oss": "4.103.0",
+      "cloud": "4.103.0",
+      "cgo": "4.103.0"
     },
     "current": {
-      "cloudSupported": 490,
-      "selfHostedOnly": 79,
-      "cgoOnly": 0
+      "cloudSupported": 489,
+      "selfHostedOnly": 75,
+      "cgoOnly": 4
     },
-    "changes": {},
+    "changes": {
+      "cloud": {
+        "added": [],
+        "removed": [
+          {
+            "type": "processors",
+            "name": "a2a_message",
+            "status": "stable"
+          }
+        ]
+      },
+      "cgo": {
+        "newCgoOnly": [
+          {
+            "type": "inputs",
+            "name": "tigerbeetle_cdc",
+            "status": "stable"
+          },
+          {
+            "type": "inputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "outputs",
+            "name": "zmq4",
+            "status": "stable"
+          },
+          {
+            "type": "processors",
+            "name": "ffi",
+            "status": "stable"
+          }
+        ],
+        "removedCgoOnly": []
+      }
+    },
     "details": {
       "cloudSupported": [
         {
@@ -1254,11 +1279,6 @@
         {
           "type": "processors",
           "name": "xml",
-          "status": "stable"
-        },
-        {
-          "type": "processors",
-          "name": "a2a_message",
           "status": "stable"
         },
         {
@@ -2634,16 +2654,6 @@
           "status": "stable"
         },
         {
-          "type": "inputs",
-          "name": "tigerbeetle_cdc",
-          "status": "stable"
-        },
-        {
-          "type": "inputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "outputs",
           "name": "amqp_1",
           "status": "stable"
@@ -2759,11 +2769,6 @@
           "status": "stable"
         },
         {
-          "type": "outputs",
-          "name": "zmq4",
-          "status": "stable"
-        },
-        {
           "type": "processors",
           "name": "awk",
           "status": "stable"
@@ -2849,11 +2854,6 @@
           "status": "stable"
         },
         {
-          "type": "processors",
-          "name": "ffi",
-          "status": "stable"
-        },
-        {
           "type": "metrics",
           "name": "aws_cloudwatch",
           "status": "stable"
@@ -2909,8 +2909,35 @@
           "status": "stable"
         }
       ],
-      "cloudOnly": [],
-      "cgoOnly": []
+      "cloudOnly": [
+        {
+          "type": "processors",
+          "name": "a2a_message",
+          "status": "stable"
+        }
+      ],
+      "cgoOnly": [
+        {
+          "type": "inputs",
+          "name": "tigerbeetle_cdc",
+          "status": "stable"
+        },
+        {
+          "type": "inputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "outputs",
+          "name": "zmq4",
+          "status": "stable"
+        },
+        {
+          "type": "processors",
+          "name": "ffi",
+          "status": "stable"
+        }
+      ]
     }
   }
 }

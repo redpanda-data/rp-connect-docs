@@ -95,7 +95,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -140,7 +140,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 Optional clustering columns (up to 4) applied during `auto_create_table`. All names must appear in `schema`.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -164,7 +164,7 @@ The BigQuery dataset ID.
 
 Optional delegation chain for chained service account impersonation. Each service account must be granted roles/iam.serviceAccountTokenCreator on the next in the chain.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -220,7 +220,7 @@ The format of input messages. Use 'json' to have the component convert JSON to p
 
 Optional list of primary-key column names. Required when `auto_create_table` is true and `write_mode` is `upsert` or `upsert_delete`. A pre-existing table must already declare its PRIMARY KEY — this field cannot add one; when both are set they must match exactly (same columns, same order). Up to 16 columns; composite keys are supported in the same order they are listed.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `project`
 
@@ -234,7 +234,7 @@ The GCP project ID. If empty, the project is auto-detected from the environment.
 
 Column definitions used by `auto_create_table`. Required when `auto_create_table` is true.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 

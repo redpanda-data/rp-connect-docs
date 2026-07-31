@@ -113,7 +113,7 @@ The format of the generated response. You must also prompt the model to output t
 
 Sets the stop sequences to use. When this pattern is encountered the LLM stops generating text and returns the final response.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `system_prompt`
 
@@ -132,7 +132,7 @@ Controls the randomness of predictions.
 
 The tools to allow the LLM to invoke. This allows building subpipelines that the LLM can choose to invoke to execute agentic-like actions.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -170,7 +170,7 @@ A description of this parameter.
 
 Specifies that this parameter is an enum and only these specific values should be used.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -184,7 +184,7 @@ The type of this parameter.
 
 The required parameters for this pipeline.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -192,7 +192,7 @@ The required parameters for this pipeline.
 
 The pipeline to execute when the LLM uses this tool.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 === `top_k`
 

@@ -39,7 +39,7 @@ If this value is set to `true`:
 
 The fields to encrypt in the Kafka messages when the record is a valid JSON map. By default, the whole record is encrypted.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -145,7 +145,7 @@ period: 500ms
 
 For aggregating and archiving message batches, you can add a list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed (optional). All resulting messages are flushed as a single batch even when you configure processors to split the batch into smaller batches.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -283,13 +283,13 @@ When you specify a <<consumer_group,`consumer_group`>>, `rebalance_timeout` sets
 
 A list of regular expression patterns for excluding topics when regex mode is enabled (via `regexp_topics` or `regexp_topics_include`). Topics matching any of these patterns will be excluded from consumption, even if they match include patterns.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `kafka.regexp_topics_include[]`
 
 A list of regular expression patterns for matching topics to consume from. When specified, the client will periodically refresh the list of matching topics based on the `metadata_max_age` interval. This enables regex mode and cannot be used together with the `topics` field. Use `regexp_topics_exclude` to exclude specific patterns.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -308,7 +308,7 @@ regexp_topics_include:
 
 A list of broker addresses to connect to (optional). List items that contain commas are expanded into multiple addresses.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -378,7 +378,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -535,7 +535,7 @@ Alternatively, add a colon after the topic name to set the explicit partitions t
 
 Finally, add another colon after the partition to set an explicit offset to consume from. For example, `foo:0:10` consumes the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_offset` determines which offset to start from.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

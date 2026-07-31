@@ -103,7 +103,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -132,7 +132,7 @@ processors:
 
 A list of columns to insert.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -269,7 +269,7 @@ ifndef::env-cloud[]
 Requires version 4.10.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -326,7 +326,7 @@ The maximum number of inserts to run in parallel.
 
 A list of keyword options to add before the INTO clause of the query.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

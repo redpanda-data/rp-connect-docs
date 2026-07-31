@@ -117,7 +117,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -206,7 +206,7 @@ Allows you to specify a custom endpoint for the AWS API.
 
 A map of column keys to xref:configuration:field_paths.adoc[field paths] pointing to value data within messages.
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 
@@ -250,7 +250,7 @@ The AWS region to target.
 A map of column keys to string values to store.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 

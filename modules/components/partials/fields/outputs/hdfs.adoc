@@ -87,7 +87,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -123,7 +123,7 @@ This field supports xref:configuration:interpolation.adoc#bloblang-queries[inter
 
 A list of target host addresses to connect to.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

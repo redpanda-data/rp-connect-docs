@@ -106,7 +106,7 @@ The rate at which events are sent to the server. A value of 0 disables capturing
 Sets key/value string tags on an event. Unlike context, these are indexed and searchable on Sentry but have length limitations.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-*Type*: `string`
+*Type*: `object`
 
 === `transport_mode`
 

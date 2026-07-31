@@ -72,7 +72,7 @@ A map of headers to add to the request.
 
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 
@@ -244,7 +244,7 @@ endpoint_params:
 
 A list of optional requested permissions.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 

@@ -131,7 +131,7 @@ Each pattern is a full regular expression evaluated against the complete topic n
 
 Example: `regexp_topics_exclude: ["^_", ".*-temp$", ".*-test.*"]` excludes topics starting with underscore, ending with `-temp`, or containing `-test`.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `regexp_topics_include[]`
 
@@ -143,7 +143,7 @@ This field enables regex mode (replacing the deprecated `regexp_topics` boolean)
 
 Example: `regexp_topics_include: ["events_.*", "logs_.*"]` consumes from all topics starting with `events_` or `logs_`.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----
@@ -213,7 +213,7 @@ Alternatively, you can specify explicit partitions to consume by using a colon a
 
 It is also possible to specify an explicit offset to consume from by adding another colon after the partition. For example, `foo:0:10` would consume the partition `0` of the topic `foo` starting from the offset `10`. If the offset is not present (or remains unspecified) then the field `start_offset` determines which offset to start from.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

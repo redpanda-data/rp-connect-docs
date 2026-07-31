@@ -93,7 +93,7 @@ include::connect:components:partial$secret_warning.adoc[]
 Explicit message headers to add to messages.
 This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 
@@ -149,7 +149,7 @@ Determine which (if any) metadata values should be added to messages as headers.
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -169,7 +169,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -214,7 +214,7 @@ Custom TLS settings can be used to override system defaults.
 
 A list of client certificates to use. For each certificate either the fields `cert` and `key`, or `cert_file` and `key_file` should be specified, but not both.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -368,7 +368,7 @@ endif::[]
 
 A list of URLs to connect to. If a list item contains commas, it will be expanded into multiple URLs.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 [source,yaml]
 ----

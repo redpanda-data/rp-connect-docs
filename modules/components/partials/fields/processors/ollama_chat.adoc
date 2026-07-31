@@ -196,7 +196,7 @@ server_address: http://127.0.0.1:11434
 
 Sets the stop sequences to use. When this pattern is encountered, the LLM stops generating text and returns the final response.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `system_prompt`
 
@@ -215,7 +215,7 @@ The temperature of the model. Increasing the temperature makes the model answer 
 
 The external tools the LLM can invoke, such as functions, APIs, or web browsing. You can build a series of processors that include definitions of these tools, and the specified LLM can choose when to invoke them to help answer a prompt. For more information, see <<Examples, examples>>.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
@@ -253,7 +253,7 @@ A description of this parameter.
 
 Specifies that this parameter is an enum and only these specific values should be used.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -267,7 +267,7 @@ The type of this parameter.
 
 The required parameters for this pipeline.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -275,7 +275,7 @@ The required parameters for this pipeline.
 
 The pipeline to execute when the LLM uses this tool.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 === `top_k`
 

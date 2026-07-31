@@ -109,7 +109,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. Please note that all resulting messages are flushed as a single batch, therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -279,7 +279,7 @@ patch_condition: from c where not is_defined(c.blobfish)
 
 Patch operations to be performed when `operation: Patch` .
 
-*Type*: `object`
+*Type*: `array<object>`
 
 === `patch_operations[].operation`
 

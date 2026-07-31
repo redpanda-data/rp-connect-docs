@@ -16,7 +16,7 @@ Set `auto_replay_nacks` to `false` to delete rejected messages. Disabling auto r
 
 A list of status codes that indicate a request failure, and trigger retries with an increasing backoff period between attempts.
 
-*Type*: `int`
+*Type*: `array<int>`
 
 *Default*:
 [source,yaml]
@@ -82,7 +82,7 @@ A list of status codes that indicate a request failure, where the input should n
 
 NOTE: In these cases, the _request_ is dropped, but the _message_ that triggered the request is retained.
 
-*Type*: `int`
+*Type*: `array<int>`
 
 *Default*: `[]`
 
@@ -110,7 +110,7 @@ Specify which response headers to add to the resulting messages as metadata. Hea
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -130,7 +130,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -164,7 +164,7 @@ Whether or not to transparently follow redirects, i.e. responses with 300-399 st
 
 A map of headers to add to the request. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions].
 
-*Type*: `string`
+*Type*: `object`
 
 *Default*: `{}`
 
@@ -242,7 +242,7 @@ Specify matching rules that determine which metadata keys to add to the HTTP req
 
 Provide a list of explicit metadata key regular expression (re2) patterns to match against.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -262,7 +262,7 @@ include_patterns:
 
 Provide a list of explicit metadata key prefixes to match against.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -397,7 +397,7 @@ ifndef::env-cloud[]
 Requires version 3.45.0 or later.
 endif::[]
 
-*Type*: `array`
+*Type*: `array<string>`
 
 *Default*: `[]`
 
@@ -487,7 +487,7 @@ A list of HTTP status codes that should be considered as successful, even if the
 
 By default, all 2XX codes are considered successful unless they are specified in `backoff_on` or `drop_on` fields.
 
-*Type*: `int`
+*Type*: `array<int>`
 
 *Default*: `[]`
 
@@ -518,7 +518,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 

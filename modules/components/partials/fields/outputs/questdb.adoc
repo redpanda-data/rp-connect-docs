@@ -99,7 +99,7 @@ period: 500ms
 
 A list of xref:components:processors/about.adoc[processors] to apply to a batch as it is flushed. This allows you to aggregate and archive the batch however you see fit. All resulting messages are flushed as a single batch, and therefore splitting the batch into smaller batches using these processors is a no-op.
 
-*Type*: `processor`
+*Type*: `array<processor>`
 
 [source,yaml]
 ----
@@ -142,7 +142,7 @@ Units used for the designated timestamp field in QuestDB.
 
 Columns that must be the `double` type, with `int` as the default.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `error_on_empty_messages`
 
@@ -190,7 +190,7 @@ The period of time to continue retrying after a failed HTTP request. The interva
 
 Columns that must be the `symbol` type. String values default to `string` types.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `table`
 
@@ -208,7 +208,7 @@ table: trades
 
 String fields with textual timestamps.
 
-*Type*: `array`
+*Type*: `array<string>`
 
 === `timestamp_string_format`
 
@@ -237,7 +237,7 @@ You must set `tls.enabled: true` for the client certificates to take effect.
 
 Mixing inline and file-based values within the same item is not supported.
 
-*Type*: `object`
+*Type*: `array<object>`
 
 *Default*: `[]`
 
