@@ -4,6 +4,9 @@
 :type: input
 :status: stable
 :categories: ["Services"]
+// tag::meta[]
+:description: Pulls messages from Redis (v5.0+) streams with the XREADGROUP command. The client_id should be unique for each consumer of a group.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

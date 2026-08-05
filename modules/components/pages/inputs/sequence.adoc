@@ -3,6 +3,9 @@
 :type: input
 :status: stable
 :categories: ["Utility"]
+// tag::meta[]
+:description: Reads messages from a sequence of child inputs, starting with the first and once that input gracefully terminates starts consuming from the next, and so on.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

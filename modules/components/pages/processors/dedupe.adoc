@@ -3,6 +3,9 @@
 :type: processor
 :status: stable
 :categories: ["Utility"]
+// tag::meta[]
+:description: Deduplicates messages by storing a key value in a cache using the add operator. If the key already exists within the cache it is dropped.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

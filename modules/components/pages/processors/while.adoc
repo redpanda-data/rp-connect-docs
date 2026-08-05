@@ -3,6 +3,9 @@
 :type: processor
 :status: stable
 :categories: ["Composition"]
+// tag::meta[]
+:description: A processor that checks a Bloblang query against each batch of messages and executes child processors on them for as long as the query resolves to true.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

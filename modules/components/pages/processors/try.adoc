@@ -3,6 +3,9 @@
 :type: processor
 :status: stable
 :categories: ["Composition"]
+// tag::meta[]
+:description: Executes a list of child processors on messages only if no prior processors have failed (or the errors have been cleared).
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

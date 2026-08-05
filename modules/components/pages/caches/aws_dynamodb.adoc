@@ -3,6 +3,9 @@
 :type: cache
 :commercial-names: AWS DynamoDB
 :status: stable
+// tag::meta[]
+:description: Stores key/value pairs as a single document in a DynamoDB table. The key is stored as a string value and used as the table hash key. The value is stored as a binary value using the data_key field name.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

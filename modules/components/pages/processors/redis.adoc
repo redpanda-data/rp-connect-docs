@@ -4,6 +4,9 @@
 :commercial-names: Redis
 :status: stable
 :categories: ["Integration"]
+// tag::meta[]
+:description: Performs actions against Redis that aren't possible using a cache processor. Actions are performed for each message and the message contents are replaced with the result. In order to merge the result into the original message compose this processor within a branch processor.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

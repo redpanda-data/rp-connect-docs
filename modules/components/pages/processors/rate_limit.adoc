@@ -3,6 +3,9 @@
 :type: processor
 :status: stable
 :categories: ["Utility"]
+// tag::meta[]
+:description: Throttles the throughput of a pipeline according to a specified rate_limit resource. Rate limits are shared across components and therefore apply globally to all processing pipelines.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 
