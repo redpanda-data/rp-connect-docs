@@ -2530,7 +2530,8 @@
             "$ref": "#/definitions/auto_replay_nacks"
           }
         ]
-      }
+      },
+      "summary": "Connects to Slack using Socket Mode and receives events, interactions, and slash commands."
     },
     {
       "name": "slack_users",
@@ -2549,7 +2550,8 @@
             "$ref": "#/definitions/auto_replay_nacks"
           }
         ]
-      }
+      },
+      "summary": "Returns the full profile of all users in your Slack organization using the users.list API method. You can filter the returned users by team ID."
     },
     {
       "name": "socket_server",
@@ -2735,6 +2737,10 @@
     {
       "name": "zmq4",
       "summary": "Consumes messages from a ZeroMQ socket."
+    },
+    {
+      "name": "inproc",
+      "summary": "Directly connects to an output within the same Redpanda Connect process by a chosen ID, to link isolated streams when running in streams mode."
     }
   ],
   "outputs": [
@@ -3569,7 +3575,8 @@
             "description": "The maximum number of message batches to have in flight at a given time. Increase this value to improve throughput."
           }
         ]
-      }
+      },
+      "summary": "Writes batches of messages to any graph database that supports the Neo4j and Bolt URI schemes, using operations written in the Cypher query language."
     },
     {
       "name": "elasticsearch",
@@ -5893,7 +5900,8 @@
             "description": "When set to `1`, this output finds and links to https://api.slack.com/reference/surfaces/formatting#mentioning-groups[user groups^] mentioned in Slack messages."
           }
         ]
-      }
+      },
+      "summary": "Posts a new message to a Slack channel using the Slack API method chat.postMessage."
     },
     {
       "name": "snowflake_put",
@@ -6236,6 +6244,10 @@
     {
       "name": "zmq4",
       "summary": "Writes messages to a ZeroMQ socket."
+    },
+    {
+      "name": "inproc",
+      "summary": "Sends data directly to Redpanda Connect inputs in the same process by connecting to a unique ID, to link isolated streams when running in streams mode."
     }
   ],
   "processors": [
@@ -8007,7 +8019,8 @@
             "description": "The timestamp of the parent message of the thread you want to read. This field supports xref:configuration:interpolation.adoc#bloblang-queries[interpolation functions]."
           }
         ]
-      }
+      },
+      "summary": "Reads a Slack thread using the Slack API method conversations.replies."
     },
     {
       "name": "sleep",
