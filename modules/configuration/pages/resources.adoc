@@ -1,4 +1,7 @@
 = Resources
+// tag::meta[]
+:description: Learn how to declare components as named resources in Redpanda Connect so one configured instance can be referenced throughout a configuration.
+// end::meta[]
 // tag::single-source[]
 
 Resources are components within Redpanda Connect that are declared with a unique label and can be referenced any number of times within a configuration. Only one instance of each named resource is created, but it is safe to use it in multiple places as they can be shared without consequence.

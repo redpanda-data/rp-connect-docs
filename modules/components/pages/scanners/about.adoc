@@ -1,4 +1,7 @@
 = Scanners
+// tag::meta[]
+:description: Learn how scanners work in Redpanda Connect. Scanners define how inputs split a raw stream of bytes into logical messages.
+// end::meta[]
 // tag::single-source[]
 ifndef::env-cloud[]
 For most Redpanda Connect xref:components:inputs/about.adoc[inputs] the data consumed comes pre-partitioned into discrete messages which can be comfortably held and processed in memory. However, some inputs such as the xref:components:inputs/file.adoc[`file` input] often need to consume data that is large enough that it cannot be processed entirely within memory, and others such as the xref:components:inputs/socket.adoc[`socket` input] don't have a concept of consuming the data "entirely".

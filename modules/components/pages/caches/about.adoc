@@ -1,4 +1,7 @@
 = Caches
+// tag::meta[]
+:description: Learn how caches work in Redpanda Connect. A cache is a named key/value store resource that components use for deduplication or data joins.
+// end::meta[]
 // tag::single-source[]
 
 A cache is a key/value store which can be used by certain components for applications such as deduplication or data joins. Caches are configured as a named resource:

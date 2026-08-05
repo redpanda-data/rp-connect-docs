@@ -2,6 +2,9 @@
 // tag::single-source[]
 :type: rate_limit
 :status: stable
+// tag::meta[]
+:description: The local rate limit is a simple X every Y type rate limit that can be shared across any number of components within the pipeline but does not support distributed rate limits across multiple running instances of Benthos.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

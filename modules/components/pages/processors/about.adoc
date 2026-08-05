@@ -1,4 +1,7 @@
 = Processors
+// tag::meta[]
+:description: Learn how processors work in Redpanda Connect. Processors are functions that mutate, filter, or enrich messages passing through a pipeline.
+// end::meta[]
 // tag::single-source[]
 
 Redpanda Connect processors are functions applied to messages passing through a pipeline. The function signature allows a processor to mutate or drop messages depending on the content of the message. There are many types on offer but the most powerful are the xref:components:processors/mapping.adoc[`mapping`] and xref:components:processors/mutation.adoc[`mutation`] processors.

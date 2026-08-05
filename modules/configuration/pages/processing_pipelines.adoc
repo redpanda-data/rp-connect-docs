@@ -1,4 +1,7 @@
 = Processing Pipelines
+// tag::meta[]
+:description: Learn how the pipeline section applies processors to all messages and how to scale processing across parallel threads.
+// end::meta[]
 
 // tag::single-source[]
 Within a Redpanda Connect configuration, in between `input` and `output`, is a `pipeline` section. This section describes an array of xref:components:processors/about.adoc[processors] that are to be applied to _all_ messages, and are not bound to any particular input or output.

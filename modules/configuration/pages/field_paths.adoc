@@ -1,4 +1,7 @@
 = Field Paths
+// tag::meta[]
+:description: Learn the dot path syntax that Redpanda Connect components use to target fields within messages and configuration.
+// end::meta[]
 // tag::single-source[]
 
 Many components within Redpanda Connect allow you to target certain fields using a JSON dot path. The syntax of a path within Redpanda Connect is similar to https://tools.ietf.org/html/rfc6901[JSON Pointers^], except with dot separators instead of slashes (and no leading dot.) When a path is used to set a value any path segment that does not yet exist in the structure is created as an object.

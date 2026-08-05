@@ -1,4 +1,7 @@
 = Metadata
+// tag::meta[]
+:description: Learn how message metadata works in Redpanda Connect, including how to get, set, and delete key/value pairs that travel with each message.
+// end::meta[]
 // tag::single-source[]
 
 In Redpanda Connect each message has raw contents and metadata, which is a map of key/value pairs representing an arbitrary amount of complementary data.

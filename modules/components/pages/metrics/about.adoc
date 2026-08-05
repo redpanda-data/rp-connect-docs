@@ -1,4 +1,7 @@
 = Metrics
+// tag::meta[]
+:description: Learn how Redpanda Connect emits metrics about pipeline components, and how to route them to a destination such as Prometheus.
+// end::meta[]
 // tag::single-source[]
 
 Redpanda Connect emits lots of metrics in order to expose how components configured within your pipeline are behaving. You can configure exactly where these metrics end up with the config field `metrics`, which describes a metrics format and destination. For example, if you wished to push them via the StatsD protocol you could use this configuration:
