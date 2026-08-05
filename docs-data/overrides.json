@@ -8466,5 +8466,15 @@
         ]
       }
     }
+  ],
+  "rate-limits": [
+    {
+      "name": "local",
+      "summary": "A simple X every Y rate limit that can be shared across components within a pipeline. It does not support distributed rate limiting across instances."
+    },
+    {
+      "name": "redis",
+      "summary": "A token bucket rate limit backed by Redis, shared across all Redpanda Connect instances that use the same Redis instance."
+    }
   ]
 }
