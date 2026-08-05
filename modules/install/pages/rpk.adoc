@@ -108,6 +108,8 @@ docker pull docker.redpanda.com/redpandadata/connect
 
 Redpanda Connect uses the `rpk connect` plugin to manage upgrades, which is automatically installed when you start to run `rpk connect` commands from the `rpk` CLI. You do not need to upgrade the entire Redpanda CLI.
 
+The reverse is also true: upgrading `rpk` does not upgrade Redpanda Connect. The plugin is a separate binary that stays at its installed version, even across `rpk` upgrades, until you run `rpk connect upgrade`. The automatic install happens only on first use and installs the latest version at that moment.
+
 Check the version of Redpanda Connect already installed:
 
 [,bash]
