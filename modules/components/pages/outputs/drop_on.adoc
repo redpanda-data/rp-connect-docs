@@ -3,6 +3,9 @@
 :type: output
 :status: stable
 :categories: ["Utility"]
+// tag::meta[]
+:description: Attempts to write messages to a child output and if the write fails for one of a list of configurable reasons the message is dropped (acked) instead of being reattempted (or nacked).
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

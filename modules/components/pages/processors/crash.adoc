@@ -1,6 +1,9 @@
 = crash
 :type: processor
 :categories: ["Utility"]
+// tag::meta[]
+:description: Crashes the process using a fatal log message. The log message can be set using function interpolations described in Bloblang queries which allows you to log the contents and metadata of messages.
+// end::meta[]
 
 Stops the current pipeline process with a fatal log message. You can use xref:configuration:interpolation.adoc#bloblang-queries[function interpolations] to define the log message, including the message contents and metadata that caused the fatal error.
 

@@ -1,4 +1,7 @@
 = Error Handling
+// tag::meta[]
+:description: Learn how to handle processing errors in Redpanda Connect, including error checks, retries, and dead-letter queue patterns.
+// end::meta[]
 // tag::single-source[]
 
 Redpanda Connect supports a range of xref:components:processors/about.adoc[processors], such as `http` and `aws_lambda`, that may fail when retry attempts are exhausted. By default, when a processor fails, the message data continues through the pipeline mostly unchanged, except for the addition of a metadata flag, which you can use for handling errors. To make processing errors terminal instead, see <<strict-error-handling>>.

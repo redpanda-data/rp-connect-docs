@@ -2,6 +2,9 @@
 // tag::single-source[]
 :type: rate_limit
 :status: stable
+// tag::meta[]
+:description: A simple X every Y rate limit that can be shared across components within a pipeline. It does not support distributed rate limiting across instances.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

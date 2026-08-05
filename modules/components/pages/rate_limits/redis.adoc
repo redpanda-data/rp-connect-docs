@@ -2,6 +2,9 @@
 // tag::single-source[]
 :type: rate_limit
 :status: experimental
+// tag::meta[]
+:description: A token bucket rate limit backed by Redis, shared across all Redpanda Connect instances that use the same Redis instance.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

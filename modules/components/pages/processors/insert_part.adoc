@@ -3,6 +3,9 @@
 :type: processor
 :status: stable
 :categories: ["Composition"]
+// tag::meta[]
+:description: Insert a new message into a batch at an index. If the specified index is greater than the length of the existing batch it will be appended to the end.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

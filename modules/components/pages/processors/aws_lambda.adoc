@@ -5,6 +5,9 @@
 :commercial-names: AWS Lambda
 :status: stable
 :categories: ["Integration"]
+// tag::meta[]
+:description: Invokes an AWS lambda for each message. The contents of the message is the payload of the request, and the result of the invocation will become the new contents of the message.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 

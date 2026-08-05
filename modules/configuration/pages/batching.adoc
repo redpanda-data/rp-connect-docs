@@ -1,4 +1,7 @@
 = Message Batching
+// tag::meta[]
+:description: Learn how message batching works in Redpanda Connect, including batch policies and how batches flow between inputs, processors, and outputs.
+// end::meta[]
 // tag::single-source[]
 
 Redpanda Connect is able to join sources and sinks with sometimes conflicting batching behaviors without sacrificing its strong delivery guarantees. It's also able to perform powerful xref:configuration:windowed_processing.adoc[processing functions] across batches of messages such as grouping, archiving and reduction. Therefore, batching within Redpanda Connect is a mechanism that serves multiple purposes:

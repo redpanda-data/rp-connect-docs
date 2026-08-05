@@ -2,6 +2,9 @@
 :type: processor
 :status: stable
 :categories: ["Integration"]
+// tag::meta[]
+:description: Executes a command as a subprocess and, for each message, will pipe its contents to the stdin stream of the process followed by a newline.
+// end::meta[]
 
 // © 2024 Redpanda Data Inc.
 
