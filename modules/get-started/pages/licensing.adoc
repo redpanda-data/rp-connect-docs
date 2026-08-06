@@ -27,10 +27,19 @@ You need a valid Enterprise Edition license to use the following enterprise feat
 
 You can either https://www.redpanda.com/upgrade[upgrade to an Enterprise Edition license^], or http://redpanda.com/try-enterprise[generate a trial license key^] that's valid for 30 days.
 
+=== Product-scoped licenses
+
+In Redpanda Connect 4.78.0 and later, licenses specify which Redpanda products they cover. To unlock enterprise features, your license must include the Redpanda Connect product. Licenses issued specifically for Redpanda Connect include it, and Enterprise Edition licenses issued before product scoping was introduced are valid for all products. If you are not sure which products your license covers, contact your Redpanda account team.
 
 == Apply a license key to Redpanda Connect
 
 When you have downloaded the license key, you can apply it using either the CLI (`rpk`) or Helm on Kubernetes.
+
+Redpanda Connect looks for a license in the following order and uses the first one it finds:
+
+. A license string passed with the `--redpanda-license` flag or set in the `REDPANDA_LICENSE` environment variable. The flag takes precedence over the environment variable.
+. The license file set in the `REDPANDA_LICENSE_FILEPATH` environment variable.
+. The default license file at `/etc/redpanda/redpanda.license`.
 
 [tabs]
 ======
@@ -95,6 +104,17 @@ You can view the license key’s expiration date at any time in the Redpanda Con
 INFO Running main config from specified file       @service=benthos benthos_version=4.50.0 path=connect_2.yaml
 INFO Successfully loaded Redpanda license          @service=benthos expires_at="2025-04-18T15:41:56+01:00" license_org=67XXX license_type="enterprise"
 ```
+
+If your license is valid but does not cover Redpanda Connect, enterprise components fail with the following error:
+
+[.no-copy]
+----
+this feature requires a valid Redpanda Enterprise Edition license that includes the Connect product
+----
+
+To resolve this error, contact your Redpanda account team to add the Redpanda Connect product to your license.
+
+When a valid enterprise license is loaded, Redpanda Connect also exports the `redpanda_cluster_features_enterprise_license_expiry_sec` metric, which reports the number of seconds until the license expires. You can alert on this metric to catch expiring licenses before enterprise connectors stop working.
 
 == Next steps
 
