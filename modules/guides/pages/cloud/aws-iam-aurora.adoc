@@ -15,12 +15,12 @@ Use IAM roles to authenticate self-hosted Redpanda Connect pipelines to Amazon A
 [IMPORTANT]
 .Self-hosted deployments only
 ====
-This guide applies to self-hosted Redpanda Connect deployments. Redpanda Cloud pipelines do not currently support IAM Roles for Service Accounts (IRSA) or cross-account `sts:AssumeRole` in Bring Your Own Cloud (BYOC) or Dedicated clusters. The Redpanda Connect binary supports both, but the Cloud platform does not currently make pod identity tokens available to pipelines, and you cannot grant additional permissions to Redpanda-managed IAM roles. To authenticate Cloud pipelines to AWS services, store static credentials as secrets and reference them in your pipeline configuration. See xref:cloud-data-platform:develop:connect/configuration/secret-management.adoc[Manage Secrets in Redpanda Cloud].
+This guide applies to self-hosted Redpanda Connect deployments. Redpanda Cloud pipelines in Bring Your Own Cloud (BYOC) and Dedicated clusters do not currently support IAM Roles for Service Accounts (IRSA), and cross-account `sts:AssumeRole` from the Redpanda-managed pipeline role is not available because you cannot grant additional permissions to that role. The Redpanda Connect binary supports both, but the Cloud platform does not currently make pod identity tokens available to pipelines. To authenticate Cloud pipelines to AWS services, store static credentials as secrets and reference them in your pipeline configuration. See xref:cloud-data-platform:develop:connect/configuration/secret-management.adoc[Manage Secrets in Redpanda Cloud].
 ====
 
 Authentication uses a two-hop role chain. The Redpanda Connect process assumes an IAM role through its runtime environment, such as IRSA on Amazon EKS or an EC2 instance profile. That role then assumes a database-specific role in your Aurora account, which generates a short-lived RDS IAM token that Aurora accepts as a password.
 
-This page covers configuring both roles with the required trust relationships. You own both roles: the Connect role that your deployment runs as, and the database connect role in the Aurora account.
+This page covers configuring the trust relationship and permissions between two roles that you own: the Connect role that your deployment runs as, and the database connect role in the Aurora account. The Connect role and its runtime binding (IRSA or an instance profile) must already exist.
 
 After reading this page, you will be able to:
 
@@ -41,8 +41,8 @@ After reading this page, you will be able to:
 
 The Connect role is the IAM role that your Redpanda Connect process runs as:
 
-* On Amazon EKS, this is the IRSA role associated with the Kubernetes service account that runs your Redpanda Connect pods.
-* On EC2, this is the role attached to the instance profile.
+* On Amazon EKS, this is the IRSA role associated with the Kubernetes service account that runs your Redpanda Connect pods. To set up IRSA, see the https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html[Amazon EKS documentation^].
+* On EC2, this is the role attached to the instance profile. To set up an instance profile, see the https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html[AWS IAM documentation^].
 
 The AWS SDK resolves this identity automatically through the default credential chain, so no credentials appear in your pipeline configuration.
 
@@ -180,7 +180,10 @@ aws iam get-role-policy \
 [[configure-the-network]]
 == Configure the network
 
-The Aurora security group must allow inbound traffic from your Redpanda Connect deployment's egress IP addresses on the database port (5432 for PostgreSQL, 3306 for MySQL). For EKS deployments, this is typically the NAT gateway or node IP range of the cluster's VPC.
+The Aurora security group must allow inbound traffic on the database port (5432 for PostgreSQL, 3306 for MySQL) from the source that Aurora sees:
+
+* For EKS or EC2 deployments in the same VPC as Aurora, allow the node or instance security group, or the private CIDR range that your Redpanda Connect pods or instances use.
+* For deployments that reach Aurora across a VPC boundary, such as through VPC peering or from another network, allow the IP addresses that your traffic originates from after translation, such as your NAT gateway IPs.
 
 [[configure-the-pipeline]]
 == Configure the pipeline
