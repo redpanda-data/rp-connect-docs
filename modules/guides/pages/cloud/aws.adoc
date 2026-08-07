@@ -75,6 +75,13 @@ credentials:
 
 This does NOT require explicit credentials, but it's possible to use both.
 
+ifdef::env-cloud[]
+[NOTE]
+====
+Redpanda Cloud pipelines cannot assume roles through the default credential chain (IAM Roles for Service Accounts), and you cannot grant Redpanda-managed IAM roles permission to assume your roles. To assume a role from a Cloud pipeline, set explicit `id` and `secret` credentials for an IAM identity that you own and that has permission to assume the target role, and make sure the target role's trust policy trusts that identity. Store these credentials as xref:cloud-data-platform:develop:connect/configuration/secret-management.adoc[secrets].
+====
+endif::[]
+
 If you need to assume a role owned by another organization they might require you to https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html[provide an external ID^], in which case place it in the field `role_external_id`:
 
 [source,yml]
