@@ -242,22 +242,6 @@ asciidoc:
         name: LRU
       - key: noop
         name: Noop
-    enterprise-components:
-      - splunk_hec
-      - snowflake_put
-      - openai_chat_completion
-      - openai_embeddings
-      - openai_image_generation
-      - openai_speech
-      - openai_transcription
-      - openai_translation
-      - ollama_chat
-      - ollama_embeddings
-      - aws_bedrock_chat
-      - gcp_vertex_ai_chat
-      - kafka_migrator
-      - kafka_migrator_bundle
-      - kafka_migrator_offsets
     certified-components:
       - name: amqp_0_9
         types:
