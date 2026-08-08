@@ -1,8 +1,8 @@
 {
   "comparison": {
-    "oldVersion": "4.102.0",
-    "newVersion": "4.103.0",
-    "timestamp": "2026-07-31T09:09:52.571Z"
+    "oldVersion": "4.103.0",
+    "newVersion": "4.103.1",
+    "timestamp": "2026-07-31T16:00:54.085Z"
   },
   "summary": {
     "newComponents": 0,
@@ -38,9 +38,9 @@
   },
   "binaryAnalysis": {
     "versions": {
-      "oss": "4.103.0",
-      "cloud": "4.103.0",
-      "cgo": "4.103.0"
+      "oss": "4.103.1",
+      "cloud": "4.103.1",
+      "cgo": "4.103.1"
     },
     "current": {
       "cloudSupported": 489,
@@ -50,37 +50,10 @@
     "changes": {
       "cloud": {
         "added": [],
-        "removed": [
-          {
-            "type": "processors",
-            "name": "a2a_message",
-            "status": "stable"
-          }
-        ]
+        "removed": []
       },
       "cgo": {
-        "newCgoOnly": [
-          {
-            "type": "inputs",
-            "name": "tigerbeetle_cdc",
-            "status": "stable"
-          },
-          {
-            "type": "inputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "outputs",
-            "name": "zmq4",
-            "status": "stable"
-          },
-          {
-            "type": "processors",
-            "name": "ffi",
-            "status": "stable"
-          }
-        ],
+        "newCgoOnly": [],
         "removedCgoOnly": []
       }
     },
