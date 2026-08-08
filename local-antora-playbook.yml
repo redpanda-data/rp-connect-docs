@@ -13,7 +13,10 @@ content:
     branches: main
     start_paths: [home, data-platform, self-managed]
   - url: https://github.com/redpanda-data/docs
-    branches: [main, v/*, site-search, shared]
+    branches: [main, v/*, site-search]
+  - url: https://github.com/redpanda-data/docs
+    branches: main
+    start_path: shared
   - url: https://github.com/redpanda-data/redpanda-labs
     branches: main
     start_paths: [docs,'*/docs']
@@ -25,6 +28,9 @@ ui:
     snapshot: true
 asciidoc:
   attributes:
+    # Report enterprise: macro targets missing from the enterprise features
+    # registry (shared component). Flip to 'error' once usage is clean.
+    enterprise-validate: warn
   extensions:
   - '@asciidoctor/tabs'
   - '@redpanda-data/docs-extensions-and-macros/macros/rp-connect-components'
@@ -33,6 +39,7 @@ asciidoc:
   - '@redpanda-data/docs-extensions-and-macros/macros/helm-ref'
   - '@redpanda-data/docs-extensions-and-macros/asciidoc-extensions/add-line-numbers-highlights'
   - '@redpanda-data/docs-extensions-and-macros/macros/badge'
+  - '@redpanda-data/docs-extensions-and-macros/macros/enterprise'
 antora:
   extensions:
   # Conditional home page redirect when agentic-data-plane component doesn't exist
